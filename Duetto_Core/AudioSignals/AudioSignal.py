@@ -1,16 +1,29 @@
-from PyQt4.phonon import *
-
+from PyQt4.QtCore import QTimer
+import pyaudio
+from PyQt4.QtCore import QTimer
 
 class AudioSignal:
     """an abstract class for the representation of an audio signal"""
-
+    PLAYING,PAUSED,STOPPED=range(3)
     def __init__(self):
         self.samplingRate=0
         self.data=[]
         self.bitDepth=0
         self.path=""
-        self.AudioPlayer = None
+        self.playStatus=self.STOPPED
+        self.playAudio = pyaudio.PyAudio()
+        self.playSection=(0,0,0)#(init,end,current)
+        self.tick=1000#1 sec interval for player update
+        self.timer=QTimer()
+        self.stream =None
+    def currentPlayingTime(self):
+        return self.playSection[2]
 
+
+
+
+    def setTickInterval(self,ms):
+        self.tick= ms if ms>=0 else 0
 
 
 

@@ -7,7 +7,7 @@ class PointerCursor(Cursor):
 
     def __init__(self,index=0):
         Cursor.__init__(self)
-        self.index=int(index)
+        self.index=index
     def toByteArray(self):
         return concatenate((self.visualOptions.toByteArray(),
                             bytearray(self.intToByteArray(self.index))))

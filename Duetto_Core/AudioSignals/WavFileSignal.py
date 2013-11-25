@@ -1,7 +1,5 @@
-from PyQt4.QtCore import QBuffer, QByteArray, QIODevice
 from PyQt4.QtGui import QMessageBox
-from PyQt4.phonon import *
-import pyglet
+import pyaudio
 from scipy.io import wavfile
 from numpy.compat import asbytes
 import struct
@@ -11,6 +9,7 @@ class WavFileSignal(FileAudioSignal):
     """
     class that represents a signal from a file in the local file system
     """
+
     def __init__(self):
         FileAudioSignal.__init__(self)
         self.channels=1
@@ -29,11 +28,20 @@ class WavFileSignal(FileAudioSignal):
             #source=Phonon.MediaSource(self.path)
             #so2=Phonon.MediaSource(QBuffer(QByteArray(bytes(self.data))))
             #self.AudioPlayer=Phonon.createPlayer(Phonon.MusicCategory,source)
+
             #self.AudioPlayer.prefinishMarkReached.connect(self.restartPlayer)
             #self.AudioPlayer.finished.connect(self.restartPlayer)
-            self.AudioPlayer=pyglet.media.Player()
-            source = pyglet.media.load(self.path)
-            self.AudioPlayer.queue(source)
+            #self.AudioPlayer=pyglet.media.Player()
+            #source = pyglet.media.load(self.path)
+            #self.AudioPlayer.queue(source)
+
+
+
+
+
+
+
+
 
         except Exception, e:
             QMessageBox.warning(QMessageBox(),"Error","Could not load the file. "+e.message)
@@ -42,31 +50,75 @@ class WavFileSignal(FileAudioSignal):
         """
         plays the sound of the signal in the interval [startIndex:endIndex]
         with the specified speed %"""
-        startIndex=startIndex*1000.0/self.samplingRate
-        endIndex= endIndex if endIndex!=-1 else len(self.data)
-        endIndex=endIndex*1000/self.samplingRate
-        self.AudioPlayer.source.seek(startIndex*1000)
+        #startIndex=startIndex*1000.0/self.samplingRate
+        #endIndex= endIndex if endIndex!=-1 else len(self.data)
+        #endIndex=endIndex*1000/self.samplingRate
+        #self.AudioPlayer.source.seek(startIndex*1000)
+        #
+        ##self.end=endIndex
+        #self.AudioPlayer.play()
+        if(self.playStatus==self.PLAYING):
+            return
+        if(self.playStatus==self.PAUSED):
+            self.stream.start_stream()
+            self.playStatus=self.PLAYING
+            self.timer.start(self.tick)
+            return
 
-        #self.end=endIndex
-        self.AudioPlayer.play()
+        self.playStatus=True
+        endIndex=endIndex if endIndex!=-1 else len(self.data)
+        formatt=(pyaudio.paInt8 if self.bitDepth==8 else pyaudio.paInt16 if self.bitDepth==16 else pyaudio.paFloat32)
+        self.stream =self.playAudio.open(format=formatt,
+                            channels=self.channels,
+                            rate=int(self.samplingRate*speed),
+                            output=True,
+                            start=False,
+                            stream_callback=self.callback())
+        self.playSection=(startIndex,endIndex,startIndex)
+        self.stream.start_stream()
+        self.timer.start(self.tick)
 
+    def callback(self):
+        def function(in_data, frame_count, time_info, status):
+            if(self.playSection[1]-self.playSection[2]<frame_count):
+                frame=self.playSection[2]
+                self.playSection=(0,0,0)
+                self.playStatus=self.STOPPED
+                return (self.data[frame], pyaudio.paComplete)
+            data=self.data[self.playSection[2]:self.playSection[2]+frame_count]
+            self.playSection=(self.playSection[0],self.playSection[1],self.playSection[2]+frame_count)
+            return (data, pyaudio.paContinue)
+        return function
 
     MS_DELAY=24 #delay in ms betwen the prefinish mark and the efective silence of the player
     TEMP_FILE_NAME="temp.wav"
 
     def stop(self):
-         if(self.AudioPlayer != None):
-            self.AudioPlayer._audio.stop()
+         #if(self.AudioPlayer != None):
+         #   self.AudioPlayer.stop()
+        self.timer.stop()
+        if(self.stream.is_active()):
+            self.stream.stop_stream()
+            self.stream.close()
+
+        self.playStatus=self.STOPPED
+
     def pause(self):
-        if(self.AudioPlayer != None):
-            self.AudioPlayer.pause()
+        #if(self.AudioPlayer != None):
+        #    self.AudioPlayer.pause(
+        self.timer.stop()
+        if(self.stream.is_active()):
+            self.stream.stop_stream()
+        self.playStatus=self.PAUSED
+
 
     def restartPlayer(self):
         #self.sum+=self.AudioPlayer.currentTime()-self.end
         #self.times=self.times+1
         #print("sum "+str(self.sum)+" times "+str(self.times)+" mean "+str(self.sum/self.times))
-        if(self.AudioPlayer != None):
-            self.AudioPlayer.source.stop()
+        #if(self.AudioPlayer != None):
+        #    self.AudioPlayer.stop()
+        pass
 
     def read(self,file):
         if hasattr(file,'read'):
@@ -81,6 +133,8 @@ class WavFileSignal(FileAudioSignal):
             chunk_id = fid.read(4)
             if chunk_id == asbytes('fmt '):
                 size, comp, noc, self.samplingRate, sbytes, ba, bits = wavfile._read_fmt_chunk(fid)
+                self.bitDepth=bits
+                self.channels=noc
             elif chunk_id == asbytes('data'):
                 data = wavfile._read_data_chunk(fid, noc, bits)
                 self.data=data

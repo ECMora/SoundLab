@@ -27,18 +27,20 @@ class SignalProcessor:
         computes the root mean square of the signal.
         indexFrom,indexTo the optionally limits of the interval
         """
+
         if(indexTo==-1):
             indexTo=len(self.signal.data)
         n=indexTo-indexFrom
-        globalSum=0
-        intervalSum=0
+        globalSum=0.0
+        intervalSum=0.0
         for i in range(n):
+            intervalSum+=(self.signal.data[indexFrom+i]**2)
             if(i%10==0):
-                globalSum+=intervalSum*1./n
-                intervalSum=0
-            intervalSum+=self.signal.data[indexFrom+i]**2
-        if(n%10!=0):
-            globalSum+=sqrt(intervalSum)
+                globalSum+=intervalSum*1.0/n
+                intervalSum=0.0
+
+        globalSum+=intervalSum*1.0/n
+        print("from "+str(indexFrom)+" to "+str(indexTo)+" sum "+str(globalSum))
         return sqrt(globalSum)
 
     def checkIndexes(self,indexFrom,indexTo):

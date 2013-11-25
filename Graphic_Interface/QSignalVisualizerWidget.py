@@ -52,7 +52,7 @@ class QSignalVisualizerWidget(FigureCanvas):
         self.meanSignalValue = None
         self.powerSpectrum = np.array([])
         self.playerSpeed=1
-
+        self.playerTime=0
 
         FigureCanvas.__init__(self, self.figure)
         # set the parent widget
@@ -72,18 +72,22 @@ class QSignalVisualizerWidget(FigureCanvas):
             self.signalProcessor.signal.play(self.zoomCursor.min,self.zoomCursor.max)
         else:
             self.signalProcessor.signal.play(self.mainCursor.min,self.mainCursor.max)
+        self.playerTime=self.signalProcessor.signal.stream.get_time()
+
 
     def stop(self):
         self.signalProcessor.signal.stop()
+
 
     def pause(self):
         self.signalProcessor.signal.pause()
 
     def notifyPlayingCursor(self):
-        ms=self.signalProcessor.signal.AudioPlayer.currentTime()
-        h = self.figure.bbox.height
-        rect=[self.fromClientToCanvas(ms*self.signalProcessor.signal.samplingRate/1000),0,1,h]
-        self.figure.canvas.drawRectangle(rect)
+        if(self.signalProcessor.signal.stream.is_active()):
+            index=self.signalProcessor.signal.currentPlayingTime()
+            h = self.figure.bbox.height
+            rect=[self.fromClientToCanvas(index),0,1,h]
+            self.figure.canvas.drawRectangle(rect)
 
 
     #endregion
@@ -449,7 +453,7 @@ class QSignalVisualizerWidget(FigureCanvas):
             if (self.visibleOscilogram and self.visibleSpectrogram):
                 self.axesOscilogram = self.figure.add_subplot(211)
                 self.axesSpecgram = self.figure.add_subplot(212)
-                self.axesOscilogram.set_position([0.05, 0.55, 0.93, 0.40])
+                self.axesOscilogram.set_position([0.08, 0.55, 0.9, 0.40])
                 trans = blended_transform_factory(self.axesOscilogram.transData, self.axesOscilogram.transAxes)
                 self.spanRectangleOsgram=Rectangle( (0,0), 0,self.axesOscilogram.bbox.height,transform=trans,visible=True,**self.SPAN_RECT_PROPS)
                 self.figure.canvas.mpl_connect('draw_event', self.updateBackgroundSpanRectangle)
@@ -459,11 +463,11 @@ class QSignalVisualizerWidget(FigureCanvas):
 
                 #the relative to parent proportions dimension of axes [left,bottom,width, heitgh]
                 #self.axesOscilogram.set_title('Oscilogram',fontsize=self.OSGRAM_FONTSIZE,color='blue')
-                self.axesSpecgram.set_position([0.05, 0.05, 0.93, 0.40])
+                self.axesSpecgram.set_position([0.08, 0.05, 0.9, 0.40])
                 #self.axesSpecgram.set_title('Spectrogram',fontsize=16,color='blue')
             elif (self.visibleOscilogram):
                 self.axesOscilogram = self.figure.add_subplot(111)
-                self.axesOscilogram.set_position([0.045, 0.05, 0.945, 0.9])
+                self.axesOscilogram.set_position([0.075, 0.05, 0.91, 0.9])
                 trans = blended_transform_factory(self.axesOscilogram.transData, self.axesOscilogram.transAxes)
                 self.spanRectangleOsgram=Rectangle( (0,0), 0,self.axesOscilogram.bbox.height,transform=trans,visible=True,**self.SPAN_RECT_PROPS)
                 self.figure.canvas.mpl_connect('draw_event', self.updateBackgroundSpanRectangle)
@@ -471,7 +475,7 @@ class QSignalVisualizerWidget(FigureCanvas):
 
             elif (self.visibleSpectrogram):
                 self.axesSpecgram = self.figure.add_subplot(111)
-                self.axesSpecgram.set_position([0.045, 0.05, 0.945, 0.9])
+                self.axesSpecgram.set_position([0.075, 0.05, 0.91, 0.9])
                 trans2 = blended_transform_factory(self.axesSpecgram.transData, self.axesSpecgram.transAxes)
                 self.spanRectangleSpectrogram=Rectangle( (0,0), 0,self.axesSpecgram.bbox.height,transform=trans2,visible=True,**self.SPAN_RECT_PROPS)
                 self.figure.canvas.mpl_connect('draw_event', self.updateBackgroundSpanRectangle)
@@ -543,7 +547,6 @@ class QSignalVisualizerWidget(FigureCanvas):
 
 
     def normalize(self):
-        return self.spectrogramsElevations()
         self.signalProcessingAction(CommonSignalProcessor(self.signalProcessor.signal).normalize)
 
 
@@ -579,10 +582,13 @@ class QSignalVisualizerWidget(FigureCanvas):
         self.refresh()
 
     def rms(self):
-        cursor = PointerCursor(self.signalProcessor.rms(max(self.zoomCursor.min, self.mainCursor.min),
-                                                        min(self.zoomCursor.max, self.mainCursor.max)))
+        indexFrom, indexTo = self.mainCursor.min, self.mainCursor.max
+        if (self.zoomCursor.min > 0 and self.zoomCursor.max > 0):
+            indexFrom, indexTo = self.zoomCursor.min, self.zoomCursor.max
+        cursor = PointerCursor(self.signalProcessor.rms(indexFrom, indexTo))
         cursor.visualOptions.vertical = False
         self.cursors.append(cursor)
+        print(cursor.index)
         self.visualChanges = True
         self.refresh()
 
@@ -626,8 +632,8 @@ class QSignalVisualizerWidget(FigureCanvas):
         self.signalProcessor.signal.open(filename)
         self.cursors = []
         self.editionSignalProcessor = EditionSignalProcessor(self.signalProcessor.signal)
-        #self.signalProcessor.signal.AudioPlayer.setTickInterval(self.TICK_INTERVAL_MS)
-        #self.signalProcessor.signal.AudioPlayer.tick.connect(self.notifyPlayingCursor)
+        self.signalProcessor.signal.setTickInterval(self.TICK_INTERVAL_MS)
+        self.signalProcessor.signal.timer.timeout.connect(self.notifyPlayingCursor)
         if (isinstance(self.signalProcessor.signal, WavFileSignal)):
             self.loadUserData(self.signalProcessor.signal.userData)
         self.mainCursor.min = 0
