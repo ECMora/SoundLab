@@ -40,7 +40,6 @@ class SignalProcessor:
                 intervalSum=0.0
 
         globalSum+=intervalSum*1.0/n
-        print("from "+str(indexFrom)+" to "+str(indexTo)+" sum "+str(globalSum))
         return sqrt(globalSum)
 
     def checkIndexes(self,indexFrom,indexTo):

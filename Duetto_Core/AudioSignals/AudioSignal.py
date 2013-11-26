@@ -16,6 +16,9 @@ class AudioSignal:
         self.tick=1000#1 sec interval for player update
         self.timer=QTimer()
         self.stream =None
+        self.timer.timeout.connect(self.stopTimer)
+
+
     def currentPlayingTime(self):
         return self.playSection[2]
 
@@ -25,8 +28,9 @@ class AudioSignal:
     def setTickInterval(self,ms):
         self.tick= ms if ms>=0 else 0
 
-
-
+    def stopTimer(self):
+        if(self.stream!=None and self.stream.is_stopped()):
+            self.timer.stop()
     def opened(self):
         return  len(self.data)>0
 

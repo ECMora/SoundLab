@@ -2,7 +2,6 @@ from PyQt4.QtGui import *
 from PyQt4 import QtCore
 from matplotlib.patches import Rectangle
 from matplotlib.transforms import blended_transform_factory
-from matplotlib.widgets import SpanSelector, Cursor, MultiCursor
 import numpy as np
 import matplotlib.mlab as mlab
 from matplotlib.figure import Figure
@@ -46,13 +45,12 @@ class QSignalVisualizerWidget(FigureCanvas):
         self.editionSignalProcessor = EditionSignalProcessor()
         self.specgramSettings = SpecgramSettings()
         self.cursors = []
-        self.visibleCursors = False
+        self.visibleCursors = True
         self.zoomIntervalPixels = (0, 0)
         self.colorbar = None
         self.meanSignalValue = None
         self.powerSpectrum = np.array([])
-        self.playerSpeed=1
-        self.playerTime=0
+        self.playerSpeed=100
 
         FigureCanvas.__init__(self, self.figure)
         # set the parent widget
@@ -69,12 +67,16 @@ class QSignalVisualizerWidget(FigureCanvas):
 
     def play(self):
         if(self.zoomCursor.min > 0 and self.zoomCursor.max > 0):
-            self.signalProcessor.signal.play(self.zoomCursor.min,self.zoomCursor.max)
+            self.signalProcessor.signal.play(self.zoomCursor.min,self.zoomCursor.max,self.playerSpeed)
         else:
-            self.signalProcessor.signal.play(self.mainCursor.min,self.mainCursor.max)
-        self.playerTime=self.signalProcessor.signal.stream.get_time()
+            self.signalProcessor.signal.play(self.mainCursor.min,self.mainCursor.max,self.playerSpeed)
 
 
+    def switchPlayStatus(self):
+        if(self.signalProcessor.signal.playStatus==self.signalProcessor.signal.PLAYING):
+            self.stop()
+        else:
+            self.play()
     def stop(self):
         self.signalProcessor.signal.stop()
 
@@ -392,6 +394,10 @@ class QSignalVisualizerWidget(FigureCanvas):
                 self.drawCursors()
             self.figure.canvas.draw()
             self.visualChanges = False
+    def cursorZoomTransform(self,cursorIndex):
+        return cursorIndex-self.mainCursor.min
+
+
 
     def drawCursors(self):
         ax = None
@@ -406,8 +412,9 @@ class QSignalVisualizerWidget(FigureCanvas):
                     if (isinstance(self.cursors[i], PointerCursor)):
                         if (self.cursors[i].visualOptions.vertical):
                             xlimLeft, xlimRigth = ax.get_xlim()
+                            xlimLeft, xlimRigth=xlimLeft+self.mainCursor.min, xlimRigth+self.mainCursor.min
                             if (self.cursors[i].index > xlimLeft and self.cursors[i].index < xlimRigth):
-                                ax.plot([self.cursors[i].index, self.cursors[i].index], ax.get_ylim())
+                                ax.plot([self.cursorZoomTransform(self.cursors[i].index), self.cursorZoomTransform(self.cursors[i].index)], ax.get_ylim())
                         else:
                             xlimLeft, xlimRigth = ax.get_ylim()
                             if (self.cursors[i].index > xlimLeft and self.cursors[i].index < xlimRigth):
@@ -417,12 +424,13 @@ class QSignalVisualizerWidget(FigureCanvas):
                         if (self.cursors[i].visualOptions.vertical):
                             a, b = ax.get_ylim()
                             xlimLeft, xlimRigth = ax.get_xlim()
-                            if (self.cursors[i].min > xlimLeft and self.cursors[i].max < xlimRigth and
-                                        self.cursors[i].max > xlimLeft and self.cursors[
-                                i].max < xlimRigth):#replace with lim for horizontal cursors
+                            xlimLeft, xlimRigth=xlimLeft+self.mainCursor.min, xlimRigth+self.mainCursor.min
+                            if (self.cursors[i].min> xlimLeft and self.cursors[i].max < xlimRigth and
+            self.cursors[i].max > xlimLeft and self.cursors[i].max < xlimRigth):#replace with lim for horizontal cursors
                                 ax.plot(
-                                    [self.cursors[i].min, self.cursors[i].min, self.cursors[i].max, self.cursors[i].max,
-                                     self.cursors[i].min],
+                                    [self.cursorZoomTransform(self.cursors[i].min), self.cursorZoomTransform(self.cursors[i].min),
+                                     self.cursorZoomTransform(self.cursors[i].max), self.cursorZoomTransform(self.cursors[i].max),
+                                     self.cursorZoomTransform(self.cursors[i].min)],
                                     [a, b, b, a, a])
                         else:
                             a, b = ax.get_xlim()
@@ -435,15 +443,18 @@ class QSignalVisualizerWidget(FigureCanvas):
                     elif (isinstance(self.cursors[i], RectangularCursor)):
                         a, b = self.cursors[i].intervalY.min, self.cursors[i].intervalY.max
                         xlimLeft, xlimRigth = ax.get_xlim()
+                        xlimLeft, xlimRigth=xlimLeft+self.mainCursor.min, xlimRigth+self.mainCursor.min
                         ylimLeft, ylimRigth = ax.get_ylim()
                         if (a > ylimLeft and a < ylimRigth and b > ylimLeft and b < ylimRigth and
-                                    self.cursors[i].intervalX.min > xlimLeft and self.cursors[
-                            i].intervalX.min < xlimRigth and
-                                    self.cursors[i].intervalX.max > xlimLeft and self.cursors[
-                            i].intervalX.max < xlimRigth):
-                            ax.plot([self.cursors[i].intervalX.min, self.cursors[i].intervalX.min,
-                                     self.cursors[i].intervalX.max, self.cursors[i].intervalX.max,
-                                     self.cursors[i].intervalX.min],
+                                self.cursors[i].intervalX.min > xlimLeft and
+                                self.cursors[i].intervalX.min < xlimRigth and
+                                self.cursors[i].intervalX.max > xlimLeft and
+                                self.cursors[i].intervalX.max< xlimRigth):
+                            ax.plot([self.cursorZoomTransform(self.cursors[i].intervalX.min),
+                                     self.cursorZoomTransform(self.cursors[i].intervalX.min),
+                                     self.cursorZoomTransform(self.cursors[i].intervalX.max),
+                                     self.cursorZoomTransform(self.cursors[i].intervalX.max),
+                                     self.cursorZoomTransform(self.cursors[i].intervalX.min)],
                                     [a, b, b, a, a])
             ax = None
     def clear(self):
@@ -515,13 +526,16 @@ class QSignalVisualizerWidget(FigureCanvas):
 
     def reverse(self):
         self.signalProcessingAction(CommonSignalProcessor(self.signalProcessor.signal).reverse)
-
-    def signalProcessingAction(self, delegate, *args):
+    def getIndexFromAndTo(self):
         indexFrom, indexTo = self.mainCursor.min, self.mainCursor.max
         if (self.zoomCursor.min > 0 and self.zoomCursor.max > 0):
             indexFrom, indexTo = self.zoomCursor.min, self.zoomCursor.max
             #the delegate has the responsability of modify just the portion of the signal
             #given by indexFrom:indexTo for an eficient action.
+        return indexFrom,indexTo
+
+    def signalProcessingAction(self, delegate, *args):
+        indexFrom, indexTo=self.getIndexFromAndTo()
         self.signalProcessor.signal = delegate(indexFrom, indexTo, *args)
         self.clearZoomCursor()
         self.visualChanges = True
@@ -531,9 +545,7 @@ class QSignalVisualizerWidget(FigureCanvas):
         self.signalProcessingAction(CommonSignalProcessor(self.signalProcessor.signal).insertSilence, ms)
 
     def scale(self, factor):
-        cursormin,cursormax=self.mainCursor.min,self.mainCursor.max
-        if(self.zoomCursor.min>0 and self.zoomCursor.max>0):
-            cursormin,cursormax=self.zoomCursor.min,self.zoomCursor.max
+        cursormin,cursormax=self.getIndexFromAndTo()
         self.signalProcessor.signal.data[cursormin:cursormax] *= factor/100.0
         self.visualChanges = True
         self.refresh()
@@ -582,20 +594,20 @@ class QSignalVisualizerWidget(FigureCanvas):
         self.refresh()
 
     def rms(self):
-        indexFrom, indexTo = self.mainCursor.min, self.mainCursor.max
-        if (self.zoomCursor.min > 0 and self.zoomCursor.max > 0):
-            indexFrom, indexTo = self.zoomCursor.min, self.zoomCursor.max
+        indexFrom, indexTo = self.getIndexFromAndTo()
         cursor = PointerCursor(self.signalProcessor.rms(indexFrom, indexTo))
         cursor.visualOptions.vertical = False
         self.cursors.append(cursor)
-        print(cursor.index)
         self.visualChanges = True
         self.refresh()
 
     def elements(self):
+        indexFrom, indexTo = self.getIndexFromAndTo()
         detector = ElementDetector()
-        detector.detect(self.signalProcessor.signal, indexFrom=max(self.zoomCursor.min, self.mainCursor.min),
-                        indexTo=min(self.zoomCursor.max, self.mainCursor.max))
+        rms=self.signalProcessor.rms(indexFrom,indexTo)
+        maxVal=max(self.signalProcessor.signal.data[indexFrom:indexTo])
+
+        detector.detect(self.signalProcessor.signal,indexFrom, indexTo,rms)
         for c in detector.cursors():
             self.cursors.append(c)
         self.visualChanges = True
@@ -607,8 +619,8 @@ class QSignalVisualizerWidget(FigureCanvas):
 
     def maxMinPeaks(self):
         detector = MaxMinPeakDetector()
-        detector.detect(self.signalProcessor.signal, max(self.zoomCursor.min, self.mainCursor.min),
-                        min(self.zoomCursor.max, self.mainCursor.max))
+        indexFrom,indexTo=self.getIndexFromAndTo()
+        detector.detect(self.signalProcessor.signal,indexFrom,indexTo)
         for c in detector.cursors():
             self.cursors.append(c)
         self.visualChanges = True

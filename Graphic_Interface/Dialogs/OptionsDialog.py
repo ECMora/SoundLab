@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'OptionsDialog.ui'
 #
-# Created: Thu Nov 07 12:59:47 2013
+# Created: Mon Nov 25 15:44:00 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -126,12 +126,12 @@ class Ui_Dialog(object):
         self.overlapspinboxthreshold.setMaximum(100)
         self.overlapspinboxthreshold.setProperty("value", 50)
         self.overlapspinboxthreshold.setObjectName(_fromUtf8("overlapspinboxthreshold"))
-        self.overlapspinboxthreshold_2 = QtGui.QSpinBox(self.groupBox)
-        self.overlapspinboxthreshold_2.setGeometry(QtCore.QRect(210, 140, 71, 21))
-        self.overlapspinboxthreshold_2.setMinimum(1)
-        self.overlapspinboxthreshold_2.setMaximum(10000)
-        self.overlapspinboxthreshold_2.setProperty("value", 100)
-        self.overlapspinboxthreshold_2.setObjectName(_fromUtf8("overlapspinboxthreshold_2"))
+        self.overlapspinboxSoundSpeed = QtGui.QSpinBox(self.groupBox)
+        self.overlapspinboxSoundSpeed.setGeometry(QtCore.QRect(210, 140, 71, 21))
+        self.overlapspinboxSoundSpeed.setMinimum(1)
+        self.overlapspinboxSoundSpeed.setMaximum(10000)
+        self.overlapspinboxSoundSpeed.setProperty("value", 100)
+        self.overlapspinboxSoundSpeed.setObjectName(_fromUtf8("overlapspinboxSoundSpeed"))
         self.label_6 = QtGui.QLabel(self.groupBox)
         self.label_6.setGeometry(QtCore.QRect(210, 120, 151, 16))
         self.label_6.setObjectName(_fromUtf8("label_6"))

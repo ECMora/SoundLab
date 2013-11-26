@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'DuettoUserInterface.ui'
 #
-# Created: Wed Nov 13 18:41:57 2013
+# Created: Mon Nov 25 16:26:13 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -275,6 +275,8 @@ class Ui_MainWindow(object):
         icon20.addPixmap(QtGui.QPixmap(_fromUtf8(":/UI Files/resources/deselect.ico")), QtGui.QIcon.Normal, QtGui.QIcon.On)
         self.actionDeselect.setIcon(icon20)
         self.actionDeselect.setObjectName(_fromUtf8("actionDeselect"))
+        self.actionChangePlayStatus = QtGui.QAction(MainWindow)
+        self.actionChangePlayStatus.setObjectName(_fromUtf8("actionChangePlayStatus"))
         self.menuArchivo.addAction(self.actionAbrir)
         self.menuArchivo.addSeparator()
         self.menuArchivo.addAction(self.actionSave)
@@ -322,7 +324,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuSound_2.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(0)
+        self.tabWidget.setCurrentIndex(2)
         QtCore.QObject.connect(self.actionExit, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.close)
         QtCore.QObject.connect(self.actionAbrir, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.openEvent)
         QtCore.QObject.connect(self.actionSave, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.saveEvent)
@@ -350,6 +352,7 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.actionPause, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.pause)
         QtCore.QObject.connect(self.actionStop, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.stop)
         QtCore.QObject.connect(self.actionScale, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.scale)
+        QtCore.QObject.connect(self.actionChangePlayStatus, QtCore.SIGNAL(_fromUtf8("triggered()")), MainWindow.switchPlayStatus)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -412,6 +415,8 @@ class Ui_MainWindow(object):
         self.actionScale.setText(_translate("MainWindow", "Scale", None))
         self.actionDeselect.setText(_translate("MainWindow", "Deselect", None))
         self.actionDeselect.setShortcut(_translate("MainWindow", "Ctrl+D", None))
+        self.actionChangePlayStatus.setText(_translate("MainWindow", "ChangePlayStatus", None))
+        self.actionChangePlayStatus.setShortcut(_translate("MainWindow", "Space", None))
 
 from QSignalVisualizerWidget import QSignalVisualizerWidget
 import resources_rc

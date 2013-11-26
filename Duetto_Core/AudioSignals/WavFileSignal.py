@@ -14,8 +14,7 @@ class WavFileSignal(FileAudioSignal):
         FileAudioSignal.__init__(self)
         self.channels=1
         self.userData=[]
-        #self.sum=0
-        #self.times=0.0
+
 
 
 
@@ -25,28 +24,17 @@ class WavFileSignal(FileAudioSignal):
             FileAudioSignal.open(self,path)
             self.read(path)
             self.path=path
-            #source=Phonon.MediaSource(self.path)
-            #so2=Phonon.MediaSource(QBuffer(QByteArray(bytes(self.data))))
-            #self.AudioPlayer=Phonon.createPlayer(Phonon.MusicCategory,source)
-
-            #self.AudioPlayer.prefinishMarkReached.connect(self.restartPlayer)
-            #self.AudioPlayer.finished.connect(self.restartPlayer)
-            #self.AudioPlayer=pyglet.media.Player()
-            #source = pyglet.media.load(self.path)
-            #self.AudioPlayer.queue(source)
-
-
-
-
-
-
-
-
-
+            formatt=(pyaudio.paInt8 if self.bitDepth==8 else pyaudio.paInt16 if self.bitDepth==16 else pyaudio.paFloat32)
+            self.stream =self.playAudio.open(format=formatt,
+                            channels=self.channels,
+                            rate=self.samplingRate,
+                            output=True,
+                            start=False,
+                            stream_callback=self.callback())
         except Exception, e:
             QMessageBox.warning(QMessageBox(),"Error","Could not load the file. "+e.message)
 
-    def play(self, startIndex=0, endIndex=-1, speed=1):
+    def play(self, startIndex=0, endIndex=-1, speed=100):
         """
         plays the sound of the signal in the interval [startIndex:endIndex]
         with the specified speed %"""
@@ -66,14 +54,15 @@ class WavFileSignal(FileAudioSignal):
             return
 
         self.playStatus=True
-        endIndex=endIndex if endIndex!=-1 else len(self.data)
         formatt=(pyaudio.paInt8 if self.bitDepth==8 else pyaudio.paInt16 if self.bitDepth==16 else pyaudio.paFloat32)
         self.stream =self.playAudio.open(format=formatt,
                             channels=self.channels,
-                            rate=int(self.samplingRate*speed),
+                            rate=self.samplingRate,
                             output=True,
                             start=False,
                             stream_callback=self.callback())
+        endIndex=endIndex if endIndex!=-1 else len(self.data)
+        self.stream._rate=int(self.samplingRate*speed/100.0)
         self.playSection=(startIndex,endIndex,startIndex)
         self.stream.start_stream()
         self.timer.start(self.tick)
@@ -84,7 +73,7 @@ class WavFileSignal(FileAudioSignal):
                 frame=self.playSection[2]
                 self.playSection=(0,0,0)
                 self.playStatus=self.STOPPED
-                return (self.data[frame], pyaudio.paComplete)
+                return (self.data[frame:frame+frame_count], pyaudio.paComplete)
             data=self.data[self.playSection[2]:self.playSection[2]+frame_count]
             self.playSection=(self.playSection[0],self.playSection[1],self.playSection[2]+frame_count)
             return (data, pyaudio.paContinue)

@@ -7,7 +7,6 @@ from Graphic_Interface.Dialogs import OptionsDialog as optdialog
 from Graphic_Interface.Dialogs import InsertSilenceDialog as sdialog, FilterOptionsDialog as filterdg
 from Graphic_Interface.DuettoMainWindow import *
 from Duetto_Core.SignalProcessors.FilterSignalProcessor import FILTER_TYPE
-from Graphic_Interface.DuettoNavigationToolBar import DuettoNavigationToolbar
 
 
 class OptionsDialog(optdialog.Ui_Dialog,QDialog):
@@ -189,7 +188,8 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.MainWindow.signalVisualizer.play()
     def pause(self):
         self.MainWindow.signalVisualizer.pause()
-
+    def switchPlayStatus(self):
+        self.signalVisualizer.switchPlayStatus()
     def stop(self):
         self.MainWindow.signalVisualizer.stop()
 
@@ -219,6 +219,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         opt.cboxcolorpalette.setCurrentIndex(self.MainWindow.signalVisualizer.specgramSettings.colorPaleteIndex)
         opt.overlapspinbox.setValue(self.MainWindow.signalVisualizer.specgramSettings.overlap)
         opt.overlapspinboxthreshold.setValue(self.MainWindow.signalVisualizer.specgramSettings.threshold)
+        opt.overlapspinboxSoundSpeed.setValue(self.MainWindow.signalVisualizer.playerSpeed)
         opt.cboxwindowType.setCurrentIndex(self.MainWindow.signalVisualizer.specgramSettings.windows.index(self.MainWindow.signalVisualizer.specgramSettings.window))
         opt.checkBoxOsgram.setChecked(self.MainWindow.signalVisualizer.visibleOscilogram)
         opt.checkBoxSpecgram.setChecked(self.MainWindow.signalVisualizer.visibleSpectrogram)
@@ -228,6 +229,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
             self.MainWindow.signalVisualizer.specgramSettings.NFFT=int(opt.cboxFFTNumber.currentText())
             self.MainWindow.signalVisualizer.specgramSettings.colorPaleteIndex=opt.cboxcolorpalette.currentIndex()
             self.MainWindow.signalVisualizer.specgramSettings.overlap=opt.overlapspinbox.value()
+            self.MainWindow.signalVisualizer.playerSpeed=opt.overlapspinboxSoundSpeed.value()
             self.MainWindow.signalVisualizer.specgramSettings.threshold=opt.overlapspinboxthreshold.value()
             self.MainWindow.signalVisualizer.specgramSettings.window=self.MainWindow.signalVisualizer.specgramSettings.windows[opt.cboxwindowType.currentIndex()]
             self.MainWindow.signalVisualizer.visibleOscilogram=opt.checkBoxOsgram.isChecked()

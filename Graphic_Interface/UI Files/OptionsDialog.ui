@@ -399,7 +399,7 @@
        <number>50</number>
       </property>
      </widget>
-     <widget class="QSpinBox" name="overlapspinboxthreshold_2">
+     <widget class="QSpinBox" name="overlapspinboxSoundSpeed">
       <property name="geometry">
        <rect>
         <x>210</x>

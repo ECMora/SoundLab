@@ -51,7 +51,7 @@
      <enum>QTabWidget::Rounded</enum>
     </property>
     <property name="currentIndex">
-     <number>0</number>
+     <number>2</number>
     </property>
     <property name="iconSize">
      <size>
@@ -651,6 +651,14 @@
     <string>Ctrl+D</string>
    </property>
   </action>
+  <action name="actionChangePlayStatus">
+   <property name="text">
+    <string>ChangePlayStatus</string>
+   </property>
+   <property name="shortcut">
+    <string>Space</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
@@ -1087,12 +1095,28 @@
    <slot>scale()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>44</x>
-     <y>15</y>
+     <x>-1</x>
+     <y>-1</y>
     </hint>
     <hint type="destinationlabel">
      <x>173</x>
      <y>-12</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionChangePlayStatus</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>switchPlayStatus()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>418</x>
+     <y>289</y>
     </hint>
    </hints>
   </connection>
@@ -1125,5 +1149,6 @@
   <slot>stop()</slot>
   <slot>pause()</slot>
   <slot>scale()</slot>
+  <slot>switchPlayStatus()</slot>
  </slots>
 </ui>
