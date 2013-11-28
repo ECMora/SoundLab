@@ -5,6 +5,7 @@ from numpy.compat import asbytes
 import struct
 from Duetto_Core.AudioSignals.FileAudioSignal import FileAudioSignal
 
+
 class WavFileSignal(FileAudioSignal):
     """
     class that represents a signal from a file in the local file system
@@ -24,6 +25,7 @@ class WavFileSignal(FileAudioSignal):
             FileAudioSignal.open(self,path)
             self.read(path)
             self.path=path
+            self.timer.stop()
             formatt=(pyaudio.paInt8 if self.bitDepth==8 else pyaudio.paInt16 if self.bitDepth==16 else pyaudio.paFloat32)
             self.stream =self.playAudio.open(format=formatt,
                             channels=self.channels,
@@ -38,13 +40,6 @@ class WavFileSignal(FileAudioSignal):
         """
         plays the sound of the signal in the interval [startIndex:endIndex]
         with the specified speed %"""
-        #startIndex=startIndex*1000.0/self.samplingRate
-        #endIndex= endIndex if endIndex!=-1 else len(self.data)
-        #endIndex=endIndex*1000/self.samplingRate
-        #self.AudioPlayer.source.seek(startIndex*1000)
-        #
-        ##self.end=endIndex
-        #self.AudioPlayer.play()
         if(self.playStatus==self.PLAYING):
             return
         if(self.playStatus==self.PAUSED):
@@ -61,53 +56,27 @@ class WavFileSignal(FileAudioSignal):
                             output=True,
                             start=False,
                             stream_callback=self.callback())
+
         endIndex=endIndex if endIndex!=-1 else len(self.data)
         self.stream._rate=int(self.samplingRate*speed/100.0)
         self.playSection=(startIndex,endIndex,startIndex)
         self.stream.start_stream()
         self.timer.start(self.tick)
 
-    def callback(self):
-        def function(in_data, frame_count, time_info, status):
-            if(self.playSection[1]-self.playSection[2]<frame_count):
-                frame=self.playSection[2]
-                self.playSection=(0,0,0)
-                self.playStatus=self.STOPPED
-                return (self.data[frame:frame+frame_count], pyaudio.paComplete)
-            data=self.data[self.playSection[2]:self.playSection[2]+frame_count]
-            self.playSection=(self.playSection[0],self.playSection[1],self.playSection[2]+frame_count)
-            return (data, pyaudio.paContinue)
-        return function
-
-    MS_DELAY=24 #delay in ms betwen the prefinish mark and the efective silence of the player
-    TEMP_FILE_NAME="temp.wav"
-
     def stop(self):
-         #if(self.AudioPlayer != None):
-         #   self.AudioPlayer.stop()
         self.timer.stop()
-        if(self.stream.is_active()):
+        if(self.stream!=None and self.stream.is_active()):
             self.stream.stop_stream()
             self.stream.close()
-
         self.playStatus=self.STOPPED
 
+
     def pause(self):
-        #if(self.AudioPlayer != None):
-        #    self.AudioPlayer.pause(
         self.timer.stop()
-        if(self.stream.is_active()):
+        if(self.stream!=None and self.stream.is_active()):
             self.stream.stop_stream()
         self.playStatus=self.PAUSED
 
-
-    def restartPlayer(self):
-        #self.sum+=self.AudioPlayer.currentTime()-self.end
-        #self.times=self.times+1
-        #print("sum "+str(self.sum)+" times "+str(self.times)+" mean "+str(self.sum/self.times))
-        #if(self.AudioPlayer != None):
-        #    self.AudioPlayer.stop()
-        pass
 
     def read(self,file):
         if hasattr(file,'read'):

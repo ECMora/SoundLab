@@ -188,6 +188,8 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.MainWindow.signalVisualizer.play()
     def pause(self):
         self.MainWindow.signalVisualizer.pause()
+    def record(self):
+        self.MainWindow.signalVisualizer.record()
     def switchPlayStatus(self):
         self.signalVisualizer.switchPlayStatus()
     def stop(self):
@@ -207,8 +209,32 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.MainWindow.signalVisualizer.mean()
     def zoomNone(self):
         self.MainWindow.signalVisualizer.zoomNone()
-    def elements(self):
+
+
+    def simpleElementsDetection(self):
         self.MainWindow.signalVisualizer.elements()
+
+    def minIntervalElementsDetection(self):
+        silenceDialog=sdialog.Ui_Dialog()
+        silenceDialogWindow=InsertSilenceDialog()
+        silenceDialog.setupUi(silenceDialogWindow)
+        silenceDialog.insertSpinBox.setValue(1)
+        silenceDialog.label.setText("Select the amount of ms \n of the min size of \nan element to detect")
+        if (silenceDialogWindow.exec_()):
+            self.MainWindow.signalVisualizer.detector.MIN_INTERVAL=silenceDialog.insertSpinBox.value()
+            self.MainWindow.signalVisualizer.elements("minInterval")
+
+
+    def mergedIntervalsElementsDetection(self):
+        silenceDialog=sdialog.Ui_Dialog()
+        silenceDialogWindow=InsertSilenceDialog()
+        silenceDialog.setupUi(silenceDialogWindow)
+        silenceDialog.insertSpinBox.setValue(1)
+        silenceDialog.label.setText("Select the merge factor\n.Two elements will be merged\n if they are bigger than   ")
+        if (silenceDialogWindow.exec_()):
+            self.MainWindow.signalVisualizer.detector.NOISE_MERGE_FACTOR=silenceDialog.insertSpinBox.value()
+            self.MainWindow.signalVisualizer.elements("mergedIntervals")
+
     #modify the optios in the program
     #like FFT options and others
     def options(self):

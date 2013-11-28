@@ -51,6 +51,7 @@ class QSignalVisualizerWidget(FigureCanvas):
         self.meanSignalValue = None
         self.powerSpectrum = np.array([])
         self.playerSpeed=100
+        self.detector = ElementDetector()
 
         FigureCanvas.__init__(self, self.figure)
         # set the parent widget
@@ -77,8 +78,11 @@ class QSignalVisualizerWidget(FigureCanvas):
             self.stop()
         else:
             self.play()
+
     def stop(self):
         self.signalProcessor.signal.stop()
+    def record(self):
+       self.signalProcessor.signal.record()
 
 
     def pause(self):
@@ -601,14 +605,11 @@ class QSignalVisualizerWidget(FigureCanvas):
         self.visualChanges = True
         self.refresh()
 
-    def elements(self):
+    def elements(self,type="simple"):
         indexFrom, indexTo = self.getIndexFromAndTo()
-        detector = ElementDetector()
         rms=self.signalProcessor.rms(indexFrom,indexTo)
-        maxVal=max(self.signalProcessor.signal.data[indexFrom:indexTo])
-
-        detector.detect(self.signalProcessor.signal,indexFrom, indexTo,rms)
-        for c in detector.cursors():
+        self.detector.detect(self.signalProcessor.signal,indexFrom, indexTo,rms,type)
+        for c in self.detector.cursors():
             self.cursors.append(c)
         self.visualChanges = True
         self.refresh()
@@ -646,6 +647,7 @@ class QSignalVisualizerWidget(FigureCanvas):
         self.editionSignalProcessor = EditionSignalProcessor(self.signalProcessor.signal)
         self.signalProcessor.signal.setTickInterval(self.TICK_INTERVAL_MS)
         self.signalProcessor.signal.timer.timeout.connect(self.notifyPlayingCursor)
+
         if (isinstance(self.signalProcessor.signal, WavFileSignal)):
             self.loadUserData(self.signalProcessor.signal.userData)
         self.mainCursor.min = 0
