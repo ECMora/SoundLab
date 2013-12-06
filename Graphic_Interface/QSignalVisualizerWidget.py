@@ -87,9 +87,11 @@ class QSignalVisualizerWidget(FigureCanvas):
 
     def pause(self):
         self.signalProcessor.signal.pause()
+    def recordCursor(self):
+        pass
 
     def notifyPlayingCursor(self):
-        if(self.signalProcessor.signal.stream.is_active()):
+        if(self.signalProcessor.signal.playStatus == self.signalProcessor.signal.PLAYING):
             index=self.signalProcessor.signal.currentPlayingTime()
             h = self.figure.bbox.height
             rect=[self.fromClientToCanvas(index),0,1,h]

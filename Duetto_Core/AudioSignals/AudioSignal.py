@@ -1,6 +1,6 @@
 import wave
 from PyQt4.QtCore import QTimer
-
+import pyaudio
 import numpy
 from numpy.numarray import fromstring
 import pyaudio
@@ -9,75 +9,135 @@ from PyQt4.QtCore import QTimer
 
 class AudioSignal:
     """an abstract class for the representation of an audio signal"""
-    PLAYING, PAUSED, STOPPED = range(3)
+    PLAYING, PAUSED, STOPPED,RECORDING = range(4)
     NUM_SAMPLES = 1024
 
     def __init__(self):
         self.samplingRate = 0
+        self.channels=1
         self.data = numpy.array([])
         self.bitDepth = 0
         self.path = ""
+        self.stream=None
+        self.playAudio=pyaudio.PyAudio()
+        #print(self.playAudio.get_device_info_by_index(0))
+        #print(self.playAudio.get_device_info_by_index(1))
+        #print(self.playAudio.get_device_info_by_index(2))
+        #print(self.playAudio.get_device_info_by_index(3))
+        print("****************************")
         self.playStatus = self.STOPPED
-        self.playAudio = pyaudio.PyAudio()
+        self.playSpeed=100#percent of the speed
         self.playSection = (0, 0, 0)#(init,end,current)
-        self.tick = 1000#1 sec interval for player update
+        self.tick = 50#msec interval for player update
         self.timer = QTimer()
-        self.stream = None
-
+        self.timer.timeout.connect(self.recordCallback)
+        self.timer.timeout.connect(self.playCallback)
 
     def currentPlayingTime(self):
         return self.playSection[2]
 
 
-    def callback(self):
-        """PLay callback"""
+    def playCallback(self):
+        """PLay playCallback"""
 
-        def function(in_data, frame_count, time_info, status):
-            if (self.playSection[1] - self.playSection[2] < frame_count):
-                frame = self.playSection[2]
+        #def function(in_data, frame_count, time_info, status):
+        #    if (self.playSection[1] - self.playSection[2] < frame_count):
+        #        frame = self.playSection[2]
+        #        self.playSection = (0, 0, 0)
+        #        self.playStatus = self.STOPPED
+        #        return (self.data[frame:frame + frame_count], pyaudio.paComplete)
+        #    data = self.data[self.playSection[2]:self.playSection[2] + frame_count]
+        #    self.playSection = (self.playSection[0], self.playSection[1], self.playSection[2] + frame_count)
+        #    return (data, pyaudio.paContinue)
+        #return function
+
+        if(self.playStatus==self.PLAYING):
+            self.stream=self.playAudio.open(format=self.playAudio.get_format_from_width(self.bitDepth/8),
+                                channels=self.channels,
+                                rate=int(self.samplingRate*self.playSpeed/100.0),
+                                output=True,
+                                frames_per_buffer=self.NUM_SAMPLES)
+            if (self.playSection[1] - self.playSection[2] < self.NUM_SAMPLES):
                 self.playSection = (0, 0, 0)
-                self.playStatus = self.STOPPED
-                return (self.data[frame:frame + frame_count], pyaudio.paComplete)
-            data = self.data[self.playSection[2]:self.playSection[2] + frame_count]
-            self.playSection = (self.playSection[0], self.playSection[1], self.playSection[2] + frame_count)
-            return (data, pyaudio.paContinue)
+                self.stream.write(self.data[self.playSection[2]:self.playSection[1]])
+                self.stop()
 
-        return function
+
+            else:
+                data = self.data[self.playSection[2]:self.playSection[2] + self.NUM_SAMPLES]
+                self.playSection = (self.playSection[0], self.playSection[1], self.playSection[2] + self.NUM_SAMPLES)
+                writed=0
+                while(writed<len(data)):
+                    bytesforwrite=self.stream.get_write_available()
+                    self.stream.write(data[writed:writed+bytesforwrite])
+                    writed+=bytesforwrite
+
+
+
 
     def recordCallback(self):
-        self.stream = self.playAudio.open(format=pyaudio.paInt16, channels=1, rate=44100,
-                                          input=True, frames_per_buffer=self.NUM_SAMPLES)
-        self.data = numpy.concatenate((self.data, fromstring(self.stream.read(self.NUM_SAMPLES), dtype=numpy.int16)))
+        if(self.playStatus==self.RECORDING):
+            self.stream = self.playAudio.open(format=pyaudio.paInt16, channels=self.channels, rate=self.samplingRate,
+                                              input=True, frames_per_buffer=self.NUM_SAMPLES)
+            self.data = numpy.concatenate((self.data, fromstring(self.stream.read(self.NUM_SAMPLES), dtype=numpy.int16)))
 
     def setTickInterval(self, ms):
-        self.tick = ms if ms >= 0 else 0
+        if(self.playStatus==self.STOPPED or self.playStatus==self.PAUSED):
+            self.tick = ms if ms >= 0 else 0
 
 
     def opened(self):
         return len(self.data) > 0
 
-    def play(self, startIndex=0, endIndex=-1, speed=1):
-        pass
+    def play(self, startIndex=0, endIndex=-1, speed=100):
+        if(self.playStatus==self.PLAYING):
+            return
+        if(self.playStatus==self.PAUSED):
+            self.playStatus=self.PLAYING
+            self.timer.start(self.tick)
+            return
+        self.playStatus=self.PLAYING
+        endIndex=endIndex if endIndex!=-1 else len(self.data)
+        self.playSpeed=speed if (speed >= 50 and speed <= 200) else 100
+        self.playSection=(startIndex,endIndex,startIndex)
+        self.stream=None
+        self.timer.start(self.tick)
+
 
     def stop(self):
         self.timer.stop()
+        self.playStatus=self.STOPPED
+        if(self.stream!=None):
+            self.stream.stop_stream()
+            self.stream.close()
+        self.playAudio.terminate()
+        self.playAudio=pyaudio.PyAudio()
+        self.stream=None
 
     def pause(self):
-        pass
+        self.timer.stop()
+        self.playStatus=self.PAUSED
 
 
     def record(self):
-
+        #ask for concatenate to the current file
         self.data = numpy.array([], dtype=numpy.int16)
-        self.timer.timeout.connect(self.recordCallback)
         self.samplingRate=44100
         self.bitDepth=16
-        self.timer.start(20)
+        self.playStatus=self.RECORDING
+        self.timer.start(self.tick)
 
 
 
 
     def toWav(self):
         raise NotImplemented
+
+    def getDeviceIndex(self,output=False):
+        for i in range(self.playAudio.get_device_count()):
+            if(   (output and self.playAudio.get_device_info_by_index(i)["maxInputChannels"]>0) or
+              (not output and self.playAudio.get_device_info_by_index(i)["maxOutputChannels"]>0)):
+                return i
+        raise Exception("No index found")
 
 

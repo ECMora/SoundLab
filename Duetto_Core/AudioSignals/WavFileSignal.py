@@ -1,5 +1,4 @@
 from PyQt4.QtGui import QMessageBox
-import pyaudio
 from scipy.io import wavfile
 from numpy.compat import asbytes
 import struct
@@ -13,10 +12,8 @@ class WavFileSignal(FileAudioSignal):
 
     def __init__(self):
         FileAudioSignal.__init__(self)
-        self.channels=1
         self.userData=[]
-
-
+        self.timer.stop()
 
 
     def open(self,path):
@@ -26,57 +23,8 @@ class WavFileSignal(FileAudioSignal):
             self.read(path)
             self.path=path
             self.timer.stop()
-            formatt=(pyaudio.paInt8 if self.bitDepth==8 else pyaudio.paInt16 if self.bitDepth==16 else pyaudio.paFloat32)
-            self.stream =self.playAudio.open(format=formatt,
-                            channels=self.channels,
-                            rate=self.samplingRate,
-                            output=True,
-                            start=False,
-                            stream_callback=self.callback())
         except Exception, e:
             QMessageBox.warning(QMessageBox(),"Error","Could not load the file. "+e.message)
-
-    def play(self, startIndex=0, endIndex=-1, speed=100):
-        """
-        plays the sound of the signal in the interval [startIndex:endIndex]
-        with the specified speed %"""
-        if(self.playStatus==self.PLAYING):
-            return
-        if(self.playStatus==self.PAUSED):
-            self.stream.start_stream()
-            self.playStatus=self.PLAYING
-            self.timer.start(self.tick)
-            return
-
-        self.playStatus=True
-        formatt=(pyaudio.paInt8 if self.bitDepth==8 else pyaudio.paInt16 if self.bitDepth==16 else pyaudio.paFloat32)
-        self.stream =self.playAudio.open(format=formatt,
-                            channels=self.channels,
-                            rate=self.samplingRate,
-                            output=True,
-                            start=False,
-                            stream_callback=self.callback())
-
-        endIndex=endIndex if endIndex!=-1 else len(self.data)
-        self.stream._rate=int(self.samplingRate*speed/100.0)
-        self.playSection=(startIndex,endIndex,startIndex)
-        self.stream.start_stream()
-        self.timer.start(self.tick)
-
-    def stop(self):
-        self.timer.stop()
-        if(self.stream!=None and self.stream.is_active()):
-            self.stream.stop_stream()
-            self.stream.close()
-        self.playStatus=self.STOPPED
-
-
-    def pause(self):
-        self.timer.stop()
-        if(self.stream!=None and self.stream.is_active()):
-            self.stream.stop_stream()
-        self.playStatus=self.PAUSED
-
 
     def read(self,file):
         if hasattr(file,'read'):
