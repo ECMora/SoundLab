@@ -98,7 +98,8 @@ class QSignalVisualizerWidget(FigureCanvas):
             rect=[self.fromClientToCanvas(index),0,1,h]
             self.figure.canvas.drawRectangle(rect)
             if(self.signalProcessor.signal.playStatus == self.signalProcessor.signal.RECORDING):
-                self.mainCursor.min,self.mainCursor.max=0,len(self.signalProcessor.signal.data)
+                size=len(self.signalProcessor.signal.data)
+                self.mainCursor.min,self.mainCursor.max=5*size/10,9*size/10
                 self.visualChanges=True
                 self.refresh()
 
