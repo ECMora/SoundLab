@@ -91,11 +91,18 @@ class QSignalVisualizerWidget(FigureCanvas):
         pass
 
     def notifyPlayingCursor(self):
-        if(self.signalProcessor.signal.playStatus == self.signalProcessor.signal.PLAYING):
+        if(self.signalProcessor.signal.playStatus == self.signalProcessor.signal.PLAYING or
+           self.signalProcessor.signal.playStatus == self.signalProcessor.signal.RECORDING):
             index=self.signalProcessor.signal.currentPlayingTime()
             h = self.figure.bbox.height
             rect=[self.fromClientToCanvas(index),0,1,h]
             self.figure.canvas.drawRectangle(rect)
+            if(self.signalProcessor.signal.playStatus == self.signalProcessor.signal.RECORDING):
+                self.mainCursor.min,self.mainCursor.max=0,len(self.signalProcessor.signal.data)
+                self.visualChanges=True
+                self.refresh()
+
+
 
 
     #endregion
@@ -551,10 +558,10 @@ class QSignalVisualizerWidget(FigureCanvas):
         self.signalProcessingAction(CommonSignalProcessor(self.signalProcessor.signal).insertSilence, ms)
 
     def scale(self, factor):
-        cursormin,cursormax=self.getIndexFromAndTo()
-        self.signalProcessor.signal.data[cursormin:cursormax] *= factor/100.0
-        self.visualChanges = True
-        self.refresh()
+        self.signalProcessingAction(CommonSignalProcessor(self.signalProcessor.signal).scale,factor)
+
+
+
 
     def silence(self):
         self.signalProcessingAction(CommonSignalProcessor(self.signalProcessor.signal).setSilence)

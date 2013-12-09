@@ -31,7 +31,6 @@ class AudioSignal:
         self.tick = 50#msec interval for player update
         self.timer = QTimer()
         self.timer.timeout.connect(self.recordCallback)
-        self.timer.timeout.connect(self.playCallback)
 
     def currentPlayingTime(self):
         return self.playSection[2]
@@ -78,7 +77,9 @@ class AudioSignal:
         if(self.playStatus==self.RECORDING):
             self.stream = self.playAudio.open(format=pyaudio.paInt16, channels=self.channels, rate=44100,
                                               input=True, frames_per_buffer=self.NUM_SAMPLES)
+            self.playSection=(0,len(self.data)+self.NUM_SAMPLES,len(self.data))
             self.data = numpy.concatenate((self.data, fromstring(self.stream.read(self.NUM_SAMPLES), dtype=numpy.int16)))
+
 
     def setTickInterval(self, ms):
         if(self.playStatus==self.STOPPED or self.playStatus==self.PAUSED):
@@ -144,10 +145,11 @@ class AudioSignal:
 
 
     def record(self):
-        #ask for concatenate to the current file
+        #ask for concatenate to the current file or make a new one
         self.data = numpy.array([], dtype=numpy.int16)
         self.samplingRate=44100
         self.bitDepth=16
+        self.playSection=(0,0,0)
         self.playStatus=self.RECORDING
         self.timer.start(self.tick)
 
