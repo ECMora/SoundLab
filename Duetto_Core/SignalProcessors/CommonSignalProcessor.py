@@ -2,7 +2,7 @@ from numpy import array,zeros,concatenate
 from Duetto_Core.AudioSignals.WavFileSignal import WavFileSignal
 from Duetto_Core.Detectors.MaxMinPeakDetector import MaxMinPeakDetector
 from Duetto_Core.Detectors.MeanDetector import MeanDetector
-from math import sin,cos,pi
+from math import sin,pi, sqrt
 from Duetto_Core.SignalProcessors.SignalProcessor import SignalProcessor
 
 class CommonSignalProcessor(SignalProcessor):
@@ -69,12 +69,12 @@ class CommonSignalProcessor(SignalProcessor):
                                       self.signal.data[indexFrom:]))
         return self.signal
 
-    def scale(self,indexFrom=0,indexTo=-1,factor=100,function="const",fade="IN"):
+    def scale(self,indexFrom=0,indexTo=-1,factor=100,function="normalize",fade="IN"):
         n=indexTo-indexFrom if(indexTo!=-1) else len(self.signal.data)-indexFrom
         def f(index):
             if(function=="normalize"):
                 return factor/100.0
-            elif(function=="linear"):
+            elif(function=="Linear"):
                  if(fade=="OUT"):
                      return 1-(index*1.0)/n
                  elif(fade=="IN"):
@@ -84,13 +84,23 @@ class CommonSignalProcessor(SignalProcessor):
                      return sin((index*1.0*pi)/(n*2)+pi/2)
                  elif(fade=="IN"):
                      return sin((index*1.0*pi)/(n*2))
-            elif(function=="cuadratic"):
+            elif(function=="sin-sqrt"):
+                 if(fade=="OUT"):
+                     return (sin((index*1.0*pi)/(n*2)+pi/2))**0.5
+                 elif(fade=="IN"):
+                     return (sin((index*1.0*pi)/(n*2)))**0.5
+            elif(function=="sin^2"):
                 if(fade=="OUT"):
-                    return (index*1.0/n)**2
+                    return (sin((index*1.0*pi)/(n*2)+pi/2))**2
                 elif(fade=="IN"):
+                    return (sin((index*1.0*pi)/(n*2)))**2
+            elif(function=="cuadratic"):
+                if(fade=="IN"):
+                    return (index*1.0/n)**2
+                elif(fade=="OUT"):
                     return (1-(index*1.0)/n)**2
         if(function=="const"):
-            self.signal.data[indexFrom:indexTo]=factor
+            self.signal.data[indexFrom:indexTo]*=factor
         else:
             self.signal.data[indexFrom:indexTo] = [self.signal.data[indexFrom+index]*f(index) for index in range(n)]
         return self.signal

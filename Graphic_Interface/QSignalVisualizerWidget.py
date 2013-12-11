@@ -22,6 +22,7 @@ from Duetto_Core.SignalProcessors.FilterSignalProcessor import *
 from Duetto_Core.SignalProcessors.SignalProcessor import SignalProcessor
 from Duetto_Core.SignalProcessors.EditionSignalProcessor import EditionSignalProcessor
 from Duetto_Core.SpecgramSettings import SpecgramSettings
+import matplotlib.cm as cm
 
 BACK_COLOR="gray"
 class QSignalVisualizerWidget(FigureCanvas):
@@ -349,9 +350,11 @@ class QSignalVisualizerWidget(FigureCanvas):
     TICK_INTERVAL_MS=25
     SPAN_RECT_PROPS = dict(facecolor='green',alpha=0.4)
 
-
+    COLOR_INDEX=0
 
     def refresh(self):
+
+
         if (self.visualChanges):
             if ( self.visibleOscilogram and self.signalProcessor.signal.opened() and self.mainCursor.max > self.mainCursor.min):
                 self.axesOscilogram.clear()
@@ -359,8 +362,10 @@ class QSignalVisualizerWidget(FigureCanvas):
                 self.axesOscilogram.set_xticklabels([
                     round((x + self.mainCursor.min) * 1.0 / self.signalProcessor.signal.samplingRate,
                           self.OSGRAM_XTICS_DECIMAL_PLACES) for x in self.axesOscilogram.get_xticks()])
+                self.axesOscilogram.set_yticklabels([round(x*100./(2**self.signalProcessor.signal.bitDepth),0) for x in self.axesOscilogram.get_yticks()])
                 self.axesOscilogram.set_xlim(0, self.mainCursor.max - self.mainCursor.min)
                 self.axesOscilogram.grid(self.specgramSettings.grid)
+
 
             if ( self.visibleSpectrogram and self.signalProcessor.signal.opened() and self.mainCursor.max > self.mainCursor.min):
                 self.axesSpecgram.clear()
@@ -387,17 +392,20 @@ class QSignalVisualizerWidget(FigureCanvas):
                 xextent = a[0], a[1], b[0], b[1]
                 #self.self.freqs += Fc where Fc is the central frecuency
                 im = self.axesSpecgram.imshow(Z,
-                                              cmap=None if self.specgramSettings.colorPaleteIndex == 1 else self.specgramSettings.colorPalette,
-                                              extent=xextent)
+                                              cmap=self.specgramSettings.colorPalette(),
+                                              extent=xextent,interpolation="nearest")
                 self.axesSpecgram.axis('auto')
+
                 if (self.colorbar == None):
                     if (self.visibleSpectrogram and self.visibleOscilogram):
                         ax = self.figure.add_axes([0.77, 0.48, 0.22, 0.03])
                     elif (self.visibleSpectrogram):
                         ax = self.figure.add_axes([0.77, 0.982, 0.22, 0.015])
+
                     self.colorbar = self.figure.colorbar(im, cax=ax, orientation="horizontal")
                 else:
                     self.colorbar.update_bruteforce(im)
+
                 self.axesSpecgram.set_xticklabels(
                     [round((x + self.mainCursor.min) * 1.0 / self.signalProcessor.signal.samplingRate,
                            self.SPECGRAM_XTICS_DECIMAL_PLACES) for x in self.axesSpecgram.get_xticks()])
@@ -558,11 +566,8 @@ class QSignalVisualizerWidget(FigureCanvas):
     def insertSilence(self, ms=0):
         self.signalProcessingAction(CommonSignalProcessor(self.signalProcessor.signal).insertSilence, ms)
 
-    def scale(self, factor):
-        self.signalProcessingAction(CommonSignalProcessor(self.signalProcessor.signal).scale,factor)
-
-
-
+    def scale(self, factor,function="normalize",fade="IN"):
+        self.signalProcessingAction(CommonSignalProcessor(self.signalProcessor.signal).scale,factor,function,fade)
 
     def silence(self):
         self.signalProcessingAction(CommonSignalProcessor(self.signalProcessor.signal).setSilence)

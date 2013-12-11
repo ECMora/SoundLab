@@ -4,7 +4,7 @@ from pylab import *
 from matplotlib.backends.qt4_editor.formlayout import QDialog
 from Duetto_Core.AudioSignals.WavFileSignal import WavFileSignal
 from Graphic_Interface.Dialogs import OptionsDialog as optdialog
-from Graphic_Interface.Dialogs import InsertSilenceDialog as sdialog, FilterOptionsDialog as filterdg
+from Graphic_Interface.Dialogs import InsertSilenceDialog as sdialog, FilterOptionsDialog as filterdg,ChangeVolumeDialog as changevolumedg
 from Graphic_Interface.DuettoMainWindow import *
 from Duetto_Core.SignalProcessors.FilterSignalProcessor import FILTER_TYPE
 
@@ -15,7 +15,8 @@ class InsertSilenceDialog(sdialog.Ui_Dialog,QDialog):
     pass
 class FilterDialog(filterdg.Ui_Dialog,QDialog):
     pass
-
+class ChangeVolumeDialog(changevolumedg.Ui_Dialog,QDialog):
+    pass
 class MainWindow(QMainWindow,Ui_MainWindow):
     """
         This class is the main aplication window
@@ -135,13 +136,19 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         self.MainWindow.signalVisualizer.reverse()
 
     def scale(self):
-        silenceDialog=sdialog.Ui_Dialog()
-        silenceDialogWindow=InsertSilenceDialog()
-        silenceDialog.setupUi(silenceDialogWindow)
-        silenceDialog.insertSpinBox.setValue(100)
-        silenceDialog.label.setText("Select the factor to \n scale the signal in percent")
-        if (silenceDialogWindow.exec_()):
-            self.MainWindow.signalVisualizer.scale(silenceDialog.insertSpinBox.value())
+        scaledg=changevolumedg.Ui_Dialog()
+        scaledgWindow=ChangeVolumeDialog()
+        scaledg.setupUi(scaledgWindow)
+        scaledg.rbuttonNormalize.setChecked(True)
+        if (scaledgWindow.exec_()):
+            if(scaledg.rbuttonConst.isChecked()):
+                self.MainWindow.signalVisualizer.scale(scaledg.spinboxConstValue.value(),"const")
+            elif(scaledg.rbuttonNormalize.isChecked()):
+                self.MainWindow.signalVisualizer.scale(scaledg.spinboxNormalizePercent.value(),"normalize")
+            elif(scaledg.rbuttonFadeIn.isChecked()):
+                self.MainWindow.signalVisualizer.scale(0,scaledg.cboxModulationType.currentText(),"IN")
+            elif(scaledg.rbuttonFadeOut.isChecked()):
+               self.MainWindow.signalVisualizer.scale(0,scaledg.cboxModulationType.currentText(),"OUT")
 
     def insertSilence(self):
         silenceDialog=sdialog.Ui_Dialog()
@@ -242,7 +249,10 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         options=OptionsDialog()
         opt.setupUi(options)
         opt.cboxFFTNumber.setCurrentIndex(opt.cboxFFTNumber.findText(str(self.MainWindow.signalVisualizer.specgramSettings.NFFT)))
-        opt.cboxcolorpalette.setCurrentIndex(self.MainWindow.signalVisualizer.specgramSettings.colorPaleteIndex)
+        opt.cboxcolorpalette.clear()
+        for cbar in self.MainWindow.signalVisualizer.specgramSettings.colors:
+            opt.cboxcolorpalette.addItem(QtCore.QString(str(cbar.name)))
+        opt.cboxcolorpalette.setCurrentIndex(self.MainWindow.signalVisualizer.specgramSettings._colorPaletteIndex)
         opt.overlapspinbox.setValue(self.MainWindow.signalVisualizer.specgramSettings.overlap)
         opt.overlapspinboxthreshold.setValue(self.MainWindow.signalVisualizer.specgramSettings.threshold)
         opt.overlapspinboxSoundSpeed.setValue(self.MainWindow.signalVisualizer.playerSpeed)
@@ -253,7 +263,7 @@ class MainWindow(QMainWindow,Ui_MainWindow):
         opt.checkBoxCursors.setChecked(self.MainWindow.signalVisualizer.visibleCursors)
         if (options.exec_()):
             self.MainWindow.signalVisualizer.specgramSettings.NFFT=int(opt.cboxFFTNumber.currentText())
-            self.MainWindow.signalVisualizer.specgramSettings.colorPaleteIndex=opt.cboxcolorpalette.currentIndex()
+            self.MainWindow.signalVisualizer.specgramSettings._colorPaletteIndex=opt.cboxcolorpalette.currentIndex()
             self.MainWindow.signalVisualizer.specgramSettings.overlap=opt.overlapspinbox.value()
             self.MainWindow.signalVisualizer.playerSpeed=opt.overlapspinboxSoundSpeed.value()
             self.MainWindow.signalVisualizer.specgramSettings.threshold=opt.overlapspinboxthreshold.value()

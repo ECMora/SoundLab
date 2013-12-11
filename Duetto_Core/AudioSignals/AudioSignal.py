@@ -1,4 +1,5 @@
 import wave
+from PyQt4.QtGui import QMessageBox
 from PyQt4.QtCore import QTimer
 import pyaudio
 import numpy
@@ -20,11 +21,6 @@ class AudioSignal:
         self.path = ""
         self.stream=None
         self.playAudio=pyaudio.PyAudio()
-        #print(self.playAudio.get_device_info_by_index(0))
-        #print(self.playAudio.get_device_info_by_index(1))
-        #print(self.playAudio.get_device_info_by_index(2))
-        #print(self.playAudio.get_device_info_by_index(3))
-        print("****************************")
         self.playStatus = self.STOPPED
         self.playSpeed=100#percent of the speed
         self.playSection = (0, 0, 0)#(init,end,current)
@@ -90,6 +86,9 @@ class AudioSignal:
         return len(self.data) > 0
 
     def play(self, startIndex=0, endIndex=-1, speed=100):
+        if(self.playAudio.get_device_count()==0):
+            QMessageBox.warning(QMessageBox(),"Error","No output devices to play the file.")
+            return
         if(self.playStatus==self.PLAYING):
             return
         if(self.playStatus==self.PAUSED):

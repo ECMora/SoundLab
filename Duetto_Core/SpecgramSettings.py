@@ -1,5 +1,7 @@
 from matplotlib.colors import ListedColormap
 import matplotlib.mlab as mlab
+import matplotlib.cm as cm
+
 import numpy
 
 "Clase que implementa los metodos" \
@@ -34,24 +36,30 @@ class SpecgramSettings:
         self.window=window
         self.colors=[]
         regularlcolor=[[.0,.0,.0]]
-        #make alist with the colors ordered
-        gray=[]
-        for i in range(1,100):
-            gray.append([1-0.01*i,1-0.01*i,1-0.01*i])
-        self.colors.append(gray)
-        self.colors.append(gray)
+        #make a list with the colors ordered
+        #gray=[]
+        #for i in range(1,100):
+        #    gray.append([1-0.01*i,1-0.01*i,1-0.01*i])
+        #self.colors.append(gray)
+        #self.colors.append(gray)
+        for cname in cm._cmapnames:
+            self.colors.append(cm.get_cmap(cname))
 
 
-        self.colorPalette=ListedColormap(self.colors[0],name="DuettoColorMap")
-        self._colorPaleteIndex=0#the color palette with the specgram is displayed its a matplotlib.cm.Colormap object
+
+        #self.colorPalette=ListedColormap(self.colors[0],name="DuettoColorMap")
+
+        self._colorPaletteIndex=0#the color palette with the specgram is displayed its a matplotlib.cm.Colormap object
         self.threshold=5#the % of the specgram that is visible
         self.grid=False
 
-    def _getColorPaleteIndex(self):
-        return self._colorPaleteIndex
-    def _setColorPaleteIndex(self, value):
-        self._colorPaleteIndex=0 if value > len(self.colors) else value
-        self.colorPalette=ListedColormap(self.colors[self._colorPaleteIndex],name="DuettoColorMap")
+    def _getColorPaletteIndex(self):
+        return self._colorPaletteIndex
+    def _setColorPaletteIndex(self, value):
+        self._colorPaletteIndex=0 if (value > len(self.colors) or value < 0) else value
 
-    colorPaleteIndex= property(_getColorPaleteIndex, _setColorPaleteIndex)
+    colorPaletteIndex= property(_getColorPaletteIndex,_setColorPaletteIndex)
+    def colorPalette(self):
+        return self.colors[self._colorPaletteIndex]
+
 
