@@ -1,0 +1,750 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MplMainWindow</class>
+ <widget class="QMainWindow" name="MplMainWindow">
+  <property name="windowModality">
+   <enum>Qt::ApplicationModal</enum>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1270</width>
+    <height>700</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>1270</width>
+    <height>760</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>BatSound</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <layout class="QVBoxLayout" name="verticalLayout_2">
+    <property name="spacing">
+     <number>7</number>
+    </property>
+    <property name="sizeConstraint">
+     <enum>QLayout::SetDefaultConstraint</enum>
+    </property>
+    <property name="topMargin">
+     <number>0</number>
+    </property>
+    <property name="rightMargin">
+     <number>0</number>
+    </property>
+    <property name="bottomMargin">
+     <number>0</number>
+    </property>
+    <item>
+     <widget class="MplWidget" name="widget" native="true">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="autoFillBackground">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>1270</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionNew"/>
+    <addaction name="actionOpen"/>
+    <addaction name="actionSave"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuTools">
+    <property name="title">
+     <string>Tools</string>
+    </property>
+    <addaction name="actionZoomIn"/>
+    <addaction name="actionZoom_out"/>
+    <addaction name="actionZoom_out_entire_file"/>
+   </widget>
+   <widget class="QMenu" name="menuEdit">
+    <property name="title">
+     <string>Edit</string>
+    </property>
+    <addaction name="actionCopy"/>
+    <addaction name="actionPaste"/>
+    <addaction name="actionCut"/>
+    <addaction name="separator"/>
+    <addaction name="actionSelect_all"/>
+   </widget>
+   <widget class="QMenu" name="menuView">
+    <property name="title">
+     <string>Analysis</string>
+    </property>
+    <addaction name="actionOscilogram"/>
+    <addaction name="actionSpectogram"/>
+    <addaction name="actionCombined"/>
+    <addaction name="actionPower_Spectrum"/>
+    <addaction name="separator"/>
+    <addaction name="actionOscillogram_Settings"/>
+    <addaction name="actionSpectogram_Settings"/>
+    <addaction name="actionPower_Spectrum_Settings"/>
+    <addaction name="actionAll_Settings"/>
+   </widget>
+   <widget class="QMenu" name="menuSound">
+    <property name="title">
+     <string>Sound</string>
+    </property>
+    <addaction name="actionPlay_Sound"/>
+    <addaction name="actionStop_Sound"/>
+    <addaction name="actionPause_Sound"/>
+   </widget>
+   <widget class="QMenu" name="menuView_2">
+    <property name="title">
+     <string>View</string>
+    </property>
+    <addaction name="actionHighest_instant_frequency"/>
+    <addaction name="actionClear_Spectogram"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuEdit"/>
+   <addaction name="menuTools"/>
+   <addaction name="menuView"/>
+   <addaction name="menuSound"/>
+   <addaction name="menuView_2"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QDockWidget" name="dock_osc_settings">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>180</width>
+     <height>179</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>180</width>
+     <height>179</height>
+    </size>
+   </property>
+   <property name="floating">
+    <bool>true</bool>
+   </property>
+   <property name="features">
+    <set>QDockWidget::AllDockWidgetFeatures</set>
+   </property>
+   <property name="windowTitle">
+    <string>Oscillogram Settings</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="osc_settings_contents">
+    <layout class="QFormLayout" name="formLayout">
+     <property name="fieldGrowthPolicy">
+      <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+     </property>
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_2">
+       <property name="text">
+        <string>Milliseconds per plot</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QSpinBox" name="spinBox"/>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="label">
+       <property name="text">
+        <string>Min and max amplitude</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLineEdit" name="min_amp_tbx"/>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLineEdit" name="max_amp_tbx"/>
+     </item>
+     <item row="5" column="0">
+      <widget class="QPushButton" name="btnosc_apply">
+       <property name="text">
+        <string>Apply</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="dock_spec_settings">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>180</width>
+     <height>200</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>180</width>
+     <height>200</height>
+    </size>
+   </property>
+   <property name="floating">
+    <bool>true</bool>
+   </property>
+   <property name="features">
+    <set>QDockWidget::AllDockWidgetFeatures</set>
+   </property>
+   <property name="windowTitle">
+    <string>Spectrogram Settings</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="spec_settings_contents">
+    <layout class="QFormLayout" name="formLayout_2">
+     <property name="fieldGrowthPolicy">
+      <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+     </property>
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_3">
+       <property name="text">
+        <string>FFT size</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0" colspan="2">
+      <widget class="QComboBox" name="cbx_fftsize">
+       <property name="contextMenuPolicy">
+        <enum>Qt::CustomContextMenu</enum>
+       </property>
+       <property name="currentIndex">
+        <number>3</number>
+       </property>
+       <property name="insertPolicy">
+        <enum>QComboBox::InsertAfterCurrent</enum>
+       </property>
+       <property name="minimumContentsLength">
+        <number>5</number>
+       </property>
+       <property name="modelColumn">
+        <number>0</number>
+       </property>
+       <item>
+        <property name="text">
+         <string>Automatic</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>2048</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>1024</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>512</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>256</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_4">
+       <property name="text">
+        <string>FFT window</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0" colspan="2">
+      <widget class="QComboBox" name="cbx_fftwindow">
+       <property name="contextMenuPolicy">
+        <enum>Qt::CustomContextMenu</enum>
+       </property>
+       <property name="minimumContentsLength">
+        <number>0</number>
+       </property>
+       <item>
+        <property name="text">
+         <string>Rectangular</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Hanning</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Hamming</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="label_5">
+       <property name="text">
+        <string>FFT overlap</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0">
+      <widget class="QSpinBox" name="sbx_fftoverlap">
+       <property name="maximum">
+        <number>98</number>
+       </property>
+       <property name="value">
+        <number>98</number>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="0">
+      <widget class="QPushButton" name="btnspec_apply">
+       <property name="text">
+        <string>Apply</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QToolBar" name="toolBar">
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionNew"/>
+   <addaction name="actionOpen"/>
+   <addaction name="actionSave"/>
+   <addaction name="separator"/>
+   <addaction name="actionCopy"/>
+   <addaction name="actionCut"/>
+   <addaction name="actionPaste"/>
+   <addaction name="separator"/>
+   <addaction name="actionPlay_Sound"/>
+   <addaction name="actionStop_Sound"/>
+   <addaction name="separator"/>
+   <addaction name="actionZoomIn"/>
+   <addaction name="actionZoom_out"/>
+   <addaction name="actionZoom_out_entire_file"/>
+   <addaction name="separator"/>
+   <addaction name="actionCombined"/>
+   <addaction name="actionOscilogram"/>
+   <addaction name="actionSpectogram"/>
+   <addaction name="actionPower_Spectrum"/>
+   <addaction name="separator"/>
+   <addaction name="actionAll_Settings"/>
+  </widget>
+  <widget class="QDockWidget" name="dock_powspec_settings">
+   <property name="minimumSize">
+    <size>
+     <width>180</width>
+     <height>153</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>180</width>
+     <height>153</height>
+    </size>
+   </property>
+   <property name="floating">
+    <bool>false</bool>
+   </property>
+   <property name="windowTitle">
+    <string>Power Spectrum Settings</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents">
+    <layout class="QFormLayout" name="formLayout_3">
+     <item row="0" column="0">
+      <widget class="QLabel" name="label_6">
+       <property name="text">
+        <string>FFT size</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0" colspan="2">
+      <widget class="QComboBox" name="cbx_fftsize_pow">
+       <property name="contextMenuPolicy">
+        <enum>Qt::CustomContextMenu</enum>
+       </property>
+       <property name="currentIndex">
+        <number>4</number>
+       </property>
+       <property name="insertPolicy">
+        <enum>QComboBox::InsertAfterCurrent</enum>
+       </property>
+       <property name="minimumContentsLength">
+        <number>5</number>
+       </property>
+       <property name="modelColumn">
+        <number>0</number>
+       </property>
+       <item>
+        <property name="text">
+         <string>16384</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>8192</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>4096</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>2048</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>1024</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>512</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>256</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>128</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>64</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>32</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>16</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="label_7">
+       <property name="text">
+        <string>FFT window</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0" colspan="2">
+      <widget class="QComboBox" name="cbx_fftwindow_pow">
+       <property name="contextMenuPolicy">
+        <enum>Qt::CustomContextMenu</enum>
+       </property>
+       <property name="minimumContentsLength">
+        <number>0</number>
+       </property>
+       <item>
+        <property name="text">
+         <string>Rectangular</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Hanning</string>
+        </property>
+       </item>
+       <item>
+        <property name="text">
+         <string>Hamming</string>
+        </property>
+       </item>
+      </widget>
+     </item>
+     <item row="4" column="0">
+      <widget class="QPushButton" name="btnpow_apply">
+       <property name="text">
+        <string>Apply</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <action name="actionOpen">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/myappicons/81.ico</normaloff>:/myappicons/81.ico</iconset>
+   </property>
+   <property name="text">
+    <string>Open</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="text">
+    <string>Exit</string>
+   </property>
+  </action>
+  <action name="actionZoomIn">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/myappicons/zoomin_26x26.png</normaloff>:/myappicons/zoomin_26x26.png</iconset>
+   </property>
+   <property name="text">
+    <string>Zoom in</string>
+   </property>
+  </action>
+  <action name="actionZoom_out">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/myappicons/zoomout_26x26.png</normaloff>:/myappicons/zoomout_26x26.png</iconset>
+   </property>
+   <property name="text">
+    <string>Zoom out</string>
+   </property>
+  </action>
+  <action name="actionSelect_all">
+   <property name="text">
+    <string>Select all</string>
+   </property>
+  </action>
+  <action name="actionSpectogram">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/myappicons/spec.ico</normaloff>:/myappicons/spec.ico</iconset>
+   </property>
+   <property name="text">
+    <string>Spectogram</string>
+   </property>
+  </action>
+  <action name="actionOscilogram">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/myappicons/osc.ico</normaloff>:/myappicons/osc.ico</iconset>
+   </property>
+   <property name="text">
+    <string>Oscillogram</string>
+   </property>
+   <property name="visible">
+    <bool>true</bool>
+   </property>
+  </action>
+  <action name="actionCombined">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/myappicons/combined.ico</normaloff>:/myappicons/combined.ico</iconset>
+   </property>
+   <property name="text">
+    <string>Combined</string>
+   </property>
+  </action>
+  <action name="actionNew">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/myappicons/Leopard Icon 60.ico</normaloff>:/myappicons/Leopard Icon 60.ico</iconset>
+   </property>
+   <property name="text">
+    <string>New</string>
+   </property>
+  </action>
+  <action name="actionPower_Spectrum">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/myappicons/powerspec.ico</normaloff>:/myappicons/powerspec.ico</iconset>
+   </property>
+   <property name="text">
+    <string>Power Spectrum</string>
+   </property>
+  </action>
+  <action name="actionOscillogram_Settings">
+   <property name="text">
+    <string>Oscillogram Settings</string>
+   </property>
+  </action>
+  <action name="actionSpectogram_Settings">
+   <property name="text">
+    <string>Spectrogram Settings</string>
+   </property>
+  </action>
+  <action name="actionPower_Spectrum_Settings">
+   <property name="text">
+    <string>Power Spectrum Settings</string>
+   </property>
+  </action>
+  <action name="actionPlay_Sound">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/myappicons/02049_26x26.png</normaloff>:/myappicons/02049_26x26.png</iconset>
+   </property>
+   <property name="text">
+    <string>Play Sound</string>
+   </property>
+  </action>
+  <action name="actionStop_Sound">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/myappicons/02051_26x26.png</normaloff>:/myappicons/02051_26x26.png</iconset>
+   </property>
+   <property name="text">
+    <string>Stop Sound</string>
+   </property>
+  </action>
+  <action name="actionPause_Sound">
+   <property name="text">
+    <string>Pause Sound</string>
+   </property>
+  </action>
+  <action name="actionZoom_out_entire_file">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/myappicons/zoom_26x26.png</normaloff>:/myappicons/zoom_26x26.png</iconset>
+   </property>
+   <property name="text">
+    <string>Zoom out entire file</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/myappicons/225.ico</normaloff>:/myappicons/225.ico</iconset>
+   </property>
+   <property name="text">
+    <string>Save as</string>
+   </property>
+  </action>
+  <action name="actionCopy">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/myappicons/copy_26x26.png</normaloff>:/myappicons/copy_26x26.png</iconset>
+   </property>
+   <property name="text">
+    <string>Copy</string>
+   </property>
+  </action>
+  <action name="actionPaste">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/myappicons/paste_26x26.png</normaloff>:/myappicons/paste_26x26.png</iconset>
+   </property>
+   <property name="text">
+    <string>Paste</string>
+   </property>
+  </action>
+  <action name="actionCut">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/myappicons/cut_26x26.png</normaloff>:/myappicons/cut_26x26.png</iconset>
+   </property>
+   <property name="text">
+    <string>Cut</string>
+   </property>
+  </action>
+  <action name="actionHighest_frecuency">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Highest frequency</string>
+   </property>
+  </action>
+  <action name="actionHighest_instant_frequency">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Highest instant frequency </string>
+   </property>
+  </action>
+  <action name="actionClear_Spectogram">
+   <property name="text">
+    <string>Clear Spectrogram</string>
+   </property>
+  </action>
+  <action name="actionAll_Settings">
+   <property name="icon">
+    <iconset resource="icons.qrc">
+     <normaloff>:/myappicons/LeopardVista V4 Icon 09.ico</normaloff>:/myappicons/LeopardVista V4 Icon 09.ico</iconset>
+   </property>
+   <property name="text">
+    <string>All Settings</string>
+   </property>
+  </action>
+  <zorder>dock_osc_settings</zorder>
+  <zorder>dock_spec_settings</zorder>
+  <zorder>dock_powspec_settings</zorder>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>MplWidget</class>
+   <extends>QWidget</extends>
+   <header location="global">wdoscilogram.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="icons.qrc"/>
+ </resources>
+ <connections/>
+</ui>

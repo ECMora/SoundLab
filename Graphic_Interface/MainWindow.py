@@ -1,286 +1,437 @@
-import sys
-from PyQt4.QtGui import *
-from pylab import *
-from matplotlib.backends.qt4_editor.formlayout import QDialog
-from Duetto_Core.AudioSignals.WavFileSignal import WavFileSignal
-from Graphic_Interface.Dialogs import OptionsDialog as optdialog
-from Graphic_Interface.Dialogs import InsertSilenceDialog as sdialog, FilterOptionsDialog as filterdg,ChangeVolumeDialog as changevolumedg
-from Graphic_Interface.DuettoMainWindow import *
-from Duetto_Core.SignalProcessors.FilterSignalProcessor import FILTER_TYPE
+# -*- coding: utf-8 -*-
 
+# Form implementation generated from reading ui file 'MainWindow.ui'
+#
+# Created: Fri Dec 06 10:54:07 2013
+#      by: PyQt4 UI code generator 4.9.5
+#
+# WARNING! All changes made in this file will be lost!
 
-class OptionsDialog(optdialog.Ui_Dialog,QDialog):
-    pass
-class InsertSilenceDialog(sdialog.Ui_Dialog,QDialog):
-    pass
-class FilterDialog(filterdg.Ui_Dialog,QDialog):
-    pass
-class ChangeVolumeDialog(changevolumedg.Ui_Dialog,QDialog):
-    pass
-class MainWindow(QMainWindow,Ui_MainWindow):
-    """
-        This class is the main aplication window
-        a MainWindow use a  QSignalVisualizer  control to process an audio signal
-        Possible extension to handle more than one audio signal at time
-        """
-    def __init__(self):
-        super(MainWindow, self).__init__()
+from PyQt4 import QtCore, QtGui
 
-    def enableScene(self):
-        """
-        Organize the layout of the aplication
-        """
-        vboxlayout=QtGui.QVBoxLayout(self.MainWindow.tabWidget.widget(0))
-        vboxlayout.addWidget(self.MainWindow.signalVisualizer)
-        vboxlayout2=QtGui.QVBoxLayout(self.MainWindow.centralwidget)
-        vboxlayout2.addWidget(self.MainWindow.tabWidget)
+try:
+    _fromUtf8 = QtCore.QString.fromUtf8
+except AttributeError:
+    _fromUtf8 = lambda s: s
 
-        vboxlayout3=QtGui.QVBoxLayout(self.MainWindow.tabWidget.widget(2))
-        vboxlayout3.addWidget(self.MainWindow.groupBoxBatchProcess)
-
-        self.MainWindow.tabWidget.setParent(self.MainWindow.centralwidget)
-        self.MainWindow.signalVisualizer.setParent(self.MainWindow.tabWidget.widget(0))
-
-        separator = QAction(self.MainWindow.signalVisualizer)
-        separator.setSeparator(True)
-
-        self.MainWindow.signalVisualizer.addAction(self.MainWindow.actionCopiar)
-        self.MainWindow.signalVisualizer.addAction(self.MainWindow.actionCortar)
-        self.MainWindow.signalVisualizer.addAction(self.MainWindow.actionPegar)
-
-        self.MainWindow.signalVisualizer.addAction(separator)
-
-        self.MainWindow.signalVisualizer.addAction(self.MainWindow.actionFilter)
-        self.MainWindow.signalVisualizer.addAction(self.MainWindow.actionReverse)
-        self.MainWindow.signalVisualizer.addAction(self.MainWindow.actionClear_Silence)
-        self.MainWindow.signalVisualizer.addAction(self.MainWindow.actionInsert_Silence)
-        self.MainWindow.signalVisualizer.addAction(self.MainWindow.actionScale)
-
-        deselectAction=QAction("Deselect Region",self.MainWindow.signalVisualizer)
+class Ui_MplMainWindow(object):
+    def setupUi(self, MplMainWindow):
+        MplMainWindow.setObjectName(_fromUtf8("MplMainWindow"))
+        MplMainWindow.setWindowModality(QtCore.Qt.ApplicationModal)
+        MplMainWindow.resize(1270, 700)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(MplMainWindow.sizePolicy().hasHeightForWidth())
+        MplMainWindow.setSizePolicy(sizePolicy)
+        MplMainWindow.setMaximumSize(QtCore.QSize(1270, 760))
+        self.centralwidget = QtGui.QWidget(MplMainWindow)
+        self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
+        self.verticalLayout_2 = QtGui.QVBoxLayout(self.centralwidget)
+        self.verticalLayout_2.setSpacing(7)
+        self.verticalLayout_2.setSizeConstraint(QtGui.QLayout.SetDefaultConstraint)
+        self.verticalLayout_2.setContentsMargins(-1, 0, 0, 0)
+        self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
+        self.widget = MplWidget(self.centralwidget)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.widget.sizePolicy().hasHeightForWidth())
+        self.widget.setSizePolicy(sizePolicy)
+        self.widget.setAutoFillBackground(True)
+        self.widget.setObjectName(_fromUtf8("widget"))
+        self.verticalLayout_2.addWidget(self.widget)
+        MplMainWindow.setCentralWidget(self.centralwidget)
+        self.menubar = QtGui.QMenuBar(MplMainWindow)
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 1270, 21))
+        self.menubar.setObjectName(_fromUtf8("menubar"))
+        self.menuFile = QtGui.QMenu(self.menubar)
+        self.menuFile.setObjectName(_fromUtf8("menuFile"))
+        self.menuTools = QtGui.QMenu(self.menubar)
+        self.menuTools.setObjectName(_fromUtf8("menuTools"))
+        self.menuEdit = QtGui.QMenu(self.menubar)
+        self.menuEdit.setObjectName(_fromUtf8("menuEdit"))
+        self.menuView = QtGui.QMenu(self.menubar)
+        self.menuView.setObjectName(_fromUtf8("menuView"))
+        self.menuSound = QtGui.QMenu(self.menubar)
+        self.menuSound.setObjectName(_fromUtf8("menuSound"))
+        self.menuView_2 = QtGui.QMenu(self.menubar)
+        self.menuView_2.setObjectName(_fromUtf8("menuView_2"))
+        MplMainWindow.setMenuBar(self.menubar)
+        self.statusbar = QtGui.QStatusBar(MplMainWindow)
+        self.statusbar.setObjectName(_fromUtf8("statusbar"))
+        MplMainWindow.setStatusBar(self.statusbar)
+        self.dock_osc_settings = QtGui.QDockWidget(MplMainWindow)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.dock_osc_settings.sizePolicy().hasHeightForWidth())
+        self.dock_osc_settings.setSizePolicy(sizePolicy)
+        self.dock_osc_settings.setMinimumSize(QtCore.QSize(180, 179))
+        self.dock_osc_settings.setMaximumSize(QtCore.QSize(180, 179))
+        self.dock_osc_settings.setFloating(True)
+        self.dock_osc_settings.setFeatures(QtGui.QDockWidget.AllDockWidgetFeatures)
+        self.dock_osc_settings.setObjectName(_fromUtf8("dock_osc_settings"))
+        self.osc_settings_contents = QtGui.QWidget()
+        self.osc_settings_contents.setObjectName(_fromUtf8("osc_settings_contents"))
+        self.formLayout = QtGui.QFormLayout(self.osc_settings_contents)
+        self.formLayout.setFieldGrowthPolicy(QtGui.QFormLayout.AllNonFixedFieldsGrow)
+        self.formLayout.setObjectName(_fromUtf8("formLayout"))
+        self.label_2 = QtGui.QLabel(self.osc_settings_contents)
+        self.label_2.setObjectName(_fromUtf8("label_2"))
+        self.formLayout.setWidget(0, QtGui.QFormLayout.LabelRole, self.label_2)
+        self.spinBox = QtGui.QSpinBox(self.osc_settings_contents)
+        self.spinBox.setObjectName(_fromUtf8("spinBox"))
+        self.formLayout.setWidget(1, QtGui.QFormLayout.LabelRole, self.spinBox)
+        self.label = QtGui.QLabel(self.osc_settings_contents)
+        self.label.setObjectName(_fromUtf8("label"))
+        self.formLayout.setWidget(2, QtGui.QFormLayout.LabelRole, self.label)
+        self.min_amp_tbx = QtGui.QLineEdit(self.osc_settings_contents)
+        self.min_amp_tbx.setObjectName(_fromUtf8("min_amp_tbx"))
+        self.formLayout.setWidget(3, QtGui.QFormLayout.LabelRole, self.min_amp_tbx)
+        self.max_amp_tbx = QtGui.QLineEdit(self.osc_settings_contents)
+        self.max_amp_tbx.setObjectName(_fromUtf8("max_amp_tbx"))
+        self.formLayout.setWidget(4, QtGui.QFormLayout.LabelRole, self.max_amp_tbx)
+        self.btnosc_apply = QtGui.QPushButton(self.osc_settings_contents)
+        self.btnosc_apply.setObjectName(_fromUtf8("btnosc_apply"))
+        self.formLayout.setWidget(5, QtGui.QFormLayout.LabelRole, self.btnosc_apply)
+        self.dock_osc_settings.setWidget(self.osc_settings_contents)
+        MplMainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(1), self.dock_osc_settings)
+        self.dock_spec_settings = QtGui.QDockWidget(MplMainWindow)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.dock_spec_settings.sizePolicy().hasHeightForWidth())
+        self.dock_spec_settings.setSizePolicy(sizePolicy)
+        self.dock_spec_settings.setMinimumSize(QtCore.QSize(180, 200))
+        self.dock_spec_settings.setMaximumSize(QtCore.QSize(180, 200))
+        self.dock_spec_settings.setFloating(True)
+        self.dock_spec_settings.setFeatures(QtGui.QDockWidget.AllDockWidgetFeatures)
+        self.dock_spec_settings.setObjectName(_fromUtf8("dock_spec_settings"))
+        self.spec_settings_contents = QtGui.QWidget()
+        self.spec_settings_contents.setObjectName(_fromUtf8("spec_settings_contents"))
+        self.formLayout_2 = QtGui.QFormLayout(self.spec_settings_contents)
+        self.formLayout_2.setFieldGrowthPolicy(QtGui.QFormLayout.AllNonFixedFieldsGrow)
+        self.formLayout_2.setObjectName(_fromUtf8("formLayout_2"))
+        self.label_3 = QtGui.QLabel(self.spec_settings_contents)
+        self.label_3.setObjectName(_fromUtf8("label_3"))
+        self.formLayout_2.setWidget(0, QtGui.QFormLayout.LabelRole, self.label_3)
+        self.cbx_fftsize = QtGui.QComboBox(self.spec_settings_contents)
+        self.cbx_fftsize.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.cbx_fftsize.setInsertPolicy(QtGui.QComboBox.InsertAfterCurrent)
+        self.cbx_fftsize.setMinimumContentsLength(5)
+        self.cbx_fftsize.setModelColumn(0)
+        self.cbx_fftsize.setObjectName(_fromUtf8("cbx_fftsize"))
+        self.cbx_fftsize.addItem(_fromUtf8(""))
+        self.cbx_fftsize.addItem(_fromUtf8(""))
+        self.cbx_fftsize.addItem(_fromUtf8(""))
+        self.cbx_fftsize.addItem(_fromUtf8(""))
+        self.cbx_fftsize.addItem(_fromUtf8(""))
+        self.formLayout_2.setWidget(1, QtGui.QFormLayout.SpanningRole, self.cbx_fftsize)
+        self.label_4 = QtGui.QLabel(self.spec_settings_contents)
+        self.label_4.setObjectName(_fromUtf8("label_4"))
+        self.formLayout_2.setWidget(2, QtGui.QFormLayout.LabelRole, self.label_4)
+        self.cbx_fftwindow = QtGui.QComboBox(self.spec_settings_contents)
+        self.cbx_fftwindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.cbx_fftwindow.setMinimumContentsLength(0)
+        self.cbx_fftwindow.setObjectName(_fromUtf8("cbx_fftwindow"))
+        self.cbx_fftwindow.addItem(_fromUtf8(""))
+        self.cbx_fftwindow.addItem(_fromUtf8(""))
+        self.cbx_fftwindow.addItem(_fromUtf8(""))
+        self.formLayout_2.setWidget(3, QtGui.QFormLayout.SpanningRole, self.cbx_fftwindow)
+        self.label_5 = QtGui.QLabel(self.spec_settings_contents)
+        self.label_5.setObjectName(_fromUtf8("label_5"))
+        self.formLayout_2.setWidget(4, QtGui.QFormLayout.LabelRole, self.label_5)
+        self.sbx_fftoverlap = QtGui.QSpinBox(self.spec_settings_contents)
+        self.sbx_fftoverlap.setMaximum(98)
+        self.sbx_fftoverlap.setProperty("value", 98)
+        self.sbx_fftoverlap.setObjectName(_fromUtf8("sbx_fftoverlap"))
+        self.formLayout_2.setWidget(5, QtGui.QFormLayout.LabelRole, self.sbx_fftoverlap)
+        self.btnspec_apply = QtGui.QPushButton(self.spec_settings_contents)
+        self.btnspec_apply.setObjectName(_fromUtf8("btnspec_apply"))
+        self.formLayout_2.setWidget(6, QtGui.QFormLayout.LabelRole, self.btnspec_apply)
+        self.dock_spec_settings.setWidget(self.spec_settings_contents)
+        MplMainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(1), self.dock_spec_settings)
+        self.toolBar = QtGui.QToolBar(MplMainWindow)
+        self.toolBar.setObjectName(_fromUtf8("toolBar"))
+        MplMainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
+        self.dock_powspec_settings = QtGui.QDockWidget(MplMainWindow)
+        self.dock_powspec_settings.setMinimumSize(QtCore.QSize(180, 153))
+        self.dock_powspec_settings.setMaximumSize(QtCore.QSize(180, 153))
+        self.dock_powspec_settings.setFloating(False)
+        self.dock_powspec_settings.setObjectName(_fromUtf8("dock_powspec_settings"))
+        self.dockWidgetContents = QtGui.QWidget()
+        self.dockWidgetContents.setObjectName(_fromUtf8("dockWidgetContents"))
+        self.formLayout_3 = QtGui.QFormLayout(self.dockWidgetContents)
+        self.formLayout_3.setObjectName(_fromUtf8("formLayout_3"))
+        self.label_6 = QtGui.QLabel(self.dockWidgetContents)
+        self.label_6.setObjectName(_fromUtf8("label_6"))
+        self.formLayout_3.setWidget(0, QtGui.QFormLayout.LabelRole, self.label_6)
+        self.cbx_fftsize_pow = QtGui.QComboBox(self.dockWidgetContents)
+        self.cbx_fftsize_pow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.cbx_fftsize_pow.setInsertPolicy(QtGui.QComboBox.InsertAfterCurrent)
+        self.cbx_fftsize_pow.setMinimumContentsLength(5)
+        self.cbx_fftsize_pow.setModelColumn(0)
+        self.cbx_fftsize_pow.setObjectName(_fromUtf8("cbx_fftsize_pow"))
+        self.cbx_fftsize_pow.addItem(_fromUtf8(""))
+        self.cbx_fftsize_pow.addItem(_fromUtf8(""))
+        self.cbx_fftsize_pow.addItem(_fromUtf8(""))
+        self.cbx_fftsize_pow.addItem(_fromUtf8(""))
+        self.cbx_fftsize_pow.addItem(_fromUtf8(""))
+        self.cbx_fftsize_pow.addItem(_fromUtf8(""))
+        self.cbx_fftsize_pow.addItem(_fromUtf8(""))
+        self.cbx_fftsize_pow.addItem(_fromUtf8(""))
+        self.cbx_fftsize_pow.addItem(_fromUtf8(""))
+        self.cbx_fftsize_pow.addItem(_fromUtf8(""))
+        self.cbx_fftsize_pow.addItem(_fromUtf8(""))
+        self.formLayout_3.setWidget(1, QtGui.QFormLayout.SpanningRole, self.cbx_fftsize_pow)
+        self.label_7 = QtGui.QLabel(self.dockWidgetContents)
+        self.label_7.setObjectName(_fromUtf8("label_7"))
+        self.formLayout_3.setWidget(2, QtGui.QFormLayout.LabelRole, self.label_7)
+        self.cbx_fftwindow_pow = QtGui.QComboBox(self.dockWidgetContents)
+        self.cbx_fftwindow_pow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.cbx_fftwindow_pow.setMinimumContentsLength(0)
+        self.cbx_fftwindow_pow.setObjectName(_fromUtf8("cbx_fftwindow_pow"))
+        self.cbx_fftwindow_pow.addItem(_fromUtf8(""))
+        self.cbx_fftwindow_pow.addItem(_fromUtf8(""))
+        self.cbx_fftwindow_pow.addItem(_fromUtf8(""))
+        self.formLayout_3.setWidget(3, QtGui.QFormLayout.SpanningRole, self.cbx_fftwindow_pow)
+        self.btnpow_apply = QtGui.QPushButton(self.dockWidgetContents)
+        self.btnpow_apply.setObjectName(_fromUtf8("btnpow_apply"))
+        self.formLayout_3.setWidget(4, QtGui.QFormLayout.LabelRole, self.btnpow_apply)
+        self.dock_powspec_settings.setWidget(self.dockWidgetContents)
+        MplMainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(1), self.dock_powspec_settings)
+        self.actionOpen = QtGui.QAction(MplMainWindow)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/UI Files/resources/deselect.ico"), QtGui.QIcon.Normal, QtGui.QIcon.On)
-        deselectAction.setIcon(icon)
-        self.MainWindow.signalVisualizer.addAction(deselectAction)
-        self.connect(deselectAction, QtCore.SIGNAL(QtCore.QString.fromUtf8("triggered()")), self.MainWindow.signalVisualizer.deselectZoomRegion)
+        icon.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/81.ico")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionOpen.setIcon(icon)
+        self.actionOpen.setObjectName(_fromUtf8("actionOpen"))
+        self.actionExit = QtGui.QAction(MplMainWindow)
+        self.actionExit.setObjectName(_fromUtf8("actionExit"))
+        self.actionZoomIn = QtGui.QAction(MplMainWindow)
+        icon1 = QtGui.QIcon()
+        icon1.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/zoomin_26x26.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionZoomIn.setIcon(icon1)
+        self.actionZoomIn.setObjectName(_fromUtf8("actionZoomIn"))
+        self.actionZoom_out = QtGui.QAction(MplMainWindow)
+        icon2 = QtGui.QIcon()
+        icon2.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/zoomout_26x26.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionZoom_out.setIcon(icon2)
+        self.actionZoom_out.setObjectName(_fromUtf8("actionZoom_out"))
+        self.actionSelect_all = QtGui.QAction(MplMainWindow)
+        self.actionSelect_all.setObjectName(_fromUtf8("actionSelect_all"))
+        self.actionSpectogram = QtGui.QAction(MplMainWindow)
+        icon3 = QtGui.QIcon()
+        icon3.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/spec.ico")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionSpectogram.setIcon(icon3)
+        self.actionSpectogram.setObjectName(_fromUtf8("actionSpectogram"))
+        self.actionOscilogram = QtGui.QAction(MplMainWindow)
+        self.actionOscilogram.setEnabled(True)
+        icon4 = QtGui.QIcon()
+        icon4.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/osc.ico")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionOscilogram.setIcon(icon4)
+        self.actionOscilogram.setVisible(True)
+        self.actionOscilogram.setObjectName(_fromUtf8("actionOscilogram"))
+        self.actionCombined = QtGui.QAction(MplMainWindow)
+        icon5 = QtGui.QIcon()
+        icon5.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/combined.ico")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionCombined.setIcon(icon5)
+        self.actionCombined.setObjectName(_fromUtf8("actionCombined"))
+        self.actionNew = QtGui.QAction(MplMainWindow)
+        icon6 = QtGui.QIcon()
+        icon6.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/Leopard Icon 60.ico")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionNew.setIcon(icon6)
+        self.actionNew.setObjectName(_fromUtf8("actionNew"))
+        self.actionPower_Spectrum = QtGui.QAction(MplMainWindow)
+        icon7 = QtGui.QIcon()
+        icon7.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/powerspec.ico")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionPower_Spectrum.setIcon(icon7)
+        self.actionPower_Spectrum.setObjectName(_fromUtf8("actionPower_Spectrum"))
+        self.actionOscillogram_Settings = QtGui.QAction(MplMainWindow)
+        self.actionOscillogram_Settings.setObjectName(_fromUtf8("actionOscillogram_Settings"))
+        self.actionSpectogram_Settings = QtGui.QAction(MplMainWindow)
+        self.actionSpectogram_Settings.setObjectName(_fromUtf8("actionSpectogram_Settings"))
+        self.actionPower_Spectrum_Settings = QtGui.QAction(MplMainWindow)
+        self.actionPower_Spectrum_Settings.setObjectName(_fromUtf8("actionPower_Spectrum_Settings"))
+        self.actionPlay_Sound = QtGui.QAction(MplMainWindow)
+        icon8 = QtGui.QIcon()
+        icon8.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/02049_26x26.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionPlay_Sound.setIcon(icon8)
+        self.actionPlay_Sound.setObjectName(_fromUtf8("actionPlay_Sound"))
+        self.actionStop_Sound = QtGui.QAction(MplMainWindow)
+        icon9 = QtGui.QIcon()
+        icon9.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/02051_26x26.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionStop_Sound.setIcon(icon9)
+        self.actionStop_Sound.setObjectName(_fromUtf8("actionStop_Sound"))
+        self.actionPause_Sound = QtGui.QAction(MplMainWindow)
+        self.actionPause_Sound.setObjectName(_fromUtf8("actionPause_Sound"))
+        self.actionZoom_out_entire_file = QtGui.QAction(MplMainWindow)
+        icon10 = QtGui.QIcon()
+        icon10.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/zoom_26x26.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionZoom_out_entire_file.setIcon(icon10)
+        self.actionZoom_out_entire_file.setObjectName(_fromUtf8("actionZoom_out_entire_file"))
+        self.actionSave = QtGui.QAction(MplMainWindow)
+        icon11 = QtGui.QIcon()
+        icon11.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/225.ico")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionSave.setIcon(icon11)
+        self.actionSave.setObjectName(_fromUtf8("actionSave"))
+        self.actionCopy = QtGui.QAction(MplMainWindow)
+        icon12 = QtGui.QIcon()
+        icon12.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/copy_26x26.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionCopy.setIcon(icon12)
+        self.actionCopy.setObjectName(_fromUtf8("actionCopy"))
+        self.actionPaste = QtGui.QAction(MplMainWindow)
+        icon13 = QtGui.QIcon()
+        icon13.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/paste_26x26.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionPaste.setIcon(icon13)
+        self.actionPaste.setObjectName(_fromUtf8("actionPaste"))
+        self.actionCut = QtGui.QAction(MplMainWindow)
+        icon14 = QtGui.QIcon()
+        icon14.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/cut_26x26.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionCut.setIcon(icon14)
+        self.actionCut.setObjectName(_fromUtf8("actionCut"))
+        self.actionHighest_frecuency = QtGui.QAction(MplMainWindow)
+        self.actionHighest_frecuency.setCheckable(False)
+        self.actionHighest_frecuency.setEnabled(True)
+        self.actionHighest_frecuency.setObjectName(_fromUtf8("actionHighest_frecuency"))
+        self.actionHighest_instant_frequency = QtGui.QAction(MplMainWindow)
+        self.actionHighest_instant_frequency.setCheckable(False)
+        self.actionHighest_instant_frequency.setObjectName(_fromUtf8("actionHighest_instant_frequency"))
+        self.actionClear_Spectogram = QtGui.QAction(MplMainWindow)
+        self.actionClear_Spectogram.setObjectName(_fromUtf8("actionClear_Spectogram"))
+        self.actionAll_Settings = QtGui.QAction(MplMainWindow)
+        icon15 = QtGui.QIcon()
+        icon15.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/LeopardVista V4 Icon 09.ico")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionAll_Settings.setIcon(icon15)
+        self.actionAll_Settings.setObjectName(_fromUtf8("actionAll_Settings"))
+        self.menuFile.addAction(self.actionNew)
+        self.menuFile.addAction(self.actionOpen)
+        self.menuFile.addAction(self.actionSave)
+        self.menuFile.addAction(self.actionExit)
+        self.menuTools.addAction(self.actionZoomIn)
+        self.menuTools.addAction(self.actionZoom_out)
+        self.menuTools.addAction(self.actionZoom_out_entire_file)
+        self.menuEdit.addAction(self.actionCopy)
+        self.menuEdit.addAction(self.actionPaste)
+        self.menuEdit.addAction(self.actionCut)
+        self.menuEdit.addSeparator()
+        self.menuEdit.addAction(self.actionSelect_all)
+        self.menuView.addAction(self.actionOscilogram)
+        self.menuView.addAction(self.actionSpectogram)
+        self.menuView.addAction(self.actionCombined)
+        self.menuView.addAction(self.actionPower_Spectrum)
+        self.menuView.addSeparator()
+        self.menuView.addAction(self.actionOscillogram_Settings)
+        self.menuView.addAction(self.actionSpectogram_Settings)
+        self.menuView.addAction(self.actionPower_Spectrum_Settings)
+        self.menuView.addAction(self.actionAll_Settings)
+        self.menuSound.addAction(self.actionPlay_Sound)
+        self.menuSound.addAction(self.actionStop_Sound)
+        self.menuSound.addAction(self.actionPause_Sound)
+        self.menuView_2.addAction(self.actionHighest_instant_frequency)
+        self.menuView_2.addAction(self.actionClear_Spectogram)
+        self.menubar.addAction(self.menuFile.menuAction())
+        self.menubar.addAction(self.menuEdit.menuAction())
+        self.menubar.addAction(self.menuTools.menuAction())
+        self.menubar.addAction(self.menuView.menuAction())
+        self.menubar.addAction(self.menuSound.menuAction())
+        self.menubar.addAction(self.menuView_2.menuAction())
+        self.toolBar.addAction(self.actionNew)
+        self.toolBar.addAction(self.actionOpen)
+        self.toolBar.addAction(self.actionSave)
+        self.toolBar.addSeparator()
+        self.toolBar.addAction(self.actionCopy)
+        self.toolBar.addAction(self.actionCut)
+        self.toolBar.addAction(self.actionPaste)
+        self.toolBar.addSeparator()
+        self.toolBar.addAction(self.actionPlay_Sound)
+        self.toolBar.addAction(self.actionStop_Sound)
+        self.toolBar.addSeparator()
+        self.toolBar.addAction(self.actionZoomIn)
+        self.toolBar.addAction(self.actionZoom_out)
+        self.toolBar.addAction(self.actionZoom_out_entire_file)
+        self.toolBar.addSeparator()
+        self.toolBar.addAction(self.actionCombined)
+        self.toolBar.addAction(self.actionOscilogram)
+        self.toolBar.addAction(self.actionSpectogram)
+        self.toolBar.addAction(self.actionPower_Spectrum)
+        self.toolBar.addSeparator()
+        self.toolBar.addAction(self.actionAll_Settings)
 
+        self.retranslateUi(MplMainWindow)
+        self.cbx_fftsize.setCurrentIndex(3)
+        self.cbx_fftsize_pow.setCurrentIndex(4)
+        QtCore.QMetaObject.connectSlotsByName(MplMainWindow)
 
-        self.MainWindow.signalVisualizer.addAction(separator)
+    def retranslateUi(self, MplMainWindow):
+        MplMainWindow.setWindowTitle(QtGui.QApplication.translate("MplMainWindow", "BatSound", None, QtGui.QApplication.UnicodeUTF8))
+        self.menuFile.setTitle(QtGui.QApplication.translate("MplMainWindow", "File", None, QtGui.QApplication.UnicodeUTF8))
+        self.menuTools.setTitle(QtGui.QApplication.translate("MplMainWindow", "Tools", None, QtGui.QApplication.UnicodeUTF8))
+        self.menuEdit.setTitle(QtGui.QApplication.translate("MplMainWindow", "Edit", None, QtGui.QApplication.UnicodeUTF8))
+        self.menuView.setTitle(QtGui.QApplication.translate("MplMainWindow", "Analysis", None, QtGui.QApplication.UnicodeUTF8))
+        self.menuSound.setTitle(QtGui.QApplication.translate("MplMainWindow", "Sound", None, QtGui.QApplication.UnicodeUTF8))
+        self.menuView_2.setTitle(QtGui.QApplication.translate("MplMainWindow", "View", None, QtGui.QApplication.UnicodeUTF8))
+        self.dock_osc_settings.setWindowTitle(QtGui.QApplication.translate("MplMainWindow", "Oscillogram Settings", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_2.setText(QtGui.QApplication.translate("MplMainWindow", "Milliseconds per plot", None, QtGui.QApplication.UnicodeUTF8))
+        self.label.setText(QtGui.QApplication.translate("MplMainWindow", "Min and max amplitude", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnosc_apply.setText(QtGui.QApplication.translate("MplMainWindow", "Apply", None, QtGui.QApplication.UnicodeUTF8))
+        self.dock_spec_settings.setWindowTitle(QtGui.QApplication.translate("MplMainWindow", "Spectrogram Settings", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_3.setText(QtGui.QApplication.translate("MplMainWindow", "FFT size", None, QtGui.QApplication.UnicodeUTF8))
+        self.cbx_fftsize.setItemText(0, QtGui.QApplication.translate("MplMainWindow", "Automatic", None, QtGui.QApplication.UnicodeUTF8))
+        self.cbx_fftsize.setItemText(1, QtGui.QApplication.translate("MplMainWindow", "2048", None, QtGui.QApplication.UnicodeUTF8))
+        self.cbx_fftsize.setItemText(2, QtGui.QApplication.translate("MplMainWindow", "1024", None, QtGui.QApplication.UnicodeUTF8))
+        self.cbx_fftsize.setItemText(3, QtGui.QApplication.translate("MplMainWindow", "512", None, QtGui.QApplication.UnicodeUTF8))
+        self.cbx_fftsize.setItemText(4, QtGui.QApplication.translate("MplMainWindow", "256", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_4.setText(QtGui.QApplication.translate("MplMainWindow", "FFT window", None, QtGui.QApplication.UnicodeUTF8))
+        self.cbx_fftwindow.setItemText(0, QtGui.QApplication.translate("MplMainWindow", "Rectangular", None, QtGui.QApplication.UnicodeUTF8))
+        self.cbx_fftwindow.setItemText(1, QtGui.QApplication.translate("MplMainWindow", "Hanning", None, QtGui.QApplication.UnicodeUTF8))
+        self.cbx_fftwindow.setItemText(2, QtGui.QApplication.translate("MplMainWindow", "Hamming", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_5.setText(QtGui.QApplication.translate("MplMainWindow", "FFT overlap", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnspec_apply.setText(QtGui.QApplication.translate("MplMainWindow", "Apply", None, QtGui.QApplication.UnicodeUTF8))
+        self.toolBar.setWindowTitle(QtGui.QApplication.translate("MplMainWindow", "toolBar", None, QtGui.QApplication.UnicodeUTF8))
+        self.dock_powspec_settings.setWindowTitle(QtGui.QApplication.translate("MplMainWindow", "Power Spectrum Settings", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_6.setText(QtGui.QApplication.translate("MplMainWindow", "FFT size", None, QtGui.QApplication.UnicodeUTF8))
+        self.cbx_fftsize_pow.setItemText(0, QtGui.QApplication.translate("MplMainWindow", "16384", None, QtGui.QApplication.UnicodeUTF8))
+        self.cbx_fftsize_pow.setItemText(1, QtGui.QApplication.translate("MplMainWindow", "8192", None, QtGui.QApplication.UnicodeUTF8))
+        self.cbx_fftsize_pow.setItemText(2, QtGui.QApplication.translate("MplMainWindow", "4096", None, QtGui.QApplication.UnicodeUTF8))
+        self.cbx_fftsize_pow.setItemText(3, QtGui.QApplication.translate("MplMainWindow", "2048", None, QtGui.QApplication.UnicodeUTF8))
+        self.cbx_fftsize_pow.setItemText(4, QtGui.QApplication.translate("MplMainWindow", "1024", None, QtGui.QApplication.UnicodeUTF8))
+        self.cbx_fftsize_pow.setItemText(5, QtGui.QApplication.translate("MplMainWindow", "512", None, QtGui.QApplication.UnicodeUTF8))
+        self.cbx_fftsize_pow.setItemText(6, QtGui.QApplication.translate("MplMainWindow", "256", None, QtGui.QApplication.UnicodeUTF8))
+        self.cbx_fftsize_pow.setItemText(7, QtGui.QApplication.translate("MplMainWindow", "128", None, QtGui.QApplication.UnicodeUTF8))
+        self.cbx_fftsize_pow.setItemText(8, QtGui.QApplication.translate("MplMainWindow", "64", None, QtGui.QApplication.UnicodeUTF8))
+        self.cbx_fftsize_pow.setItemText(9, QtGui.QApplication.translate("MplMainWindow", "32", None, QtGui.QApplication.UnicodeUTF8))
+        self.cbx_fftsize_pow.setItemText(10, QtGui.QApplication.translate("MplMainWindow", "16", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_7.setText(QtGui.QApplication.translate("MplMainWindow", "FFT window", None, QtGui.QApplication.UnicodeUTF8))
+        self.cbx_fftwindow_pow.setItemText(0, QtGui.QApplication.translate("MplMainWindow", "Rectangular", None, QtGui.QApplication.UnicodeUTF8))
+        self.cbx_fftwindow_pow.setItemText(1, QtGui.QApplication.translate("MplMainWindow", "Hanning", None, QtGui.QApplication.UnicodeUTF8))
+        self.cbx_fftwindow_pow.setItemText(2, QtGui.QApplication.translate("MplMainWindow", "Hamming", None, QtGui.QApplication.UnicodeUTF8))
+        self.btnpow_apply.setText(QtGui.QApplication.translate("MplMainWindow", "Apply", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionOpen.setText(QtGui.QApplication.translate("MplMainWindow", "Open", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionExit.setText(QtGui.QApplication.translate("MplMainWindow", "Exit", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionZoomIn.setText(QtGui.QApplication.translate("MplMainWindow", "Zoom in", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionZoom_out.setText(QtGui.QApplication.translate("MplMainWindow", "Zoom out", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSelect_all.setText(QtGui.QApplication.translate("MplMainWindow", "Select all", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSpectogram.setText(QtGui.QApplication.translate("MplMainWindow", "Spectogram", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionOscilogram.setText(QtGui.QApplication.translate("MplMainWindow", "Oscillogram", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionCombined.setText(QtGui.QApplication.translate("MplMainWindow", "Combined", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionNew.setText(QtGui.QApplication.translate("MplMainWindow", "New", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionPower_Spectrum.setText(QtGui.QApplication.translate("MplMainWindow", "Power Spectrum", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionOscillogram_Settings.setText(QtGui.QApplication.translate("MplMainWindow", "Oscillogram Settings", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSpectogram_Settings.setText(QtGui.QApplication.translate("MplMainWindow", "Spectrogram Settings", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionPower_Spectrum_Settings.setText(QtGui.QApplication.translate("MplMainWindow", "Power Spectrum Settings", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionPlay_Sound.setText(QtGui.QApplication.translate("MplMainWindow", "Play Sound", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionStop_Sound.setText(QtGui.QApplication.translate("MplMainWindow", "Stop Sound", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionPause_Sound.setText(QtGui.QApplication.translate("MplMainWindow", "Pause Sound", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionZoom_out_entire_file.setText(QtGui.QApplication.translate("MplMainWindow", "Zoom out entire file", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSave.setText(QtGui.QApplication.translate("MplMainWindow", "Save as", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionCopy.setText(QtGui.QApplication.translate("MplMainWindow", "Copy", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionPaste.setText(QtGui.QApplication.translate("MplMainWindow", "Paste", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionCut.setText(QtGui.QApplication.translate("MplMainWindow", "Cut", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionHighest_frecuency.setText(QtGui.QApplication.translate("MplMainWindow", "Highest frequency", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionHighest_instant_frequency.setText(QtGui.QApplication.translate("MplMainWindow", "Highest instant frequency ", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionClear_Spectogram.setText(QtGui.QApplication.translate("MplMainWindow", "Clear Spectrogram", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionAll_Settings.setText(QtGui.QApplication.translate("MplMainWindow", "All Settings", None, QtGui.QApplication.UnicodeUTF8))
 
-        self.MainWindow.signalVisualizer.addAction(self.MainWindow.actionRefresh_Signal)
-        self.MainWindow.signalVisualizer.addAction(self.MainWindow.actionOpciones)
-        ###navtoolbar = DuettoNavigationToolbar(self.MainWindow.signalVisualizer.figure.canvas, self.MainWindow.centralwidget)
-        ##pack these widget into the vertical box
-        #self.MainWindow.signalVisualizer.toolbar=navtoolbar
-        #vboxlayout.addWidget(self.MainWindow.signalVisualizer.figure.canvas)
-        #vboxlayout.addWidget(navtoolbar)
-
-
-
-    def refreshSignal(self):
-        """
-        This method refresh the oscilogram and the specgram windows
-        """
-        if(self.MainWindow.signalVisualizer.signalProcessor.signal.opened()):
-            self.MainWindow.signalVisualizer.visualChanges=True
-            self.MainWindow.signalVisualizer.refresh()
-
-    #region OPEN CLOSE AND SAVE EVENTS
-    def closeEvent(self, event):
-        if(self.MainWindow.signalVisualizer.signalProcessor.signal.opened()):
-            save_changes = QMessageBox.question(None,
-                           "Save", "Save unsaved changes?",
-                           QMessageBox.Yes|QMessageBox.Default,
-                           QMessageBox.No|QMessageBox.Escape)
-            if(QMessageBox.Yes == save_changes or save_changes== QMessageBox.Default):
-                fname = unicode(QFileDialog.getSaveFileName())
-                if fname:
-                    self.MainWindow.signalVisualizer.signalProcessori.signal.save(fname)
-
-
-    def openEvent(self):
-        formats = ["*.%s" % unicode(format).lower()\
-                   for format in ["wav"]]
-        openfilename =unicode(QFileDialog.getOpenFileName(self,
-        "Choose File"))
-        if openfilename:
-            self.MainWindow.signalVisualizer.signalProcessor.signal=WavFileSignal()
-            self.MainWindow.signalVisualizer.open(openfilename)
-            self.MainWindow.signalVisualizer.visibleOscilogram=True
-            self.MainWindow.signalVisualizer.visibleSpectrogram=True
-
-    def saveEvent(self):
-        if(self.MainWindow.signalVisualizer.signalProcessor.signal.opened()):
-            fname = unicode(QFileDialog.getSaveFileName())
-            if fname:
-                self.MainWindow.signalVisualizer.save(fname)
-
-    #endregion
-
-    #region CUT COPY AND PASTE
-    def cut(self):
-        if(len(self.MainWindow.signalVisualizer.signalProcessor.signal.data)>0 and self.MainWindow.signalVisualizer.signalProcessor.signal.opened()):
-            self.MainWindow.signalVisualizer.cut()
-
-    def copy(self):
-        if(len(self.MainWindow.signalVisualizer.signalProcessor.signal.data)>0and self.MainWindow.signalVisualizer.signalProcessor.signal.opened()):
-            self.MainWindow.signalVisualizer.copy()
-
-    def paste(self):
-        if(self.MainWindow.signalVisualizer.signalProcessor.signal.opened):
-            self.MainWindow.signalVisualizer.paste()
-    #endregion
-
-    def zoomIn(self):
-        self.MainWindow.signalVisualizer.zoomIn()
-    def reverse(self):
-        self.MainWindow.signalVisualizer.reverse()
-
-    def scale(self):
-        scaledg=changevolumedg.Ui_Dialog()
-        scaledgWindow=ChangeVolumeDialog()
-        scaledg.setupUi(scaledgWindow)
-        scaledg.rbuttonNormalize.setChecked(True)
-        if (scaledgWindow.exec_()):
-            if(scaledg.rbuttonConst.isChecked()):
-                self.MainWindow.signalVisualizer.scale(scaledg.spinboxConstValue.value(),"const")
-            elif(scaledg.rbuttonNormalize.isChecked()):
-                self.MainWindow.signalVisualizer.scale(scaledg.spinboxNormalizePercent.value(),"normalize")
-            elif(scaledg.rbuttonFadeIn.isChecked()):
-                self.MainWindow.signalVisualizer.scale(0,scaledg.cboxModulationType.currentText(),"IN")
-            elif(scaledg.rbuttonFadeOut.isChecked()):
-               self.MainWindow.signalVisualizer.scale(0,scaledg.cboxModulationType.currentText(),"OUT")
-
-    def insertSilence(self):
-        silenceDialog=sdialog.Ui_Dialog()
-        silenceDialogWindow=InsertSilenceDialog()
-        silenceDialog.setupUi(silenceDialogWindow)
-        if (silenceDialogWindow.exec_()):
-            self.MainWindow.signalVisualizer.insertSilence(silenceDialog.insertSpinBox.value())
-
-    def rms(self):
-        self.MainWindow.signalVisualizer.rms()
-    def envelope(self):
-        self.MainWindow.signalVisualizer.envelope()
-    def peaks(self):
-        self.MainWindow.signalVisualizer.maxMinPeaks()
-    def zoomOut(self):
-        self.MainWindow.signalVisualizer.zoomOut()
-    def filter(self):
-        filterDialog=filterdg.Ui_Dialog()
-        filterDialogWindow=InsertSilenceDialog()
-        filterDialog.setupUi(filterDialogWindow)
-        if (filterDialogWindow.exec_()):
-            type=None
-            Fc,Fl,Fu=0,0,0
-            if(filterDialog.rButtonLowPass.isChecked()):
-                type=FILTER_TYPE().LOW_PASS
-                Fc=filterDialog.spinBoxLowPass.value()
-            elif(filterDialog.rButtonHighPass.isChecked()):
-                type=FILTER_TYPE().HIGH_PASS
-                Fc=filterDialog.spinBoxHighPass.value()
-
-            elif(filterDialog.rButtonBandPass.isChecked()):
-                type=FILTER_TYPE().BAND_PASS
-                Fl=filterDialog.spinBoxBandPassFl.value()
-                Fu=filterDialog.spinBoxBandPassFu.value()
-            elif(filterDialog.rButtonBandStop.isChecked()):
-                type=FILTER_TYPE().BAND_STOP
-                Fl=filterDialog.spinBoxBandStopFl.value()
-                Fu=filterDialog.spinBoxBandStopFu.value()
-
-            if(type!=None):
-                self.MainWindow.signalVisualizer.filter(type, Fc,Fl,Fu)
-
-    def play(self):
-        self.MainWindow.signalVisualizer.play()
-    def pause(self):
-        self.MainWindow.signalVisualizer.pause()
-    def record(self):
-        self.MainWindow.signalVisualizer.record()
-    def switchPlayStatus(self):
-        self.signalVisualizer.switchPlayStatus()
-    def stop(self):
-        self.MainWindow.signalVisualizer.stop()
-
-    def silence(self):
-        self.MainWindow.signalVisualizer.silence()
-    def normalize(self):
-        self.MainWindow.signalVisualizer.normalize()
-    def uniformSegmenter(self):
-        self.MainWindow.signalVisualizer.segment()
-    def uniformSegmenter(self):
-        self.MainWindow.signalVisualizer.uniformSegmenter()
-    def pseudoUniformSegmenter(self):
-        self.MainWindow.signalVisualizer.pseudoUniformSegmenter()
-    def mean(self):
-        self.MainWindow.signalVisualizer.mean()
-    def zoomNone(self):
-        self.MainWindow.signalVisualizer.zoomNone()
-
-
-    def simpleElementsDetection(self):
-        self.MainWindow.signalVisualizer.elements()
-
-    def minIntervalElementsDetection(self):
-        silenceDialog=sdialog.Ui_Dialog()
-        silenceDialogWindow=InsertSilenceDialog()
-        silenceDialog.setupUi(silenceDialogWindow)
-        silenceDialog.insertSpinBox.setValue(1)
-        silenceDialog.label.setText("Select the amount of ms \n of the min size of \nan element to detect")
-        if (silenceDialogWindow.exec_()):
-            self.MainWindow.signalVisualizer.detector.MIN_INTERVAL=silenceDialog.insertSpinBox.value()
-            self.MainWindow.signalVisualizer.elements("minInterval")
-
-
-    def mergedIntervalsElementsDetection(self):
-        silenceDialog=sdialog.Ui_Dialog()
-        silenceDialogWindow=InsertSilenceDialog()
-        silenceDialog.setupUi(silenceDialogWindow)
-        silenceDialog.insertSpinBox.setValue(1)
-        silenceDialog.label.setText("Select the merge factor\n.Two elements will be merged\n if they are bigger than   ")
-        if (silenceDialogWindow.exec_()):
-            self.MainWindow.signalVisualizer.detector.NOISE_MERGE_FACTOR=silenceDialog.insertSpinBox.value()
-            self.MainWindow.signalVisualizer.elements("mergedIntervals")
-
-    #modify the optios in the program
-    #like FFT options and others
-    def options(self):
-        opt=optdialog.Ui_Dialog()
-        options=OptionsDialog()
-        opt.setupUi(options)
-        opt.cboxFFTNumber.setCurrentIndex(opt.cboxFFTNumber.findText(str(self.MainWindow.signalVisualizer.specgramSettings.NFFT)))
-        opt.cboxcolorpalette.clear()
-        for cbar in self.MainWindow.signalVisualizer.specgramSettings.colors:
-            opt.cboxcolorpalette.addItem(QtCore.QString(str(cbar.name)))
-        opt.cboxcolorpalette.setCurrentIndex(self.MainWindow.signalVisualizer.specgramSettings._colorPaletteIndex)
-        opt.overlapspinbox.setValue(self.MainWindow.signalVisualizer.specgramSettings.overlap)
-        opt.overlapspinboxthreshold.setValue(self.MainWindow.signalVisualizer.specgramSettings.threshold)
-        opt.overlapspinboxSoundSpeed.setValue(self.MainWindow.signalVisualizer.playerSpeed)
-        opt.cboxwindowType.setCurrentIndex(self.MainWindow.signalVisualizer.specgramSettings.windows.index(self.MainWindow.signalVisualizer.specgramSettings.window))
-        opt.checkBoxOsgram.setChecked(self.MainWindow.signalVisualizer.visibleOscilogram)
-        opt.checkBoxSpecgram.setChecked(self.MainWindow.signalVisualizer.visibleSpectrogram)
-        opt.checkBoxGrid.setChecked(self.MainWindow.signalVisualizer.specgramSettings.grid)
-        opt.checkBoxCursors.setChecked(self.MainWindow.signalVisualizer.visibleCursors)
-        if (options.exec_()):
-            self.MainWindow.signalVisualizer.specgramSettings.NFFT=int(opt.cboxFFTNumber.currentText())
-            self.MainWindow.signalVisualizer.specgramSettings._colorPaletteIndex=opt.cboxcolorpalette.currentIndex()
-            self.MainWindow.signalVisualizer.specgramSettings.overlap=opt.overlapspinbox.value()
-            self.MainWindow.signalVisualizer.playerSpeed=opt.overlapspinboxSoundSpeed.value()
-            self.MainWindow.signalVisualizer.specgramSettings.threshold=opt.overlapspinboxthreshold.value()
-            self.MainWindow.signalVisualizer.specgramSettings.window=self.MainWindow.signalVisualizer.specgramSettings.windows[opt.cboxwindowType.currentIndex()]
-            self.MainWindow.signalVisualizer.visibleOscilogram=opt.checkBoxOsgram.isChecked()
-            self.MainWindow.signalVisualizer.visibleSpectrogram=opt.checkBoxSpecgram.isChecked()
-            self.MainWindow.signalVisualizer.visibleCursors=opt.checkBoxCursors.isChecked()
-            self.MainWindow.signalVisualizer.specgramSettings.grid=opt.checkBoxGrid.isChecked()
-            self.MainWindow.signalVisualizer.visualChanges=True
-            self.refreshSignal()
-
-
-app = QtGui.QApplication(sys.argv)
-generatedwindow=Ui_MainWindow()
-DuettoWindow=MainWindow()
-generatedwindow.setupUi(DuettoWindow)
-DuettoWindow.MainWindow=generatedwindow
-DuettoWindow.enableScene()
-DuettoWindow.show()
-sys.exit(app.exec_())
+from wdoscilogram import MplWidget
+import icons_rc
