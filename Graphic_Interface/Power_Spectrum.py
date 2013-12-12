@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'power_spectrum.ui'
+# Form implementation generated from reading ui file 'D:\Proyecto bioacustica\DuettoSystem\Graphic_Interface\UI Files\power_spectrum.ui'
 #
-# Created: Wed Nov 27 21:41:03 2013
+# Created: Thu Dec 12 13:35:06 2013
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -22,7 +22,7 @@ class Ui_PowSpecWindow(object):
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.verticalLayout = QtGui.QVBoxLayout(self.centralwidget)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
-        self.pow_spec = pow_plot(self.centralwidget)
+        self.pow_spec = QPowerSpectrumWidget(self.centralwidget)
         self.pow_spec.setObjectName(_fromUtf8("pow_spec"))
         self.verticalLayout.addWidget(self.pow_spec)
         PowSpecWindow.setCentralWidget(self.centralwidget)
@@ -39,4 +39,4 @@ class Ui_PowSpecWindow(object):
         PowSpecWindow.setWindowTitle(QtGui.QApplication.translate("PowSpecWindow", "Power Spectrum", None, QtGui.QApplication.UnicodeUTF8))
         self.actionHighest_frequency.setText(QtGui.QApplication.translate("PowSpecWindow", "Highest frequency", None, QtGui.QApplication.UnicodeUTF8))
 
-from wdoscilogram import pow_plot
+from QPowerSpectrumWidget import QPowerSpectrumWidget

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MplMainWindow</class>
- <widget class="QMainWindow" name="MplMainWindow">
+ <class>DuettoMainWindow</class>
+ <widget class="QMainWindow" name="DuettoMainWindow">
   <property name="windowModality">
    <enum>Qt::ApplicationModal</enum>
   </property>
@@ -46,7 +46,7 @@
      <number>0</number>
     </property>
     <item>
-     <widget class="MplWidget" name="widget" native="true">
+     <widget class="QSignalVisualizerWidget" name="widget" native="true">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
         <horstretch>0</horstretch>
@@ -529,7 +529,7 @@
   </widget>
   <action name="actionOpen">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="resources/icons.qrc">
      <normaloff>:/myappicons/81.ico</normaloff>:/myappicons/81.ico</iconset>
    </property>
    <property name="text">
@@ -543,7 +543,7 @@
   </action>
   <action name="actionZoomIn">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="resources/icons.qrc">
      <normaloff>:/myappicons/zoomin_26x26.png</normaloff>:/myappicons/zoomin_26x26.png</iconset>
    </property>
    <property name="text">
@@ -552,7 +552,7 @@
   </action>
   <action name="actionZoom_out">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="resources/icons.qrc">
      <normaloff>:/myappicons/zoomout_26x26.png</normaloff>:/myappicons/zoomout_26x26.png</iconset>
    </property>
    <property name="text">
@@ -566,7 +566,7 @@
   </action>
   <action name="actionSpectogram">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="resources/icons.qrc">
      <normaloff>:/myappicons/spec.ico</normaloff>:/myappicons/spec.ico</iconset>
    </property>
    <property name="text">
@@ -578,7 +578,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="resources/icons.qrc">
      <normaloff>:/myappicons/osc.ico</normaloff>:/myappicons/osc.ico</iconset>
    </property>
    <property name="text">
@@ -590,7 +590,7 @@
   </action>
   <action name="actionCombined">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="resources/icons.qrc">
      <normaloff>:/myappicons/combined.ico</normaloff>:/myappicons/combined.ico</iconset>
    </property>
    <property name="text">
@@ -599,7 +599,7 @@
   </action>
   <action name="actionNew">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="resources/icons.qrc">
      <normaloff>:/myappicons/Leopard Icon 60.ico</normaloff>:/myappicons/Leopard Icon 60.ico</iconset>
    </property>
    <property name="text">
@@ -608,7 +608,7 @@
   </action>
   <action name="actionPower_Spectrum">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="resources/icons.qrc">
      <normaloff>:/myappicons/powerspec.ico</normaloff>:/myappicons/powerspec.ico</iconset>
    </property>
    <property name="text">
@@ -632,7 +632,7 @@
   </action>
   <action name="actionPlay_Sound">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="resources/icons.qrc">
      <normaloff>:/myappicons/02049_26x26.png</normaloff>:/myappicons/02049_26x26.png</iconset>
    </property>
    <property name="text">
@@ -641,7 +641,7 @@
   </action>
   <action name="actionStop_Sound">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="resources/icons.qrc">
      <normaloff>:/myappicons/02051_26x26.png</normaloff>:/myappicons/02051_26x26.png</iconset>
    </property>
    <property name="text">
@@ -655,7 +655,7 @@
   </action>
   <action name="actionZoom_out_entire_file">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="resources/icons.qrc">
      <normaloff>:/myappicons/zoom_26x26.png</normaloff>:/myappicons/zoom_26x26.png</iconset>
    </property>
    <property name="text">
@@ -664,7 +664,7 @@
   </action>
   <action name="actionSave">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="resources/icons.qrc">
      <normaloff>:/myappicons/225.ico</normaloff>:/myappicons/225.ico</iconset>
    </property>
    <property name="text">
@@ -673,7 +673,7 @@
   </action>
   <action name="actionCopy">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="resources/icons.qrc">
      <normaloff>:/myappicons/copy_26x26.png</normaloff>:/myappicons/copy_26x26.png</iconset>
    </property>
    <property name="text">
@@ -682,7 +682,7 @@
   </action>
   <action name="actionPaste">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="resources/icons.qrc">
      <normaloff>:/myappicons/paste_26x26.png</normaloff>:/myappicons/paste_26x26.png</iconset>
    </property>
    <property name="text">
@@ -691,7 +691,7 @@
   </action>
   <action name="actionCut">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="resources/icons.qrc">
      <normaloff>:/myappicons/cut_26x26.png</normaloff>:/myappicons/cut_26x26.png</iconset>
    </property>
    <property name="text">
@@ -724,7 +724,7 @@
   </action>
   <action name="actionAll_Settings">
    <property name="icon">
-    <iconset resource="icons.qrc">
+    <iconset resource="resources/icons.qrc">
      <normaloff>:/myappicons/LeopardVista V4 Icon 09.ico</normaloff>:/myappicons/LeopardVista V4 Icon 09.ico</iconset>
    </property>
    <property name="text">
@@ -737,14 +737,14 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>MplWidget</class>
+   <class>QSignalVisualizerWidget</class>
    <extends>QWidget</extends>
-   <header location="global">wdoscilogram.h</header>
+   <header location="global">QSignalVisualizerWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
  <resources>
-  <include location="icons.qrc"/>
+  <include location="resources/icons.qrc"/>
  </resources>
  <connections/>
 </ui>

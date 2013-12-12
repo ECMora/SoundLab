@@ -16,7 +16,7 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="pow_plot" name="pow_spec" native="true"/>
+     <widget class="QPowerSpectrumWidget" name="pow_spec" native="true"/>
     </item>
    </layout>
   </widget>
@@ -29,9 +29,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>pow_plot</class>
+   <class>QPowerSpectrumWidget</class>
    <extends>QWidget</extends>
-   <header location="global">wdoscilogram.h</header>
+   <header location="global">QPowerSpectrumWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

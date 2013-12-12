@@ -392,8 +392,7 @@ class QSignalVisualizerWidget(FigureCanvas):
                 xextent = a[0], a[1], b[0], b[1]
                 #self.self.freqs += Fc where Fc is the central frecuency
                 im = self.axesSpecgram.imshow(Z,
-                                              cmap=self.specgramSettings.colorPalette(),
-                                              extent=xextent,interpolation="nearest")
+                                              cmap=self.specgramSettings.colorPalette(),extent=xextent, interpolation="nearest")
                 self.axesSpecgram.axis('auto')
 
                 if (self.colorbar == None):
