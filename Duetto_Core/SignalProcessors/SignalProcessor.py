@@ -7,19 +7,18 @@ class SignalProcessor:
     """
     Class that execute several functionalities with an AudioSignal
     """
-    def __init__(self,signal=WavFileSignal()):
-        self._signal=signal
+    def __init__(self, signal=WavFileSignal()):
+        self._signal = signal
 
     #region Propiedad SIGNAL
-
     def _getSignal(self):
         return self._signal
     def _setSignal(self, value):
         assert isinstance(value, AudioSignal)
         self._signal = value
 
-    signal= property(_getSignal, _setSignal)
- #endregion
+    signal = property(_getSignal, _setSignal)
+    #endregion
 
 
     def rms(self,indexFrom=0,indexTo=-1):
@@ -50,7 +49,7 @@ class SignalProcessor:
         if(indexFrom>indexTo or indexFrom>=dataLength or indexTo>dataLength):
             raise IndexError()
 
-    def envelope(self,n):
+    def envelope(self, n):
         return abs(self.signal.data[n])
 
 

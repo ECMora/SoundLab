@@ -6,17 +6,20 @@ from Duetto_Core.Cursors.RectangularCursor import RectangularCursor
 class Detector:
 
     def __init__(self):
-        self.pointers=[]
-        self.intervals=[]
-        self.rectangles=[]
+        self.pointers = []
+        self.pointers2D = []
+        self.intervals = []
+        self.rectangles = []
 
-    def detect(self,signal):
+    def detect(self, signal):
         pass
 
     def cursors(self):
         for c in self.intervals:
             yield c
         for c in self.pointers:
+            yield c
+        for c in self.pointers2D:
             yield c
         for c in self.rectangles:
             yield c
