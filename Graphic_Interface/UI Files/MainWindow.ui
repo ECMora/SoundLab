@@ -117,6 +117,7 @@
     <addaction name="actionPlay_Sound"/>
     <addaction name="actionStop_Sound"/>
     <addaction name="actionPause_Sound"/>
+    <addaction name="actionRecord"/>
    </widget>
    <widget class="QMenu" name="menuView_2">
     <property name="title">
@@ -731,6 +732,11 @@
     <string>All Settings</string>
    </property>
   </action>
+  <action name="actionRecord">
+   <property name="text">
+    <string>Record</string>
+   </property>
+  </action>
   <zorder>dock_osc_settings</zorder>
   <zorder>dock_spec_settings</zorder>
   <zorder>dock_powspec_settings</zorder>
@@ -739,7 +745,7 @@
   <customwidget>
    <class>QSignalVisualizerWidget</class>
    <extends>QWidget</extends>
-   <header location="global">QSignalVisualizerWidget.h</header>
+   <header>QSignalVisualizerWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

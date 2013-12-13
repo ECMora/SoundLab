@@ -78,9 +78,7 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     @QtCore.pyqtSlot()
     def on_actionSelect_all_triggered(self):
-        #self.widget.update_osc_span(self.widget.minact,self.widget.maxact)
-        #self.widget.update_spec_span(self.widget.minact,self.widget.maxact)
-        pass
+        self.widget.updateSpanSelector()
 
     @QtCore.pyqtSlot()
     def on_btnosc_apply_clicked(self):
@@ -127,21 +125,18 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             self.widget.refresh()
             self.first = True
 
-    #def play_sound(self):
-    #    if self.widget.zmin != self.widget.zmax:
-    #        self.start = max(self.widget.zmin*1000, self.widget.minact*1000)
-    #        self.end = min(self.start + (self.widget.zmax - self.widget.zmin)*1000, self.widget.maxact*1000)
-    #    else:
-    #        self.start = self.widget.minact*1000
-    #        self.end = self.widget.maxact*1000
-    #
-    #    self.mediaObject.seek(self.start)
-    #    self.mediaObject.play()
-    #
-    #def tick(self,time):
-    #    if time > self.end:
-    #        self.mediaObject.stop()
-    #    return
+
+    @QtCore.pyqtSlot()
+    def on_actionPlay_Sound_triggered(self):
+        self.widget.play()
+
+    @QtCore.pyqtSlot()
+    def on_actionStop_Sound_triggered(self):
+        self.widget.stop()
+
+    @QtCore.pyqtSlot()
+    def on_actionRecord_triggered(self):
+        self.widget.record()
 
     @QtCore.pyqtSlot()
     def on_actionCombined_triggered(self):

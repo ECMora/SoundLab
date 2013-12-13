@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'D:\Proyecto bioacustica\DuettoSystem\Graphic_Interface\UI Files\MainWindow.ui'
 #
-# Created: Thu Dec 12 13:23:34 2013
+# Created: Thu Dec 12 15:49:48 2013
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -304,6 +304,8 @@ class Ui_DuettoMainWindow(object):
         icon15.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/LeopardVista V4 Icon 09.ico")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionAll_Settings.setIcon(icon15)
         self.actionAll_Settings.setObjectName(_fromUtf8("actionAll_Settings"))
+        self.actionRecord = QtGui.QAction(DuettoMainWindow)
+        self.actionRecord.setObjectName(_fromUtf8("actionRecord"))
         self.menuFile.addAction(self.actionNew)
         self.menuFile.addAction(self.actionOpen)
         self.menuFile.addAction(self.actionSave)
@@ -328,6 +330,7 @@ class Ui_DuettoMainWindow(object):
         self.menuSound.addAction(self.actionPlay_Sound)
         self.menuSound.addAction(self.actionStop_Sound)
         self.menuSound.addAction(self.actionPause_Sound)
+        self.menuSound.addAction(self.actionRecord)
         self.menuView_2.addAction(self.actionHighest_instant_frequency)
         self.menuView_2.addAction(self.actionClear_Spectogram)
         self.menubar.addAction(self.menuFile.menuAction())
@@ -432,6 +435,7 @@ class Ui_DuettoMainWindow(object):
         self.actionHighest_instant_frequency.setText(QtGui.QApplication.translate("DuettoMainWindow", "Highest instant frequency ", None, QtGui.QApplication.UnicodeUTF8))
         self.actionClear_Spectogram.setText(QtGui.QApplication.translate("DuettoMainWindow", "Clear Spectrogram", None, QtGui.QApplication.UnicodeUTF8))
         self.actionAll_Settings.setText(QtGui.QApplication.translate("DuettoMainWindow", "All Settings", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionRecord.setText(QtGui.QApplication.translate("DuettoMainWindow", "Record", None, QtGui.QApplication.UnicodeUTF8))
 
 from QSignalVisualizerWidget import QSignalVisualizerWidget
 import icons_rc

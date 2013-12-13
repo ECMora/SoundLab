@@ -147,6 +147,23 @@ class QSignalVisualizerWidget(FigureCanvas):
         if(self.visibleSpectrogram):
             self.backgroundSpectrogramSpanRectangle = self.figure.canvas.copy_from_bbox(self.axesSpecgram.bbox)
 
+    def updateSpanSelector(self):
+        if(self.visibleOscilogram):
+            self.spanRectangleOsgram.set_x(self.mainCursor.min)
+            self.spanRectangleOsgram.set_width(self.mainCursor.max - self.mainCursor.min)
+            self.spanRectangleOsgram.set_height(self.axesOscilogram.bbox.height)
+            self.figure.canvas.restore_region(self.backgroundOscilogramSpanRectangle)
+            self.axesOscilogram.draw_artist(self.spanRectangleOsgram)
+            self.figure.canvas.blit(self.axesOscilogram.bbox)
+        if(self.visibleSpectrogram):
+            x1=self.mainCursor.min
+            x2=self.mainCursor.max
+            self.spanRectangleSpectrogram.set_x(x1)
+            self.spanRectangleSpectrogram.set_width(x2-x1)
+            self.spanRectangleSpectrogram.set_height(self.axesSpecgram.bbox.height)
+            self.figure.canvas.restore_region(self.backgroundSpectrogramSpanRectangle)
+            self.axesSpecgram.draw_artist(self.spanRectangleSpectrogram)
+            self.figure.canvas.blit(self.axesSpecgram.bbox)
 
     def mouseMoveEvent(self, event):
         FigureCanvas.mouseMoveEvent(self, event)
