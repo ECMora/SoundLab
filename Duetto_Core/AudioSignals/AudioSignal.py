@@ -2,11 +2,11 @@ import wave
 from PyQt4.QtGui import QMessageBox
 import pyaudio
 from numpy import *
-
+from audio import
 from numpy.numarray import fromstring
 import pyaudio
 from PyQt4.QtCore import QTimer
-
+from audiolazy import *
 
 class AudioSignal:
     """an abstract class for the representation of an audio signal"""
@@ -39,6 +39,10 @@ class AudioSignal:
         if(abs(media)>0.01):
             self.data-=media
 
+
+    def generate(self):
+        #generates common signals
+        pass
 
     def playCallback(self):
         """PLay playCallback"""

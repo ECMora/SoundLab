@@ -23,6 +23,7 @@ from Duetto_Core.SignalProcessors.SignalProcessor import SignalProcessor
 from Duetto_Core.SignalProcessors.EditionSignalProcessor import EditionSignalProcessor
 from Duetto_Core.SpecgramSettings import SpecgramSettings
 import matplotlib.cm as cm
+import time
 
 BACK_COLOR="gray"
 class QSignalVisualizerWidget(FigureCanvas):
@@ -392,6 +393,7 @@ class QSignalVisualizerWidget(FigureCanvas):
                     self.specgramSettings.NFFT, Fs=2, detrend=mlab.detrend_none, window=self.specgramSettings.window,
                     noverlap=overlap, sides=self.SPECGRAM_COMPLEX_SIDE)
                 self.axesSpecgram.grid(self.specgramSettings.grid)
+
                 #the umbral cut
                 #increases the performance with search in the indexes
                 cut_off = percentile(self.powerSpectrum, self.specgramSettings.threshold)

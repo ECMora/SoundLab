@@ -77,7 +77,14 @@ class ElementDetector(Detector):
         newIntervals.append(current)
         self.intervals=[x for x in newIntervals if(x.max-x.min>msSize)]
 
-    def specgramElementsDetector(self,signal,indexFrom=0,indexTo=-1,threshold=50):
+    def specgramElementsDetector(self,signal,Psd,indexFrom=0,indexTo=-1,threshold=50):
+        #buscar maximos locales de frecuencia por intervalo de tiempo
+        #unir los maximos locales que esten "cercanos" mediante un concpto de distancia
+        #asume calculado el psd
+
+
+
+
         pass
 
 
