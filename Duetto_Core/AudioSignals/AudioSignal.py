@@ -1,8 +1,8 @@
 import wave
 from PyQt4.QtGui import QMessageBox
-from PyQt4.QtCore import QTimer
 import pyaudio
-import numpy
+from numpy import *
+
 from numpy.numarray import fromstring
 import pyaudio
 from PyQt4.QtCore import QTimer
@@ -16,9 +16,10 @@ class AudioSignal:
     def __init__(self):
         self.samplingRate = 0
         self.channels=1
-        self.data = numpy.array([])
+        self.data = array([])
         self.bitDepth = 0
         self.path = ""
+        self.media=0#mean value of the signal
         self.stream=None
         self.playAudio=pyaudio.PyAudio()
         self.playStatus = self.STOPPED
@@ -31,6 +32,13 @@ class AudioSignal:
     def currentPlayingTime(self):
         return self.playSection[2]
 
+    def removeDCOffset(self):
+        if(len(self.data)==0):
+            return
+        media=mean(self.data)
+        if(abs(media)>0.01):
+            self.data-=media
+
 
     def playCallback(self):
         """PLay playCallback"""
@@ -39,7 +47,9 @@ class AudioSignal:
                 frame = self.playSection[2]
                 self.playSection = (0, 0, 0)
                 self.playStatus = self.STOPPED
-                return (self.data[frame:frame + frame_count], pyaudio.paComplete)
+                data=self.data[frame:frame + frame_count]
+                data-=self.media
+                return (data, pyaudio.paComplete)
             data = self.data[self.playSection[2]:self.playSection[2] + frame_count]
             self.playSection = (self.playSection[0], self.playSection[1], self.playSection[2] + frame_count)
             return (data, pyaudio.paContinue)
@@ -97,7 +107,7 @@ class AudioSignal:
             self.playStatus=self.PLAYING
             self.timer.start(self.tick)
             return
-
+        self.media=mean(self.data)
         self.playStatus=self.PLAYING
         formatt=(pyaudio.paInt8 if self.bitDepth==8 else pyaudio.paInt16 if self.bitDepth==16 else pyaudio.paFloat32)
         self.stream =self.playAudio.open(format=formatt,

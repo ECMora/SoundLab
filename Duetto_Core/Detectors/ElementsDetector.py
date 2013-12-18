@@ -77,6 +77,8 @@ class ElementDetector(Detector):
         newIntervals.append(current)
         self.intervals=[x for x in newIntervals if(x.max-x.min>msSize)]
 
+    def specgramElementsDetector(self,signal,indexFrom=0,indexTo=-1,threshold=50):
+        pass
 
 
 

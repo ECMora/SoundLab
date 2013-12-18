@@ -67,7 +67,7 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     def on_actionPower_Spectrum_triggered(self):
         dg_pow_spec = PowerSpectrumWindow(self)
         minx = self.widget.zmin * self.widget.rate
-        maxx = max(self.widget.zmax * self.widget.rate ,min(minx + self.NFFT_pow,len(self.widget.data)))
+        maxx = max(self.widget.zmax ,min(minx + self.NFFT_pow,len(self.widget.data)))
         dg_pow_spec.plot(self.widget.data[minx:maxx], self.widget.rate, self.NFFT_pow, self.window_pow)
         self.pow_spec_windows.append(dg_pow_spec)
 
