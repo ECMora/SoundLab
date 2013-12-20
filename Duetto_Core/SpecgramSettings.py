@@ -50,7 +50,7 @@ class SpecgramSettings:
         #self.colorPalette=ListedColormap(self.colors[0],name="DuettoColorMap")
 
         self._colorPaletteIndex=0#the color palette with the specgram is displayed its a matplotlib.cm.Colormap object
-        self.threshold=5#the % of the specgram that is visible
+        self.threshold=30#the % of the specgram that is visible
         self.grid=False
 
     def _getColorPaletteIndex(self):

@@ -12,7 +12,7 @@ from Duetto_Core.AudioSignals.WavFileSignal import WavFileSignal
 from Duetto_Core.Cursors.IntervalCursor import IntervalCursor
 from Duetto_Core.Cursors.PointerCursor import PointerCursor
 from Duetto_Core.Cursors.RectangularCursor import RectangularCursor
-from Duetto_Core.Detectors.ElementsDetector import ElementDetector,specgramElementsDetector
+from Duetto_Core.Detectors.ElementsDetector import ElementDetector,specgram_elements_detector
 from Duetto_Core.Detectors.SpectrogramHillDetector import SpectrogramHillDetector
 from Duetto_Core.Detectors.MaxMinPeakDetector import MaxMinPeakDetector
 from Duetto_Core.Detectors.MeanDetector import MeanDetector
@@ -69,11 +69,11 @@ class QSignalVisualizerWidget(FigureCanvas):
     #region  Sound
 
     def play(self):
-        #if(self.zoomCursor.min > 0 and self.zoomCursor.max > 0):
-        #    self.signalProcessor.signal.play(self.zoomCursor.min,self.zoomCursor.max,self.playerSpeed)
-        #else:
-        #    self.signalProcessor.signal.play(self.mainCursor.min,self.mainCursor.max,self.playerSpeed)
-        specgramElementsDetector(self.signalProcessor.signal)
+        if(self.zoomCursor.min > 0 and self.zoomCursor.max > 0):
+            self.signalProcessor.signal.play(self.zoomCursor.min,self.zoomCursor.max,self.playerSpeed)
+        else:
+            self.signalProcessor.signal.play(self.mainCursor.min,self.mainCursor.max,self.playerSpeed)
+
 
     def switchPlayStatus(self):
         if(self.signalProcessor.signal.playStatus==self.signalProcessor.signal.PLAYING):
@@ -387,22 +387,24 @@ class QSignalVisualizerWidget(FigureCanvas):
 
             if ( self.visibleSpectrogram and self.signalProcessor.signal.opened() and self.mainCursor.max > self.mainCursor.min):
                 self.axesSpecgram.clear()
+                self.axesSpecgram.hold(False)
                 overlap = int(self.specgramSettings.NFFT * self.specgramSettings.overlap / 100)
-                self.specgramSettings.Pxx, self.specgramSettings.freqs, self.specgramSettings.bins = mlab.specgram(
+                self.specgramSettings.Pxx , self.specgramSettings.freqs, self.specgramSettings.bins = mlab.specgram(
                     self.signalProcessor.signal.data[self.mainCursor.min:self.mainCursor.max],
                     self.specgramSettings.NFFT, Fs=2, detrend=mlab.detrend_none, window=self.specgramSettings.window,
                     noverlap=overlap, sides=self.SPECGRAM_COMPLEX_SIDE)
                 self.axesSpecgram.grid(self.specgramSettings.grid)
+                elems = specgram_elements_detector(self.signalProcessor.signal,self.mainCursor.min,self.mainCursor.max)
+
+                cut_off = percentile(self.powerSpectrum, self.specgramSettings.threshold)
 
                 #the umbral cut
                 #increases the performance with search in the indexes
-                cut_off = percentile(self.powerSpectrum, self.specgramSettings.threshold)
+
                 modify = 0
 
-                for i in range(len(self.specgramSettings.Pxx)):
-                    for j in range(len(self.specgramSettings.Pxx[i])):
-                        if (self.specgramSettings.Pxx[i, j] < cut_off):
-                            self.specgramSettings.Pxx[i, j] = self.min_specgram_value
+                ind = mlab.cross_from_below(self.specgramSettings.Pxx, cut_off)
+                self.specgramSettings.Pxx[ind] = self.min_specgram_value
 
                 Z = 10. * np.log10(self.specgramSettings.Pxx)
                 Z = np.flipud(Z)
@@ -410,8 +412,7 @@ class QSignalVisualizerWidget(FigureCanvas):
                 b = self.axesSpecgram.get_ylim()
                 xextent = a[0], a[1], b[0], b[1]
                 #self.self.freqs += Fc where Fc is the central frecuency
-                im = self.axesSpecgram.imshow(Z,
-                                              cmap=self.specgramSettings.colorPalette(),extent=xextent, interpolation="nearest")
+                im = self.axesSpecgram.imshow(Z, cmap=self.specgramSettings.colorPalette(),extent=xextent, interpolation="nearest")
                 self.axesSpecgram.axis('auto')
 
                 if (self.colorbar == None):

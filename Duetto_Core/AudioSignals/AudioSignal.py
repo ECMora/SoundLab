@@ -123,18 +123,6 @@ class AudioSignal:
         self.playSection=(startIndex,endIndex,startIndex)
         self.stream.start_stream()
         self.timer.start(self.tick)
-        #if(self.playStatus==self.PLAYING):
-        #    return
-        #if(self.playStatus==self.PAUSED):
-        #    self.playStatus=self.PLAYING
-        #    self.timer.start(self.tick)
-        #    return
-        #self.playStatus=self.PLAYING
-        #endIndex=endIndex if endIndex!=-1 else len(self.data)
-        #self.playSpeed=speed if (speed >= 50 and speed <= 200) else 100
-        #self.playSection=(startIndex,endIndex,startIndex)
-        #self.stream=None
-        #self.timer.start(self.tick)
 
 
     def stop(self):

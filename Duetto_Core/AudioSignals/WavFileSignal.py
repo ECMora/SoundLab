@@ -24,7 +24,8 @@ class WavFileSignal(FileAudioSignal):
             self.path=path
             #self.timer.stop()
         except Exception, e:
-            QMessageBox.warning(QMessageBox(),"Error","Could not load the file. "+e.message)
+            #QMessageBox.warning(QMessageBox(),"Error","Could not load the file. "+e.message)
+            pass
 
     def read(self,file):
         if hasattr(file,'read'):
