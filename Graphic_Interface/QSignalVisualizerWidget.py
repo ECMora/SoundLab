@@ -12,7 +12,7 @@ from Duetto_Core.AudioSignals.WavFileSignal import WavFileSignal
 from Duetto_Core.Cursors.IntervalCursor import IntervalCursor
 from Duetto_Core.Cursors.PointerCursor import PointerCursor
 from Duetto_Core.Cursors.RectangularCursor import RectangularCursor
-from Duetto_Core.Detectors.ElementsDetector import ElementDetector
+from Duetto_Core.Detectors.ElementsDetector import ElementDetector,specgramElementsDetector
 from Duetto_Core.Detectors.SpectrogramHillDetector import SpectrogramHillDetector
 from Duetto_Core.Detectors.MaxMinPeakDetector import MaxMinPeakDetector
 from Duetto_Core.Detectors.MeanDetector import MeanDetector
@@ -69,11 +69,11 @@ class QSignalVisualizerWidget(FigureCanvas):
     #region  Sound
 
     def play(self):
-        if(self.zoomCursor.min > 0 and self.zoomCursor.max > 0):
-            self.signalProcessor.signal.play(self.zoomCursor.min,self.zoomCursor.max,self.playerSpeed)
-        else:
-            self.signalProcessor.signal.play(self.mainCursor.min,self.mainCursor.max,self.playerSpeed)
-
+        #if(self.zoomCursor.min > 0 and self.zoomCursor.max > 0):
+        #    self.signalProcessor.signal.play(self.zoomCursor.min,self.zoomCursor.max,self.playerSpeed)
+        #else:
+        #    self.signalProcessor.signal.play(self.mainCursor.min,self.mainCursor.max,self.playerSpeed)
+        specgramElementsDetector(self.signalProcessor.signal)
 
     def switchPlayStatus(self):
         if(self.signalProcessor.signal.playStatus==self.signalProcessor.signal.PLAYING):

@@ -22,7 +22,7 @@ class WavFileSignal(FileAudioSignal):
             FileAudioSignal.open(self,path)
             self.read(path)
             self.path=path
-            self.timer.stop()
+            #self.timer.stop()
         except Exception, e:
             QMessageBox.warning(QMessageBox(),"Error","Could not load the file. "+e.message)
 

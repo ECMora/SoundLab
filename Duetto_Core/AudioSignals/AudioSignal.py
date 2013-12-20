@@ -2,7 +2,6 @@ import wave
 from PyQt4.QtGui import QMessageBox
 import pyaudio
 from numpy import *
-from audio import
 from numpy.numarray import fromstring
 import pyaudio
 from PyQt4.QtCore import QTimer
@@ -79,8 +78,6 @@ class AudioSignal:
         #            bytesforwrite=self.stream.get_write_available()
         #            self.stream.write(data[writed:writed+bytesforwrite])
         #            writed+=bytesforwrite
-
-
 
 
     def recordCallback(self):
@@ -165,8 +162,6 @@ class AudioSignal:
         self.playSection=(0,0,0)
         self.playStatus=self.RECORDING
         self.timer.start(self.tick)
-
-
 
 
     def toWav(self):

@@ -1,8 +1,11 @@
-from numpy import mean
+from numpy import *
 from Duetto_Core.AudioSignals.WavFileSignal import WavFileSignal
 from Duetto_Core.Cursors.IntervalCursor import IntervalCursor
 from Duetto_Core.Detectors.Detector import Detector
+import matplotlib.mlab as mlab
 from Duetto_Core.SignalProcessors.SignalProcessor import SignalProcessor
+import time
+from numpy.lib.function_base import percentile
 
 class ElementDetector(Detector):
     def __init__(self):
@@ -77,23 +80,51 @@ class ElementDetector(Detector):
         newIntervals.append(current)
         self.intervals=[x for x in newIntervals if(x.max-x.min>msSize)]
 
-    def specgramElementsDetector(self,signal,Psd,indexFrom=0,indexTo=-1,threshold=50):
-        #buscar maximos locales de frecuencia por intervalo de tiempo
-        #unir los maximos locales que esten "cercanos" mediante un concpto de distancia
-        #asume calculado el psd
 
 
 
 
-        pass
+
+def specgram_elements_detector(signal,indexFrom=0,indexTo=-1,threshold=50,NFFT=512,overlap=50,minamplitud=1,minLongitud=1000):
+    #buscar maximos locales de frecuencia por intervalo de tiempo
+    #unir los maximos locales que esten "cercanos" mediante un concpto de distancia
+    #asume calculado el psd
+    #minamplitud en Hz
+    #minLongitud en ms
+    t=time.time()
+
+    if(threshold<0 or threshold >=100):
+        return
+
+    umbral = percentile(signal.data,threshold)
+    Pxx, freqs, bins = mlab.specgram(signal.data[indexFrom:indexTo],
+                                     NFFT, Fs=2, detrend=mlab.detrend_none, noverlap=overlap, sides="onesided")
+    print(Pxx.shape)
+    print(time.time()-t)
+    #elemIndexes = mlab.cross_from_above(signal.data, umbral)
+    t=time.time()
+    elements = []
+    begin = -1
+    for col in range(Pxx.shape[1]):
+        elements.append([])
+        for fila in range(Pxx.shape[0]):
+            begin = fila if (begin == -1 and Pxx[fila,col] > umbral) else begin
+            if(begin > -1 and Pxx[fila,col] < umbral):
+                #if(j-begin>minamplitud):
+                elements[col].append((begin, fila))
+                begin = -1
+
+    print(time.time()-t)
+    print(elements)
 
 
 
+#
+wav=WavFileSignal()
+t=time.time()
+wav.open("start.wav")
+print("time "+str(time.time()-t))
+specgram_elements_detector(wav)
 
-#data=[1,2,5,9,10,12,15,12,8,2,5,8,15,10,8,9,8,8,7,6,5,4,2,1]
-#a=ElementDetector()
-#signal=WavFileSignal()
-#signal.data=data
-#a.minIntervalDetect(signal,threshold=5,minInterval=0)
-#for c in  a.intervals:
-#    print(" min "+str(c.min)+" max "+str(c.max))
+a= array([[1,2,3],[4,5,6],[7,8,9]])
+print(a[:,1])
