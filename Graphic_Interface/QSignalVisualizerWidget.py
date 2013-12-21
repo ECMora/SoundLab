@@ -12,7 +12,7 @@ from Duetto_Core.AudioSignals.WavFileSignal import WavFileSignal
 from Duetto_Core.Cursors.IntervalCursor import IntervalCursor
 from Duetto_Core.Cursors.PointerCursor import PointerCursor
 from Duetto_Core.Cursors.RectangularCursor import RectangularCursor
-from Duetto_Core.Detectors.ElementsDetector import ElementDetector,specgram_elements_detector
+from Duetto_Core.Detectors.ElementsDetector import ElementDetector
 from Duetto_Core.Detectors.SpectrogramHillDetector import SpectrogramHillDetector
 from Duetto_Core.Detectors.MaxMinPeakDetector import MaxMinPeakDetector
 from Duetto_Core.Detectors.MeanDetector import MeanDetector
@@ -69,6 +69,8 @@ class QSignalVisualizerWidget(FigureCanvas):
     #region  Sound
 
     def play(self):
+        #self.signalProcessor.signal.resampling(self.signalProcessor.signal.samplingRate/2)
+        #print(self.signalProcessor.signal.samplingRate)
         if(self.zoomCursor.min > 0 and self.zoomCursor.max > 0):
             self.signalProcessor.signal.play(self.zoomCursor.min,self.zoomCursor.max,self.playerSpeed)
         else:
@@ -394,7 +396,6 @@ class QSignalVisualizerWidget(FigureCanvas):
                     self.specgramSettings.NFFT, Fs=2, detrend=mlab.detrend_none, window=self.specgramSettings.window,
                     noverlap=overlap, sides=self.SPECGRAM_COMPLEX_SIDE)
                 self.axesSpecgram.grid(self.specgramSettings.grid)
-                elems = specgram_elements_detector(self.signalProcessor.signal,self.mainCursor.min,self.mainCursor.max)
 
                 cut_off = percentile(self.powerSpectrum, self.specgramSettings.threshold)
 
@@ -567,6 +568,12 @@ class QSignalVisualizerWidget(FigureCanvas):
 
     def reverse(self):
         self.signalProcessingAction(CommonSignalProcessor(self.signalProcessor.signal).reverse)
+
+    def resampling(self,samplingRate):
+        self.signalProcessor.signal.resampling(samplingRate)
+        self.visualChanges=True
+        self.refresh()
+
     def getIndexFromAndTo(self):
         indexFrom, indexTo = self.mainCursor.min, self.mainCursor.max
         if (self.zoomCursor.min > 0 and self.zoomCursor.max > 0):

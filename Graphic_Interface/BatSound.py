@@ -21,6 +21,9 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.overlap_spec = self.sbx_fftoverlap.value()
         self.pow_spec_windows = []
 
+    def resampling(self):
+        self.widget.resampling()
+
     @QtCore.pyqtSlot()
     def on_actionZoomIn_triggered(self):
         self.widget.zoomIn()
@@ -155,6 +158,9 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.widget._setVisibleOscilogram(True)
         self.widget._setVisibleSpectrogram(False)
         self.widget.refresh()
+
+
+
 
 # create the GUI application
 app = QtGui.QApplication(sys.argv)

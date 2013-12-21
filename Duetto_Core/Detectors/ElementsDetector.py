@@ -135,13 +135,13 @@ class ElementDetector(Detector):
 
 
 
-wav = WavFileSignal()
-wav.open("..\\..\\..\\ficheros de audio\Clasif\c2.wav")
-print(str(len(wav.data))+" "+str(wav.samplingRate))
-print(wav.data)
-wav.resampling(wav.samplingRate/3.3)
-print(wav.data)
-print(str(len(wav.data))+" "+str(wav.samplingRate))
+#wav = WavFileSignal()
+#wav.open("..\\..\\..\\ficheros de audio\Clasif\c2.wav")
+#print(str(len(wav.data))+" "+str(wav.samplingRate))
+#print(wav.data)
+#wav.resampling(wav.samplingRate/3.3)
+#print(wav.data)
+#print(str(len(wav.data))+" "+str(wav.samplingRate))
 
 #detector=ElementDetector()
 #el=detector.specgram_elements_detector(wav)

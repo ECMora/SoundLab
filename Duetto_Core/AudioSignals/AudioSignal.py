@@ -28,7 +28,12 @@ class AudioSignal:
         self.timer = QTimer()
         self.timer.timeout.connect(self.recordCallback)
 
-    def resampling(self,samplinRate=44100):
+    def generateWhiteNoise(self, duration=1, begin_at=0):
+        wn = array([random.uniform(-2**self.bitDepth -1, 2**self.bitDepth-1) for i in range(duration*self.samplingRate/1000)])
+        self.data=concatenate((self.data[0:begin_at],wn,self.data[begin_at:]))
+
+    
+    def resampling(self,  samplinRate= 44100):
         samplinRate = int(samplinRate)
         frac = self.samplingRate*1./samplinRate
         if( abs(frac-1) < 0.001 ):
