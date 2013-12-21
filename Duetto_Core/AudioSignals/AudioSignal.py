@@ -28,6 +28,34 @@ class AudioSignal:
         self.timer = QTimer()
         self.timer.timeout.connect(self.recordCallback)
 
+    def resampling(self,samplinRate=44100):
+        samplinRate = int(samplinRate)
+        frac = self.samplingRate*1./samplinRate
+        if( abs(frac-1) < 0.001 ):
+            return
+        if( frac > 1):
+            #down sampling
+            self.data = array(self.data[[int(round(index*frac)) for index in range(int(floor(len(self.data)/frac)))]])
+        else:
+            # up
+            arr = array([self.interpolate(i,frac) for i in range(int(round(len(self.data)/frac)))])
+            self.data = arr
+
+        self.samplingRate = samplinRate
+
+    def interpolate(self, index, frac):
+        """
+        returns a interpolated new value corresponding to the index position
+        in the new resampled array of data with frac fraction of resampling
+        """
+        if(index==0):
+            return self.data[0]
+        current_low_index , current_high_index = int(floor(index*frac)),int(ceil(index*frac))
+        if(current_low_index==len(self.data)-1):
+            return self.data[-1]
+        y0 , y1 = self.data[current_low_index], self.data[current_high_index]
+        return y0+(index*frac - current_low_index)*(y1-y0)
+
     def currentPlayingTime(self):
         return self.playSection[2]
 
@@ -36,7 +64,7 @@ class AudioSignal:
             return
         media=mean(self.data)
         if(abs(media)>0.01):
-            self.data-=media
+            self.data -= media
 
 
     def generate(self):

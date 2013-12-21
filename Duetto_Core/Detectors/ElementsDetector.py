@@ -82,7 +82,7 @@ class ElementDetector(Detector):
         self.intervals=[x for x in newIntervals if(x.max-x.min>msSize)]
 
 
-    def specgram_elements_detector(self,signal, indexFrom=0, indexTo = -1, threshold=50, NFFT=512, overlap=0,minamplitud=1,minLongitud=1000):
+    def specgram_elements_detector(self, signal, indexFrom=0, indexTo = -1, threshold=50, NFFT=512, overlap = 0, minamplitud = 1, minLongitud = 1):
         #buscar maximos locales de frecuencia por intervalo de tiempo
         #unir los maximos locales que esten "cercanos" mediante un concpto de distancia
         #asume calculado el psd
@@ -94,24 +94,35 @@ class ElementDetector(Detector):
         Pxx, freqs, bins = mlab.specgram(signal.data[indexFrom:indexTo],
                                          NFFT, Fs=2, detrend=mlab.detrend_none, noverlap=10, sides="onesided",window=mlab.window_hanning)
 
+        t = time.time()
         umbral = percentile(Pxx, threshold)
 
-        distancefactor = Pxx.shape[0]*1./100
-        elements = array([self.merge(mlab.contiguous_regions(Pxx[1:, col] >= umbral),distancefactor) for col in range(Pxx.shape[1])])
+        distancefactor = Pxx.shape[0]*1./100  # 1 %
+        elements = array([self.mergeIntervals(mlab.contiguous_regions(Pxx[1:, col] >= umbral),distancefactor) for col in range(Pxx.shape[1])])
 
         #build the elements by link the indices
-        elements=array([[Element(Pxx,bins,freqs, None, [e], i) for e in col] for i, col in enumerate(elements)])
+        elements = array([[Element(signal, indexFrom, indexTo, Pxx, bins, freqs, None, [e], i) for e in col] for i, col in enumerate(elements)])
+
+        identifiedElements = []
+
+        for arr in elements:
+            pass
+
+        #mergeIntervals
+
+        identifiedElements=array([el for el in identifiedElements if (el.size() >= minLongitud)])
+        print("Algortimo finalizado "+str(time.time()-t))
+        return identifiedElements
 
 
 
-        return elements
 
-
-
-
-    def merge(self, a, distancefactor=2):
+    def mergeIntervals(self, a, distancefactor=2):
+        """
+        Merge into one interval two intervals with no more than  distance factor distance between them
+        """
         b = []
-        current=a[0]
+        current = a[0]
         for tuple in a[1:]:
             if(tuple[0]-current[1] < distancefactor):
                 current=(current[0],tuple[1])
@@ -126,12 +137,19 @@ class ElementDetector(Detector):
 
 wav = WavFileSignal()
 wav.open("..\\..\\..\\ficheros de audio\Clasif\c2.wav")
-detector=ElementDetector()
-el=detector.specgram_elements_detector(wav)
+print(str(len(wav.data))+" "+str(wav.samplingRate))
+print(wav.data)
+wav.resampling(wav.samplingRate/3.3)
+print(wav.data)
+print(str(len(wav.data))+" "+str(wav.samplingRate))
 
-for x in el:
-    print("New Column")
-    for ele in x:
-        print(str(ele.perimeter)+" "+str(ele.initColumn))
+#detector=ElementDetector()
+#el=detector.specgram_elements_detector(wav)
+#
+#for x in el:
+#    #print("New Column")
+#    print(x.perimeter)
+    #for ele in x:
+    #    print(ele.size())
 #a= array([[1,2,3],[4,5,6],[7,8,9]])
 #print(a[:,1])
