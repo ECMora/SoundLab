@@ -3,11 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="a4cadb62-d73c-4cca-ab38-f0555ce54738" name="Default" comment="Inicio del algoritmo de links entre elementos&#10;Definicion de segmento y de elemento.&#10;Tipos de segmentacion">
       <change type="DELETED" beforePath="D:\YASEL\Universidad\Biologia\DuettosytemYasel\Graphic_Interface\Dialogs\ChangeVolume.ui" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Duetto_Core/AudioSignals/AudioSignal.py" afterPath="$PROJECT_DIR$/Duetto_Core/AudioSignals/AudioSignal.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Graphic_Interface/BatSound.py" afterPath="$PROJECT_DIR$/Graphic_Interface/BatSound.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Duetto_Core/SignalProcessors/CommonSignalProcessor.py" afterPath="$PROJECT_DIR$/Duetto_Core/SignalProcessors/CommonSignalProcessor.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Graphic_Interface/QSignalVisualizerWidget.py" afterPath="$PROJECT_DIR$/Graphic_Interface/QSignalVisualizerWidget.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Duetto_Core/AudioSignals/WavFileSignal.py" afterPath="$PROJECT_DIR$/Duetto_Core/AudioSignals/WavFileSignal.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="DuettosytemYasel.iws" />
@@ -45,7 +40,7 @@
       <file leaf-file-name="BatSound.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Graphic_Interface/BatSound.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="39" column="22" selection-start="1466" selection-end="1466" vertical-scroll-proportion="0.6356164" vertical-offset="159" max-vertical-offset="2448">
+            <state line="11" column="27" selection-start="500" selection-end="500" vertical-scroll-proportion="0.33754513" vertical-offset="0" max-vertical-offset="2448">
               <folding>
                 <element signature="e#0#44#0" expanded="true" />
                 <element signature="e#556#560#0" expanded="false" />
@@ -557,7 +552,7 @@
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39805827" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.30582523" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.30582523" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -707,7 +702,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Graphic_Interface/BatSound.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="39" column="22" selection-start="1466" selection-end="1466" vertical-scroll-proportion="0.6356164" vertical-offset="159" max-vertical-offset="2448">
+        <state line="11" column="27" selection-start="500" selection-end="500" vertical-scroll-proportion="0.33754513" vertical-offset="0" max-vertical-offset="2448">
           <folding>
             <element signature="e#0#44#0" expanded="true" />
             <element signature="e#556#560#0" expanded="false" />

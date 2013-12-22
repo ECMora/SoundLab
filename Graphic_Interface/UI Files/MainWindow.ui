@@ -66,7 +66,7 @@
      <x>0</x>
      <y>0</y>
      <width>1270</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -90,11 +90,28 @@
     <property name="title">
      <string>Edit</string>
     </property>
+    <widget class="QMenu" name="menuGenerate">
+     <property name="title">
+      <string>Generate</string>
+     </property>
+     <addaction name="actionGenerate_White_Noise"/>
+    </widget>
     <addaction name="actionCopy"/>
     <addaction name="actionPaste"/>
     <addaction name="actionCut"/>
     <addaction name="separator"/>
     <addaction name="actionSelect_all"/>
+    <addaction name="separator"/>
+    <addaction name="action_Reverse"/>
+    <addaction name="actionInsert_Silence"/>
+    <addaction name="actionSilence"/>
+    <addaction name="separator"/>
+    <addaction name="actionFilter"/>
+    <addaction name="actionSmart_Scale"/>
+    <addaction name="actionNormalize"/>
+    <addaction name="actionResampling"/>
+    <addaction name="separator"/>
+    <addaction name="menuGenerate"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -735,6 +752,46 @@
   <action name="actionRecord">
    <property name="text">
     <string>Record</string>
+   </property>
+  </action>
+  <action name="action_Reverse">
+   <property name="text">
+    <string>Reverse</string>
+   </property>
+  </action>
+  <action name="actionInsert_Silence">
+   <property name="text">
+    <string>Insert Silence</string>
+   </property>
+  </action>
+  <action name="actionSilence">
+   <property name="text">
+    <string>Silence</string>
+   </property>
+  </action>
+  <action name="actionFilter">
+   <property name="text">
+    <string>Filter</string>
+   </property>
+  </action>
+  <action name="actionSmart_Scale">
+   <property name="text">
+    <string>Smart Scale</string>
+   </property>
+  </action>
+  <action name="actionNormalize">
+   <property name="text">
+    <string>Normalize</string>
+   </property>
+  </action>
+  <action name="actionResampling">
+   <property name="text">
+    <string>Resampling</string>
+   </property>
+  </action>
+  <action name="actionGenerate_White_Noise">
+   <property name="text">
+    <string>White Noise</string>
    </property>
   </action>
   <zorder>dock_osc_settings</zorder>

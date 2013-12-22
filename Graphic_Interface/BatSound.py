@@ -1,4 +1,5 @@
 from PyQt4.QtGui import QDialog, QMessageBox
+from Duetto_Core.SignalProcessors.FilterSignalProcessor import FILTER_TYPE
 from MainWindow import Ui_DuettoMainWindow
 from MyPowerSpecWindow import PowerSpectrumWindow
 from Graphic_Interface.Dialogs import OptionsDialog as optdialog
@@ -6,7 +7,6 @@ from Graphic_Interface.Dialogs import InsertSilenceDialog as sdialog, FilterOpti
 from PyQt4 import QtCore
 from PyQt4 import QtGui
 import sys
-from Duetto_Core.AudioSignals import WavFileSignal
 
 MIN_SAMPLING_RATE = 1000
 MAX_SAMPLING_RATE = 2000000
@@ -38,7 +38,7 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     #region Yasel Changes
 
     @QtCore.pyqtSlot()
-    def on_actionResampling(self):
+    def on_actionResampling_triggered(self):
         resamplingDialog=sdialog.Ui_Dialog()
         resamplingDialogWindow=InsertSilenceDialog()
         resamplingDialog.setupUi(resamplingDialogWindow)
@@ -57,19 +57,19 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                                         "Sampling rate should be less than "+str(MAX_SAMPLING_RATE))
 
     @QtCore.pyqtSlot()
-    def on_actionCut(self):
+    def on_actionCut_triggered(self):
         self.widget.cut()
 
     @QtCore.pyqtSlot()
-    def on_actionCopy(self):
+    def on_actionCopy_triggered(self):
         self.widget.copy()
 
     @QtCore.pyqtSlot()
-    def on_actionPaste(self):
+    def on_actionPaste_triggered(self):
         self.widget.paste()
 
     @QtCore.pyqtSlot()
-    def on_actionScale(self):
+    def on_actionSmart_Scale_triggered(self):
         scaleDialog=cvdialog.Ui_Dialog()
         scaleDialogWindow=InsertSilenceDialog()
         scaleDialog.setupUi(scaleDialogWindow)
@@ -86,7 +86,7 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             self.widget.scale(factor, function, fade)
 
     @QtCore.pyqtSlot()
-    def on_actionInsertSilence(self):
+    def on_actionInsert_Silence_triggered(self):
         silenceDialog=sdialog.Ui_Dialog()
         silenceDialogWindow=InsertSilenceDialog()
         silenceDialog.setupUi(silenceDialogWindow)
@@ -94,7 +94,7 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             self.widget.insertSilence(silenceDialog.insertSpinBox.value())
 
     @QtCore.pyqtSlot()
-    def on_actionInsertWhiteNoise(self):
+    def on_actionGenerate_White_Noise_triggered(self):
         whiteNoiseDialog=sdialog.Ui_Dialog()
         whiteNoiseDialogWindow=InsertSilenceDialog()
         whiteNoiseDialog.setupUi(whiteNoiseDialogWindow)
@@ -104,7 +104,7 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             self.widget.insertWhiteNoise(whiteNoiseDialog.insertSpinBox.value())
 
     @QtCore.pyqtSlot()
-    def on_actionFilter(self):
+    def on_actionFilter_triggered(self):
         filterDialog=filterdg.Ui_Dialog()
         filterDialogWindow=InsertSilenceDialog()
         filterDialog.setupUi(filterDialogWindow)
@@ -131,15 +131,15 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 self.widget.filter(type, Fc,Fl,Fu)
 
     @QtCore.pyqtSlot()
-    def on_actionSilence(self):
+    def on_actionSilence_triggered(self):
         self.widget.silence()
 
     @QtCore.pyqtSlot()
-    def on_actionNormalize(self):
+    def on_actionNormalize_triggered(self):
         self.widget.normalize()
 
     @QtCore.pyqtSlot()
-    def on_actionReverse(self):
+    def on_action_Reverse_triggered(self):
         self.widget.reverse()
 
 

@@ -69,8 +69,6 @@ class QSignalVisualizerWidget(FigureCanvas):
     #region  Sound
 
     def play(self):
-        #self.signalProcessor.signal.resampling(self.signalProcessor.signal.samplingRate/2)
-        #print(self.signalProcessor.signal.samplingRate)
         if(self.zoomCursor.min > 0 and self.zoomCursor.max > 0):
             self.signalProcessor.signal.play(self.zoomCursor.min,self.zoomCursor.max,self.playerSpeed)
         else:
@@ -575,6 +573,8 @@ class QSignalVisualizerWidget(FigureCanvas):
     def insertWhiteNoise(self,ms=1):
         if(self.signalProcessor.signal is not None):
             self.signalProcessor.signal.generateWhiteNoise(ms,self.zoomCursor.min)
+            self.visualChanges=True
+            self.refresh()
 
 
 
