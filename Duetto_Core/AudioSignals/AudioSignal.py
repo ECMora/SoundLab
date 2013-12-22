@@ -32,7 +32,7 @@ class AudioSignal:
         wn = array([random.uniform(-2**self.bitDepth -1, 2**self.bitDepth-1) for i in range(duration*self.samplingRate/1000)])
         self.data=concatenate((self.data[0:begin_at],wn,self.data[begin_at:]))
 
-    
+
     def resampling(self,  samplinRate= 44100):
         samplinRate = int(samplinRate)
         frac = self.samplingRate*1./samplinRate

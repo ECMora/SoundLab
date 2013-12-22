@@ -1,10 +1,24 @@
+from PyQt4.QtGui import QDialog, QMessageBox
 from MainWindow import Ui_DuettoMainWindow
 from MyPowerSpecWindow import PowerSpectrumWindow
+from Graphic_Interface.Dialogs import OptionsDialog as optdialog
+from Graphic_Interface.Dialogs import InsertSilenceDialog as sdialog, FilterOptionsDialog as filterdg,ChangeVolumeDialog as cvdialog
 from PyQt4 import QtCore
 from PyQt4 import QtGui
 import sys
 from Duetto_Core.AudioSignals import WavFileSignal
 
+MIN_SAMPLING_RATE = 1000
+MAX_SAMPLING_RATE = 2000000
+
+class OptionsDialog(optdialog.Ui_Dialog,QDialog):
+    pass
+class InsertSilenceDialog(sdialog.Ui_Dialog,QDialog):
+    pass
+class ChangeVolumeDialog(cvdialog.Ui_Dialog,QDialog):
+    pass
+class FilterDialog(filterdg.Ui_Dialog,QDialog):
+    pass
 
 class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     def __init__(self, parent=None):
@@ -21,12 +35,120 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.overlap_spec = self.sbx_fftoverlap.value()
         self.pow_spec_windows = []
 
-    def resampling(self):
-        self.widget.resampling()
+    #region Yasel Changes
+
+    @QtCore.pyqtSlot()
+    def on_actionResampling(self):
+        resamplingDialog=sdialog.Ui_Dialog()
+        resamplingDialogWindow=InsertSilenceDialog()
+        resamplingDialog.setupUi(resamplingDialogWindow)
+        resamplingDialog.label.setText("Select the new Sampling Rate.")
+        resamplingDialog.insertSpinBox.setValue(self.widget.signalProcessor.signal.samplingRate)
+        if (resamplingDialogWindow.exec_()):
+            val=resamplingDialog.insertSpinBox.value()
+            if(val > MIN_SAMPLING_RATE and val < MAX_SAMPLING_RATE):
+                self.widget.resampling(val)
+            else:
+                if(val < MIN_SAMPLING_RATE):
+                    QMessageBox.warning(QMessageBox(), "Error",
+                                        "Sampling rate should be greater than "+str(MIN_SAMPLING_RATE))
+                elif(val > MAX_SAMPLING_RATE ):
+                    QMessageBox.warning(QMessageBox(), "Error",
+                                        "Sampling rate should be less than "+str(MAX_SAMPLING_RATE))
+
+    @QtCore.pyqtSlot()
+    def on_actionCut(self):
+        self.widget.cut()
+
+    @QtCore.pyqtSlot()
+    def on_actionCopy(self):
+        self.widget.copy()
+
+    @QtCore.pyqtSlot()
+    def on_actionPaste(self):
+        self.widget.paste()
+
+    @QtCore.pyqtSlot()
+    def on_actionScale(self):
+        scaleDialog=cvdialog.Ui_Dialog()
+        scaleDialogWindow=InsertSilenceDialog()
+        scaleDialog.setupUi(scaleDialogWindow)
+        if (scaleDialogWindow.exec_()):
+            factor=scaleDialog.spinboxConstValue.value()
+            if (scaleDialog.rbuttonConst.isChecked()):
+                function = "const"
+            elif(scaleDialog.rbuttonNormalize.isChecked()):
+                function = "normalize"
+                factor = scaleDialog.spinboxNormalizePercent.value()
+            else:
+                function = scaleDialog.cboxModulationType.currentText()
+            fade = "IN" if scaleDialog.rbuttonFadeIn.isChecked() else ("OUT" if scaleDialog.rbuttonFadeOut.isChecked() else "")
+            self.widget.scale(factor, function, fade)
+
+    @QtCore.pyqtSlot()
+    def on_actionInsertSilence(self):
+        silenceDialog=sdialog.Ui_Dialog()
+        silenceDialogWindow=InsertSilenceDialog()
+        silenceDialog.setupUi(silenceDialogWindow)
+        if (silenceDialogWindow.exec_()):
+            self.widget.insertSilence(silenceDialog.insertSpinBox.value())
+
+    @QtCore.pyqtSlot()
+    def on_actionInsertWhiteNoise(self):
+        whiteNoiseDialog=sdialog.Ui_Dialog()
+        whiteNoiseDialogWindow=InsertSilenceDialog()
+        whiteNoiseDialog.setupUi(whiteNoiseDialogWindow)
+        whiteNoiseDialog.label.setText("Select the duration in ms \n of the white noise.")
+        whiteNoiseDialog.insertSpinBox.setValue(1000)
+        if (whiteNoiseDialogWindow.exec_()):
+            self.widget.insertWhiteNoise(whiteNoiseDialog.insertSpinBox.value())
+
+    @QtCore.pyqtSlot()
+    def on_actionFilter(self):
+        filterDialog=filterdg.Ui_Dialog()
+        filterDialogWindow=InsertSilenceDialog()
+        filterDialog.setupUi(filterDialogWindow)
+        if (filterDialogWindow.exec_()):
+            type=None
+            Fc,Fl,Fu=0,0,0
+            if(filterDialog.rButtonLowPass.isChecked()):
+                type=FILTER_TYPE().LOW_PASS
+                Fc=filterDialog.spinBoxLowPass.value()
+            elif(filterDialog.rButtonHighPass.isChecked()):
+                type=FILTER_TYPE().HIGH_PASS
+                Fc=filterDialog.spinBoxHighPass.value()
+
+            elif(filterDialog.rButtonBandPass.isChecked()):
+                type=FILTER_TYPE().BAND_PASS
+                Fl=filterDialog.spinBoxBandPassFl.value()
+                Fu=filterDialog.spinBoxBandPassFu.value()
+            elif(filterDialog.rButtonBandStop.isChecked()):
+                type=FILTER_TYPE().BAND_STOP
+                Fl=filterDialog.spinBoxBandStopFl.value()
+                Fu=filterDialog.spinBoxBandStopFu.value()
+
+            if(type!=None):
+                self.widget.filter(type, Fc,Fl,Fu)
+
+    @QtCore.pyqtSlot()
+    def on_actionSilence(self):
+        self.widget.silence()
+
+    @QtCore.pyqtSlot()
+    def on_actionNormalize(self):
+        self.widget.normalize()
+
+    @QtCore.pyqtSlot()
+    def on_actionReverse(self):
+        self.widget.reverse()
+
+
+    #endregion
 
     @QtCore.pyqtSlot()
     def on_actionZoomIn_triggered(self):
         self.widget.zoomIn()
+
 
     @QtCore.pyqtSlot()
     def on_actionZoom_out_triggered(self):

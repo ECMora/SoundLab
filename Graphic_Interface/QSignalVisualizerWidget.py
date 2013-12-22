@@ -548,26 +548,35 @@ class QSignalVisualizerWidget(FigureCanvas):
 
     #region Edition CUT,COPY PASTE
     def cut(self):
-        self.editionSignalProcessor.cut(self.zoomCursor.min, self.zoomCursor.max)
-        self.mainCursor.max -= self.zoomCursor.max - self.zoomCursor.min
-        self.visualChanges = True
-        if (self.mainCursor.max < 1):
-            self.zoomOut()
-        self.refresh()
+        if(len(self.signalProcessor.signal.data)>0 and self.signalProcessor.signal.opened()):
+            self.editionSignalProcessor.cut(self.zoomCursor.min, self.zoomCursor.max)
+            self.mainCursor.max -= self.zoomCursor.max - self.zoomCursor.min
+            self.visualChanges = True
+            if (self.mainCursor.max < 1):
+                self.zoomOut()
+            self.refresh()
 
     def copy(self):
-        return self.editionSignalProcessor.copy(self.zoomCursor.min, self.zoomCursor.max)
+        if(len(self.signalProcessor.signal.data)>0and self.signalProcessor.signal.opened()):
+            return self.editionSignalProcessor.copy(self.zoomCursor.min, self.zoomCursor.max)
 
     def paste(self):
-        self.editionSignalProcessor.paste(self.editionSignalProcessor.clipboard, self.zoomCursor.min)
-        self.mainCursor.max = self.mainCursor.max + len(self.editionSignalProcessor.clipboard)
-        self.visualChanges = True
-        self.refresh()
+        if(self.signalProcessor.signal.opened):
+            self.editionSignalProcessor.paste(self.editionSignalProcessor.clipboard, self.zoomCursor.min)
+            self.mainCursor.max += len(self.editionSignalProcessor.clipboard)
+            self.visualChanges = True
+            self.refresh()
 
     #endregion
 
     def reverse(self):
         self.signalProcessingAction(CommonSignalProcessor(self.signalProcessor.signal).reverse)
+
+    def insertWhiteNoise(self,ms=1):
+        if(self.signalProcessor.signal is not None):
+            self.signalProcessor.signal.generateWhiteNoise(ms,self.zoomCursor.min)
+
+
 
     def resampling(self,samplingRate):
         self.signalProcessor.signal.resampling(samplingRate)
@@ -592,7 +601,7 @@ class QSignalVisualizerWidget(FigureCanvas):
     def insertSilence(self, ms=0):
         self.signalProcessingAction(CommonSignalProcessor(self.signalProcessor.signal).insertSilence, ms)
 
-    def scale(self, factor,function="normalize",fade="IN"):
+    def scale(self, factor, function="normalize",fade="IN"):
         self.signalProcessingAction(CommonSignalProcessor(self.signalProcessor.signal).scale,factor,function,fade)
 
     def silence(self):
