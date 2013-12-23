@@ -11,6 +11,12 @@ class PowerSpectrumWindow(QtGui.QMainWindow):
         self.show()
 
     def plot(self, data, rate, NFFT, window):
+        self.NFFT = NFFT
+        self.window = window
+        self.rate = rate
         self.ui.pow_spec.Plot_Power_Spectrum(data, rate, NFFT, window)
         self.ui.pow_spec.draw()
 
+    def updatePowSpectrumInterval(self,data):
+        self.ui.pow_spec.Plot_Power_Spectrum(data,self.rate,self.NFFT,self.window)
+        self.ui.pow_spec.draw()

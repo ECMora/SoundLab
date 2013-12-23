@@ -8,6 +8,7 @@ from PyQt4 import QtCore
 from PyQt4 import QtGui
 
 import sys
+from PyQt4.QtCore import SIGNAL
 from Duetto_Core.AudioSignals import WavFileSignal
 
 
@@ -31,6 +32,7 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.dock_spec_settings.setVisible(False)
         self.dock_osc_settings.setVisible(False)
         self.dock_powspec_settings.setVisible(False)
+        self.connect(self.widget,SIGNAL("IntervalChanged"),self.updatePowSpecWin)
         self.NFFT_pow = int(self.cbx_fftsize_pow.currentText())
         self.window_pow = self.cbx_fftwindow_pow.currentText()
         self.NFFT_spec = int(self.cbx_fftsize.currentText())
@@ -38,6 +40,7 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.overlap_spec = self.sbx_fftoverlap.value()
         self.pow_spec_windows = []
 
+<<<<<<< HEAD
 
 
     #region Yasel Changes
@@ -149,6 +152,13 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
 
     #endregion
+=======
+    def updatePowSpecWin(self):
+       for win in self.pow_spec_windows:
+           minx = self.widget.zoomCursor.min
+           maxx = max(self.widget.zoomCursor.max ,min(minx + self.NFFT_pow,len(self.widget.signalProcessor.signal.data)))
+           win.updatePowSpectrumInterval(self.widget.signalProcessor.signal.data[minx:maxx])
+>>>>>>> c542c9bc1de3a74422877b7ed68340b2cca42fe3
 
     @QtCore.pyqtSlot()
     def on_actionZoomIn_triggered(self):
@@ -196,10 +206,16 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     @QtCore.pyqtSlot()
     def on_actionPower_Spectrum_triggered(self):
         dg_pow_spec = PowerSpectrumWindow(self)
+<<<<<<< HEAD
         minx = self.widget.zmin * self.widget.rate
 
         maxx = max(self.widget.zmax * self.widget.rate, min(minx + self.NFFT_pow, len(self.widget.data)))
         dg_pow_spec.plot(self.widget.data[minx:maxx], self.widget.rate, self.NFFT_pow, self.window_pow)
+=======
+        minx = self.widget.zoomCursor.min
+        maxx = max(self.widget.zoomCursor.max ,min(minx + self.NFFT_pow,len(self.widget.signalProcessor.signal.data)))
+        dg_pow_spec.plot(self.widget.signalProcessor.signal.data[minx:maxx], self.widget.signalProcessor.signal.samplingRate, self.NFFT_pow, self.window_pow)
+>>>>>>> c542c9bc1de3a74422877b7ed68340b2cca42fe3
         self.pow_spec_windows.append(dg_pow_spec)
 
     @QtCore.pyqtSlot()
