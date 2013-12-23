@@ -100,7 +100,7 @@ class CommonSignalProcessor(SignalProcessor):
                 elif(fade=="OUT"):
                     return (1-(index*1.0)/n)**2
         if(function=="const"):
-            self.signal.data[indexFrom:indexTo]*=factor
+            self.signal.data[indexFrom:indexTo] *= factor
         else:
             self.signal.data[indexFrom:indexTo] = [self.signal.data[indexFrom+index]*f(index) for index in range(n)]
         return self.signal

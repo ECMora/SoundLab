@@ -1,12 +1,11 @@
 import wave
 from PyQt4.QtGui import QMessageBox
-from PyQt4.QtCore import QTimer
 import pyaudio
-import numpy
+from numpy import *
 from numpy.numarray import fromstring
 import pyaudio
 from PyQt4.QtCore import QTimer
-
+from audiolazy import *
 
 class AudioSignal:
     """an abstract class for the representation of an audio signal"""
@@ -16,9 +15,10 @@ class AudioSignal:
     def __init__(self):
         self.samplingRate = 0
         self.channels=1
-        self.data = numpy.array([])
+        self.data = array([])
         self.bitDepth = 0
         self.path = ""
+        self.media=0#mean value of the signal
         self.stream=None
         self.playAudio=pyaudio.PyAudio()
         self.playStatus = self.STOPPED
@@ -28,9 +28,53 @@ class AudioSignal:
         self.timer = QTimer()
         self.timer.timeout.connect(self.recordCallback)
 
+    def generateWhiteNoise(self, duration=1, begin_at=0):
+        wn = array([random.uniform(-2**self.bitDepth -1, 2**self.bitDepth-1) for i in range(duration*self.samplingRate/1000)])
+        self.data=concatenate((self.data[0:begin_at],wn,self.data[begin_at:]))
+
+
+    def resampling(self,  samplinRate= 44100):
+        samplinRate = int(samplinRate)
+        frac = self.samplingRate*1./samplinRate
+        if( abs(frac-1) < 0.001 ):
+            return
+        if( frac > 1):
+            #down sampling
+            self.data = array(self.data[[int(round(index*frac)) for index in range(int(floor(len(self.data)/frac)))]])
+        else:
+            # up
+            arr = array([self.interpolate(i,frac) for i in range(int(round(len(self.data)/frac)))])
+            self.data = arr
+
+        self.samplingRate = samplinRate
+
+    def interpolate(self, index, frac):
+        """
+        returns a interpolated new value corresponding to the index position
+        in the new resampled array of data with frac fraction of resampling
+        """
+        if(index==0):
+            return self.data[0]
+        current_low_index , current_high_index = int(floor(index*frac)),int(ceil(index*frac))
+        if(current_low_index==len(self.data)-1):
+            return self.data[-1]
+        y0 , y1 = self.data[current_low_index], self.data[current_high_index]
+        return y0+(index*frac - current_low_index)*(y1-y0)
+
     def currentPlayingTime(self):
         return self.playSection[2]
 
+    def removeDCOffset(self):
+        if(len(self.data)==0):
+            return
+        media=mean(self.data)
+        if(abs(media)>0.01):
+            self.data -= media
+
+
+    def generate(self):
+        #generates common signals
+        pass
 
     def playCallback(self):
         """PLay playCallback"""
@@ -39,7 +83,9 @@ class AudioSignal:
                 frame = self.playSection[2]
                 self.playSection = (0, 0, 0)
                 self.playStatus = self.STOPPED
-                return (self.data[frame:frame + frame_count], pyaudio.paComplete)
+                data=self.data[frame:frame + frame_count]
+                data-=self.media
+                return (data, pyaudio.paComplete)
             data = self.data[self.playSection[2]:self.playSection[2] + frame_count]
             self.playSection = (self.playSection[0], self.playSection[1], self.playSection[2] + frame_count)
             return (data, pyaudio.paContinue)
@@ -65,8 +111,6 @@ class AudioSignal:
         #            bytesforwrite=self.stream.get_write_available()
         #            self.stream.write(data[writed:writed+bytesforwrite])
         #            writed+=bytesforwrite
-
-
 
 
     def recordCallback(self):
@@ -97,7 +141,7 @@ class AudioSignal:
             self.playStatus=self.PLAYING
             self.timer.start(self.tick)
             return
-
+        self.media=mean(self.data)
         self.playStatus=self.PLAYING
         formatt=(pyaudio.paInt8 if self.bitDepth==8 else pyaudio.paInt16 if self.bitDepth==16 else pyaudio.paFloat32)
         self.stream =self.playAudio.open(format=formatt,
@@ -112,18 +156,6 @@ class AudioSignal:
         self.playSection=(startIndex,endIndex,startIndex)
         self.stream.start_stream()
         self.timer.start(self.tick)
-        #if(self.playStatus==self.PLAYING):
-        #    return
-        #if(self.playStatus==self.PAUSED):
-        #    self.playStatus=self.PLAYING
-        #    self.timer.start(self.tick)
-        #    return
-        #self.playStatus=self.PLAYING
-        #endIndex=endIndex if endIndex!=-1 else len(self.data)
-        #self.playSpeed=speed if (speed >= 50 and speed <= 200) else 100
-        #self.playSection=(startIndex,endIndex,startIndex)
-        #self.stream=None
-        #self.timer.start(self.tick)
 
 
     def stop(self):
@@ -151,8 +183,6 @@ class AudioSignal:
         self.playSection=(0,0,0)
         self.playStatus=self.RECORDING
         self.timer.start(self.tick)
-
-
 
 
     def toWav(self):
