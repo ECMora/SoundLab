@@ -20,24 +20,22 @@ class WavFileSignal(FileAudioSignal):
         try:
             FileAudioSignal.open(self, path)
             self.read(path)
-<<<<<<< HEAD
+
             self.path=path
 
-=======
+
             self.path = path
->>>>>>> 93cba4b67720b98ec5f5fbeea441e07c64848f4c
+
             self.timer.stop()
         except Exception, e:
             QMessageBox.warning(QMessageBox(), "Error", "Could not load the file. "+e.message)
 
-<<<<<<< HEAD
 
-    def read(self,file):
-        if hasattr(file,'read'):
-=======
+
+
     def read(self, file):
         if hasattr(file, 'read'):
->>>>>>> 93cba4b67720b98ec5f5fbeea441e07c64848f4c
+
             fid = file
         else:
             fid = open(file, 'rb')

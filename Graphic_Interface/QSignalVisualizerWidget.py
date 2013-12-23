@@ -73,19 +73,19 @@ class QSignalVisualizerWidget(FigureCanvas):
     #region Sound
 
     def play(self):
-<<<<<<< HEAD
+# HEAD
         self.elements()
         #if(self.zoomCursor.min > 0 and self.zoomCursor.max > 0):
         #    self.signalProcessor.signal.play(self.zoomCursor.min,self.zoomCursor.max,self.playerSpeed)
         #else:
         #    self.signalProcessor.signal.play(self.mainCursor.min,self.mainCursor.max,self.playerSpeed)
 
-=======
+
         if self.zoomCursor.min > 0 and self.zoomCursor.max > 0:
             self.signalProcessor.signal.play(self.zoomCursor.min, self.zoomCursor.max, self.playerSpeed)
         else:
             self.signalProcessor.signal.play(self.mainCursor.min, self.mainCursor.max, self.playerSpeed)
->>>>>>> 93cba4b67720b98ec5f5fbeea441e07c64848f4c
+#>>>>>>> 93cba4b67720b98ec5f5fbeea441e07c64848f4c
 
     def switchPlayStatus(self):
         if self.signalProcessor.signal.playStatus == self.signalProcessor.signal.PLAYING:
@@ -419,17 +419,15 @@ class QSignalVisualizerWidget(FigureCanvas):
                 #the umbral cut
                 #increases the performance with search in the indexes
 
-                modify = 0
 
-<<<<<<< HEAD
                 ind = mlab.cross_from_below(self.specgramSettings.Pxx, cut_off)
                 #self.specgramSettings.Pxx[ind] = self.min_specgram_value
-=======
+
                 for i in range(len(self.specgramSettings.Pxx)):
                     for j in range(len(self.specgramSettings.Pxx[i])):
                         if self.specgramSettings.Pxx[i, j] < cut_off:
                             self.specgramSettings.Pxx[i, j] = self.min_specgram_value
->>>>>>> 93cba4b67720b98ec5f5fbeea441e07c64848f4c
+
 
                 Z = 10. * np.log10(self.specgramSettings.Pxx)
                 Z = np.flipud(Z)
@@ -437,13 +435,13 @@ class QSignalVisualizerWidget(FigureCanvas):
                 b = self.axesSpecgram.get_ylim()
                 xextent = a[0], a[1], b[0], b[1]
                 #self.self.freqs += Fc where Fc is the central frecuency
-<<<<<<< HEAD
+
                 im = self.axesSpecgram.imshow(Z, cmap=self.specgramSettings.colorPalette(),extent=xextent, interpolation="nearest")
-=======
+
                 im = self.axesSpecgram.imshow(Z,
                                               cmap=self.specgramSettings.colorPalette(), extent=xextent,
                                               interpolation="nearest")
->>>>>>> 93cba4b67720b98ec5f5fbeea441e07c64848f4c
+
                 self.axesSpecgram.axis('auto')
 
                 if self.colorbar == None:
@@ -581,49 +579,33 @@ class QSignalVisualizerWidget(FigureCanvas):
 
     #region Edition CUT,COPY PASTE
     def cut(self):
-<<<<<<< HEAD
         if(len(self.signalProcessor.signal.data)>0 and self.signalProcessor.signal.opened()):
             self.editionSignalProcessor.cut(self.zoomCursor.min, self.zoomCursor.max)
             self.mainCursor.max -= self.zoomCursor.max - self.zoomCursor.min
             self.visualChanges = True
             if (self.mainCursor.max < 1):
                 self.zoomOut()
+            self.rangeChanged.emit(self.mainCursor.min, self.mainCursor.max, len(self.signalProcessor.signal.data))
             self.refresh()
-=======
-        self.editionSignalProcessor.cut(self.zoomCursor.min, self.zoomCursor.max)
-        self.mainCursor.max -= self.zoomCursor.max - self.zoomCursor.min
-        self.visualChanges = True
-        if self.mainCursor.max < 1:
-            self.zoomOut()
-        self.refresh()
-        self.rangeChanged.emit(self.mainCursor.min, self.mainCursor.max, len(self.signalProcessor.signal.data))
->>>>>>> 93cba4b67720b98ec5f5fbeea441e07c64848f4c
 
     def copy(self):
         if(len(self.signalProcessor.signal.data)>0and self.signalProcessor.signal.opened()):
             return self.editionSignalProcessor.copy(self.zoomCursor.min, self.zoomCursor.max)
 
     def paste(self):
-<<<<<<< HEAD
         if(self.signalProcessor.signal.opened):
             self.editionSignalProcessor.paste(self.editionSignalProcessor.clipboard, self.zoomCursor.min)
             self.mainCursor.max += len(self.editionSignalProcessor.clipboard)
             self.visualChanges = True
+            self.rangeChanged.emit(self.mainCursor.min, self.mainCursor.max, len(self.signalProcessor.signal.data))
             self.refresh()
-=======
-        self.editionSignalProcessor.paste(self.editionSignalProcessor.clipboard, self.zoomCursor.min)
-        self.mainCursor.max = self.mainCursor.max + len(self.editionSignalProcessor.clipboard)
-        self.visualChanges = True
-        self.refresh()
-        self.rangeChanged.emit(self.mainCursor.min, self.mainCursor.max, len(self.signalProcessor.signal.data))
->>>>>>> 93cba4b67720b98ec5f5fbeea441e07c64848f4c
+
 
     #endregion
 
     def reverse(self):
         self.signalProcessingAction(CommonSignalProcessor(self.signalProcessor.signal).reverse)
 
-<<<<<<< HEAD
     def insertWhiteNoise(self,ms=1):
         if(self.signalProcessor.signal is not None):
             self.signalProcessor.signal.generateWhiteNoise(ms,self.zoomCursor.min)
@@ -635,8 +617,8 @@ class QSignalVisualizerWidget(FigureCanvas):
         self.visualChanges=True
         self.refresh()
 
-=======
->>>>>>> 93cba4b67720b98ec5f5fbeea441e07c64848f4c
+
+
     def getIndexFromAndTo(self):
         indexFrom, indexTo = self.mainCursor.min, self.mainCursor.max
         if self.zoomCursor.min > 0 and self.zoomCursor.max > 0:
@@ -655,13 +637,13 @@ class QSignalVisualizerWidget(FigureCanvas):
     def insertSilence(self, ms=0):
         self.signalProcessingAction(CommonSignalProcessor(self.signalProcessor.signal).insertSilence, ms)
 
-<<<<<<< HEAD
+
     def scale(self, factor, function="normalize",fade="IN"):
         self.signalProcessingAction(CommonSignalProcessor(self.signalProcessor.signal).scale,factor,function,fade)
-=======
+
     def scale(self, factor, function="normalize", fade="IN"):
         self.signalProcessingAction(CommonSignalProcessor(self.signalProcessor.signal).scale, factor, function, fade)
->>>>>>> 93cba4b67720b98ec5f5fbeea441e07c64848f4c
+
 
     def silence(self):
         self.signalProcessingAction(CommonSignalProcessor(self.signalProcessor.signal).setSilence)
@@ -712,16 +694,16 @@ class QSignalVisualizerWidget(FigureCanvas):
         self.visualChanges = True
         self.refresh()
 
-<<<<<<< HEAD
+
     def elements(self):
         indexFrom, indexTo = self.getIndexFromAndTo()
         self.detector.detect(self.signalProcessor.signal,indexFrom, indexTo)
-=======
+
     def elements(self, type="simple"):
         indexFrom, indexTo = self.getIndexFromAndTo()
         rms = self.signalProcessor.rms(indexFrom, indexTo)
         self.detector.detect(self.signalProcessor.signal, indexFrom, indexTo, rms, type)
->>>>>>> 93cba4b67720b98ec5f5fbeea441e07c64848f4c
+
         for c in self.detector.cursors():
             self.cursors.append(c)
         self.visualChanges = True

@@ -6,11 +6,10 @@ from Graphic_Interface.Dialogs import OptionsDialog as optdialog
 from Graphic_Interface.Dialogs import InsertSilenceDialog as sdialog, FilterOptionsDialog as filterdg,ChangeVolumeDialog as cvdialog
 from PyQt4 import QtCore
 from PyQt4 import QtGui
-<<<<<<< HEAD
+
 import sys
-=======
 from Duetto_Core.AudioSignals import WavFileSignal
->>>>>>> 93cba4b67720b98ec5f5fbeea441e07c64848f4c
+
 
 MIN_SAMPLING_RATE = 1000
 MAX_SAMPLING_RATE = 2000000
@@ -198,11 +197,8 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     def on_actionPower_Spectrum_triggered(self):
         dg_pow_spec = PowerSpectrumWindow(self)
         minx = self.widget.zmin * self.widget.rate
-<<<<<<< HEAD
-        maxx = max(self.widget.zmax ,min(minx + self.NFFT_pow,len(self.widget.data)))
-=======
+
         maxx = max(self.widget.zmax * self.widget.rate, min(minx + self.NFFT_pow, len(self.widget.data)))
->>>>>>> 93cba4b67720b98ec5f5fbeea441e07c64848f4c
         dg_pow_spec.plot(self.widget.data[minx:maxx], self.widget.rate, self.NFFT_pow, self.window_pow)
         self.pow_spec_windows.append(dg_pow_spec)
 
@@ -293,20 +289,7 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.widget._setVisibleSpectrogram(False)
         self.widget.refresh()
 
-<<<<<<< HEAD
 
-
-
-# create the GUI application
-app = QtGui.QApplication(sys.argv)
-# instantiate the main window
-dmw = BatSoundWindow()
-# show it
-dmw.show()
-# start the Qt main loop execution, exiting from this script
-# with the same return code of Qt application
-sys.exit(app.exec_())
-=======
     @QtCore.pyqtSlot(int, int, int)
     def on_widget_rangeChanged(self, left, right, total):
         self.horizontalScrollBar.blockSignals(True)
@@ -335,4 +318,4 @@ if __name__ == '__main__':
     # start the Qt main loop execution, exiting from this script
     # with the same return code of Qt application
     sys.exit(app.exec_())
->>>>>>> 93cba4b67720b98ec5f5fbeea441e07c64848f4c
+

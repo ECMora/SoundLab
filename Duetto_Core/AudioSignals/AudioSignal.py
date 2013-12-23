@@ -14,7 +14,6 @@ class AudioSignal:
 
     def __init__(self):
         self.samplingRate = 0
-<<<<<<< HEAD
         self.channels=1
         self.data = array([])
         self.bitDepth = 0
@@ -22,14 +21,6 @@ class AudioSignal:
         self.media=0#mean value of the signal
         self.stream=None
         self.playAudio=pyaudio.PyAudio()
-=======
-        self.channels = 1
-        self.data = numpy.array([])
-        self.bitDepth = 0
-        self.path = ""
-        self.stream = None
-        self.playAudio = pyaudio.PyAudio()
->>>>>>> 93cba4b67720b98ec5f5fbeea441e07c64848f4c
         self.playStatus = self.STOPPED
         self.playSpeed = 100  # percent of the speed
         self.playSection = (0, 0, 0)  # (init,end,current)
@@ -73,7 +64,7 @@ class AudioSignal:
     def currentPlayingTime(self):
         return self.playSection[2]
 
-<<<<<<< HEAD
+
     def removeDCOffset(self):
         if(len(self.data)==0):
             return
@@ -86,8 +77,7 @@ class AudioSignal:
         #generates common signals
         pass
 
-=======
->>>>>>> 93cba4b67720b98ec5f5fbeea441e07c64848f4c
+
     def playCallback(self):
         """PLay playCallback"""
 
@@ -126,16 +116,13 @@ class AudioSignal:
         #            self.stream.write(data[writed:writed+bytesforwrite])
         #            writed+=bytesforwrite
 
-<<<<<<< HEAD
 
-=======
->>>>>>> 93cba4b67720b98ec5f5fbeea441e07c64848f4c
     def recordCallback(self):
         if (self.playStatus == self.RECORDING):
             self.stream = self.playAudio.open(format=pyaudio.paInt16, channels=self.channels, rate=44100,
                                               input=True, frames_per_buffer=self.NUM_SAMPLES)
             self.playSection = (0, len(self.data) + self.NUM_SAMPLES, len(self.data))
-            self.data = numpy.concatenate(
+            self.data = concatenate(
                 (self.data, fromstring(self.stream.read(self.NUM_SAMPLES), dtype=numpy.int16)))
 
     def setTickInterval(self, ms):
@@ -157,7 +144,7 @@ class AudioSignal:
             self.playStatus = self.PLAYING
             self.timer.start(self.tick)
             return
-<<<<<<< HEAD
+
         self.media=mean(self.data)
         self.playStatus=self.PLAYING
         formatt=(pyaudio.paInt8 if self.bitDepth==8 else pyaudio.paInt16 if self.bitDepth==16 else pyaudio.paFloat32)
@@ -171,7 +158,7 @@ class AudioSignal:
         endIndex=endIndex if endIndex!=-1 else len(self.data)
         self.stream._rate=int(self.samplingRate*speed/100.0)
         self.playSection=(startIndex,endIndex,startIndex)
-=======
+
 
         self.playStatus = self.PLAYING
         formatt = (
@@ -186,7 +173,7 @@ class AudioSignal:
         endIndex = endIndex if endIndex != -1 else len(self.data)
         self.stream._rate = int(self.samplingRate * speed / 100.0)
         self.playSection = (startIndex, endIndex, startIndex)
->>>>>>> 93cba4b67720b98ec5f5fbeea441e07c64848f4c
+
         self.stream.start_stream()
         self.timer.start(self.tick)
 
@@ -208,17 +195,15 @@ class AudioSignal:
 
     def record(self):
         #ask for concatenate to the current file or make a new one
-        self.data = numpy.array([], dtype=numpy.int16)
+        self.data = array([], dtype=int16)
         self.samplingRate = 44100
         self.bitDepth = 16
         self.playSection = (0, 0, 0)
         self.playStatus = self.RECORDING
         self.timer.start(self.tick)
 
-<<<<<<< HEAD
 
-=======
->>>>>>> 93cba4b67720b98ec5f5fbeea441e07c64848f4c
+
     def toWav(self):
         raise NotImplemented
 

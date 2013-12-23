@@ -76,7 +76,6 @@ class CommonSignalProcessor(SignalProcessor):
         n = indexTo - indexFrom if indexTo != -1 else len(self.signal.data) - indexFrom
 
         def f(index):
-<<<<<<< HEAD
             if(function=="normalize"):
                 return factor/100.0
             elif(function=="Linear"):
@@ -104,38 +103,7 @@ class CommonSignalProcessor(SignalProcessor):
                     return (index*1.0/n)**2
                 elif(fade=="OUT"):
                     return (1-(index*1.0)/n)**2
-        if(function=="const"):
-=======
-            if function == "normalize":
-                return factor / 100.0
-            elif function == "Linear":
-                if fade == "OUT":
-                    return 1 - (index * 1.0) / n
-                elif fade == "IN":
-                    return (index * 1.0) / n
-            elif function == "sin":
-                if fade == "OUT":
-                    return sin((index * 1.0 * pi) / (n * 2) + pi / 2)
-                elif fade == "IN":
-                    return sin((index * 1.0 * pi) / (n * 2))
-            elif function == "sin-sqrt":
-                if fade == "OUT":
-                    return (sin((index * 1.0 * pi) / (n * 2) + pi / 2)) ** 0.5
-                elif fade == "IN":
-                    return (sin((index * 1.0 * pi) / (n * 2))) ** 0.5
-            elif function == "sin^2":
-                if fade == "OUT":
-                    return (sin((index * 1.0 * pi) / (n * 2) + pi / 2)) ** 2
-                elif fade == "IN":
-                    return (sin((index * 1.0 * pi) / (n * 2))) ** 2
-            elif function == "cuadratic":
-                if fade == "IN":
-                    return (index * 1.0 / n) ** 2
-                elif fade == "OUT":
-                    return (1 - (index * 1.0) / n) ** 2
-
         if function == "const":
->>>>>>> 93cba4b67720b98ec5f5fbeea441e07c64848f4c
             self.signal.data[indexFrom:indexTo] *= factor
         else:
             self.signal.data[indexFrom:indexTo] = [self.signal.data[indexFrom + index] * f(index) for index in range(n)]
