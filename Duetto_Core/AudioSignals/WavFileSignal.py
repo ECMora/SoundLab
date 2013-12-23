@@ -15,37 +15,45 @@ class WavFileSignal(FileAudioSignal):
         self.userData=[]
         self.timer.stop()
 
-
-    def open(self,path):
+    def open(self, path):
         """open a wav file for its processing"""
         try:
-            FileAudioSignal.open(self,path)
+            FileAudioSignal.open(self, path)
             self.read(path)
+<<<<<<< HEAD
             self.path=path
 
+=======
+            self.path = path
+>>>>>>> 93cba4b67720b98ec5f5fbeea441e07c64848f4c
             self.timer.stop()
         except Exception, e:
-            QMessageBox.warning(QMessageBox(),"Error","Could not load the file. "+e.message)
+            QMessageBox.warning(QMessageBox(), "Error", "Could not load the file. "+e.message)
 
+<<<<<<< HEAD
 
     def read(self,file):
         if hasattr(file,'read'):
+=======
+    def read(self, file):
+        if hasattr(file, 'read'):
+>>>>>>> 93cba4b67720b98ec5f5fbeea441e07c64848f4c
             fid = file
         else:
             fid = open(file, 'rb')
         fsize = wavfile._read_riff_chunk(fid)
         noc = 1
         bits = 8
-        while (fid.tell() < fsize):
+        while fid.tell() < fsize:
             # read the next chunk
             chunk_id = fid.read(4)
             if chunk_id == asbytes('fmt '):
                 size, comp, noc, self.samplingRate, sbytes, ba, bits = wavfile._read_fmt_chunk(fid)
-                self.bitDepth=bits
-                self.channels=noc
+                self.bitDepth = bits
+                self.channels = noc
             elif chunk_id == asbytes('data'):
                 data = wavfile._read_data_chunk(fid, noc, bits)
-                self.data=data
+                self.data = data
             elif chunk_id == asbytes('uh++'):
                 self.userData = self.readUserChunk(fid)
             else:
@@ -58,8 +66,7 @@ class WavFileSignal(FileAudioSignal):
                 fid.seek(size, 1)
         fid.close()
 
-
-    def save(self, path="",chunk=bytearray([])):
+    def save(self, path="", chunk=bytearray([])):
         """saves to a file the signal on self.data with the correspondient chunk"""
 
         fid = open(path, 'wb')
