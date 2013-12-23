@@ -17,17 +17,10 @@ class QPowerSpectrumWidget(FigureCanvas):
         self.fig.set_facecolor('w')
 
     def get_highest_freq(self):
-        index = []
-        maxdb = self.Pxx[1]
-        for i in range(2,len(self.Pxx)):
-            if maxdb < self.Pxx[i]:
-                maxdb = self.Pxx[i]
-                index = []
-            if maxdb ==self.Pxx[i]:
-                index.append(self.freqs[i])
-        return index , maxdb
+        return  self.freqs[numpy.argmax(self.Pxx[1:len(self.Pxx)], axis=0)]
 
     def Plot_Power_Spectrum(self, data, Fs, NFFT, window):
+        self.fig.clear()
         self.pow_spectrum = self.fig.add_subplot(111)
         if window == "Hanning":
             window = mlab.window_hanning
@@ -35,9 +28,9 @@ class QPowerSpectrumWidget(FigureCanvas):
             window= mlab.window_none
         (self.Pxx , self.freqs) = self.pow_spectrum.psd(data,Fs= Fs,NFFT=NFFT, window=window)
         self.pow_spectrum.set_xlim(0,Fs/2)
-        (max_freq, maxdb) = self.get_highest_freq()
+        max_freq = self.get_highest_freq()
         x = [max_freq, max_freq]
-        y = [10 * numpy.log10(min(self.Pxx)), 10 * numpy.log10(maxdb)]
+        y = [10 * numpy.log10(min(self.Pxx)), 10 * numpy.log10(max(self.Pxx[1:len(self.Pxx)]))]
         self.pow_spectrum.hold(True)
         self.pow_spectrum.plot(x,y)
         self.pow_spectrum.set_xlabel("Frequency(Hz)")

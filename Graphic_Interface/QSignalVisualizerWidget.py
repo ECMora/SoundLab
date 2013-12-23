@@ -22,6 +22,7 @@ from Duetto_Core.SignalProcessors.FilterSignalProcessor import *
 from Duetto_Core.SignalProcessors.SignalProcessor import SignalProcessor
 from Duetto_Core.SignalProcessors.EditionSignalProcessor import EditionSignalProcessor
 from Duetto_Core.SpecgramSettings import SpecgramSettings
+from PyQt4.QtCore import SIGNAL
 import matplotlib.cm as cm
 
 BACK_COLOR="gray"
@@ -230,7 +231,6 @@ class QSignalVisualizerWidget(FigureCanvas):
                         self.axesSpecgram.draw_artist(self.spanRectangleSpectrogram)
                         self.figure.canvas.blit(self.axesSpecgram.bbox)
 
-
     def specgramIndex(self,OsgramIndex):
         minxSpecgram,maxxSpecgram=self.axesSpecgram.get_xlim()
         return minxSpecgram+(OsgramIndex-self.mainCursor.min)*(maxxSpecgram-minxSpecgram)/(self.mainCursor.max-self.mainCursor.min)
@@ -297,6 +297,7 @@ class QSignalVisualizerWidget(FigureCanvas):
             self.setCursor(QCursor(QtCore.Qt.ArrowCursor))
         self.movingCursorZoom = False
         self.mousePressed = False
+        self.emit(SIGNAL("IntervalChanged"))
 
     def fromClientToCanvas(self, indexX):
         """
