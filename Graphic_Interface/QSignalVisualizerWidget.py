@@ -706,6 +706,7 @@ class QSignalVisualizerWidget(FigureCanvas):
         self.min_specgram_value = min(self.powerSpectrum)
         self.specgramSettings.threshold = 50
         self.visualChanges = True
+
         self.refresh()
 
     def save(self, fname):
