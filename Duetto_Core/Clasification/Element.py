@@ -6,7 +6,7 @@ class Element:
     An element is a time and spectral region of the signal that contains a superior energy that the fragment of signal
     near to it
     """
-    def __init__(self,signal, indexFrom, indexTo , Pxx, bins, frecs, specgramsettings, perimeter,column):
+    def __init__(self, signal, indexFrom, indexTo, Pxx, bins, frecs, specgramsettings, perimeter,column):
         self.signal=signal
         self.indexFrom=indexFrom
         self.indexTo=indexTo
@@ -24,24 +24,21 @@ class Element:
 
     def size(self):
         """
-        returns the len in ms of an element
+        returns the len in ms of an element (float)
         """
         samples = (self.bins[self.initColumn+len(self.perimeter)]-self.bins[self.initColumn]) if self.initColumn < len(self.bins)-1 else self.bins[1]-self.bins[0]
-        return samples*1000/self.signal.samplingRate  #ms
-
+        return samples*1000.0/self.signal.samplingRate  #ms
 
     def merge(self, other_element):
         """
         Merge self and the other_element in one single element. Modify the current element
 
         """
-
         last = self.perimeter[-1]
         first = other_element.perimeter[0]
         n = other_element.initColumn - self.initColumn - len(self.perimeter)
         perimeter = self.perimeter
         other_perimeter = other_element.perimeter
-
 
         if(other_element.initColumn < self.initColumn):
             # the other first
@@ -52,7 +49,7 @@ class Element:
             other_perimeter = self.perimeter
 
         #an element just could have one interval per column in the Pxx
-        if(self.initColumn+len(perimeter)+ len(other_perimeter)+ n >=len(self.bins)):
+        if (self.initColumn+len(perimeter)+ len(other_perimeter)+ n >=len(self.bins)):
             raise Exception("Could Not merge. To large element for this especgram")
         for i in range(n):
             perimeter.append((last[0]+i*(first[0]-last[0])/n,last[1] + i*(first[1]-last[1])/n))

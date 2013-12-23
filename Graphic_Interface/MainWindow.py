@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'MainWindow.ui'
 #
-# Created: Sun Dec 22 17:46:12 2013
+# Created: Sun Dec 22 18:32:44 2013
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -47,6 +47,7 @@ class Ui_DuettoMainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.widget.sizePolicy().hasHeightForWidth())
         self.widget.setSizePolicy(sizePolicy)
+        self.widget.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
         self.widget.setAutoFillBackground(True)
         self.widget.setObjectName(_fromUtf8("widget"))
         self.verticalLayout_2.addWidget(self.widget)

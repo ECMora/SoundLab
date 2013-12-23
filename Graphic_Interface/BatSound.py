@@ -35,6 +35,8 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.overlap_spec = self.sbx_fftoverlap.value()
         self.pow_spec_windows = []
 
+
+
     #region Yasel Changes
 
     @QtCore.pyqtSlot()

@@ -13,7 +13,6 @@ from Duetto_Core.Cursors.IntervalCursor import IntervalCursor
 from Duetto_Core.Cursors.PointerCursor import PointerCursor
 from Duetto_Core.Cursors.RectangularCursor import RectangularCursor
 from Duetto_Core.Detectors.ElementsDetector import ElementDetector
-from Duetto_Core.Detectors.SpectrogramHillDetector import SpectrogramHillDetector
 from Duetto_Core.Detectors.MaxMinPeakDetector import MaxMinPeakDetector
 from Duetto_Core.Detectors.MeanDetector import MeanDetector
 from Duetto_Core.Detectors.SegmenterDetector import SegmenterDetector
@@ -69,10 +68,11 @@ class QSignalVisualizerWidget(FigureCanvas):
     #region  Sound
 
     def play(self):
-        if(self.zoomCursor.min > 0 and self.zoomCursor.max > 0):
-            self.signalProcessor.signal.play(self.zoomCursor.min,self.zoomCursor.max,self.playerSpeed)
-        else:
-            self.signalProcessor.signal.play(self.mainCursor.min,self.mainCursor.max,self.playerSpeed)
+        self.elements()
+        #if(self.zoomCursor.min > 0 and self.zoomCursor.max > 0):
+        #    self.signalProcessor.signal.play(self.zoomCursor.min,self.zoomCursor.max,self.playerSpeed)
+        #else:
+        #    self.signalProcessor.signal.play(self.mainCursor.min,self.mainCursor.max,self.playerSpeed)
 
 
     def switchPlayStatus(self):
@@ -403,7 +403,7 @@ class QSignalVisualizerWidget(FigureCanvas):
                 modify = 0
 
                 ind = mlab.cross_from_below(self.specgramSettings.Pxx, cut_off)
-                self.specgramSettings.Pxx[ind] = self.min_specgram_value
+                #self.specgramSettings.Pxx[ind] = self.min_specgram_value
 
                 Z = 10. * np.log10(self.specgramSettings.Pxx)
                 Z = np.flipud(Z)
@@ -576,8 +576,6 @@ class QSignalVisualizerWidget(FigureCanvas):
             self.visualChanges=True
             self.refresh()
 
-
-
     def resampling(self,samplingRate):
         self.signalProcessor.signal.resampling(samplingRate)
         self.visualChanges=True
@@ -610,7 +608,6 @@ class QSignalVisualizerWidget(FigureCanvas):
     def filter(self, filterType=FILTER_TYPE().LOW_PASS, FCut=0, FLow=0, FUpper=0):
         self.signalProcessingAction(FilterSignalProcessor(self.signalProcessor.signal). \
                                         filter, filterType, FCut, FLow, FUpper)
-
 
     def normalize(self):
         self.signalProcessingAction(CommonSignalProcessor(self.signalProcessor.signal).normalize)
@@ -655,10 +652,9 @@ class QSignalVisualizerWidget(FigureCanvas):
         self.visualChanges = True
         self.refresh()
 
-    def elements(self,type="simple"):
+    def elements(self):
         indexFrom, indexTo = self.getIndexFromAndTo()
-        rms=self.signalProcessor.rms(indexFrom,indexTo)
-        self.detector.detect(self.signalProcessor.signal,indexFrom, indexTo,rms,type)
+        self.detector.detect(self.signalProcessor.signal,indexFrom, indexTo)
         for c in self.detector.cursors():
             self.cursors.append(c)
         self.visualChanges = True

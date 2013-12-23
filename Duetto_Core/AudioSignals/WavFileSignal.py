@@ -22,8 +22,7 @@ class WavFileSignal(FileAudioSignal):
             FileAudioSignal.open(self,path)
             self.read(path)
             self.path=path
-            #self.removeDCOffset()
-            self.generateWhiteNoise(10)
+
             self.timer.stop()
         except Exception, e:
             QMessageBox.warning(QMessageBox(),"Error","Could not load the file. "+e.message)
