@@ -245,17 +245,14 @@ class QSignalVisualizerWidget(FigureCanvas):
                         self.axesSpecgram.draw_artist(self.spanRectangleSpectrogram)
                         self.figure.canvas.blit(self.axesSpecgram.bbox)
 
-<<<<<<< HEAD
-    def specgramIndex(self, OsgramIndex):
-        minxSpecgram, maxxSpecgram = self.axesSpecgram.get_xlim()
-        return minxSpecgram + (OsgramIndex - self.mainCursor.min) * (maxxSpecgram - minxSpecgram) / (
-            self.mainCursor.max - self.mainCursor.min)
-=======
+
+
+
     def specgramIndex(self,OsgramIndex):
         minxSpecgram,maxxSpecgram=self.axesSpecgram.get_xlim()
         return minxSpecgram+(OsgramIndex-self.mainCursor.min)*(maxxSpecgram-minxSpecgram)/(self.mainCursor.max-self.mainCursor.min)
 
->>>>>>> c542c9bc1de3a74422877b7ed68340b2cca42fe3
+
 
     def mousePressEvent(self, event):
         FigureCanvas.mousePressEvent(self, event)
