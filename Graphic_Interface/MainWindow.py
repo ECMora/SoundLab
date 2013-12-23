@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'D:\Proyecto bioacustica\DuettoSystem\Graphic_Interface\UI Files\MainWindow.ui'
+# Form implementation generated from reading ui file 'MainWindow.ui'
 #
-# Created: Thu Dec 12 15:49:48 2013
+# Created: Sun Dec 22 23:21:40 2013
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -28,9 +28,9 @@ class Ui_DuettoMainWindow(object):
         self.centralwidget = QtGui.QWidget(DuettoMainWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.verticalLayout_2 = QtGui.QVBoxLayout(self.centralwidget)
-        self.verticalLayout_2.setSpacing(7)
+        self.verticalLayout_2.setSpacing(0)
         self.verticalLayout_2.setSizeConstraint(QtGui.QLayout.SetDefaultConstraint)
-        self.verticalLayout_2.setContentsMargins(-1, 0, 0, 0)
+        self.verticalLayout_2.setMargin(0)
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
         self.widget = QSignalVisualizerWidget(self.centralwidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
@@ -41,6 +41,10 @@ class Ui_DuettoMainWindow(object):
         self.widget.setAutoFillBackground(True)
         self.widget.setObjectName(_fromUtf8("widget"))
         self.verticalLayout_2.addWidget(self.widget)
+        self.horizontalScrollBar = QtGui.QScrollBar(self.centralwidget)
+        self.horizontalScrollBar.setOrientation(QtCore.Qt.Horizontal)
+        self.horizontalScrollBar.setObjectName(_fromUtf8("horizontalScrollBar"))
+        self.verticalLayout_2.addWidget(self.horizontalScrollBar)
         DuettoMainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(DuettoMainWindow)
         self.menubar.setGeometry(QtCore.QRect(0, 0, 1270, 21))

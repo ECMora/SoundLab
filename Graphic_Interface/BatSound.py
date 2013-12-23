@@ -2,7 +2,6 @@ from MainWindow import Ui_DuettoMainWindow
 from MyPowerSpecWindow import PowerSpectrumWindow
 from PyQt4 import QtCore
 from PyQt4 import QtGui
-import sys
 from Duetto_Core.AudioSignals import WavFileSignal
 
 
@@ -67,7 +66,7 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     def on_actionPower_Spectrum_triggered(self):
         dg_pow_spec = PowerSpectrumWindow(self)
         minx = self.widget.zmin * self.widget.rate
-        maxx = max(self.widget.zmax * self.widget.rate ,min(minx + self.NFFT_pow,len(self.widget.data)))
+        maxx = max(self.widget.zmax * self.widget.rate, min(minx + self.NFFT_pow, len(self.widget.data)))
         dg_pow_spec.plot(self.widget.data[minx:maxx], self.widget.rate, self.NFFT_pow, self.window_pow)
         self.pow_spec_windows.append(dg_pow_spec)
 
@@ -82,7 +81,7 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     @QtCore.pyqtSlot()
     def on_btnosc_apply_clicked(self):
-        pass;
+        pass
 
     @QtCore.pyqtSlot()
     def on_btnpow_apply_clicked(self):
@@ -99,7 +98,7 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.widget.specgramSettings.overlap = self.overlap_spec
         self.widget.visualChanges = True
         self.widget.refresh()
-    #    falta actualizar la ventana
+        # falta actualizar la ventana
 
     @QtCore.pyqtSlot()
     def on_actionSpectogram_Settings_triggered(self):
@@ -114,11 +113,12 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     @QtCore.pyqtSlot()
     def on_actionOpen_triggered(self):
         self.actionHighest_instant_frequency.setChecked(False)
-        file = QtGui.QFileDialog.getOpenFileName(caption="Select a wav file", filter="*.wav")
-        if file != '':
+        f = QtGui.QFileDialog.getOpenFileName(self, "Select a file to open",
+                                              filter="Wave Files (*.wav);;All Files (*)")
+        if f != '':
             self.widget._setVisibleOscilogram(True)
             self.widget._setVisibleSpectrogram(True)
-            self.widget.open(file)
+            self.widget.open(f)
             self.widget.specgramSettings.NFFT = self.NFFT_spec
             self.widget.specgramSettings.overlap = self.overlap_spec
             self.widget.visualChanges = True
@@ -156,12 +156,31 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.widget._setVisibleSpectrogram(False)
         self.widget.refresh()
 
-# create the GUI application
-app = QtGui.QApplication(sys.argv)
-# instantiate the main window
-dmw = BatSoundWindow()
-# show it
-dmw.show()
-# start the Qt main loop execution, exiting from this script
-# with the same return code of Qt application
-sys.exit(app.exec_())
+    @QtCore.pyqtSlot(int, int, int)
+    def on_widget_rangeChanged(self, left, right, total):
+        self.horizontalScrollBar.blockSignals(True)
+        self.horizontalScrollBar.setValue(0)
+        self.horizontalScrollBar.setMinimum(0)
+        self.horizontalScrollBar.setMaximum(total - (right - left))
+        self.horizontalScrollBar.setValue(left)
+        self.horizontalScrollBar.setPageStep(right - left)
+        self.horizontalScrollBar.setSingleStep((right - left) / 16)
+        self.horizontalScrollBar.blockSignals(True)
+        self.horizontalScrollBar.blockSignals(False)
+
+    @QtCore.pyqtSlot(int)
+    def on_horizontalScrollBar_valueChanged(self, value):
+        self.widget.changeRange(value, value + self.horizontalScrollBar.pageStep(), emit=False)
+
+if __name__ == '__main__':
+    import sys
+
+    # create the GUI application
+    app = QtGui.QApplication(sys.argv)
+    # instantiate the main window
+    dmw = BatSoundWindow()
+    # show it
+    dmw.show()
+    # start the Qt main loop execution, exiting from this script
+    # with the same return code of Qt application
+    sys.exit(app.exec_())
