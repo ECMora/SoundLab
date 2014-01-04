@@ -1,13 +1,14 @@
 from math import *
-from matplotlib.pyplot import summer
-from numpy import real,concatenate,convolve, array
+from numpy import real,concatenate, array
 import numpy
 from numpy.fft import *
-
 from Duetto_Core.AudioSignals.WavFileSignal import WavFileSignal
 from Duetto_Core.SignalProcessors.SignalProcessor import SignalProcessor
+
 class FILTER_TYPE():
     BAND_PASS,BAND_STOP,LOW_PASS,HIGH_PASS=range(4)
+
+
 class FilterSignalProcessor(SignalProcessor):
 
     def __init__(self,signal=WavFileSignal()):
@@ -20,7 +21,7 @@ class FilterSignalProcessor(SignalProcessor):
         if(indexTo==-1):
             indexTo=len(self.signal.data)-numberOfPoints
         for i in range(indexFrom,indexTo):
-            self.signal.data[i]=sum(self.signal.data[i:i+numberOfPoints])*1./numberOfPoints
+            self.signal.data[i] = sum(self.signal.data[i:i+numberOfPoints])*1./numberOfPoints
         return self.signal
 
 
@@ -69,4 +70,5 @@ class FilterSignalProcessor(SignalProcessor):
         else:
             self.signal.data=concatenate((self.signal.data[0:indexFrom],array(real(ifft(data_frec)[0:indexTo-indexFrom]),numpy.int32),self.signal.data[indexTo:]))
         return self.signal
+
 

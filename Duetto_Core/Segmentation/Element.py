@@ -1,5 +1,6 @@
-from Duetto_Core import SpecgramSettings
-from Segment import Segment
+from Duetto_Core.Segmentation import Segment
+
+
 class Element:
     """
     Represents the minimal piece of information to clasify

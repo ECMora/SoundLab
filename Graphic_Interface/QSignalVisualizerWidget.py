@@ -74,19 +74,12 @@ class QSignalVisualizerWidget(FigureCanvas):
     #region Sound
 
     def play(self):
-# HEAD
         self.elements()
-        #if(self.zoomCursor.min > 0 and self.zoomCursor.max > 0):
-        #    self.signalProcessor.signal.play(self.zoomCursor.min,self.zoomCursor.max,self.playerSpeed)
+
+        #if self.zoomCursor.min > 0 and self.zoomCursor.max > 0:
+        #    self.signalProcessor.signal.play(self.zoomCursor.min, self.zoomCursor.max, self.playerSpeed)
         #else:
-        #    self.signalProcessor.signal.play(self.mainCursor.min,self.mainCursor.max,self.playerSpeed)
-
-
-        if self.zoomCursor.min > 0 and self.zoomCursor.max > 0:
-            self.signalProcessor.signal.play(self.zoomCursor.min, self.zoomCursor.max, self.playerSpeed)
-        else:
-            self.signalProcessor.signal.play(self.mainCursor.min, self.mainCursor.max, self.playerSpeed)
-#>>>>>>> 93cba4b67720b98ec5f5fbeea441e07c64848f4c
+        #    self.signalProcessor.signal.play(self.mainCursor.min, self.mainCursor.max, self.playerSpeed)
 
     def switchPlayStatus(self):
         if self.signalProcessor.signal.playStatus == self.signalProcessor.signal.PLAYING:
@@ -434,7 +427,6 @@ class QSignalVisualizerWidget(FigureCanvas):
                         if self.specgramSettings.Pxx[i, j] < cut_off:
                             self.specgramSettings.Pxx[i, j] = self.min_specgram_value
 
-
                 Z = 10. * np.log10(self.specgramSettings.Pxx)
                 Z = np.flipud(Z)
                 a = self.axesSpecgram.get_xlim()
@@ -703,17 +695,28 @@ class QSignalVisualizerWidget(FigureCanvas):
 
     def elements(self):
         indexFrom, indexTo = self.getIndexFromAndTo()
-        self.detector.detect(self.signalProcessor.signal,indexFrom, indexTo)
-
-    def elements(self, type="simple"):
-        indexFrom, indexTo = self.getIndexFromAndTo()
-        rms = self.signalProcessor.rms(indexFrom, indexTo)
-        self.detector.detect(self.signalProcessor.signal, indexFrom, indexTo, rms, type)
+        a = self.detector.detect(self.signalProcessor.signal,indexFrom, indexTo)
+        #self.axesSpecgram.hold(True)
+        #arr = [self.getElementsPlotData(arrEl) for arrEl in a]
+        #maxSize = max([len(x) for x in arr])
+        #for i in range(len(arr)):
+        #    arr[i].extend([0 for _ in range(maxSize-len(arr[i]))])
+        #    print(len(arr[i]))
+        #self.axesSpecgram.plot(range(len(arr)), arr, "bo")
+        #self.axesSpecgram.hold(False)
 
         for c in self.detector.cursors():
             self.cursors.append(c)
         self.visualChanges = True
         self.refresh()
+
+    def getElementsPlotData(self, arrElements):
+        acumulative=[]
+        for e in arrElements:
+            for t in e.perimeter:
+                acumulative.extend([t[0],t[1]])
+        return acumulative
+
 
     def envelope(self):
         self.axesOscilogram.plot(range(len(self.signalProcessor.signal.data)),

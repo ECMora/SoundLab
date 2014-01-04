@@ -2,7 +2,6 @@ from PyQt4.QtGui import QDialog, QMessageBox
 from Duetto_Core.SignalProcessors.FilterSignalProcessor import FILTER_TYPE
 from MainWindow import Ui_DuettoMainWindow
 from MyPowerSpecWindow import PowerSpectrumWindow
-from Graphic_Interface.Dialogs import OptionsDialog as optdialog
 from Graphic_Interface.Dialogs import InsertSilenceDialog as sdialog, FilterOptionsDialog as filterdg,ChangeVolumeDialog as cvdialog
 from PyQt4 import QtCore
 from PyQt4 import QtGui
@@ -15,8 +14,6 @@ from Duetto_Core.AudioSignals import WavFileSignal
 MIN_SAMPLING_RATE = 1000
 MAX_SAMPLING_RATE = 2000000
 
-class OptionsDialog(optdialog.Ui_Dialog,QDialog):
-    pass
 class InsertSilenceDialog(sdialog.Ui_Dialog,QDialog):
     pass
 class ChangeVolumeDialog(cvdialog.Ui_Dialog,QDialog):

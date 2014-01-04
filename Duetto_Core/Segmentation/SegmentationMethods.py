@@ -1,5 +1,3 @@
-from Segment import Segment
-
 def individual(elements):
     return [e.segment() for e in elements]
 
