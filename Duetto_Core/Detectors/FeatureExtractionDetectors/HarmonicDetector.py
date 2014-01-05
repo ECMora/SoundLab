@@ -1,10 +1,10 @@
-from Duetto_Core.Cursors.IntervalCursor import IntervalCursor
-from Duetto_Core.Cursors.PointerCursor import PointerCursor
-from Duetto_Core.Detectors.Detector import Detector
-from Duetto_Core.Detectors.FrequencyPeeksDetector import FrequencyPeeksDetector
-from Duetto_Core.Detectors.MinMaxFrequencyDetector import MinMaxFrequencyDetector
-from Duetto_Core.SignalProcessors.SignalProcessor import SignalProcessor
 from matplotlib import mlab
+
+from Duetto_Core.Cursors.IntervalCursor import IntervalCursor
+from Duetto_Core.Detectors.Detector import Detector
+from Duetto_Core.Detectors.MinMaxFrequencyDetector import MinMaxFrequencyDetector
+from Duetto_Core.Detectors.FeatureExtractionDetectors import FrequencyPeeksDetector
+
 
 class HarmonicDetector(Detector):
     def __init__(self):

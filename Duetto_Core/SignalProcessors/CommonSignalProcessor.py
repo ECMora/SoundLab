@@ -1,8 +1,10 @@
+from math import sin, pi
+
 from numpy import array, zeros, concatenate
+
 from Duetto_Core.AudioSignals.WavFileSignal import WavFileSignal
-from Duetto_Core.Detectors.MaxMinPeakDetector import MaxMinPeakDetector
-from Duetto_Core.Detectors.MeanDetector import MeanDetector
-from math import sin, pi, sqrt
+from Duetto_Core.Detectors.FeatureExtractionDetectors.MaxMinPeakDetector import MaxMinPeakDetector
+from Duetto_Core.Detectors.FeatureExtractionDetectors import MeanDetector
 from Duetto_Core.SignalProcessors.SignalProcessor import SignalProcessor
 
 

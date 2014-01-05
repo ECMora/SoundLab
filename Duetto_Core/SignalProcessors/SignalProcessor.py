@@ -1,4 +1,6 @@
+import math
 import numpy
+import matplotlib.mlab as mlab
 from Duetto_Core.AudioSignals.AudioSignal import AudioSignal
 from Duetto_Core.AudioSignals.WavFileSignal import WavFileSignal
 
@@ -48,35 +50,27 @@ class SignalProcessor:
             raise IndexError()
 
 
-def envelope(signal, indexFrom=0, indexTo=-1, decimation=1, decay=1):
+def envelope(signal, indexFrom=0, indexTo=-1, decay=1):
     if indexTo == -1 :
         indexTo = len(signal.data)
-
-    decay *= signal.samplingRate/1000  #salto para evitar caidas locales
-    print(len(signal.data))
-    if decimation > 1:
-        rectified = numpy.array([(abs(x) if i %decimation == 0 else numpy.mean(abs(signal.data[i-i%decimation:i]))) for i, x in enumerate(signal.data[indexFrom: indexTo])])
-    else:
-        rectified = numpy.array(abs(signal.data[indexFrom: indexTo]))
-
+    decay = int(decay*signal.samplingRate/1000)  #salto para evitar caidas locales
+    rectified = numpy.array(abs(signal.data[indexFrom: indexTo]))
     i = 1
     arr = numpy.zeros(len(rectified), dtype=numpy.uint32)
     current = rectified[0]
-    arr[0] = current
+    fall_init = None
     while i < len(arr):
-        if rectified[i] < current:
-            interval = min(decay, len(arr)-i-1)
-            arr[i+1:i+interval] = [arr[i]+x*(arr[i]-arr[i+interval])/(-interval) for x in range(1, interval)]
-            print("LLLLLLLLLLLLLLLLLLLLLLLLLLLL")
-            current = arr[i+interval]
-            i += interval
+        if fall_init is not None:
+            value = rectified[fall_init] - rectified[fall_init]*(i-fall_init)/decay    #formula
+            arr[i-1] = value
+            fall_init = None if(value <= rectified[i] or i-fall_init >= decay) else fall_init
         else:
-            current = rectified[i]
-            arr[i] = current
+            fall_init = i-1 if rectified[i] < current else None
+            arr[i-1] = current
+        current = rectified[i]
         i += 1
 
-    for i, x in enumerate(arr):
-        print(str(x)+" --------  "+ str(rectified[i]))
+    arr[-1] = current
     return arr
 
 

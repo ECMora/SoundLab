@@ -147,12 +147,20 @@
     <addaction name="actionHighest_instant_frequency"/>
     <addaction name="actionClear_Spectogram"/>
    </widget>
+   <widget class="QMenu" name="menuDetection">
+    <property name="title">
+     <string>Detection</string>
+    </property>
+    <addaction name="actionOsilogram_Detector"/>
+    <addaction name="actionSpectrogram_Detector"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
    <addaction name="menuTools"/>
    <addaction name="menuView"/>
    <addaction name="menuSound"/>
    <addaction name="menuView_2"/>
+   <addaction name="menuDetection"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QDockWidget" name="dock_osc_settings">
@@ -796,6 +804,16 @@
   <action name="actionGenerate_White_Noise">
    <property name="text">
     <string>White Noise</string>
+   </property>
+  </action>
+  <action name="actionOsilogram_Detector">
+   <property name="text">
+    <string>Osilogram Detector</string>
+   </property>
+  </action>
+  <action name="actionSpectrogram_Detector">
+   <property name="text">
+    <string>Spectrogram Detector</string>
    </property>
   </action>
   <zorder>dock_osc_settings</zorder>

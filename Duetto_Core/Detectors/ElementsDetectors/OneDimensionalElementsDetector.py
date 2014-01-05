@@ -1,8 +1,37 @@
-from numpy import array,floor
-from Duetto_Core.Cursors.IntervalCursor import IntervalCursor
+from numpy import *
+import matplotlib.mlab as mlab
 from Duetto_Core.Detectors.Detector import Detector
+from Duetto_Core.Detectors.ElementsDetectors.ElementsDetector import ElementsDetector
+from Duetto_Core.SignalProcessors.SignalProcessor import envelope
+from Duetto_Core.Cursors.IntervalCursor import IntervalCursor
 
-class SegmenterDetector(Detector):
+
+class OneDimensionalElementsDetector(ElementsDetector):
+
+    def __init__(self):
+        ElementsDetector.__init__(self)
+        self.oscilogram_elements_detector = self.one_dimensional_elements_detector
+
+    def detect(self,signal,indexFrom=0,indexTo=-1,threshold=50,decay=1, minsize=2):
+            """
+            decay in ms to prevent locals falls, should be as long as the size of the separation between
+            elements
+            minsize of an element. by default twice of the size betwen elements
+            """
+            minsize = int(minsize*decay*signal.samplingRate/1000)
+            data = envelope(signal,indexFrom, indexTo, decay=1)
+            sup = max(data) #relative to max
+            inf = min(data)
+            print(math.log10((sup - inf)))
+            threshold = (sup - inf)/2.0
+            return self.one_dimensional_elements_detector(data, threshold,minsize)
+
+    def one_dimensional_elements_detector(self, data,threshold,minSize=1,merge_factor = 1):
+            intervals = mlab.contiguous_regions(data > threshold)
+            self.intervals = [IntervalCursor(c[0], c[1]) for c in intervals if c[1]-c[0] > minSize]
+
+
+class SegmentsDetector(Detector):
     """This abstract class represents diferent ways to split an audio signal"""
     UNIFORM_SEGMENTER,PSEUDOUNIFORM_SEGMENTER,NOICE_DETECTION_SEGMENTER=range(3)
 
@@ -64,10 +93,3 @@ class SegmenterDetector(Detector):
             if i >threshold: break
             else: last = last - 1
         return data[first:last]
-
-    def noiseDetectionSegmenter(self):
-        """
-
-                """
-
-        pass

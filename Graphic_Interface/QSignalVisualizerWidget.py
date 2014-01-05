@@ -9,22 +9,20 @@ from matplotlib.figure import Figure
 from matplotlib.backends.backend_qt4agg \
     import FigureCanvasQTAgg as FigureCanvas
 from numpy.lib.function_base import percentile
+from PyQt4.QtCore import SIGNAL
+
 from Duetto_Core.AudioSignals.WavFileSignal import WavFileSignal
 from Duetto_Core.Cursors.IntervalCursor import IntervalCursor
 from Duetto_Core.Cursors.PointerCursor import PointerCursor
 from Duetto_Core.Cursors.RectangularCursor import RectangularCursor
-from Duetto_Core.Detectors.ElementsDetector import ElementDetector
-from Duetto_Core.Detectors.MaxMinPeakDetector import MaxMinPeakDetector
-from Duetto_Core.Detectors.MeanDetector import MeanDetector
-from Duetto_Core.Detectors.SegmenterDetector import SegmenterDetector
+from Duetto_Core.Detectors.ElementsDetectors.ElementsDetector import ElementsDetector
+from Duetto_Core.Detectors.FeatureExtractionDetectors import MeanDetector, MaxMinPeakDetector
 from Duetto_Core.SignalProcessors.CommonSignalProcessor import CommonSignalProcessor
 from Duetto_Core.SignalProcessors.FilterSignalProcessor import *
 from Duetto_Core.SignalProcessors.SignalProcessor import SignalProcessor
 from Duetto_Core.SignalProcessors.EditionSignalProcessor import EditionSignalProcessor
 from Duetto_Core.SpecgramSettings import SpecgramSettings
-from PyQt4.QtCore import SIGNAL
-import matplotlib.cm as cm
-import time
+
 
 BACK_COLOR = "gray"
 
@@ -58,7 +56,7 @@ class QSignalVisualizerWidget(FigureCanvas):
         self.meanSignalValue = None
         self.powerSpectrum = np.array([])
         self.playerSpeed = 100
-        self.detector = ElementDetector()
+        self.detector = ElementsDetector()
 
         FigureCanvas.__init__(self, self.figure)
         # set the parent widget
@@ -74,12 +72,10 @@ class QSignalVisualizerWidget(FigureCanvas):
     #region Sound
 
     def play(self):
-        self.elements()
-
-        #if self.zoomCursor.min > 0 and self.zoomCursor.max > 0:
-        #    self.signalProcessor.signal.play(self.zoomCursor.min, self.zoomCursor.max, self.playerSpeed)
-        #else:
-        #    self.signalProcessor.signal.play(self.mainCursor.min, self.mainCursor.max, self.playerSpeed)
+        if self.zoomCursor.min > 0 and self.zoomCursor.max > 0:
+            self.signalProcessor.signal.play(self.zoomCursor.min, self.zoomCursor.max, self.playerSpeed)
+        else:
+            self.signalProcessor.signal.play(self.mainCursor.min, self.mainCursor.max, self.playerSpeed)
 
     def switchPlayStatus(self):
         if self.signalProcessor.signal.playStatus == self.signalProcessor.signal.PLAYING:
@@ -658,31 +654,6 @@ class QSignalVisualizerWidget(FigureCanvas):
 
     #region DETECTION
 
-    def uniformSegmenter(self):
-        segmenter = SegmenterDetector()
-        segmenter.detect(self.signalProcessor.signal)
-        for c in segmenter.cursors():
-            self.cursors.append(c)
-        self.visualChanges = True
-        self.refresh()
-
-    def spectrogramsElevations(self):
-        detector = SpectrogramHillDetector()
-        overlap = int(self.specgramSettings.NFFT * self.specgramSettings.overlap / 100)
-        detector.detect(self.signalProcessor.signal, 80, self.specgramSettings.Pxx, self.specgramSettings.freqs,
-                        self.specgramSettings.bins)
-        for c in detector.cursors():
-            self.cursors.append(c)
-        self.visualChanges = True
-        self.refresh()
-
-    def pseudoUniformSegmenter(self):
-        segmenter = SegmenterDetector()
-        segmenter.detect(self.signalProcessor.signal, segment_mode=segmenter.PSEUDOUNIFORM_SEGMENTER)
-        for c in segmenter.cursors():
-            self.cursors.append(c)
-        self.visualChanges = True
-        self.refresh()
 
     def rms(self):
         indexFrom, indexTo = self.getIndexFromAndTo()
@@ -692,35 +663,18 @@ class QSignalVisualizerWidget(FigureCanvas):
         self.visualChanges = True
         self.refresh()
 
-
-    def elements(self):
+    def oscilogramDetector(self):
         indexFrom, indexTo = self.getIndexFromAndTo()
-        a = self.detector.detect(self.signalProcessor.signal,indexFrom, indexTo)
-        #self.axesSpecgram.hold(True)
-        #arr = [self.getElementsPlotData(arrEl) for arrEl in a]
-        #maxSize = max([len(x) for x in arr])
-        #for i in range(len(arr)):
-        #    arr[i].extend([0 for _ in range(maxSize-len(arr[i]))])
-        #    print(len(arr[i]))
-        #self.axesSpecgram.plot(range(len(arr)), arr, "bo")
-        #self.axesSpecgram.hold(False)
-
+        self.detector.detect(self.signalProcessor.signal,indexFrom, indexTo)
         for c in self.detector.cursors():
             self.cursors.append(c)
         self.visualChanges = True
         self.refresh()
 
-    def getElementsPlotData(self, arrElements):
-        acumulative=[]
-        for e in arrElements:
-            for t in e.perimeter:
-                acumulative.extend([t[0],t[1]])
-        return acumulative
-
-
     def envelope(self):
-        self.axesOscilogram.plot(range(len(self.signalProcessor.signal.data)),
-                                 map(self.signalProcessor.envelope, self.signalProcessor.signal.data))
+        #add cofig dialog and plot the envelope
+        pass
+
 
     def maxMinPeaks(self):
         detector = MaxMinPeakDetector()

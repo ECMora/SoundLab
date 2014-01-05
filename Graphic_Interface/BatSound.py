@@ -39,9 +39,6 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
 
 
-
-    #region Yasel Changes
-
     @QtCore.pyqtSlot()
     def on_actionResampling_triggered(self):
         resamplingDialog=sdialog.Ui_Dialog()
@@ -148,8 +145,6 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.widget.reverse()
 
 
-    #endregion
-
     def updatePowSpecWin(self):
        for win in self.pow_spec_windows:
            minx = self.widget.zoomCursor.min
@@ -244,6 +239,14 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     def on_actionSpectogram_Settings_triggered(self):
         self.dock_spec_settings.setVisible(True)
         self.dock_spec_settings.setFloating(False)
+
+    @QtCore.pyqtSlot()
+    def on_actionOsilogram_Detector_triggered(self):
+        print("")
+
+    @QtCore.pyqtSlot()
+    def on_actionSpectrogram_Detector_triggered(self):
+        print("SP")
 
     @QtCore.pyqtSlot()
     def on_actionOscillogram_Settings_triggered(self):
