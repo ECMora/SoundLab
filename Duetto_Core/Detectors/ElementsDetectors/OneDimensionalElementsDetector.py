@@ -12,23 +12,33 @@ class OneDimensionalElementsDetector(ElementsDetector):
         ElementsDetector.__init__(self)
         self.oscilogram_elements_detector = self.one_dimensional_elements_detector
 
-    def detect(self,signal,indexFrom=0,indexTo=-1,threshold=50,decay=1, minsize=2):
+    def detect(self,signal, indexFrom=0, indexTo=-1, threshold=50, decay=1, softfactor=0.5):
             """
-            decay in ms to prevent locals falls, should be as long as the size of the separation between
+            decay in ms to prevent locals falls, should be as long as the min size of the separation between
             elements
-            minsize of an element. by default twice of the size betwen elements
+            softfactor points to make a moving average in data
             """
-            minsize = int(minsize*decay*signal.samplingRate/1000)
-            data = envelope(signal,indexFrom, indexTo, decay=1)
-            sup = max(data) #relative to max
-            inf = min(data)
-            print(math.log10((sup - inf)))
-            threshold = (sup - inf)/2.0
-            return self.one_dimensional_elements_detector(data, threshold,minsize)
+            decay = int(decay*signal.samplingRate/1000)  #salto para evitar caidas locales
+            data = envelope(signal,indexFrom, indexTo, decay=decay)
+            softfactor = int(softfactor*decay)
+            #sup = max(data) #relative to max
+            #inf = min(data)
+            threshold = mean(data)/2
+            #make a moving average in data to soft rising edges
+            data = array([mean(data[i-softfactor:i]) for i,_ in enumerate(data, start=softfactor)])
+            return self.one_dimensional_elements_detector(data, threshold, minSize=decay)
 
-    def one_dimensional_elements_detector(self, data,threshold,minSize=1,merge_factor = 1):
-            intervals = mlab.contiguous_regions(data > threshold)
-            self.intervals = [IntervalCursor(c[0], c[1]) for c in intervals if c[1]-c[0] > minSize]
+    def one_dimensional_elements_detector(self, data, threshold, minSize=1, merge_factor=0):
+        """
+        data is a numpy array
+        minSize is the min ampolitude of an element
+        merge_factor is the % of separation between 2 elements that is assumed as one (merge the 2 into one)
+        """
+        regions = mlab.contiguous_regions(data > threshold)
+        if merge_factor > 0:
+            regions = self.mergeIntervals(regions, merge_factor)
+
+        self.intervals = [IntervalCursor(c[0], c[1]) for c in regions if c[1]-c[0] > minSize]
 
 
 class SegmentsDetector(Detector):
@@ -93,3 +103,5 @@ class SegmentsDetector(Detector):
             if i >threshold: break
             else: last = last - 1
         return data[first:last]
+
+

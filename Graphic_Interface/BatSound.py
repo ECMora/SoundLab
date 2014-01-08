@@ -242,7 +242,7 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     @QtCore.pyqtSlot()
     def on_actionOsilogram_Detector_triggered(self):
-        print("")
+        self.widget.detectElementsInOscilogram()
 
     @QtCore.pyqtSlot()
     def on_actionSpectrogram_Detector_triggered(self):

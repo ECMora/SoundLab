@@ -3,12 +3,19 @@ from Duetto_Core.AudioSignals.WavFileSignal import WavFileSignal
 from matplotlib.pylab import *
 import math
 wav = WavFileSignal()
-wav.open("..\\..\\ficheros de audio\Clasif\\c1.wav")
-print("YA")
+wav.open("..\\..\\ficheros de audio\\Clasif\c1.wav")
 
-plot(envelope(wav,decay=5))
 
-show()
+#for i in wav.data:
+#    print(i)
+#print("************************")
+
+print(min(wav.data))
+
+#
+#plot(envelope(wav))
+#
+#show()
 
 
 

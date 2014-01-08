@@ -15,7 +15,7 @@ from Duetto_Core.AudioSignals.WavFileSignal import WavFileSignal
 from Duetto_Core.Cursors.IntervalCursor import IntervalCursor
 from Duetto_Core.Cursors.PointerCursor import PointerCursor
 from Duetto_Core.Cursors.RectangularCursor import RectangularCursor
-from Duetto_Core.Detectors.ElementsDetectors.ElementsDetector import ElementsDetector
+from Duetto_Core.Detectors.ElementsDetectors.OneDimensionalElementsDetector import OneDimensionalElementsDetector
 from Duetto_Core.Detectors.FeatureExtractionDetectors import MeanDetector, MaxMinPeakDetector
 from Duetto_Core.SignalProcessors.CommonSignalProcessor import CommonSignalProcessor
 from Duetto_Core.SignalProcessors.FilterSignalProcessor import *
@@ -56,7 +56,7 @@ class QSignalVisualizerWidget(FigureCanvas):
         self.meanSignalValue = None
         self.powerSpectrum = np.array([])
         self.playerSpeed = 100
-        self.detector = ElementsDetector()
+        self.oscilogram_elements_detector = OneDimensionalElementsDetector()
 
         FigureCanvas.__init__(self, self.figure)
         # set the parent widget
@@ -663,10 +663,10 @@ class QSignalVisualizerWidget(FigureCanvas):
         self.visualChanges = True
         self.refresh()
 
-    def oscilogramDetector(self):
+    def detectElementsInOscilogram(self):
         indexFrom, indexTo = self.getIndexFromAndTo()
-        self.detector.detect(self.signalProcessor.signal,indexFrom, indexTo)
-        for c in self.detector.cursors():
+        self.oscilogram_elements_detector.detect(self.signalProcessor.signal,indexFrom, indexTo)
+        for c in self.oscilogram_elements_detector.cursors():
             self.cursors.append(c)
         self.visualChanges = True
         self.refresh()

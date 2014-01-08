@@ -53,7 +53,6 @@ class SignalProcessor:
 def envelope(signal, indexFrom=0, indexTo=-1, decay=1):
     if indexTo == -1 :
         indexTo = len(signal.data)
-    decay = int(decay*signal.samplingRate/1000)  #salto para evitar caidas locales
     rectified = numpy.array(abs(signal.data[indexFrom: indexTo]))
     i = 1
     arr = numpy.zeros(len(rectified), dtype=numpy.uint32)

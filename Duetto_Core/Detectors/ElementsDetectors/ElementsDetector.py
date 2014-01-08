@@ -42,8 +42,8 @@ class ElementsDetector(Detector):
 #wav = WavFileSignal()
 #wav.open("..\\..\\..\\ficheros de audio\Clasif\c1.wav")
 #envelope(wav, decimation=10)
-#detector=ElementsDetector()
-#el=detector.one_dimensional_elements_detector(wav)
+#oscilogram_elements_detector=ElementsDetector()
+#el=oscilogram_elements_detector.one_dimensional_elements_detector(wav)
 #a = range(25)
 #
 #b = [mean(a[i*len(a)/10:(i+1)*len(a)/10]) for i in range(10)]
