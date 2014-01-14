@@ -1,14 +1,15 @@
+import sys
+
 from PyQt4.QtGui import QDialog, QMessageBox
-from Duetto_Core.SignalProcessors.FilterSignalProcessor import FILTER_TYPE
-from MainWindow import Ui_DuettoMainWindow
-from MyPowerSpecWindow import PowerSpectrumWindow
-from Graphic_Interface.Dialogs import InsertSilenceDialog as sdialog, FilterOptionsDialog as filterdg,ChangeVolumeDialog as cvdialog
 from PyQt4 import QtCore
 from PyQt4 import QtGui
-
-import sys
 from PyQt4.QtCore import SIGNAL
-from Duetto_Core.AudioSignals import WavFileSignal
+
+from Duetto_Core.SignalProcessors.FilterSignalProcessor import FILTER_TYPE
+from Graphic_Interface import ElemDetectSettingsDialog as elementsdlg
+from MainWindow import Ui_DuettoMainWindow
+from MyPowerSpecWindow import PowerSpectrumWindow
+from Graphic_Interface.Dialogs import InsertSilenceDialog as sdialog, FilterOptionsDialog as filterdg,ChangeVolumeDialog as cvdialog,ui_elemDetectSettings as elementdlg
 
 
 MIN_SAMPLING_RATE = 1000
@@ -16,8 +17,16 @@ MAX_SAMPLING_RATE = 2000000
 
 class InsertSilenceDialog(sdialog.Ui_Dialog,QDialog):
     pass
+
+
+class ElementsDetectDialog(elementdlg.Ui_elemDetectSettingsDialog,QDialog):
+    pass
+
+
 class ChangeVolumeDialog(cvdialog.Ui_Dialog,QDialog):
     pass
+
+
 class FilterDialog(filterdg.Ui_Dialog,QDialog):
     pass
 
@@ -144,13 +153,11 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     def on_action_Reverse_triggered(self):
         self.widget.reverse()
 
-
     def updatePowSpecWin(self):
        for win in self.pow_spec_windows:
            minx = self.widget.zoomCursor.min
            maxx = max(self.widget.zoomCursor.max ,min(minx + self.NFFT_pow,len(self.widget.signalProcessor.signal.data)))
            win.updatePowSpectrumInterval(self.widget.signalProcessor.signal.data[minx:maxx])
-
 
     @QtCore.pyqtSlot()
     def on_actionZoomIn_triggered(self):
@@ -242,11 +249,27 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     @QtCore.pyqtSlot()
     def on_actionOsilogram_Detector_triggered(self):
-        self.widget.detectElementsInOscilogram()
+        elementsDetectorDialog = elementdlg.Ui_elemDetectSettingsDialog()
+        elementsDetectorDialogWindow = ElementsDetectDialog()
+        elementsDetectorDialog.setupUi(elementsDetectorDialogWindow)
+        elementsDetectorDialog.dsbxThreshold.setValue(20)
+        elementsDetectorDialog.dsbxMinSize.setValue(1)
+        elementsDetectorDialog.dsbxDecay.setValue(1)
+        if elementsDetectorDialogWindow.exec_():
+            threshold = elementsDetectorDialog.dsbxThreshold.value()
+            minsize = elementsDetectorDialog.dsbxMinSize.value()
+            mergefactor = elementsDetectorDialog.dsbxMergeFactor.value()
+            softfactor = elementsDetectorDialog.sbxSoftFactor.value()
+            decay = elementsDetectorDialog.dsbxDecay.value()
+            self.widget.detectElementsInOscilogram(threshold,decay,minsize,softfactor,mergefactor)
 
     @QtCore.pyqtSlot()
     def on_actionSpectrogram_Detector_triggered(self):
-        print("SP")
+        self.widget.clearCursors()
+
+    @QtCore.pyqtSlot()
+    def on_actionEnvelope_triggered(self):
+        self.widget.envelope()
 
     @QtCore.pyqtSlot()
     def on_actionOscillogram_Settings_triggered(self):

@@ -10,7 +10,7 @@ from matplotlib.backends.backend_qt4agg \
     import FigureCanvasQTAgg as FigureCanvas
 from numpy.lib.function_base import percentile
 from PyQt4.QtCore import SIGNAL
-
+import matplotlib.pyplot as plt
 from Duetto_Core.AudioSignals.WavFileSignal import WavFileSignal
 from Duetto_Core.Cursors.IntervalCursor import IntervalCursor
 from Duetto_Core.Cursors.PointerCursor import PointerCursor
@@ -19,7 +19,7 @@ from Duetto_Core.Detectors.ElementsDetectors.OneDimensionalElementsDetector impo
 from Duetto_Core.Detectors.FeatureExtractionDetectors import MeanDetector, MaxMinPeakDetector
 from Duetto_Core.SignalProcessors.CommonSignalProcessor import CommonSignalProcessor
 from Duetto_Core.SignalProcessors.FilterSignalProcessor import *
-from Duetto_Core.SignalProcessors.SignalProcessor import SignalProcessor
+from Duetto_Core.SignalProcessors.SignalProcessor import SignalProcessor, envelope
 from Duetto_Core.SignalProcessors.EditionSignalProcessor import EditionSignalProcessor
 from Duetto_Core.SpecgramSettings import SpecgramSettings
 
@@ -234,14 +234,9 @@ class QSignalVisualizerWidget(FigureCanvas):
                         self.axesSpecgram.draw_artist(self.spanRectangleSpectrogram)
                         self.figure.canvas.blit(self.axesSpecgram.bbox)
 
-
-
-
     def specgramIndex(self,OsgramIndex):
         minxSpecgram,maxxSpecgram=self.axesSpecgram.get_xlim()
         return minxSpecgram+(OsgramIndex-self.mainCursor.min)*(maxxSpecgram-minxSpecgram)/(self.mainCursor.max-self.mainCursor.min)
-
-
 
     def mousePressEvent(self, event):
         FigureCanvas.mousePressEvent(self, event)
@@ -395,7 +390,7 @@ class QSignalVisualizerWidget(FigureCanvas):
                     round((x + self.mainCursor.min) * 1.0 / self.signalProcessor.signal.samplingRate,
                           self.OSGRAM_XTICS_DECIMAL_PLACES) for x in self.axesOscilogram.get_xticks()])
                 self.axesOscilogram.set_yticklabels(
-                    [round(x * 100. / (2 ** self.signalProcessor.signal.bitDepth), 0) for x in
+                    [str(round(x * 100. / (2 ** self.signalProcessor.signal.bitDepth),0))+"%" for x in
                      self.axesOscilogram.get_yticks()])
                 self.axesOscilogram.set_xlim(0, self.mainCursor.max - self.mainCursor.min)
                 self.axesOscilogram.grid(self.specgramSettings.grid)
@@ -411,17 +406,6 @@ class QSignalVisualizerWidget(FigureCanvas):
 
                 cut_off = percentile(self.powerSpectrum, self.specgramSettings.threshold)
 
-                #the umbral cut
-                #increases the performance with search in the indexes
-
-
-                ind = mlab.cross_from_below(self.specgramSettings.Pxx, cut_off)
-                #self.specgramSettings.Pxx[ind] = self.min_specgram_value
-
-                for i in range(len(self.specgramSettings.Pxx)):
-                    for j in range(len(self.specgramSettings.Pxx[i])):
-                        if self.specgramSettings.Pxx[i, j] < cut_off:
-                            self.specgramSettings.Pxx[i, j] = self.min_specgram_value
 
                 Z = 10. * np.log10(self.specgramSettings.Pxx)
                 Z = np.flipud(Z)
@@ -593,8 +577,6 @@ class QSignalVisualizerWidget(FigureCanvas):
             self.visualChanges = True
             self.rangeChanged.emit(self.mainCursor.min, self.mainCursor.max, len(self.signalProcessor.signal.data))
             self.refresh()
-
-
     #endregion
 
     def reverse(self):
@@ -611,7 +593,18 @@ class QSignalVisualizerWidget(FigureCanvas):
         self.visualChanges=True
         self.refresh()
 
-
+    def envelope(self):
+        #add cofig dialog and plot the envelope
+        indexFrom, indexTo = self.getIndexFromAndTo()
+        y = envelope(self.signalProcessor.signal.data[indexFrom:indexTo],decay=self.signalProcessor.signal.samplingRate/1000)
+        x = np.arange(len(y))
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        l, = plt.plot(x, y)
+        t = ax.set_title('Envelope')
+        ax.set_xticklabels([round(x * 1.0 / self.signalProcessor.signal.samplingRate,self.OSGRAM_XTICS_DECIMAL_PLACES) for x in self.axesOscilogram.get_xticks()])
+        ax.set_yticklabels([str(int(y * 1000.0 /(2**self.signalProcessor.signal.bitDepth)))+"dB" for y in self.axesOscilogram.get_yticks()])
+        plt.show()
 
     def getIndexFromAndTo(self):
         indexFrom, indexTo = self.mainCursor.min, self.mainCursor.max
@@ -631,13 +624,8 @@ class QSignalVisualizerWidget(FigureCanvas):
     def insertSilence(self, ms=0):
         self.signalProcessingAction(CommonSignalProcessor(self.signalProcessor.signal).insertSilence, ms)
 
-
     def scale(self, factor, function="normalize",fade="IN"):
         self.signalProcessingAction(CommonSignalProcessor(self.signalProcessor.signal).scale,factor,function,fade)
-
-    def scale(self, factor, function="normalize", fade="IN"):
-        self.signalProcessingAction(CommonSignalProcessor(self.signalProcessor.signal).scale, factor, function, fade)
-
 
     def silence(self):
         self.signalProcessingAction(CommonSignalProcessor(self.signalProcessor.signal).setSilence)
@@ -648,12 +636,9 @@ class QSignalVisualizerWidget(FigureCanvas):
 
     def normalize(self):
         self.signalProcessingAction(CommonSignalProcessor(self.signalProcessor.signal).normalize)
-
-
     #endregion
 
     #region DETECTION
-
 
     def rms(self):
         indexFrom, indexTo = self.getIndexFromAndTo()
@@ -663,18 +648,16 @@ class QSignalVisualizerWidget(FigureCanvas):
         self.visualChanges = True
         self.refresh()
 
-    def detectElementsInOscilogram(self):
+    def clearCursors(self):
+        self.cursors = []
+
+    def detectElementsInOscilogram(self,threshold=20, decay=1, minSize=0, softfactor=5, merge_factor=0):
         indexFrom, indexTo = self.getIndexFromAndTo()
-        self.oscilogram_elements_detector.detect(self.signalProcessor.signal,indexFrom, indexTo)
+        self.oscilogram_elements_detector.detect(self.signalProcessor.signal,indexFrom, indexTo, threshold, decay, minSize, softfactor, merge_factor)
         for c in self.oscilogram_elements_detector.cursors():
             self.cursors.append(c)
         self.visualChanges = True
         self.refresh()
-
-    def envelope(self):
-        #add cofig dialog and plot the envelope
-        pass
-
 
     def maxMinPeaks(self):
         detector = MaxMinPeakDetector()
@@ -764,5 +747,3 @@ class QSignalVisualizerWidget(FigureCanvas):
             cursor.fromByteArray(userData[index:index + size])
             index += size
             self.cursors.append(cursor)
-
-            #endregion

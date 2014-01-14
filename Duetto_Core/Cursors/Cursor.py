@@ -8,6 +8,7 @@ class LineType:
     DOT,FULL=range(2)
 ARRAYLENGTH=5
 
+
 class CursorOptions(Storable):
 
     def __init__(self):

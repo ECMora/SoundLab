@@ -125,6 +125,7 @@
     <addaction name="actionSpectogram"/>
     <addaction name="actionCombined"/>
     <addaction name="actionPower_Spectrum"/>
+    <addaction name="actionEnvelope"/>
     <addaction name="separator"/>
     <addaction name="actionOscillogram_Settings"/>
     <addaction name="actionSpectogram_Settings"/>
@@ -814,6 +815,11 @@
   <action name="actionSpectrogram_Detector">
    <property name="text">
     <string>Spectrogram Detector</string>
+   </property>
+  </action>
+  <action name="actionEnvelope">
+   <property name="text">
+    <string>Envelope</string>
    </property>
   </action>
   <zorder>dock_osc_settings</zorder>

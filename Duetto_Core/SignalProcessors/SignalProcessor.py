@@ -12,6 +12,7 @@ class SignalProcessor:
     def __init__(self, signal=WavFileSignal()):
         self._signal = signal
 
+
     #region Propiedad SIGNAL
     def _getSignal(self):
         return self._signal
@@ -50,18 +51,20 @@ class SignalProcessor:
             raise IndexError()
 
 
-def envelope(signal, indexFrom=0, indexTo=-1, decay=1):
-    if indexTo == -1 :
-        indexTo = len(signal.data)
-    rectified = numpy.array(abs(signal.data[indexFrom: indexTo]))
+def envelope(data, decay=1):
+    """
+    decay is the min number of samples in data that separates two elements
+    """
+    rectified = numpy.array(abs(data))
     i = 1
-    arr = numpy.zeros(len(rectified), dtype=numpy.uint32)
+    arr = numpy.zeros(len(rectified), dtype=numpy.int32)
     current = rectified[0]
     fall_init = None
     while i < len(arr):
         if fall_init is not None:
-            value = rectified[fall_init] - rectified[fall_init]*(i-fall_init)/decay    #formula
-            arr[i-1] = value
+            value = rectified[fall_init] - rectified[fall_init]*(i-fall_init)/decay
+            #formula
+            arr[i-1] = max(value, rectified[i])
             fall_init = None if(value <= rectified[i] or i-fall_init >= decay) else fall_init
         else:
             fall_init = i-1 if rectified[i] < current else None

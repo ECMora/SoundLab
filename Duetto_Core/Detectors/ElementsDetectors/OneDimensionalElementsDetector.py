@@ -4,6 +4,7 @@ from Duetto_Core.Detectors.Detector import Detector
 from Duetto_Core.Detectors.ElementsDetectors.ElementsDetector import ElementsDetector
 from Duetto_Core.SignalProcessors.SignalProcessor import envelope
 from Duetto_Core.Cursors.IntervalCursor import IntervalCursor
+import time
 
 
 class OneDimensionalElementsDetector(ElementsDetector):
@@ -11,34 +12,51 @@ class OneDimensionalElementsDetector(ElementsDetector):
     def __init__(self):
         ElementsDetector.__init__(self)
         self.oscilogram_elements_detector = self.one_dimensional_elements_detector
+        self.threshold = 20
 
-    def detect(self,signal, indexFrom=0, indexTo=-1, threshold=50, decay=1, softfactor=0.5):
+    def detect(self,signal, indexFrom=0, indexTo=-1, threshold=0, decay=1,minSize=0,softfactor = 5,merge_factor=0):
             """
             decay in ms to prevent locals falls, should be as long as the min size of the separation between
             elements
             softfactor points to make a moving average in data
+            merge_factor in ms
+            threshold in dB from the max value
             """
+            if indexTo == -1:
+                indexTo = len(signal.data)
             decay = int(decay*signal.samplingRate/1000)  #salto para evitar caidas locales
-            data = envelope(signal,indexFrom, indexTo, decay=decay)
-            softfactor = int(softfactor*decay)
-            #sup = max(data) #relative to max
-            #inf = min(data)
-            threshold = mean(data)/2
-            #make a moving average in data to soft rising edges
-            data = array([mean(data[i-softfactor:i]) for i,_ in enumerate(data, start=softfactor)])
-            return self.one_dimensional_elements_detector(data, threshold, minSize=decay)
+            if threshold == 0:
+                threshold = mean(signal.data[indexFrom : indexTo])/2
+                self.threshold = 20*log10(threshold*1000.0/(2**signal.bitDepth))
+            else:
+                #translate the threshold from dB scale to V value
+                threshold = (10.0**(threshold/20.0))*(2**signal.bitDepth)/1000.0
 
-    def one_dimensional_elements_detector(self, data, threshold, minSize=1, merge_factor=0):
+            if merge_factor != 0:
+                merge_factor = merge_factor*signal.samplingRate/1000.0
+            if minSize != 0:
+                minSize = minSize*signal.samplingRate/1000.0
+            self.intervals = [IntervalCursor(c[0], c[1]) for c in self.one_dimensional_elements_detector(signal.data[indexFrom : indexTo],threshold, minSize=minSize, decay=decay, softfactor=softfactor, merge_factor=merge_factor)]
+
+
+
+    def one_dimensional_elements_detector(self, data,threshold=0, minSize=1, decay=1, softfactor=10, merge_factor=0, above_threshold_precent = 10):
         """
         data is a numpy array
-        minSize is the min ampolitude of an element
+        minSize is the min amplitude of an element
         merge_factor is the % of separation between 2 elements that is assumed as one (merge the 2 into one)
         """
-        regions = mlab.contiguous_regions(data > threshold)
+        soft_data = envelope(data, decay=decay)
+        #make a moving average in data to soft rising edges
+        soft_data = array([mean(soft_data[i-softfactor:i]) for i,_ in enumerate(soft_data, start=softfactor)])
+        max_value_above_umbral = max(soft_data)
+        if max_value_above_umbral < threshold:
+            threshold = int(threshold*1.1)
+        regions = mlab.contiguous_regions(soft_data > threshold)
+        regions = [c for c in regions if (c[1]-c[0]) > minSize]
         if merge_factor > 0:
             regions = self.mergeIntervals(regions, merge_factor)
-
-        self.intervals = [IntervalCursor(c[0], c[1]) for c in regions if c[1]-c[0] > minSize]
+        return regions
 
 
 class SegmentsDetector(Detector):
@@ -103,5 +121,4 @@ class SegmentsDetector(Detector):
             if i >threshold: break
             else: last = last - 1
         return data[first:last]
-
 

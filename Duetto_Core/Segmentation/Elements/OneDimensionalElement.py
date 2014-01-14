@@ -1,34 +1,21 @@
 from Duetto_Core.Segmentation import Segment
+from Duetto_Core.Segmentation.Elements.Element import Element
 
 
-class Element:
+class OneDimensionalElement(Element):
     """
     Represents the minimal piece of information to clasify
     An element is a time and spectral region of the signal that contains a superior energy that the fragment of signal
     near to it
     """
-    def __init__(self, signal, indexFrom, indexTo, Pxx, bins, frecs, specgramsettings, perimeter,column):
-        self.signal=signal
-        self.indexFrom=indexFrom
-        self.indexTo=indexTo
-        self.Pxx=Pxx  # the spectrogram at wich the elements belongs
-        self.bins=bins  # the middle point in samples of every col in the Pxx
-        self.frecs=frecs  # the frecs of the Pxx
-        self.specgramSettings=specgramsettings
-        self.initColumn =column  # the column of Pxx when the element begin
-        self.perimeter = perimeter  # border of the spectrogram region its an array of tuple col*fragment col*(init,end)
-        if(len(perimeter)>=len(bins)):
-            raise Exception()
+    def __init__(self, signal, indexFrom, indexTo):
+        super(self, signal, indexFrom, indexTo)
 
-    def segment(self):
-        return Segment([self])
-
-    def size(self):
+    def __len__(self):
         """
         returns the len in ms of an element (float)
         """
-        samples = (self.bins[self.initColumn+len(self.perimeter)]-self.bins[self.initColumn]) if self.initColumn < len(self.bins)-1 else self.bins[1]-self.bins[0]
-        return samples*1000.0/self.signal.samplingRate  #ms
+        return (self.indexTo-self.indexFrom)*1000.0/self.signal.samplingRate
 
     def merge(self, other_element):
         """
@@ -57,3 +44,4 @@ class Element:
 
         perimeter.extend(other_perimeter)
         self.perimeter = perimeter
+
