@@ -8,7 +8,7 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
-from Graphic_Interface.Widgets import QSignalVisualizerWidget
+from Graphic_Interface.Windows import QSignalVisualizerWidget
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
