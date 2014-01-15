@@ -1,4 +1,4 @@
-import wave
+from string import *
 from PyQt4.QtGui import QMessageBox
 import pyaudio
 from numpy import *
@@ -31,6 +31,18 @@ class AudioSignal:
     def generateWhiteNoise(self, duration=1, begin_at=0):
         wn = array([random.uniform(-2**self.bitDepth -1, 2**self.bitDepth-1) for i in range(duration*self.samplingRate/1000)])
         self.data=concatenate((self.data[0:begin_at],wn,self.data[begin_at:]))
+
+    def name(self):
+        if len(self.path) > 0:
+            x = rfind(str(self.path), "\\")
+            y = rfind(str(self.path), "/")
+            index = max(x,y)
+            if(index>0):
+                return self.path[index+1:]
+            else:
+                return ""
+
+
 
 
     def resampling(self,  samplinRate= 44100):
@@ -178,5 +190,4 @@ class AudioSignal:
                     (not output and self.playAudio.get_device_info_by_index(i)["maxOutputChannels"] > 0):
                 return i
         raise Exception("No index found")
-
 
