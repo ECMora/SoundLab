@@ -6,7 +6,6 @@ from PyQt4 import QtGui
 from PyQt4.QtCore import SIGNAL
 
 from Duetto_Core.SignalProcessors.FilterSignalProcessor import FILTER_TYPE
-from Graphic_Interface import ElemDetectSettingsDialog as elementsdlg
 from MainWindow import Ui_DuettoMainWindow
 from MyPowerSpecWindow import PowerSpectrumWindow
 from Graphic_Interface.Dialogs import InsertSilenceDialog as sdialog, FilterOptionsDialog as filterdg,ChangeVolumeDialog as cvdialog,ui_elemDetectSettings as elementdlg
@@ -31,6 +30,7 @@ class FilterDialog(filterdg.Ui_Dialog,QDialog):
     pass
 
 class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
+
     def __init__(self, parent=None):
         super(BatSoundWindow, self).__init__(parent)
         self.setupUi(self)
@@ -45,8 +45,6 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.window_spec = self.cbx_fftwindow.currentText()
         self.overlap_spec = self.sbx_fftoverlap.value()
         self.pow_spec_windows = []
-
-
 
     @QtCore.pyqtSlot()
     def on_actionResampling_triggered(self):
@@ -105,6 +103,18 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             self.widget.insertSilence(silenceDialog.insertSpinBox.value())
 
     @QtCore.pyqtSlot()
+    def on_actionGenerate_Pink_Noise_triggered(self):
+        whiteNoiseDialog=sdialog.Ui_Dialog()
+        whiteNoiseDialogWindow=InsertSilenceDialog()
+        whiteNoiseDialog.setupUi(whiteNoiseDialogWindow)
+        whiteNoiseDialog.label.setText("Select the duration in ms \n of the Pink Noise.")
+        whiteNoiseDialog.insertSpinBox.setValue(1000)
+        if (whiteNoiseDialogWindow.exec_()):
+            type,Fc,Fl,Fu = self.filter_helper()
+            if(type!=None):
+                self.widget.insertPinkNoise(whiteNoiseDialog.insertSpinBox.value(),type,Fc,Fl,Fu)
+
+    @QtCore.pyqtSlot()
     def on_actionGenerate_White_Noise_triggered(self):
         whiteNoiseDialog=sdialog.Ui_Dialog()
         whiteNoiseDialogWindow=InsertSilenceDialog()
@@ -114,8 +124,7 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         if (whiteNoiseDialogWindow.exec_()):
             self.widget.insertWhiteNoise(whiteNoiseDialog.insertSpinBox.value())
 
-    @QtCore.pyqtSlot()
-    def on_actionFilter_triggered(self):
+    def filter_helper(self):
         filterDialog=filterdg.Ui_Dialog()
         filterDialogWindow=InsertSilenceDialog()
         filterDialog.setupUi(filterDialogWindow)
@@ -137,9 +146,13 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 type=FILTER_TYPE().BAND_STOP
                 Fl=filterDialog.spinBoxBandStopFl.value()
                 Fu=filterDialog.spinBoxBandStopFu.value()
+        return type,Fc,Fl,Fu
 
-            if(type!=None):
-                self.widget.filter(type, Fc,Fl,Fu)
+    @QtCore.pyqtSlot()
+    def on_actionFilter_triggered(self):
+        type,Fc,Fl,Fu = self.filter_helper()
+        if(type!=None):
+            self.widget.filter(type, Fc,Fl,Fu)
 
     @QtCore.pyqtSlot()
     def on_actionSilence_triggered(self):
@@ -252,16 +265,19 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         elementsDetectorDialog = elementdlg.Ui_elemDetectSettingsDialog()
         elementsDetectorDialogWindow = ElementsDetectDialog()
         elementsDetectorDialog.setupUi(elementsDetectorDialogWindow)
-        elementsDetectorDialog.dsbxThreshold.setValue(20)
+        elementsDetectorDialog.dsbxThreshold.setValue(-40)
         elementsDetectorDialog.dsbxMinSize.setValue(1)
+        elementsDetectorDialog.dsbxThreshold2.setValue(0)
+        elementsDetectorDialog.dsbxMergeFactor.setValue(0.5)
         elementsDetectorDialog.dsbxDecay.setValue(1)
-        if elementsDetectorDialogWindow.exec_():
-            threshold = elementsDetectorDialog.dsbxThreshold.value()
+        if elementsDetectorDialogWindow.exec_() and elementsDetectorDialog.chbxDetectOsc.isChecked():
+            threshold = abs(elementsDetectorDialog.dsbxThreshold.value())
+            threshold2 = abs(elementsDetectorDialog.dsbxThreshold2.value())
             minsize = elementsDetectorDialog.dsbxMinSize.value()
             mergefactor = elementsDetectorDialog.dsbxMergeFactor.value()
             softfactor = elementsDetectorDialog.sbxSoftFactor.value()
             decay = elementsDetectorDialog.dsbxDecay.value()
-            self.widget.detectElementsInOscilogram(threshold,decay,minsize,softfactor,mergefactor)
+            self.widget.detectElementsInOscilogram(threshold,decay,minsize,softfactor,mergefactor,threshold2)
 
     @QtCore.pyqtSlot()
     def on_actionSpectrogram_Detector_triggered(self):
@@ -340,16 +356,5 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     def on_horizontalScrollBar_valueChanged(self, value):
         self.widget.changeRange(value, value + self.horizontalScrollBar.pageStep(), emit=False)
 
-if __name__ == '__main__':
-    import sys
 
-    # create the GUI application
-    app = QtGui.QApplication(sys.argv)
-    # instantiate the main window
-    dmw = BatSoundWindow()
-    # show it
-    dmw.show()
-    # start the Qt main loop execution, exiting from this script
-    # with the same return code of Qt application
-    sys.exit(app.exec_())
 

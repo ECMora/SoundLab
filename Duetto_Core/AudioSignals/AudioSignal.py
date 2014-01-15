@@ -40,6 +40,9 @@ class AudioSignal:
             return
         if( frac > 1):
             #down sampling
+            from Duetto_Core.SignalProcessors.FilterSignalProcessor import FilterSignalProcessor,FILTER_TYPE
+            f = FilterSignalProcessor(self)
+            self.data = f.filter(filterType=FILTER_TYPE().LOW_PASS,Fc=samplinRate/2).data
             self.data = array(self.data[[int(round(index*frac)) for index in range(int(floor(len(self.data)/frac)))]])
         else:
             # up
@@ -73,7 +76,7 @@ class AudioSignal:
             self.data -= media
 
 
-    def generate(self):
+    def generatePinkNoise(self,duration=1, begin_at=0):
         #generates common signals
         pass
 

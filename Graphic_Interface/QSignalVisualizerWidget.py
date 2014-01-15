@@ -588,6 +588,14 @@ class QSignalVisualizerWidget(FigureCanvas):
             self.visualChanges=True
             self.refresh()
 
+    def insertPinkNoise(self,ms,type, Fc,Fl,Fu):
+        if(self.signalProcessor.signal is not None):
+            self.signalProcessor.signal.generateWhiteNoise(ms,self.zoomCursor.min)
+            f = FilterSignalProcessor(self.signalProcessor.signal)
+            self.signalProcessor.signal = f.filter(self.zoomCursor.min,self.zoomCursor.min+ms*self.signalProcessor.signal.samplingRate/1000.0,type,Fc,Fl,Fu)
+            self.visualChanges=True
+            self.refresh()
+
     def resampling(self,samplingRate):
         self.signalProcessor.signal.resampling(samplingRate)
         self.visualChanges=True
@@ -603,7 +611,7 @@ class QSignalVisualizerWidget(FigureCanvas):
         l, = plt.plot(x, y)
         t = ax.set_title('Envelope')
         ax.set_xticklabels([round(x * 1.0 / self.signalProcessor.signal.samplingRate,self.OSGRAM_XTICS_DECIMAL_PLACES) for x in self.axesOscilogram.get_xticks()])
-        ax.set_yticklabels([str(int(y * 1000.0 /(2**self.signalProcessor.signal.bitDepth)))+"dB" for y in self.axesOscilogram.get_yticks()])
+        ax.set_yticklabels([str(int(y * 500 /(2**self.signalProcessor.signal.bitDepth)))+"dB" for y in self.axesOscilogram.get_yticks()])
         plt.show()
 
     def getIndexFromAndTo(self):
@@ -651,9 +659,9 @@ class QSignalVisualizerWidget(FigureCanvas):
     def clearCursors(self):
         self.cursors = []
 
-    def detectElementsInOscilogram(self,threshold=20, decay=1, minSize=0, softfactor=5, merge_factor=0):
+    def detectElementsInOscilogram(self,threshold=20, decay=1, minSize=0, softfactor=5, merge_factor=0,threshold2=0):
         indexFrom, indexTo = self.getIndexFromAndTo()
-        self.oscilogram_elements_detector.detect(self.signalProcessor.signal,indexFrom, indexTo, threshold, decay, minSize, softfactor, merge_factor)
+        self.oscilogram_elements_detector.detect(self.signalProcessor.signal,indexFrom, indexTo, threshold, decay, minSize, softfactor, merge_factor,threshold2)
         for c in self.oscilogram_elements_detector.cursors():
             self.cursors.append(c)
         self.visualChanges = True

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'MainWindow.ui'
 #
-# Created: Wed Jan 08 12:35:30 2014
+# Created: Wed Jan 15 00:20:08 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -346,6 +346,8 @@ class Ui_DuettoMainWindow(object):
         self.actionSpectrogram_Detector.setObjectName(_fromUtf8("actionSpectrogram_Detector"))
         self.actionEnvelope = QtGui.QAction(DuettoMainWindow)
         self.actionEnvelope.setObjectName(_fromUtf8("actionEnvelope"))
+        self.actionGenerate_Pink_Noise = QtGui.QAction(DuettoMainWindow)
+        self.actionGenerate_Pink_Noise.setObjectName(_fromUtf8("actionGenerate_Pink_Noise"))
         self.menuFile.addAction(self.actionNew)
         self.menuFile.addAction(self.actionOpen)
         self.menuFile.addAction(self.actionSave)
@@ -354,6 +356,7 @@ class Ui_DuettoMainWindow(object):
         self.menuTools.addAction(self.actionZoom_out)
         self.menuTools.addAction(self.actionZoom_out_entire_file)
         self.menuGenerate.addAction(self.actionGenerate_White_Noise)
+        self.menuGenerate.addAction(self.actionGenerate_Pink_Noise)
         self.menuEdit.addAction(self.actionCopy)
         self.menuEdit.addAction(self.actionPaste)
         self.menuEdit.addAction(self.actionCut)
@@ -505,6 +508,7 @@ class Ui_DuettoMainWindow(object):
         self.actionOsilogram_Detector.setText(_translate("DuettoMainWindow", "Osilogram Detector", None))
         self.actionSpectrogram_Detector.setText(_translate("DuettoMainWindow", "Spectrogram Detector", None))
         self.actionEnvelope.setText(_translate("DuettoMainWindow", "Envelope", None))
+        self.actionGenerate_Pink_Noise.setText(_translate("DuettoMainWindow", "Pink Noise", None))
 
 from QSignalVisualizerWidget import QSignalVisualizerWidget
 import icons_rc

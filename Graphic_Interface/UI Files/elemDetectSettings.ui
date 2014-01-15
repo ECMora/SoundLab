@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>266</width>
-    <height>254</height>
+    <width>270</width>
+    <height>284</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -39,7 +39,7 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>70</y>
+         <y>100</y>
          <width>141</width>
          <height>22</height>
         </rect>
@@ -65,8 +65,8 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>100</y>
-         <width>139</width>
+         <y>130</y>
+         <width>141</width>
          <height>22</height>
         </rect>
        </property>
@@ -91,8 +91,8 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>130</y>
-         <width>139</width>
+         <y>160</y>
+         <width>141</width>
          <height>22</height>
         </rect>
        </property>
@@ -117,8 +117,8 @@
        <property name="geometry">
         <rect>
          <x>10</x>
-         <y>160</y>
-         <width>139</width>
+         <y>190</y>
+         <width>141</width>
          <height>22</height>
         </rect>
        </property>
@@ -155,6 +155,9 @@
         </rect>
        </property>
        <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="0,0">
+        <property name="spacing">
+         <number>6</number>
+        </property>
         <item>
          <widget class="QLabel" name="label_6">
           <property name="text">
@@ -169,6 +172,12 @@
           </property>
           <property name="suffix">
            <string>dB</string>
+          </property>
+          <property name="minimum">
+           <double>-60.000000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>0.000000000000000</double>
           </property>
          </widget>
         </item>
@@ -189,6 +198,47 @@
        <property name="checked">
         <bool>true</bool>
        </property>
+      </widget>
+      <widget class="QWidget" name="horizontalLayoutWidget_11">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>70</y>
+         <width>141</width>
+         <height>22</height>
+        </rect>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout_11" stretch="0,0">
+        <property name="spacing">
+         <number>6</number>
+        </property>
+        <item>
+         <widget class="QLabel" name="label_10">
+          <property name="text">
+           <string>Threshold 2:</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QDoubleSpinBox" name="dsbxThreshold2">
+          <property name="buttonSymbols">
+           <enum>QAbstractSpinBox::UpDownArrows</enum>
+          </property>
+          <property name="suffix">
+           <string>dB</string>
+          </property>
+          <property name="minimum">
+           <double>-60.000000000000000</double>
+          </property>
+          <property name="maximum">
+           <double>0.000000000000000</double>
+          </property>
+          <property name="value">
+           <double>0.000000000000000</double>
+          </property>
+         </widget>
+        </item>
+       </layout>
       </widget>
      </widget>
      <widget class="QWidget" name="tabSpectrogram">
