@@ -99,6 +99,7 @@
       <string>Generate</string>
      </property>
      <addaction name="actionGenerate_White_Noise"/>
+     <addaction name="actionGenerate_Pink_Noise"/>
     </widget>
     <addaction name="actionCopy"/>
     <addaction name="actionPaste"/>
@@ -820,6 +821,11 @@
   <action name="actionEnvelope">
    <property name="text">
     <string>Envelope</string>
+   </property>
+  </action>
+  <action name="actionGenerate_Pink_Noise">
+   <property name="text">
+    <string>Pink Noise</string>
    </property>
   </action>
   <zorder>dock_osc_settings</zorder>
