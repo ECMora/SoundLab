@@ -2,8 +2,8 @@ from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 import PyQt4.phonon as phonon
 
-from Graphic_Interface.BatSound import BatSoundWindow
-from presentation import Ui_MainWindow
+from Graphic_Interface.MainWindow.BatSound import BatSoundWindow
+from Graphic_Interface.MainWindow.PresentationSlogan.presentation import Ui_MainWindow
 
 
 class Duetto_Sound_Lab(QMainWindow, Ui_MainWindow):
@@ -11,7 +11,7 @@ class Duetto_Sound_Lab(QMainWindow, Ui_MainWindow):
         super(Duetto_Sound_Lab, self).__init__(parent)
         self.setupUi(self)
         self.setWindowFlags(Qt.SplashScreen)
-        self.videoPlayer.load(phonon.Phonon.MediaSource("PresentationVideo\\duettoinit.avi"))
+        self.videoPlayer.load(phonon.Phonon.MediaSource("PresentationVideo\\duettoinit.wmv"))
 
 
 if __name__ == '__main__':
