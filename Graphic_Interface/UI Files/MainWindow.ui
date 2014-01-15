@@ -26,7 +26,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>BatSound</string>
+   <string>Duetto Sound Lab</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -149,20 +149,12 @@
     <addaction name="actionHighest_instant_frequency"/>
     <addaction name="actionClear_Spectogram"/>
    </widget>
-   <widget class="QMenu" name="menuDetection">
-    <property name="title">
-     <string>Detection</string>
-    </property>
-    <addaction name="actionOsilogram_Detector"/>
-    <addaction name="actionSpectrogram_Detector"/>
-   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
    <addaction name="menuTools"/>
    <addaction name="menuView"/>
    <addaction name="menuSound"/>
    <addaction name="menuView_2"/>
-   <addaction name="menuDetection"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QDockWidget" name="dock_osc_settings">
@@ -411,6 +403,7 @@
    <addaction name="actionPower_Spectrum"/>
    <addaction name="separator"/>
    <addaction name="actionAll_Settings"/>
+   <addaction name="actionSegmentation_And_Clasification"/>
   </widget>
   <widget class="QDockWidget" name="dock_powspec_settings">
    <property name="minimumSize">
@@ -808,14 +801,9 @@
     <string>White Noise</string>
    </property>
   </action>
-  <action name="actionOsilogram_Detector">
+  <action name="actionSegmentation_And_Clasification">
    <property name="text">
-    <string>Osilogram Detector</string>
-   </property>
-  </action>
-  <action name="actionSpectrogram_Detector">
-   <property name="text">
-    <string>Spectrogram Detector</string>
+    <string>Segmentation And Clasification</string>
    </property>
   </action>
   <action name="actionEnvelope">
