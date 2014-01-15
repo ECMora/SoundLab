@@ -33,7 +33,12 @@ class QSignalVisualizerWidget(FigureCanvas):
     rangeChanged = pyqtSignal(int, int, int)
 
     def __init__(self, parent):
+
         self.figure = Figure(facecolor=BACK_COLOR)  # widget container of the axes
+        FigureCanvas.__init__(self, self.figure)
+        # set the parent widget
+        self.setParent(parent)
+
         self.mousePressed = False
         self.movingCursorZoom = False
         self.lastX = 0
@@ -58,16 +63,8 @@ class QSignalVisualizerWidget(FigureCanvas):
         self.playerSpeed = 100
         self.oscilogram_elements_detector = OneDimensionalElementsDetector()
 
-        FigureCanvas.__init__(self, self.figure)
-        # set the parent widget
-        self.setParent(parent)
 
-        # we define the widget as expandable
-        FigureCanvas.setSizePolicy(self,
-                                   QSizePolicy.Expanding,
-                                   QSizePolicy.Expanding)
-        # notify the system of updated policy
-        FigureCanvas.updateGeometry(self)
+
 
     #region Sound
 
@@ -142,6 +139,16 @@ class QSignalVisualizerWidget(FigureCanvas):
     #endregion
 
     #region VISUAL EVENTS AND ACTIONS
+
+    def dropEvent(self, event):
+        data = event.mimeData().data()
+        file= QtCore.QFile()
+        file.setFileName("local.wav")
+        file.write(data)
+        file.close()
+        event.accept()
+        self.open("local.wav")
+
     def updateBackgroundSpanRectangle(self, event=None):
         """force an update of the background"""
         if self.visibleOscilogram:
@@ -403,8 +410,6 @@ class QSignalVisualizerWidget(FigureCanvas):
                     self.specgramSettings.NFFT, Fs=2, detrend=mlab.detrend_none, window=self.specgramSettings.window,
                     noverlap=overlap, sides=self.SPECGRAM_COMPLEX_SIDE)
                 self.axesSpecgram.grid(self.specgramSettings.grid)
-
-                cut_off = percentile(self.powerSpectrum, self.specgramSettings.threshold)
 
 
                 Z = 10. * np.log10(self.specgramSettings.Pxx)
@@ -703,10 +708,10 @@ class QSignalVisualizerWidget(FigureCanvas):
         self.mainCursor.max = len(self.signalProcessor.signal.data)
         if self.mainCursor.max / self.signalProcessor.signal.samplingRate > 10000:  # 10 seg
             self.mainCursor.max = 10000 * self.signalProcessor.signal.samplingRate
-        self.powerSpectrum = real(fft(self.signalProcessor.signal.data[self.mainCursor.min:self.mainCursor.max]))
-        self.meanSignalValue = real(np.mean(self.powerSpectrum))
-        self.max_specgram_value = max(self.powerSpectrum)
-        self.min_specgram_value = min(self.powerSpectrum)
+        #self.powerSpectrum = real(fft(self.signalProcessor.signal.data[self.mainCursor.min:self.mainCursor.max]))
+        #self.meanSignalValue = real(np.mean(self.powerSpectrum))
+        #self.max_specgram_value = max(self.powerSpectrum)
+        #self.min_specgram_value = min(self.powerSpectrum)
         self.specgramSettings.threshold = 50
         self.visualChanges = True
 

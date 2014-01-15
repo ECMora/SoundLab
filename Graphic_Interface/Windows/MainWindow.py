@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'MainWindow.ui'
 #
-# Created: Wed Jan 15 00:20:08 2014
+# Created: Wed Jan 15 16:50:24 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -48,6 +48,7 @@ class Ui_DuettoMainWindow(object):
         sizePolicy.setHeightForWidth(self.widget.sizePolicy().hasHeightForWidth())
         self.widget.setSizePolicy(sizePolicy)
         self.widget.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+        self.widget.setAcceptDrops(True)
         self.widget.setAutoFillBackground(True)
         self.widget.setObjectName(_fromUtf8("widget"))
         self.verticalLayout_2.addWidget(self.widget)
@@ -73,8 +74,6 @@ class Ui_DuettoMainWindow(object):
         self.menuSound.setObjectName(_fromUtf8("menuSound"))
         self.menuView_2 = QtGui.QMenu(self.menubar)
         self.menuView_2.setObjectName(_fromUtf8("menuView_2"))
-        self.menuDetection = QtGui.QMenu(self.menubar)
-        self.menuDetection.setObjectName(_fromUtf8("menuDetection"))
         DuettoMainWindow.setMenuBar(self.menubar)
         self.statusbar = QtGui.QStatusBar(DuettoMainWindow)
         self.statusbar.setObjectName(_fromUtf8("statusbar"))
@@ -340,10 +339,8 @@ class Ui_DuettoMainWindow(object):
         self.actionResampling.setObjectName(_fromUtf8("actionResampling"))
         self.actionGenerate_White_Noise = QtGui.QAction(DuettoMainWindow)
         self.actionGenerate_White_Noise.setObjectName(_fromUtf8("actionGenerate_White_Noise"))
-        self.actionOsilogram_Detector = QtGui.QAction(DuettoMainWindow)
-        self.actionOsilogram_Detector.setObjectName(_fromUtf8("actionOsilogram_Detector"))
-        self.actionSpectrogram_Detector = QtGui.QAction(DuettoMainWindow)
-        self.actionSpectrogram_Detector.setObjectName(_fromUtf8("actionSpectrogram_Detector"))
+        self.actionSegmentation_And_Clasification = QtGui.QAction(DuettoMainWindow)
+        self.actionSegmentation_And_Clasification.setObjectName(_fromUtf8("actionSegmentation_And_Clasification"))
         self.actionEnvelope = QtGui.QAction(DuettoMainWindow)
         self.actionEnvelope.setObjectName(_fromUtf8("actionEnvelope"))
         self.actionGenerate_Pink_Noise = QtGui.QAction(DuettoMainWindow)
@@ -389,15 +386,12 @@ class Ui_DuettoMainWindow(object):
         self.menuSound.addAction(self.actionRecord)
         self.menuView_2.addAction(self.actionHighest_instant_frequency)
         self.menuView_2.addAction(self.actionClear_Spectogram)
-        self.menuDetection.addAction(self.actionOsilogram_Detector)
-        self.menuDetection.addAction(self.actionSpectrogram_Detector)
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuEdit.menuAction())
         self.menubar.addAction(self.menuTools.menuAction())
         self.menubar.addAction(self.menuView.menuAction())
         self.menubar.addAction(self.menuSound.menuAction())
         self.menubar.addAction(self.menuView_2.menuAction())
-        self.menubar.addAction(self.menuDetection.menuAction())
         self.toolBar.addAction(self.actionNew)
         self.toolBar.addAction(self.actionOpen)
         self.toolBar.addAction(self.actionSave)
@@ -419,6 +413,7 @@ class Ui_DuettoMainWindow(object):
         self.toolBar.addAction(self.actionPower_Spectrum)
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionAll_Settings)
+        self.toolBar.addAction(self.actionSegmentation_And_Clasification)
 
         self.retranslateUi(DuettoMainWindow)
         self.cbx_fftsize.setCurrentIndex(3)
@@ -426,7 +421,7 @@ class Ui_DuettoMainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(DuettoMainWindow)
 
     def retranslateUi(self, DuettoMainWindow):
-        DuettoMainWindow.setWindowTitle(_translate("DuettoMainWindow", "BatSound", None))
+        DuettoMainWindow.setWindowTitle(_translate("DuettoMainWindow", "Duetto Sound Lab", None))
         self.menuFile.setTitle(_translate("DuettoMainWindow", "File", None))
         self.menuTools.setTitle(_translate("DuettoMainWindow", "Tools", None))
         self.menuEdit.setTitle(_translate("DuettoMainWindow", "Edit", None))
@@ -434,7 +429,6 @@ class Ui_DuettoMainWindow(object):
         self.menuView.setTitle(_translate("DuettoMainWindow", "Analysis", None))
         self.menuSound.setTitle(_translate("DuettoMainWindow", "Sound", None))
         self.menuView_2.setTitle(_translate("DuettoMainWindow", "View", None))
-        self.menuDetection.setTitle(_translate("DuettoMainWindow", "Detection", None))
         self.dock_osc_settings.setWindowTitle(_translate("DuettoMainWindow", "Oscillogram Settings", None))
         self.label_2.setText(_translate("DuettoMainWindow", "Milliseconds per plot", None))
         self.label.setText(_translate("DuettoMainWindow", "Min and max amplitude", None))
@@ -505,10 +499,9 @@ class Ui_DuettoMainWindow(object):
         self.actionNormalize.setText(_translate("DuettoMainWindow", "Normalize", None))
         self.actionResampling.setText(_translate("DuettoMainWindow", "Resampling", None))
         self.actionGenerate_White_Noise.setText(_translate("DuettoMainWindow", "White Noise", None))
-        self.actionOsilogram_Detector.setText(_translate("DuettoMainWindow", "Osilogram Detector", None))
-        self.actionSpectrogram_Detector.setText(_translate("DuettoMainWindow", "Spectrogram Detector", None))
+        self.actionSegmentation_And_Clasification.setText(_translate("DuettoMainWindow", "Segmentation And Clasification", None))
         self.actionEnvelope.setText(_translate("DuettoMainWindow", "Envelope", None))
         self.actionGenerate_Pink_Noise.setText(_translate("DuettoMainWindow", "Pink Noise", None))
 
 from Graphic_Interface.Widgets.QSignalVisualizerWidget import QSignalVisualizerWidget
-import Graphic_Interface.icons_rc
+import icons_rc

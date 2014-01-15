@@ -50,6 +50,9 @@
       <property name="contextMenuPolicy">
        <enum>Qt::ActionsContextMenu</enum>
       </property>
+      <property name="acceptDrops">
+       <bool>true</bool>
+      </property>
       <property name="autoFillBackground">
        <bool>true</bool>
       </property>
@@ -824,7 +827,7 @@
   <customwidget>
    <class>QSignalVisualizerWidget</class>
    <extends>QWidget</extends>
-   <header>QSignalVisualizerWidget.h</header>
+   <header>Graphic_Interface.Widgets.QSignalVisualizerWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
