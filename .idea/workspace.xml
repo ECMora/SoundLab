@@ -2,20 +2,20 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="95623188-59c1-4b7e-a711-1ddd9d989568" name="Default" comment="probando git">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Graphic_Interface/Widgets/__init__.py" />
-      <change type="DELETED" beforePath="D:\YASEL\Universidad\Biologia\DuettoSystemYasel\Graphic_Interface\MainWindow\BatSound.py" afterPath="" />
       <change type="DELETED" beforePath="D:\YASEL\Universidad\Biologia\DuettoSystemYasel\Graphic_Interface\MainWindow\MainWindow.py" afterPath="" />
       <change type="DELETED" beforePath="D:\YASEL\Universidad\Biologia\DuettoSystemYasel\Graphic_Interface\MainWindow\PresentationSlogan\Duetto_Sound_Lab.py" afterPath="" />
+      <change type="DELETED" beforePath="D:\YASEL\Universidad\Biologia\DuettoSystemYasel\Graphic_Interface\MainWindow\PresentationSlogan\__init__.py" afterPath="" />
       <change type="DELETED" beforePath="D:\YASEL\Universidad\Biologia\DuettoSystemYasel\Graphic_Interface\MainWindow\PresentationSlogan\presentation.py" afterPath="" />
-      <change type="DELETED" beforePath="D:\YASEL\Universidad\Biologia\DuettoSystemYasel\Graphic_Interface\PresentationVideo\duettoinit.avi" afterPath="" />
+      <change type="DELETED" beforePath="D:\YASEL\Universidad\Biologia\DuettoSystemYasel\Graphic_Interface\MainWindow\__init__.py" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Graphic_Interface/UI Files/MainWindow.ui" afterPath="$PROJECT_DIR$/Graphic_Interface/UI Files/MainWindow.ui" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Graphic_Interface/PresentationVideo/Thumbs.db" afterPath="$PROJECT_DIR$/Graphic_Interface/PresentationVideo/Thumbs.db" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Duetto_Core/AudioSignals/AudioSignal.py" afterPath="$PROJECT_DIR$/Duetto_Core/AudioSignals/AudioSignal.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Graphic_Interface/UI Files/SegmentationAndClasificationWindow.ui" afterPath="$PROJECT_DIR$/Graphic_Interface/UI Files/SegmentationAndClasificationWindow.ui" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Graphic_Interface/Windows/BatSound.py" afterPath="$PROJECT_DIR$/Graphic_Interface/Windows/BatSound.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Graphic_Interface/Windows/MainWindow.py" afterPath="$PROJECT_DIR$/Graphic_Interface/Windows/MainWindow.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Graphic_Interface/Widgets/QSignalVisualizerWidget.py" afterPath="$PROJECT_DIR$/Graphic_Interface/Widgets/QSignalVisualizerWidget.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MOVED" beforePath="D:\YASEL\Universidad\Biologia\DuettoSystemYasel\Graphic_Interface\MyPowerSpecWindow.py" afterPath="$PROJECT_DIR$/Graphic_Interface/Widgets/MyPowerSpecWindow.py" />
-      <change type="MOVED" beforePath="D:\YASEL\Universidad\Biologia\DuettoSystemYasel\Graphic_Interface\Power_Spectrum.py" afterPath="$PROJECT_DIR$/Graphic_Interface/Widgets/Power_Spectrum.py" />
-      <change type="MOVED" beforePath="D:\YASEL\Universidad\Biologia\DuettoSystemYasel\Graphic_Interface\QPowerSpectrumWidget.py" afterPath="$PROJECT_DIR$/Graphic_Interface/Widgets/QPowerSpectrumWidget.py" />
-      <change type="MOVED" beforePath="D:\YASEL\Universidad\Biologia\DuettoSystemYasel\Graphic_Interface\QSignalVisualizerWidget.py" afterPath="$PROJECT_DIR$/Graphic_Interface/Widgets/QSignalVisualizerWidget.py" />
+      <change type="MOVED" beforePath="D:\YASEL\Universidad\Biologia\DuettoSystemYasel\Graphic_Interface\MainWindow\BatSound.py" afterPath="$PROJECT_DIR$/Graphic_Interface/Windows/SegmentationAndClasificationWindow.py" />
+      <change type="MOVED" beforePath="D:\YASEL\Universidad\Biologia\DuettoSystemYasel\Graphic_Interface\icons_rc.py" afterPath="$PROJECT_DIR$/Graphic_Interface/Windows/icons_rc.py" />
+      <change type="MOVED" beforePath="D:\YASEL\Universidad\Biologia\DuettoSystemYasel\Graphic_Interface\segmentationAndCalsificationUI.py" afterPath="$PROJECT_DIR$/Graphic_Interface/Windows/segmentationAndCalsificationUI.py" />
     </list>
     <ignored path="DuettoSystemYasel.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -32,7 +32,7 @@
     <SUITE FILE_PATH="coverage/DuettoSystemYasel$ElementsDetector.coverage" NAME="ElementsDetector Coverage Results" MODIFIED="1388875372250" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Duetto_Core/Detectors" />
     <SUITE FILE_PATH="coverage/DuettoSystemYasel$pygletexample.coverage" NAME="pygletexample Coverage Results" MODIFIED="1389243689437" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/example pyglet" />
     <SUITE FILE_PATH="coverage/DuettoSystemYasel$presentationWindow.coverage" NAME="presentationWindow Coverage Results" MODIFIED="1389771597984" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Graphic_Interface" />
-    <SUITE FILE_PATH="coverage/DuettoSystemYasel$Duetto_Sound_Lab__1_.coverage" NAME="Duetto_Sound_Lab (1) Coverage Results" MODIFIED="1389810966531" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Graphic_Interface/Windows/PresentationSlogan" />
+    <SUITE FILE_PATH="coverage/DuettoSystemYasel$Duetto_Sound_Lab__1_.coverage" NAME="Duetto_Sound_Lab (1) Coverage Results" MODIFIED="1389826305437" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Graphic_Interface/Windows/PresentationSlogan" />
     <SUITE FILE_PATH="coverage/DuettoSystemYasel$TwoDimensionalElementsDetector.coverage" NAME="TwoDimensionalElementsDetector Coverage Results" MODIFIED="1389244889593" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Duetto_Core/Detectors/ElementsDetectors" />
     <SUITE FILE_PATH="coverage/DuettoSystemYasel$Duetto_Sound_Lab.coverage" NAME="Duetto_Sound_Lab Coverage Results" MODIFIED="1389810693375" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Graphic_Interface" />
   </component>
@@ -53,32 +53,71 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="Duetto_Sound_Lab.py" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/Graphic_Interface/Windows/PresentationSlogan/Duetto_Sound_Lab.py">
+      <file leaf-file-name="SegmentationAndClasificationWindow.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Graphic_Interface/Windows/SegmentationAndClasificationWindow.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="13" column="98" selection-start="545" selection-end="545" vertical-scroll-proportion="0.3933162" vertical-offset="68" max-vertical-offset="731">
+            <state line="5" column="0" selection-start="267" selection-end="267" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="476">
               <folding>
-                <element signature="e#0#25#0" expanded="true" />
+                <element signature="e#355#359#0" expanded="false" />
+                <marker date="1389824474125" expanded="true" signature="0:266" placeholder="import ..." />
+                <marker date="1389824474125" expanded="true" signature="437:2528" placeholder="..." />
+                <marker date="1389824474125" expanded="false" signature="487:1054" placeholder="..." />
+                <marker date="1389824474125" expanded="false" signature="2337:2350" placeholder="..." />
+                <marker date="1389824474125" expanded="false" signature="2422:2528" placeholder="..." />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="MainWindow.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Graphic_Interface/Windows/MainWindow.py">
+      <file leaf-file-name="segmentationAndCalsificationUI.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Graphic_Interface/Windows/segmentationAndCalsificationUI.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="513" column="30" selection-start="33919" selection-end="33919" vertical-scroll-proportion="0.0" vertical-offset="193" max-vertical-offset="595">
+            <state line="51" column="42" selection-start="2336" selection-end="2336" vertical-scroll-proportion="0.0" vertical-offset="960" max-vertical-offset="2261">
+              <folding>
+                <marker date="1389826302718" expanded="true" signature="7157:7166" placeholder="..." />
+                <marker date="1389826302718" expanded="false" signature="7157:7166" placeholder="..." />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="QSignalVisualizerWidget.py" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Graphic_Interface/Widgets/QSignalVisualizerWidget.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="67" column="0" selection-start="2651" selection-end="2651" vertical-scroll-proportion="0.29310346" vertical-offset="1037" max-vertical-offset="1564">
+              <folding>
+                <element signature="e#0#35#0" expanded="true" />
+                <element signature="e#1535#2656#0" expanded="true" />
+                <element signature="e#2656#2669#0" expanded="false" />
+                <element signature="e#4312#4363#0" expanded="false" />
+                <element signature="e#5185#5218#0" expanded="false" />
+                <element signature="e#18295#21965#0" expanded="true" />
+                <element signature="e#29248#29273#0" expanded="false" />
+                <element signature="e#29279#29309#0" expanded="false" />
+                <element signature="e#30913#31327#0" expanded="true" />
+                <element signature="e#33755#33772#0" expanded="false" />
+                <element signature="e#34245#34605#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="QtGui.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$USER_HOME$/.PyCharm20/system/python_stubs/-762174762/PyQt4/QtGui.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="13264" column="8" selection-start="469784" selection-end="469784" vertical-scroll-proportion="0.0" vertical-offset="225365" max-vertical-offset="906559">
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="BatSound.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Graphic_Interface/Windows/BatSound.py">
+      <file leaf-file-name="QtCore.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$USER_HOME$/.PyCharm20/system/python_stubs/-762174762/PyQt4/QtCore.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="11" column="0" selection-start="502" selection-end="502" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2788">
+            <state line="5350" column="8" selection-start="189257" selection-end="189257" vertical-scroll-proportion="0.0" vertical-offset="48557" max-vertical-offset="162486">
               <folding>
-                <element signature="e#0#10#0" expanded="true" />
+                <element signature="e#189362#189366#0" expanded="true" />
+                <element signature="e#409962#409966#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -102,9 +141,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/Duetto_Core/Detectors/ElementsDetectors/TwoDimensionalElementsDetector.py" />
-        <option value="$PROJECT_DIR$/Duetto_Core/Segmentation/Elements/OneDimensionalElement.py" />
-        <option value="$PROJECT_DIR$/Duetto_Core/Segmentation/Elements/TwoDimensionalElement.py" />
         <option value="$PROJECT_DIR$/Duetto_Core/Segmentation/Elements/Element.py" />
         <option value="$PROJECT_DIR$/Graphic_Interface/Dialogs/ui_elemDetectSettings.py" />
         <option value="$PROJECT_DIR$/Duetto_Core/Detectors/ElementsDetectors/OneDimensionalElementsDetector.py" />
@@ -115,9 +151,12 @@
         <option value="$PROJECT_DIR$/Graphic_Interface/BatSound.py" />
         <option value="$PROJECT_DIR$/Duetto_Core/AudioSignals/WavFileSignal.py" />
         <option value="$PROJECT_DIR$/Graphic_Interface/Duetto_Sound_Lab.py" />
+        <option value="$PROJECT_DIR$/Graphic_Interface/Windows/PresentationSlogan/Duetto_Sound_Lab.py" />
         <option value="$PROJECT_DIR$/Graphic_Interface/Windows/MainWindow.py" />
         <option value="$PROJECT_DIR$/Graphic_Interface/Windows/BatSound.py" />
-        <option value="$PROJECT_DIR$/Graphic_Interface/Windows/PresentationSlogan/Duetto_Sound_Lab.py" />
+        <option value="$PROJECT_DIR$/Graphic_Interface/Windows/segmentationAndCalsificationUI.py" />
+        <option value="$PROJECT_DIR$/Graphic_Interface/Windows/SegmentationAndClasificationWindow.py" />
+        <option value="$PROJECT_DIR$/Graphic_Interface/Widgets/QSignalVisualizerWidget.py" />
       </list>
     </option>
   </component>
@@ -153,6 +192,7 @@
       <sortByType />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -185,9 +225,44 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="DuettoSystemYasel" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="DuettoSystemYasel" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Graphic_Interface" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Windows" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="DuettoSystemYasel" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="DuettoSystemYasel" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Graphic_Interface" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Widgets" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -202,10 +277,10 @@
     <property name="WebServerToolWindowPanel.toolwindow.highlight.mappings" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="WebServerToolWindowPanel.toolwindow.show.date" value="false" />
-    <property name="FullScreen" value="false" />
     <property name="WebServerToolWindowPanel.toolwindow.highlight.symlinks" value="true" />
-    <property name="options.searchVisible" value="true" />
+    <property name="FullScreen" value="false" />
     <property name="options.splitter.details.proportions" value="0.2" />
+    <property name="options.searchVisible" value="true" />
   </component>
   <component name="PublishConfig" uploadOnCheckin="239c5b22-0b6b-4640-a5c0-9e75332a144f">
     <servers>
@@ -226,15 +301,16 @@
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="D:\YASEL\Universidad\Biologia\DuettoSystemYasel\Graphic_Interface\Windows" />
       <recent name="D:\YASEL\Universidad\Biologia\DuettoSystemYasel\Graphic_Interface" />
       <recent name="D:\YASEL\Universidad\Biologia\DuettoSystemYasel\Duetto_Core\Segmentation\Elements" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="D:\YASEL\Universidad\Biologia\DuettoSystemYasel\Graphic_Interface\Widgets" />
+      <recent name="D:\YASEL\Universidad\Biologia\DuettoSystemYasel\Graphic_Interface\Widgets\QSignalVisualizerWidget" />
+      <recent name="D:\YASEL\Universidad\Biologia\DuettoSystemYasel\Graphic_Interface\Windows" />
+      <recent name="D:\YASEL\Universidad\Biologia\DuettoSystemYasel\Graphic_Interface" />
       <recent name="D:\YASEL\Universidad\Biologia\DuettoSystemYasel\Graphic_Interface\MainWindow\PresentationSlogan" />
-      <recent name="D:\YASEL\Universidad\Biologia\DuettoSystemYasel\Graphic_Interface\MainWindow" />
-      <recent name="D:\YASEL\Universidad\Biologia\DuettoSystemYasel\Graphic_Interface\Dialogs" />
-      <recent name="D:\YASEL\Universidad\Biologia\DuettoSystemYasel\Duetto_Core\Segmentation\SegmentationMethods" />
     </key>
   </component>
   <component name="RunManager" selected="Python.Duetto_Sound_Lab (1)">
@@ -421,6 +497,9 @@
       <option name="PARAMETERS" value="" />
       <method />
     </configuration>
+    <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug" singleton="true">
+      <method />
+    </configuration>
     <configuration default="true" type="tests" factoryName="Unittests">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -442,9 +521,6 @@
       <option name="PUREUNITTEST" value="true" />
       <option name="PARAMS" value="" />
       <option name="USE_PARAM" value="false" />
-      <method />
-    </configuration>
-    <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug" singleton="true">
       <method />
     </configuration>
     <configuration default="true" type="tests" factoryName="Doctests">
@@ -563,25 +639,25 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-4" y="-4" width="1032" height="729" extended-state="6" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3289256" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.28264463" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.22644629" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32924336" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24948876" sideWeight="0.57048094" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.22290389" sideWeight="0.707438" order="5" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.26584867" sideWeight="0.6743802" order="5" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.20826447" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.29256198" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32561985" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3283582" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Documentation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" x="96" y="96" width="832" height="529" />
+      <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3283582" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.22644629" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32924336" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
@@ -590,16 +666,16 @@
     </layout>
     <layout-to-restore>
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Documentation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" x="96" y="96" width="832" height="529" />
       <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3283582" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Documentation" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="FLOATING" visible="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" x="96" y="96" width="832" height="529" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3289256" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25454545" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.28264463" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.22644629" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32924336" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4033058" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32924336" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.20826447" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
@@ -607,10 +683,10 @@
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24948876" sideWeight="0.57048094" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.11554192" sideWeight="0.77190083" order="5" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.26584867" sideWeight="0.6380165" order="5" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.22809917" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.36198348" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
     </layout-to-restore>
   </component>
   <component name="VcsContentAnnotationSettings">
@@ -629,132 +705,158 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/Duetto_Core/Segmentation/Segment.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="8" column="34" selection-start="243" selection-end="243" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="187" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Duetto_Core/SignalProcessors/FilterSignalProcessor.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="34" column="45" selection-start="1269" selection-end="1269" vertical-scroll-proportion="0.49526814" vertical-offset="268" max-vertical-offset="1207" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Graphic_Interface/Widgets/QSignalVisualizerWidget.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="594" column="141" selection-start="31387" selection-end="31387" vertical-scroll-proportion="0.49211356" vertical-offset="983" max-vertical-offset="2346">
-          <folding>
-            <element signature="e#0#35#0" expanded="false" />
-            <element signature="e#2943#2956#0" expanded="false" />
-            <element signature="e#5472#5505#0" expanded="false" />
-            <element signature="e#18342#22103#0" expanded="false" />
-            <element signature="e#29417#29447#0" expanded="false" />
-            <element signature="e#32845#33052#0" expanded="false" />
-            <element signature="e#33587#33748#0" expanded="false" />
-            <element signature="e#33939#34200#0" expanded="false" />
-            <element signature="e#34238#34255#0" expanded="false" />
-            <element signature="e#34383#34743#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Duetto_Core/Segmentation/Elements/TwoDimensionalElement.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="19" column="29" selection-start="1018" selection-end="1018" vertical-scroll-proportion="0.25757575" vertical-offset="0" max-vertical-offset="330" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Graphic_Interface/Dialogs/InsertSilenceDialog.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="26" column="30" selection-start="762" selection-end="762" vertical-scroll-proportion="0.5106007" vertical-offset="136" max-vertical-offset="1088" />
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.PyCharm20/system/python_stubs/-762174762/sys.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="195" column="22" selection-start="7359" selection-end="7359" vertical-scroll-proportion="-3.2316017" vertical-offset="2462" max-vertical-offset="2924" />
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.PyCharm20/system/python_stubs/-762174762/PyQt4/phonon.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="36" column="24" selection-start="1383" selection-end="1383" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1564" />
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.PyCharm20/system/python_stubs/-762174762/_io.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="893" column="8" selection-start="31560" selection-end="31560" vertical-scroll-proportion="0.33189654" vertical-offset="5703" max-vertical-offset="9486">
-          <folding>
-            <element signature="e#31630#31790#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/Python27/Lib/string.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="363" column="4" selection-start="11578" selection-end="11578" vertical-scroll-proportion="0.3325792" vertical-offset="1944" max-vertical-offset="3536">
-          <folding>
-            <element signature="e#0#1024#1" expanded="true" />
-            <element signature="e#3441#4184#0" expanded="false" />
-            <element signature="e#4207#7246#0" expanded="false" />
-            <element signature="e#11599#11893#0" expanded="true" />
-            <element signature="e#17282#20755#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Duetto_Core/AudioSignals/WavFileSignal.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="37" column="34" selection-start="922" selection-end="922" vertical-scroll-proportion="0.5944056" vertical-offset="289" max-vertical-offset="1173">
-          <folding>
-            <element signature="e#0#35#0" expanded="false" />
-            <element signature="e#459#786#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Duetto_Core/AudioSignals/AudioSignal.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="34" column="19" selection-start="1215" selection-end="1215" vertical-scroll-proportion="0.33100232" vertical-offset="402" max-vertical-offset="1615">
           <folding>
-            <element signature="e#0#20#0" expanded="true" />
-            <element signature="e#398#929#0" expanded="true" />
-            <element signature="e#1534#2278#0" expanded="true" />
+            <element signature="e#0#20#0" expanded="false" />
+            <element signature="e#398#929#0" expanded="false" />
+            <element signature="e#1534#2278#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Graphic_Interface/segmentationAndCalsificationUI.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="-0.5879121" vertical-offset="214" max-vertical-offset="578">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Graphic_Interface/icons_rc.py">
+    <entry file="file://$PROJECT_DIR$/Graphic_Interface/Windows/icons_rc.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="17" column="42" selection-start="509" selection-end="509" vertical-scroll-proportion="0.79395604" vertical-offset="0" max-vertical-offset="847620">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Graphic_Interface/Windows/MainWindow.py">
+    <entry file="file://$PROJECT_DIR$/Graphic_Interface/Widgets/MyPowerSpecWindow.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="513" column="30" selection-start="33919" selection-end="33919" vertical-scroll-proportion="0.0" vertical-offset="193" max-vertical-offset="595">
+        <state line="8" column="23" selection-start="235" selection-end="235" vertical-scroll-proportion="0.25646552" vertical-offset="0" max-vertical-offset="464">
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Graphic_Interface/Windows/BatSound.py">
+    <entry file="file://$PROJECT_DIR$/Graphic_Interface/Dialogs/ElemDetectSettingsDialog.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="11" column="0" selection-start="502" selection-end="502" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2788">
+        <state line="4" column="30" selection-start="128" selection-end="152" vertical-scroll-proportion="0.1440678" vertical-offset="0" max-vertical-offset="472">
           <folding>
-            <element signature="e#0#10#0" expanded="true" />
+            <element signature="e#0#31#0" expanded="false" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Graphic_Interface/Widgets/QPowerSpectrumWidget.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="9" column="36" selection-start="269" selection-end="269" vertical-scroll-proportion="0.32415253" vertical-offset="0" max-vertical-offset="472">
+          <folding>
+            <element signature="e#0#23#0" expanded="false" />
+            <element signature="e#279#552#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Graphic_Interface/Widgets/Power_Spectrum.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="17" column="6" selection-start="494" selection-end="494" vertical-scroll-proportion="0.5762712" vertical-offset="0" max-vertical-offset="472">
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Graphic_Interface/Windows/PresentationSlogan/Duetto_Sound_Lab.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="13" column="98" selection-start="545" selection-end="545" vertical-scroll-proportion="0.3933162" vertical-offset="68" max-vertical-offset="731">
+        <state line="20" column="26" selection-start="653" selection-end="653" vertical-scroll-proportion="0.0" vertical-offset="168" max-vertical-offset="680">
           <folding>
-            <element signature="e#0#25#0" expanded="true" />
+            <element signature="e#328#548#0" expanded="false" />
+            <element signature="e#740#790#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/Python27/Lib/site-packages/matplotlib/backends/backend_qt4agg.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="56" column="0" selection-start="1609" selection-end="1609" vertical-scroll-proportion="0.0" vertical-offset="203" max-vertical-offset="714">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.PyCharm20/system/python_stubs/-762174762/__builtin__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="4168" column="8" selection-start="142681" selection-end="142681" vertical-scroll-proportion="0.33333334" vertical-offset="26672" max-vertical-offset="32929">
+          <folding>
+            <element signature="e#142763#143186#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Graphic_Interface/Windows/BatSound.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="30" column="17" selection-start="960" selection-end="960" vertical-scroll-proportion="0.0" vertical-offset="152" max-vertical-offset="2737">
+          <folding>
+            <element signature="e#1641#1742#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Graphic_Interface/Windows/MainWindow.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="43" column="19" selection-start="1790" selection-end="1796" vertical-scroll-proportion="-8.431677" vertical-offset="3429" max-vertical-offset="7310">
+          <folding>
+            <element signature="e#361#369#0" expanded="false" />
+            <element signature="e#476#547#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Graphic_Interface/Windows/segmentationAndCalsificationUI.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="51" column="42" selection-start="2336" selection-end="2336" vertical-scroll-proportion="0.0" vertical-offset="960" max-vertical-offset="2261">
+          <folding>
+            <marker date="1389826302718" expanded="true" signature="7157:7166" placeholder="..." />
+            <marker date="1389826302718" expanded="false" signature="7157:7166" placeholder="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Graphic_Interface/Windows/SegmentationAndClasificationWindow.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="5" column="0" selection-start="267" selection-end="267" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="476">
+          <folding>
+            <element signature="e#355#359#0" expanded="false" />
+            <marker date="1389824474125" expanded="true" signature="0:266" placeholder="import ..." />
+            <marker date="1389824474125" expanded="true" signature="437:2528" placeholder="..." />
+            <marker date="1389824474125" expanded="false" signature="487:1054" placeholder="..." />
+            <marker date="1389824474125" expanded="false" signature="2337:2350" placeholder="..." />
+            <marker date="1389824474125" expanded="false" signature="2422:2528" placeholder="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.PyCharm20/system/python_stubs/-762174762/PyQt4/QtGui.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="13264" column="8" selection-start="469784" selection-end="469784" vertical-scroll-proportion="0.0" vertical-offset="225365" max-vertical-offset="906559">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.PyCharm20/system/python_stubs/-762174762/PyQt4/QtCore.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="5350" column="8" selection-start="189257" selection-end="189257" vertical-scroll-proportion="0.0" vertical-offset="48557" max-vertical-offset="162486">
+          <folding>
+            <element signature="e#189362#189366#0" expanded="true" />
+            <element signature="e#409962#409966#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Graphic_Interface/Widgets/QSignalVisualizerWidget.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="67" column="0" selection-start="2651" selection-end="2651" vertical-scroll-proportion="0.29310346" vertical-offset="1037" max-vertical-offset="1564">
+          <folding>
+            <element signature="e#0#35#0" expanded="true" />
+            <element signature="e#1535#2656#0" expanded="true" />
+            <element signature="e#2656#2669#0" expanded="false" />
+            <element signature="e#4312#4363#0" expanded="false" />
+            <element signature="e#5185#5218#0" expanded="false" />
+            <element signature="e#18295#21965#0" expanded="true" />
+            <element signature="e#29248#29273#0" expanded="false" />
+            <element signature="e#29279#29309#0" expanded="false" />
+            <element signature="e#30913#31327#0" expanded="true" />
+            <element signature="e#33755#33772#0" expanded="false" />
+            <element signature="e#34245#34605#0" expanded="true" />
           </folding>
         </state>
       </provider>

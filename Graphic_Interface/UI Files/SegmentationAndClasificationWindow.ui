@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>583</width>
-    <height>384</height>
+    <width>1084</width>
+    <height>608</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -19,35 +19,59 @@
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
+  <property name="maximumSize">
+   <size>
+    <width>1300</width>
+    <height>900</height>
+   </size>
+  </property>
   <property name="windowTitle">
    <string>Duetto Sound Lab - Segmentation And Clasification Window </string>
   </property>
   <property name="tabShape">
    <enum>QTabWidget::Rounded</enum>
   </property>
+  <property name="unifiedTitleAndToolBarOnMac">
+   <bool>false</bool>
+  </property>
   <widget class="QWidget" name="centralwidget">
-   <widget class="QWidget" name="verticalLayoutWidget">
-    <property name="geometry">
-     <rect>
-      <x>-1</x>
-      <y>-1</y>
-      <width>441</width>
-      <height>341</height>
-     </rect>
-    </property>
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <item>
-      <widget class="QSignalVisualizerWidget" name="widget" native="true"/>
-     </item>
-    </layout>
-   </widget>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>641</width>
+     <height>0</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>1300</width>
+     <height>900</height>
+    </size>
+   </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
+     <widget class="QSignalVisualizerWidget" name="widget" native="true">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+     </widget>
+    </item>
+   </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>583</width>
+     <width>1084</width>
      <height>22</height>
     </rect>
    </property>
@@ -66,6 +90,7 @@
     </property>
     <addaction name="actionOscilogram_Detection"/>
     <addaction name="actionEspectrogram_Detection"/>
+    <addaction name="actionClear_Cursors"/>
     <addaction name="separator"/>
     <addaction name="actionParameters_Measurement"/>
     <addaction name="separator"/>
@@ -91,34 +116,6 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-  </widget>
-  <widget class="QDockWidget" name="dockWidget_3">
-   <attribute name="dockWidgetArea">
-    <number>1</number>
-   </attribute>
-   <widget class="QWidget" name="dockWidgetContents_3">
-    <widget class="QWidget" name="horizontalLayoutWidget">
-     <property name="geometry">
-      <rect>
-       <x>-1</x>
-       <y>-1</y>
-       <width>141</width>
-       <height>341</height>
-      </rect>
-     </property>
-     <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <widget class="QTreeWidget" name="treeWidget">
-        <column>
-         <property name="text">
-          <string notr="true">1</string>
-         </property>
-        </column>
-       </widget>
-      </item>
-     </layout>
-    </widget>
-   </widget>
   </widget>
   <action name="actionExportar">
    <property name="text">
@@ -147,7 +144,7 @@
   </action>
   <action name="actionEspectrogram_Detection">
    <property name="text">
-    <string>Espectrogram Detection</string>
+    <string>Spectrogram Detection</string>
    </property>
   </action>
   <action name="actionParameters_Measurement">
@@ -160,12 +157,17 @@
     <string>Segmentation</string>
    </property>
   </action>
+  <action name="actionClear_Cursors">
+   <property name="text">
+    <string>Clear Cursors</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>
    <class>QSignalVisualizerWidget</class>
    <extends>QWidget</extends>
-   <header>QSignalVisualizerWidget.h</header>
+   <header>Graphic_Interface.Widgets.QSignalVisualizerWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

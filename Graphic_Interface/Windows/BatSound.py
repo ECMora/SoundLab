@@ -4,11 +4,11 @@ from PyQt4.QtGui import QDialog, QMessageBox
 from PyQt4 import QtCore
 from PyQt4 import QtGui
 from PyQt4.QtCore import SIGNAL
-
+from SegmentationAndClasificationWindow import SegmentationAndClasificationWindow
 from Duetto_Core.SignalProcessors.FilterSignalProcessor import FILTER_TYPE
 from MainWindow import Ui_DuettoMainWindow
 from Graphic_Interface.Widgets.MyPowerSpecWindow import PowerSpectrumWindow
-from Graphic_Interface.Dialogs import InsertSilenceDialog as sdialog, FilterOptionsDialog as filterdg,ChangeVolumeDialog as cvdialog,ui_elemDetectSettings as elementdlg
+from Graphic_Interface.Dialogs import InsertSilenceDialog as sdialog, FilterOptionsDialog as filterdg,ChangeVolumeDialog as cvdialog
 
 
 MIN_SAMPLING_RATE = 1000
@@ -16,11 +16,6 @@ MAX_SAMPLING_RATE = 2000000
 
 class InsertSilenceDialog(sdialog.Ui_Dialog,QDialog):
     pass
-
-
-class ElementsDetectDialog(elementdlg.Ui_elemDetectSettingsDialog,QDialog):
-    pass
-
 
 class ChangeVolumeDialog(cvdialog.Ui_Dialog,QDialog):
     pass
@@ -45,6 +40,10 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.window_spec = self.cbx_fftwindow.currentText()
         self.overlap_spec = self.sbx_fftoverlap.value()
         self.pow_spec_windows = []
+
+    @QtCore.pyqtSlot()
+    def on_actionSegmentation_And_Clasification_triggered(self):
+        segWindow = SegmentationAndClasificationWindow(parent=self,signal=self.widget.signalProcessor.signal)
 
     @QtCore.pyqtSlot()
     def on_actionResampling_triggered(self):
@@ -260,28 +259,6 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.dock_spec_settings.setVisible(True)
         self.dock_spec_settings.setFloating(False)
 
-    @QtCore.pyqtSlot()
-    def on_actionOsilogram_Detector_triggered(self):
-        elementsDetectorDialog = elementdlg.Ui_elemDetectSettingsDialog()
-        elementsDetectorDialogWindow = ElementsDetectDialog()
-        elementsDetectorDialog.setupUi(elementsDetectorDialogWindow)
-        elementsDetectorDialog.dsbxThreshold.setValue(-40)
-        elementsDetectorDialog.dsbxMinSize.setValue(1)
-        elementsDetectorDialog.dsbxThreshold2.setValue(0)
-        elementsDetectorDialog.dsbxMergeFactor.setValue(0.5)
-        elementsDetectorDialog.dsbxDecay.setValue(1)
-        if elementsDetectorDialogWindow.exec_() and elementsDetectorDialog.chbxDetectOsc.isChecked():
-            threshold = abs(elementsDetectorDialog.dsbxThreshold.value())
-            threshold2 = abs(elementsDetectorDialog.dsbxThreshold2.value())
-            minsize = elementsDetectorDialog.dsbxMinSize.value()
-            mergefactor = elementsDetectorDialog.dsbxMergeFactor.value()
-            softfactor = elementsDetectorDialog.sbxSoftFactor.value()
-            decay = elementsDetectorDialog.dsbxDecay.value()
-            self.widget.detectElementsInOscilogram(threshold,decay,minsize,softfactor,mergefactor,threshold2)
-
-    @QtCore.pyqtSlot()
-    def on_actionSpectrogram_Detector_triggered(self):
-        self.widget.clearCursors()
 
     @QtCore.pyqtSlot()
     def on_actionEnvelope_triggered(self):
