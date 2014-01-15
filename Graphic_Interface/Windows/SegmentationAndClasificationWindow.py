@@ -7,7 +7,7 @@ from PyQt4.QtCore import SIGNAL
 
 from Duetto_Core.SignalProcessors.FilterSignalProcessor import FILTER_TYPE
 from MainWindow import Ui_DuettoMainWindow
-from MyPowerSpecWindow import PowerSpectrumWindow
+from Graphic_Interface.Widgets.MyPowerSpecWindow import PowerSpectrumWindow
 from Graphic_Interface.Dialogs import InsertSilenceDialog as sdialog, FilterOptionsDialog as filterdg,ChangeVolumeDialog as cvdialog,ui_elemDetectSettings as elementdlg
 
 
@@ -259,6 +259,9 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     def on_actionSpectogram_Settings_triggered(self):
         self.dock_spec_settings.setVisible(True)
         self.dock_spec_settings.setFloating(False)
+
+
+
 
     @QtCore.pyqtSlot()
     def on_actionOsilogram_Detector_triggered(self):
