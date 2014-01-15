@@ -304,7 +304,7 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             self.widget.specgramSettings.NFFT = self.NFFT_spec
             self.widget.specgramSettings.overlap = self.overlap_spec
             self.widget.visualChanges = True
-
+            self.setWindowTitle("Duetto Sound Lab - "+self.widget.signalProcessor.signal.name())
             self.widget.refresh()
             self.first = True
 
