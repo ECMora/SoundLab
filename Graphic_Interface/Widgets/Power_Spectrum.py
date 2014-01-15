@@ -8,6 +8,7 @@
 # WARNING! All changes made in this file will be lost!
 
 from PyQt4 import QtCore, QtGui
+from Graphic_Interface.Widgets import QPowerSpectrumWidget
 
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
@@ -39,4 +40,3 @@ class Ui_PowSpecWindow(object):
         PowSpecWindow.setWindowTitle(QtGui.QApplication.translate("PowSpecWindow", "Power Spectrum", None, QtGui.QApplication.UnicodeUTF8))
         self.actionHighest_frequency.setText(QtGui.QApplication.translate("PowSpecWindow", "Highest frequency", None, QtGui.QApplication.UnicodeUTF8))
 
-from QPowerSpectrumWidget import QPowerSpectrumWidget
