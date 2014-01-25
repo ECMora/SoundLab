@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'MainWindow.ui'
 #
-# Created: Wed Jan 15 16:50:24 2014
+# Created: Wed Jan 22 22:06:22 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -27,7 +27,7 @@ class Ui_DuettoMainWindow(object):
     def setupUi(self, DuettoMainWindow):
         DuettoMainWindow.setObjectName(_fromUtf8("DuettoMainWindow"))
         DuettoMainWindow.setWindowModality(QtCore.Qt.ApplicationModal)
-        DuettoMainWindow.resize(1270, 700)
+        DuettoMainWindow.resize(817, 616)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -42,14 +42,6 @@ class Ui_DuettoMainWindow(object):
         self.verticalLayout_2.setMargin(0)
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
         self.widget = QSignalVisualizerWidget(self.centralwidget)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.widget.sizePolicy().hasHeightForWidth())
-        self.widget.setSizePolicy(sizePolicy)
-        self.widget.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
-        self.widget.setAcceptDrops(True)
-        self.widget.setAutoFillBackground(True)
         self.widget.setObjectName(_fromUtf8("widget"))
         self.verticalLayout_2.addWidget(self.widget)
         self.horizontalScrollBar = QtGui.QScrollBar(self.centralwidget)
@@ -58,7 +50,7 @@ class Ui_DuettoMainWindow(object):
         self.verticalLayout_2.addWidget(self.horizontalScrollBar)
         DuettoMainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(DuettoMainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 1270, 22))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 817, 22))
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuFile = QtGui.QMenu(self.menubar)
         self.menuFile.setObjectName(_fromUtf8("menuFile"))

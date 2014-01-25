@@ -1,19 +1,29 @@
-from Duetto_Core.SignalProcessors.SignalProcessor import envelope
+
+from pyqtgraph.Qt import QtGui, QtCore
+import pyqtgraph as pg
+import time
 from Duetto_Core.AudioSignals.WavFileSignal import WavFileSignal
-from matplotlib.pylab import *
-import math
-#wav = WavFileSignal()
-#wav.open("..\\..\\ficheros de audio\\Clasif\\c5.wav")
-
-
-#for i in wav.data:
-#    print(i)
-#print("************************")
-
-#x= envelope(wav.data, decay=500)
-#plot(x)
-#show()
-
-a= [1, 2,3,6,12, 24  , 56 ,148 , 473 ,2034,14798 ,  372049, 39054730,74767615,49046,49046,  748, 748,66, 66,11]
-
-print(sum(a)/128)
+from pyqtgraph.ptime import time
+#app = QtGui.QApplication([])
+#
+#p = pg.plot()
+#p.setWindowTitle('pyqtgraph example: PlotSpeedTest')
+#
+#signal = WavFileSignal()
+#
+#signal.open("..\\..\\ficheros de audio\\Playback_1.wav")
+#p.setRange(QtCore.QRectF(0, -(2**(signal.bitDepth-1)), len(signal.data), 2**signal.bitDepth))
+#curve = p.plot(signal.data[::10])
+#
+#
+#
+#
+#
+#
+#
+### Start Qt event loop unless running in interactive mode.
+#if __name__ == '__main__':
+#    import sys
+#    if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
+#        QtGui.QApplication.instance().exec_()
+pg.
