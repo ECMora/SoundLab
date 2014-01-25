@@ -1,11 +1,15 @@
 from PyQt4 import QtCore
 from PyQt4 import QtGui
 from Duetto_Core.AudioSignals.AudioSignal import AudioSignal
-from Graphic_Interface.Windows.segmentationAndCalsificationUI import Ui_MainWindow
-from Graphic_Interface.Dialogs import ui_elemDetectSettings as elementdlg
+from Graphic_Interface.Widgets.segmentationAndCalsificationUI import Ui_MainWindow
+from Graphic_Interface.Dialogs import ui_elemDetectSettings as elementdlg, ParametersMeasurementDialog as paramdialog
 
 
 class ElementsDetectDialog(elementdlg.Ui_elemDetectSettingsDialog,QtGui.QDialog):
+    pass
+
+
+class ParameterMeasurementDialog(paramdialog.Ui_ParameterMeasurement,QtGui.QDialog):
     pass
 
 
@@ -44,6 +48,14 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
             softfactor = elementsDetectorDialog.sbxSoftFactor.value()
             decay = elementsDetectorDialog.dsbxDecay.value()
             self.widget.detectElementsInOscilogram(threshold,decay,minsize,softfactor,mergefactor,threshold2)
+
+    @QtCore.pyqtSlot()
+    def on_actionParameters_Measurement_triggered(self):
+        paramMeasurementDialog = paramdialog.Ui_ParameterMeasurement()
+        paramMeasurementDialogWindow = ParameterMeasurementDialog()
+        paramMeasurementDialog.setupUi(paramMeasurementDialogWindow)
+        if paramMeasurementDialogWindow.exec_():
+            pass
 
     @QtCore.pyqtSlot()
     def on_actionEspectrogram_Detection_triggered(self):
