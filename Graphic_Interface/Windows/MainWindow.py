@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'MainWindow.ui'
 #
-# Created: Wed Jan 22 22:06:22 2014
+# Created: Fri Jan 24 22:25:23 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -27,13 +27,16 @@ class Ui_DuettoMainWindow(object):
     def setupUi(self, DuettoMainWindow):
         DuettoMainWindow.setObjectName(_fromUtf8("DuettoMainWindow"))
         DuettoMainWindow.setWindowModality(QtCore.Qt.ApplicationModal)
-        DuettoMainWindow.resize(817, 616)
+        DuettoMainWindow.resize(846, 619)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(DuettoMainWindow.sizePolicy().hasHeightForWidth())
         DuettoMainWindow.setSizePolicy(sizePolicy)
-        DuettoMainWindow.setMaximumSize(QtCore.QSize(1270, 760))
+        DuettoMainWindow.setMaximumSize(QtCore.QSize(1270, 900))
+        DuettoMainWindow.setStyleSheet(_fromUtf8("font: 10pt \"Cambria\";\n"
+"color: rgb(0, 0, 0);\n"
+"padding:1%;"))
         self.centralwidget = QtGui.QWidget(DuettoMainWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.verticalLayout_2 = QtGui.QVBoxLayout(self.centralwidget)
@@ -42,6 +45,8 @@ class Ui_DuettoMainWindow(object):
         self.verticalLayout_2.setMargin(0)
         self.verticalLayout_2.setObjectName(_fromUtf8("verticalLayout_2"))
         self.widget = QSignalVisualizerWidget(self.centralwidget)
+        self.widget.setStyleSheet(_fromUtf8("background-color: rgb(217, 217, 217);\n"
+"border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 rgba(0, 0, 0, 255), stop:1 rgba(255, 255, 255, 255));"))
         self.widget.setObjectName(_fromUtf8("widget"))
         self.verticalLayout_2.addWidget(self.widget)
         self.horizontalScrollBar = QtGui.QScrollBar(self.centralwidget)
@@ -50,21 +55,29 @@ class Ui_DuettoMainWindow(object):
         self.verticalLayout_2.addWidget(self.horizontalScrollBar)
         DuettoMainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(DuettoMainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 817, 22))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 846, 24))
+        self.menubar.setStyleSheet(_fromUtf8("background-color: rgba(255, 214, 8, 100);\n"
+"selection-color: rgb(255, 255, 127);"))
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuFile = QtGui.QMenu(self.menubar)
+        self.menuFile.setStyleSheet(_fromUtf8("background-color: rgb(255, 240, 40, 100);"))
         self.menuFile.setObjectName(_fromUtf8("menuFile"))
         self.menuTools = QtGui.QMenu(self.menubar)
+        self.menuTools.setStyleSheet(_fromUtf8("background-color: rgb(255, 240, 40, 100);"))
         self.menuTools.setObjectName(_fromUtf8("menuTools"))
         self.menuEdit = QtGui.QMenu(self.menubar)
+        self.menuEdit.setStyleSheet(_fromUtf8("background-color: rgb(255, 240, 40, 100);"))
         self.menuEdit.setObjectName(_fromUtf8("menuEdit"))
         self.menuGenerate = QtGui.QMenu(self.menuEdit)
         self.menuGenerate.setObjectName(_fromUtf8("menuGenerate"))
         self.menuView = QtGui.QMenu(self.menubar)
+        self.menuView.setStyleSheet(_fromUtf8("background-color: rgb(255, 240, 40, 100);"))
         self.menuView.setObjectName(_fromUtf8("menuView"))
         self.menuSound = QtGui.QMenu(self.menubar)
+        self.menuSound.setStyleSheet(_fromUtf8("background-color: rgb(255, 240, 40, 100);"))
         self.menuSound.setObjectName(_fromUtf8("menuSound"))
         self.menuView_2 = QtGui.QMenu(self.menubar)
+        self.menuView_2.setStyleSheet(_fromUtf8("background-color: rgb(255, 240, 40, 100);"))
         self.menuView_2.setObjectName(_fromUtf8("menuView_2"))
         DuettoMainWindow.setMenuBar(self.menubar)
         self.statusbar = QtGui.QStatusBar(DuettoMainWindow)
@@ -78,6 +91,8 @@ class Ui_DuettoMainWindow(object):
         self.dock_osc_settings.setSizePolicy(sizePolicy)
         self.dock_osc_settings.setMinimumSize(QtCore.QSize(180, 179))
         self.dock_osc_settings.setMaximumSize(QtCore.QSize(180, 179))
+        self.dock_osc_settings.setStyleSheet(_fromUtf8("background-color: rgba(255, 214, 8, 100);\n"
+"selection-color: rgb(255, 255, 127);"))
         self.dock_osc_settings.setFloating(True)
         self.dock_osc_settings.setFeatures(QtGui.QDockWidget.AllDockWidgetFeatures)
         self.dock_osc_settings.setObjectName(_fromUtf8("dock_osc_settings"))
@@ -90,20 +105,27 @@ class Ui_DuettoMainWindow(object):
         self.label_2.setObjectName(_fromUtf8("label_2"))
         self.formLayout.setWidget(0, QtGui.QFormLayout.LabelRole, self.label_2)
         self.spinBox = QtGui.QSpinBox(self.osc_settings_contents)
+        self.spinBox.setStyleSheet(_fromUtf8("background-color: rgb(255, 255, 255);"))
         self.spinBox.setObjectName(_fromUtf8("spinBox"))
         self.formLayout.setWidget(1, QtGui.QFormLayout.LabelRole, self.spinBox)
         self.label = QtGui.QLabel(self.osc_settings_contents)
         self.label.setObjectName(_fromUtf8("label"))
         self.formLayout.setWidget(2, QtGui.QFormLayout.LabelRole, self.label)
         self.min_amp_tbx = QtGui.QLineEdit(self.osc_settings_contents)
+        self.min_amp_tbx.setStyleSheet(_fromUtf8("background-color: rgb(255, 255, 255);"))
         self.min_amp_tbx.setObjectName(_fromUtf8("min_amp_tbx"))
         self.formLayout.setWidget(3, QtGui.QFormLayout.LabelRole, self.min_amp_tbx)
         self.max_amp_tbx = QtGui.QLineEdit(self.osc_settings_contents)
+        self.max_amp_tbx.setStyleSheet(_fromUtf8("background-color: rgb(255, 255, 255);"))
         self.max_amp_tbx.setObjectName(_fromUtf8("max_amp_tbx"))
         self.formLayout.setWidget(4, QtGui.QFormLayout.LabelRole, self.max_amp_tbx)
         self.btnosc_apply = QtGui.QPushButton(self.osc_settings_contents)
+        self.btnosc_apply.setStyleSheet(_fromUtf8("background-color: qconicalgradient(cx:0.5, cy:0.5, angle:317.2, stop:0 rgba(136, 106, 22, 255), stop:0.130682 rgba(245, 236, 112, 255), stop:0.147727 rgba(0, 0, 0, 255), stop:0.164773 rgba(166, 140, 41, 255), stop:0.176136 rgba(235, 219, 102, 255), stop:0.414773 rgba(209, 190, 76, 255), stop:0.539773 rgba(208, 187, 73, 255), stop:0.545455 rgba(200, 194, 111, 255), stop:0.573864 rgba(187, 156, 51, 255), stop:0.590909 rgba(1, 11, 16, 255), stop:0.619318 rgba(187, 156, 51, 255), stop:0.636364 rgba(137, 108, 26, 255), stop:0.869318 rgba(202, 174, 68, 255));\n"
+"font: 75 11pt \"MS Serif\";\n"
+"color: rgb(255, 255, 255);\n"
+"padding:2%;"))
         self.btnosc_apply.setObjectName(_fromUtf8("btnosc_apply"))
-        self.formLayout.setWidget(5, QtGui.QFormLayout.LabelRole, self.btnosc_apply)
+        self.formLayout.setWidget(5, QtGui.QFormLayout.SpanningRole, self.btnosc_apply)
         self.dock_osc_settings.setWidget(self.osc_settings_contents)
         DuettoMainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(1), self.dock_osc_settings)
         self.dock_spec_settings = QtGui.QDockWidget(DuettoMainWindow)
@@ -114,6 +136,8 @@ class Ui_DuettoMainWindow(object):
         self.dock_spec_settings.setSizePolicy(sizePolicy)
         self.dock_spec_settings.setMinimumSize(QtCore.QSize(180, 200))
         self.dock_spec_settings.setMaximumSize(QtCore.QSize(180, 200))
+        self.dock_spec_settings.setStyleSheet(_fromUtf8("background-color: rgba(255, 214, 8, 100);\n"
+"selection-color: rgb(255, 255, 127);"))
         self.dock_spec_settings.setFloating(True)
         self.dock_spec_settings.setFeatures(QtGui.QDockWidget.AllDockWidgetFeatures)
         self.dock_spec_settings.setObjectName(_fromUtf8("dock_spec_settings"))
@@ -127,6 +151,7 @@ class Ui_DuettoMainWindow(object):
         self.formLayout_2.setWidget(0, QtGui.QFormLayout.LabelRole, self.label_3)
         self.cbx_fftsize = QtGui.QComboBox(self.spec_settings_contents)
         self.cbx_fftsize.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.cbx_fftsize.setStyleSheet(_fromUtf8("background-color: rgb(255, 255, 255);"))
         self.cbx_fftsize.setInsertPolicy(QtGui.QComboBox.InsertAfterCurrent)
         self.cbx_fftsize.setMinimumContentsLength(5)
         self.cbx_fftsize.setModelColumn(0)
@@ -142,6 +167,7 @@ class Ui_DuettoMainWindow(object):
         self.formLayout_2.setWidget(2, QtGui.QFormLayout.LabelRole, self.label_4)
         self.cbx_fftwindow = QtGui.QComboBox(self.spec_settings_contents)
         self.cbx_fftwindow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.cbx_fftwindow.setStyleSheet(_fromUtf8("background-color: rgb(255, 255, 255);"))
         self.cbx_fftwindow.setMinimumContentsLength(0)
         self.cbx_fftwindow.setObjectName(_fromUtf8("cbx_fftwindow"))
         self.cbx_fftwindow.addItem(_fromUtf8(""))
@@ -152,21 +178,31 @@ class Ui_DuettoMainWindow(object):
         self.label_5.setObjectName(_fromUtf8("label_5"))
         self.formLayout_2.setWidget(4, QtGui.QFormLayout.LabelRole, self.label_5)
         self.sbx_fftoverlap = QtGui.QSpinBox(self.spec_settings_contents)
+        self.sbx_fftoverlap.setStyleSheet(_fromUtf8("background-color: rgb(255, 255, 255);"))
         self.sbx_fftoverlap.setMaximum(98)
         self.sbx_fftoverlap.setProperty("value", 98)
         self.sbx_fftoverlap.setObjectName(_fromUtf8("sbx_fftoverlap"))
         self.formLayout_2.setWidget(5, QtGui.QFormLayout.LabelRole, self.sbx_fftoverlap)
         self.btnspec_apply = QtGui.QPushButton(self.spec_settings_contents)
+        self.btnspec_apply.setEnabled(True)
+        self.btnspec_apply.setStyleSheet(_fromUtf8("background-color: qconicalgradient(cx:0.5, cy:0.5, angle:317.2, stop:0 rgba(136, 106, 22, 255), stop:0.130682 rgba(245, 236, 112, 255), stop:0.147727 rgba(0, 0, 0, 255), stop:0.164773 rgba(166, 140, 41, 255), stop:0.176136 rgba(235, 219, 102, 255), stop:0.414773 rgba(209, 190, 76, 255), stop:0.539773 rgba(208, 187, 73, 255), stop:0.545455 rgba(200, 194, 111, 255), stop:0.573864 rgba(187, 156, 51, 255), stop:0.590909 rgba(1, 11, 16, 255), stop:0.619318 rgba(187, 156, 51, 255), stop:0.636364 rgba(137, 108, 26, 255), stop:0.869318 rgba(202, 174, 68, 255));\n"
+"font: 75 11pt \"MS Serif\";\n"
+"color: rgb(255, 255, 255);\n"
+"padding:2%;"))
         self.btnspec_apply.setObjectName(_fromUtf8("btnspec_apply"))
-        self.formLayout_2.setWidget(6, QtGui.QFormLayout.LabelRole, self.btnspec_apply)
+        self.formLayout_2.setWidget(6, QtGui.QFormLayout.SpanningRole, self.btnspec_apply)
         self.dock_spec_settings.setWidget(self.spec_settings_contents)
         DuettoMainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(1), self.dock_spec_settings)
         self.toolBar = QtGui.QToolBar(DuettoMainWindow)
+        self.toolBar.setStyleSheet(_fromUtf8("background-color: rgb(249, 249, 124);\n"
+"selection-color: rgb(255, 255, 127);"))
         self.toolBar.setObjectName(_fromUtf8("toolBar"))
         DuettoMainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
         self.dock_powspec_settings = QtGui.QDockWidget(DuettoMainWindow)
         self.dock_powspec_settings.setMinimumSize(QtCore.QSize(180, 153))
         self.dock_powspec_settings.setMaximumSize(QtCore.QSize(180, 153))
+        self.dock_powspec_settings.setStyleSheet(_fromUtf8("background-color: rgba(255, 214, 8, 100);\n"
+"selection-color: rgb(255, 255, 127);"))
         self.dock_powspec_settings.setFloating(False)
         self.dock_powspec_settings.setObjectName(_fromUtf8("dock_powspec_settings"))
         self.dockWidgetContents = QtGui.QWidget()
@@ -178,6 +214,7 @@ class Ui_DuettoMainWindow(object):
         self.formLayout_3.setWidget(0, QtGui.QFormLayout.LabelRole, self.label_6)
         self.cbx_fftsize_pow = QtGui.QComboBox(self.dockWidgetContents)
         self.cbx_fftsize_pow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.cbx_fftsize_pow.setStyleSheet(_fromUtf8("background-color: rgb(255, 255, 255);"))
         self.cbx_fftsize_pow.setInsertPolicy(QtGui.QComboBox.InsertAfterCurrent)
         self.cbx_fftsize_pow.setMinimumContentsLength(5)
         self.cbx_fftsize_pow.setModelColumn(0)
@@ -199,6 +236,7 @@ class Ui_DuettoMainWindow(object):
         self.formLayout_3.setWidget(2, QtGui.QFormLayout.LabelRole, self.label_7)
         self.cbx_fftwindow_pow = QtGui.QComboBox(self.dockWidgetContents)
         self.cbx_fftwindow_pow.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
+        self.cbx_fftwindow_pow.setStyleSheet(_fromUtf8("background-color: rgb(255, 255, 255);"))
         self.cbx_fftwindow_pow.setMinimumContentsLength(0)
         self.cbx_fftwindow_pow.setObjectName(_fromUtf8("cbx_fftwindow_pow"))
         self.cbx_fftwindow_pow.addItem(_fromUtf8(""))
@@ -206,8 +244,12 @@ class Ui_DuettoMainWindow(object):
         self.cbx_fftwindow_pow.addItem(_fromUtf8(""))
         self.formLayout_3.setWidget(3, QtGui.QFormLayout.SpanningRole, self.cbx_fftwindow_pow)
         self.btnpow_apply = QtGui.QPushButton(self.dockWidgetContents)
+        self.btnpow_apply.setStyleSheet(_fromUtf8("background-color: qconicalgradient(cx:0.5, cy:0.5, angle:317.2, stop:0 rgba(136, 106, 22, 255), stop:0.130682 rgba(245, 236, 112, 255), stop:0.147727 rgba(0, 0, 0, 255), stop:0.164773 rgba(166, 140, 41, 255), stop:0.176136 rgba(235, 219, 102, 255), stop:0.414773 rgba(209, 190, 76, 255), stop:0.539773 rgba(208, 187, 73, 255), stop:0.545455 rgba(200, 194, 111, 255), stop:0.573864 rgba(187, 156, 51, 255), stop:0.590909 rgba(1, 11, 16, 255), stop:0.619318 rgba(187, 156, 51, 255), stop:0.636364 rgba(137, 108, 26, 255), stop:0.869318 rgba(202, 174, 68, 255));\n"
+"font: 75 11pt \"MS Serif\";\n"
+"color: rgb(255, 255, 255);\n"
+"padding:2%;"))
         self.btnpow_apply.setObjectName(_fromUtf8("btnpow_apply"))
-        self.formLayout_3.setWidget(4, QtGui.QFormLayout.LabelRole, self.btnpow_apply)
+        self.formLayout_3.setWidget(4, QtGui.QFormLayout.SpanningRole, self.btnpow_apply)
         self.dock_powspec_settings.setWidget(self.dockWidgetContents)
         DuettoMainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(1), self.dock_powspec_settings)
         self.actionOpen = QtGui.QAction(DuettoMainWindow)
