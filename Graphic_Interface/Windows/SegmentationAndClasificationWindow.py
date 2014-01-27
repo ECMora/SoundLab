@@ -1,6 +1,7 @@
-from PyQt4 import QtCore
+from PyQt4.QtCore import pyqtSlot, Qt
 from PyQt4 import QtGui
 from Duetto_Core.AudioSignals.AudioSignal import AudioSignal
+from Graphic_Interface.Dialogs.elemDetectSettings import ElemDetectSettingsDialog
 from Graphic_Interface.Widgets.segmentationAndCalsificationUI import Ui_MainWindow
 from Graphic_Interface.Dialogs import ui_elemDetectSettings as elementdlg, ParametersMeasurementDialog as paramdialog
 
@@ -30,7 +31,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.widget.refresh()
 
 
-    @QtCore.pyqtSlot()
+    @pyqtSlot()
     def on_actionOscilogram_Detection_triggered(self):
         elementsDetectorDialog = elementdlg.Ui_elemDetectSettingsDialog()
         elementsDetectorDialogWindow = ElementsDetectDialog()
@@ -47,9 +48,9 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
             mergefactor = elementsDetectorDialog.dsbxMergeFactor.value()
             softfactor = elementsDetectorDialog.sbxSoftFactor.value()
             decay = elementsDetectorDialog.dsbxDecay.value()
-            self.widget.detectElementsInOscilogram(threshold,decay,minsize,softfactor,mergefactor,threshold2)
+            self.widget.detectElementsInOscilogram(threshold, decay, minsize, softfactor, mergefactor, threshold2)
 
-    @QtCore.pyqtSlot()
+    @pyqtSlot()
     def on_actionParameters_Measurement_triggered(self):
         paramMeasurementDialog = paramdialog.Ui_ParameterMeasurement()
         paramMeasurementDialogWindow = ParameterMeasurementDialog()
@@ -57,11 +58,15 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         if paramMeasurementDialogWindow.exec_():
             pass
 
-    @QtCore.pyqtSlot()
+    @pyqtSlot()
     def on_actionEspectrogram_Detection_triggered(self):
-        pass
+        diag = ElemDetectSettingsDialog(self, Qt.Dialog | Qt.MSWindowsFixedSizeDialogHint | Qt.WindowCloseButtonHint)
+        if diag.exec_():
+            settings = diag.getSettings()
+            if settings['detectSpec']:
+                self.widget.spectrogramsElevations(settings)
 
-    @QtCore.pyqtSlot()
+    @pyqtSlot()
     def on_actionClear_Cursors_triggered(self):
         self.widget.clearCursors()
         self.widget.visualChanges = True
