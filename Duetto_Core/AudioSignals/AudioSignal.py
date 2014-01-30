@@ -4,7 +4,8 @@ import pyaudio
 from numpy import *
 from numpy.numarray import fromstring
 import pyaudio
-from PyQt4.QtCore import QTimer
+from PyQt4.QtCore import QTimer, pyqtSignal
+
 
 class AudioSignal:
     """an abstract class for the representation of an audio signal"""
@@ -40,9 +41,6 @@ class AudioSignal:
                 return self.path[index+1:]
             else:
                 return ""
-
-
-
 
     def resampling(self,  samplinRate= 44100):
         samplinRate = int(samplinRate)
@@ -92,20 +90,22 @@ class AudioSignal:
         pass
 
 
-    def playCallback(self):
-        """PLay playCallback"""
-        def function(in_data, frame_count, time_info, status):
-            if (self.playSection[1] - self.playSection[2] < frame_count):
-                frame = self.playSection[2]
-                self.playSection = (0, 0, 0)
-                self.playStatus = self.STOPPED
-                data=self.data[frame:frame + frame_count]
-                data-=self.media
-                return (data, pyaudio.paComplete)
-            data = self.data[self.playSection[2]:self.playSection[2] + frame_count]
-            self.playSection = (self.playSection[0], self.playSection[1], self.playSection[2] + frame_count)
-            return (data, pyaudio.paContinue)
-        return function
+
+    play_finished = pyqtSignal()
+
+    def playCallback(self,in_data, frame_count, time_info, status):
+        if (self.playSection[1] - self.playSection[2] < frame_count):
+            frame = self.playSection[2]
+            self.playSection = (0, 0, 0)
+            self.playStatus = self.STOPPED
+            data = self.data[frame:frame + frame_count]
+            data -= self.media
+            self.play_finished.emit()
+            return (data, pyaudio.paComplete)
+        data = self.data[self.playSection[2]:self.playSection[2] + frame_count]
+        self.playSection = (self.playSection[0], self.playSection[1], self.playSection[2] + frame_count)
+        return (data, pyaudio.paContinue)
+
 
 
     def recordCallback(self):
@@ -144,7 +144,7 @@ class AudioSignal:
                             rate=self.samplingRate,
                             output=True,
                             start=False,
-                            stream_callback=self.playCallback())
+                            stream_callback=self.playCallback)
 
         endIndex=endIndex if endIndex!=-1 else len(self.data)
         self.stream._rate=int(self.samplingRate*speed/100.0)
