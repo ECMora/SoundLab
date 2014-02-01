@@ -41,15 +41,16 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 {'name': 'Y', 'type': 'bool','default':True , 'value': True},
 
             ]},
-
-            {'name': 'Plot color', 'type': 'color', 'value':"FFF", 'default': "FFF"}
+            {'name':'Background color', 'type':'color','value':"000", 'default':"000"},
+            {'name': 'Plot color', 'type': 'color', 'value':"FFF", 'default': "FFF"},
         ]},
 
         {'name': 'Spectrogram Settings', 'type': 'group', 'children': [
 
-            {'name': 'FFT size', 'type': 'list', 'values': {"256": 256, "512": 512, "1024": 1024, '2048': 2048, 'Automatic': 512}, 'value': 512},
+            {'name': 'FFT size', 'type': 'list', 'values': {'256': 256, '512': 512, '1024': 1024, '2048': 2048, 'Automatic': 512}, 'value':4 },
             {'name': 'FFT window', 'type': 'list', 'value':'None','default':self.widget.specgramSettings.windows[6],'values': {"blackman": self.widget.specgramSettings.windows[3],"rectangular": self.widget.specgramSettings.windows[1], "Hanning": self.widget.specgramSettings.windows[2], "Hamming": self.widget.specgramSettings.windows[0],'bartlett':self.widget.specgramSettings.windows[4],'kaiser':self.widget.specgramSettings.windows[5],'None':self.widget.specgramSettings.windows[6]}},
             {'name': 'FFT overlap', 'type': 'int', 'value':90, 'max' : 100},
+            {'name': 'Background color', 'type': 'color', 'value':"000", 'default': "000"},
         ]},
 
         {'name': 'Power Spectrum Settings', 'type': 'group', 'children': [
@@ -93,6 +94,8 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 self.widget.specgramSettings.NFFT = data
             elif childName == 'Spectrogram Settings.FFT window':
                 self.widget.specgramSettings.window = data
+            elif childName == 'Spectrogram Settings.Background color':
+                self.widget.spec_background = data
             elif childName == 'Spectrogram Settings.ColorMap':
                 self.widget.axesSpecgram.getHistogramWidget().item._pixelVectorCache.append(data)
             elif childName == 'Spectrogram Settings.FFT overlap':
@@ -103,6 +106,8 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             elif childName == 'Power Spectrum Settings.FFT window':
                 self.window_pow = data
                 pow = True
+            elif childName == 'Oscillogram Settings.Background color':
+                self.widget.osc_background = data
             elif childName == 'Oscillogram Settings.Grid.X':
                 self.widget.osc_gridx = data
             elif childName == 'Oscillogram Settings.Grid.Y':

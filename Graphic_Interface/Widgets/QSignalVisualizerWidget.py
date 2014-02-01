@@ -44,9 +44,11 @@ class QSignalVisualizerWidget(QWidget):
         QWidget.__init__(self,parent)
         layout = QVBoxLayout()
         self.osc_gridx = True
-        self.osc_grridy = True
+        self.osc_gridy = True
         self.osc_color=QColor(255,255,255)
         self.axesOscilogram = pg.PlotWidget(parent=self)
+        self.osc_background = "000"
+        self.spec_background = "000"
         self.axesOscilogram.getPlotItem().enableAutoRange()
 
         self.axesSpecgram = pg.ImageView(parent=self)
@@ -393,6 +395,8 @@ class QSignalVisualizerWidget(QWidget):
     COLOR_INDEX = 0
 
     def refresh(self):
+        self.axesOscilogram.setBackground(self.osc_background)
+        #self.axesSpecgram.
         if self.visualChanges:
             if self.visibleOscilogram and self.signalProcessor.signal.opened() and self.mainCursor.max > self.mainCursor.min:
                 self.axesOscilogram.clear()
