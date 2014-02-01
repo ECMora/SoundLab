@@ -1,6 +1,6 @@
 from math import sin, pi
 
-from numpy import array, zeros, concatenate
+from numpy import array, zeros, concatenate,mean
 
 from Duetto_Core.AudioSignals.WavFileSignal import WavFileSignal
 from Duetto_Core.Detectors.FeatureExtractionDetectors.MaxMinPeakDetector import MaxMinPeakDetector
@@ -39,11 +39,7 @@ class CommonSignalProcessor(SignalProcessor):
         if indexTo == -1:
             indexTo = len(self.signal.data)
         self.checkIndexes(indexFrom, indexTo)
-        if self.mean is None:
-            detector = MeanDetector()
-            detector.detect(self.signal)
-            self.mean = detector.pointers[0].index
-        self.signal.data[indexFrom:indexTo] = self.mean
+        self.signal.data[indexFrom:indexTo] = 0
         return self.signal
 
     def reverse(self, indexFrom, indexTo=-1):
@@ -62,13 +58,7 @@ class CommonSignalProcessor(SignalProcessor):
         return self.signal
 
     def insertSilence(self, indexFrom=0, indexTo=-1, ms=0):
-        if self.mean == None:
-            detector = MeanDetector()
-            detector.detect(self.signal)
-            self.mean = detector.pointers[0].index
         arr = zeros(ms * self.signal.samplingRate / 1000, type(self.signal.data[0]))
-        if self.mean != 0:
-            arr.fill(self.mean)
         self.signal.data = concatenate((self.signal.data[0:indexFrom],
                                         arr,
                                         self.signal.data[indexFrom:]))

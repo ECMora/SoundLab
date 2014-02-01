@@ -1,6 +1,6 @@
 import sys
 
-from PyQt4.QtGui import QDialog, QMessageBox
+from PyQt4.QtGui import QDialog, QMessageBox,QFileDialog
 from PyQt4 import QtCore
 from PyQt4 import QtGui
 from PyQt4.QtCore import SIGNAL
@@ -284,7 +284,11 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             self.setWindowTitle("Duetto Sound Lab - "+self.widget.signalProcessor.signal.name())
             self.widget.refresh()
             self.first = True
-
+    @QtCore.pyqtSlot()
+    def on_actionSave_triggered(self):
+        fname = unicode(QFileDialog.getSaveFileName())
+        if fname:
+            self.widget.save(fname)
 
     @QtCore.pyqtSlot()
     def on_actionPlay_Sound_triggered(self):
