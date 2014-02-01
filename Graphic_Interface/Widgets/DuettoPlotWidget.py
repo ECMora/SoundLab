@@ -17,10 +17,9 @@ class DuettoPlotWidget(pg.PlotWidget):
     def setZoomRegionVisible(self,value=False):
         if value and  self.zoomRegion not in self.items():
             self.addItem(self.zoomRegion)
-            self.update()
         elif not value and self.zoomRegion in self.items():
             self.removeItem(self.zoomRegion)
-            self.update()
+        self.update()
 
 
     def mouseMoveEvent(self, event):
@@ -38,28 +37,33 @@ class DuettoPlotWidget(pg.PlotWidget):
 
 
     def mousePressEvent(self, event):
-        if(not self.zoomRegion in self.items()):
-            self.zoomRegion.setRegion([self.fromCanvasToClient(),self.fromCanvasToClient()])
-            self.setZoomRegionVisible(True)
-        pg.PlotWidget.mousePressEvent(self,event)
-        self.mousePressed = True
-        if self.mouseInsideZoomArea(event.x()):
-            self.setCursor(QCursor(QtCore.Qt.ClosedHandCursor))
-        self.lastX = event.x()
-        rgn = self.zoomRegion.getRegion()
-        minx, maxx = self.fromClientToCanvas(rgn[0]),self.fromClientToCanvas(rgn[1])
-        if abs(minx - event.x()) < self.PIXELS_OF_CURSORS_CHANGES:
-            self.setCursor(QCursor(QtCore.Qt.SizeHorCursor))
-            self.lastX = maxx
-        if abs(maxx - event.x()) < self.PIXELS_OF_CURSORS_CHANGES:
-            self.setCursor(QCursor(QtCore.Qt.SizeHorCursor))
-            self.lastX = minx
+         if(not self.zoomRegion in self.items()):
+             self.zoomRegion.setRegion([self.fromCanvasToClient(event.x()),self.fromCanvasToClient(event.x())])
+             self.update()
+         elif not self.mouseInsideZoomArea(event.x()):
+             self.zoomRegion.setRegion([self.fromCanvasToClient(event.x()),self.fromCanvasToClient(event.x())])
+             self.setZoomRegionVisible(True)
+             self.update()
+         pg.PlotWidget.mousePressEvent(self,event)
+         self.mousePressed = True
+         if self.mouseInsideZoomArea(event.x()):
+             self.setCursor(QCursor(QtCore.Qt.ClosedHandCursor))
+         self.lastX = event.x()
+         rgn = self.zoomRegion.getRegion()
+         minx, maxx = self.fromClientToCanvas(rgn[0]),self.fromClientToCanvas(rgn[1])
+         if abs(minx - event.x()) < self.PIXELS_OF_CURSORS_CHANGES:
+             self.setCursor(QCursor(QtCore.Qt.SizeHorCursor))
+             self.lastX = maxx
+         if abs(maxx - event.x()) < self.PIXELS_OF_CURSORS_CHANGES:
+             self.setCursor(QCursor(QtCore.Qt.SizeHorCursor))
+             self.lastX = minx
 
     def mouseDoubleClickEvent(self, event):
         pg.PlotWidget.mouseDoubleClickEvent(self,event)
         if self.mouseInsideZoomArea(event.x()) and self.makeZoom is not None and callable(self.makeZoom):
             rgn = self.zoomRegion.getRegion()
             self.makeZoom(rgn[0],rgn[1])
+            self.setZoomRegionVisible(False)
 
 
     def mouseReleaseEvent(self, event):
@@ -82,9 +86,9 @@ class DuettoPlotWidget(pg.PlotWidget):
        """
        Translates the index in the signal array to its corresponding coordinates in the canvas
        """
-       minx, maxx = 0, self.width()
+       maxx = self.width()
        a, b = self.getPlotItem().viewRange()[0]
-       return int(self.PIXELS_OF_CURSORS_CHANGES+round((maxx - minx) * (indexX - a) * 1. / (b - a),0))
+       return int(self.PIXELS_BETWEEN_AXES_AND_DATA + round((maxx) * (indexX - a) * 1. / (b - a),0))
 
     PIXELS_BETWEEN_AXES_AND_DATA = 36 #the pixels for the numbers in the left side
 

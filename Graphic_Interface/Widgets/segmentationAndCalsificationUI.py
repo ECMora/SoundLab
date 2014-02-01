@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'SegmentationAndClasificationWindow.ui'
+# Form implementation generated from reading ui file 'Graphic_Interface\UI Files\SegmentationAndClasificationWindow.ui'
 #
-# Created: Tue Jan 21 19:49:55 2014
+# Created: Sat Feb 01 12:43:51 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -27,13 +27,12 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
         MainWindow.setWindowModality(QtCore.Qt.NonModal)
-        MainWindow.resize(641, 421)
+        MainWindow.resize(725, 421)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(MainWindow.sizePolicy().hasHeightForWidth())
         MainWindow.setSizePolicy(sizePolicy)
-        MainWindow.setMaximumSize(QtCore.QSize(1300, 900))
         MainWindow.setTabShape(QtGui.QTabWidget.Rounded)
         MainWindow.setUnifiedTitleAndToolBarOnMac(False)
         self.centralwidget = QtGui.QWidget(MainWindow)
@@ -52,7 +51,7 @@ class Ui_MainWindow(object):
         self.horizontalLayout.addWidget(self.widget)
         MainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(MainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 641, 22))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 725, 21))
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuArchivo = QtGui.QMenu(self.menubar)
         self.menuArchivo.setObjectName(_fromUtf8("menuArchivo"))
@@ -67,32 +66,6 @@ class Ui_MainWindow(object):
         self.toolBar = QtGui.QToolBar(MainWindow)
         self.toolBar.setObjectName(_fromUtf8("toolBar"))
         MainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
-        self.dockelements = QtGui.QDockWidget(MainWindow)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.dockelements.sizePolicy().hasHeightForWidth())
-        self.dockelements.setSizePolicy(sizePolicy)
-        self.dockelements.setObjectName(_fromUtf8("dockelements"))
-        self.dockWidgetElements = QtGui.QWidget()
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Maximum)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.dockWidgetElements.sizePolicy().hasHeightForWidth())
-        self.dockWidgetElements.setSizePolicy(sizePolicy)
-        self.dockWidgetElements.setObjectName(_fromUtf8("dockWidgetElements"))
-        self.treeViewElements = QtGui.QTreeView(self.dockWidgetElements)
-        self.treeViewElements.setGeometry(QtCore.QRect(0, 0, 71, 231))
-        self.treeViewElements.setFrameShadow(QtGui.QFrame.Raised)
-        self.treeViewElements.setDragEnabled(True)
-        self.treeViewElements.setDragDropMode(QtGui.QAbstractItemView.InternalMove)
-        self.treeViewElements.setSelectionMode(QtGui.QAbstractItemView.MultiSelection)
-        self.treeViewElements.setSortingEnabled(True)
-        self.treeViewElements.setAnimated(True)
-        self.treeViewElements.setAllColumnsShowFocus(True)
-        self.treeViewElements.setObjectName(_fromUtf8("treeViewElements"))
-        self.dockelements.setWidget(self.dockWidgetElements)
-        MainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(1), self.dockelements)
         self.actionExportar = QtGui.QAction(MainWindow)
         self.actionExportar.setObjectName(_fromUtf8("actionExportar"))
         self.actionImportar = QtGui.QAction(MainWindow)
@@ -135,7 +108,6 @@ class Ui_MainWindow(object):
         self.menuDetection.setTitle(_translate("MainWindow", "Detection", None))
         self.menuClasification.setTitle(_translate("MainWindow", "Clasification", None))
         self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar", None))
-        self.dockelements.setWindowTitle(_translate("MainWindow", "Elements", None))
         self.actionExportar.setText(_translate("MainWindow", "Export", None))
         self.actionImportar.setText(_translate("MainWindow", "Import", None))
         self.actionGuardar_Como.setText(_translate("MainWindow", "Save As", None))
