@@ -4,12 +4,12 @@ from PyQt4.QtGui import QDialog, QMessageBox
 from PyQt4 import QtCore
 from PyQt4 import QtGui
 from PyQt4.QtCore import SIGNAL
+from traits.trait_types import Python
 from SegmentationAndClasificationWindow import SegmentationAndClasificationWindow
 from Duetto_Core.SignalProcessors.FilterSignalProcessor import FILTER_TYPE
 from MainWindow import Ui_DuettoMainWindow
 from Graphic_Interface.Widgets.MyPowerSpecWindow import PowerSpectrumWindow
 from Graphic_Interface.Dialogs import InsertSilenceDialog as sdialog, FilterOptionsDialog as filterdg,ChangeVolumeDialog as cvdialog
-
 
 MIN_SAMPLING_RATE = 1000
 MAX_SAMPLING_RATE = 2000000
@@ -277,12 +277,11 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         if f != '':
             self.widget._setVisibleOscilogram(True)
             self.widget._setVisibleSpectrogram(True)
-            self.widget.open(f)
             self.widget.specgramSettings.NFFT = self.NFFT_spec
             self.widget.specgramSettings.overlap = self.overlap_spec
-            self.widget.visualChanges = True
+            self.widget.open(f)
             self.setWindowTitle("Duetto Sound Lab - "+self.widget.signalProcessor.signal.name())
-            self.widget.refresh()
+            #self.widget.refresh()
             self.first = True
 
 
@@ -302,19 +301,39 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     def on_actionCombined_triggered(self):
         self.widget._setVisibleOscilogram(True)
         self.widget._setVisibleSpectrogram(True)
+        self.widget.clear()
         self.widget.refresh()
 
     @QtCore.pyqtSlot()
     def on_actionSpectogram_triggered(self):
         self.widget._setVisibleOscilogram(False)
         self.widget._setVisibleSpectrogram(True)
+        self.widget.clear()
         self.widget.refresh()
 
     @QtCore.pyqtSlot()
     def on_actionOscilogram_triggered(self):
         self.widget._setVisibleOscilogram(True)
         self.widget._setVisibleSpectrogram(False)
+        self.widget.clear()
         self.widget.refresh()
+
+    @QtCore.pyqtSlot()
+    def on_actionSaveColorBar_triggered(self):
+        state = self.widget.axesSpecgram.getHistogramWidget().item.gradient.saveState()
+        path  = QtGui.QFileDialog.getSaveFileName(self, "Save Color Bar",filter="Bar Files (*.bar);;All Files (*)")
+        if path != "":
+            fh = open(path,'w')
+            fh.write(state.__repr__())
+            fh.close()
+
+    @QtCore.pyqtSlot()
+    def on_actionLoadColorBar_triggered(self):
+        path  = QtGui.QFileDialog.getOpenFileName(self, "Load Color Bar",filter="Bar Files (*.bar);;All Files (*)")
+        if path != "":
+            fh = open(path,'r')
+            state = eval(fh.readline())
+            self.widget.axesSpecgram.getHistogramWidget().item.gradient.restoreState(state)
 
 
     @QtCore.pyqtSlot(int, int, int)
