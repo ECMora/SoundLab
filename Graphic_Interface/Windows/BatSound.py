@@ -299,6 +299,10 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.widget.record()
 
     @QtCore.pyqtSlot()
+    def on_actionPause_Sound_triggered(self):
+        self.widget.pause()
+
+    @QtCore.pyqtSlot()
     def on_actionCombined_triggered(self):
         self.widget._setVisibleOscilogram(True)
         self.widget._setVisibleSpectrogram(True)
