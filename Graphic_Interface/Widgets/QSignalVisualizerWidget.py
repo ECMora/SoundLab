@@ -123,12 +123,8 @@ class QSignalVisualizerWidget(QWidget):
         return self._visibleOscillogram
 
     def _setVisibleOscilogram(self, value):
-        aux = self._visibleOscillogram
+        self.visualChanges = True
         self._visibleOscillogram = value
-        if aux != value:
-            self.clear()
-            self.visualChanges = True
-            self.refresh()
 
     visibleOscilogram = property(_getVisibleOscilogram, _setVisibleOscilogram)
 
@@ -136,12 +132,8 @@ class QSignalVisualizerWidget(QWidget):
         return self._visibleSpectrogram
 
     def _setVisibleSpectrogram(self, value):
-        aux = self._visibleSpectrogram
         self._visibleSpectrogram = value
-        if aux != value:
-            self.clear()
-            self.visualChanges = True
-            self.refresh()
+        self.visualChanges = True
 
     visibleSpectrogram = property(_getVisibleSpectrogram, _setVisibleSpectrogram)
     #endregion
@@ -401,6 +393,10 @@ class QSignalVisualizerWidget(QWidget):
         if self.visualChanges:
             if self.visibleOscilogram and self.signalProcessor.signal.opened() and self.mainCursor.max > self.mainCursor.min:
                 self.axesOscilogram.clear()
+                if self.visibleSpectrogram:
+                    self.axesOscilogram.setFixedHeight(self.height()/2)
+                else:
+                    self.axesOscilogram.setFixedHeight(self.height())
                 if((self.mainCursor.max-self.mainCursor.min)>2*self.INTERVAL_START_DECIMATION):
                     length = (self.mainCursor.max-self.mainCursor.min)
                     interval = length/self.INTERVAL_START_DECIMATION
@@ -414,41 +410,18 @@ class QSignalVisualizerWidget(QWidget):
                 overlap = int(self.specgramSettings.NFFT * self.specgramSettings.overlap / 100)
                 self.specgramSettings.Pxx , self.specgramSettings.freqs, self.specgramSettings.bins = mlab.specgram(
                     self.signalProcessor.signal.data[self.mainCursor.min:self.mainCursor.max],
-                    self.specgramSettings.NFFT, Fs=2, detrend=mlab.detrend_none, window=self.specgramSettings.window,
+                    self.specgramSettings.NFFT, Fs=self.signalProcessor.signal.samplingRate, detrend=mlab.detrend_none, window=self.specgramSettings.window,
                     noverlap=overlap, sides=self.SPECGRAM_COMPLEX_SIDE)
-            #   self.axesSpecgram.grid(self.specgramSettings.grid)
 
-            #
-            #
                 Z = 10. * np.log10(self.specgramSettings.Pxx)
                 Z = np.flipud(Z)
-                #a = self.axesSpecgram.get_xlim()
-                #b = self.axesSpecgram.get_ylim()
-            #    xextent = a[0], a[1], b[0], b[1]
-            #    #self.self.freqs += Fc where Fc is the central frecuency
+
+                cut_off = np.amin(Z[np.isfinite(Z)])
+                Z[Z < cut_off] = cut_off
+
+                self.axesSpecgram.getView().setAspectLocked(False)
                 self.axesSpecgram.setImage(numpy.transpose(Z))
-                #self.axesSpecgram.getView().invertY()
-            #    self.axesSpecgram.axis('auto')
-            #
-            #    if self.colorbar == None:
-            #        if self.visibleSpectrogram and self.visibleOscilogram:
-            #            ax = self.figure.add_axes([0.77, 0.48, 0.22, 0.03])
-            #        elif self.visibleSpectrogram:
-            #            ax = self.figure.add_axes([0.77, 0.982, 0.22, 0.015])
-            #        self.colorbar = self.figure.colorbar(im, cax=ax, orientation="horizontal")
-            #    else:
-            #        self.colorbar.update_bruteforce(im)
-            #
-            #    self.axesSpecgram.set_xticklabels(
-            #        [round((x + self.mainCursor.min) * 1.0 / self.signalProcessor.signal.samplingRate,
-            #               self.SPECGRAM_XTICS_DECIMAL_PLACES) for x in self.axesSpecgram.get_xticks()])
-            #    self.axesSpecgram.set_yticklabels([(str(round(x * self.signalProcessor.signal.samplingRate / (2 * 1000),
-            #                                                  self.SPECGRAM_YTICS_DECIMAL_PLACES)) + " kHz") for x in
-            #                                       self.axesSpecgram.get_yticks()])
-            #if self.visibleCursors:
-            #    self.drawCursors()
-            #self.figure.canvas.draw()
-            self.visualChanges = False
+                self.visualChanges = False
 
     def cursorZoomTransform(self, cursorIndex):
         return cursorIndex - self.mainCursor.min
@@ -703,7 +676,6 @@ class QSignalVisualizerWidget(QWidget):
         #self.meanSignalValue = real(np.mean(self.powerSpectrum))
         #self.max_specgram_value = max(self.powerSpectrum)
         #self.min_specgram_value = min(self.powerSpectrum)
-        self.specgramSettings.threshold = 50
         self.visualChanges = True
 
         self.refresh()

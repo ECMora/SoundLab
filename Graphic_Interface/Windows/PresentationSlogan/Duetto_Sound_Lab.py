@@ -20,20 +20,20 @@ if __name__ == '__main__':
 
     dmw = BatSoundWindow()
 
-    duetto_sound_lab_window = Duetto_Sound_Lab()
-    # show it
-
-    def s():
-        dmw.show()
-        duetto_sound_lab_window.close()
-
-    duetto_sound_lab_window.videoPlayer.finished.connect(s)
-    duetto_sound_lab_window.show()
-    duetto_sound_lab_window.videoPlayer.play()
+    #duetto_sound_lab_window = Duetto_Sound_Lab()
+    ## show it
+    #
+    #def s():
+    #    dmw.show()
+    #    duetto_sound_lab_window.close()
+    #
+    #duetto_sound_lab_window.videoPlayer.finished.connect(s)
+    #duetto_sound_lab_window.show()
+    #duetto_sound_lab_window.videoPlayer.play()
 
     # create the GUI application
     # show it
-    #dmw.show()
+    dmw.show()
     sys.exit(app.exec_())
     # start the Qt main loop execution, exiting from this script
     # with the same return code of Qt application
