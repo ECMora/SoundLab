@@ -5,7 +5,6 @@ from numpy import *
 from numpy.numarray import fromstring
 import pyaudio
 from PyQt4.QtCore import QTimer
-from audiolazy import *
 
 class AudioSignal:
     """an abstract class for the representation of an audio signal"""

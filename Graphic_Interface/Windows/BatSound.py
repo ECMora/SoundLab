@@ -1,5 +1,7 @@
 import sys
-
+from pyqtgraph.Qt import QtCore, QtGui
+import numpy
+from pyqtgraph.parametertree import Parameter, ParameterTree, ParameterItem, registerParameterType
 from PyQt4.QtGui import QDialog, QMessageBox
 from PyQt4 import QtCore
 from PyQt4 import QtGui
@@ -29,17 +31,86 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     def __init__(self, parent=None):
         super(BatSoundWindow, self).__init__(parent)
         self.setupUi(self)
+        params = [
+        {'name': 'Oscillogram Settings', 'type': 'group', 'children': [
+            {'name': 'Milliseconds per plot', 'type': 'int', 'value': 0},
+            {'name': 'Min amplitude', 'type': 'float', 'value': 0, 'step': 0.1},
+            {'name': 'Max amplitude', 'type': 'float', 'value': 0, 'step': 0.1},
+            {'name': 'Grid' , 'type': 'bool', 'value': True},
+            {'name': 'Plot color', 'type': 'color', 'value':"FFF"}
+        ]},
 
-        self.dock_spec_settings.setVisible(False)
-        self.dock_osc_settings.setVisible(False)
-        self.dock_powspec_settings.setVisible(False)
+        {'name': 'Spectrogram Settings', 'type': 'group', 'children': [
+            {'name': 'ColorMap', 'type' : 'colormap'},
+            {'name': 'FFT size', 'type': 'list', 'values': {"256": 256, "512": 512, "1024": 1024, '2048': 2048, 'Automatic': 512}, 'value': 512},
+            {'name': 'FFT window', 'type': 'list', 'default':'None','values': {"blackman": self.widget.specgramSettings.windows[3],"rectangular": self.widget.specgramSettings.windows[1], "Hanning": self.widget.specgramSettings.windows[2], "Hamming": self.widget.specgramSettings.windows[0],'bartlett':self.widget.specgramSettings.windows[4],'kaiser':self.widget.specgramSettings.windows[5],'None':self.widget.specgramSettings.windows[6]}},
+            {'name': 'FFT overlap', 'type': 'int', 'value':90, 'max' : 100},
+        ]},
+
+        {'name': 'Power Spectrum Settings', 'type': 'group', 'children': [
+
+             {'name': 'FFT size', 'type': 'list','default':512, 'values': {"256": 256, "512": 512, "1024": 1024, '2048': 2048, 'Automatic': 512}, 'value': 2},
+             {'name': 'FFT window', 'type': 'list', 'default':'None','values': {"blackman": self.widget.specgramSettings.windows[3],"rectangular": self.widget.specgramSettings.windows[1], "Hanning": self.widget.specgramSettings.windows[2], "Hamming": self.widget.specgramSettings.windows[0],'bartlett':self.widget.specgramSettings.windows[4],'kaiser':self.widget.specgramSettings.windows[5],'None':self.widget.specgramSettings.windows[6]}},
+        ]},
+
+        ]
+        self.ParamTree = Parameter.create(name='params', type='group', children=params)
+        self.ParamTree.sigTreeStateChanged.connect(self.change)
+        self.t = ParameterTree()
+        self.t.setAutoScroll(True)
+        self.t.setFixedWidth(300)
+        self.t.setFixedHeight(700)
+        self.t.setHeaderHidden(True)
+        self.t.setParameters(self.ParamTree, showTop=False)
+
+        self.dock_settings.layout().addWidget(self.t)
+        self.dock_settings.setVisible(False)
+        self.dock_settings.setFixedWidth(300)
         self.connect(self.widget,SIGNAL("IntervalChanged"),self.updatePowSpecWin)
-        self.NFFT_pow = int(self.cbx_fftsize_pow.currentText())
-        self.window_pow = self.cbx_fftwindow_pow.currentText()
-        self.NFFT_spec = int(self.cbx_fftsize.currentText())
-        self.window_spec = self.cbx_fftwindow.currentText()
-        self.overlap_spec = self.sbx_fftoverlap.value()
+        self.NFFT_pow = 512
+
+        self.window_pow = self.widget.specgramSettings.windows[6]
+        #self.NFFT_spec = int(self.cbx_fftsize.currentText())
+        #self.window_spec = self.cbx_fftwindow.currentText()
+        #self.overlap_spec = self.sbx_fftoverlap.value()
         self.pow_spec_windows = []
+
+    def change(self, param, changes):
+        print("tree changes:")
+        pow = False
+        for param, change, data in changes:
+            path = self.ParamTree.childPath(param)
+            if path is not None:
+                childName = '.'.join(path)
+            else:
+                childName = param.name()
+            if childName == 'Spectrogram Settings.FFT size':
+                self.widget.specgramSettings.NFFT = data
+            elif childName == 'Spectrogram Settings.FFT window':
+                self.widget.specgramSettings.window = data
+            elif childName == 'Spectrogram Settings.ColorMap':
+                self.widget.axesSpecgram.getHistogramWidget().item._pixelVectorCache.append(data)
+            elif childName == 'Spectrogram Settings.FFT overlap':
+                self.widget.specgramSettings.overlap = data
+            elif childName == 'Power Spectrum Settings.FFT size':
+                self.NFFT_pow = data
+                pow = True
+            elif childName == 'Power Spectrum Settings.FFT window':
+                self.window_pow = data
+                pow = True
+            elif childName == 'Oscillogram Settings.Grid':
+                self.widget.osc_grid = data
+            elif childName == 'Oscillogram Settings.Plot color':
+                self.widget.osc_color = data
+
+            print('  parameter: %s'% childName)
+            print('  change:    %s'% change)
+            print('  data:      %s'% str(data))
+            print('  ----------')
+        if not pow:
+            self.widget.visualChanges = True
+            self.widget.refresh()
+
 
     @QtCore.pyqtSlot()
     def on_actionSegmentation_And_Clasification_triggered(self):
@@ -175,7 +246,6 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     def on_actionZoomIn_triggered(self):
         self.widget.zoomIn()
 
-
     @QtCore.pyqtSlot()
     def on_actionZoom_out_triggered(self):
         self.widget.zoomOut()
@@ -190,15 +260,12 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         pass
 
     @QtCore.pyqtSlot()
-    def on_actionAll_Settings_triggered(self):
-        self.dock_osc_settings.setVisible(True)
-        self.dock_osc_settings.setFloating(False)
-
-        self.dock_spec_settings.setVisible(True)
-        self.dock_spec_settings.setFloating(False)
-
-        self.dock_powspec_settings.setVisible(True)
-        self.dock_powspec_settings.setFloating(False)
+    def on_actionSettings_triggered(self):
+        if self.dock_settings.isVisible():
+            self.dock_settings.setVisible(False)
+        else:
+            self.dock_settings.setVisible(True)
+            self.dock_settings.setFloating(False)
 
     @QtCore.pyqtSlot()
     def on_actionHighest_instant_frequency_triggered(self):
@@ -225,49 +292,12 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.pow_spec_windows.append(dg_pow_spec)
 
     @QtCore.pyqtSlot()
-    def on_actionPower_Spectrum_Settings_triggered(self):
-        self.dock_powspec_settings.setVisible(True)
-        self.dock_powspec_settings.setFloating(False)
-
-    @QtCore.pyqtSlot()
     def on_actionSelect_all_triggered(self):
         self.widget.updateSpanSelector()
 
     @QtCore.pyqtSlot()
-    def on_btnosc_apply_clicked(self):
-        pass
-
-    @QtCore.pyqtSlot()
-    def on_btnpow_apply_clicked(self):
-        self.NFFT_pow = int(self.cbx_fftsize_pow.currentText())
-        self.window_pow = self.cbx_fftwindow_pow.currentText()
-
-    @QtCore.pyqtSlot()
-    def on_btnspec_apply_clicked(self):
-        self.NFFT_spec = int(self.cbx_fftsize.currentText())
-        self.window_spec = self.cbx_fftwindow.currentText()
-        self.overlap_spec = self.sbx_fftoverlap.value()
-
-        self.widget.specgramSettings.NFFT = self.NFFT_spec
-        self.widget.specgramSettings.overlap = self.overlap_spec
-        self.widget.visualChanges = True
-        self.widget.refresh()
-        # falta actualizar la ventana
-
-    @QtCore.pyqtSlot()
-    def on_actionSpectogram_Settings_triggered(self):
-        self.dock_spec_settings.setVisible(True)
-        self.dock_spec_settings.setFloating(False)
-
-
-    @QtCore.pyqtSlot()
     def on_actionEnvelope_triggered(self):
         self.widget.envelope()
-
-    @QtCore.pyqtSlot()
-    def on_actionOscillogram_Settings_triggered(self):
-        self.dock_osc_settings.setVisible(True)
-        self.dock_osc_settings.setFloating(False)
 
     @QtCore.pyqtSlot()
     def on_actionOpen_triggered(self):
@@ -278,13 +308,12 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             self.widget._setVisibleOscilogram(True)
             self.widget._setVisibleSpectrogram(True)
             self.widget.open(f)
-            self.widget.specgramSettings.NFFT = self.NFFT_spec
-            self.widget.specgramSettings.overlap = self.overlap_spec
+            self.widget.specgramSettings.NFFT = 512
+            self.widget.specgramSettings.overlap = 90
             self.widget.visualChanges = True
             self.setWindowTitle("Duetto Sound Lab - "+self.widget.signalProcessor.signal.name())
             self.widget.refresh()
             self.first = True
-
 
     @QtCore.pyqtSlot()
     def on_actionPlay_Sound_triggered(self):
@@ -315,7 +344,6 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.widget._setVisibleOscilogram(True)
         self.widget._setVisibleSpectrogram(False)
         self.widget.refresh()
-
 
     @QtCore.pyqtSlot(int, int, int)
     def on_widget_rangeChanged(self, left, right, total):
