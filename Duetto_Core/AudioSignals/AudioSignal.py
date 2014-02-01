@@ -1,10 +1,11 @@
 from string import *
-from PyQt4.QtGui import QMessageBox
+from PyQt4.QtGui import QMessageBox,QWidget
 import pyaudio
 from numpy import *
 from numpy.numarray import fromstring
 import pyaudio
 from PyQt4.QtCore import QTimer, pyqtSignal
+
 
 
 class AudioSignal:
@@ -26,6 +27,7 @@ class AudioSignal:
         self.playSection = (0, 0, 0)  # (init,end,current)
         self.tick = 50  # msec interval for player update
         self.timer = QTimer()
+        self.play_finished = None #the method to call when
         self.timer.timeout.connect(self.recordCallback)
 
     def generateWhiteNoise(self, duration=1, begin_at=0):
@@ -91,7 +93,7 @@ class AudioSignal:
 
 
 
-    play_finished = pyqtSignal()
+
 
     def playCallback(self,in_data, frame_count, time_info, status):
         if (self.playSection[1] - self.playSection[2] < frame_count):
@@ -100,7 +102,8 @@ class AudioSignal:
             self.playStatus = self.STOPPED
             data = self.data[frame:frame + frame_count]
             data -= self.media
-            self.play_finished.emit()
+            if self.play_finished is not None and  callable(self.play_finished):
+                self.play_finished()
             return (data, pyaudio.paComplete)
         data = self.data[self.playSection[2]:self.playSection[2] + frame_count]
         self.playSection = (self.playSection[0], self.playSection[1], self.playSection[2] + frame_count)
