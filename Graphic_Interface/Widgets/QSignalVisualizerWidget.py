@@ -421,6 +421,8 @@ class QSignalVisualizerWidget(QWidget):
 
                 self.axesSpecgram.getView().setAspectLocked(False)
                 self.axesSpecgram.setImage(numpy.transpose(Z))
+                self.axesSpecgram.getHistogramWidget().setVisible(False)
+                self.axesSpecgram.ui.roiBtn.visible=False
                 self.visualChanges = False
 
     def cursorZoomTransform(self, cursorIndex):
