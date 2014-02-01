@@ -43,7 +43,8 @@ class QSignalVisualizerWidget(QWidget):
         #self.setParent(parent)
         QWidget.__init__(self,parent)
         layout = QVBoxLayout()
-        self.osc_grid = True
+        self.osc_gridx = True
+        self.osc_grridy = True
         self.osc_color=QColor(255,255,255)
         self.axesOscilogram = pg.PlotWidget(parent=self)
         self.axesOscilogram.getPlotItem().enableAutoRange()
@@ -403,7 +404,7 @@ class QSignalVisualizerWidget(QWidget):
                     self.axesOscilogram.plot(self.signalProcessor.signal.data[self.mainCursor.min:self.mainCursor.max],pen=self.osc_color)
                 self.axesOscilogram.setLabels(bottom="10ms")
 
-                self.axesOscilogram.getPlotItem().showGrid(x=self.osc_grid, y=self.osc_grid)
+                self.axesOscilogram.getPlotItem().showGrid(x=self.osc_gridx, y=self.osc_gridy)
             if self.visibleSpectrogram and self.signalProcessor.signal.opened() and self.mainCursor.max > self.mainCursor.min:
                 overlap = int(self.specgramSettings.NFFT * self.specgramSettings.overlap / 100)
 
