@@ -36,12 +36,17 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             {'name': 'Milliseconds per plot', 'type': 'int', 'value': 0},
             {'name': 'Min amplitude', 'type': 'float', 'value': 0, 'step': 0.1},
             {'name': 'Max amplitude', 'type': 'float', 'value': 0, 'step': 0.1},
-            {'name': 'Grid' , 'type': 'bool', 'value': True},
+            {'name': 'Grid', 'type': 'group', 'children': [
+                {'name': 'X', 'type': 'bool','value': True},
+                {'name': 'Y', 'type': 'bool', },
+
+            ]},
+
             {'name': 'Plot color', 'type': 'color', 'value':"FFF"}
         ]},
 
         {'name': 'Spectrogram Settings', 'type': 'group', 'children': [
-            {'name': 'ColorMap', 'type' : 'colormap'},
+
             {'name': 'FFT size', 'type': 'list', 'values': {"256": 256, "512": 512, "1024": 1024, '2048': 2048, 'Automatic': 512}, 'value': 512},
             {'name': 'FFT window', 'type': 'list', 'default':'None','values': {"blackman": self.widget.specgramSettings.windows[3],"rectangular": self.widget.specgramSettings.windows[1], "Hanning": self.widget.specgramSettings.windows[2], "Hamming": self.widget.specgramSettings.windows[0],'bartlett':self.widget.specgramSettings.windows[4],'kaiser':self.widget.specgramSettings.windows[5],'None':self.widget.specgramSettings.windows[6]}},
             {'name': 'FFT overlap', 'type': 'int', 'value':90, 'max' : 100},
@@ -98,8 +103,10 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             elif childName == 'Power Spectrum Settings.FFT window':
                 self.window_pow = data
                 pow = True
-            elif childName == 'Oscillogram Settings.Grid':
-                self.widget.osc_grid = data
+            elif childName == 'Oscillogram Settings.Grid.X':
+                self.widget.osc_gridx = data
+            elif childName == 'Oscillogram Settings.Grid.Y':
+                self.widget.osc_gridy = data
             elif childName == 'Oscillogram Settings.Plot color':
                 self.widget.osc_color = data
 
