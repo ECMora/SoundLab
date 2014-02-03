@@ -262,6 +262,7 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     def on_actionZoomIn_triggered(self):
         self.widget.zoomIn()
 
+
     @QtCore.pyqtSlot()
     def on_actionZoom_out_triggered(self):
         self.widget.zoomOut()
@@ -357,6 +358,11 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             self.setWindowTitle("Duetto Sound Lab - " + self.widget.signalProcessor.signal.name())
             self.widget.refresh()
             self.first = True
+    @QtCore.pyqtSlot()
+    def on_actionSave_triggered(self):
+        fname = unicode(QFileDialog.getSaveFileName())
+        if fname:
+            self.widget.save(fname)
 
     @QtCore.pyqtSlot()
     def on_actionPlay_Sound_triggered(self):
@@ -369,6 +375,10 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     @QtCore.pyqtSlot()
     def on_actionRecord_triggered(self):
         self.widget.record()
+
+    @QtCore.pyqtSlot()
+    def on_actionPause_Sound_triggered(self):
+        self.widget.pause()
 
     @QtCore.pyqtSlot()
     def on_actionCombined_triggered(self):

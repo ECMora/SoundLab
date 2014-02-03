@@ -66,7 +66,7 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
      <x>0</x>
      <y>0</y>
      <width>846</width>
-     <height>24</height>
+     <height>23</height>
     </rect>
    </property>
    <property name="autoFillBackground">
@@ -275,10 +275,16 @@ border-color: rgb(170, 170, 255);</string>
    <property name="text">
     <string>Open</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
   </action>
   <action name="actionExit">
    <property name="text">
     <string>Exit</string>
+   </property>
+   <property name="shortcut">
+    <string>Esc</string>
    </property>
   </action>
   <action name="actionZoomIn">
@@ -289,6 +295,9 @@ border-color: rgb(170, 170, 255);</string>
    <property name="text">
     <string>Zoom in</string>
    </property>
+   <property name="shortcut">
+    <string>+</string>
+   </property>
   </action>
   <action name="actionZoom_out">
    <property name="icon">
@@ -297,6 +306,9 @@ border-color: rgb(170, 170, 255);</string>
    </property>
    <property name="text">
     <string>Zoom out</string>
+   </property>
+   <property name="shortcut">
+    <string>-</string>
    </property>
   </action>
   <action name="actionSelect_all">
@@ -345,6 +357,9 @@ border-color: rgb(170, 170, 255);</string>
    <property name="text">
     <string>New</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
   </action>
   <action name="actionPower_Spectrum">
    <property name="icon">
@@ -378,6 +393,9 @@ border-color: rgb(170, 170, 255);</string>
    <property name="text">
     <string>Play Sound</string>
    </property>
+   <property name="shortcut">
+    <string>Space</string>
+   </property>
   </action>
   <action name="actionStop_Sound">
    <property name="icon">
@@ -410,6 +428,9 @@ border-color: rgb(170, 170, 255);</string>
    <property name="text">
     <string>Save as</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
   </action>
   <action name="actionCopy">
    <property name="icon">
@@ -418,6 +439,9 @@ border-color: rgb(170, 170, 255);</string>
    </property>
    <property name="text">
     <string>Copy</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
    </property>
   </action>
   <action name="actionPaste">
@@ -428,6 +452,9 @@ border-color: rgb(170, 170, 255);</string>
    <property name="text">
     <string>Paste</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+V</string>
+   </property>
   </action>
   <action name="actionCut">
    <property name="icon">
@@ -436,6 +463,9 @@ border-color: rgb(170, 170, 255);</string>
    </property>
    <property name="text">
     <string>Cut</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+X</string>
    </property>
   </action>
   <action name="actionHighest_frecuency">
@@ -537,7 +567,7 @@ border-color: rgb(170, 170, 255);</string>
   <customwidget>
    <class>QSignalVisualizerWidget</class>
    <extends>QWidget</extends>
-   <header>Graphic_Interface.Widgets.QSignalVisualizerWidget</header>
+   <header>Graphic_Interface.Widgets.QSignalVisualizerWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
