@@ -10,24 +10,26 @@ from SegmentationAndClasificationWindow import SegmentationAndClasificationWindo
 from Duetto_Core.SignalProcessors.FilterSignalProcessor import FILTER_TYPE
 from MainWindow import Ui_DuettoMainWindow
 from Graphic_Interface.Widgets.MyPowerSpecWindow import PowerSpectrumWindow
-from Graphic_Interface.Dialogs import InsertSilenceDialog as sdialog, FilterOptionsDialog as filterdg,ChangeVolumeDialog as cvdialog
+from Graphic_Interface.Dialogs import InsertSilenceDialog as sdialog, FilterOptionsDialog as filterdg, ChangeVolumeDialog as cvdialog
 
 
 MIN_SAMPLING_RATE = 1000
 MAX_SAMPLING_RATE = 2000000
 
-class InsertSilenceDialog(sdialog.Ui_Dialog,QDialog):
-    pass
 
-class ChangeVolumeDialog(cvdialog.Ui_Dialog,QDialog):
+class InsertSilenceDialog(sdialog.Ui_Dialog, QDialog):
     pass
 
 
-class FilterDialog(filterdg.Ui_Dialog,QDialog):
+class ChangeVolumeDialog(cvdialog.Ui_Dialog, QDialog):
     pass
+
+
+class FilterDialog(filterdg.Ui_Dialog, QDialog):
+    pass
+
 
 class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
-
     def __init__(self, parent=None):
         super(BatSoundWindow, self).__init__(parent)
         self.setupUi(self)
@@ -126,26 +128,26 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     @QtCore.pyqtSlot()
     def on_actionSegmentation_And_Clasification_triggered(self):
-        segWindow = SegmentationAndClasificationWindow(parent=self,signal=self.widget.signalProcessor.signal)
+        segWindow = SegmentationAndClasificationWindow(parent=self, signal=self.widget.signalProcessor.signal)
 
     @QtCore.pyqtSlot()
     def on_actionResampling_triggered(self):
-        resamplingDialog=sdialog.Ui_Dialog()
-        resamplingDialogWindow=InsertSilenceDialog()
+        resamplingDialog = sdialog.Ui_Dialog()
+        resamplingDialogWindow = InsertSilenceDialog()
         resamplingDialog.setupUi(resamplingDialogWindow)
         resamplingDialog.label.setText("Select the new Sampling Rate.")
         resamplingDialog.insertSpinBox.setValue(self.widget.signalProcessor.signal.samplingRate)
-        if (resamplingDialogWindow.exec_()):
-            val=resamplingDialog.insertSpinBox.value()
-            if(val > MIN_SAMPLING_RATE and val < MAX_SAMPLING_RATE):
+        if resamplingDialogWindow.exec_():
+            val = resamplingDialog.insertSpinBox.value()
+            if val > MIN_SAMPLING_RATE and val < MAX_SAMPLING_RATE:
                 self.widget.resampling(val)
             else:
-                if(val < MIN_SAMPLING_RATE):
+                if val < MIN_SAMPLING_RATE:
                     QMessageBox.warning(QMessageBox(), "Error",
-                                        "Sampling rate should be greater than "+str(MIN_SAMPLING_RATE))
-                elif(val > MAX_SAMPLING_RATE ):
+                                        "Sampling rate should be greater than " + str(MIN_SAMPLING_RATE))
+                elif val > MAX_SAMPLING_RATE:
                     QMessageBox.warning(QMessageBox(), "Error",
-                                        "Sampling rate should be less than "+str(MAX_SAMPLING_RATE))
+                                        "Sampling rate should be less than " + str(MAX_SAMPLING_RATE))
 
     @QtCore.pyqtSlot()
     def on_actionCut_triggered(self):
@@ -161,80 +163,81 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     @QtCore.pyqtSlot()
     def on_actionSmart_Scale_triggered(self):
-        scaleDialog=cvdialog.Ui_Dialog()
-        scaleDialogWindow=InsertSilenceDialog()
+        scaleDialog = cvdialog.Ui_Dialog()
+        scaleDialogWindow = InsertSilenceDialog()
         scaleDialog.setupUi(scaleDialogWindow)
-        if (scaleDialogWindow.exec_()):
-            factor=scaleDialog.spinboxConstValue.value()
-            if (scaleDialog.rbuttonConst.isChecked()):
+        if scaleDialogWindow.exec_():
+            factor = scaleDialog.spinboxConstValue.value()
+            if scaleDialog.rbuttonConst.isChecked():
                 function = "const"
-            elif(scaleDialog.rbuttonNormalize.isChecked()):
+            elif scaleDialog.rbuttonNormalize.isChecked():
                 function = "normalize"
                 factor = scaleDialog.spinboxNormalizePercent.value()
             else:
                 function = scaleDialog.cboxModulationType.currentText()
-            fade = "IN" if scaleDialog.rbuttonFadeIn.isChecked() else ("OUT" if scaleDialog.rbuttonFadeOut.isChecked() else "")
+            fade = "IN" if scaleDialog.rbuttonFadeIn.isChecked() else (
+                "OUT" if scaleDialog.rbuttonFadeOut.isChecked() else "")
             self.widget.scale(factor, function, fade)
 
     @QtCore.pyqtSlot()
     def on_actionInsert_Silence_triggered(self):
-        silenceDialog=sdialog.Ui_Dialog()
-        silenceDialogWindow=InsertSilenceDialog()
+        silenceDialog = sdialog.Ui_Dialog()
+        silenceDialogWindow = InsertSilenceDialog()
         silenceDialog.setupUi(silenceDialogWindow)
-        if (silenceDialogWindow.exec_()):
+        if silenceDialogWindow.exec_():
             self.widget.insertSilence(silenceDialog.insertSpinBox.value())
 
     @QtCore.pyqtSlot()
     def on_actionGenerate_Pink_Noise_triggered(self):
-        whiteNoiseDialog=sdialog.Ui_Dialog()
-        whiteNoiseDialogWindow=InsertSilenceDialog()
+        whiteNoiseDialog = sdialog.Ui_Dialog()
+        whiteNoiseDialogWindow = InsertSilenceDialog()
         whiteNoiseDialog.setupUi(whiteNoiseDialogWindow)
         whiteNoiseDialog.label.setText("Select the duration in ms \n of the Pink Noise.")
         whiteNoiseDialog.insertSpinBox.setValue(1000)
-        if (whiteNoiseDialogWindow.exec_()):
-            type,Fc,Fl,Fu = self.filter_helper()
-            if(type!=None):
-                self.widget.insertPinkNoise(whiteNoiseDialog.insertSpinBox.value(),type,Fc,Fl,Fu)
+        if whiteNoiseDialogWindow.exec_():
+            type_, Fc, Fl, Fu = self.filter_helper()
+            if type_ != None:
+                self.widget.insertPinkNoise(whiteNoiseDialog.insertSpinBox.value(), type_, Fc, Fl, Fu)
 
     @QtCore.pyqtSlot()
     def on_actionGenerate_White_Noise_triggered(self):
-        whiteNoiseDialog=sdialog.Ui_Dialog()
-        whiteNoiseDialogWindow=InsertSilenceDialog()
+        whiteNoiseDialog = sdialog.Ui_Dialog()
+        whiteNoiseDialogWindow = InsertSilenceDialog()
         whiteNoiseDialog.setupUi(whiteNoiseDialogWindow)
         whiteNoiseDialog.label.setText("Select the duration in ms \n of the white noise.")
         whiteNoiseDialog.insertSpinBox.setValue(1000)
-        if (whiteNoiseDialogWindow.exec_()):
+        if whiteNoiseDialogWindow.exec_():
             self.widget.insertWhiteNoise(whiteNoiseDialog.insertSpinBox.value())
 
     def filter_helper(self):
-        filterDialog=filterdg.Ui_Dialog()
-        filterDialogWindow=InsertSilenceDialog()
+        filterDialog = filterdg.Ui_Dialog()
+        filterDialogWindow = InsertSilenceDialog()
         filterDialog.setupUi(filterDialogWindow)
-        if (filterDialogWindow.exec_()):
-            type=None
-            Fc,Fl,Fu=0,0,0
-            if(filterDialog.rButtonLowPass.isChecked()):
-                type=FILTER_TYPE().LOW_PASS
-                Fc=filterDialog.spinBoxLowPass.value()
-            elif(filterDialog.rButtonHighPass.isChecked()):
-                type=FILTER_TYPE().HIGH_PASS
-                Fc=filterDialog.spinBoxHighPass.value()
+        if filterDialogWindow.exec_():
+            type_ = None
+            Fc, Fl, Fu = 0, 0, 0
+            if filterDialog.rButtonLowPass.isChecked():
+                type_ = FILTER_TYPE().LOW_PASS
+                Fc = filterDialog.spinBoxLowPass.value()
+            elif filterDialog.rButtonHighPass.isChecked():
+                type_ = FILTER_TYPE().HIGH_PASS
+                Fc = filterDialog.spinBoxHighPass.value()
 
-            elif(filterDialog.rButtonBandPass.isChecked()):
-                type=FILTER_TYPE().BAND_PASS
-                Fl=filterDialog.spinBoxBandPassFl.value()
-                Fu=filterDialog.spinBoxBandPassFu.value()
-            elif(filterDialog.rButtonBandStop.isChecked()):
-                type=FILTER_TYPE().BAND_STOP
-                Fl=filterDialog.spinBoxBandStopFl.value()
-                Fu=filterDialog.spinBoxBandStopFu.value()
-        return type,Fc,Fl,Fu
+            elif filterDialog.rButtonBandPass.isChecked():
+                type_ = FILTER_TYPE().BAND_PASS
+                Fl = filterDialog.spinBoxBandPassFl.value()
+                Fu = filterDialog.spinBoxBandPassFu.value()
+            elif filterDialog.rButtonBandStop.isChecked():
+                type_ = FILTER_TYPE().BAND_STOP
+                Fl = filterDialog.spinBoxBandStopFl.value()
+                Fu = filterDialog.spinBoxBandStopFu.value()
+        return type_, Fc, Fl, Fu
 
     @QtCore.pyqtSlot()
     def on_actionFilter_triggered(self):
-        type,Fc,Fl,Fu = self.filter_helper()
-        if(type!=None):
-            self.widget.filter(type, Fc,Fl,Fu)
+        type_, Fc, Fl, Fu = self.filter_helper()
+        if type_ is not None:
+            self.widget.filter(type_, Fc, Fl, Fu)
 
     @QtCore.pyqtSlot()
     def on_actionSilence_triggered(self):
@@ -249,10 +252,11 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.widget.reverse()
 
     def updatePowSpecWin(self):
-       for win in self.pow_spec_windows:
-           minx = self.widget.zoomCursor.min
-           maxx = max(self.widget.zoomCursor.max ,min(minx + self.NFFT_pow,len(self.widget.signalProcessor.signal.data)))
-           win.updatePowSpectrumInterval(self.widget.signalProcessor.signal.data[minx:maxx])
+        for win in self.pow_spec_windows:
+            minx = self.widget.zoomCursor.min
+            maxx = max(self.widget.zoomCursor.max,
+                       min(minx + self.NFFT_pow, len(self.widget.signalProcessor.signal.data)))
+            win.updatePowSpectrumInterval(self.widget.signalProcessor.signal.data[minx:maxx])
 
     @QtCore.pyqtSlot()
     def on_actionZoomIn_triggered(self):
@@ -298,14 +302,41 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         dg_pow_spec = PowerSpectrumWindow(self)
 
         minx = self.widget.zoomCursor.min
-        maxx = max(self.widget.zoomCursor.max ,min(minx + self.NFFT_pow,len(self.widget.signalProcessor.signal.data)))
-        dg_pow_spec.plot(self.widget.signalProcessor.signal.data[minx:maxx], self.widget.signalProcessor.signal.samplingRate, self.NFFT_pow, self.window_pow)
+        maxx = max(self.widget.zoomCursor.max, min(minx + self.NFFT_pow, len(self.widget.signalProcessor.signal.data)))
+        dg_pow_spec.plot(self.widget.signalProcessor.signal.data[minx:maxx],
+                         self.widget.signalProcessor.signal.samplingRate, self.NFFT_pow, self.window_pow)
 
         self.pow_spec_windows.append(dg_pow_spec)
 
     @QtCore.pyqtSlot()
     def on_actionSelect_all_triggered(self):
         self.widget.updateSpanSelector()
+
+    @QtCore.pyqtSlot()
+    def on_btnosc_apply_clicked(self):
+        pass
+
+    @QtCore.pyqtSlot()
+    def on_btnpow_apply_clicked(self):
+        self.NFFT_pow = int(self.cbx_fftsize_pow.currentText())
+        self.window_pow = self.cbx_fftwindow_pow.currentText()
+
+    @QtCore.pyqtSlot()
+    def on_btnspec_apply_clicked(self):
+        self.NFFT_spec = int(self.cbx_fftsize.currentText())
+        self.window_spec = self.cbx_fftwindow.currentText()
+        self.overlap_spec = self.sbx_fftoverlap.value()
+
+        self.widget.specgramSettings.NFFT = self.NFFT_spec
+        self.widget.specgramSettings.overlap = self.overlap_spec
+        self.widget.visualChanges = True
+        self.widget.refresh()
+        # falta actualizar la ventana
+
+    @QtCore.pyqtSlot()
+    def on_actionSpectogram_Settings_triggered(self):
+        self.dock_spec_settings.setVisible(True)
+        self.dock_spec_settings.setFloating(False)
 
     @QtCore.pyqtSlot()
     def on_actionEnvelope_triggered(self):
@@ -317,13 +348,13 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         f = QtGui.QFileDialog.getOpenFileName(self, "Select a file to open",
                                               filter="Wave Files (*.wav);;All Files (*)")
         if f != '':
-            self.widget._setVisibleOscilogram(True)
-            self.widget._setVisibleSpectrogram(True)
+            self.widget.visibleOscilogram = True
+            self.widget.visibleSpectrogram = True
             self.widget.open(f)
             self.widget.specgramSettings.NFFT = 512
             self.widget.specgramSettings.overlap = 90
             self.widget.visualChanges = True
-            self.setWindowTitle("Duetto Sound Lab - "+self.widget.signalProcessor.signal.name())
+            self.setWindowTitle("Duetto Sound Lab - " + self.widget.signalProcessor.signal.name())
             self.widget.refresh()
             self.first = True
 
@@ -341,21 +372,22 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     @QtCore.pyqtSlot()
     def on_actionCombined_triggered(self):
-        self.widget._setVisibleOscilogram(True)
-        self.widget._setVisibleSpectrogram(True)
+        self.widget.visibleOscilogram(True)
+        self.widget.visibleSpectrogram(True)
         self.widget.refresh()
 
     @QtCore.pyqtSlot()
     def on_actionSpectogram_triggered(self):
-        self.widget._setVisibleOscilogram(False)
-        self.widget._setVisibleSpectrogram(True)
+        self.widget.visibleOscilogram(False)
+        self.widget.visibleSpectrogram(True)
         self.widget.refresh()
 
     @QtCore.pyqtSlot()
     def on_actionOscilogram_triggered(self):
-        self.widget._setVisibleOscilogram(True)
-        self.widget._setVisibleSpectrogram(False)
+        self.widget.visibleOscilogram(True)
+        self.widget.visibleSpectrogram(False)
         self.widget.refresh()
+
 
     @QtCore.pyqtSlot(int, int, int)
     def on_widget_rangeChanged(self, left, right, total):
@@ -372,6 +404,3 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     @QtCore.pyqtSlot(int)
     def on_horizontalScrollBar_valueChanged(self, value):
         self.widget.changeRange(value, value + self.horizontalScrollBar.pageStep(), emit=False)
-
-
-

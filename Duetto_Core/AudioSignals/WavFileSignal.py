@@ -13,7 +13,6 @@ class WavFileSignal(FileAudioSignal):
     def __init__(self):
         FileAudioSignal.__init__(self)
         self.userData=[]
-        self.timer.stop()
 
     def open(self, path):
         """open a wav file for its processing"""
@@ -21,18 +20,18 @@ class WavFileSignal(FileAudioSignal):
             FileAudioSignal.open(self, path)
             self.read(path)
 
+            self.removeDCOffset()
+            self.channelData = [self.data[:, i] for i in range(self.channels)] if self.channels > 1 else [self.data]
+            self.data = self.channelData[0]
+
             self.path=path
 
-            self.timer.stop()
-        except Exception, e:
-            #QMessageBox.warning(QMessageBox(), "Error", "Could not load the file. "+e.message)
-            pass
-
-
+        except Exception as e:
+            QMessageBox.warning(QMessageBox(), "Error", "Could not load the file. "+e.message)
+            #pass
 
     def read(self, file):
         if hasattr(file, 'read'):
-
             fid = file
         else:
             fid = open(file, 'rb')
@@ -62,8 +61,7 @@ class WavFileSignal(FileAudioSignal):
         fid.close()
 
     def save(self, path="", chunk=bytearray([])):
-        """saves to a file the signal on self.data with the correspondient chunk"""
-
+        """saves to a file the signal on self.data with the corresponding chunk"""
         fid = open(path, 'wb')
         fid.write(asbytes('RIFF'))
         fid.write(asbytes('\x00\x00\x00\x00'))
@@ -88,7 +86,7 @@ class WavFileSignal(FileAudioSignal):
         fid.write(asbytes('data'))
         fid.write(struct.pack('<i', self.data.nbytes))
         import sys
-        data=self.data
+        data = self.data
         if self.data.dtype.byteorder == '>' or (self.data.dtype.byteorder == '=' and sys.byteorder == 'big'):
             data = self.data.byteswap()
         data.tofile(fid)
@@ -107,8 +105,8 @@ class WavFileSignal(FileAudioSignal):
             fmt = '>i'
         else:
             fmt = '<i'
-        size = struct.unpack(fmt,fid.read(4))[0]
-        data=fid.read(size)
+        size = struct.unpack(fmt, fid.read(4))[0]
+        data = fid.read(size)
         return data
 
     #def loadSource(self):
