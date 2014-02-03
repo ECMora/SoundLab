@@ -37,10 +37,6 @@ class QSignalVisualizerWidget(QWidget):
 
     def __init__(self, parent):
 
-        #self.figure = Figure(facecolor=BACK_COLOR)  # widget container of the axes
-        #FigureCanvas.__init__(self, self.figure)
-        # set the parent widget
-        #self.setParent(parent)
         QWidget.__init__(self, parent)
         self._Z = np.array([[0]])
         layout = QVBoxLayout()
@@ -137,6 +133,7 @@ class QSignalVisualizerWidget(QWidget):
 
     def _setVisibleOscilogram(self, value):
         self.visualChanges = True
+        self.visualChanges = True
         self._visibleOscillogram = value
 
     visibleOscilogram = property(_getVisibleOscilogram, _setVisibleOscilogram)
@@ -146,6 +143,7 @@ class QSignalVisualizerWidget(QWidget):
 
     def _setVisibleSpectrogram(self, value):
         self._visibleSpectrogram = value
+        self.visualChanges = True
         self.visualChanges = True
 
     visibleSpectrogram = property(_getVisibleSpectrogram, _setVisibleSpectrogram)
@@ -444,6 +442,10 @@ class QSignalVisualizerWidget(QWidget):
                 and self.mainCursor.max > self.mainCursor.min:
             if dataChanged:
                 overlap = int(self.specgramSettings.NFFT * self.specgramSettings.overlap / 100)
+                self.specgramSettings.Pxx , self.specgramSettings.freqs, self.specgramSettings.bins = mlab.specgram(
+                    self.signalProcessor.signal.data[self.mainCursor.min:self.mainCursor.max],
+                    self.specgramSettings.NFFT, Fs=self.signalProcessor.signal.samplingRate, detrend=mlab.detrend_none, window=self.specgramSettings.window,
+                    noverlap=overlap, sides=self.SPECGRAM_COMPLEX_SIDE)
                 self.specgramSettings.Pxx, self.specgramSettings.freqs, self.specgramSettings.bins\
                     = mlab.specgram(self.signalProcessor.signal.data[self.mainCursor.min:self.mainCursor.max],
                                     self.specgramSettings.NFFT, Fs=2, detrend=mlab.detrend_none,
@@ -461,6 +463,18 @@ class QSignalVisualizerWidget(QWidget):
                                                          self.mainCursor.max / osc_spec_ratio),
                                                  yRange=(0, self._Z.shape[0]), padding=0)
         self.visualChanges = False
+
+                Z = 10. * np.log10(self.specgramSettings.Pxx)
+                Z = np.flipud(Z)
+
+                cut_off = np.amin(Z[np.isfinite(Z)])
+                Z[Z < cut_off] = cut_off
+
+                self.axesSpecgram.getView().setAspectLocked(False)
+                self.axesSpecgram.setImage(numpy.transpose(Z))
+                self.axesSpecgram.getHistogramWidget().setVisible(False)
+                self.axesSpecgram.ui.roiBtn.visible=False
+                self.visualChanges = False
 
     def cursorZoomTransform(self, cursorIndex):
         return cursorIndex - self.mainCursor.min
@@ -723,7 +737,6 @@ class QSignalVisualizerWidget(QWidget):
         #self.meanSignalValue = real(np.mean(self.powerSpectrum))
         #self.max_specgram_value = max(self.powerSpectrum)
         #self.min_specgram_value = min(self.powerSpectrum)
-        self.specgramSettings.threshold = 50
         self.visualChanges = True
 
         self.refresh()
