@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'Graphic_Interface\UI Files\MainWindow.ui'
 #
-# Created: Sun Feb 02 19:30:01 2014
+# Created: Sun Feb 02 19:42:05 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -326,30 +326,39 @@ class Ui_DuettoMainWindow(object):
         self.dock_settings.setWindowTitle(_translate("DuettoMainWindow", "Settings", None))
         self.toolBar.setWindowTitle(_translate("DuettoMainWindow", "toolBar", None))
         self.actionOpen.setText(_translate("DuettoMainWindow", "Open", None))
+        self.actionOpen.setShortcut(_translate("DuettoMainWindow", "Ctrl+O", None))
         self.actionExit.setText(_translate("DuettoMainWindow", "Exit", None))
         self.actionZoomIn.setText(_translate("DuettoMainWindow", "Zoom in", None))
+        self.actionZoomIn.setShortcut(_translate("DuettoMainWindow", "+", None))
         self.actionZoom_out.setText(_translate("DuettoMainWindow", "Zoom out", None))
+        self.actionZoom_out.setShortcut(_translate("DuettoMainWindow", "-", None))
         self.actionSelect_all.setText(_translate("DuettoMainWindow", "Select all", None))
         self.actionSpectogram.setText(_translate("DuettoMainWindow", "Spectogram", None))
         self.actionOscilogram.setText(_translate("DuettoMainWindow", "Oscillogram", None))
         self.actionCombined.setText(_translate("DuettoMainWindow", "Combined", None))
         self.actionNew.setText(_translate("DuettoMainWindow", "New", None))
+        self.actionNew.setShortcut(_translate("DuettoMainWindow", "Ctrl+N", None))
         self.actionPower_Spectrum.setText(_translate("DuettoMainWindow", "Power Spectrum", None))
         self.actionOscillogram_Settings.setText(_translate("DuettoMainWindow", "Oscillogram Settings", None))
         self.actionSpectogram_Settings.setText(_translate("DuettoMainWindow", "Spectrogram Settings", None))
         self.actionPower_Spectrum_Settings.setText(_translate("DuettoMainWindow", "Power Spectrum Settings", None))
         self.actionPlay_Sound.setText(_translate("DuettoMainWindow", "Play Sound", None))
+        self.actionPlay_Sound.setShortcut(_translate("DuettoMainWindow", "Space", None))
         self.actionStop_Sound.setText(_translate("DuettoMainWindow", "Stop Sound", None))
         self.actionPause_Sound.setText(_translate("DuettoMainWindow", "Pause Sound", None))
         self.actionZoom_out_entire_file.setText(_translate("DuettoMainWindow", "Zoom out entire file", None))
         self.actionSave.setText(_translate("DuettoMainWindow", "Save as", None))
         self.actionCopy.setText(_translate("DuettoMainWindow", "Copy", None))
+        self.actionCopy.setShortcut(_translate("DuettoMainWindow", "Ctrl+C", None))
         self.actionPaste.setText(_translate("DuettoMainWindow", "Paste", None))
+        self.actionPaste.setShortcut(_translate("DuettoMainWindow", "Ctrl+V", None))
         self.actionCut.setText(_translate("DuettoMainWindow", "Cut", None))
+        self.actionCut.setShortcut(_translate("DuettoMainWindow", "Ctrl+X", None))
         self.actionHighest_frecuency.setText(_translate("DuettoMainWindow", "Highest frequency", None))
         self.actionHighest_instant_frequency.setText(_translate("DuettoMainWindow", "Highest instant frequency ", None))
         self.actionClear_Spectogram.setText(_translate("DuettoMainWindow", "Clear Spectrogram", None))
         self.actionSettings.setText(_translate("DuettoMainWindow", "Settings", None))
+        self.actionSettings.setShortcut(_translate("DuettoMainWindow", "Ctrl+P", None))
         self.actionRecord.setText(_translate("DuettoMainWindow", "Record", None))
         self.action_Reverse.setText(_translate("DuettoMainWindow", "Reverse", None))
         self.actionInsert_Silence.setText(_translate("DuettoMainWindow", "Insert Silence", None))

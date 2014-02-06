@@ -2,7 +2,7 @@ import sys
 from pyqtgraph.Qt import QtCore, QtGui
 import numpy
 from pyqtgraph.parametertree import Parameter, ParameterTree, ParameterItem, registerParameterType
-from PyQt4.QtGui import QDialog, QMessageBox
+from PyQt4.QtGui import QDialog, QMessageBox, QFileDialog
 from PyQt4 import QtCore
 from PyQt4 import QtGui
 from PyQt4.QtCore import SIGNAL
@@ -59,6 +59,13 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
              {'name': 'FFT size', 'type': 'list','default':512, 'values': {"256": 256, "512": 512, "1024": 1024, '2048': 2048, 'Automatic': 512}, 'value': 2},
              {'name': 'FFT window', 'type': 'list', 'value':'None','default':self.widget.specgramSettings.windows[6],'values': {"blackman": self.widget.specgramSettings.windows[3],"rectangular": self.widget.specgramSettings.windows[1], "Hanning": self.widget.specgramSettings.windows[2], "Hamming": self.widget.specgramSettings.windows[0],'bartlett':self.widget.specgramSettings.windows[4],'kaiser':self.widget.specgramSettings.windows[5],'None':self.widget.specgramSettings.windows[6]}},
+             {'name': 'Grid', 'type': 'group', 'children': [
+                {'name': 'X', 'type': 'bool','default': True, 'value': True},
+                {'name': 'Y', 'type': 'bool','default':True , 'value': True},
+
+             ]},
+             {'name':'Background color', 'type':'color','value':"000", 'default':"000"},
+             {'name': 'Plot color', 'type': 'color', 'value':"FFF", 'default': "FFF"},
         ]},
 
         ]
@@ -78,9 +85,11 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.NFFT_pow = 512
 
         self.window_pow = self.widget.specgramSettings.windows[6]
-        #self.NFFT_spec = int(self.cbx_fftsize.currentText())
-        #self.window_spec = self.cbx_fftwindow.currentText()
-        #self.overlap_spec = self.sbx_fftoverlap.value()
+        self.pow_spec_backg = "000"
+        self.pow_spec_plotColor = "FFF"
+        self.pow_spec_gridx = True
+        self.pow_spec_gridy = True
+
         self.pow_spec_windows = []
 
     def change(self, param, changes):
@@ -92,39 +101,67 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 childName = '.'.join(path)
             else:
                 childName = param.name()
+
             if childName == 'Spectrogram Settings.FFT size':
                 self.widget.specgramSettings.NFFT = data
+                self.widget.visualChanges = True
+                self.widget.refresh(dataChanged=True, updateOscillogram=False, updateSpectrogram=True)
+
             elif childName == 'Spectrogram Settings.FFT window':
                 self.widget.specgramSettings.window = data
+                self.widget.visualChanges = True
+                self.widget.refresh(dataChanged=True, updateOscillogram=False, updateSpectrogram=True)
+
             elif childName == 'Spectrogram Settings.Background color':
                 self.widget.spec_background = data
+
             elif childName == 'Spectrogram Settings.ColorMap':
                 self.widget.axesSpecgram.getHistogramWidget().item._pixelVectorCache.append(data)
+
             elif childName == 'Spectrogram Settings.FFT overlap':
                 self.widget.specgramSettings.overlap = data
+                self.widget.visualChanges = True
+                self.widget.refresh(dataChanged=True, updateOscillogram=False, updateSpectrogram=True)
+
             elif childName == 'Power Spectrum Settings.FFT size':
                 self.NFFT_pow = data
-                pow = True
+
             elif childName == 'Power Spectrum Settings.FFT window':
                 self.window_pow = data
-                pow = True
+
+            elif childName == 'Power Spectrum Settings.Background color':
+                self.pow_spec_backg = data
+
+            elif childName == 'Power Spectrum Settings.Plot color':
+                self.pow_spec_plotColor = data
+
+            elif childName == 'Power Spectrum Settings.Grid.X':
+                self.pow_spec_gridx = data
+
+            elif childName == 'Power Spectrum Settings.Grid.Y':
+                self.pow_spec_gridy = data
+
             elif childName == 'Oscillogram Settings.Background color':
                 self.widget.osc_background = data
+                self.widget.visualChanges = True
+                self.widget.refresh(dataChanged=False, updateOscillogram=False, updateSpectrogram=False)
             elif childName == 'Oscillogram Settings.Grid.X':
                 self.widget.osc_gridx = data
+                self.widget.visualChanges = True
+                self.widget.refresh(dataChanged=False, updateOscillogram=False, updateSpectrogram=False)
             elif childName == 'Oscillogram Settings.Grid.Y':
                 self.widget.osc_gridy = data
+                self.widget.visualChanges = True
+                self.widget.refresh(dataChanged=False, updateOscillogram=False, updateSpectrogram=False)
             elif childName == 'Oscillogram Settings.Plot color':
                 self.widget.osc_color = data
+                self.widget.visualChanges = True
+                self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
 
-            print('  parameter: %s'% childName)
-            print('  change:    %s'% change)
-            print('  data:      %s'% str(data))
+            print('  parameter: %s' % childName)
+            print('  change:    %s' % change)
+            print('  data:      %s' % str(data))
             print('  ----------')
-        if not pow:
-            self.widget.visualChanges = True
-            self.widget.refresh()
-
 
     @QtCore.pyqtSlot()
     def on_actionSegmentation_And_Clasification_triggered(self):
@@ -304,8 +341,8 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         minx = self.widget.zoomCursor.min
         maxx = max(self.widget.zoomCursor.max, min(minx + self.NFFT_pow, len(self.widget.signalProcessor.signal.data)))
-        dg_pow_spec.plot(self.widget.signalProcessor.signal.data[minx:maxx],
-                         self.widget.signalProcessor.signal.samplingRate, self.NFFT_pow, self.window_pow)
+        dg_pow_spec.plot(self.widget.signalProcessor.signal.data,
+                         self.widget.signalProcessor.signal.samplingRate, self.NFFT_pow, self.window_pow, self.pow_spec_plotColor, self.pow_spec_backg, self.pow_spec_gridx, self.pow_spec_gridy)
 
         self.pow_spec_windows.append(dg_pow_spec)
 
@@ -346,18 +383,17 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     @QtCore.pyqtSlot()
     def on_actionOpen_triggered(self):
         self.actionHighest_instant_frequency.setChecked(False)
-        f = QtGui.QFileDialog.getOpenFileName(self, "Select a file to open",
+        f = QFileDialog.getOpenFileName(self, "Select a file to open",
                                               filter="Wave Files (*.wav);;All Files (*)")
         if f != '':
             self.widget.visibleOscilogram = True
             self.widget.visibleSpectrogram = True
-            self.widget.open(f)
             self.widget.specgramSettings.NFFT = 512
             self.widget.specgramSettings.overlap = 90
-            self.widget.visualChanges = True
+            self.widget.open(f)
             self.setWindowTitle("Duetto Sound Lab - " + self.widget.signalProcessor.signal.name())
-            self.widget.refresh()
             self.first = True
+
     @QtCore.pyqtSlot()
     def on_actionSave_triggered(self):
         fname = unicode(QFileDialog.getSaveFileName())
@@ -382,22 +418,38 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     @QtCore.pyqtSlot()
     def on_actionCombined_triggered(self):
-        self.widget.visibleOscilogram(True)
-        self.widget.visibleSpectrogram(True)
-        self.widget.refresh()
+        self.widget.visibleOscilogram=True
+        self.widget.visibleSpectrogram=True
+        self.widget.refresh(dataChanged=False)
 
     @QtCore.pyqtSlot()
     def on_actionSpectogram_triggered(self):
-        self.widget.visibleOscilogram(False)
-        self.widget.visibleSpectrogram(True)
-        self.widget.refresh()
+        self.widget.visibleOscilogram=False
+        self.widget.visibleSpectrogram=True
+        self.widget.refresh(dataChanged=False)
 
     @QtCore.pyqtSlot()
     def on_actionOscilogram_triggered(self):
-        self.widget.visibleOscilogram(True)
-        self.widget.visibleSpectrogram(False)
-        self.widget.refresh()
+        self.widget.visibleOscilogram=True
+        self.widget.visibleSpectrogram=False
+        self.widget.refresh(dataChanged=False)
 
+    @QtCore.pyqtSlot()
+    def on_actionSaveColorBar_triggered(self):
+        state = self.widget.axesSpecgram.getHistogramWidget().item.gradient.saveState()
+        path = QtGui.QFileDialog.getSaveFileName(self, "Save Color Bar", filter="Bar Files (*.bar);;All Files (*)")
+        if path != "":
+            fh = open(path, 'w')
+            fh.write(state.__repr__())
+            fh.close()
+
+    @QtCore.pyqtSlot()
+    def on_actionLoadColorBar_triggered(self):
+        path = QtGui.QFileDialog.getOpenFileName(self, "Load Color Bar", filter="Bar Files (*.bar);;All Files (*)")
+        if path != "":
+            fh = open(path, 'r')
+            state = eval(fh.readline())
+            self.widget.axesSpecgram.getHistogramWidget().item.gradient.restoreState(state)
 
     @QtCore.pyqtSlot(int, int, int)
     def on_widget_rangeChanged(self, left, right, total):

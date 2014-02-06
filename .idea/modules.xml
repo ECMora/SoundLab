@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/DuettoSystemYasel.iml" filepath="$PROJECT_DIR$/.idea/DuettoSystemYasel.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/DuettoSystem.iml" filepath="$PROJECT_DIR$/.idea/DuettoSystem.iml" />
     </modules>
   </component>
 </project>

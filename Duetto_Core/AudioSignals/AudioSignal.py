@@ -22,6 +22,7 @@ class AudioSignal:
         self.playStatus = self.STOPPED
         self.playSpeed = 100  # percent of the speed
         self.playSection = (0, 0, 0)  # (init,end,current)
+        self.recordNotifier = None
 
     def generateWhiteNoise(self, duration=1, begin_at=0):
         wn = np.array([np.random.uniform(-2 ** self.bitDepth - 1, 2 ** self.bitDepth - 1) for i in
@@ -119,10 +120,10 @@ class AudioSignal:
         if self.playStatus != self.RECORDING:
             return None, pyaudio.paAbort
 
-        #print(in_data)  # for debugging purposes; remove later
-
         self.data = np.concatenate((self.data, np.fromstring(in_data, dtype=self.data.dtype)))
         self.playSection = (0, len(self.data), len(self.data))
+        if self.recordNotifier:
+            self.recordNotifier()
 
         return None, pyaudio.paContinue
 

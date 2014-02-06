@@ -269,11 +269,14 @@ border-color: rgb(170, 170, 255);</string>
   </widget>
   <action name="actionOpen">
    <property name="icon">
-    <iconset>
+    <iconset resource="resources/icons.qrc">
      <normaloff>:/myappicons/81.ico</normaloff>:/myappicons/81.ico</iconset>
    </property>
    <property name="text">
     <string>Open</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
    </property>
   </action>
   <action name="actionExit">
@@ -283,20 +286,26 @@ border-color: rgb(170, 170, 255);</string>
   </action>
   <action name="actionZoomIn">
    <property name="icon">
-    <iconset>
+    <iconset resource="resources/icons.qrc">
      <normaloff>:/myappicons/zoomin_26x26.png</normaloff>:/myappicons/zoomin_26x26.png</iconset>
    </property>
    <property name="text">
     <string>Zoom in</string>
    </property>
+   <property name="shortcut">
+    <string>+</string>
+   </property>
   </action>
   <action name="actionZoom_out">
    <property name="icon">
-    <iconset>
+    <iconset resource="resources/icons.qrc">
      <normaloff>:/myappicons/zoomout_26x26.png</normaloff>:/myappicons/zoomout_26x26.png</iconset>
    </property>
    <property name="text">
     <string>Zoom out</string>
+   </property>
+   <property name="shortcut">
+    <string>-</string>
    </property>
   </action>
   <action name="actionSelect_all">
@@ -306,7 +315,7 @@ border-color: rgb(170, 170, 255);</string>
   </action>
   <action name="actionSpectogram">
    <property name="icon">
-    <iconset>
+    <iconset resource="resources/icons.qrc">
      <normaloff>:/myappicons/spec.ico</normaloff>:/myappicons/spec.ico</iconset>
    </property>
    <property name="text">
@@ -318,7 +327,7 @@ border-color: rgb(170, 170, 255);</string>
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset>
+    <iconset resource="resources/icons.qrc">
      <normaloff>:/myappicons/osc.ico</normaloff>:/myappicons/osc.ico</iconset>
    </property>
    <property name="text">
@@ -330,7 +339,7 @@ border-color: rgb(170, 170, 255);</string>
   </action>
   <action name="actionCombined">
    <property name="icon">
-    <iconset>
+    <iconset resource="resources/icons.qrc">
      <normaloff>:/myappicons/combined.ico</normaloff>:/myappicons/combined.ico</iconset>
    </property>
    <property name="text">
@@ -339,16 +348,19 @@ border-color: rgb(170, 170, 255);</string>
   </action>
   <action name="actionNew">
    <property name="icon">
-    <iconset>
+    <iconset resource="resources/icons.qrc">
      <normaloff>:/myappicons/Leopard Icon 60.ico</normaloff>:/myappicons/Leopard Icon 60.ico</iconset>
    </property>
    <property name="text">
     <string>New</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
   </action>
   <action name="actionPower_Spectrum">
    <property name="icon">
-    <iconset>
+    <iconset resource="resources/icons.qrc">
      <normaloff>:/myappicons/powerspec.ico</normaloff>:/myappicons/powerspec.ico</iconset>
    </property>
    <property name="text">
@@ -372,16 +384,19 @@ border-color: rgb(170, 170, 255);</string>
   </action>
   <action name="actionPlay_Sound">
    <property name="icon">
-    <iconset>
+    <iconset resource="resources/icons.qrc">
      <normaloff>:/myappicons/02049_26x26.png</normaloff>:/myappicons/02049_26x26.png</iconset>
    </property>
    <property name="text">
     <string>Play Sound</string>
    </property>
+   <property name="shortcut">
+    <string>Space</string>
+   </property>
   </action>
   <action name="actionStop_Sound">
    <property name="icon">
-    <iconset>
+    <iconset resource="resources/icons.qrc">
      <normaloff>:/myappicons/02051_26x26.png</normaloff>:/myappicons/02051_26x26.png</iconset>
    </property>
    <property name="text">
@@ -395,7 +410,7 @@ border-color: rgb(170, 170, 255);</string>
   </action>
   <action name="actionZoom_out_entire_file">
    <property name="icon">
-    <iconset>
+    <iconset resource="resources/icons.qrc">
      <normaloff>:/myappicons/zoom_26x26.png</normaloff>:/myappicons/zoom_26x26.png</iconset>
    </property>
    <property name="text">
@@ -404,7 +419,7 @@ border-color: rgb(170, 170, 255);</string>
   </action>
   <action name="actionSave">
    <property name="icon">
-    <iconset>
+    <iconset resource="resources/icons.qrc">
      <normaloff>:/myappicons/225.ico</normaloff>:/myappicons/225.ico</iconset>
    </property>
    <property name="text">
@@ -413,29 +428,38 @@ border-color: rgb(170, 170, 255);</string>
   </action>
   <action name="actionCopy">
    <property name="icon">
-    <iconset>
+    <iconset resource="resources/icons.qrc">
      <normaloff>:/myappicons/copy_26x26.png</normaloff>:/myappicons/copy_26x26.png</iconset>
    </property>
    <property name="text">
     <string>Copy</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
+   </property>
   </action>
   <action name="actionPaste">
    <property name="icon">
-    <iconset>
+    <iconset resource="resources/icons.qrc">
      <normaloff>:/myappicons/paste_26x26.png</normaloff>:/myappicons/paste_26x26.png</iconset>
    </property>
    <property name="text">
     <string>Paste</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+V</string>
+   </property>
   </action>
   <action name="actionCut">
    <property name="icon">
-    <iconset>
+    <iconset resource="resources/icons.qrc">
      <normaloff>:/myappicons/cut_26x26.png</normaloff>:/myappicons/cut_26x26.png</iconset>
    </property>
    <property name="text">
     <string>Cut</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+X</string>
    </property>
   </action>
   <action name="actionHighest_frecuency">
@@ -464,11 +488,14 @@ border-color: rgb(170, 170, 255);</string>
   </action>
   <action name="actionSettings">
    <property name="icon">
-    <iconset>
+    <iconset resource="resources/icons.qrc">
      <normaloff>:/myappicons/LeopardVista V4 Icon 09.ico</normaloff>:/myappicons/LeopardVista V4 Icon 09.ico</iconset>
    </property>
    <property name="text">
     <string>Settings</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+P</string>
    </property>
   </action>
   <action name="actionRecord">
