@@ -49,7 +49,7 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         {'name': 'Spectrogram Settings', 'type': 'group', 'children': [
 
-            {'name': 'FFT size', 'type': 'list', 'values': {'256': 256, '512': 512, '1024': 1024, '2048': 2048, 'Automatic': 512}, 'value':4 },
+            {'name': 'FFT size', 'type': 'list','values': {'256': 256, '512': 512, '1024': 1024, '2048': 2048, 'Automatic': 512}, 'value':'Automatic' },
             {'name': 'FFT window', 'type': 'list', 'value':'None','default':self.widget.specgramSettings.windows[6],'values': {"blackman": self.widget.specgramSettings.windows[3],"rectangular": self.widget.specgramSettings.windows[1], "Hanning": self.widget.specgramSettings.windows[2], "Hamming": self.widget.specgramSettings.windows[0],'bartlett':self.widget.specgramSettings.windows[4],'kaiser':self.widget.specgramSettings.windows[5],'None':self.widget.specgramSettings.windows[6]}},
             {'name': 'FFT overlap', 'type': 'int', 'value':90, 'max' : 100},
             {'name': 'Background color', 'type': 'color', 'value':"000", 'default': "000"},

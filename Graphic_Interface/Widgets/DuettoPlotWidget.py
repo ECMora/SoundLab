@@ -63,7 +63,7 @@ class DuettoPlotWidget(pg.PlotWidget):
         if self.mouseInsideZoomArea(event.x()) and self.makeZoom is not None and callable(self.makeZoom):
             rgn = self.zoomRegion.getRegion()
             self.makeZoom(rgn[0],rgn[1])
-            self.setZoomRegionVisible(False)
+            #self.setZoomRegionVisible(False)
 
 
     def mouseReleaseEvent(self, event):
