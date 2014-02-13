@@ -14,8 +14,9 @@ class QPowerSpectrumWidget(QtGui.QWidget):
         QtGui.QWidget.__init__(self,parent)
         self.setParent(parent)
         self.pow_spectrum = pg.PlotWidget(parent=self)
-
+        self.pow_spectrum.getPlotItem().setMouseEnabled(True,False)
         self.pow_spectrum.getPlotItem().setLabel(axis='bottom',text='Frequency',units='Hz')
+        self.pow_spectrum.getPlotItem().setLabel(axis='left', text='Intensity', units='db/Hz')
         layout = QtGui.QVBoxLayout()
         layout.addWidget(self.pow_spectrum)
         layout.setStretch(1,1)

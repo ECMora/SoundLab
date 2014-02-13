@@ -72,11 +72,6 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
    <property name="autoFillBackground">
     <bool>false</bool>
    </property>
-   <property name="styleSheet">
-    <string notr="true">background-color:rgb(109, 152, 165);
-alternate-background-color: rgb(109, 152, 165);
-</string>
-   </property>
    <widget class="QMenu" name="menuFile">
     <property name="autoFillBackground">
      <bool>false</bool>
@@ -211,7 +206,7 @@ selection-background-color:rgb(170, 170, 255)</string>
     <string notr="true"/>
    </property>
    <property name="floating">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="features">
     <set>QDockWidget::AllDockWidgetFeatures</set>

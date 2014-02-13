@@ -54,7 +54,9 @@ class QSignalVisualizerWidget(QWidget):
         self.axesOscilogram.getPlotItem().hideButtons()
         self.axesOscilogram.show()
 
+
         self.axesSpecgram = pg.ImageView(parent=self)
+
         self.axesSpecgram.getView().setMouseEnabled(x=True, y=False)
         self.axesSpecgram.getView().setAspectLocked(False)
         self.axesSpecgram.show()
@@ -62,7 +64,7 @@ class QSignalVisualizerWidget(QWidget):
         self.axesSpecgram.ui.gridLayout.itemAtPosition(1, 1).widget().setVisible(False)
         self.axesSpecgram.ui.gridLayout.itemAtPosition(1, 2).widget().setVisible(False)
 
-        #self.axesSpecgram.getView().enableAutoRange()
+        self.axesSpecgram.getView().enableAutoRange()
         layout = QVBoxLayout()
         layout.addWidget(self.axesOscilogram)
         layout.addWidget(self.axesSpecgram)
@@ -259,6 +261,10 @@ class QSignalVisualizerWidget(QWidget):
 
     def makeZoom(self, _min, _max):
         self.changeRange(_min, _max)
+        self.zoomCursor.max = self.zoomCursor.min
+        self.axesOscilogram.zoomRegion.setRegion([self.zoomCursor.min,self.zoomCursor.max])
+
+
 
     def changeRange(self, left, right, emit=True, updateOscillogram=True, updateSpectrogram=True):
         self.mainCursor.min, self.mainCursor.max = left, right
@@ -299,7 +305,7 @@ class QSignalVisualizerWidget(QWidget):
 
                 #self.axesOscilogram.setRange(xRange=(0, self.mainCursor.max - self.mainCursor.min))
                 #self.axesOscilogram.zoomRegion.setBounds([0, self.mainCursor.max-self.mainCursor.min])
-                #self.axesOscilogram.setZoomRegionVisible(True)
+            self.axesOscilogram.setZoomRegionVisible(True)
             self.axesOscilogram.getPlotItem().showGrid(x=True, y=True)
             self.axesOscilogram.setRange(xRange=(self.mainCursor.min, self.mainCursor.max),
                                          yRange=(self.signalProcessor.signal.getMinimumValueAllowed(),
