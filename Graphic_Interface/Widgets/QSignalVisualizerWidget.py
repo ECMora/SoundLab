@@ -1,6 +1,6 @@
 from PyQt4.QtCore import pyqtSignal,QRect
 from PyQt4.QtGui import *
-from PyQt4 import QtCore
+from PyQt4 import QtCore, QtGui
 import pyqtgraph as pg
 from matplotlib.patches import Rectangle
 from matplotlib.transforms import blended_transform_factory
@@ -27,7 +27,6 @@ from Duetto_Core.SignalProcessors.SignalProcessor import SignalProcessor, envelo
 from Duetto_Core.SignalProcessors.EditionSignalProcessor import EditionSignalProcessor
 from Duetto_Core.SpecgramSettings import SpecgramSettings
 from DuettoPlotWidget import DuettoPlotWidget
-from DuettoSpecgramWidget import SpecgramWidgget
 
 
 BACK_COLOR = "gray"
@@ -64,6 +63,11 @@ class QSignalVisualizerWidget(QWidget):
 
         self.axesSpecgram.ui.gridLayout.itemAtPosition(1, 1).widget().setVisible(False)
         self.axesSpecgram.ui.gridLayout.itemAtPosition(1, 2).widget().setVisible(False)
+        action = self.axesSpecgram.ui.gridLayout.itemAtPosition(0, 1).widget().item.gradient.hsvAction
+        action.triggered.disconnect()
+        action.triggered.connect(self.SaveColorBar)
+        action.setCheckable(False)
+        action.setText("Save")
 
         self.axesSpecgram.getView().enableAutoRange()
         layout = QVBoxLayout()
@@ -241,11 +245,6 @@ class QSignalVisualizerWidget(QWidget):
         self.visualChanges = True
         self.refresh(dataChanged=False)
         self.rangeChanged.emit(self.mainCursor.min, self.mainCursor.max, len(self.signalProcessor.signal.data))
-        self.axesOscilogram.zoomRegion.setBounds([self.mainCursor.min,self.mainCursor.max])
-        self.axesOscilogram.zoomRegion.setRegion([self.mainCursor.min,self.mainCursor.min])
-
-        self.axesOscilogram.setZoomRegionVisible(True)
-        self.axesOscilogram.update()
 
     def zoomIn(self):
         aux = (self.mainCursor.max - self.mainCursor.min) / (4 * self.zoomStep)
@@ -255,11 +254,6 @@ class QSignalVisualizerWidget(QWidget):
         self.visualChanges = True
         self.refresh(dataChanged=False)
         self.rangeChanged.emit(self.mainCursor.min, self.mainCursor.max, len(self.signalProcessor.signal.data))
-        self.axesOscilogram.zoomRegion.setBounds([self.mainCursor.min,self.mainCursor.max])
-        self.axesOscilogram.zoomRegion.setRegion([self.mainCursor.min,self.mainCursor.min])
-
-        self.axesOscilogram.setZoomRegionVisible(True)
-        self.axesOscilogram.update()
 
     def zoomNone(self):
         if self.signalProcessor.signal.opened():
@@ -269,11 +263,6 @@ class QSignalVisualizerWidget(QWidget):
             self.visualChanges = True
             self.refresh(dataChanged=False)
             self.rangeChanged.emit(self.mainCursor.min, self.mainCursor.max, len(self.signalProcessor.signal.data))
-            self.axesOscilogram.zoomRegion.setBounds([self.mainCursor.min,self.mainCursor.max])
-            self.axesOscilogram.zoomRegion.setRegion([self.mainCursor.min,self.mainCursor.min])
-
-            self.axesOscilogram.setZoomRegionVisible(True)
-            self.axesOscilogram.update()
 
     def makeZoom(self, _min, _max):
         self.changeRange(_min, _max)
@@ -618,5 +607,14 @@ class QSignalVisualizerWidget(QWidget):
             cursor.fromByteArray(userData[index:index + size])
             index += size
             self.cursors.append(cursor)
+
+    def SaveColorBar(self):
+        state = self.axesSpecgram.getHistogramWidget().item.gradient.saveState()
+        path = QtGui.QFileDialog.getSaveFileName(self, "Save Color Bar", filter="Bar Files (*.bar);;All Files (*)")
+        if path != "":
+            fh = open(path, 'w')
+            fh.write(state.__repr__())
+            fh.close()
+
 
     #endregion

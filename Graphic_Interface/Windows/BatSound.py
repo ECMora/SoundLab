@@ -1,6 +1,7 @@
 import sys
 from pyqtgraph.Qt import QtCore, QtGui
 import numpy
+import os
 from pyqtgraph.parametertree import Parameter, ParameterTree, ParameterItem, registerParameterType
 from PyQt4.QtGui import QDialog, QMessageBox, QFileDialog
 from PyQt4 import QtCore
@@ -89,8 +90,9 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.pow_spec_plotColor = "FFF"
         self.pow_spec_gridx = True
         self.pow_spec_gridy = True
-
+        self.colorBarsPath = "ColorBars"
         self.pow_spec_windows = []
+        self.loadAllColorBars()
 
     def change(self, param, changes):
         print("tree changes:")
@@ -293,12 +295,11 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             minx = self.widget.zoomCursor.min
             maxx = max(self.widget.zoomCursor.max,
                        min(minx + self.NFFT_pow, len(self.widget.signalProcessor.signal.data)))
-            win.updatePowSpectrumInterval(self.widget.signalProcessor.signal.data[minx:maxx],self.pow_spec_plotColor,self.pow_spec_backg,self.pow_spec_gridx,self.pow_spec_gridy)
+            win.updatePowSpectrumInterval(self.widget.signalProcessor.signal.data[minx:maxx])
 
     @QtCore.pyqtSlot()
     def on_actionZoomIn_triggered(self):
         self.widget.zoomIn()
-
 
     @QtCore.pyqtSlot()
     def on_actionZoom_out_triggered(self):
@@ -466,3 +467,9 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     @QtCore.pyqtSlot(int)
     def on_horizontalScrollBar_valueChanged(self, value):
         self.widget.changeRange(value, value + self.horizontalScrollBar.pageStep(), emit=False)
+
+    def loadAllColorBars(self):
+        if os.path.exists(self.colorBarsPath):
+            for i in os.listdir(self.colorBarsPath):
+                if os.path.isfile(self.colorBarsPath+'\\'+ i):
+                    print(i)
