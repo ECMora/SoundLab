@@ -27,6 +27,7 @@ from Duetto_Core.SignalProcessors.SignalProcessor import SignalProcessor, envelo
 from Duetto_Core.SignalProcessors.EditionSignalProcessor import EditionSignalProcessor
 from Duetto_Core.SpecgramSettings import SpecgramSettings
 from DuettoPlotWidget import DuettoPlotWidget
+from DuettoSpecgramWidget import SpecgramWidgget
 
 
 BACK_COLOR = "gray"
