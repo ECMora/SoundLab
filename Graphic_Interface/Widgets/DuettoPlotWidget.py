@@ -25,6 +25,13 @@ class DuettoPlotWidget(pg.PlotWidget):
     def mouseMoveEvent(self, event):
        pg.PlotWidget.mouseMoveEvent(self,event)
        if self.parent().visibleOscilogram:
+           if self.mousePressed and not self.mouseInsideZoomArea(event.x()):
+
+               now = self.fromCanvasToClient(event.x())
+               if self.fromCanvasToClient(self.lastX) > now:
+                    self.zoomRegion.setRegion([now,self.fromCanvasToClient(self.lastX)])
+               else: self.zoomRegion.setRegion([self.fromCanvasToClient(self.lastX),now])
+               self.zoomRegion.lineMoved()
            if not self.mousePressed and self.mouseInsideZoomArea(event.x()):
                self.setCursor(QCursor(QtCore.Qt.OpenHandCursor))
            elif not self.mouseInsideZoomArea(event.x()):
@@ -63,12 +70,14 @@ class DuettoPlotWidget(pg.PlotWidget):
         if self.mouseInsideZoomArea(event.x()) and self.makeZoom is not None and callable(self.makeZoom):
             rgn = self.zoomRegion.getRegion()
             self.makeZoom(rgn[0],rgn[1])
-            #self.setZoomRegionVisible(False)
+            self.zoomRegion.setRegion([rgn[0],rgn[0]])
+            self.zoomRegion.lineMoved()
 
 
     def mouseReleaseEvent(self, event):
         pg.PlotWidget.mouseReleaseEvent(self,event)
         self.lastX = event.x()
+
         if self.mouseInsideZoomArea(event.x()):
             self.setCursor(QCursor(QtCore.Qt.OpenHandCursor))
         else:
@@ -79,7 +88,7 @@ class DuettoPlotWidget(pg.PlotWidget):
     def mouseInsideZoomArea(self, xPixel):
         xIndex = self.fromCanvasToClient(xPixel)
         rgn = self.zoomRegion.getRegion()
-        return xIndex>rgn[0] and xIndex < rgn[1]
+        return xIndex >= rgn[0] and xIndex <= rgn[1]
 
 
     def fromClientToCanvas(self, indexX):
