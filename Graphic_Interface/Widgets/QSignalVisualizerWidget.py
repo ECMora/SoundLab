@@ -240,6 +240,11 @@ class QSignalVisualizerWidget(QWidget):
         self.visualChanges = True
         self.refresh(dataChanged=False)
         self.rangeChanged.emit(self.mainCursor.min, self.mainCursor.max, len(self.signalProcessor.signal.data))
+        self.axesOscilogram.zoomRegion.setBounds([self.mainCursor.min,self.mainCursor.max])
+        self.axesOscilogram.zoomRegion.setRegion([self.mainCursor.min,self.mainCursor.min])
+
+        self.axesOscilogram.setZoomRegionVisible(True)
+        self.axesOscilogram.update()
 
     def zoomIn(self):
         aux = (self.mainCursor.max - self.mainCursor.min) / (4 * self.zoomStep)
@@ -249,6 +254,11 @@ class QSignalVisualizerWidget(QWidget):
         self.visualChanges = True
         self.refresh(dataChanged=False)
         self.rangeChanged.emit(self.mainCursor.min, self.mainCursor.max, len(self.signalProcessor.signal.data))
+        self.axesOscilogram.zoomRegion.setBounds([self.mainCursor.min,self.mainCursor.max])
+        self.axesOscilogram.zoomRegion.setRegion([self.mainCursor.min,self.mainCursor.min])
+
+        self.axesOscilogram.setZoomRegionVisible(True)
+        self.axesOscilogram.update()
 
     def zoomNone(self):
         if self.signalProcessor.signal.opened():
@@ -258,6 +268,11 @@ class QSignalVisualizerWidget(QWidget):
             self.visualChanges = True
             self.refresh(dataChanged=False)
             self.rangeChanged.emit(self.mainCursor.min, self.mainCursor.max, len(self.signalProcessor.signal.data))
+            self.axesOscilogram.zoomRegion.setBounds([self.mainCursor.min,self.mainCursor.max])
+            self.axesOscilogram.zoomRegion.setRegion([self.mainCursor.min,self.mainCursor.min])
+
+            self.axesOscilogram.setZoomRegionVisible(True)
+            self.axesOscilogram.update()
 
     def makeZoom(self, _min, _max):
         self.changeRange(_min, _max)

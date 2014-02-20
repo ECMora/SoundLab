@@ -293,7 +293,7 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             minx = self.widget.zoomCursor.min
             maxx = max(self.widget.zoomCursor.max,
                        min(minx + self.NFFT_pow, len(self.widget.signalProcessor.signal.data)))
-            win.updatePowSpectrumInterval(self.widget.signalProcessor.signal.data[minx:maxx])
+            win.updatePowSpectrumInterval(self.widget.signalProcessor.signal.data[minx:maxx],self.pow_spec_plotColor,self.pow_spec_backg,self.pow_spec_gridx,self.pow_spec_gridy)
 
     @QtCore.pyqtSlot()
     def on_actionZoomIn_triggered(self):

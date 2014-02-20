@@ -16,6 +16,6 @@ class PowerSpectrumWindow(QtGui.QMainWindow):
         self.rate = rate
         self.ui.pow_spec.Plot_Power_Spectrum(data, rate, NFFT, window,plotColor, backColor, gridx, gridy)
 
-    def updatePowSpectrumInterval(self,data):
-        self.ui.pow_spec.Plot_Power_Spectrum(data,self.rate,self.NFFT,self.window)
+    def updatePowSpectrumInterval(self,data,plotColor, backColor, gridx, gridy):
+        self.ui.pow_spec.Plot_Power_Spectrum(data,self.rate,self.NFFT,self.window,plotColor, backColor, gridx, gridy)
 
