@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\Gaby\Downloads\DuettoSystem\Graphic_Interface\UI Files\MainWindow.ui'
+# Form implementation generated from reading ui file 'UI Files\MainWindow.ui'
 #
-# Created: Thu Feb 13 16:11:14 2014
+# Created: Tue Feb 18 09:15:09 2014
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -18,7 +18,7 @@ class Ui_DuettoMainWindow(object):
     def setupUi(self, DuettoMainWindow):
         DuettoMainWindow.setObjectName(_fromUtf8("DuettoMainWindow"))
         DuettoMainWindow.setWindowModality(QtCore.Qt.ApplicationModal)
-        DuettoMainWindow.resize(846, 778)
+        DuettoMainWindow.resize(800, 600)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -46,8 +46,11 @@ class Ui_DuettoMainWindow(object):
         self.verticalLayout_2.addWidget(self.horizontalScrollBar)
         DuettoMainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(DuettoMainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 846, 24))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 24))
         self.menubar.setAutoFillBackground(False)
+        self.menubar.setStyleSheet(_fromUtf8("background-color:rgb(109, 152, 165);\n"
+"alternate-background-color: rgb(109, 152, 165);\n"
+""))
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuFile = QtGui.QMenu(self.menubar)
         self.menuFile.setAutoFillBackground(False)
@@ -87,17 +90,17 @@ class Ui_DuettoMainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.dock_settings.sizePolicy().hasHeightForWidth())
         self.dock_settings.setSizePolicy(sizePolicy)
-        self.dock_settings.setMinimumSize(QtCore.QSize(250, 700))
-        self.dock_settings.setMaximumSize(QtCore.QSize(250, 700))
+        self.dock_settings.setMinimumSize(QtCore.QSize(250, 40))
+        self.dock_settings.setMaximumSize(QtCore.QSize(250, 524287))
         self.dock_settings.setStyleSheet(_fromUtf8(""))
-        self.dock_settings.setFloating(False)
+        self.dock_settings.setFloating(True)
         self.dock_settings.setFeatures(QtGui.QDockWidget.AllDockWidgetFeatures)
         self.dock_settings.setObjectName(_fromUtf8("dock_settings"))
         self.osc_settings_contents = QtGui.QWidget()
         self.osc_settings_contents.setObjectName(_fromUtf8("osc_settings_contents"))
-        self.formLayout = QtGui.QFormLayout(self.osc_settings_contents)
-        self.formLayout.setFieldGrowthPolicy(QtGui.QFormLayout.AllNonFixedFieldsGrow)
-        self.formLayout.setObjectName(_fromUtf8("formLayout"))
+        self.verticalLayout_6 = QtGui.QVBoxLayout(self.osc_settings_contents)
+        self.verticalLayout_6.setMargin(0)
+        self.verticalLayout_6.setObjectName(_fromUtf8("verticalLayout_6"))
         self.dock_settings.setWidget(self.osc_settings_contents)
         DuettoMainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(1), self.dock_settings)
         self.toolBar = QtGui.QToolBar(DuettoMainWindow)
