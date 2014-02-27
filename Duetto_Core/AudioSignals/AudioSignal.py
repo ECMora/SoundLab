@@ -123,7 +123,7 @@ class AudioSignal:
         self.data = np.concatenate((self.data, np.fromstring(in_data, dtype=self.data.dtype)))
         self.playSection = (0, len(self.data), len(self.data))
         if self.recordNotifier:
-            self.recordNotifier()
+            self.recordNotifier(frame_count)
 
         return None, pyaudio.paContinue
 
