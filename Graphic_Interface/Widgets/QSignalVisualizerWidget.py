@@ -59,6 +59,9 @@ class QSignalVisualizerWidget(QWidget):
         self.axesSpecgram = DuettoImageWidget(parent=self)
         self.axesSpecgram.show()
 
+        self.axesOscilogram.IntervalOscChanged.connect(self.updateSpecZoomRegion)
+        self.axesSpecgram.IntervalSpecChanged.connect(self.updateOscZoomRegion)
+
         # TODO: revisar cuando se ponga histograma
         #self.axesSpecgram.ui.gridLayout.itemAtPosition(1, 1).widget().setVisible(False)
         #self.axesSpecgram.ui.gridLayout.itemAtPosition(1, 2).widget().setVisible(False)
@@ -83,7 +86,7 @@ class QSignalVisualizerWidget(QWidget):
         self.mainCursor = IntervalCursor(0, 0)
         #the zoom cursor
         self.zoomCursor = IntervalCursor(0, 0)
-        self.axesOscilogram.zoomRegion.sigRegionChanged.connect(self.updatezoomcursor)
+        #self.axesOscilogram.zoomRegion.sigRegionChanged.connect(self.updatezoomcursor)
         #self.setLayout(layout)
         self.axesOscilogram.makeZoom = self.makeZoom # metodo a ejecutar si se produce un zoom
 
@@ -111,7 +114,13 @@ class QSignalVisualizerWidget(QWidget):
 
         self._doRefresh.connect(self._refresh)
 
+    def updateSpecZoomRegion(self,a,b):
+        self.axesSpecgram.zoomRegion.setRegion([self.axesSpecgram.fromCanvasToClient(a),self.axesSpecgram.fromCanvasToClient(b)])
+        self.axesSpecgram.update()
 
+    def updateOscZoomRegion(self,a,b):
+        self.axesOscilogram.zoomRegion.setRegion([self.axesOscilogram.fromCanvasToClient(a),self.axesOscilogram.fromCanvasToClient(b)])
+        self.axesOscilogram.update()
     #region Sound
 
     def play(self):
@@ -309,7 +318,7 @@ class QSignalVisualizerWidget(QWidget):
                                 detrend=mlab.detrend_none, window=self.specgramSettings.window, noverlap=overlap,
                                 sides=self.SPECGRAM_COMPLEX_SIDE)
             self._Z = 10. * np.log10(self.specgramSettings.Pxx)
-            self._Z = np.flipud(self._Z)
+            #self._Z = np.flipud(self._Z)
             Zfin = np.isfinite(self._Z)
             if not np.any(Zfin):
                 return
@@ -339,7 +348,8 @@ class QSignalVisualizerWidget(QWidget):
                                          autoDownsample=not partial, clipToView=partial)
 
             #self.axesOscilogram.setRange(xRange=(0, self.mainCursor.max - self.mainCursor.min))
-            self.axesOscilogram.zoomRegion.setBounds([0, self.mainCursor.max-self.mainCursor.min])
+            #self.axesSpecgram.zoomRegion.setBounds([0, self.mainCursor.max-self.mainCursor.min])
+            self.axesOscilogram.zoomRegion.setBounds([0, self.mainCursor.max])
             self.axesOscilogram.setZoomRegionVisible(True)
 
             self.axesOscilogram.getPlotItem().showGrid(x=True, y=True)

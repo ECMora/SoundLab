@@ -1,5 +1,5 @@
 from PyQt4 import QtGui, QtCore
-from PyQt4.QtCore import SIGNAL
+from PyQt4.QtCore import SIGNAL, pyqtSignal
 from PyQt4.QtGui import QCursor
 from pyqtgraph import GraphicsView
 from pyqtgraph.graphicsItems.AxisItem import AxisItem
@@ -32,15 +32,7 @@ class DuettoImageWidget(GraphicsView):
         self.mousePressed = False
 
     PIXELS_OF_CURSORS_CHANGES = 3
-
-    #def setZoomRegionVisible(self,value=False):
-    #    if value and  self.zoomRegion not in self.items():
-    #        self.addItem(self.zoomRegion)
-    #    elif not value and self.zoomRegion in self.items():
-    #        self.removeItem(self.zoomRegion)
-    #    self.update()
-
-
+    IntervalSpecChanged = pyqtSignal(int, int)
     def mouseMoveEvent(self, event):
        pg.GraphicsView.mouseMoveEvent(self,event)
        if self.parent().visibleOscilogram:
@@ -49,7 +41,10 @@ class DuettoImageWidget(GraphicsView):
                now = self.fromCanvasToClient(event.x())
                if self.fromCanvasToClient(self.lastX) > now:
                     self.zoomRegion.setRegion([now,self.fromCanvasToClient(self.lastX)])
-               else: self.zoomRegion.setRegion([self.fromCanvasToClient(self.lastX),now])
+                    self.IntervalSpecChanged.emit(self.fromClientToCanvas(now),self.lastX)
+               else:
+                   self.zoomRegion.setRegion([self.fromCanvasToClient(self.lastX),now])
+                   self.IntervalSpecChanged.emit(self.lastX,self.fromClientToCanvas(now))
                self.zoomRegion.lineMoved()
            if not self.mousePressed and self.mouseInsideZoomArea(event.x()):
                self.setCursor(QCursor(QtCore.Qt.OpenHandCursor))
@@ -61,13 +56,14 @@ class DuettoImageWidget(GraphicsView):
                            maxx - event.x()) < self.PIXELS_OF_CURSORS_CHANGES:
                self.setCursor(QCursor(QtCore.Qt.SizeHorCursor))
 
-
     def mousePressEvent(self, event):
          if(not self.zoomRegion in self.items()):
              self.zoomRegion.setRegion([self.fromCanvasToClient(event.x()),self.fromCanvasToClient(event.x())])
+             self.IntervalSpecChanged.emit(event.x(),event.x())
              self.update()
          elif not self.mouseInsideZoomArea(event.x()):
              self.zoomRegion.setRegion([self.fromCanvasToClient(event.x()),self.fromCanvasToClient(event.x())])
+             self.IntervalSpecChanged.emit(event.x(),event.x())
              #self.setZoomRegionVisible(True)
              self.update()
          pg.GraphicsView.mousePressEvent(self,event)
@@ -90,8 +86,8 @@ class DuettoImageWidget(GraphicsView):
             rgn = self.zoomRegion.getRegion()
             self.makeZoom(rgn[0],rgn[1])
             self.zoomRegion.setRegion([rgn[0],rgn[0]])
+            self.IntervalSpecChanged.emit(rgn[0],rgn[0])
             self.zoomRegion.lineMoved()
-
 
     def mouseReleaseEvent(self, event):
         pg.GraphicsView.mouseReleaseEvent(self,event)
@@ -108,7 +104,6 @@ class DuettoImageWidget(GraphicsView):
         xIndex = self.fromCanvasToClient(xPixel)
         rgn = self.zoomRegion.getRegion()
         return xIndex >= rgn[0] and xIndex <= rgn[1]
-
 
     def fromClientToCanvas(self, indexX):
        """
