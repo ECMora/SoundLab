@@ -7,6 +7,34 @@ from pyqtgraph.graphicsItems.ImageItem import ImageItem
 from pyqtgraph.graphicsItems.ViewBox import ViewBox
 import  pyqtgraph as pg
 
+class SpecXAxis(pg.AxisItem):
+    def __init__(self,*args,**kwargs):
+        pg.AxisItem.__init__(self,*args,**kwargs)
+        self.bins = None
+    def tickStrings(self, values, scale, spacing):
+        self.setLabel(text="Time (s)")
+        if self.bins is None:
+            return values
+        return self.bins[values]
+    def refresh(self,bins):
+        self.bins = bins
+
+class SpecYAxis(pg.AxisItem):
+    def __init__(self,*args,**kwargs):
+        pg.AxisItem.__init__(self,*args,**kwargs)
+        self.freqs = None
+    def tickStrings(self, values, scale, spacing):
+        #self.setLabel(text="KHz")
+        if self.freqs is None:
+            return values
+        r  = self.freqs[values]
+        for i in range(len(r)):
+            r[i] = (int((r[i]/100)))/10.0
+        return r
+    def refresh(self,freqs):
+        self.freqs = freqs
+
+
 
 class DuettoImageWidget(GraphicsView):
     def __init__(self, *args, **kwargs):
@@ -20,9 +48,9 @@ class DuettoImageWidget(GraphicsView):
         self.viewBox.addItem(self.imageItem)
         l.addItem(self.viewBox, 0, 1)
         self.centralWidget.setLayout(l)
-        self.xAxis = AxisItem(orientation='bottom', linkView=self.viewBox)
+        self.xAxis = SpecXAxis(orientation = 'bottom',linkView=self.viewBox)
         l.addItem(self.xAxis, 1, 1)
-        self.yAxis = AxisItem(orientation='left', linkView=self.viewBox)
+        self.yAxis = SpecYAxis(orientation='left', linkView=self.viewBox)
         l.addItem(self.yAxis, 0, 0)
         self.viewBox.setMouseEnabled(x=False, y=False)
         self.viewBox.setAspectLocked(False)
@@ -30,9 +58,11 @@ class DuettoImageWidget(GraphicsView):
         self.viewBox.addItem(self.zoomRegion)
         self.makeZoom = None
         self.mousePressed = False
+        self.viewBox.setRange(xRange=(0, 10), padding=0)
 
-    PIXELS_OF_CURSORS_CHANGES = 3
+    PIXELS_OF_CURSORS_CHANGES = 5
     IntervalSpecChanged = pyqtSignal(int, int)
+
     def mouseMoveEvent(self, event):
        pg.GraphicsView.mouseMoveEvent(self,event)
        if self.parent().visibleOscilogram:
@@ -84,7 +114,7 @@ class DuettoImageWidget(GraphicsView):
         pg.GraphicsView.mouseDoubleClickEvent(self,event)
         if self.mouseInsideZoomArea(event.x()) and self.makeZoom is not None and callable(self.makeZoom):
             rgn = self.zoomRegion.getRegion()
-            self.makeZoom(rgn[0],rgn[1])
+            self.viewBox.makeZoom(rgn[0],rgn[1])
             self.zoomRegion.setRegion([rgn[0],rgn[0]])
             self.IntervalSpecChanged.emit(rgn[0],rgn[0])
             self.zoomRegion.lineMoved()
@@ -113,7 +143,7 @@ class DuettoImageWidget(GraphicsView):
        a, b = self.imageItem.getViewBox().viewRange()[0]
        return int(self.PIXELS_BETWEEN_AXES_AND_DATA + round((maxx) * (indexX - a) * 1. / (b - a),0))
 
-    PIXELS_BETWEEN_AXES_AND_DATA = 36 #the pixels for the numbers in the left side
+    PIXELS_BETWEEN_AXES_AND_DATA = 9 #the pixels for the numbers in the left side
 
     def fromCanvasToClient(self, xPixel):
         """
