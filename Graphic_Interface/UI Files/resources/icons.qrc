@@ -1,0 +1,21 @@
+<RCC>
+  <qresource prefix="myappicons">
+    <file>pause.png</file>
+    <file>LeopardVista V4 Icon 09.ico</file>
+    <file>spec.ico</file>
+    <file>osc.ico</file>
+    <file>combined.ico</file>
+    <file>powerspec.ico</file>
+    <file>copy_26x26.png</file>
+    <file>cut_26x26.png</file>
+    <file>paste_26x26.png</file>
+    <file>02049_26x26.png</file>
+    <file>02051_26x26.png</file>
+    <file>225.ico</file>
+    <file>zoom_26x26.png</file>
+    <file>Leopard Icon 60.ico</file>
+    <file>81.ico</file>
+    <file>zoomin_26x26.png</file>
+    <file>zoomout_26x26.png</file>
+  </qresource>
+</RCC>
