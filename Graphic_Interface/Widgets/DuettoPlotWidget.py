@@ -13,7 +13,7 @@ class DuettoPlotWidget(pg.PlotWidget):
         self.getPlotItem().setMouseEnabled(x=False,y=False)
 
     IntervalOscChanged = pyqtSignal(int, int)
-    PIXELS_OF_CURSORS_CHANGES = 3
+    PIXELS_OF_CURSORS_CHANGES = 5
 
     def setZoomRegionVisible(self,value=False):
         if value and  self.zoomRegion not in self.items():
@@ -105,7 +105,7 @@ class DuettoPlotWidget(pg.PlotWidget):
        a, b = self.getPlotItem().viewRange()[0]
        return int(self.PIXELS_BETWEEN_AXES_AND_DATA + round((maxx) * (indexX - a) * 1. / (b - a),0))
 
-    PIXELS_BETWEEN_AXES_AND_DATA = 36 #the pixels for the numbers in the left side
+    PIXELS_BETWEEN_AXES_AND_DATA = 10 #the pixels for the numbers in the left side
 
     def fromCanvasToClient(self, xPixel):
         """

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'UI Files\MainWindow.ui'
+# Form implementation generated from reading ui file 'C:\Users\Gaby\Desktop\DuettoSystem\Graphic_Interface\UI Files\MainWindow.ui'
 #
-# Created: Tue Feb 18 09:15:09 2014
+# Created: Wed Mar 12 23:59:00 2014
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -98,9 +98,6 @@ class Ui_DuettoMainWindow(object):
         self.dock_settings.setObjectName(_fromUtf8("dock_settings"))
         self.osc_settings_contents = QtGui.QWidget()
         self.osc_settings_contents.setObjectName(_fromUtf8("osc_settings_contents"))
-        self.verticalLayout_6 = QtGui.QVBoxLayout(self.osc_settings_contents)
-        self.verticalLayout_6.setMargin(0)
-        self.verticalLayout_6.setObjectName(_fromUtf8("verticalLayout_6"))
         self.dock_settings.setWidget(self.osc_settings_contents)
         DuettoMainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(1), self.dock_settings)
         self.toolBar = QtGui.QToolBar(DuettoMainWindow)

@@ -23,6 +23,7 @@ class AudioSignal:
         self.playSpeed = 100  # percent of the speed
         self.playSection = (0, 0, 0)  # (init,end,current)
         self.recordNotifier = None
+        self.recordNotifier = None
 
     def generateWhiteNoise(self, duration=1, begin_at=0):
         wn = np.array([np.random.uniform(-2 ** self.bitDepth - 1, 2 ** self.bitDepth - 1) for i in
@@ -82,7 +83,7 @@ class AudioSignal:
         y0, y1 = self.data[current_low_index], self.data[current_high_index]
         return y0 + (index * frac - current_low_index) * (y1 - y0)
 
-    def currentPlayingTime(self):
+    def currentPlayingFrame(self):
         return self.playSection[2]
 
     def removeDCOffset(self):
@@ -108,12 +109,16 @@ class AudioSignal:
 
         if self.playSection[1] - self.playSection[2] < frame_count:
             data = self.data[self.playSection[2]: -1]
+            if self.playNotifier:
+                self.playNotifier(self.currentPlayingFrame())
             self.playSection = (0, 0, 0)
             self.playStatus = self.STOPPED
             return data, pyaudio.paComplete
 
         data = self.data[self.playSection[2]: self.playSection[2] + frame_count]
         self.playSection = (self.playSection[0], self.playSection[1], self.playSection[2] + frame_count)
+        if self.playNotifier:
+            self.playNotifier(self.currentPlayingFrame())
         return data, pyaudio.paContinue
 
     def recordCallback(self, in_data, frame_count, time_info, status):

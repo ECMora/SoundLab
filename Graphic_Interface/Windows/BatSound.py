@@ -2,6 +2,8 @@ import sys
 from pyqtgraph.Qt import QtCore, QtGui
 import numpy
 import os
+import pyqtgraph
+import pyqtgraph.widgets.HistogramLUTWidget
 from pyqtgraph.parametertree import Parameter, ParameterTree, ParameterItem, registerParameterType
 from PyQt4.QtGui import QDialog, QMessageBox, QFileDialog
 from PyQt4 import QtCore
@@ -12,7 +14,7 @@ from Duetto_Core.SignalProcessors.FilterSignalProcessor import FILTER_TYPE
 from MainWindow import Ui_DuettoMainWindow
 from Graphic_Interface.Widgets.MyPowerSpecWindow import PowerSpectrumWindow
 from Graphic_Interface.Dialogs import InsertSilenceDialog as sdialog, FilterOptionsDialog as filterdg, ChangeVolumeDialog as cvdialog
-
+from PyQt4 import QtCore, QtGui
 
 MIN_SAMPLING_RATE = 1000
 MAX_SAMPLING_RATE = 2000000
@@ -74,14 +76,32 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.ParamTree.sigTreeStateChanged.connect(self.change)
         self.t = ParameterTree()
         self.t.setAutoScroll(True)
-        self.t.setFixedWidth(300)
-        self.t.setFixedHeight(700)
+        self.t.setFixedWidth(340)
+        self.t.setFixedHeight(450)
         self.t.setHeaderHidden(True)
         self.t.setParameters(self.ParamTree, showTop=False)
 
-        self.dock_settings.layout().addWidget(self.t)
+        lay1 = QtGui.QVBoxLayout()
+        lay1.addWidget(self.t)
+
+        self.hist = pyqtgraph.widgets.HistogramLUTWidget.HistogramLUTWidget()
+        self.hist.setFixedWidth(340)
+        self.hist.setFixedHeight(100)
+        self.hist.item.setImageItem(self.widget.axesSpecgram.imageItem)
+
+        action = self.hist.item.gradient.hsvAction
+        action.triggered.disconnect()
+        action.triggered.connect(self.widget.SaveColorBar)
+        action.setCheckable(False)
+        action.setText("Save")
+
+        lay1.addWidget(self.hist)
+        self.osc_settings_contents.setLayout(lay1)
+        self.osc_settings_contents.layout().addWidget(self.hist)
         self.dock_settings.setVisible(False)
-        self.dock_settings.setFixedWidth(300)
+        self.dock_settings.setFixedWidth(350)
+
+
         self.connect(self.widget,SIGNAL("IntervalChanged"),self.updatePowSpecWin)
         self.NFFT_pow = 512
 
@@ -338,12 +358,12 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     @QtCore.pyqtSlot()
     def on_actionPower_Spectrum_triggered(self):
-        dg_pow_spec = PowerSpectrumWindow(self)
+        dg_pow_spec = PowerSpectrumWindow(self,self.pow_spec_plotColor, self.pow_spec_backg, self.pow_spec_gridx, self.pow_spec_gridy)
 
         minx = self.widget.zoomCursor.min
         maxx = max(self.widget.zoomCursor.max, min(minx + self.NFFT_pow, len(self.widget.signalProcessor.signal.data)))
         dg_pow_spec.plot(self.widget.signalProcessor.signal.data,
-                         self.widget.signalProcessor.signal.samplingRate, self.NFFT_pow, self.window_pow, self.pow_spec_plotColor, self.pow_spec_backg, self.pow_spec_gridx, self.pow_spec_gridy)
+                         self.widget.signalProcessor.signal.samplingRate, self.NFFT_pow, self.window_pow)
 
         self.pow_spec_windows.append(dg_pow_spec)
 
