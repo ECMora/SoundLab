@@ -407,10 +407,10 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         f = QFileDialog.getOpenFileName(self, "Select a file to open",
                                               filter="Wave Files (*.wav);;All Files (*)")
         if f != '':
-            self.widget.visibleOscilogram = True
-            self.widget.visibleSpectrogram = True
+            #self.widget.visibleOscilogram = True
+            #self.widget.visibleSpectrogram = True
             self.widget.specgramSettings.NFFT = 512
-            self.widget.specgramSettings.overlap = 90
+            self.widget.specgramSettings.overlap = 0
             self.widget.open(f)
             self.setWindowTitle("Duetto Sound Lab - " + self.widget.signalProcessor.signal.name())
             self.first = True

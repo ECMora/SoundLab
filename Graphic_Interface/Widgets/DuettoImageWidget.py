@@ -58,7 +58,7 @@ class DuettoImageWidget(GraphicsView):
         self.viewBox.addItem(self.zoomRegion)
         self.makeZoom = None
         self.mousePressed = False
-        self.viewBox.setRange(xRange=(0, 10), padding=0)
+        #self.viewBox.setRange(xRange=(0, 10), padding=0)
 
     PIXELS_OF_CURSORS_CHANGES = 5
     IntervalSpecChanged = pyqtSignal(int, int)
