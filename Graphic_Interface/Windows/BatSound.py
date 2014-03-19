@@ -33,6 +33,7 @@ class FilterDialog(filterdg.Ui_Dialog, QDialog):
 
 
 class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
+    dropchanged = QtCore.pyqtSignal(QtCore.QMimeData)
     def __init__(self, parent=None):
         super(BatSoundWindow, self).__init__(parent)
         self.setupUi(self)
@@ -113,6 +114,32 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.colorBarsPath = "ColorBars"
         self.pow_spec_windows = []
         self.loadAllColorBars()
+        self.setAcceptDrops(True)
+
+    def dragEnterEvent(self, event):
+        event.acceptProposedAction()
+        self.dropchanged.emit(event.mimeData())
+
+    def dragMoveEvent(self, event):
+        event.acceptProposedAction()
+
+    def dropEvent(self, event):
+        mimeData = event.mimeData()
+        if len(mimeData.urls())>1:return
+        mimeUrl = "".join([str(url.path()) for url in mimeData.urls()])
+
+        print(mimeUrl)
+        self.widget.visibleOscilogram = True
+        self.widget.visibleSpectrogram = True
+        self.widget.specgramSettings.NFFT = 512
+        self.widget.specgramSettings.overlap = 90
+        self.widget.open(mimeUrl[1:len(mimeUrl)])
+        self.setWindowTitle("Duetto Sound Lab - " + self.widget.signalProcessor.signal.name())
+        self.first = True
+        event.acceptProposedAction()
+
+    def dragLeaveEvent(self, event):
+        event.accept()
 
     def change(self, param, changes):
         print("tree changes:")
