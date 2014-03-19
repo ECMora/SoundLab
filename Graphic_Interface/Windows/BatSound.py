@@ -166,7 +166,7 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             elif childName == 'Oscillogram Settings.Background color':
                 self.widget.osc_background = data
                 self.widget.visualChanges = True
-                self.widget.refresh(dataChanged=False, updateOscillogram=False, updateSpectrogram=False)
+                self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
             elif childName == 'Oscillogram Settings.Grid.X':
                 self.widget.osc_gridx = data
                 self.widget.visualChanges = True
@@ -407,10 +407,10 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         f = QFileDialog.getOpenFileName(self, "Select a file to open",
                                               filter="Wave Files (*.wav);;All Files (*)")
         if f != '':
-            #self.widget.visibleOscilogram = True
-            #self.widget.visibleSpectrogram = True
+            self.widget.visibleOscilogram = True
+            self.widget.visibleSpectrogram = True
             self.widget.specgramSettings.NFFT = 512
-            self.widget.specgramSettings.overlap = 0
+            self.widget.specgramSettings.overlap = 90
             self.widget.open(f)
             self.setWindowTitle("Duetto Sound Lab - " + self.widget.signalProcessor.signal.name())
             self.first = True
