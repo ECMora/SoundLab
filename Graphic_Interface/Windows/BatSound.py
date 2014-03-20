@@ -8,7 +8,8 @@ from pyqtgraph.parametertree import Parameter, ParameterTree, ParameterItem, reg
 from PyQt4.QtGui import QDialog, QMessageBox, QFileDialog
 from PyQt4 import QtCore
 from PyQt4 import QtGui
-from PyQt4.QtCore import SIGNAL
+from PyQt4.QtCore import SIGNAL, pyqtSlot
+from Graphic_Interface.Dialogs.NewFileDialog import NewFileDialog
 from SegmentationAndClasificationWindow import SegmentationAndClasificationWindow
 from Duetto_Core.SignalProcessors.FilterSignalProcessor import FILTER_TYPE
 from MainWindow import Ui_DuettoMainWindow
@@ -143,12 +144,12 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         file.close()
         return data
 
-    @QtCore.pyqtSlot()
+    @pyqtSlot()
     def on_actionSave_theme_triggered(self):
         filename = QFileDialog.getSaveFileName(parent=self,caption="Save Theme",filter="Duetto Theme Files (*.dth);;All Files (*)")
         self.SerializeTheme(filename)
 
-    @QtCore.pyqtSlot()
+    @pyqtSlot()
     def on_actionLoad_Theme_triggered(self):
         filename = QFileDialog.getOpenFileName(parent=self, caption="Load Theme",filter="Duetto Theme Files (*.dth);;All Files (*)")
         data = self.DeSerializeTheme(filename)
@@ -281,11 +282,11 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             print('  data:      %s' % str(data))
             print('  ----------')
 
-    @QtCore.pyqtSlot()
+    @pyqtSlot()
     def on_actionSegmentation_And_Clasification_triggered(self):
         segWindow = SegmentationAndClasificationWindow(parent=self, signal=self.widget.signalProcessor.signal)
 
-    @QtCore.pyqtSlot()
+    @pyqtSlot()
     def on_actionResampling_triggered(self):
         resamplingDialog = sdialog.Ui_Dialog()
         resamplingDialogWindow = InsertSilenceDialog()
@@ -304,19 +305,19 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                     QMessageBox.warning(QMessageBox(), "Error",
                                         "Sampling rate should be less than " + str(MAX_SAMPLING_RATE))
 
-    @QtCore.pyqtSlot()
+    @pyqtSlot()
     def on_actionCut_triggered(self):
         self.widget.cut()
 
-    @QtCore.pyqtSlot()
+    @pyqtSlot()
     def on_actionCopy_triggered(self):
         self.widget.copy()
 
-    @QtCore.pyqtSlot()
+    @pyqtSlot()
     def on_actionPaste_triggered(self):
         self.widget.paste()
 
-    @QtCore.pyqtSlot()
+    @pyqtSlot()
     def on_actionSmart_Scale_triggered(self):
         scaleDialog = cvdialog.Ui_Dialog()
         scaleDialogWindow = InsertSilenceDialog()
@@ -334,7 +335,7 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 "OUT" if scaleDialog.rbuttonFadeOut.isChecked() else "")
             self.widget.scale(factor, function, fade)
 
-    @QtCore.pyqtSlot()
+    @pyqtSlot()
     def on_actionInsert_Silence_triggered(self):
         silenceDialog = sdialog.Ui_Dialog()
         silenceDialogWindow = InsertSilenceDialog()
@@ -342,7 +343,7 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         if silenceDialogWindow.exec_():
             self.widget.insertSilence(silenceDialog.insertSpinBox.value())
 
-    @QtCore.pyqtSlot()
+    @pyqtSlot()
     def on_actionGenerate_Pink_Noise_triggered(self):
         whiteNoiseDialog = sdialog.Ui_Dialog()
         whiteNoiseDialogWindow = InsertSilenceDialog()
@@ -354,7 +355,7 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             if type_ != None:
                 self.widget.insertPinkNoise(whiteNoiseDialog.insertSpinBox.value(), type_, Fc, Fl, Fu)
 
-    @QtCore.pyqtSlot()
+    @pyqtSlot()
     def on_actionGenerate_White_Noise_triggered(self):
         whiteNoiseDialog = sdialog.Ui_Dialog()
         whiteNoiseDialogWindow = InsertSilenceDialog()
@@ -388,21 +389,21 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 Fu = filterDialog.spinBoxBandStopFu.value()
         return type_, Fc, Fl, Fu
 
-    @QtCore.pyqtSlot()
+    @pyqtSlot()
     def on_actionFilter_triggered(self):
         type_, Fc, Fl, Fu = self.filter_helper()
         if type_ is not None:
             self.widget.filter(type_, Fc, Fl, Fu)
 
-    @QtCore.pyqtSlot()
+    @pyqtSlot()
     def on_actionSilence_triggered(self):
         self.widget.silence()
 
-    @QtCore.pyqtSlot()
+    @pyqtSlot()
     def on_actionNormalize_triggered(self):
         self.widget.normalize()
 
-    @QtCore.pyqtSlot()
+    @pyqtSlot()
     def on_action_Reverse_triggered(self):
         self.widget.reverse()
 
@@ -413,24 +414,24 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                        min(minx + self.NFFT_pow, len(self.widget.signalProcessor.signal.data)))
             win.updatePowSpectrumInterval(self.widget.signalProcessor.signal.data[minx:maxx])
 
-    @QtCore.pyqtSlot()
+    @pyqtSlot()
     def on_actionZoomIn_triggered(self):
         self.widget.zoomIn()
 
-    @QtCore.pyqtSlot()
+    @pyqtSlot()
     def on_actionZoom_out_triggered(self):
         self.widget.zoomOut()
 
-    @QtCore.pyqtSlot()
+    @pyqtSlot()
     def on_actionZoom_out_entire_file_triggered(self):
         self.widget.zoomNone()
 
-    @QtCore.pyqtSlot()
+    @pyqtSlot()
     def on_actionClear_Spectogram_triggered(self):
         #self.widget.update_spectrogram(self.NFFT_spec, self.overlap_spec)
         pass
 
-    @QtCore.pyqtSlot()
+    @pyqtSlot()
     def on_actionSettings_triggered(self):
         if self.dock_settings.isVisible():
             self.dock_settings.setVisible(False)
@@ -438,7 +439,7 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             self.dock_settings.setVisible(True)
             self.dock_settings.setFloating(False)
 
-    @QtCore.pyqtSlot()
+    @pyqtSlot()
     def on_actionHighest_instant_frequency_triggered(self):
         #print self.widget.zmax, self.widget.zmin,self.widget.minIntervalLength
         #
@@ -452,7 +453,7 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         #else : self.widget.plot_highest_freq(self.widget.zmin, self.widget.zmax)
         pass
 
-    @QtCore.pyqtSlot()
+    @pyqtSlot()
     def on_actionPower_Spectrum_triggered(self):
         dg_pow_spec = PowerSpectrumWindow(self,self.pow_spec_plotColor, self.pow_spec_backg, self.pow_spec_gridx, self.pow_spec_gridy)
 
@@ -463,20 +464,20 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         self.pow_spec_windows.append(dg_pow_spec)
 
-    @QtCore.pyqtSlot()
+    @pyqtSlot()
     def on_actionSelect_all_triggered(self):
         self.widget.updateSpanSelector()
 
-    @QtCore.pyqtSlot()
+    @pyqtSlot()
     def on_btnosc_apply_clicked(self):
         pass
 
-    @QtCore.pyqtSlot()
+    @pyqtSlot()
     def on_btnpow_apply_clicked(self):
         self.NFFT_pow = int(self.cbx_fftsize_pow.currentText())
         self.window_pow = self.cbx_fftwindow_pow.currentText()
 
-    @QtCore.pyqtSlot()
+    @pyqtSlot()
     def on_btnspec_apply_clicked(self):
         self.NFFT_spec = int(self.cbx_fftsize.currentText())
         self.window_spec = self.cbx_fftwindow.currentText()
@@ -488,16 +489,28 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.widget.refresh()
         # falta actualizar la ventana
 
-    @QtCore.pyqtSlot()
+    @pyqtSlot()
     def on_actionSpectogram_Settings_triggered(self):
         self.dock_spec_settings.setVisible(True)
         self.dock_spec_settings.setFloating(False)
 
-    @QtCore.pyqtSlot()
+    @pyqtSlot()
     def on_actionEnvelope_triggered(self):
         self.widget.envelope()
 
-    @QtCore.pyqtSlot()
+    @pyqtSlot()
+    def on_actionNew_triggered(self):
+        nfd = NewFileDialog(parent=self)
+        if nfd.exec_():
+            self.widget.visibleOscilogram = True
+            self.widget.visibleSpectrogram = True
+            self.widget.specgramSettings.NFFT = 512
+            self.widget.specgramSettings.overlap = 90
+            self.widget.openNew(nfd.SamplingRate, nfd.BitDepth, nfd.Duration, nfd.WhiteNoise)
+            self.setWindowTitle("Duetto Sound Lab - (new)")
+            self.first = True
+
+    @pyqtSlot()
     def on_actionOpen_triggered(self):
         self.actionHighest_instant_frequency.setChecked(False)
         f = QFileDialog.getOpenFileName(self, "Select a file to open",
@@ -509,49 +522,73 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             self.widget.specgramSettings.overlap = 90
             self.widget.open(f)
             self.setWindowTitle("Duetto Sound Lab - " + self.widget.signalProcessor.signal.name())
+
+            data = self.DeSerializeTheme('Themes\\another.dth')
+
+            self.widget.osc_background = data.osc_background
+            self.widget.osc_color = data.osc_plot
+            self.widget.osc_gridx = data.osc_GridX
+            self.widget.osc_gridy = data.osc_GridY
+            self.pow_spec_backg = data.pow_Back
+            self.pow_spec_plotColor = data.pow_Plot
+            self.pow_spec_gridx = data.pow_GridX
+            self.pow_spec_gridy = data.pow_GridY
+            self.hist.item.gradient.restoreState(data.colorBarState)
+            self.hist.item.region.setRegion([data.histRange[0],data.histRange[1]])
+            self.hist.item.update()
+            self.widget.visualChanges = True
+            self.widget.refresh(dataChanged=True,updateOscillogram=True,updateSpectrogram=False)
+            self.ParamTree.param('Oscillogram Settings').param('Grid').param('X').setValue(self.widget.osc_gridx)
+            self.ParamTree.param('Oscillogram Settings').param('Grid').param('Y').setValue(self.widget.osc_gridy)
+            self.ParamTree.param('Oscillogram Settings').param('Background color').setValue(self.widget.osc_background)
+            self.ParamTree.param('Oscillogram Settings').param('Plot color').setValue(self.widget.osc_color)
+            self.ParamTree.param('Power Spectrum Settings').param('Grid').param('X').setValue(self.pow_spec_gridx)
+            self.ParamTree.param('Power Spectrum Settings').param('Grid').param('Y').setValue(self.pow_spec_gridy)
+            self.ParamTree.param('Power Spectrum Settings').param('Background color').setValue(self.pow_spec_backg)
+            self.ParamTree.param('Power Spectrum Settings').param('Plot color').setValue(self.pow_spec_plotColor)
             self.first = True
 
-    @QtCore.pyqtSlot()
+    @pyqtSlot()
     def on_actionSave_triggered(self):
         fname = unicode(QFileDialog.getSaveFileName())
         if fname:
             self.widget.save(fname)
 
-    @QtCore.pyqtSlot()
+    @pyqtSlot()
     def on_actionPlay_Sound_triggered(self):
         self.widget.play()
 
-    @QtCore.pyqtSlot()
+    @pyqtSlot()
     def on_actionStop_Sound_triggered(self):
         self.widget.stop()
 
-    @QtCore.pyqtSlot()
+    @pyqtSlot()
     def on_actionRecord_triggered(self):
         self.widget.record()
 
-    @QtCore.pyqtSlot()
+    @pyqtSlot()
     def on_actionPause_Sound_triggered(self):
         self.widget.pause()
 
-    @QtCore.pyqtSlot()
+    @pyqtSlot()
     def on_actionCombined_triggered(self):
         self.widget.visibleOscilogram=True
         self.widget.visibleSpectrogram=True
         self.widget.refresh(dataChanged=False)
 
-    @QtCore.pyqtSlot()
+    @pyqtSlot()
     def on_actionSpectogram_triggered(self):
         self.widget.visibleOscilogram=False
         self.widget.visibleSpectrogram=True
         self.widget.refresh(dataChanged=False)
 
-    @QtCore.pyqtSlot()
+    @pyqtSlot()
     def on_actionOscilogram_triggered(self):
         self.widget.visibleOscilogram=True
         self.widget.visibleSpectrogram=False
         self.widget.refresh(dataChanged=False)
 
-    @QtCore.pyqtSlot()
+    @pyqtSlot()
     def on_actionSaveColorBar_triggered(self):
         state = self.widget.axesSpecgram.getHistogramWidget().item.gradient.saveState()
         path = QtGui.QFileDialog.getSaveFileName(self, "Save Color Bar", filter="Bar Files (*.bar);;All Files (*)")
@@ -560,7 +597,7 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             fh.write(state.__repr__())
             fh.close()
 
-    @QtCore.pyqtSlot()
+    @pyqtSlot()
     def on_actionLoadColorBar_triggered(self):
         path = QtGui.QFileDialog.getOpenFileName(self, "Load Color Bar", filter="Bar Files (*.bar);;All Files (*)")
         if path != "":

@@ -90,6 +90,7 @@ class Ui_DuettoMainWindow(object):
         DuettoMainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(1), self.dock_settings)
         self.toolBar = QtGui.QToolBar(DuettoMainWindow)
         self.toolBar.setStyleSheet(_fromUtf8(""))
+        self.toolBar.setIconSize(QtCore.QSize(20, 20))
         self.toolBar.setObjectName(_fromUtf8("toolBar"))
         DuettoMainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
         self.actionOpen = QtGui.QAction(DuettoMainWindow)

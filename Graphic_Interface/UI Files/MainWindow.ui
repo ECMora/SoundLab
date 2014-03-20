@@ -220,6 +220,12 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
    <property name="styleSheet">
     <string notr="true"/>
    </property>
+   <property name="iconSize">
+    <size>
+     <width>20</width>
+     <height>20</height>
+    </size>
+   </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
    </attribute>

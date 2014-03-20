@@ -15,7 +15,10 @@ class SpecXAxis(pg.AxisItem):
         self.setLabel(text="Time (s)")
         if self.bins is None:
             return values
-        return self.bins[values]
+        r = self.bins[values]
+        for i in range(len(r)):
+            r[i] = "{:.2f}".format(r[i])
+        return r
     def refresh(self,bins):
         self.bins = bins
 
@@ -24,12 +27,12 @@ class SpecYAxis(pg.AxisItem):
         pg.AxisItem.__init__(self,*args,**kwargs)
         self.freqs = None
     def tickStrings(self, values, scale, spacing):
-        #self.setLabel(text="KHz")
+        self.setLabel(text="KHz")
         if self.freqs is None:
             return values
-        r  = self.freqs[values]
+        r = self.freqs[values]
         for i in range(len(r)):
-            r[i] = (int((r[i]/100)))/10.0
+            r[i] = "{:.3f}".format(r[i]/1000.0)
         return r
     def refresh(self,freqs):
         self.freqs = freqs
