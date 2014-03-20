@@ -637,7 +637,7 @@ class QSignalVisualizerWidget(QWidget):
         #self.axesSpecgram.viewBox.sigRangeChanged.disconnect()
         self.clear()
         if filename:
-            self.signalProcessor.signal.open(filename)
+            self.signalProcessor.signal = WavFileSignal(filename)
         else:
             self.signalProcessor.signal.openNew(samplingRate, duration, bitDepth, whiteNoise)
         self.cursors = []

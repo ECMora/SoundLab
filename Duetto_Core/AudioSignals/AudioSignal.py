@@ -60,7 +60,6 @@ class AudioSignal:
                              % (channel, self.channels))
         self._currentChannel = channel
         self.data = self.channelData[channel]
-<<<<<<< HEAD
 
     def get_currentChannel(self):
         return self._currentChannel
