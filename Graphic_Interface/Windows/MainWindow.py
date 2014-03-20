@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\Gaby\Desktop\DuettoSystem\Graphic_Interface\UI Files\MainWindow.ui'
 #
-# Created: Wed Mar 19 10:05:59 2014
+# Created: Wed Mar 19 23:13:15 2014
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -25,9 +25,7 @@ class Ui_DuettoMainWindow(object):
         sizePolicy.setHeightForWidth(DuettoMainWindow.sizePolicy().hasHeightForWidth())
         DuettoMainWindow.setSizePolicy(sizePolicy)
         DuettoMainWindow.setAutoFillBackground(False)
-        DuettoMainWindow.setStyleSheet(_fromUtf8("font: 10pt \"Arial\";\n"
-"color: rgb(0, 0, 0);\n"
-"padding:1%;"))
+        DuettoMainWindow.setStyleSheet(_fromUtf8(""))
         self.centralwidget = QtGui.QWidget(DuettoMainWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.verticalLayout_2 = QtGui.QVBoxLayout(self.centralwidget)
@@ -46,40 +44,30 @@ class Ui_DuettoMainWindow(object):
         self.verticalLayout_2.addWidget(self.horizontalScrollBar)
         DuettoMainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(DuettoMainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 24))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 21))
         self.menubar.setAutoFillBackground(False)
-        self.menubar.setStyleSheet(_fromUtf8("background-color:rgb(109, 152, 165);\n"
-"alternate-background-color: rgb(109, 152, 165);\n"
-""))
+        self.menubar.setStyleSheet(_fromUtf8(""))
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuFile = QtGui.QMenu(self.menubar)
+        self.menuFile.setGeometry(QtCore.QRect(208, 128, 143, 182))
         self.menuFile.setAutoFillBackground(False)
-        self.menuFile.setStyleSheet(_fromUtf8("background-color: rgb(174, 200, 255);\n"
-"selection-background-color:rgb(170, 170, 255)"))
+        self.menuFile.setStyleSheet(_fromUtf8(""))
         self.menuFile.setTearOffEnabled(False)
         self.menuFile.setObjectName(_fromUtf8("menuFile"))
         self.menuTools = QtGui.QMenu(self.menubar)
-        self.menuTools.setStyleSheet(_fromUtf8("background-color:rgb(174, 200, 255);\n"
-"selection-background-color:rgb(170, 170, 255)"))
+        self.menuTools.setStyleSheet(_fromUtf8(""))
         self.menuTools.setObjectName(_fromUtf8("menuTools"))
         self.menuEdit = QtGui.QMenu(self.menubar)
-        self.menuEdit.setStyleSheet(_fromUtf8("background-color: rgb(174, 200, 255);\n"
-"selection-background-color:rgb(170, 170, 255)"))
+        self.menuEdit.setStyleSheet(_fromUtf8(""))
         self.menuEdit.setObjectName(_fromUtf8("menuEdit"))
         self.menuGenerate = QtGui.QMenu(self.menuEdit)
         self.menuGenerate.setObjectName(_fromUtf8("menuGenerate"))
         self.menuView = QtGui.QMenu(self.menubar)
-        self.menuView.setStyleSheet(_fromUtf8("background-color:rgb(174, 200, 255);\n"
-"selection-background-color:rgb(170, 170, 255)"))
+        self.menuView.setStyleSheet(_fromUtf8(""))
         self.menuView.setObjectName(_fromUtf8("menuView"))
         self.menuSound = QtGui.QMenu(self.menubar)
-        self.menuSound.setStyleSheet(_fromUtf8("background-color:rgb(174, 200, 255);\n"
-"selection-background-color:rgb(170, 170, 255)"))
+        self.menuSound.setStyleSheet(_fromUtf8(""))
         self.menuSound.setObjectName(_fromUtf8("menuSound"))
-        self.menuView_2 = QtGui.QMenu(self.menubar)
-        self.menuView_2.setStyleSheet(_fromUtf8("background-color: rgb(174, 200, 255);\n"
-"selection-background-color:rgb(170, 170, 255)"))
-        self.menuView_2.setObjectName(_fromUtf8("menuView_2"))
         DuettoMainWindow.setMenuBar(self.menubar)
         self.statusbar = QtGui.QStatusBar(DuettoMainWindow)
         self.statusbar.setObjectName(_fromUtf8("statusbar"))
@@ -101,8 +89,7 @@ class Ui_DuettoMainWindow(object):
         self.dock_settings.setWidget(self.osc_settings_contents)
         DuettoMainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(1), self.dock_settings)
         self.toolBar = QtGui.QToolBar(DuettoMainWindow)
-        self.toolBar.setStyleSheet(_fromUtf8("background-color:rgb(109, 152, 165);\n"
-"border-color: rgb(170, 170, 255);"))
+        self.toolBar.setStyleSheet(_fromUtf8(""))
         self.toolBar.setObjectName(_fromUtf8("toolBar"))
         DuettoMainWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
         self.actionOpen = QtGui.QAction(DuettoMainWindow)
@@ -238,9 +225,15 @@ class Ui_DuettoMainWindow(object):
         self.actionEnvelope.setObjectName(_fromUtf8("actionEnvelope"))
         self.actionGenerate_Pink_Noise = QtGui.QAction(DuettoMainWindow)
         self.actionGenerate_Pink_Noise.setObjectName(_fromUtf8("actionGenerate_Pink_Noise"))
+        self.actionSave_theme = QtGui.QAction(DuettoMainWindow)
+        self.actionSave_theme.setObjectName(_fromUtf8("actionSave_theme"))
+        self.actionLoad_Theme = QtGui.QAction(DuettoMainWindow)
+        self.actionLoad_Theme.setObjectName(_fromUtf8("actionLoad_Theme"))
         self.menuFile.addAction(self.actionNew)
         self.menuFile.addAction(self.actionOpen)
         self.menuFile.addAction(self.actionSave)
+        self.menuFile.addAction(self.actionLoad_Theme)
+        self.menuFile.addAction(self.actionSave_theme)
         self.menuFile.addAction(self.actionExit)
         self.menuTools.addAction(self.actionZoomIn)
         self.menuTools.addAction(self.actionZoom_out)
@@ -274,14 +267,11 @@ class Ui_DuettoMainWindow(object):
         self.menuSound.addAction(self.actionStop_Sound)
         self.menuSound.addAction(self.actionPause_Sound)
         self.menuSound.addAction(self.actionRecord)
-        self.menuView_2.addAction(self.actionHighest_instant_frequency)
-        self.menuView_2.addAction(self.actionClear_Spectogram)
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuEdit.menuAction())
         self.menubar.addAction(self.menuTools.menuAction())
         self.menubar.addAction(self.menuView.menuAction())
         self.menubar.addAction(self.menuSound.menuAction())
-        self.menubar.addAction(self.menuView_2.menuAction())
         self.toolBar.addAction(self.actionNew)
         self.toolBar.addAction(self.actionOpen)
         self.toolBar.addAction(self.actionSave)
@@ -318,7 +308,6 @@ class Ui_DuettoMainWindow(object):
         self.menuGenerate.setTitle(QtGui.QApplication.translate("DuettoMainWindow", "Generate", None, QtGui.QApplication.UnicodeUTF8))
         self.menuView.setTitle(QtGui.QApplication.translate("DuettoMainWindow", "Analysis", None, QtGui.QApplication.UnicodeUTF8))
         self.menuSound.setTitle(QtGui.QApplication.translate("DuettoMainWindow", "Sound", None, QtGui.QApplication.UnicodeUTF8))
-        self.menuView_2.setTitle(QtGui.QApplication.translate("DuettoMainWindow", "View", None, QtGui.QApplication.UnicodeUTF8))
         self.dock_settings.setWindowTitle(QtGui.QApplication.translate("DuettoMainWindow", "Settings", None, QtGui.QApplication.UnicodeUTF8))
         self.toolBar.setWindowTitle(QtGui.QApplication.translate("DuettoMainWindow", "toolBar", None, QtGui.QApplication.UnicodeUTF8))
         self.actionOpen.setText(QtGui.QApplication.translate("DuettoMainWindow", "Open", None, QtGui.QApplication.UnicodeUTF8))
@@ -342,6 +331,7 @@ class Ui_DuettoMainWindow(object):
         self.actionPlay_Sound.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Space", None, QtGui.QApplication.UnicodeUTF8))
         self.actionStop_Sound.setText(QtGui.QApplication.translate("DuettoMainWindow", "Stop Sound", None, QtGui.QApplication.UnicodeUTF8))
         self.actionPause_Sound.setText(QtGui.QApplication.translate("DuettoMainWindow", "Pause Sound", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionPause_Sound.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "P", None, QtGui.QApplication.UnicodeUTF8))
         self.actionZoom_out_entire_file.setText(QtGui.QApplication.translate("DuettoMainWindow", "Zoom out entire file", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSave.setText(QtGui.QApplication.translate("DuettoMainWindow", "Save as", None, QtGui.QApplication.UnicodeUTF8))
         self.actionCopy.setText(QtGui.QApplication.translate("DuettoMainWindow", "Copy", None, QtGui.QApplication.UnicodeUTF8))
@@ -367,6 +357,8 @@ class Ui_DuettoMainWindow(object):
         self.actionSegmentation_And_Clasification.setText(QtGui.QApplication.translate("DuettoMainWindow", "Segmentation And Clasification", None, QtGui.QApplication.UnicodeUTF8))
         self.actionEnvelope.setText(QtGui.QApplication.translate("DuettoMainWindow", "Envelope", None, QtGui.QApplication.UnicodeUTF8))
         self.actionGenerate_Pink_Noise.setText(QtGui.QApplication.translate("DuettoMainWindow", "Pink Noise", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSave_theme.setText(QtGui.QApplication.translate("DuettoMainWindow", "Save theme", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionLoad_Theme.setText(QtGui.QApplication.translate("DuettoMainWindow", "Load Theme", None, QtGui.QApplication.UnicodeUTF8))
 
 from Graphic_Interface.Widgets.QSignalVisualizerWidget import QSignalVisualizerWidget
 import icons_rc

@@ -64,19 +64,21 @@ class DuettoImageWidget(GraphicsView):
     IntervalSpecChanged = pyqtSignal(int, int)
 
     def mouseMoveEvent(self, event):
-       pg.GraphicsView.mouseMoveEvent(self,event)
+       pg.ImageView.mouseMoveEvent(self,event)
        if self.parent().visibleOscilogram:
            if self.mousePressed and not self.mouseInsideZoomArea(event.x()):
 
                now = self.fromCanvasToClient(event.x())
                if self.fromCanvasToClient(self.lastX) > now:
                     self.zoomRegion.setRegion([now,self.fromCanvasToClient(self.lastX)])
-                    self.IntervalSpecChanged.emit(self.fromClientToCanvas(now),self.lastX)
+                    self.IntervalSpecChanged.emit(now,self.fromCanvasToClient(self.lastX))
                else:
                    self.zoomRegion.setRegion([self.fromCanvasToClient(self.lastX),now])
-                   self.IntervalSpecChanged.emit(self.lastX,self.fromClientToCanvas(now))
+                   self.IntervalSpecChanged.emit(self.fromCanvasToClient(self.lastX),now)
                self.zoomRegion.lineMoved()
            if not self.mousePressed and self.mouseInsideZoomArea(event.x()):
+               rgn = self.zoomRegion.getRegion()
+               self.IntervalSpecChanged.emit(rgn[0],rgn[1])
                self.setCursor(QCursor(QtCore.Qt.OpenHandCursor))
            elif not self.mouseInsideZoomArea(event.x()):
                self.setCursor(QCursor(QtCore.Qt.ArrowCursor))
@@ -89,11 +91,11 @@ class DuettoImageWidget(GraphicsView):
     def mousePressEvent(self, event):
          if(not self.zoomRegion in self.items()):
              self.zoomRegion.setRegion([self.fromCanvasToClient(event.x()),self.fromCanvasToClient(event.x())])
-             self.IntervalSpecChanged.emit(event.x(),event.x())
+             self.IntervalSpecChanged.emit(self.fromCanvasToClient(event.x()),self.fromCanvasToClient(event.x()))
              self.update()
          elif not self.mouseInsideZoomArea(event.x()):
              self.zoomRegion.setRegion([self.fromCanvasToClient(event.x()),self.fromCanvasToClient(event.x())])
-             self.IntervalSpecChanged.emit(event.x(),event.x())
+             self.IntervalSpecChanged.emit(self.fromCanvasToClient(event.x()),self.fromCanvasToClient(event.x()))
              #self.setZoomRegionVisible(True)
              self.update()
          pg.GraphicsView.mousePressEvent(self,event)
@@ -111,10 +113,10 @@ class DuettoImageWidget(GraphicsView):
              self.lastX = minx
 
     def mouseDoubleClickEvent(self, event):
-        pg.GraphicsView.mouseDoubleClickEvent(self,event)
+        pg.ImageView.mouseDoubleClickEvent(self,event)
         if self.mouseInsideZoomArea(event.x()) and self.makeZoom is not None and callable(self.makeZoom):
             rgn = self.zoomRegion.getRegion()
-            self.viewBox.makeZoom(rgn[0],rgn[1])
+            self.makeZoom(rgn[0],rgn[1])
             self.zoomRegion.setRegion([rgn[0],rgn[0]])
             self.IntervalSpecChanged.emit(rgn[0],rgn[0])
             self.zoomRegion.lineMoved()

@@ -15,10 +15,24 @@ from MainWindow import Ui_DuettoMainWindow
 from Graphic_Interface.Widgets.MyPowerSpecWindow import PowerSpectrumWindow
 from Graphic_Interface.Dialogs import InsertSilenceDialog as sdialog, FilterOptionsDialog as filterdg, ChangeVolumeDialog as cvdialog
 from PyQt4 import QtCore, QtGui
+import pickle
 
 MIN_SAMPLING_RATE = 1000
 MAX_SAMPLING_RATE = 2000000
 
+
+class SerializedData:
+    def __init__(self,oscBack,oscPlot,oscGridX,oscGridY,powBack,powPlot,powGridX,powGridY,colorbar,region):
+        self.osc_background = oscBack
+        self.osc_plot = oscPlot
+        self.osc_GridX =oscGridX
+        self.osc_GridY = oscGridY
+        self.pow_Back = powBack
+        self.pow_Plot = powPlot
+        self.pow_GridX = powGridX
+        self.pow_GridY = powGridY
+        self.colorBarState = colorbar
+        self.histRange = region
 
 class InsertSilenceDialog(sdialog.Ui_Dialog, QDialog):
     pass
@@ -30,7 +44,6 @@ class ChangeVolumeDialog(cvdialog.Ui_Dialog, QDialog):
 
 class FilterDialog(filterdg.Ui_Dialog, QDialog):
     pass
-
 
 class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     dropchanged = QtCore.pyqtSignal(QtCore.QMimeData)
@@ -116,6 +129,57 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.loadAllColorBars()
         self.setAcceptDrops(True)
 
+    def SerializeTheme(self,filename):
+        data = SerializedData(self.widget.osc_background,self.widget.osc_color,self.widget.osc_gridx,
+                              self.widget.osc_gridy,self.pow_spec_backg,self.pow_spec_plotColor,self.pow_spec_gridx,
+                              self.pow_spec_gridy,self.hist.item.gradient.saveState(),self.hist.item.region.getRegion())
+        file = open(filename,'wb')
+        pickle.dump(data,file)
+        file.close()
+
+    def DeSerializeTheme(self,filename):
+        file = open(filename,'rb')
+        data = pickle.load(file)
+        file.close()
+        return data
+
+    @QtCore.pyqtSlot()
+    def on_actionSave_theme_triggered(self):
+        filename = QFileDialog.getSaveFileName(parent=self,caption="Save Theme",filter="Duetto Theme Files (*.dth);;All Files (*)")
+        self.SerializeTheme(filename)
+
+    @QtCore.pyqtSlot()
+    def on_actionLoad_Theme_triggered(self):
+        filename = QFileDialog.getOpenFileName(parent=self, caption="Load Theme",filter="Duetto Theme Files (*.dth);;All Files (*)")
+        data = self.DeSerializeTheme(filename)
+
+        self.widget.osc_background = data.osc_background
+        self.widget.osc_color = data.osc_plot
+        self.widget.osc_gridx = data.osc_GridX
+        self.widget.osc_gridy = data.osc_GridY
+        self.pow_spec_backg = data.pow_Back
+        self.pow_spec_plotColor = data.pow_Plot
+        self.pow_spec_gridx = data.pow_GridX
+        self.pow_spec_gridy = data.pow_GridY
+        self.hist.item.gradient.restoreState(data.colorBarState)
+        self.hist.item.region.setRegion([data.histRange[0],data.histRange[1]])
+        self.hist.item.update()
+        self.widget.visualChanges = True
+        #self.hist.item.region.sigRegionChanged.emit(self)
+
+        self.widget.refresh(dataChanged=True,updateOscillogram=True,updateSpectrogram=False)
+        self.ParamTree.param('Oscillogram Settings').param('Grid').param('X').setValue(self.widget.osc_gridx)
+        self.ParamTree.param('Oscillogram Settings').param('Grid').param('Y').setValue(self.widget.osc_gridy)
+        self.ParamTree.param('Oscillogram Settings').param('Background color').setValue(self.widget.osc_background)
+        self.ParamTree.param('Oscillogram Settings').param('Plot color').setValue(self.widget.osc_color)
+        self.ParamTree.param('Power Spectrum Settings').param('Grid').param('X').setValue(self.pow_spec_gridx)
+        self.ParamTree.param('Power Spectrum Settings').param('Grid').param('Y').setValue(self.pow_spec_gridy)
+        self.ParamTree.param('Power Spectrum Settings').param('Background color').setValue(self.pow_spec_backg)
+        self.ParamTree.param('Power Spectrum Settings').param('Plot color').setValue(self.pow_spec_plotColor)
+
+
+    #region Drag and Drop file
+
     def dragEnterEvent(self, event):
         event.acceptProposedAction()
         self.dropchanged.emit(event.mimeData())
@@ -141,6 +205,9 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     def dragLeaveEvent(self, event):
         event.accept()
 
+
+    #endregion
+
     def change(self, param, changes):
         print("tree changes:")
         pow = False
@@ -163,6 +230,8 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
             elif childName == 'Spectrogram Settings.Background color':
                 self.widget.spec_background = data
+                self.widget.visualChanges = True
+                self.widget.refresh(dataChanged=True,updateOscillogram=False,updateSpectrogram=True)
 
             elif childName == 'Spectrogram Settings.ColorMap':
                 self.widget.axesSpecgram.getHistogramWidget().item._pixelVectorCache.append(data)
@@ -197,11 +266,11 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             elif childName == 'Oscillogram Settings.Grid.X':
                 self.widget.osc_gridx = data
                 self.widget.visualChanges = True
-                self.widget.refresh(dataChanged=False, updateOscillogram=False, updateSpectrogram=False)
+                self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
             elif childName == 'Oscillogram Settings.Grid.Y':
                 self.widget.osc_gridy = data
                 self.widget.visualChanges = True
-                self.widget.refresh(dataChanged=False, updateOscillogram=False, updateSpectrogram=False)
+                self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
             elif childName == 'Oscillogram Settings.Plot color':
                 self.widget.osc_color = data
                 self.widget.visualChanges = True

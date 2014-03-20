@@ -30,12 +30,14 @@ class DuettoPlotWidget(pg.PlotWidget):
                now = self.fromCanvasToClient(event.x())
                if self.fromCanvasToClient(self.lastX) > now:
                     self.zoomRegion.setRegion([now,self.fromCanvasToClient(self.lastX)])
-                    self.IntervalOscChanged.emit(self.fromClientToCanvas(now),self.lastX)
+                    self.IntervalOscChanged.emit(now,self.fromCanvasToClient(self.lastX))
                else:
                    self.zoomRegion.setRegion([self.fromCanvasToClient(self.lastX),now])
-                   self.IntervalOscChanged.emit(self.lastX,self.fromClientToCanvas(now))
+                   self.IntervalOscChanged.emit(self.fromCanvasToClient(self.lastX),now)
                self.zoomRegion.lineMoved()
            if not self.mousePressed and self.mouseInsideZoomArea(event.x()):
+               rgn = self.zoomRegion.getRegion()
+               self.IntervalOscChanged.emit(rgn[0],rgn[1])
                self.setCursor(QCursor(QtCore.Qt.OpenHandCursor))
            elif not self.mouseInsideZoomArea(event.x()):
                self.setCursor(QCursor(QtCore.Qt.ArrowCursor))
@@ -48,11 +50,11 @@ class DuettoPlotWidget(pg.PlotWidget):
     def mousePressEvent(self, event):
          if(not self.zoomRegion in self.items()):
              self.zoomRegion.setRegion([self.fromCanvasToClient(event.x()),self.fromCanvasToClient(event.x())])
-             self.IntervalOscChanged.emit(event.x(),event.x())
+             self.IntervalOscChanged.emit(self.fromCanvasToClient(event.x()),self.fromCanvasToClient(event.x()))
              self.update()
          elif not self.mouseInsideZoomArea(event.x()):
              self.zoomRegion.setRegion([self.fromCanvasToClient(event.x()),self.fromCanvasToClient(event.x())])
-             self.IntervalOscChanged.emit(event.x(),event.x())
+             self.IntervalOscChanged.emit(self.fromCanvasToClient(event.x()),self.fromCanvasToClient(event.x()))
 
              self.setZoomRegionVisible(True)
              self.update()
@@ -76,7 +78,6 @@ class DuettoPlotWidget(pg.PlotWidget):
             rgn = self.zoomRegion.getRegion()
             self.makeZoom(rgn[0],rgn[1])
             self.zoomRegion.setRegion([rgn[0],rgn[0]])
-
             self.IntervalOscChanged.emit(rgn[0],rgn[0])
             self.zoomRegion.lineMoved()
 
@@ -90,7 +91,6 @@ class DuettoPlotWidget(pg.PlotWidget):
             self.setCursor(QCursor(QtCore.Qt.ArrowCursor))
         self.mousePressed = False
         self.parent().emit(SIGNAL("IntervalChanged"))
-
 
     def mouseInsideZoomArea(self, xPixel):
         xIndex = self.fromCanvasToClient(xPixel)

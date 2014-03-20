@@ -29,7 +29,7 @@ from Duetto_Core.SignalProcessors.EditionSignalProcessor import EditionSignalPro
 from Duetto_Core.SpecgramSettings import SpecgramSettings
 from DuettoPlotWidget import DuettoPlotWidget
 from Graphic_Interface.Widgets.DuettoImageWidget import DuettoImageWidget
-
+import pickle
 
 BACK_COLOR = "gray"
 
@@ -45,8 +45,6 @@ class OscAxis(pg.AxisItem):
         return strns
     def setFrequency(self,rate):
         self.Fs = rate
-
-
 
 class QSignalVisualizerWidget(QWidget):
     """Class to represent the QSignalVisualizerWidget widget"""
@@ -77,15 +75,6 @@ class QSignalVisualizerWidget(QWidget):
         self.axesOscilogram.IntervalOscChanged.connect(self.updateSpecZoomRegion)
         self.axesSpecgram.IntervalSpecChanged.connect(self.updateOscZoomRegion)
 
-        # TODO: revisar cuando se ponga histograma
-        #self.axesSpecgram.ui.gridLayout.itemAtPosition(1, 1).widget().setVisible(False)
-        #self.axesSpecgram.ui.gridLayout.itemAtPosition(1, 2).widget().setVisible(False)
-        #action = self.axesSpecgram.ui.gridLayout.itemAtPosition(0, 1).widget().item.gradient.hsvAction
-        #action.triggered.disconnect()
-        #action.triggered.connect(self.SaveColorBar)
-        #action.setCheckable(False)
-        #action.setText("Save")
-
         #self.axesSpecgram.getView().enableAutoRange()
         layout = QVBoxLayout()
         layout.addWidget(self.axesOscilogram)
@@ -105,7 +94,7 @@ class QSignalVisualizerWidget(QWidget):
         self.axesSpecgram.zoomRegion.sigRegionChanged.connect(self.updatezoomcursor)
         #self.setLayout(layout)
         self.axesOscilogram.makeZoom = self.makeZoom # metodo a ejecutar si se produce un zoom
-
+        #self.axesSpecgram.makeZoom = self.makeZoom
         self.zoomStep = 1
         self.visualChanges = False
         self._visibleOscillogram = False
@@ -132,12 +121,22 @@ class QSignalVisualizerWidget(QWidget):
         self._doRefresh.connect(self._refresh)
         self.playing.connect(self.notifyPlayingCursor)
 
+
+
     def updateSpecZoomRegion(self,a,b):
-        self.axesSpecgram.zoomRegion.setRegion([self.axesSpecgram.fromCanvasToClient(a),self.axesSpecgram.fromCanvasToClient(b)])
+        min = self._from_osc_to_spec(a)
+        max = self._from_osc_to_spec(b)
+        print(min)
+        print(max)
+        self.axesSpecgram.zoomRegion.setRegion([min, max])
         self.axesSpecgram.update()
 
     def updateOscZoomRegion(self,a,b):
-        self.axesOscilogram.zoomRegion.setRegion([self.axesOscilogram.fromCanvasToClient(a),self.axesOscilogram.fromCanvasToClient(b)])
+        min = self._from_spec_to_osc(a)
+        max = self._from_spec_to_osc(b)
+        print(min)
+        print(max)
+        self.axesOscilogram.zoomRegion.setRegion([min, max])
         self.axesOscilogram.update()
     #region Sound
 
@@ -277,6 +276,7 @@ class QSignalVisualizerWidget(QWidget):
         self.visualChanges = True
         self.refresh(dataChanged=False)
         self.rangeChanged.emit(self.mainCursor.min, self.mainCursor.max, len(self.signalProcessor.signal.data))
+        self.axesSpecgram.zoomRegion.setRegion([0,0])
 
     def zoomIn(self):
         aux = (self.mainCursor.max - self.mainCursor.min) / (4 * self.zoomStep)
@@ -300,7 +300,7 @@ class QSignalVisualizerWidget(QWidget):
         self.changeRange(_min, _max)
         self.zoomCursor.max = self.zoomCursor.min
         self.axesOscilogram.zoomRegion.setRegion([self.zoomCursor.min,self.zoomCursor.max])
-
+        self.axesSpecgram.zoomRegion.setRegion([self._from_osc_to_spec(self.zoomCursor.min),self._from_osc_to_spec(self.zoomCursor.max)])
 
 
     def changeRange(self, left, right, emit=True, updateOscillogram=True, updateSpectrogram=True):
@@ -374,11 +374,11 @@ class QSignalVisualizerWidget(QWidget):
                                          autoDownsample=not partial, clipToView=partial)
 
             #self.axesOscilogram.setRange(xRange=(0, self.mainCursor.max - self.mainCursor.min))
-            #self.axesSpecgram.zoomRegion.setBounds([0, self.mainCursor.max-self.mainCursor.min])
+            self.axesSpecgram.zoomRegion.setBounds([0, self._from_osc_to_spec(self.mainCursor.max)])
             self.axesOscilogram.zoomRegion.setBounds([0, self.mainCursor.max])
             self.axesOscilogram.setZoomRegionVisible(True)
 
-            self.axesOscilogram.getPlotItem().showGrid(x=True, y=True)
+
             self.axesOscilogram.getPlotItem().showGrid(x=self.osc_gridx, y=self.osc_gridy)
             self.axesOscilogram.setBackground(self.osc_background)
 
@@ -423,7 +423,9 @@ class QSignalVisualizerWidget(QWidget):
 
     def clearZoomCursor(self):
         self.zoomCursor.min, self.zoomCursor.max = 0, 0
+
         self.axesOscilogram.zoomRegion.setBounds((self.mainCursor.min,self.mainCursor.min))
+        #self.axesSpecgram.zoomRegion.setBounds((self.mainCursor.min,self.mainCursor.min))
         self.axesOscilogram.setZoomRegionVisible(False)
 
     #endregion
