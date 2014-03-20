@@ -1,47 +1,71 @@
-from numpy import *
-import matplotlib.mlab as mlab
-from Duetto_Core.Detectors.ElementsDetectors.ElementsDetector import ElementsDetector
-from Duetto_Core.Detectors.ElementsDetectors.OneDimensionalElementsDetector import OneDimensionalElementsDetector
-from Duetto_Core.Segmentation.Elements import Element
+from collections import deque
+import numpy as np
+from math import log10
+from Duetto_Core.Cursors.RectangularCursor import RectangularCursor
+from Duetto_Core.Segmentation.Elements.TwoDimensionalElement import SpecgramElement
+from Duetto_Core.Detectors.Detector import Detector
 
 
-class TwoDimensionalElementsDetector(ElementsDetector):
-
+class TwoDimensionalElementsDetector(Detector):
     def __init__(self):
-        ElementsDetector.__init__(self)
-        self.one_dimensional_elements_detector = OneDimensionalElementsDetector()
-        self.specgram_elements_detector = self.two_dimensional_elements_detector
+        Detector.__init__(self)
+        self.regionsOverUmbral = []
+        self._nr, self._nc = 0, 0
+        self._dr, self._dc = [-1,0,1,0], [0,1,0,-1]
+        self._gt_tresh = np.ndarray((0, 0))
+        self.pxx = np.ndarray((0, 0))
+        self.markedPxx = self.pxx
 
-    def detect(self, signal, indexFrom=0, indexTo=-1, threshold=50, decay=1, minsize=2):
-            pass
+    def detect(self, signal, threshold, pxx, freqs, bins, minsize=(0, 0),
+               merge_factor=(1,1)):
+        if(signal is None):
+                return
+        #gets the  relevant regions in spectrogram
+        spec_resolution, temp_resoution = freqs[1] -freqs[0],bins[1]-bins[0]
+        #minsize came with the hz, sec of min size elements and its translated to index values in pxx for comparations
+        minsize = (max(1,minsize[0]/spec_resolution),max(1,minsize[1]/temp_resoution))
+        print("Min size "+str(minsize))
+        threshold = np.percentile(pxx,threshold)
+        print("Especgram trh "+str(threshold))
+        self.pxx = pxx
+        self._nr, self._nc = self.pxx.shape
+        self.markedPxx = np.zeros_like(self.pxx)
+        self._gt_tresh = pxx > threshold
+        gt_tresh_idx = np.argwhere(self._gt_tresh)
+        for i, j in gt_tresh_idx:
+            if self._gt_tresh[i, j]:
+                self.regionsOverUmbral.append([])
+                regionBounds = self._islandDelete(i, j, len(self.regionsOverUmbral))
+                if freqs[regionBounds[1]] - freqs[regionBounds[0]] < minsize[0] \
+                        and bins[regionBounds[3]] - bins[regionBounds[2]] < minsize[1]:
+                    for idxs in self.regionsOverUmbral.pop():
+                        self.markedPxx[idxs[0], idxs[1]] = 0
+                    continue
 
-    def two_dimensional_elements_detector(self, signal, indexFrom=0, indexTo = -1, threshold=50, NFFT=256):
-            #buscar maximos locales de frecuencia por intervalo de tiempo
-            #unir los maximos locales que esten "cercanos" mediante un concepto de distancia
-            #minLongitud en ms de los elementos detectados
+                print("**************************************************")
 
-            Pxx, freqs, bins = mlab.specgram(range(1000,2000)*sin(range(1000)),
-                                             NFFT, noverlap=128, sides="onesided",window=mlab.window_hanning)
+                if(regionBounds[1]-regionBounds[0]>minsize[0] or regionBounds[3]-regionBounds[2]>minsize[1]):
+                    print(regionBounds)
+                    rc = SpecgramElement(signal,pxx[regionBounds[0]: regionBounds[1]][regionBounds[2]:regionBounds[3]],freqs,regionBounds[0],regionBounds[1],bins,regionBounds[2],regionBounds[3])
+                    self.twodimensionalElements.append(rc)
 
-            distancefactor = Pxx.shape[0]*1./100  # 1 %
-            #select the elements in every piece of time
-            elements = array([[self.one_dimensional_elements_detector.one_dimensional_elements_detector(Pxx[1:, col])] for col in range(Pxx.shape[1])])
-            print(elements)
-            #build the elements by link the indices
-
-
-            elements = array([[Element(signal, indexFrom, indexTo, Pxx, bins, freqs, None, [e], i) for e in col] for i, col in enumerate(elements)])
-
-            identifiedElements = [el for el in [el2 for el2 in elements]]
-
-            return identifiedElements
-
-
-from Duetto_Core.AudioSignals.WavFileSignal import WavFileSignal
-
-wav = WavFileSignal()
-wav.open("..\\..\\ficheros de audio\\Clasif\c2.wav")
-d = TwoDimensionalElementsDetector()
-d.two_dimensional_elements_detector(wav)
+    def _islandDelete(self, r, c, element_number):
+        #deletes a boolean island in map with earth in the i, j position
+        #returns a tuple with the min row ,max row, min column, max column coordinates of the bool island
+        result = r, r, c, c
+        q = deque()
+        q.append((r, c))
+        self._gt_tresh[r, c] = False
+        while q:
+            r, c = q.popleft()
+            result = min(result[0], r), max(result[1], r), min(result[2], c), max(result[3], c)
+            self.markedPxx[r, c] = element_number
+            self.regionsOverUmbral[element_number - 1].append((r, c))
+            for d in range(len(self._dr)):
+                mr, mc = r + self._dr[d], c + self._dc[d]
+                if 0 <= mr < self._nr and 0 <= mc < self._nc and self._gt_tresh[mr, mc]:
+                    self._gt_tresh[mr, mc] = False
+                    q.append((mr, mc))
+        return result
 
 

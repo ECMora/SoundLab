@@ -3,7 +3,8 @@ import matplotlib.mlab as mlab
 from Duetto_Core.Detectors.Detector import Detector
 from Duetto_Core.Detectors.ElementsDetectors.ElementsDetector import ElementsDetector
 from Duetto_Core.SignalProcessors.SignalProcessor import envelope
-from Duetto_Core.Cursors.IntervalCursor import IntervalCursor
+
+from Duetto_Core.Segmentation.Elements.OneDimensionalElement import OscilogramElement
 import time
 
 
@@ -22,6 +23,9 @@ class OneDimensionalElementsDetector(ElementsDetector):
             merge_factor in ms
             threshold in dB from the max value
             """
+            if(signal is None):
+                return
+            print("Oscilogram trh "+str(threshold))
             if indexTo == -1:
                 indexTo = len(signal.data)
             decay = int(decay*signal.samplingRate/1000)  #salto para evitar caidas locales
@@ -38,7 +42,7 @@ class OneDimensionalElementsDetector(ElementsDetector):
                 merge_factor = merge_factor*signal.samplingRate/1000.0
             if minSize != 0:
                 minSize = minSize*signal.samplingRate/1000.0
-            self.intervals = [IntervalCursor(c[0], c[1]) for c in self.one_dimensional_elements_detector(signal.data[indexFrom : indexTo],threshold, minSize=minSize, decay=decay, softfactor=softfactor, merge_factor=merge_factor,secondThreshold=secondThreshold)]
+            self.oneDimensionalElements = [OscilogramElement(signal,c[0], c[1]) for c in self.one_dimensional_elements_detector(signal.data[indexFrom : indexTo],threshold, minSize=minSize, decay=decay, softfactor=softfactor, merge_factor=merge_factor,secondThreshold=secondThreshold)]
 
     def one_dimensional_elements_detector(self, data,threshold=0, minSize=1, decay=1, softfactor=10, merge_factor=0,secondThreshold=0):
         """
@@ -49,9 +53,6 @@ class OneDimensionalElementsDetector(ElementsDetector):
         soft_data = envelope(data, decay=decay)
         #make a moving average in data to soft rising edges
         soft_data = array([mean(soft_data[i-softfactor:i]) for i,_ in enumerate(soft_data, start=softfactor)])
-        max_value_above_umbral = max(soft_data)
-        if max_value_above_umbral < threshold:
-            threshold = int(threshold*1.1)
         regions = mlab.contiguous_regions(soft_data > threshold)
         if secondThreshold > 0:
             for i in range(len(regions)):

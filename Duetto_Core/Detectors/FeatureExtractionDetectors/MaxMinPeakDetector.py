@@ -8,11 +8,11 @@ class MaxMinPeakDetector(Detector):
 
     def detect(self,signal,indexFrom=0,indexTo=-1):
         #region MAX MIN PEAKS
-        self.pointers=[]
-        self.pointers.extend([PointerCursor(),PointerCursor()])
+        self.pointer2D=[]
+        self.pointer2D.extend([PointerCursor(),PointerCursor()])
         if(indexTo==-1):
             indexTo==len(signal.data)
-        _,self.pointers[0].index,_,self.pointers[1].index=self.maxMinPeaks(signal,indexFrom,indexTo)
+        _,self.pointer2D[0].index,_,self.pointer2D[1].index=self.maxMinPeaks(signal,indexFrom,indexTo)
 
 
 

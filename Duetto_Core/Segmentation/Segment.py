@@ -1,6 +1,5 @@
 from Duetto_Core.Segmentation.Elements import Element
 
-
 class Segment:
     """
     Defines a group of elements for their classification

@@ -65,7 +65,7 @@ class Cursor(Storable):
         arr=[]
         while(n>0):
             arr.insert(0,n%256)
-            n=n/256
+            n /= 256
         if(len(arr)<places):
             while(len(arr)<places):
                 arr.insert(0,0)

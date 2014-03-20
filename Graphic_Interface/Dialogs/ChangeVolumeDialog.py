@@ -102,3 +102,5 @@ class Ui_Dialog(object):
         self.rbuttonNormalize.setText(_translate("Dialog", "Normalize", None))
         self.label_2.setText(_translate("Dialog", "%", None))
 
+
+import re, sre_compile, sre_constants, sre_parse

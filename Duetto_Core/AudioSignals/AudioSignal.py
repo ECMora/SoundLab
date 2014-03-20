@@ -1,4 +1,5 @@
 from string import rfind
+from PyQt4.QtCore import pyqtSignal
 from PyQt4.QtGui import QMessageBox
 import pyaudio
 import numpy as np
@@ -45,8 +46,11 @@ class AudioSignal:
             x = rfind(str(self.path), "\\")
             y = rfind(str(self.path), "/")
             index = max(x, y)
-            if index > 0:
-                return self.path[index + 1:]
+
+            pointindex= rfind(str(self.path), ".")
+            pointindex = len(self.path) if pointindex == -1 else pointindex
+            if index > 0 and pointindex-index>1:
+                return self.path[index + 1:pointindex]
             else:
                 return ""
 
@@ -56,6 +60,7 @@ class AudioSignal:
                              % (channel, self.channels))
         self._currentChannel = channel
         self.data = self.channelData[channel]
+<<<<<<< HEAD
 
     def get_currentChannel(self):
         return self._currentChannel

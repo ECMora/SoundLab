@@ -203,3 +203,5 @@ class Ui_Dialog(object):
         self.btonaceptar.setText(_translate("Dialog", "Aceptar", None))
         self.btoncancelar.setText(_translate("Dialog", "Cancelar", None))
 
+
+import re, sre_compile, sre_constants, sre_parse

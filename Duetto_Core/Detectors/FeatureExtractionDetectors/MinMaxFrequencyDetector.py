@@ -26,5 +26,5 @@ class MinMaxFrequencyDetector(Detector):
 
         p1 = IntervalCursor(freqs[l],freqs[r])
         p1.visualOptions.vertical=False
-        self.intervals = [p1]
+        self.oneDimensionalElements = [p1]
 

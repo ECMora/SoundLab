@@ -9,13 +9,13 @@ class InflectionPointDetector(Detector):
         Detector.__init__(self)
 
     def detect(self, signal, indexFrom, indexTo):
-        self.pointers = [PointerCursor()]
-        self.pointers[0].visualOptions.vertical = True
-        self.pointers[0].visualOptions.oscilogramCursor = False
+        self.pointer2D = [PointerCursor()]
+        self.pointer2D[0].visualOptions.vertical = True
+        self.pointer2D[0].visualOptions.oscilogramCursor = False
         mfd = MaxFreqDetector()
         mfd.detect(signal, indexFrom, indexTo)
         data = [p.indexes[1] for p in mfd.pointers2D]
-        self.pointers[0].index = self._getInflectionPosition2(data)
+        self.pointer2D[0].index = self._getInflectionPosition2(data)
 
     def _getInflectionPosition(self, data):
         imax = (0, 0)

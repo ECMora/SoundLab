@@ -1,7 +1,8 @@
-import math
-import numpy
+from math import *
+import numpy as np
 import matplotlib.mlab as mlab
-from Duetto_Core.AudioSignals.AudioSignal import AudioSignal
+from numpy.fft import fft
+from ..AudioSignals.AudioSignal import AudioSignal
 from Duetto_Core.AudioSignals.WavFileSignal import WavFileSignal
 
 
@@ -9,9 +10,8 @@ class SignalProcessor:
     """
     Class that execute several functionalities with an AudioSignal
     """
-    def __init__(self, signal=WavFileSignal()):
+    def __init__(self, signal=None):
         self._signal = signal
-
 
     #region Propiedad SIGNAL
     def _getSignal(self):
@@ -23,24 +23,8 @@ class SignalProcessor:
     signal = property(_getSignal, _setSignal)
     #endregion
 
-    def rms(self, indexFrom=0, indexTo=-1):
-        """
-        computes the root mean square of the signal.
-        indexFrom,indexTo the optionally limits of the interval
-        """
-        if indexTo == -1:
-            indexTo = len(self.signal.data)
-        n = indexTo-indexFrom
-        globalSum = 0.0
-        intervalSum = 0.0
-        for i in range(n):
-            intervalSum += (self.signal.data[indexFrom+i]**2)
-            if i % 10 == 0:
-                globalSum += intervalSum * 1.0 / n
-                intervalSum = 0.0
-
-        globalSum += intervalSum * 1.0 / n
-        return numpy.sqrt(globalSum)
+    def mean(self, indexFrom=0, indexTo=-1):
+        return np.mean(self.signal.data[indexFrom:indexTo])
 
     def checkIndexes(self, indexFrom, indexTo):
         """
@@ -55,15 +39,14 @@ def envelope(data, decay=1):
     """
     decay is the min number of samples in data that separates two elements
     """
-    rectified = numpy.array(abs(data))
+    rectified = np.array(abs(data))
     i = 1
-    arr = numpy.zeros(len(rectified), dtype=numpy.int32)
+    arr = np.zeros(len(rectified), dtype=np.int32)
     current = rectified[0]
     fall_init = None
     while i < len(arr):
         if fall_init is not None:
             value = rectified[fall_init] - rectified[fall_init]*(i-fall_init)/decay
-            #formula
             arr[i-1] = max(value, rectified[i])
             fall_init = None if(value <= rectified[i] or i-fall_init >= decay) else fall_init
         else:
@@ -71,9 +54,9 @@ def envelope(data, decay=1):
             arr[i-1] = current
         current = rectified[i]
         i += 1
-
     arr[-1] = current
     return arr
+
 
 
 

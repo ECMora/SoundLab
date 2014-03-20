@@ -1,27 +1,24 @@
-from numpy import *
-from Duetto_Core.Cursors.IntervalCursor import IntervalCursor
-from Duetto_Core.Cursors.PointerCursor import PointerCursor
-from Duetto_Core.Cursors.RectangularCursor import RectangularCursor
-
-
 class Detector:
 
     def __init__(self):
-        self.pointers = []
-        self.pointers2D = []
-        self.intervals = []
-        self.rectangles = []
+        self.pointer2D = []
+        self.oneDimensionalElements = []
+        self.twodimensionalElements = []
 
     def detect(self, signal):
+        """
+        The method that detect the elements in the signal and storages into the corresponding list
+        """
         pass
 
-    def cursors(self):
-        for c in self.intervals:
+    def elementCount(self):
+        return len(self.pointer2D)+len(self.oneDimensionalElements)+len(self.twodimensionalElements)
+
+    def elements(self):
+        for c in self.oneDimensionalElements:
             yield c
-        for c in self.pointers:
+        for c in self.pointer2D:
             yield c
-        for c in self.pointers2D:
-            yield c
-        for c in self.rectangles:
+        for c in self.twodimensionalElements:
             yield c
 
