@@ -9,7 +9,7 @@ class ElementsDetector(Detector):
 
     def mergeIntervals(self, a, distancefactor=50):
         """
-        Merge into one interval two intervals with no more than  distance factor distance between them
+        Merge into one interval two oneDimensionalElements with no more than  distance factor distance between them
         """
         b = []
         if(a is None or len(a) == 0):

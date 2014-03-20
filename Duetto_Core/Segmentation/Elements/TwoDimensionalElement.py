@@ -1,55 +1,43 @@
-from Duetto_Core.Segmentation import Segment
 from Duetto_Core.Segmentation.Elements.Element import Element
 
 
 class TwoDimensionalElement(Element):
     """
-    Represents the minimal piece of information to clasify
-    An element is a time and spectral region of the signal that contains a superior energy that the fragment of signal
-    near to it
+    In an acoustic procesing transform of 2 dimensional as spectrogram an element is a 2 dimensional region
+    of local maximum in the rectangular matrix of specgram
     """
-    def __init__(self, signal, indexFrom, indexTo, Pxx, bins, frecs, specgramsettings, perimeter,column):
-        super(self, signal, indexFrom, indexTo)
-        self.Pxx=Pxx  # the spectrogram at wich the elements belongs
-        self.bins=bins  # the middle point in samples of every col in the Pxx
-        self.frecs=frecs  # the frecs of the Pxx
-        self.specgramSettings=specgramsettings
-        self.initColumn =column  # the column of Pxx when the element begin
-        self.perimeter = perimeter  # border of the spectrogram region its an array of tuple col*fragment col*(init,end)
-        if(len(perimeter)>=len(bins)):
-            raise Exception()
+    def __init__(self, signal,matrix):
+        Element.__init__(self,signal)
+        self.matrix = matrix
 
-    def __len__(self):
-        """
-        returns the len in ms of an element (float)
-        """
-        samples = (self.bins[self.initColumn+len(self.perimeter)]-self.bins[self.initColumn]) if self.initColumn < len(self.bins)-1 else self.bins[1]-self.bins[0]
-        return samples*1000.0/self.signal.samplingRate  #ms
 
-    def merge(self, other_element):
-        """
-        Merge self and the other_element in one single element. Modify the current element
+class SpecgramElement(TwoDimensionalElement):
 
-        """
-        last = self.perimeter[-1]
-        first = other_element.perimeter[0]
-        n = other_element.initColumn - self.initColumn - len(self.perimeter)
-        perimeter = self.perimeter
-        other_perimeter = other_element.perimeter
+    def __init__(self,signal,matrix,freqs,startfreq,endfreq,bins,starttime,endtime):
+        TwoDimensionalElement.__init__(self,signal,matrix)
+        self.bins = bins
+        self.freqs = freqs
+        self.timeStartIndex = starttime
+        self.timeEndIndex = endtime
+        self.freqStartIndex = startfreq
+        self.freqEndIndex = endfreq
 
-        if(other_element.initColumn < self.initColumn):
-            # the other first
-            last = other_element.perimeter[-1]
-            first = self.perimeter[0]
-            n = self.initColumn-other_element.initColumn-len(other_element.perimeter)
-            perimeter = other_element.perimeter
-            other_perimeter = self.perimeter
+    def startTime(self):
+        return self.bins[self.timeStartIndex]
 
-        #an element just could have one interval per column in the Pxx
-        if (self.initColumn+len(perimeter)+ len(other_perimeter)+ n >=len(self.bins)):
-            raise Exception("Could Not merge. To large element for this especgram")
-        for i in range(n):
-            perimeter.append((last[0]+i*(first[0]-last[0])/n,last[1] + i*(first[1]-last[1])/n))
+    def endTime(self):
+        return self.bins[self.timeEndIndex]
 
-        perimeter.extend(other_perimeter)
-        self.perimeter = perimeter
+    def minFreq(self):
+        return self.freqs[self.freqStartIndex]
+
+    def maxFreq(self):
+        return self.freqs[self.freqEndIndex]
+
+    def PeakFreq(self,meditionTime = 0.0):
+        return 0
+
+
+
+
+

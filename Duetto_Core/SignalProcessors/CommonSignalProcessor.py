@@ -11,7 +11,7 @@ from Duetto_Core.SignalProcessors.SignalProcessor import SignalProcessor
 class CommonSignalProcessor(SignalProcessor):
     mean = None
 
-    def __init__(self, signal=WavFileSignal()):
+    def __init__(self, signal=None):
         SignalProcessor.__init__(self, signal)
 
     def normalize(self, indexFrom=0, indexTo=-1, interval=(-1, 1)):

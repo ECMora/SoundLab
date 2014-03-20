@@ -10,8 +10,9 @@ class WavFileSignal(FileAudioSignal):
     class that represents a signal from a file in the local file system
     """
 
-    def __init__(self):
+    def __init__(self,path):
         FileAudioSignal.__init__(self)
+        self.open(path)
         self.userData=[]
 
     def open(self, path):
@@ -27,7 +28,7 @@ class WavFileSignal(FileAudioSignal):
             self.path=path
 
         except Exception as e:
-            QMessageBox.warning(QMessageBox(), "Error", "Could not load the file. "+e.message)
+            QMessageBox.warning(QMessageBox(), "Error", "Could not load the file. " +self.name()+" "+e.message)
             #pass
 
     def read(self, file):

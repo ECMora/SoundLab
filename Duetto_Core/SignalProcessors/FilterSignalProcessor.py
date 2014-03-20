@@ -11,7 +11,7 @@ class FILTER_TYPE():
 
 class FilterSignalProcessor(SignalProcessor):
 
-    def __init__(self,signal=WavFileSignal()):
+    def __init__(self,signal=None):
         SignalProcessor.__init__(self,signal)
 
     def movingAverageFilter(self,numberOfPoints=10,indexFrom=0,indexTo=-1):

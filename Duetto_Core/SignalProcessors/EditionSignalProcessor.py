@@ -4,7 +4,7 @@ from Duetto_Core.AudioSignals.WavFileSignal import WavFileSignal
 from Duetto_Core.SignalProcessors.SignalProcessor import SignalProcessor
 
 class EditionSignalProcessor(SignalProcessor):
-    def __init__(self, signal=WavFileSignal()):
+    def __init__(self, signal=None):
         SignalProcessor.__init__(self, signal)
         self.clipboard = []
 

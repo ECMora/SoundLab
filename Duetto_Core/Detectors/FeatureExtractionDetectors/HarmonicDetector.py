@@ -4,6 +4,7 @@ from Duetto_Core.Cursors.IntervalCursor import IntervalCursor
 from Duetto_Core.Detectors.Detector import Detector
 from Duetto_Core.Detectors.MinMaxFrequencyDetector import MinMaxFrequencyDetector
 from Duetto_Core.Detectors.FeatureExtractionDetectors import FrequencyPeeksDetector
+from Duetto_Core.Segmentation.Elements.OneDimensionalElement import OneDimensionalElement
 
 
 class HarmonicDetector(Detector):
@@ -16,10 +17,10 @@ class HarmonicDetector(Detector):
         if indexTo == -1:
             indexTo = signal.data.size
         pxx,freqs = mlab.psd(signal.data[indexFrom:indexTo],Fs=signal.samplingRate,NFFT=512)
-        self.intervals = []
+        self.oneDimensionalElements = []
         minmaxfreqd = MinMaxFrequencyDetector()
         for p in fpeeksd.pointers:
             minmaxfreqd.detect(signal,indexFrom,indexTo,thresholdRel,p.index)
             interval = minmaxfreqd.intervals[0]
-            self.intervals.append(IntervalCursor(interval.min,interval.max))
+            self.oneDimensionalElements.append(OneDimensionalElement(signal,interval.min,interval.max))
 

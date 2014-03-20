@@ -1,5 +1,8 @@
-from Duetto_Core.Segmentation import Segment
-from Duetto_Core.Segmentation.Elements.Element import Element
+from .TwoDimensionalElement import TwoDimensionalElement
+import numpy as np
+from numpy.fft import fft
+from .Element import Element
+
 
 
 class OneDimensionalElement(Element):
@@ -9,39 +12,67 @@ class OneDimensionalElement(Element):
     near to it
     """
     def __init__(self, signal, indexFrom, indexTo):
-        super(self, signal, indexFrom, indexTo)
+        Element.__init__(self, signal)
+        self.indexFrom =  indexFrom#index of start of the element
+        self.indexTo = indexTo # end of element in ms
+        self.listOf2dimelements = []
 
-    def __len__(self):
+    def twoDimensionalElements(self):
+        #the 2dimensional elements storage in this 1 dimensional element
+        #after apply a 2dimensional acoustic transformation to this one dimensional element and detec the 2 dim elements
+        #in this transform they are returned
+        pass
+
+    def startTime(self):
+        return self.indexFrom*1.0/self.signal.samplingRate
+
+    def endTime(self):
+        return self.indexTo*1.0/self.signal.samplingRate
+
+    def duration(self):
         """
         returns the len in ms of an element (float)
         """
         return (self.indexTo-self.indexFrom)*1000.0/self.signal.samplingRate
 
-    def merge(self, other_element):
+
+class OscilogramElement(OneDimensionalElement):
+
+    def __init__(self, signal, indexFrom, indexTo):
+        OneDimensionalElement.__init__(self,signal,indexFrom,indexTo)
+        self.twodimensionalOptions = dict()
+
+    def twoDimensionalElements(self):
+        if len(self.listOf2dimelements) == 0:
+            #compute the elements
+            elements = []
+            self.listOf2dimelements = elements
+        return self.listOf2dimelements
+
+    def distanceFromStartToMax(self):
+        return np.argmax(self.signal.data[self.indexFrom:self.indexTo])
+
+    def peakFreq(self):
+        indexFrecuency = self.signal.samplingRate/(self.indexTo-self.indexFrom)*1.0
+        maxindex = np.argmax(fft(self.signal.data[self.indexFrom:self.indexTo]))
+        return int(round((maxindex)*indexFrecuency))
+
+    def peekToPeek(self):
+        return np.ptp(self.signal.data[self.indexFrom:self.indexTo])
+
+    def rms(self):
         """
-        Merge self and the other_element in one single element. Modify the current element
-
+        computes the root mean square of the signal.
+        indexFrom,indexTo the optionally limits of the interval
         """
-        last = self.perimeter[-1]
-        first = other_element.perimeter[0]
-        n = other_element.initColumn - self.initColumn - len(self.perimeter)
-        perimeter = self.perimeter
-        other_perimeter = other_element.perimeter
-
-        if(other_element.initColumn < self.initColumn):
-            # the other first
-            last = other_element.perimeter[-1]
-            first = self.perimeter[0]
-            n = self.initColumn-other_element.initColumn-len(other_element.perimeter)
-            perimeter = other_element.perimeter
-            other_perimeter = self.perimeter
-
-        #an element just could have one interval per column in the Pxx
-        if (self.initColumn+len(perimeter)+ len(other_perimeter)+ n >=len(self.bins)):
-            raise Exception("Could Not merge. To large element for this especgram")
+        n = self.indexTo-self.indexFrom
+        globalSum = 0.0
+        intervalSum = 0.0
         for i in range(n):
-            perimeter.append((last[0]+i*(first[0]-last[0])/n,last[1] + i*(first[1]-last[1])/n))
+            intervalSum += (self.signal.data[self.indexFrom+i]**2)
+            if i % 10 == 0:
+                globalSum += intervalSum * 1.0 / n
+                intervalSum = 0.0
 
-        perimeter.extend(other_perimeter)
-        self.perimeter = perimeter
-
+        globalSum += intervalSum * 1.0 / n
+        return np.sqrt(globalSum)
