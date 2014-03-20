@@ -26,9 +26,7 @@
    <bool>false</bool>
   </property>
   <property name="styleSheet">
-   <string notr="true">font: 10pt &quot;Arial&quot;;
-color: rgb(0, 0, 0);
-padding:1%;</string>
+   <string notr="true"/>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -66,24 +64,29 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
      <x>0</x>
      <y>0</y>
      <width>800</width>
-     <height>24</height>
+     <height>21</height>
     </rect>
    </property>
    <property name="autoFillBackground">
     <bool>false</bool>
    </property>
    <property name="styleSheet">
-    <string notr="true">background-color:rgb(109, 152, 165);
-alternate-background-color: rgb(109, 152, 165);
-</string>
+    <string notr="true"/>
    </property>
    <widget class="QMenu" name="menuFile">
+    <property name="geometry">
+     <rect>
+      <x>208</x>
+      <y>128</y>
+      <width>143</width>
+      <height>182</height>
+     </rect>
+    </property>
     <property name="autoFillBackground">
      <bool>false</bool>
     </property>
     <property name="styleSheet">
-     <string notr="true">background-color: rgb(174, 200, 255);
-selection-background-color:rgb(170, 170, 255)</string>
+     <string notr="true"/>
     </property>
     <property name="tearOffEnabled">
      <bool>false</bool>
@@ -94,12 +97,13 @@ selection-background-color:rgb(170, 170, 255)</string>
     <addaction name="actionNew"/>
     <addaction name="actionOpen"/>
     <addaction name="actionSave"/>
+    <addaction name="actionLoad_Theme"/>
+    <addaction name="actionSave_theme"/>
     <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuTools">
     <property name="styleSheet">
-     <string notr="true">background-color:rgb(174, 200, 255);
-selection-background-color:rgb(170, 170, 255)</string>
+     <string notr="true"/>
     </property>
     <property name="title">
      <string>Tools</string>
@@ -110,8 +114,7 @@ selection-background-color:rgb(170, 170, 255)</string>
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="styleSheet">
-     <string notr="true">background-color: rgb(174, 200, 255);
-selection-background-color:rgb(170, 170, 255)</string>
+     <string notr="true"/>
     </property>
     <property name="title">
      <string>Edit</string>
@@ -142,8 +145,7 @@ selection-background-color:rgb(170, 170, 255)</string>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="styleSheet">
-     <string notr="true">background-color:rgb(174, 200, 255);
-selection-background-color:rgb(170, 170, 255)</string>
+     <string notr="true"/>
     </property>
     <property name="title">
      <string>Analysis</string>
@@ -158,8 +160,7 @@ selection-background-color:rgb(170, 170, 255)</string>
    </widget>
    <widget class="QMenu" name="menuSound">
     <property name="styleSheet">
-     <string notr="true">background-color:rgb(174, 200, 255);
-selection-background-color:rgb(170, 170, 255)</string>
+     <string notr="true"/>
     </property>
     <property name="title">
      <string>Sound</string>
@@ -169,23 +170,11 @@ selection-background-color:rgb(170, 170, 255)</string>
     <addaction name="actionPause_Sound"/>
     <addaction name="actionRecord"/>
    </widget>
-   <widget class="QMenu" name="menuView_2">
-    <property name="styleSheet">
-     <string notr="true">background-color: rgb(174, 200, 255);
-selection-background-color:rgb(170, 170, 255)</string>
-    </property>
-    <property name="title">
-     <string>View</string>
-    </property>
-    <addaction name="actionHighest_instant_frequency"/>
-    <addaction name="actionClear_Spectogram"/>
-   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
    <addaction name="menuTools"/>
    <addaction name="menuView"/>
    <addaction name="menuSound"/>
-   <addaction name="menuView_2"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <widget class="QDockWidget" name="dock_settings">
@@ -229,8 +218,7 @@ selection-background-color:rgb(170, 170, 255)</string>
     <string>toolBar</string>
    </property>
    <property name="styleSheet">
-    <string notr="true">background-color:rgb(109, 152, 165);
-border-color: rgb(170, 170, 255);</string>
+    <string notr="true"/>
    </property>
    <attribute name="toolBarArea">
     <enum>TopToolBarArea</enum>
@@ -407,6 +395,9 @@ border-color: rgb(170, 170, 255);</string>
    <property name="text">
     <string>Pause Sound</string>
    </property>
+   <property name="shortcut">
+    <string>P</string>
+   </property>
   </action>
   <action name="actionZoom_out_entire_file">
    <property name="icon">
@@ -560,6 +551,16 @@ border-color: rgb(170, 170, 255);</string>
   <action name="actionGenerate_Pink_Noise">
    <property name="text">
     <string>Pink Noise</string>
+   </property>
+  </action>
+  <action name="actionSave_theme">
+   <property name="text">
+    <string>Save theme</string>
+   </property>
+  </action>
+  <action name="actionLoad_Theme">
+   <property name="text">
+    <string>Load Theme</string>
    </property>
   </action>
   <zorder>dock_settings</zorder>
