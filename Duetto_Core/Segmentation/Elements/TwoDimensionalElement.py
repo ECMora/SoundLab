@@ -13,22 +13,26 @@ class TwoDimensionalElement(Element):
 
 class SpecgramElement(TwoDimensionalElement):
 
-    def __init__(self,signal,matrix,freqs,bins):
+    def __init__(self,signal,matrix,freqs,startfreq,endfreq,bins,starttime,endtime):
         TwoDimensionalElement.__init__(self,signal,matrix)
         self.bins = bins
         self.freqs = freqs
+        self.timeStartIndex = starttime
+        self.timeEndIndex = endtime
+        self.freqStartIndex = startfreq
+        self.freqEndIndex = endfreq
 
     def startTime(self):
-        return self.bins[0]
+        return self.bins[self.timeStartIndex]
 
     def endTime(self):
-        return self.bins[-1]
+        return self.bins[self.timeEndIndex]
 
     def minFreq(self):
-        return self.freqs[0]
+        return self.freqs[self.freqStartIndex]
 
     def maxFreq(self):
-        return self.freqs[-1]
+        return self.freqs[self.freqEndIndex]
 
     def PeakFreq(self,meditionTime = 0.0):
         return 0

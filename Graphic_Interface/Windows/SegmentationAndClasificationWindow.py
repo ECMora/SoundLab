@@ -1,3 +1,4 @@
+from math import log10
 import os.path
 from PyQt4.QtCore import pyqtSlot, Qt
 import PyQt4.QtCore as QtCore
@@ -39,7 +40,11 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.widget.visibleSpectrogram = True
         self.widget.visualChanges = True
         self.OscilogramThreshold = 0
+        self.dialog = None
+        self.widget.axesOscilogram.threshold.sigPositionChangeFinished.connect(self.updateThreshold)
+        self.widget.axesOscilogram.threshold.setBounds((0,2**(self.widget.signalProcessor.signal.bitDepth-1)))
         self.oscilogramDetectionSettings = {"Threshold": -40, "Threshold2": 0, "MergeFactor": 0.5, "MinSize": 1, "Decay": 1, "SoftFactor": 6}
+        self.widget.axesOscilogram.threshold.setValue(10.0*(2**self.widget.signalProcessor.signal.bitDepth)/1000.0)
         self.specgramDetectionSettings = {"Threshold": 95 ,"minSizeTime": 0, "minSizeFreq": 0, "mergeFactorTime": 0, "mergeFactorFreq": 0}
         sr = self.widget.signalProcessor.signal.samplingRate#["Mean", True, SignalProcessor.mean]
         self.parameterMeasurement = dict(
@@ -54,6 +59,20 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         #the order of the elements in the array of self.parameterMeasurement["Temporal"] is relevant for the visualization in the table and the
         #binding to the checkboxes in the dialog of parameter measurement
         self.widget.refresh()
+
+
+    def updateThreshold(self):
+        self.oscilogramDetectionSettings["Threshold"] = -60 + int(20*log10(abs(self.widget.axesOscilogram.threshold.value())*1000.0/(2**self.widget.signalProcessor.signal.bitDepth)))
+        if(self.dialog is not None):
+            self.dialog.dsbxThreshold.setValue(self.oscilogramDetectionSettings["Threshold"])
+        print(self.oscilogramDetectionSettings["Threshold"])
+
+
+
+    @pyqtSlot(bool)
+    def setVisibleThreshold(self,bool):
+        self.widget.axesOscilogram.setVisibleThreshold(bool)
+
 
     @pyqtSlot()
     def on_actionView_Parameters_triggered(self):
@@ -191,6 +210,9 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
     @pyqtSlot()
     def on_actionDetection_triggered(self):
         elementsDetectorDialog = ElemDetectSettingsDialog(self)
+        #arrglar con eventos
+        self.dialog = elementsDetectorDialog
+        #*****************
         elementsDetectorDialog.dsbxThreshold.setValue(self.oscilogramDetectionSettings["Threshold"])
         elementsDetectorDialog.sbxSoftFactor.setValue(self.oscilogramDetectionSettings["SoftFactor"])
         elementsDetectorDialog.dsbxMinSize.setValue(self.oscilogramDetectionSettings["MinSize"])
@@ -205,9 +227,12 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         elementsDetectorDialog.sbxMergeFactorFreq.setValue(self.specgramDetectionSettings["mergeFactorFreq"])
 
         elementsDetectorDialog.widgetOscilogram.open("Didactic Signals\\recognition.wav")
+        print("*****************************************")
+        elementsDetectorDialog.widgetOscilogram.axesOscilogram.plot(self.widget.signalProcessor.signal.data)
         elementsDetectorDialog.widgetSpecgram.open("Didactic Signals\\recognition.wav")
 
         if elementsDetectorDialog.exec_():
+            self.dialog = None
             if elementsDetectorDialog.chbxDetectOsc.isChecked():
                 try:
                     threshold = abs(elementsDetectorDialog.dsbxThreshold.value())
@@ -222,6 +247,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                     self.oscilogramDetectionSettings["MergeFactor"] = mergefactor
                     self.oscilogramDetectionSettings["SoftFactor"] = softfactor
                     self.oscilogramDetectionSettings["Decay"] = decay
+                    self.widget.axesOscilogram.threshold.setValue((10.0**((60-threshold)/20.0))*(2**self.widget.signalProcessor.signal.bitDepth)/1000.0)
                     self.widget.detectElementsInOscilogram(threshold, decay, minsize, softfactor, mergefactor, threshold2)
                     self.ui.tableParameterOscilogram.clear()
                     self.ui.tableParameterOscilogram.setRowCount(len(self.widget.OscilogramElements))
@@ -232,7 +258,6 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                             item = QtGui.QTableWidgetItem(str(round(prop[2](self.widget.OscilogramElements[i]),self.parameterDecimalPlaces)))
                             item.setBackgroundColor(self.parameterTable_rowcolor_odd if i%2==0 else self.parameterTable_rowcolor_even)
                             self.ui.tableParameterOscilogram.setItem(i, j, item)
-
                 except:
                     pass
                 self.ui.tableParameterOscilogram.setHorizontalHeaderLabels([label[0] for label in paramsTomeasure])
@@ -254,7 +279,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                     self.ui.tableParameterSpectrogram.setColumnCount(len(paramsTomeasure))
                     for i in range(self.ui.tableParameterSpectrogram.rowCount()):
                         for j,prop in enumerate(paramsTomeasure):
-                            item = QtGui.QTableWidgetItem(str(round(prop[2](self.widget.SpectrogramElements[i][0]),self.parameterDecimalPlaces)))
+                            item = QtGui.QTableWidgetItem(str(round(prop[2](self.widget.SpectrogramElements[i]),self.parameterDecimalPlaces)))
                             item.setBackgroundColor(self.parameterTable_rowcolor_odd if i%2==0 else self.parameterTable_rowcolor_even)
                             self.ui.tableParameterSpectrogram.setItem(i, j, item)
                 except:

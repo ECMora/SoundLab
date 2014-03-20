@@ -103,6 +103,7 @@ class QSignalVisualizerWidget(QWidget):
         self._visibleOscillogram = False
         self._visibleSpectrogram = False
 
+
         self.clear()
 
         self.signalProcessor = SignalProcessor()
@@ -413,12 +414,19 @@ class QSignalVisualizerWidget(QWidget):
         if(self.visibleSpectrogram):
             for i in range(len(self.SpectrogramElements)):
                 if self.SpectrogramElements[i].visible:
-                    text = pg.TextItem(str(i+1),color=(255,255,255),anchor=(0.5,0.5))
-                    #text.setPos(self.SpectrogramElements[i].indexFrom/2.0+self.SpectrogramElements[i].indexTo/2.0, 0.75*2**(self.signalProcessor.signal.bitDepth-1))
-                    #lr = pg.LinearRegionItem([self.SpectrogramElements[i].indexFrom,self.SpectrogramElements[i].indexTo], movable=False,brush=(pg.mkBrush((0, 255, 0, 70)) if i%2==0 else pg.mkBrush((0, 0, 255,70))))
-                    self.SpectrogramElements[i].visualwidgets = [text]
+                    text = pg.TextItem(str(i+1),color=(255,0,0),anchor=(0.5,0.5))
+                    text.setPos(self.SpectrogramElements[i].timeStartIndex+(self.SpectrogramElements[i].timeEndIndex-self.SpectrogramElements[i].timeStartIndex)/2,
+                                self.SpectrogramElements[i].freqStartIndex+(self.SpectrogramElements[i].freqEndIndex-self.SpectrogramElements[i].freqStartIndex)/2)
+                    rect = QtGui.QGraphicsRectItem(QtCore.QRectF(self.SpectrogramElements[i].timeStartIndex,
+                                                                 self.SpectrogramElements[i].freqStartIndex,
+                                                                 self.SpectrogramElements[i].timeEndIndex-self.SpectrogramElements[i].timeStartIndex,
+                                                                 self.SpectrogramElements[i].freqEndIndex-self.SpectrogramElements[i].freqStartIndex))
+                    rect.setPen(QtGui.QPen(QtGui.QColor(255, 0, 50)))
+                    self.SpectrogramElements[i].visualwidgets = [text,rect]
                     for item in self.SpectrogramElements[i].visualwidgets:
-                        self.axesSpecgram.addItem(item)
+                        self.axesSpecgram.viewBox.addItem(item)
+
+
 
         self.axesOscilogram.update()
 
@@ -532,7 +540,7 @@ class QSignalVisualizerWidget(QWidget):
                 self.axesOscilogram.removeItem(item)
         for elem in self.SpectrogramElements:
             for item in elem.visualwidgets:
-                self.axesSpecgram.removeItem(item)
+                self.axesSpecgram.viewBox.removeItem(item)
 
     def detectElementsInEspectrogram(self, threshold=80):
         signal = self.signalProcessor.signal

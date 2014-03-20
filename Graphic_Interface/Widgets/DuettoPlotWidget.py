@@ -11,6 +11,15 @@ class DuettoPlotWidget(pg.PlotWidget):
         self.zoomRegion= pg.LinearRegionItem([0,0])
         self.makeZoom = None
         self.getPlotItem().setMouseEnabled(x=False,y=False)
+        self.threshold = pg.InfiniteLine(movable=True,angle=0,pos = 0)
+
+
+    def setVisibleThreshold(self,bool):
+        if bool and self.threshold not in self.getPlotItem().getViewBox().addedItems:
+            self.getPlotItem().getViewBox().addItem(self.threshold)
+        elif not bool and self.threshold in self.getPlotItem().getViewBox().addedItems:
+            self.getPlotItem().getViewBox().removeItem(self.threshold)
+
 
     IntervalOscChanged = pyqtSignal(int, int)
     PIXELS_OF_CURSORS_CHANGES = 5

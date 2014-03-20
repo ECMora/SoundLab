@@ -254,6 +254,7 @@ border-color: rgb(170, 170, 255);</string>
     <addaction name="actionView_Parameters"/>
     <addaction name="actionParameters_Measurement"/>
     <addaction name="actionClear_Meditions"/>
+    <addaction name="actionView_Threshold"/>
    </widget>
    <addaction name="menuExport"/>
    <addaction name="menuParameters"/>
@@ -445,6 +446,14 @@ border-color: rgb(170, 170, 255);</string>
     <string>Clear Meditions</string>
    </property>
   </action>
+  <action name="actionView_Threshold">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>View Threshold</string>
+   </property>
+  </action>
   <zorder>dockWidgetParameterTableOscilogram</zorder>
   <zorder>dockWidgetParameterTableSpectrogram</zorder>
   <zorder>dock_settings</zorder>
@@ -468,8 +477,8 @@ border-color: rgb(170, 170, 255);</string>
    <slot>selectInputFolder()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>650</x>
-     <y>317</y>
+     <x>666</x>
+     <y>350</y>
     </hint>
     <hint type="destinationlabel">
      <x>442</x>
@@ -484,8 +493,8 @@ border-color: rgb(170, 170, 255);</string>
    <slot>selectOutputFolder()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>625</x>
-     <y>338</y>
+     <x>666</x>
+     <y>378</y>
     </hint>
     <hint type="destinationlabel">
      <x>595</x>
@@ -500,12 +509,28 @@ border-color: rgb(170, 170, 255);</string>
    <slot>startBatchProcess()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>719</x>
-     <y>321</y>
+     <x>754</x>
+     <y>350</y>
     </hint>
     <hint type="destinationlabel">
      <x>681</x>
      <y>-19</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionView_Threshold</sender>
+   <signal>triggered(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setVisibleThreshold()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>384</x>
+     <y>280</y>
     </hint>
    </hints>
   </connection>
@@ -514,5 +539,6 @@ border-color: rgb(170, 170, 255);</string>
   <slot>selectInputFolder()</slot>
   <slot>selectOutputFolder()</slot>
   <slot>startBatchProcess()</slot>
+  <slot>setVisibleThreshold()</slot>
  </slots>
 </ui>

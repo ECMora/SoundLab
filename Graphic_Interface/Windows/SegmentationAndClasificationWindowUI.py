@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'E:\Biologia\SISTEMA\DuettoSystemYasel\Graphic_Interface\UI Files\SegmentationAndClasificationWindowUI.ui'
 #
-# Created: Tue Mar 18 10:20:13 2014
+# Created: Wed Mar 19 16:24:23 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -233,6 +233,9 @@ class Ui_MainWindow(object):
         self.actionDetection.setObjectName(_fromUtf8("actionDetection"))
         self.actionClear_Meditions = QtGui.QAction(MainWindow)
         self.actionClear_Meditions.setObjectName(_fromUtf8("actionClear_Meditions"))
+        self.actionView_Threshold = QtGui.QAction(MainWindow)
+        self.actionView_Threshold.setCheckable(True)
+        self.actionView_Threshold.setObjectName(_fromUtf8("actionView_Threshold"))
         self.toolBar.addAction(self.actionPlay_Sound)
         self.toolBar.addAction(self.actionPause_Sound)
         self.toolBar.addAction(self.actionStop_Sound)
@@ -252,6 +255,7 @@ class Ui_MainWindow(object):
         self.menuParameters.addAction(self.actionView_Parameters)
         self.menuParameters.addAction(self.actionParameters_Measurement)
         self.menuParameters.addAction(self.actionClear_Meditions)
+        self.menuParameters.addAction(self.actionView_Threshold)
         self.menuBar.addAction(self.menuExport.menuAction())
         self.menuBar.addAction(self.menuParameters.menuAction())
 
@@ -260,6 +264,7 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.pushButtonInputFolder, QtCore.SIGNAL(_fromUtf8("clicked()")), MainWindow.selectInputFolder)
         QtCore.QObject.connect(self.pushButtonOutputFolder, QtCore.SIGNAL(_fromUtf8("clicked()")), MainWindow.selectOutputFolder)
         QtCore.QObject.connect(self.pushButtonStart, QtCore.SIGNAL(_fromUtf8("clicked()")), MainWindow.startBatchProcess)
+        QtCore.QObject.connect(self.actionView_Threshold, QtCore.SIGNAL(_fromUtf8("triggered(bool)")), MainWindow.setVisibleThreshold)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -309,6 +314,7 @@ class Ui_MainWindow(object):
         self.actionParameters_Measurement.setText(_translate("MainWindow", "Parameters Measurement", None))
         self.actionDetection.setText(_translate("MainWindow", "Detection", None))
         self.actionClear_Meditions.setText(_translate("MainWindow", "Clear Meditions", None))
+        self.actionView_Threshold.setText(_translate("MainWindow", "View Threshold", None))
 
 from Graphic_Interface.Widgets.QSignalVisualizerWidget import QSignalVisualizerWidget
 import icons_rc

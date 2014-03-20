@@ -46,7 +46,7 @@ class TwoDimensionalElementsDetector(Detector):
 
                 if(regionBounds[1]-regionBounds[0]>minsize[0] or regionBounds[3]-regionBounds[2]>minsize[1]):
                     print(regionBounds)
-                    rc = SpecgramElement(signal,pxx[regionBounds[0]: regionBounds[1]][regionBounds[2]:regionBounds[3]],freqs[regionBounds[0]: regionBounds[1]],bins[regionBounds[2]:regionBounds[3]])
+                    rc = SpecgramElement(signal,pxx[regionBounds[0]: regionBounds[1]][regionBounds[2]:regionBounds[3]],freqs,regionBounds[0],regionBounds[1],bins,regionBounds[2],regionBounds[3])
                     self.twodimensionalElements.append(rc)
 
     def _islandDelete(self, r, c, element_number):
