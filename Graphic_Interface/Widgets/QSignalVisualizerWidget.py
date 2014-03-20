@@ -33,18 +33,31 @@ import pickle
 
 BACK_COLOR = "gray"
 
-class OscAxis(pg.AxisItem):
+class OscXAxis(pg.AxisItem):
     def __init__(self,*args,**kwargs):
         pg.AxisItem.__init__(self,*args,**kwargs)
         self.Fs = 1
     def tickStrings(self, values, scale, spacing):
         strns = []
         for x in values:
-            strns.append(x*1.0/self.Fs)
-        self.setLabel(text="Time (s)")
+            strns.append("{:.2f}".format(x*1.0/self.Fs))
+        self.setLabel(text="Time")
         return strns
     def setFrequency(self,rate):
         self.Fs = rate
+
+class OscYAxis(pg.AxisItem):
+    def __init__(self,*args,**kwargs):
+        pg.AxisItem.__init__(self,*args,**kwargs)
+        self.Max = 1
+    def tickStrings(self, values, scale, spacing):
+        strns = []
+        for x in values:
+            strns.append("{:.2f}".format(x*100.0/self.Max))
+        self.setLabel(text="Amplitude %")
+        return strns
+    def setMaxVal(self,maxVal):
+        self.Max = maxVal
 
 class QSignalVisualizerWidget(QWidget):
     """Class to represent the QSignalVisualizerWidget widget"""
@@ -58,8 +71,9 @@ class QSignalVisualizerWidget(QWidget):
         self.osc_gridx = True
         self.osc_gridy = True
         self.osc_color = QColor(255, 255, 255)
-        self.axisOsc = OscAxis(orientation = 'bottom')
-        self.axesOscilogram = DuettoPlotWidget(parent=self,axisItems={'bottom': self.axisOsc})
+        self.axisXOsc = OscXAxis(orientation = 'bottom')
+        self.axisYOsc = OscYAxis(orientation = 'left')
+        self.axesOscilogram = DuettoPlotWidget(parent=self,axisItems={'bottom': self.axisXOsc,'left':self.axisYOsc})
 
         self.osc_background = "000"
         self.spec_background = "000"
@@ -126,24 +140,23 @@ class QSignalVisualizerWidget(QWidget):
     def updateSpecZoomRegion(self,a,b):
         min = self._from_osc_to_spec(a)
         max = self._from_osc_to_spec(b)
-        print(min)
-        print(max)
         self.axesSpecgram.zoomRegion.setRegion([min, max])
         self.axesSpecgram.update()
 
     def updateOscZoomRegion(self,a,b):
         min = self._from_spec_to_osc(a)
         max = self._from_spec_to_osc(b)
-        print(min)
-        print(max)
         self.axesOscilogram.zoomRegion.setRegion([min, max])
         self.axesOscilogram.update()
     #region Sound
 
     def play(self):
         if self.zoomCursor.min > 0 and self.zoomCursor.max > 0:
-            self.signalProcessor.signal.play(self.zoomCursor.min, self.zoomCursor.max, self.playerSpeed)
-            self.createPlayerLine(self.zoomCursor.min-self.mainCursor.min)
+            if self.zoomCursor.max - self.zoomCursor.min > self.signalProcessor.signal.samplingRate / 100.0:
+                self.signalProcessor.signal.play(self.zoomCursor.min, self.zoomCursor.max, self.playerSpeed)
+            else:
+                self.signalProcessor.signal.play(self.zoomCursor.min, self.mainCursor.max, self.playerSpeed)
+            self.createPlayerLine(self.zoomCursor.min)
         else:
             self.signalProcessor.signal.play(self.mainCursor.min, self.mainCursor.max, self.playerSpeed)
             self.createPlayerLine(self.mainCursor.min)
@@ -183,10 +196,10 @@ class QSignalVisualizerWidget(QWidget):
         self.signalProcessor.signal.pause()
 
     def notifyPlayingCursor(self, frame):
-        if self.signalProcessor.signal.playStatus == self.signalProcessor.signal.PLAYING:
+        #if self.signalProcessor.signal.playStatus == self.signalProcessor.signal.PLAYING:
             #draw the line in the axes
-            self.playerLineOsc.setValue(frame)
-            self.playerLineSpec.setValue(self._from_osc_to_spec(frame))
+        self.playerLineOsc.setValue(frame)
+        self.playerLineSpec.setValue(self._from_osc_to_spec(frame))
 
             #if self.signalProcessor.signal.playStatus == self.signalProcessor.signal.RECORDING:
             #    size = len(self.signalProcessor.signal.data)
@@ -343,12 +356,13 @@ class QSignalVisualizerWidget(QWidget):
             self._Z = 10. * np.log10(self.specgramSettings.Pxx)
             #self._Z = np.flipud(self._Z)
             Zfin = np.isfinite(self._Z)
-            if not np.any(Zfin):
-                return
-            m = self._Z[Zfin].min()
-            self._Z[np.isneginf(self._Z)] = m
-            cut_off = np.amin(self._Z[np.isfinite(self._Z)])
-            self._Z[self._Z < cut_off] = cut_off
+            if np.any(Zfin):
+                m = self._Z[Zfin].min()
+                self._Z[np.isneginf(self._Z)] = m
+                cut_off = np.amin(self._Z[np.isfinite(self._Z)])
+                self._Z[self._Z < cut_off] = cut_off
+            else:
+                self._Z[self._Z < -100] = -100
             self.axesSpecgram.xAxis.refresh(self.specgramSettings.bins)
             self.axesSpecgram.yAxis.refresh(self.specgramSettings.freqs)
         # do actual refresh
@@ -589,11 +603,17 @@ class QSignalVisualizerWidget(QWidget):
 
     #region SAVE AND OPEN
 
-    def open(self, filename):
+    def openNew(self, samplingRate=1, bitDepth=8, duration=1, whiteNoise=False):
+        self.open(None, samplingRate, bitDepth, duration, whiteNoise)
+
+    def open(self, filename, samplingRate=1, bitDepth=8, duration=1, whiteNoise=False):
         #self.axesOscilogram.sigRangeChanged.disconnect()
         #self.axesSpecgram.viewBox.sigRangeChanged.disconnect()
         self.clear()
-        self.signalProcessor.signal.open(filename)
+        if filename:
+            self.signalProcessor.signal.open(filename)
+        else:
+            self.signalProcessor.signal.openNew(samplingRate, duration, bitDepth, whiteNoise)
         self.cursors = []
         self.editionSignalProcessor = EditionSignalProcessor(self.signalProcessor.signal)
         #self.signalProcessor.signal.setTickInterval(self.TICK_INTERVAL_MS)
@@ -615,7 +635,8 @@ class QSignalVisualizerWidget(QWidget):
             self.axesOscilogram.zoomRegion.sigRegionChanged.connect(self.updatezoomcursor)
             self.signalProcessor.signal.play_finished = self.removePlayerLine
         self.visualChanges = True
-        self.axisOsc.setFrequency(self.signalProcessor.signal.samplingRate)
+        self.axisXOsc.setFrequency(self.signalProcessor.signal.samplingRate)
+        self.axisYOsc.setMaxVal(2**(self.signalProcessor.signal.bitDepth-1))
         self.refresh()
         self.zoomNone()
         self.axesOscilogram.getPlotItem().getViewBox().sigRangeChangedManually.connect(self._oscRangeChanged)

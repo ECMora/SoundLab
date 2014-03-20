@@ -23,12 +23,22 @@ class AudioSignal:
         self.playSpeed = 100  # percent of the speed
         self.playSection = (0, 0, 0)  # (init,end,current)
         self.recordNotifier = None
-        self.recordNotifier = None
+        self.playNotifier = None
 
     def generateWhiteNoise(self, duration=1, begin_at=0):
-        wn = np.array([np.random.uniform(-2 ** self.bitDepth - 1, 2 ** self.bitDepth - 1) for i in
+        wn = np.array([np.random.uniform(-2 ** (self.bitDepth - 1), 2 ** self.bitDepth - 1) for i in
                        range(duration * self.samplingRate / 1000)])
         self.data = np.concatenate((self.data[0:begin_at], wn, self.data[begin_at:]))
+
+    def openNew(self, samplingRate, duration, bitDepth, whiteNoise):
+        self.samplingRate = samplingRate
+        self.bitDepth = bitDepth
+        if whiteNoise:
+            self.data = np.array(
+                [np.random.uniform(-(1 << (self.bitDepth - 1)), (1 << (self.bitDepth - 1)) - 1) for i in
+                 range(int(duration * self.samplingRate))], np.dtype('int' + str(bitDepth)))
+        else:
+            self.data = np.zeros(samplingRate * duration, np.dtype('int' + str(bitDepth)))
 
     def name(self):
         if len(self.path) > 0:
@@ -46,8 +56,10 @@ class AudioSignal:
                              % (channel, self.channels))
         self._currentChannel = channel
         self.data = self.channelData[channel]
+
     def get_currentChannel(self):
         return self._currentChannel
+
     currentChannel = property(get_currentChannel, set_currentChannel)
 
     def resampling(self, samplinRate=44100):
@@ -90,8 +102,8 @@ class AudioSignal:
         if len(self.data) == 0:
             return
         if self.data.dtype.str[1] == 'u':
-            self.data = (self.data - (1 << (self.data.dtype.itemsize * 8 - 1)))\
-                        .astype(self.data.dtype.str.replace('u', 'i'))
+            self.data = (self.data - (1 << (self.data.dtype.itemsize * 8 - 1))) \
+                .astype(self.data.dtype.str.replace('u', 'i'))
 
     def getMinimumValueAllowed(self):
         return -(1 << (self.data.dtype.itemsize * 8 - 1))
@@ -103,12 +115,13 @@ class AudioSignal:
         #generates common signals
         pass
 
-    def playCallback(self, in_data, frame_count, time_info, status):
+    def _playCallback(self, in_data, frame_count, time_info, status):
         if self.playStatus != self.PLAYING:
             return None, pyaudio.paAbort
 
         if self.playSection[1] - self.playSection[2] < frame_count:
-            data = self.data[self.playSection[2]: -1]
+            data = self.data[self.playSection[2]: self.playSection[1]]
+            self.playSection = self.playSection[0], self.playSection[1], self.playSection[1]
             if self.playNotifier:
                 self.playNotifier(self.currentPlayingFrame())
             self.playSection = (0, 0, 0)
@@ -121,7 +134,7 @@ class AudioSignal:
             self.playNotifier(self.currentPlayingFrame())
         return data, pyaudio.paContinue
 
-    def recordCallback(self, in_data, frame_count, time_info, status):
+    def _recordCallback(self, in_data, frame_count, time_info, status):
         if self.playStatus != self.RECORDING:
             return None, pyaudio.paAbort
 
@@ -157,7 +170,7 @@ class AudioSignal:
                                           channels=self.channels,
                                           rate=int(self.samplingRate * speed / 100.0),
                                           output=True,
-                                          stream_callback=self.playCallback)
+                                          stream_callback=self._playCallback)
 
     def stop(self):
         self.playStatus = self.STOPPED
@@ -179,7 +192,7 @@ class AudioSignal:
             return
         if self.playStatus == self.PLAYING or self.playAudio == self.PAUSED:
             self.stop()
-        #ask for concatenate to the current file or make a new one
+            #ask for concatenate to the current file or make a new one
         self.data = np.array([], dtype=self.data.dtype)
         #self.samplingRate = 44100
         #self.bitDepth = 16
@@ -192,7 +205,7 @@ class AudioSignal:
                                           channels=self.channels,
                                           rate=int(self.samplingRate * speed / 100.0),
                                           input=True,
-                                          stream_callback=self.recordCallback)
+                                          stream_callback=self._recordCallback)
 
     def toWav(self):
         raise NotImplemented
