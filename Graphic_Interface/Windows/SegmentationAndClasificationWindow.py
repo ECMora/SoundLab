@@ -3,7 +3,7 @@ import os.path
 from PyQt4.QtCore import pyqtSlot, Qt
 import PyQt4.QtCore as QtCore
 from PyQt4 import QtGui
-import xlwt
+#import xlwt
 from PyQt4.QtGui import QFileDialog
 from Duetto_Core.AudioSignals.AudioSignal import AudioSignal
 from Duetto_Core.AudioSignals.WavFileSignal import WavFileSignal

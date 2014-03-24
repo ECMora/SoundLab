@@ -39,7 +39,9 @@ class AudioSignal:
                 [np.random.uniform(-(1 << (self.bitDepth - 1)), (1 << (self.bitDepth - 1)) - 1) for i in
                  range(int(duration * self.samplingRate))], np.dtype('int' + str(bitDepth)))
         else:
-            self.data = np.zeros(samplingRate * duration, np.dtype('int' + str(bitDepth)))
+            s = 'int' + str(bitDepth)
+            dt = np.dtype(s)
+            self.data = np.zeros(samplingRate * duration, dt)
 
     def name(self):
         if len(self.path) > 0:
@@ -192,7 +194,7 @@ class AudioSignal:
 
     def record(self, speed=100):
         if self.playAudio.get_device_count() == 0:
-            QMessageBox.warning(QMessageBox(), "Error", "No output devices to play the file.")
+            QMessageBox.critical(QMessageBox(), "Error", "No output devices to play the file.")
             return
         if self.playStatus == self.PLAYING or self.playAudio == self.PAUSED:
             self.stop()
