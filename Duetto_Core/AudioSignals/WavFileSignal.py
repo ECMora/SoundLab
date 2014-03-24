@@ -10,10 +10,15 @@ class WavFileSignal(FileAudioSignal):
     class that represents a signal from a file in the local file system
     """
 
-    def __init__(self,path):
+    # if path is supplied the rest of the arguments are ignored
+    # otherwise a new signal is created with the value of the other arguments
+    def __init__(self, path=None, samplingRate=44100, duration=5, bitDepth=8, whiteNoise=False):
         FileAudioSignal.__init__(self)
-        self.open(path)
-        self.userData=[]
+        if path:
+            self.open(path)
+        else:
+            self.openNew(samplingRate, duration, bitDepth, whiteNoise)
+        self.userData = []
 
     def open(self, path):
         """open a wav file for its processing"""
