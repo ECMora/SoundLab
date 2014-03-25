@@ -1,0 +1,84 @@
+from .TwoDimensionalElement import TwoDimensionalElement
+import numpy as np
+from numpy.fft import fft
+import pyqtgraph as pg
+from .Element import Element
+
+
+
+class OneDimensionalElement(Element):
+    """
+    Represents the minimal piece of information to clasify
+    An element is a time and spectral region of the signal that contains a superior energy that the fragment of signal
+    near to it
+    """
+    def __init__(self, signal, indexFrom, indexTo):
+        Element.__init__(self, signal)
+        self.indexFrom =  indexFrom#index of start of the element
+        self.indexTo = indexTo # end of element in ms
+        self.listOf2dimelements = []
+
+    def twoDimensionalElements(self):
+        #the 2dimensional elements storage in this 1 dimensional element
+        #after apply a 2dimensional acoustic transformation to this one dimensional element and detec the 2 dim elements
+        #in this transform they are returned
+        pass
+
+    def startTime(self):
+        return self.indexFrom*1.0/self.signal.samplingRate
+
+    def endTime(self):
+        return self.indexTo*1.0/self.signal.samplingRate
+
+    def duration(self):
+        """
+        returns the len in ms of an element (float)
+        """
+        return (self.indexTo-self.indexFrom)*1000.0/self.signal.samplingRate
+
+
+class OscilogramElement(OneDimensionalElement):
+
+    def __init__(self, signal, indexFrom, indexTo,number=0):
+        OneDimensionalElement.__init__(self,signal,indexFrom,indexTo)
+        self.twodimensionalOptions = dict()
+        text = pg.TextItem(str(number),color=(255,255,255),anchor=(0.5,0.5))
+        text.setPos(self.indexFrom/2.0+self.indexTo/2.0, 0.75*2**(signal.bitDepth-1))
+        lr = pg.LinearRegionItem([self.indexFrom,self.indexTo], movable=False,brush=(pg.mkBrush((0, 255, 0, 70)) if number%2==0 else pg.mkBrush((0, 0, 255,70))))
+        self.visualwidgets = [text,lr]
+
+    def twoDimensionalElements(self):
+        if len(self.listOf2dimelements) == 0:
+            #compute the elements
+            elements = []
+
+            self.listOf2dimelements = elements
+        return self.listOf2dimelements
+
+    def distanceFromStartToMax(self):
+        return np.argmax(self.signal.data[self.indexFrom:self.indexTo])
+
+    def peakFreq(self):
+        indexFrecuency = self.signal.samplingRate/(self.indexTo-self.indexFrom)*1.0
+        maxindex = np.argmax(fft(self.signal.data[self.indexFrom:self.indexTo]))
+        return int(round((maxindex)*indexFrecuency))
+
+    def peekToPeek(self):
+        return np.ptp(self.signal.data[self.indexFrom:self.indexTo])
+
+    def rms(self):
+        """
+        computes the root mean square of the signal.
+        indexFrom,indexTo the optionally limits of the interval
+        """
+        n = self.indexTo-self.indexFrom
+        globalSum = 0.0
+        intervalSum = 0.0
+        for i in range(n):
+            intervalSum += (self.signal.data[self.indexFrom+i]**2)
+            if i % 10 == 0:
+                globalSum += intervalSum * 1.0 / n
+                intervalSum = 0.0
+
+        globalSum += intervalSum * 1.0 / n
+        return np.sqrt(globalSum)
