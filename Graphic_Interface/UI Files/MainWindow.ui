@@ -527,7 +527,7 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
   </action>
   <action name="actionSmart_Scale">
    <property name="text">
-    <string>Smart Scale</string>
+    <string>Change Volume</string>
    </property>
   </action>
   <action name="actionNormalize">

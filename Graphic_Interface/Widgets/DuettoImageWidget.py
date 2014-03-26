@@ -56,6 +56,16 @@ class DuettoImageWidget(GraphicsView):
     PIXELS_OF_CURSORS_CHANGES = 5
     IntervalSpecChanged = pyqtSignal(int, int)
 
+    def showGrid(self,x=True,y=True):
+        if x:
+            self.xAxis.setGrid(88)
+        else:
+            self.xAxis.setGrid(0)
+        if y:
+            self.yAxis.setGrid(88)
+        else:
+            self.yAxis.setGrid(0)
+
     def on_zoomRegionChanged(self):
         if self.emitIntervalSpecChanged:
             rgn = self.zoomRegion.getRegion()

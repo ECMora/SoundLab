@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\Gaby\Desktop\DuettoSystem\Graphic_Interface\UI Files\MainWindow.ui'
+# Form implementation generated from reading ui file 'C:\Users\Gaby\Desktop\DuettoSystem current\Graphic_Interface\UI Files\MainWindow.ui'
 #
-# Created: Mon Mar 24 22:19:51 2014
+# Created: Wed Mar 26 20:46:53 2014
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -352,7 +352,7 @@ class Ui_DuettoMainWindow(object):
         self.actionInsert_Silence.setText(QtGui.QApplication.translate("DuettoMainWindow", "Insert Silence", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSilence.setText(QtGui.QApplication.translate("DuettoMainWindow", "Silence", None, QtGui.QApplication.UnicodeUTF8))
         self.actionFilter.setText(QtGui.QApplication.translate("DuettoMainWindow", "Filter", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionSmart_Scale.setText(QtGui.QApplication.translate("DuettoMainWindow", "Smart Scale", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSmart_Scale.setText(QtGui.QApplication.translate("DuettoMainWindow", "Change Volume", None, QtGui.QApplication.UnicodeUTF8))
         self.actionNormalize.setText(QtGui.QApplication.translate("DuettoMainWindow", "Normalize", None, QtGui.QApplication.UnicodeUTF8))
         self.actionResampling.setText(QtGui.QApplication.translate("DuettoMainWindow", "Resampling", None, QtGui.QApplication.UnicodeUTF8))
         self.actionGenerate_White_Noise.setText(QtGui.QApplication.translate("DuettoMainWindow", "White Noise", None, QtGui.QApplication.UnicodeUTF8))

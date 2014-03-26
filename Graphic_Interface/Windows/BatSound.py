@@ -42,7 +42,8 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.setupUi(self)
 
         self.hist = DuettoHorizontalHistogramWidget()
-
+        #SerializedData('000','fff',True,True,'000','fff',True,True,'000',True,True,self.hist.item.gradient.saveState(),[5,50])
+        #self.DeSerializeTheme(self.Theme)
         self.Theme = 'Themes\\RedBlackTheme.dth'
         self.defaultTheme = self.DeSerializeTheme(self.Theme)
 
@@ -51,13 +52,12 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.widget.osc_color = self.defaultTheme.osc_plot
         self.widget.osc_gridx = self.defaultTheme.osc_GridX
         self.widget.osc_gridy = self.defaultTheme.osc_GridY
+        self.widget.spec_gridx = self.defaultTheme.spec_GridX
+        self.widget.spec_gridy = self.defaultTheme.spec_GridY
         self.pow_spec_backg = self.defaultTheme.pow_Back
         self.pow_spec_plotColor = self.defaultTheme.pow_Plot
         self.pow_spec_gridx = self.defaultTheme.pow_GridX
         self.pow_spec_gridy = self.defaultTheme.pow_GridY
-
-
-
 
         params = [
         {'name': 'Oscillogram Settings', 'type': 'group', 'children': [
@@ -81,6 +81,11 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 {'name': 'Min', 'type': 'float','step':0.1,'default': self.defaultTheme.histRange[0], 'value': self.defaultTheme.histRange[0]},
                 {'name': 'Max', 'type': 'float','step':0.1,'default': self.defaultTheme.histRange[1] , 'value': self.defaultTheme.histRange[1]},
              ]},
+            {'name': 'Grid', 'type': 'group', 'children': [
+                {'name': 'X', 'type': 'bool','default': self.defaultTheme.spec_GridX, 'value': self.defaultTheme.spec_GridX},
+                {'name': 'Y', 'type': 'bool','default':self.defaultTheme.spec_GridY , 'value': self.defaultTheme.spec_GridY},
+
+            ]},
             {'name': 'Background color', 'type': 'color', 'value':self.defaultTheme.spec_background, 'default': self.defaultTheme.spec_background},
         ]},
 
@@ -168,7 +173,8 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     def SerializeTheme(self,filename):
         data = SerializedData(self.widget.osc_background,self.widget.osc_color,self.widget.osc_gridx,
                               self.widget.osc_gridy,self.pow_spec_backg,self.pow_spec_plotColor,self.pow_spec_gridx,
-                              self.pow_spec_gridy,self.widget.spec_background, self.hist.item.gradient.saveState(),self.hist.item.region.getRegion())
+                              self.pow_spec_gridy,self.widget.spec_background, self.widget.spec_gridx, self.widget.spec_gridy,
+                              self.hist.item.gradient.saveState(),self.hist.item.region.getRegion())
         file = open(filename,'wb')
         pickle.dump(data,file)
         file.close()
@@ -190,6 +196,8 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.widget.osc_color = data.osc_plot
         self.widget.osc_gridx = data.osc_GridX
         self.widget.osc_gridy = data.osc_GridY
+        self.widget.spec_gridx = data.spec_GridX
+        self.widget.spec_gridy = data.spec_GridY
         self.pow_spec_backg = data.pow_Back
         self.pow_spec_plotColor = data.pow_Plot
         self.pow_spec_gridx = data.pow_GridX
@@ -201,6 +209,8 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.hist.item.region.lineMoveFinished()
         self.ParamTree.param('Oscillogram Settings').param('Grid').param('X').setValue(self.widget.osc_gridx)
         self.ParamTree.param('Oscillogram Settings').param('Grid').param('Y').setValue(self.widget.osc_gridy)
+        self.ParamTree.param('Spectrogram Settings').param('Grid').param('X').setValue(self.widget.spec_gridx)
+        self.ParamTree.param('Spectrogram Settings').param('Grid').param('Y').setValue(self.widget.spec_gridy)
         self.ParamTree.param('Oscillogram Settings').param('Background color').setValue(self.widget.osc_background)
         self.ParamTree.param('Oscillogram Settings').param('Plot color').setValue(self.widget.osc_color)
         self.ParamTree.param('Spectrogram Settings').param('Background color').setValue(self.widget.spec_background)
@@ -261,6 +271,16 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 self.widget.refresh(dataChanged=True, updateOscillogram=False, updateSpectrogram=True)
                 self.hist.item.region.lineMoved()
                 self.hist.item.region.lineMoveFinished()
+
+            elif childName == 'Spectrogram Settings.Grid.X':
+                self.widget.spec_gridx = data
+                self.widget.visualChanges = True
+                self.widget.refresh(dataChanged=True, updateOscillogram=False, updateSpectrogram=False)
+
+            elif childName == 'Spectrogram Settings.Grid.Y':
+                self.widget.spec_gridy = data
+                self.widget.visualChanges = True
+                self.widget.refresh(dataChanged=True, updateOscillogram=False, updateSpectrogram=False)
 
             elif childName == 'Spectrogram Settings.Threshold.Min':
                 if self.hist.item.region.getRegion()[0] != data:
@@ -342,8 +362,9 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     def on_actionSegmentation_And_Clasification_triggered(self):
         segWindow = SegmentationAndClasificationWindow(parent=self, signal=self.widget.signalProcessor.signal)
         segWindow.load_Theme(SerializedData(self.widget.osc_background,self.widget.osc_color,self.widget.osc_gridx,
-                              self.widget.osc_gridy,self.pow_spec_backg,self.pow_spec_plotColor,self.pow_spec_gridx,
-                              self.pow_spec_gridy,self.widget.spec_background, self.hist.item.gradient.saveState(),self.hist.item.region.getRegion()))
+                              self.widget.osc_gridy, self.pow_spec_backg,self.pow_spec_plotColor,self.pow_spec_gridx,
+                              self.pow_spec_gridy, self.widget.spec_background, self.widget.spec_gridx, self.widget.spec_gridy,
+                              self.hist.item.gradient.saveState(),self.hist.item.region.getRegion()))
 
     @pyqtSlot()
     def on_actionResampling_triggered(self):
@@ -557,7 +578,9 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     @pyqtSlot()
     def on_actionStop_Sound_triggered(self):
         self.widget.stop()
-
+        self.hist.item.region.lineMoved()
+        self.hist.item.region.lineMoveFinished()
+        
     @pyqtSlot()
     def on_actionRecord_triggered(self):
         self.widget.record()

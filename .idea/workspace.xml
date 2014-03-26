@@ -2,14 +2,22 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9f80b555-41eb-434c-b510-abe08206f059" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Graphic_Interface/Windows/WorkTheme.py" />
+      <change type="DELETED" beforePath="C:\Users\Gaby\Desktop\DuettoSystem current\Graphic_Interface\Windows\PresentationSlogan\Themes\BlueYellowTheme.dth" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\Gaby\Desktop\DuettoSystem current\Graphic_Interface\Windows\PresentationSlogan\Themes\another.dth" afterPath="" />
+      <change type="DELETED" beforePath="C:\Users\Gaby\Desktop\DuettoSystem current\Graphic_Interface\Windows\PresentationSlogan\Themes\mytheme.dth" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Graphic_Interface/UI Files/MainWindow.ui" afterPath="$PROJECT_DIR$/Graphic_Interface/UI Files/MainWindow.ui" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Graphic_Interface/UI Files/SegmentationAndClasificationWindowUI.ui" afterPath="$PROJECT_DIR$/Graphic_Interface/UI Files/SegmentationAndClasificationWindowUI.ui" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Graphic_Interface/Windows/BatSound.py" afterPath="$PROJECT_DIR$/Graphic_Interface/Windows/BatSound.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Graphic_Interface/Windows/PresentationSlogan/Themes/BatsoundLikeTheme.dth" afterPath="$PROJECT_DIR$/Graphic_Interface/Windows/PresentationSlogan/Themes/BatsoundLikeTheme.dth" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Graphic_Interface/Widgets/DuettoImageWidget.py" afterPath="$PROJECT_DIR$/Graphic_Interface/Widgets/DuettoImageWidget.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Graphic_Interface/Windows/MainWindow.py" afterPath="$PROJECT_DIR$/Graphic_Interface/Windows/MainWindow.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Graphic_Interface/Windows/PresentationSlogan/Themes/PinkBlueTheme.dth" afterPath="$PROJECT_DIR$/Graphic_Interface/Windows/PresentationSlogan/Themes/PinkBlueTheme.dth" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Graphic_Interface/Widgets/QSignalVisualizerWidget.py" afterPath="$PROJECT_DIR$/Graphic_Interface/Widgets/QSignalVisualizerWidget.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Graphic_Interface/Windows/PresentationSlogan/Themes/RedBlackTheme.dth" afterPath="$PROJECT_DIR$/Graphic_Interface/Windows/PresentationSlogan/Themes/RedBlackTheme.dth" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Graphic_Interface/Windows/SegmentationAndClasificationWindow.py" afterPath="$PROJECT_DIR$/Graphic_Interface/Windows/SegmentationAndClasificationWindow.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Graphic_Interface/Windows/SegmentationAndClasificationWindowUI.py" afterPath="$PROJECT_DIR$/Graphic_Interface/Windows/SegmentationAndClasificationWindowUI.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Graphic_Interface/Windows/PresentationSlogan/Themes/WhiteBlackTheme.dth" afterPath="$PROJECT_DIR$/Graphic_Interface/Windows/PresentationSlogan/Themes/WhiteBlackTheme.dth" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/modules.xml" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Graphic_Interface/Windows/WorkTheme.py" afterPath="$PROJECT_DIR$/Graphic_Interface/Windows/WorkTheme.py" />
     </list>
     <ignored path="DuettoSystem.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -21,7 +29,7 @@
   </component>
   <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
   <component name="CoverageDataManager">
-    <SUITE FILE_PATH="coverage/DuettoSystem$Duetto_Sound_Lab.coverage" NAME="Duetto_Sound_Lab Coverage Results" MODIFIED="1395857632907" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Graphic_Interface/Windows/PresentationSlogan" />
+    <SUITE FILE_PATH="coverage/DuettoSystem$Duetto_Sound_Lab.coverage" NAME="Duetto_Sound_Lab Coverage Results" MODIFIED="1395869264121" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Graphic_Interface/Windows/PresentationSlogan" />
   </component>
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
@@ -38,21 +46,18 @@
       <file leaf-file-name="BatSound.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Graphic_Interface/Windows/BatSound.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="589" column="0" selection-start="27907" selection-end="27907" vertical-scroll-proportion="0.0" vertical-offset="7985" max-vertical-offset="9112">
+            <state line="582" column="8" selection-start="28683" selection-end="28683" vertical-scroll-proportion="0.0" vertical-offset="6846" max-vertical-offset="8347">
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
-                <element signature="e#8529#9050#0" expanded="false" />
-                <element signature="e#9597#9697#0" expanded="false" />
-                <element signature="e#9973#11837#0" expanded="false" />
-                <element signature="e#11908#12118#0" expanded="false" />
-                <element signature="e#12118#12144#0" expanded="false" />
-                <element signature="e#12313#12341#0" expanded="false" />
-                <element signature="e#12383#12888#0" expanded="false" />
-                <element signature="e#23876#23898#0" expanded="false" />
-                <element signature="e#24237#24760#0" expanded="false" />
-                <element signature="e#25189#25744#0" expanded="false" />
-                <element signature="e#25809#26620#0" expanded="false" />
-                <element signature="e#26685#26785#0" expanded="false" />
+                <element signature="e#9149#9670#0" expanded="false" />
+                <element signature="e#12926#13136#0" expanded="false" />
+                <element signature="e#13136#13162#0" expanded="false" />
+                <element signature="e#13331#13359#0" expanded="false" />
+                <element signature="e#13401#13906#0" expanded="false" />
+                <element signature="e#14032#19105#0" expanded="false" />
+                <element signature="e#21130#21902#0" expanded="false" />
+                <element signature="e#21977#22230#0" expanded="false" />
+                <element signature="e#22310#22833#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -61,9 +66,40 @@
       <file leaf-file-name="SegmentationAndClasificationWindow.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Graphic_Interface/Windows/SegmentationAndClasificationWindow.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="270" column="12" selection-start="15433" selection-end="15433" vertical-scroll-proportion="0.15482695" vertical-offset="4505" max-vertical-offset="6698">
+            <state line="300" column="12" selection-start="17903" selection-end="17903" vertical-scroll-proportion="0.7431694" vertical-offset="2584" max-vertical-offset="4590">
               <folding>
                 <element signature="e#0#22#0" expanded="true" />
+                <element signature="e#4804#5098#0" expanded="false" />
+                <element signature="e#5174#5746#0" expanded="false" />
+                <element signature="e#5839#6352#0" expanded="false" />
+                <element signature="e#6411#6755#0" expanded="false" />
+                <element signature="e#6786#10499#0" expanded="false" />
+                <element signature="e#10542#10641#0" expanded="false" />
+                <element signature="e#10685#10791#0" expanded="false" />
+                <element signature="e#10849#11862#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="QSignalVisualizerWidget.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Graphic_Interface/Widgets/QSignalVisualizerWidget.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="233" column="26" selection-start="9700" selection-end="9700" vertical-scroll-proportion="-13.28" vertical-offset="3000" max-vertical-offset="8262">
+              <folding>
+                <element signature="e#6332#6657#0" expanded="false" />
+                <element signature="e#11224#11904#0" expanded="false" />
+                <element signature="e#11920#11971#0" expanded="false" />
+                <element signature="e#12971#13169#0" expanded="false" />
+                <element signature="e#24295#24320#0" expanded="false" />
+                <element signature="e#24326#24356#0" expanded="false" />
+                <element signature="e#28421#28438#0" expanded="false" />
+                <element signature="e#31665#31726#0" expanded="false" />
+                <element signature="e#31824#34341#0" expanded="false" />
+                <element signature="e#34379#34534#0" expanded="false" />
+                <element signature="e#34571#35219#0" expanded="false" />
+                <element signature="e#35267#36090#0" expanded="false" />
+                <element signature="e#36128#36451#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -72,8 +108,19 @@
       <file leaf-file-name="WorkTheme.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Graphic_Interface/Windows/WorkTheme.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="12" column="31" selection-start="519" selection-end="519" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="323">
+            <state line="7" column="19" selection-start="352" selection-end="352" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="357">
               <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="DuettoImageWidget.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Graphic_Interface/Widgets/DuettoImageWidget.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="58" column="37" selection-start="2252" selection-end="2252" vertical-scroll-proportion="0.0" vertical-offset="526" max-vertical-offset="2703">
+              <folding>
+                <element signature="e#2261#2446#0" expanded="false" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -106,12 +153,12 @@
         <option value="C:/Python27/Lib/site-packages/pyqtgraph/graphicsItems/HistogramLUTItem.py" />
         <option value="$PROJECT_DIR$/Graphic_Interface/Widgets/DuettoHistogram.py" />
         <option value="$PROJECT_DIR$/Graphic_Interface/Widgets/DuettoPlotWidget.py" />
-        <option value="$PROJECT_DIR$/Graphic_Interface/Widgets/DuettoImageWidget.py" />
         <option value="$PROJECT_DIR$/Duetto_Core/AudioSignals/AudioSignal.py" />
-        <option value="$PROJECT_DIR$/Graphic_Interface/Widgets/QSignalVisualizerWidget.py" />
+        <option value="$PROJECT_DIR$/Graphic_Interface/Widgets/DuettoImageWidget.py" />
         <option value="$PROJECT_DIR$/Graphic_Interface/Windows/WorkTheme.py" />
-        <option value="$PROJECT_DIR$/Graphic_Interface/Windows/SegmentationAndClasificationWindow.py" />
+        <option value="$PROJECT_DIR$/Graphic_Interface/Widgets/QSignalVisualizerWidget.py" />
         <option value="$PROJECT_DIR$/Graphic_Interface/Windows/BatSound.py" />
+        <option value="$PROJECT_DIR$/Graphic_Interface/Windows/SegmentationAndClasificationWindow.py" />
       </list>
     </option>
   </component>
@@ -207,7 +254,7 @@
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="recentsLimit" value="5" />
     <property name="options.lastSelected" value="com.jetbrains.python.configuration.PythonSdkConfigurable" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../DuettoSystem Hiram" />
+    <property name="last_opened_file_path" value="D:/Proyecto bioacustica/DuettoSystem" />
     <property name="FullScreen" value="false" />
     <property name="options.splitter.details.proportions" value="0.2" />
     <property name="options.searchVisible" value="true" />
@@ -454,7 +501,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1382" height="744" extended-state="7" />
+    <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3379791" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -513,10 +560,17 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="python-line">
+          <url>file://$PROJECT_DIR$/Graphic_Interface/Widgets/QSignalVisualizerWidget.py</url>
+          <line>751</line>
+          <option name="timeStamp" value="52" />
+        </line-breakpoint>
+      </breakpoints>
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
-      <option name="time" value="51" />
+      <option name="time" value="53" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
@@ -538,13 +592,6 @@
     <entry file="file://C:/Python27/Lib/site-packages/pyqtgraph/widgets/GraphicsView.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="197" column="13" selection-start="7864" selection-end="7864" vertical-scroll-proportion="0.0" vertical-offset="3144" max-vertical-offset="6766" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Graphic_Interface/Widgets/DuettoImageWidget.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="129" column="36" selection-start="5507" selection-end="5507" vertical-scroll-proportion="0.0" vertical-offset="2193" max-vertical-offset="2788">
-          <folding />
-        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Graphic_Interface/Widgets/DuettoPlotWidget.py">
@@ -592,46 +639,74 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Graphic_Interface/Widgets/QSignalVisualizerWidget.py">
+    <entry file="file://$PROJECT_DIR$/Graphic_Interface/Widgets/DuettoImageWidget.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="65" column="0" selection-start="2566" selection-end="2566" vertical-scroll-proportion="0.0" vertical-offset="255" max-vertical-offset="13226">
-          <folding />
+        <state line="58" column="37" selection-start="2252" selection-end="2252" vertical-scroll-proportion="0.0" vertical-offset="526" max-vertical-offset="2703">
+          <folding>
+            <element signature="e#2261#2446#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Graphic_Interface/Windows/WorkTheme.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="12" column="31" selection-start="519" selection-end="519" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="323">
+        <state line="7" column="19" selection-start="352" selection-end="352" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="357">
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Graphic_Interface/Widgets/QSignalVisualizerWidget.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="233" column="26" selection-start="9700" selection-end="9700" vertical-scroll-proportion="-13.28" vertical-offset="3000" max-vertical-offset="8262">
+          <folding>
+            <element signature="e#6332#6657#0" expanded="false" />
+            <element signature="e#11224#11904#0" expanded="false" />
+            <element signature="e#11920#11971#0" expanded="false" />
+            <element signature="e#12971#13169#0" expanded="false" />
+            <element signature="e#24295#24320#0" expanded="false" />
+            <element signature="e#24326#24356#0" expanded="false" />
+            <element signature="e#28421#28438#0" expanded="false" />
+            <element signature="e#31665#31726#0" expanded="false" />
+            <element signature="e#31824#34341#0" expanded="false" />
+            <element signature="e#34379#34534#0" expanded="false" />
+            <element signature="e#34571#35219#0" expanded="false" />
+            <element signature="e#35267#36090#0" expanded="false" />
+            <element signature="e#36128#36451#0" expanded="false" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Graphic_Interface/Windows/BatSound.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="589" column="0" selection-start="27907" selection-end="27907" vertical-scroll-proportion="0.0" vertical-offset="7985" max-vertical-offset="9112">
+        <state line="582" column="8" selection-start="28683" selection-end="28683" vertical-scroll-proportion="0.0" vertical-offset="6846" max-vertical-offset="8347">
           <folding>
             <element signature="e#0#10#0" expanded="true" />
-            <element signature="e#8529#9050#0" expanded="false" />
-            <element signature="e#9597#9697#0" expanded="false" />
-            <element signature="e#9973#11837#0" expanded="false" />
-            <element signature="e#11908#12118#0" expanded="false" />
-            <element signature="e#12118#12144#0" expanded="false" />
-            <element signature="e#12313#12341#0" expanded="false" />
-            <element signature="e#12383#12888#0" expanded="false" />
-            <element signature="e#23876#23898#0" expanded="false" />
-            <element signature="e#24237#24760#0" expanded="false" />
-            <element signature="e#25189#25744#0" expanded="false" />
-            <element signature="e#25809#26620#0" expanded="false" />
-            <element signature="e#26685#26785#0" expanded="false" />
+            <element signature="e#9149#9670#0" expanded="false" />
+            <element signature="e#12926#13136#0" expanded="false" />
+            <element signature="e#13136#13162#0" expanded="false" />
+            <element signature="e#13331#13359#0" expanded="false" />
+            <element signature="e#13401#13906#0" expanded="false" />
+            <element signature="e#14032#19105#0" expanded="false" />
+            <element signature="e#21130#21902#0" expanded="false" />
+            <element signature="e#21977#22230#0" expanded="false" />
+            <element signature="e#22310#22833#0" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Graphic_Interface/Windows/SegmentationAndClasificationWindow.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="270" column="12" selection-start="15433" selection-end="15433" vertical-scroll-proportion="0.15482695" vertical-offset="4505" max-vertical-offset="6698">
+        <state line="300" column="12" selection-start="17903" selection-end="17903" vertical-scroll-proportion="0.7431694" vertical-offset="2584" max-vertical-offset="4590">
           <folding>
             <element signature="e#0#22#0" expanded="true" />
+            <element signature="e#4804#5098#0" expanded="false" />
+            <element signature="e#5174#5746#0" expanded="false" />
+            <element signature="e#5839#6352#0" expanded="false" />
+            <element signature="e#6411#6755#0" expanded="false" />
+            <element signature="e#6786#10499#0" expanded="false" />
+            <element signature="e#10542#10641#0" expanded="false" />
+            <element signature="e#10685#10791#0" expanded="false" />
+            <element signature="e#10849#11862#0" expanded="false" />
           </folding>
         </state>
       </provider>

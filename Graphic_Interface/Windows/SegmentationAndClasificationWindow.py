@@ -297,8 +297,8 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                 except:
                     pass
                 self.tableParameterSpectrogram.setHorizontalHeaderLabels([label[0] for label in paramsTomeasure])
-                self.hist.region.lineMoved()
-                self.hist.region.lineMoveFinished()
+            self.hist.region.lineMoved()
+            self.hist.region.lineMoveFinished()
 
 
 
