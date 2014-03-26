@@ -55,12 +55,14 @@ class OscYAxis(pg.AxisItem):
     def __init__(self,*args,**kwargs):
         pg.AxisItem.__init__(self,*args,**kwargs)
         self.Max = 1
+        self.setLabel(text="Amplitude (%)")
+
     def tickStrings(self, values, scale, spacing):
         strns = []
         for x in values:
-            strns.append("{:.2f}".format(x*100.0/self.Max))
-        self.setLabel(text="Amplitude %")
+            strns.append("{:.0f}".format(x*100.0/self.Max))
         return strns
+
     def setMaxVal(self,maxVal):
         self.Max = maxVal
 
@@ -527,7 +529,7 @@ class QSignalVisualizerWidget(QWidget):
 
     def clearZoomCursor(self):
         self.zoomCursor.min, self.zoomCursor.max = 0, 0
-        self.axesOscilogram.zoomRegion.setBounds([0, 0])
+        self.axesOscilogram.zoomRegion.setRegion([0, 0])
         self.axesSpecgram.zoomRegion.setRegion([0, 0])
 
 

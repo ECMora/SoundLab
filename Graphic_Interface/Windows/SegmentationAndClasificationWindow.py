@@ -88,8 +88,8 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.widget.load_Theme(theme)
         self.widget.visualChanges = True
         self.widget.refresh()
-
-
+        self.hist.region.lineMoved()
+        self.hist.region.lineMoveFinished()
 
     @pyqtSlot()
     def on_actionView_Parameters_triggered(self):
@@ -336,18 +336,24 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.widget.visibleOscilogram=True
         self.widget.visibleSpectrogram=True
         self.widget.refresh(dataChanged=False)
+        self.hist.region.lineMoved()
+        self.hist.region.lineMoveFinished()
 
     @QtCore.pyqtSlot()
     def on_actionSpectogram_triggered(self):
         self.widget.visibleOscilogram=False
         self.widget.visibleSpectrogram=True
         self.widget.refresh(dataChanged=False)
+        self.hist.region.lineMoved()
+        self.hist.region.lineMoveFinished()
 
     @QtCore.pyqtSlot()
     def on_actionOscilogram_triggered(self):
         self.widget.visibleOscilogram=True
         self.widget.visibleSpectrogram=False
         self.widget.refresh(dataChanged=False)
+        self.hist.region.lineMoved()
+        self.hist.region.lineMoveFinished()
 
     @QtCore.pyqtSlot()
     def on_actionPlay_Sound_triggered(self):
