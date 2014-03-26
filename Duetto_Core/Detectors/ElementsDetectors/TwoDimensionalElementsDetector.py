@@ -26,12 +26,12 @@ class TwoDimensionalElementsDetector(Detector):
         minsize = (max(1,minsize[0]/spec_resolution),max(1,minsize[1]/temp_resoution))
         print("Min size "+str(minsize))
         threshold = np.percentile(pxx,threshold)
-        print("Especgram trh "+str(threshold))
         self.pxx = pxx
         self._nr, self._nc = self.pxx.shape
         self.markedPxx = np.zeros_like(self.pxx)
         self._gt_tresh = pxx > threshold
         gt_tresh_idx = np.argwhere(self._gt_tresh)
+        elemIndex=1
         for i, j in gt_tresh_idx:
             if self._gt_tresh[i, j]:
                 self.regionsOverUmbral.append([])
@@ -42,11 +42,12 @@ class TwoDimensionalElementsDetector(Detector):
                         self.markedPxx[idxs[0], idxs[1]] = 0
                     continue
 
-                print("**************************************************")
+                print("*****************************")
 
-                if(regionBounds[1]-regionBounds[0]>minsize[0] or regionBounds[3]-regionBounds[2]>minsize[1]):
+                if(regionBounds[1]-regionBounds[0]>=minsize[0] and regionBounds[3]-regionBounds[2]>=minsize[1]):
                     print(regionBounds)
-                    rc = SpecgramElement(signal,pxx[regionBounds[0]: regionBounds[1]][regionBounds[2]:regionBounds[3]],freqs,regionBounds[0],regionBounds[1],bins,regionBounds[2],regionBounds[3])
+                    rc = SpecgramElement(signal,pxx[regionBounds[0]: regionBounds[1]][regionBounds[2]:regionBounds[3]],freqs,regionBounds[0],regionBounds[1],bins,regionBounds[2],regionBounds[3],number=elemIndex)
+                    elemIndex+=1
                     self.twodimensionalElements.append(rc)
 
     def _islandDelete(self, r, c, element_number):

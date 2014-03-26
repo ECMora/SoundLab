@@ -42,7 +42,7 @@ class OneDimensionalElementsDetector(ElementsDetector):
                 merge_factor = merge_factor*signal.samplingRate/1000.0
             if minSize != 0:
                 minSize = minSize*signal.samplingRate/1000.0
-            self.oneDimensionalElements = [OscilogramElement(signal,c[0], c[1]) for c in self.one_dimensional_elements_detector(signal.data[indexFrom : indexTo],threshold, minSize=minSize, decay=decay, softfactor=softfactor, merge_factor=merge_factor,secondThreshold=secondThreshold)]
+            self.oneDimensionalElements = [OscilogramElement(signal,c[0], c[1],number=i+1) for i,c in enumerate(self.one_dimensional_elements_detector(signal.data[indexFrom : indexTo],threshold, minSize=minSize, decay=decay, softfactor=softfactor, merge_factor=merge_factor,secondThreshold=secondThreshold))]
 
     def one_dimensional_elements_detector(self, data,threshold=0, minSize=1, decay=1, softfactor=10, merge_factor=0,secondThreshold=0):
         """

@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\Gaby\Desktop\DuettoSystem\Graphic_Interface\UI Files\MainWindow.ui'
 #
-# Created: Wed Mar 19 23:13:15 2014
+# Created: Mon Mar 24 22:19:51 2014
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -49,7 +49,7 @@ class Ui_DuettoMainWindow(object):
         self.menubar.setStyleSheet(_fromUtf8(""))
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuFile = QtGui.QMenu(self.menubar)
-        self.menuFile.setGeometry(QtCore.QRect(208, 128, 143, 182))
+        self.menuFile.setGeometry(QtCore.QRect(208, 128, 143, 191))
         self.menuFile.setAutoFillBackground(False)
         self.menuFile.setStyleSheet(_fromUtf8(""))
         self.menuFile.setTearOffEnabled(False)
@@ -233,6 +233,7 @@ class Ui_DuettoMainWindow(object):
         self.menuFile.addAction(self.actionNew)
         self.menuFile.addAction(self.actionOpen)
         self.menuFile.addAction(self.actionSave)
+        self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionLoad_Theme)
         self.menuFile.addAction(self.actionSave_theme)
         self.menuFile.addAction(self.actionExit)
@@ -358,8 +359,8 @@ class Ui_DuettoMainWindow(object):
         self.actionSegmentation_And_Clasification.setText(QtGui.QApplication.translate("DuettoMainWindow", "Segmentation And Clasification", None, QtGui.QApplication.UnicodeUTF8))
         self.actionEnvelope.setText(QtGui.QApplication.translate("DuettoMainWindow", "Envelope", None, QtGui.QApplication.UnicodeUTF8))
         self.actionGenerate_Pink_Noise.setText(QtGui.QApplication.translate("DuettoMainWindow", "Pink Noise", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionSave_theme.setText(QtGui.QApplication.translate("DuettoMainWindow", "Save theme", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionLoad_Theme.setText(QtGui.QApplication.translate("DuettoMainWindow", "Load Theme", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSave_theme.setText(QtGui.QApplication.translate("DuettoMainWindow", "Save theme as", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionLoad_Theme.setText(QtGui.QApplication.translate("DuettoMainWindow", "Load theme", None, QtGui.QApplication.UnicodeUTF8))
 
 from Graphic_Interface.Widgets.QSignalVisualizerWidget import QSignalVisualizerWidget
 import icons_rc

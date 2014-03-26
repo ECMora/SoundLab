@@ -1,6 +1,7 @@
 from .TwoDimensionalElement import TwoDimensionalElement
 import numpy as np
 from numpy.fft import fft
+import pyqtgraph as pg
 from .Element import Element
 
 
@@ -38,14 +39,19 @@ class OneDimensionalElement(Element):
 
 class OscilogramElement(OneDimensionalElement):
 
-    def __init__(self, signal, indexFrom, indexTo):
+    def __init__(self, signal, indexFrom, indexTo,number=0):
         OneDimensionalElement.__init__(self,signal,indexFrom,indexTo)
         self.twodimensionalOptions = dict()
+        text = pg.TextItem(str(number),color=(255,255,255),anchor=(0.5,0.5))
+        text.setPos(self.indexFrom/2.0+self.indexTo/2.0, 0.75*2**(signal.bitDepth-1))
+        lr = pg.LinearRegionItem([self.indexFrom,self.indexTo], movable=False,brush=(pg.mkBrush((0, 255, 0, 70)) if number%2==0 else pg.mkBrush((0, 0, 255,70))))
+        self.visualwidgets = [text,lr]
 
     def twoDimensionalElements(self):
         if len(self.listOf2dimelements) == 0:
             #compute the elements
             elements = []
+
             self.listOf2dimelements = elements
         return self.listOf2dimelements
 

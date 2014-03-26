@@ -24,7 +24,7 @@ MAX_SAMPLING_RATE = 2000000
 
 
 class SerializedData:
-    def __init__(self,oscBack,oscPlot,oscGridX,oscGridY,powBack,powPlot,powGridX,powGridY,colorbar,region):
+    def __init__(self,oscBack,oscPlot,oscGridX,oscGridY,powBack,powPlot,powGridX,powGridY, specBack, colorbar,region):
         self.osc_background = oscBack
         self.osc_plot = oscPlot
         self.osc_GridX =oscGridX
@@ -33,6 +33,7 @@ class SerializedData:
         self.pow_Plot = powPlot
         self.pow_GridX = powGridX
         self.pow_GridY = powGridY
+        self.spec_background = specBack
         self.colorBarState = colorbar
         self.histRange = region
 
@@ -52,39 +53,60 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     def __init__(self, parent=None):
         super(BatSoundWindow, self).__init__(parent)
         self.setupUi(self)
+
+        self.Theme = 'Themes\\RedBlackTheme.dth'
+        self.defaultTheme = self.DeSerializeTheme(self.Theme)
+
+        self.widget.spec_background = self.defaultTheme.spec_background
+        self.widget.osc_background = self.defaultTheme.osc_background
+        self.widget.osc_color = self.defaultTheme.osc_plot
+        self.widget.osc_gridx = self.defaultTheme.osc_GridX
+        self.widget.osc_gridy = self.defaultTheme.osc_GridY
+        self.pow_spec_backg = self.defaultTheme.pow_Back
+        self.pow_spec_plotColor = self.defaultTheme.pow_Plot
+        self.pow_spec_gridx = self.defaultTheme.pow_GridX
+        self.pow_spec_gridy = self.defaultTheme.pow_GridY
+
+
+
+
         params = [
         {'name': 'Oscillogram Settings', 'type': 'group', 'children': [
             {'name': 'Milliseconds per plot', 'type': 'int', 'value': 0},
             {'name': 'Min amplitude', 'type': 'float', 'value': 0, 'step': 0.1},
             {'name': 'Max amplitude', 'type': 'float', 'value': 0, 'step': 0.1},
             {'name': 'Grid', 'type': 'group', 'children': [
-                {'name': 'X', 'type': 'bool','default': True, 'value': True},
-                {'name': 'Y', 'type': 'bool','default':True , 'value': True},
+                {'name': 'X', 'type': 'bool','default': self.defaultTheme.osc_GridX, 'value': self.defaultTheme.osc_GridX},
+                {'name': 'Y', 'type': 'bool','default':self.defaultTheme.osc_GridY , 'value': self.defaultTheme.osc_GridY},
 
             ]},
-            {'name':'Background color', 'type':'color','value':"000", 'default':"000"},
-            {'name': 'Plot color', 'type': 'color', 'value':"FFF", 'default': "FFF"},
+            {'name':'Background color', 'type':'color','value':self.defaultTheme.osc_background, 'default':self.defaultTheme.osc_background},
+            {'name': 'Plot color', 'type': 'color', 'value':self.defaultTheme.osc_plot, 'default': self.defaultTheme.osc_plot},
         ]},
 
         {'name': 'Spectrogram Settings', 'type': 'group', 'children': [
 
-            {'name': 'FFT size', 'type': 'list','values': {'256': 256, '512': 512, '1024': 1024, '2048': 2048, 'Automatic': 512}, 'value':'Automatic' },
-            {'name': 'FFT window', 'type': 'list', 'value':'None','default':self.widget.specgramSettings.windows[6],'values': {"blackman": self.widget.specgramSettings.windows[3],"rectangular": self.widget.specgramSettings.windows[1], "Hanning": self.widget.specgramSettings.windows[2], "Hamming": self.widget.specgramSettings.windows[0],'bartlett':self.widget.specgramSettings.windows[4],'kaiser':self.widget.specgramSettings.windows[5],'None':self.widget.specgramSettings.windows[6]}},
+            {'name': 'FFT size', 'type': 'list', 'default':512, 'values': {'256': 256, '512': 512, '1024': 1024, '2048': 2048, 'Automatic': 512}, 'value':'Automatic' },
+            {'name': 'FFT window', 'type': 'list', 'value':self.widget.specgramSettings.windows[0],'default':self.widget.specgramSettings.windows[0],'values': {"blackman": self.widget.specgramSettings.windows[3],"rectangular": self.widget.specgramSettings.windows[1], "Hanning": self.widget.specgramSettings.windows[2], "Hamming": self.widget.specgramSettings.windows[0],'bartlett':self.widget.specgramSettings.windows[4],'kaiser':self.widget.specgramSettings.windows[5],'None':self.widget.specgramSettings.windows[6]}},
             {'name': 'FFT overlap', 'type': 'int', 'value':90, 'max' : 100},
-            {'name': 'Background color', 'type': 'color', 'value':"000", 'default': "000"},
+            {'name': 'Threshold', 'type': 'group', 'children': [
+                {'name': 'Min', 'type': 'float','step':0.1,'default': self.defaultTheme.histRange[0], 'value': self.defaultTheme.histRange[0]},
+                {'name': 'Max', 'type': 'float','step':0.1,'default': self.defaultTheme.histRange[1] , 'value': self.defaultTheme.histRange[1]},
+             ]},
+            {'name': 'Background color', 'type': 'color', 'value':self.defaultTheme.spec_background, 'default': self.defaultTheme.spec_background},
         ]},
 
         {'name': 'Power Spectrum Settings', 'type': 'group', 'children': [
 
              {'name': 'FFT size', 'type': 'list','default':512, 'values': {"256": 256, "512": 512, "1024": 1024, '2048': 2048, 'Automatic': 512}, 'value': 2},
-             {'name': 'FFT window', 'type': 'list', 'value':'None','default':self.widget.specgramSettings.windows[6],'values': {"blackman": self.widget.specgramSettings.windows[3],"rectangular": self.widget.specgramSettings.windows[1], "Hanning": self.widget.specgramSettings.windows[2], "Hamming": self.widget.specgramSettings.windows[0],'bartlett':self.widget.specgramSettings.windows[4],'kaiser':self.widget.specgramSettings.windows[5],'None':self.widget.specgramSettings.windows[6]}},
+             {'name': 'FFT window', 'type': 'list', 'value':self.widget.specgramSettings.windows[0],'default':self.widget.specgramSettings.windows[0],'values': {"blackman": self.widget.specgramSettings.windows[3],"rectangular": self.widget.specgramSettings.windows[1], "Hanning": self.widget.specgramSettings.windows[2], "Hamming": self.widget.specgramSettings.windows[0],'bartlett':self.widget.specgramSettings.windows[4],'kaiser':self.widget.specgramSettings.windows[5],'None':self.widget.specgramSettings.windows[6]}},
              {'name': 'Grid', 'type': 'group', 'children': [
-                {'name': 'X', 'type': 'bool','default': True, 'value': True},
-                {'name': 'Y', 'type': 'bool','default':True , 'value': True},
+                {'name': 'X', 'type': 'bool','default': self.defaultTheme.pow_GridX, 'value': self.defaultTheme.pow_GridX},
+                {'name': 'Y', 'type': 'bool','default':self.defaultTheme.pow_GridY , 'value': self.defaultTheme.pow_GridY},
 
              ]},
-             {'name':'Background color', 'type':'color','value':"000", 'default':"000"},
-             {'name': 'Plot color', 'type': 'color', 'value':"FFF", 'default': "FFF"},
+             {'name':'Background color', 'type':'color','value':self.defaultTheme.pow_Back, 'default':self.defaultTheme.pow_Back},
+             {'name': 'Plot color', 'type': 'color', 'value':self.defaultTheme.pow_Plot, 'default': self.defaultTheme.pow_Plot},
         ]},
 
         ]
@@ -98,6 +120,7 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.t.setParameters(self.ParamTree, showTop=False)
 
         lay1 = QtGui.QVBoxLayout()
+        lay1.setMargin(0)
         lay1.addWidget(self.t)
 
         self.hist = DuettoHorizontalHistogramWidget()
@@ -108,6 +131,9 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.hist.setFixedWidth(340)
         self.hist.setFixedHeight(100)
         self.hist.item.setImageItem(self.widget.axesSpecgram.imageItem)
+        self.hist.item.gradient.restoreState(self.defaultTheme.colorBarState)
+        self.hist.item.region.setRegion(self.defaultTheme.histRange)
+        self.hist.item.region.sigRegionChanged.connect(self.updateRegionTheme)
 
         action = self.hist.item.gradient.hsvAction
         action.triggered.disconnect()
@@ -117,23 +143,34 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         lay1.addWidget(self.hist)
         self.osc_settings_contents.setLayout(lay1)
-        self.osc_settings_contents.layout().addWidget(self.hist)
         self.dock_settings.setVisible(False)
         self.dock_settings.setFixedWidth(350)
-
 
         self.connect(self.widget, SIGNAL("IntervalChanged"), self.updatePowSpecWin)
         self.NFFT_pow = 512
 
         self.window_pow = self.widget.specgramSettings.windows[6]
-        self.pow_spec_backg = "000"
-        self.pow_spec_plotColor = "FFF"
-        self.pow_spec_gridx = True
-        self.pow_spec_gridy = True
         self.colorBarsPath = "ColorBars"
         self.pow_spec_windows = []
         self.loadAllColorBars()
         self.setAcceptDrops(True)
+        separator = QtGui.QAction(self)
+        separator.setSeparator(True)
+        separator2 = QtGui.QAction(self)
+        separator2.setSeparator(True)
+        self.widget.createContextCursor([self.actionCopy,self.actionCut,self.actionPaste,separator,
+                                         self.actionPlay_Sound,self.actionPause_Sound,self.actionStop_Sound,self.actionRecord,separator2,
+                                         self.action_Reverse,self.actionSilence,self.actionInsert_Silence])
+
+    def updateRegionTheme(self):
+        reg = self.hist.item.region.getRegion()
+        valueMin = self.ParamTree.param('Spectrogram Settings').param('Threshold').param('Min').value()
+        valueMax = self.ParamTree.param('Spectrogram Settings').param('Threshold').param('Max').value()
+        if reg[0] != valueMin :
+            self.ParamTree.param('Spectrogram Settings').param('Threshold').param('Min').setValue(reg[0])
+        if  reg[1] != valueMax:
+            self.ParamTree.param('Spectrogram Settings').param('Threshold').param('Max').setValue(reg[1])
+
 
         QTimer.singleShot(0, self.on_load)
 
@@ -145,35 +182,12 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.widget.openNew(44100, 16, 5., whiteNoise=False)
         self.setWindowTitle("Duetto Sound Lab - (new)")
 
-        data = self.DeSerializeTheme('Themes\\another.dth')
 
-        self.widget.osc_background = data.osc_background
-        self.widget.osc_color = data.osc_plot
-        self.widget.osc_gridx = data.osc_GridX
-        self.widget.osc_gridy = data.osc_GridY
-        self.pow_spec_backg = data.pow_Back
-        self.pow_spec_plotColor = data.pow_Plot
-        self.pow_spec_gridx = data.pow_GridX
-        self.pow_spec_gridy = data.pow_GridY
-        self.hist.item.gradient.restoreState(data.colorBarState)
-        self.hist.item.region.setRegion([data.histRange[0],data.histRange[1]])
-        self.hist.item.update()
-        self.widget.visualChanges = True
-        self.widget.refresh(dataChanged=True,updateOscillogram=True,updateSpectrogram=False)
-        self.ParamTree.param('Oscillogram Settings').param('Grid').param('X').setValue(self.widget.osc_gridx)
-        self.ParamTree.param('Oscillogram Settings').param('Grid').param('Y').setValue(self.widget.osc_gridy)
-        self.ParamTree.param('Oscillogram Settings').param('Background color').setValue(self.widget.osc_background)
-        self.ParamTree.param('Oscillogram Settings').param('Plot color').setValue(self.widget.osc_color)
-        self.ParamTree.param('Power Spectrum Settings').param('Grid').param('X').setValue(self.pow_spec_gridx)
-        self.ParamTree.param('Power Spectrum Settings').param('Grid').param('Y').setValue(self.pow_spec_gridy)
-        self.ParamTree.param('Power Spectrum Settings').param('Background color').setValue(self.pow_spec_backg)
-        self.ParamTree.param('Power Spectrum Settings').param('Plot color').setValue(self.pow_spec_plotColor)
-        self.first = True
 
     def SerializeTheme(self,filename):
         data = SerializedData(self.widget.osc_background,self.widget.osc_color,self.widget.osc_gridx,
                               self.widget.osc_gridy,self.pow_spec_backg,self.pow_spec_plotColor,self.pow_spec_gridx,
-                              self.pow_spec_gridy,self.hist.item.gradient.saveState(),self.hist.item.region.getRegion())
+                              self.pow_spec_gridy,self.widget.spec_background, self.hist.item.gradient.saveState(),self.hist.item.region.getRegion())
         file = open(filename,'wb')
         pickle.dump(data,file)
         file.close()
@@ -189,11 +203,8 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         filename = QFileDialog.getSaveFileName(parent=self,caption="Save Theme",filter="Duetto Theme Files (*.dth);;All Files (*)")
         self.SerializeTheme(filename)
 
-    @pyqtSlot()
-    def on_actionLoad_Theme_triggered(self):
-        filename = QFileDialog.getOpenFileName(parent=self, caption="Load Theme",filter="Duetto Theme Files (*.dth);;All Files (*)")
-        data = self.DeSerializeTheme(filename)
-
+    def updateMyTheme(self,data):
+        self.widget.spec_background = data.spec_background
         self.widget.osc_background = data.osc_background
         self.widget.osc_color = data.osc_plot
         self.widget.osc_gridx = data.osc_GridX
@@ -203,23 +214,29 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.pow_spec_gridx = data.pow_GridX
         self.pow_spec_gridy = data.pow_GridY
         self.hist.item.gradient.restoreState(data.colorBarState)
-        self.hist.item.region.setRegion([data.histRange[0],data.histRange[1]])
-        self.hist.item.update()
-        self.widget.visualChanges = True
-        #self.hist.item.region.sigRegionChanged.emit(self)
+        self.hist.item.region.setRegion(data.histRange)
 
-        self.widget.refresh(dataChanged=True,updateOscillogram=True,updateSpectrogram=False)
+        self.hist.item.region.lineMoved()
+        self.hist.item.region.lineMoveFinished()
         self.ParamTree.param('Oscillogram Settings').param('Grid').param('X').setValue(self.widget.osc_gridx)
         self.ParamTree.param('Oscillogram Settings').param('Grid').param('Y').setValue(self.widget.osc_gridy)
         self.ParamTree.param('Oscillogram Settings').param('Background color').setValue(self.widget.osc_background)
         self.ParamTree.param('Oscillogram Settings').param('Plot color').setValue(self.widget.osc_color)
+        self.ParamTree.param('Spectrogram Settings').param('Background color').setValue(self.widget.spec_background)
+        self.ParamTree.param('Spectrogram Settings').param('Threshold').param('Min').setValue(data.histRange[0])
+        self.ParamTree.param('Spectrogram Settings').param('Threshold').param('Max').setValue(data.histRange[1])
         self.ParamTree.param('Power Spectrum Settings').param('Grid').param('X').setValue(self.pow_spec_gridx)
         self.ParamTree.param('Power Spectrum Settings').param('Grid').param('Y').setValue(self.pow_spec_gridy)
-        self.ParamTree.param('Power Spectrum Settings').param('Background color').setValue(self.pow_spec_backg)
+        self.ParamTree.param('Power Spectrum Settings').param('Background color').setValue(data.pow_Back)
         self.ParamTree.param('Power Spectrum Settings').param('Plot color').setValue(self.pow_spec_plotColor)
 
-    #region Drag and Drop file
+    @pyqtSlot()
+    def on_actionLoad_Theme_triggered(self):
+        filename = QFileDialog.getOpenFileName(parent=self, caption="Load Theme",filter="Duetto Theme Files (*.dth);;All Files (*)")
+        data = self.DeSerializeTheme(filename)
+        self.updateMyTheme(data)
 
+    #region Drag and Drop file
 
     def dragEnterEvent(self, event):
         event.acceptProposedAction()
@@ -263,16 +280,34 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 self.widget.specgramSettings.NFFT = data
                 self.widget.visualChanges = True
                 self.widget.refresh(dataChanged=True, updateOscillogram=False, updateSpectrogram=True)
+                self.hist.item.region.lineMoved()
+                self.hist.item.region.lineMoveFinished()
+
+            elif childName == 'Spectrogram Settings.Threshold.Min':
+                if self.hist.item.region.getRegion()[0] != data:
+                    self.hist.item.region.setRegion([data,self.hist.item.region.getRegion()[1]])
+                    self.hist.item.region.lineMoved()
+                    self.hist.item.region.lineMoveFinished()
+
+            elif childName == 'Spectrogram Settings.Threshold.Max':
+                if self.hist.item.region.getRegion()[1] != data:
+                    self.hist.item.region.setRegion([self.hist.item.region.getRegion()[0],data])
+                    self.hist.item.region.lineMoved()
+                    self.hist.item.region.lineMoveFinished()
 
             elif childName == 'Spectrogram Settings.FFT window':
                 self.widget.specgramSettings.window = data
                 self.widget.visualChanges = True
                 self.widget.refresh(dataChanged=True, updateOscillogram=False, updateSpectrogram=True)
+                self.hist.item.region.lineMoved()
+                self.hist.item.region.lineMoveFinished()
 
             elif childName == 'Spectrogram Settings.Background color':
                 self.widget.spec_background = data
                 self.widget.visualChanges = True
-                self.widget.refresh(dataChanged=True,updateOscillogram=False,updateSpectrogram=True)
+                self.widget.refresh(dataChanged=True,updateOscillogram=False,updateSpectrogram=False)
+                self.hist.item.region.lineMoved()
+                self.hist.item.region.lineMoveFinished()
 
             elif childName == 'Spectrogram Settings.ColorMap':
                 self.widget.axesSpecgram.getHistogramWidget().item._pixelVectorCache.append(data)
@@ -281,6 +316,8 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 self.widget.specgramSettings.overlap = data
                 self.widget.visualChanges = True
                 self.widget.refresh(dataChanged=True, updateOscillogram=False, updateSpectrogram=True)
+                self.hist.item.region.lineMoved()
+                self.hist.item.region.lineMoveFinished()
 
             elif childName == 'Power Spectrum Settings.FFT size':
                 self.NFFT_pow = data
@@ -303,15 +340,15 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             elif childName == 'Oscillogram Settings.Background color':
                 self.widget.osc_background = data
                 self.widget.visualChanges = True
-                self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
+                self.widget.refresh(dataChanged=True, updateOscillogram=False, updateSpectrogram=False)
             elif childName == 'Oscillogram Settings.Grid.X':
                 self.widget.osc_gridx = data
                 self.widget.visualChanges = True
-                self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
+                self.widget.refresh(dataChanged=True, updateOscillogram=False, updateSpectrogram=False)
             elif childName == 'Oscillogram Settings.Grid.Y':
                 self.widget.osc_gridy = data
                 self.widget.visualChanges = True
-                self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
+                self.widget.refresh(dataChanged=True, updateOscillogram=False, updateSpectrogram=False)
             elif childName == 'Oscillogram Settings.Plot color':
                 self.widget.osc_color = data
                 self.widget.visualChanges = True
@@ -325,6 +362,11 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     @pyqtSlot()
     def on_actionSegmentation_And_Clasification_triggered(self):
         segWindow = SegmentationAndClasificationWindow(parent=self, signal=self.widget.signalProcessor.signal)
+        segWindow.load_Theme(self.defaultTheme)
+        segWindow.hist.region.lineMoved()
+        segWindow.hist.region.lineMoveFinished()
+
+
 
     @pyqtSlot()
     def on_actionResampling_triggered(self):
@@ -467,11 +509,6 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.widget.zoomNone()
 
     @pyqtSlot()
-    def on_actionClear_Spectogram_triggered(self):
-        #self.widget.update_spectrogram(self.NFFT_spec, self.overlap_spec)
-        pass
-
-    @pyqtSlot()
     def on_actionSettings_triggered(self):
         if self.dock_settings.isVisible():
             self.dock_settings.setVisible(False)
@@ -480,26 +517,12 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             self.dock_settings.setFloating(False)
 
     @pyqtSlot()
-    def on_actionHighest_instant_frequency_triggered(self):
-        #print self.widget.zmax, self.widget.zmin,self.widget.minIntervalLength
-        #
-        #if self.widget.first:
-        #    self.widget.calc_highest_freq()
-        #    self.widget.first = False
-        #if self.widget.zmax - self.widget.zmin < self.widget.minIntervalLength:
-        #    m = QtGui.QMessageBox(self)
-        #    m.setText("The least that you can select interval length is " + str(self.widget.minIntervalLength))
-        #    m.show()
-        #else : self.widget.plot_highest_freq(self.widget.zmin, self.widget.zmax)
-        pass
-
-    @pyqtSlot()
     def on_actionPower_Spectrum_triggered(self):
         dg_pow_spec = PowerSpectrumWindow(self,self.pow_spec_plotColor, self.pow_spec_backg, self.pow_spec_gridx, self.pow_spec_gridy)
 
         minx = self.widget.zoomCursor.min
         maxx = max(self.widget.zoomCursor.max, min(minx + self.NFFT_pow, len(self.widget.signalProcessor.signal.data)))
-        dg_pow_spec.plot(self.widget.signalProcessor.signal.data,
+        dg_pow_spec.plot(self.widget.signalProcessor.signal.data[minx:maxx],
                          self.widget.signalProcessor.signal.samplingRate, self.NFFT_pow, self.window_pow)
 
         self.pow_spec_windows.append(dg_pow_spec)
@@ -527,7 +550,7 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.widget.specgramSettings.overlap = self.overlap_spec
         self.widget.visualChanges = True
         self.widget.refresh()
-        # falta actualizar la ventana
+
 
     @pyqtSlot()
     def on_actionSpectogram_Settings_triggered(self):
@@ -561,6 +584,10 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             self.widget.specgramSettings.overlap = self.ParamTree.param('Spectrogram Settings').param('FFT overlap').value()
             self.widget.open(f)
             self.setWindowTitle("Duetto Sound Lab - " + self.widget.signalProcessor.signal.name())
+
+            self.hist.item.region.lineMoved()
+            self.hist.item.region.lineMoveFinished()
+            self.first = True
 
     @pyqtSlot()
     def on_actionSave_triggered(self):

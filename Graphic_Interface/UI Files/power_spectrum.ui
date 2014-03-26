@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>340</width>
-    <height>340</height>
+    <width>483</width>
+    <height>377</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -34,11 +34,17 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="QPowerSpectrumWidget" name="pow_spec" native="true"/>
+     <widget class="QPowerSpectrumWidget" name="widget" native="true"/>
     </item>
    </layout>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QDockWidget" name="dockWidget">
+   <attribute name="dockWidgetArea">
+    <number>2</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents"/>
+  </widget>
   <action name="actionHighest_frequency">
    <property name="text">
     <string>Highest frequency</string>
