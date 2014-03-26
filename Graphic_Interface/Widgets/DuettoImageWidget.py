@@ -7,37 +7,21 @@ from pyqtgraph.graphicsItems.ImageItem import ImageItem
 from pyqtgraph.graphicsItems.ViewBox import ViewBox
 import  pyqtgraph as pg
 
-
-class SpecXAxis(pg.AxisItem):
-    def __init__(self,*args,**kwargs):
-        pg.AxisItem.__init__(self,*args,**kwargs)
-        self.bins = None
-    def tickStrings(self, values, scale, spacing):
-        self.setLabel(text="Time (s)")
-        if self.bins is None:
-            return values
-        r = self.bins[values]
-        for i in range(len(r)):
-            r[i] = "{:.2f}".format(r[i])
-        return r
-    def refresh(self,bins):
-        self.bins = bins
-
-
 class SpecYAxis(pg.AxisItem):
     def __init__(self,*args,**kwargs):
         pg.AxisItem.__init__(self,*args,**kwargs)
         self.freqs = None
+        self.setLabel(text="Frequency (KHz)")
     def tickStrings(self, values, scale, spacing):
-        self.setLabel(text="KHz")
         if self.freqs is None:
             return values
-        r = self.freqs[values]
+        r = self.freqs[[x for x in values if x < len(self.freqs)]]
         for i in range(len(r)):
-            r[i] = "{:.3f}".format(r[i]/1000.0)
+            r[i] = "{:.1f}".format(r[i]/1000.0)
         return r
     def refresh(self,freqs):
         self.freqs = freqs
+
 
 
 class DuettoImageWidget(GraphicsView):
@@ -52,9 +36,11 @@ class DuettoImageWidget(GraphicsView):
         self.viewBox.addItem(self.imageItem)
         l.addItem(self.viewBox, 0, 1)
         self.centralWidget.setLayout(l)
-        self.xAxis = SpecXAxis(orientation='bottom', linkView=self.viewBox)
+        self.xAxis = pg.AxisItem(orientation = 'bottom',linkView=self.parent().axesOscilogram.getPlotItem().getViewBox())
+        self.xAxis.setGrid(88)
         l.addItem(self.xAxis, 1, 1)
         self.yAxis = SpecYAxis(orientation='left', linkView=self.viewBox)
+        self.yAxis.setGrid(88)
         l.addItem(self.yAxis, 0, 0)
         self.viewBox.setMouseEnabled(x=False, y=False)
         self.viewBox.setAspectLocked(False)

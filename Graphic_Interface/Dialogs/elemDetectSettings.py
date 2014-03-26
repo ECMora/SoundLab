@@ -1,14 +1,15 @@
 from PyQt4.QtCore import pyqtSlot
 from PyQt4.QtGui import QDialog
+from Duetto_Core.AudioSignals.WavFileSignal import WavFileSignal
 from Graphic_Interface.Dialogs.ui_elemDetectSettings import Ui_Dialog
 
 
 class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
     def __init__(self, parent):
-        super(QDialog, self).__init__(parent)
+        super(QDialog,self).__init__(parent)
         self.setupUi(self)
-        self.widgetOscilogram.visibleSpectrogram = False
-        self.widgetSpecgram.visibleOscilogram = False
+        self.widget.visibleSpectrogram = True
+        self.widget.visibleOscilogram = True
 
         #espectrogram
         self.dsbxThresholdSpec.valueChanged.connect(self.detectSpectrogram)
@@ -16,14 +17,19 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         self.dsbxminSizeTime.valueChanged.connect(self.detectSpectrogram)
         self.sbxMergeFactorTime.valueChanged.connect(self.detectSpectrogram)
         self.sbxMergeFactorFreq.valueChanged.connect(self.detectSpectrogram)
-
         #oscilogram
         self.dsbxThreshold.valueChanged.connect(self.detectOscilogram)
+
         self.dsbxThreshold2.valueChanged.connect(self.detectOscilogram)
         self.dsbxDecay.valueChanged.connect(self.detectOscilogram)
         self.dsbxMinSize.valueChanged.connect(self.detectOscilogram)
         self.dsbxMergeFactor.valueChanged.connect(self.detectOscilogram)
         self.sbxSoftFactor.valueChanged.connect(self.detectOscilogram)
+        self.widget.signalProcessor.signal = WavFileSignal("Didactic Signals\\recognition.wav")
+        self.widget.mainCursor.min,self.widget.mainCursor.max = 0,len(self.widget.signalProcessor.signal.data)
+        self.widget.axesOscilogram.setVisibleThreshold(True)
+        self.widget.visualChanges = True
+        self.widget.refresh()
 
 
     @pyqtSlot(bool)
@@ -45,10 +51,12 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
 
     @pyqtSlot()
     def detectOscilogram(self):
-        self.widgetOscilogram.detectElementsInOscilogram()
+        self.widget.detectElementsInOscilogram()
+        self.widget.refresh()
 
     @pyqtSlot()
     def detectSpectrogram(self):
-        self.widgetSpecgram.detectElementsInEspectrogram()
+        self.widget.detectElementsInEspectrogram()
+        self.widget.refresh()
 
 import re, sre_compile, sre_constants, sre_parse
