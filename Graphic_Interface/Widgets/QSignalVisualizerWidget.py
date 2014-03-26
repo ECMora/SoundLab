@@ -84,6 +84,8 @@ class QSignalVisualizerWidget(QWidget):
         self._Z = np.array([[0]])
         self.osc_gridx = True
         self.osc_gridy = True
+        self.spec_gridx = True
+        self.spec_gridy = True
         self.osc_color = QColor(255, 255, 255)
         self.axisXOsc = OscXAxis(orientation = 'bottom')
         self.axisYOsc = OscYAxis(orientation = 'left')
@@ -91,7 +93,7 @@ class QSignalVisualizerWidget(QWidget):
         self.tool = Tools().Zoom
         self.osc_background = "000"
         self.spec_background = "000"
-        #self.axesOscilogram.getPlotItem().enableAutoRange()
+
 
         self.axesOscilogram.setMouseEnabled(x=False, y=False)
         self.axesOscilogram.getPlotItem().hideButtons()
@@ -498,6 +500,7 @@ class QSignalVisualizerWidget(QWidget):
                                                          self.mainCursor.max / osc_spec_ratio),
                                                  yRange=(0, self._Z.shape[0]), padding=0)
         self.axesSpecgram.setBackground(self.spec_background)
+        self.axesSpecgram.showGrid(x=self.spec_gridx,y=self.spec_gridy)
         self.refreshAxes()
         self.visualChanges = False
         if(self.visibleElements):
