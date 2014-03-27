@@ -98,7 +98,7 @@ class QSignalVisualizerWidget(QWidget):
         self.axesOscilogram.setMouseEnabled(x=False, y=False)
         self.axesOscilogram.getPlotItem().hideButtons()
         self.axesOscilogram.show()
-
+        self.axesOscilogram.setRange(QRect(0,0,1,1))
         self.axesSpecgram = DuettoImageWidget(parent=self)
         self.axesSpecgram.show()
 
@@ -746,7 +746,7 @@ class QSignalVisualizerWidget(QWidget):
         self.axesSpecgram.viewBox.sigRangeChangedManually.connect(self._specRangeChanged)
         self.signalProcessor.signal.recordNotifier = self.on_newDataRecorded#self.newDataRecorded.emit
         self.signalProcessor.signal.playNotifier = self.playing.emit
-        self.rangeChanged.emit(self.mainCursor.min, self.mainCursor.max, len(self.signalProcessor.signal.data))
+        self.rangeChanged.emit(0, len(self.signalProcessor.signal.data), len(self.signalProcessor.signal.data))
 
 
     def save(self, fname):
