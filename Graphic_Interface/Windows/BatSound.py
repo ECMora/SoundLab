@@ -256,8 +256,8 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     #endregion
 
     def change(self, param, changes):
-        print("tree changes:")
-        pow = False
+        #print("tree changes:")
+        #pow = False
         for param, change, data in changes:
             path = self.ParamTree.childPath(param)
             if path is not None:
@@ -353,10 +353,10 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 self.widget.visualChanges = True
                 self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
 
-            print('  parameter: %s' % childName)
-            print('  change:    %s' % change)
-            print('  data:      %s' % str(data))
-            print('  ----------')
+            #print('  parameter: %s' % childName)
+            #print('  change:    %s' % change)
+            #print('  data:      %s' % str(data))
+            #print('  ----------')
 
     @pyqtSlot()
     def on_actionSegmentation_And_Clasification_triggered(self):
@@ -388,14 +388,20 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     @pyqtSlot()
     def on_actionCut_triggered(self):
         self.widget.cut()
+        self.hist.item.region.lineMoved()
+        self.hist.item.region.lineMoveFinished()
 
     @pyqtSlot()
     def on_actionCopy_triggered(self):
         self.widget.copy()
+        self.hist.item.region.lineMoved()
+        self.hist.item.region.lineMoveFinished()
 
     @pyqtSlot()
     def on_actionPaste_triggered(self):
         self.widget.paste()
+        self.hist.item.region.lineMoved()
+        self.hist.item.region.lineMoveFinished()
 
     @pyqtSlot()
     def on_actionSmart_Scale_triggered(self):
