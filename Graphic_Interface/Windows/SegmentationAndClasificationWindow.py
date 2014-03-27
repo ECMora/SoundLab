@@ -3,10 +3,9 @@ import os.path
 from PyQt4.QtCore import pyqtSlot, Qt
 import PyQt4.QtCore as QtCore
 from PyQt4 import QtGui
-#import xlwt
 from PyQt4.QtGui import QFileDialog
 import pyqtgraph as pg
-#import xlwt
+import xlwt
 from Duetto_Core.AudioSignals.AudioSignal import AudioSignal
 from Duetto_Core.AudioSignals.WavFileSignal import WavFileSignal
 from Duetto_Core.SignalProcessors.SignalProcessor import SignalProcessor
@@ -378,6 +377,10 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
     @QtCore.pyqtSlot()
     def on_actionZoom_out_entire_file_triggered(self):
         self.widget.zoomNone()
+
+    @QtCore.pyqtSlot(int)
+    def on_horizontalScrollBar_valueChanged(self, value):
+        self.widget.changeRange(value, value + self.horizontalScrollBar.pageStep(), emit=False)
 
     @QtCore.pyqtSlot()
     def on_actionSettings_triggered(self):
