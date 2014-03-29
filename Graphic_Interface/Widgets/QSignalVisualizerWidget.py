@@ -1,24 +1,20 @@
+from datetime import datetime
+
 from PyQt4.QtCore import pyqtSignal,QRect, Qt
 from PyQt4.QtGui import *
 from PyQt4 import QtCore, QtGui
-from datetime import datetime
 import pyqtgraph as pg
-from matplotlib.patches import Rectangle
-from matplotlib.transforms import blended_transform_factory
 import numpy as np
 import matplotlib.mlab as mlab
-from matplotlib.image import imsave
-from numpy.lib.function_base import percentile
-from PyQt4.QtCore import SIGNAL
-import matplotlib.pyplot as plt
+from pyqtgraph.Point import Point
+
 from Duetto_Core.AudioSignals.WavFileSignal import WavFileSignal
 from Duetto_Core.AudioSignals.AudioSignal import AudioSignal
 from Duetto_Core.Cursors.IntervalCursor import IntervalCursor
 from Duetto_Core.Cursors.PointerCursor import PointerCursor
 from Duetto_Core.Cursors.RectangularCursor import RectangularCursor
-from Duetto_Core.Detectors.ElementsDetectors.OneDimensionalElementsDetector import OneDimensionalElementsDetector
-from Duetto_Core.Detectors.ElementsDetectors.TwoDimensionalElementsDetector import TwoDimensionalElementsDetector
-from Duetto_Core.Detectors.FeatureExtractionDetectors import MeanDetector, MaxMinPeakDetector
+from Duetto_Core.Segmentation.Detectors.ElementsDetectors.OneDimensionalElementsDetector import OneDimensionalElementsDetector
+from Duetto_Core.Segmentation.Detectors.ElementsDetectors.TwoDimensionalElementsDetector import TwoDimensionalElementsDetector
 from Duetto_Core.SignalProcessors.CommonSignalProcessor import CommonSignalProcessor
 from Duetto_Core.SignalProcessors.FilterSignalProcessor import *
 from Duetto_Core.SignalProcessors.SignalProcessor import SignalProcessor, envelope
@@ -26,8 +22,7 @@ from Duetto_Core.SignalProcessors.EditionSignalProcessor import EditionSignalPro
 from Duetto_Core.SpecgramSettings import SpecgramSettings
 from DuettoPlotWidget import DuettoPlotWidget
 from Graphic_Interface.Widgets.DuettoImageWidget import DuettoImageWidget
-from pyqtgraph.Point import Point
-import pickle
+
 
 BACK_COLOR = "gray"
 
@@ -139,17 +134,14 @@ class QSignalVisualizerWidget(QWidget):
         self.cursors = []
         self.cursorsmarkers = []  # the rectangles for the visualizations of cursors
         self.visibleCursors = True
-        self.OscilogramElements = []  # list of elements detected in oscilogram each element contains the object it self and the extra data for visualize it
-
-        self.SpectrogramElements = []  # list of elements detected in spectrogram idem to oscilogram
-        self.elementsRegionsMarkers = []  # the twodimensionalElements for the visualizations of elements in the widget
+        self.Elements = []  # list of elements detected in oscilogram each element contains the object it self and the extra data for visualize it
         self.visibleElements = True
 
         self.colorbar = None
         self.playerSpeed = 100
         self.playerLineOsc = pg.InfiniteLine()
         self.playerLineSpec = pg.InfiniteLine()
-        self.oscilogram_elements_detector = OneDimensionalElementsDetector()
+        self.elements_detector = OneDimensionalElementsDetector()
 
         self._lastRecordRefresh = datetime.now()
         self._recordRefreshRate = 5
@@ -512,17 +504,18 @@ class QSignalVisualizerWidget(QWidget):
 
     def drawElements(self):
         if(self.visibleOscilogram):
-            for i in range(len(self.OscilogramElements)):
-                if self.OscilogramElements[i].visible:
-                    for item in self.OscilogramElements[i].visualwidgets:
+            for i in range(len(self.Elements)):
+                if self.Elements[i].visible:
+                    for item in self.Elements[i].visualwidgets:
                         if(not item in self.axesOscilogram.items()):
                             self.axesOscilogram.addItem(item)
         if(self.visibleSpectrogram):
-            for i in range(len(self.SpectrogramElements)):
-                if self.SpectrogramElements[i].visible:
-                    for item in self.SpectrogramElements[i].visualwidgets:
-                        if(not item in self.axesSpecgram.items()):
-                            self.axesSpecgram.viewBox.addItem(item)
+            for i in range(len(self.Elements)):
+                for j in range(len(self.Elements[i].twoDimensionalElements)):
+                    if self.Elements[i].twoDimensionalElements[j].visible:
+                        for item in self.Elements[i].twoDimensionalElements[j].visualwidgets:
+                            if(not item in self.axesSpecgram.items()):
+                                self.axesSpecgram.viewBox.addItem(item)
 
         self.axesOscilogram.update()
         self.axesSpecgram.update()
@@ -634,70 +627,33 @@ class QSignalVisualizerWidget(QWidget):
 
     def cleanVisibleCursors(self,oscilogram=True,specgram=True):
         if(oscilogram):
-            for elem in self.OscilogramElements:
+            for elem in self.Elements:
                 for item in elem.visualwidgets:
                     self.axesOscilogram.removeItem(item)
         if(specgram):
-            for elem in self.SpectrogramElements:
-                for item in elem.visualwidgets:
-                    self.axesSpecgram.viewBox.removeItem(item)
-
-
-    def detectElementsInEspectrogram(self, threshold=80,minsize=(0,0),mergefactor=(0,0)):
-        signal = self.signalProcessor.signal
-        self.clearCursors(oscilogram=False)
-        detector = TwoDimensionalElementsDetector()
-        detector.detect(self.signalProcessor.signal, threshold, self.specgramSettings.Pxx,
-                        self.specgramSettings.freqs * signal.samplingRate / 2.0,
-                        1.0 * self.specgramSettings.bins / self.signalProcessor.signal.samplingRate,minsize,mergefactor)
-        imsave('last.png', detector.markedPxx, format='png', origin='lower')
-        for c in detector.twodimensionalElements:
-            self.SpectrogramElements.append(c)
-        self.visualChanges = True
-        self.refresh()
-
-    def rms(self):
-        #indexFrom, indexTo = self.getIndexFromAndTo()
-        #cursor = PointerCursor(self.signalProcessor.rms(indexFrom, indexTo))
-        #cursor.visualOptions.vertical = False
-        #self.clearCursors()
-        #self.OscilogramElements.append(cursor)
-        #self.visualChanges = True
-        #self.refresh()
-        pass
+            for elem in self.Elements:
+                for elem2 in elem.twoDimensionalElements:
+                    for item in elem2.visualwidgets:
+                        self.axesSpecgram.viewBox.removeItem(item)
 
     def clearCursors(self,oscilogram=True,specgram=True):
         self.cleanVisibleCursors(oscilogram=True,specgram=True)
-        self.OscilogramElements = [] if oscilogram else self.OscilogramElements
-        self.SpectrogramElements = [] if specgram else self.SpectrogramElements
+        self.Elements = [] if oscilogram and specgram else self.Elements
 
 
 
-    def detectElementsInOscilogram(self,threshold=20, decay=1, minSize=0, softfactor=5, merge_factor=0,threshold2=0):
+
+    def detectElements(self,threshold=20, decay=1, minSize=0, softfactor=5, merge_factor=0,threshold2=0, threshold_spectral=95, pxx=[], freqs=[], bins=[], minsize_spectral=(0, 0),
+               merge_factor_spectral=(1,1)):
         indexFrom, indexTo = self.getIndexFromAndTo()
-        self.clearCursors(specgram=False)
-        self.oscilogram_elements_detector.detect(self.signalProcessor.signal,indexFrom, indexTo, threshold, decay, minSize, softfactor, merge_factor,threshold2)
-        for c in self.oscilogram_elements_detector.elements():
-            self.OscilogramElements.append(c)# the elment the space for the span selector and the text
-        self.visualChanges = True
-        self.refresh()
-
-    def maxMinPeaks(self):
-        detector = MaxMinPeakDetector()
-        indexFrom, indexTo = self.getIndexFromAndTo()
-        detector.detect(self.signalProcessor.signal, indexFrom, indexTo)
         self.clearCursors()
-        for c in detector.elements():
-            self.OscilogramElements.append(c)
-        self.visualChanges = True
-        self.refresh()
-
-    def mean(self):
-        detector = MeanDetector()
-        detector.detect(self.signalProcessor.signal, max(self.zoomCursor.min, self.mainCursor.min),
-                        min(self.zoomCursor.max, self.mainCursor.max))
-        self.clearCursors()
-
+        self.elements_detector.detect(self.signalProcessor.signal,indexFrom, indexTo, threshold, decay, minSize, softfactor, merge_factor,threshold2,
+                                      threshold_spectral=threshold_spectral, pxx =  self.specgramSettings.Pxx, freqs=self.specgramSettings.freqs,
+                                      bins=self.specgramSettings.bins, minsize_spectral=minsize_spectral,
+               merge_factor_spectral=merge_factor_spectral)
+        for c in self.elements_detector.elements():
+            self.Elements.append(c)# the elment the space for the span selector and the text
+        #incorporar deteccion en espectrograma
         self.visualChanges = True
         self.refresh()
 

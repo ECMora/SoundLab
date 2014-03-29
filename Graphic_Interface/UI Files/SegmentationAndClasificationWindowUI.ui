@@ -186,13 +186,11 @@ padding:1%;</string>
    <addaction name="actionOscilogram"/>
    <addaction name="actionSpectogram"/>
    <addaction name="separator"/>
-   <addaction name="actionSettings"/>
    <addaction name="actionDetection"/>
-   <addaction name="actionSelect_all"/>
   </widget>
   <widget class="QDockWidget" name="dockWidgetParameterTableOscilogram">
    <property name="windowTitle">
-    <string>Oscilogram Elements</string>
+    <string>Elements</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>4</number>
@@ -205,40 +203,6 @@ padding:1%;</string>
         <string>Oscilogram elements  meditions</string>
        </property>
       </widget>
-     </item>
-    </layout>
-   </widget>
-  </widget>
-  <widget class="QDockWidget" name="dockWidgetParameterTableSpectrogram">
-   <property name="windowTitle">
-    <string>Spectrogram Elements</string>
-   </property>
-   <attribute name="dockWidgetArea">
-    <number>4</number>
-   </attribute>
-   <widget class="QWidget" name="dockWidgetContents_2">
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <item>
-      <widget class="QTableWidget" name="tableParameterSpectrogram">
-       <property name="toolTip">
-        <string>Spectrogram elements meditions</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
-  </widget>
-  <widget class="QDockWidget" name="dock_settings">
-   <property name="windowTitle">
-    <string>Settings</string>
-   </property>
-   <attribute name="dockWidgetArea">
-    <number>1</number>
-   </attribute>
-   <widget class="QWidget" name="dockWidgetContents_5">
-    <layout class="QGridLayout" name="gridLayout_2">
-     <item row="0" column="0">
-      <widget class="QWidget" name="osc_settings_contents" native="true"/>
      </item>
     </layout>
    </widget>
@@ -292,11 +256,6 @@ padding:1%;</string>
    </property>
    <property name="shortcut">
     <string>-</string>
-   </property>
-  </action>
-  <action name="actionSelect_all">
-   <property name="text">
-    <string>Select all</string>
    </property>
   </action>
   <action name="actionSpectogram">
@@ -415,18 +374,6 @@ padding:1%;</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+X</string>
-   </property>
-  </action>
-  <action name="actionSettings">
-   <property name="icon">
-    <iconset resource="resources/icons.qrc">
-     <normaloff>:/myappicons/LeopardVista V4 Icon 09.ico</normaloff>:/myappicons/LeopardVista V4 Icon 09.ico</iconset>
-   </property>
-   <property name="text">
-    <string>Settings</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+P</string>
    </property>
   </action>
   <action name="actionExcel_File">
