@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'E:\Biologia\SISTEMA\DuettoSystemYasel\Graphic_Interface\UI Files\ui_elemDetectSettings.ui'
+# Form implementation generated from reading ui file 'E:\Biologia\SISTEMA\DuettoSystem\Graphic_Interface\UI Files\ui_elemDetectSettings.ui'
 #
-# Created: Mon Mar 24 21:22:49 2014
+# Created: Fri Mar 28 17:45:06 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -45,10 +45,6 @@ class Ui_Dialog(object):
         self.dockWidgetContents_2.setObjectName(_fromUtf8("dockWidgetContents_2"))
         self.verticalLayout = QtGui.QVBoxLayout(self.dockWidgetContents_2)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
-        self.chbxDetectOsc = QtGui.QCheckBox(self.dockWidgetContents_2)
-        self.chbxDetectOsc.setChecked(True)
-        self.chbxDetectOsc.setObjectName(_fromUtf8("chbxDetectOsc"))
-        self.verticalLayout.addWidget(self.chbxDetectOsc)
         self.horizontalLayout_7 = QtGui.QHBoxLayout()
         self.horizontalLayout_7.setSpacing(6)
         self.horizontalLayout_7.setObjectName(_fromUtf8("horizontalLayout_7"))
@@ -124,11 +120,6 @@ class Ui_Dialog(object):
         self.dockWidgetContents_3.setObjectName(_fromUtf8("dockWidgetContents_3"))
         self.gridLayout_3 = QtGui.QGridLayout(self.dockWidgetContents_3)
         self.gridLayout_3.setObjectName(_fromUtf8("gridLayout_3"))
-        self.chbxDetectSpec = QtGui.QCheckBox(self.dockWidgetContents_3)
-        self.chbxDetectSpec.setChecked(True)
-        self.chbxDetectSpec.setTristate(False)
-        self.chbxDetectSpec.setObjectName(_fromUtf8("chbxDetectSpec"))
-        self.gridLayout_3.addWidget(self.chbxDetectSpec, 0, 1, 1, 1)
         self.horizontalLayout_10 = QtGui.QHBoxLayout()
         self.horizontalLayout_10.setObjectName(_fromUtf8("horizontalLayout_10"))
         self.label_9 = QtGui.QLabel(self.dockWidgetContents_3)
@@ -144,7 +135,7 @@ class Ui_Dialog(object):
         self.horizontalLayout_10.addWidget(self.sbxMergeFactorFreq)
         self.horizontalLayout_10.setStretch(1, 1)
         self.horizontalLayout_10.setStretch(2, 1)
-        self.gridLayout_3.addLayout(self.horizontalLayout_10, 3, 1, 1, 1)
+        self.gridLayout_3.addLayout(self.horizontalLayout_10, 2, 1, 1, 1)
         self.horizontalLayout_8 = QtGui.QHBoxLayout()
         self.horizontalLayout_8.setObjectName(_fromUtf8("horizontalLayout_8"))
         self.label_7 = QtGui.QLabel(self.dockWidgetContents_3)
@@ -160,7 +151,7 @@ class Ui_Dialog(object):
         self.horizontalLayout_8.addWidget(self.dsbxMinSizeFreq)
         self.horizontalLayout_8.setStretch(1, 1)
         self.horizontalLayout_8.setStretch(2, 1)
-        self.gridLayout_3.addLayout(self.horizontalLayout_8, 2, 1, 1, 1)
+        self.gridLayout_3.addLayout(self.horizontalLayout_8, 1, 1, 1, 1)
         self.horizontalLayout_9 = QtGui.QHBoxLayout()
         self.horizontalLayout_9.setObjectName(_fromUtf8("horizontalLayout_9"))
         self.label_8 = QtGui.QLabel(self.dockWidgetContents_3)
@@ -181,7 +172,7 @@ class Ui_Dialog(object):
         self.dsbxThresholdSpec.setObjectName(_fromUtf8("dsbxThresholdSpec"))
         self.horizontalLayout_9.addWidget(self.dsbxThresholdSpec)
         self.horizontalLayout_9.setStretch(1, 1)
-        self.gridLayout_3.addLayout(self.horizontalLayout_9, 1, 1, 1, 1)
+        self.gridLayout_3.addLayout(self.horizontalLayout_9, 0, 1, 1, 1)
         self.dockWidget_2.setWidget(self.dockWidgetContents_3)
         self.gridLayout_2.addWidget(self.dockWidget_2, 1, 0, 1, 1)
         self.buttonBox = QtGui.QDialogButtonBox(self.groupBox_2)
@@ -202,7 +193,6 @@ class Ui_Dialog(object):
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(_translate("Dialog", "Detection Settings", None))
         self.dockWidget.setWindowTitle(_translate("Dialog", "Oscilogram ", None))
-        self.chbxDetectOsc.setText(_translate("Dialog", "Detect elements in oscillogram", None))
         self.label_6.setText(_translate("Dialog", "Threshold:", None))
         self.dsbxThreshold.setSuffix(_translate("Dialog", "dB", None))
         self.label_10.setText(_translate("Dialog", "Threshold 2:", None))
@@ -215,7 +205,6 @@ class Ui_Dialog(object):
         self.label_3.setText(_translate("Dialog", "Merge factor:", None))
         self.dsbxMergeFactor.setSuffix(_translate("Dialog", " ms", None))
         self.dockWidget_2.setWindowTitle(_translate("Dialog", "Espectrogram", None))
-        self.chbxDetectSpec.setText(_translate("Dialog", "Detect elements in spectrogram", None))
         self.label_9.setText(_translate("Dialog", "Merge factor:", None))
         self.sbxMergeFactorTime.setSuffix(_translate("Dialog", " ms", None))
         self.sbxMergeFactorFreq.setSuffix(_translate("Dialog", " kHz", None))

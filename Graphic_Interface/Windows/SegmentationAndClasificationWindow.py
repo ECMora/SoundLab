@@ -3,17 +3,17 @@ import os.path
 from PyQt4.QtCore import pyqtSlot, Qt
 import PyQt4.QtCore as QtCore
 from PyQt4 import QtGui
-#import xlwt
+import xlwt
 from PyQt4.QtGui import QFileDialog
 import pyqtgraph as pg
 #import xlwt
 from Duetto_Core.AudioSignals.AudioSignal import AudioSignal
 from Duetto_Core.AudioSignals.WavFileSignal import WavFileSignal
+from Duetto_Core.Segmentation.Detectors.ElementsDetectors import OneDimensionalElementsDetector
 from Duetto_Core.SignalProcessors.SignalProcessor import SignalProcessor
 from ..Dialogs.elemDetectSettings import ElemDetectSettingsDialog
 from SegmentationAndClasificationWindowUI import Ui_MainWindow
 from ..Dialogs import ParametersMeasurementDialog as paramdialog
-from Duetto_Core.Detectors.ElementsDetectors.OneDimensionalElementsDetector import OneDimensionalElementsDetector
 
 
 class ParameterMeasurementDialog(paramdialog.Ui_ParameterMeasurement,QtGui.QDialog):
@@ -34,10 +34,9 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.widget.signalProcessor.signal = signal
         self.widget.mainCursor.min, self.widget.mainCursor.max = 0, len(self.widget.signalProcessor.signal.data)
         self.dockWidgetParameterTableOscilogram.setVisible(False)
-        self.dockWidgetParameterTableSpectrogram.setVisible(False)
         self.show()
-        self.dock_settings.setVisible(False)
-        self.parameterTable_rowcolor_odd,self.parameterTable_rowcolor_even = QtGui.QColor(120,150,200,255),QtGui.QColor(150,200,250,255)
+
+        self.parameterTable_rowcolor_odd,self.parameterTable_rowcolor_even = QtGui.QColor(0, 0, 255,150),QtGui.QColor(0, 255, 0, 150)
         self.parameterDecimalPlaces = 5
         self.widget.visibleOscilogram = True
         self.widget.visibleSpectrogram = True
@@ -45,18 +44,17 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.OscilogramThreshold = 0
         self.widget.axesOscilogram.threshold.sigPositionChangeFinished.connect(self.updateThreshold)
         self.widget.axesOscilogram.threshold.setBounds((0,2**(self.widget.signalProcessor.signal.bitDepth-1)))
-        self.oscilogramDetectionSettings = {"Threshold": -40, "Threshold2": 0, "MergeFactor": 0.5, "MinSize": 1, "Decay": 1, "SoftFactor": 6}
+        self.detectionSettings = {"Threshold": -40, "Threshold2": 0, "MergeFactor": 0.5, "MinSize": 1, "Decay": 1, "SoftFactor": 6,"ThresholdSpectral": 95 ,"minSizeTimeSpectral": 0, "minSizeFreqSpectral": 0, "mergeFactorTimeSpectral": 0, "mergeFactorFreqSpectral": 0}
         self.widget.axesOscilogram.threshold.setValue(10.0*(2**self.widget.signalProcessor.signal.bitDepth)/1000.0)
-        self.specgramDetectionSettings = {"Threshold": 95 ,"minSizeTime": 0, "minSizeFreq": 0, "mergeFactorTime": 0, "mergeFactorFreq": 0}
         self.parameterMeasurement = dict(
             Temporal=[["start", True, lambda x: x.startTime()], ["end", True,  lambda x: x.endTime()],
                       ["PeekToPeek", True, lambda x: x.peekToPeek()],
                       ["rms", True, lambda x: x.rms()],
-                      ["DistanceFromStartToMax", True,lambda x: x.distanceFromStartToMax()],
+                      ["StartToMax", True,lambda x: x.distanceFromStartToMax()],
                       ["PeakFreq(Hz)", True,lambda x: x.peakFreq()]],
                       #funciones que reciben un elemento temporal 1 dimension
-            Spectral=[["startTime", True, lambda x: x.startTime()], ["endTime", True, lambda x: x.endTime()], ["startFrecuency", True,lambda x:x.minFreq()],[ "endFrecuency",True,lambda x:x.maxFreq()],
-                      ["PeakFrecuency", True,lambda x:x.PeakFreq()]]) #funciones que reciben un elemento spectral 2 dimensiones y devuelven el valor del parametro medido
+            Spectral=[["startFrecuency", False,lambda x:x.minFreq()],[ "endFrecuency",False,lambda x:x.maxFreq()],
+                      ["PeakFrecuency", False,lambda x:x.PeakFreq()]]) #funciones que reciben un elemento spectral 2 dimensiones y devuelven el valor del parametro medido
         #the order of the elements in the array of self.parameterMeasurement["Temporal"] is relevant for the visualization in the table and the
         #binding to the checkboxes in the dialog of parameter measurement
         separator = QtGui.QAction(self)
@@ -71,7 +69,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.setThreshold(self.toDB() if line.value() == 0 else  self.toDB(line.value()))
 
     def setThreshold(self,value):
-        self.oscilogramDetectionSettings["Threshold"] = self.toDB(value)
+        self.detectionSettings["Threshold"] = self.toDB(value)
 
     def toDB(self,value=None):
         if(value is None):
@@ -98,12 +96,6 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         else:
             self.dockWidgetParameterTableOscilogram.setVisible(True)
             self.dockWidgetParameterTableOscilogram.setFloating(False)
-
-        if self.dockWidgetParameterTableSpectrogram.isVisible():
-            self.dockWidgetParameterTableSpectrogram.setVisible(False)
-        else:
-            self.dockWidgetParameterTableSpectrogram.setVisible(True)
-            self.dockWidgetParameterTableSpectrogram.setFloating(False)
 
     @pyqtSlot()
     def on_actionExcel_File_triggered(self, name="",table = None):
@@ -136,8 +128,8 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     def batch(self):
         #start in a diferent thread
-        threshold, decay, minsize= abs(self.oscilogramDetectionSettings["Threshold"]), self.oscilogramDetectionSettings["Decay"], self.oscilogramDetectionSettings["MinSize"],
-        softfactor, mergefactor, threshold2 =  self.oscilogramDetectionSettings["SoftFactor"],self.oscilogramDetectionSettings["MergeFactor"],abs(self.oscilogramDetectionSettings["Threshold2"])
+        threshold, decay, minsize= abs(self.detectionSettings["Threshold"]), self.detectionSettings["Decay"], self.detectionSettings["MinSize"],
+        softfactor, mergefactor, threshold2 =  self.detectionSettings["SoftFactor"],self.detectionSettings["MergeFactor"],abs(self.detectionSettings["Threshold2"])
         table = QtGui.QTableWidget()
 
         detector = OneDimensionalElementsDetector()
@@ -168,7 +160,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                 totalms += len(signalProcessor.signal.data)/(1.0*signalProcessor.signal.samplingRate)
             except:
                 pass
-        msProcessed = 0
+        msProcessed = 1
         totalms = max(totalms-1,1)
 
         for filename in sounds:
@@ -194,10 +186,10 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                     self.on_actionExcel_File_triggered(os.path.join(directoryoutput,signalProcessor.signal.name()+".xls"),table)
 
                 self.listwidgetProgress.addItem(signalProcessor.signal.name()+" has been processed")
-                msProcessed += len(signalProcessor.signal.data)/(1.0*signalProcessor.signal.samplingRate)
+                msProcessed += 1 #len(signalProcessor.signal.data)/(1.0*signalProcessor.signal.samplingRate)
             except:
                 self.listwidgetProgress.addItem("Some problem found while processing " + signalProcessor.signal.name())
-            self.progressBarProcesed.setValue(round(100*(msProcessed+1)/totalms))
+            self.progressBarProcesed.setValue(round(100*(msProcessed)/len(sounds)))
         self.progressBarProcesed.setValue(100)
         name = "DuettoMeditions"
         #valorar si ya existe el fichero reescribirlo o guardalo con otro nombre
@@ -228,75 +220,50 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
     @pyqtSlot()
     def on_actionDetection_triggered(self):
         elementsDetectorDialog = ElemDetectSettingsDialog(self)
-        elementsDetectorDialog.dsbxThreshold.setValue(self.oscilogramDetectionSettings["Threshold"])
-        elementsDetectorDialog.sbxSoftFactor.setValue(self.oscilogramDetectionSettings["SoftFactor"])
-        elementsDetectorDialog.dsbxMinSize.setValue(self.oscilogramDetectionSettings["MinSize"])
-        elementsDetectorDialog.dsbxThreshold2.setValue(self.oscilogramDetectionSettings["Threshold2"])
-        elementsDetectorDialog.dsbxMergeFactor.setValue(self.oscilogramDetectionSettings["MergeFactor"])
-        elementsDetectorDialog.dsbxDecay.setValue(self.oscilogramDetectionSettings["Decay"])
+        elementsDetectorDialog.dsbxThreshold.setValue(self.detectionSettings["Threshold"])
+        elementsDetectorDialog.sbxSoftFactor.setValue(self.detectionSettings["SoftFactor"])
+        elementsDetectorDialog.dsbxMinSize.setValue(self.detectionSettings["MinSize"])
+        elementsDetectorDialog.dsbxThreshold2.setValue(self.detectionSettings["Threshold2"])
+        elementsDetectorDialog.dsbxMergeFactor.setValue(self.detectionSettings["MergeFactor"])
+        elementsDetectorDialog.dsbxDecay.setValue(self.detectionSettings["Decay"])
         #specgram settings
-        elementsDetectorDialog.dsbxThresholdSpec.setValue(self.specgramDetectionSettings["Threshold"])
-        elementsDetectorDialog.dsbxMinSizeFreq.setValue(self.specgramDetectionSettings["minSizeFreq"])
-        elementsDetectorDialog.dsbxminSizeTime.setValue(self.specgramDetectionSettings["minSizeTime"])
-        elementsDetectorDialog.sbxMergeFactorTime.setValue(self.specgramDetectionSettings["mergeFactorTime"])
-        elementsDetectorDialog.sbxMergeFactorFreq.setValue(self.specgramDetectionSettings["mergeFactorFreq"])
+        elementsDetectorDialog.dsbxThresholdSpec.setValue(self.detectionSettings["ThresholdSpectral"])
+        elementsDetectorDialog.dsbxMinSizeFreq.setValue(self.detectionSettings["minSizeFreqSpectral"])
+        elementsDetectorDialog.dsbxminSizeTime.setValue(self.detectionSettings["minSizeTimeSpectral"])
+        elementsDetectorDialog.sbxMergeFactorTime.setValue(self.detectionSettings["mergeFactorTimeSpectral"])
+        elementsDetectorDialog.sbxMergeFactorFreq.setValue(self.detectionSettings["mergeFactorFreqSpectral"])
         elementsDetectorDialog.dsbxThreshold.valueChanged.connect(lambda x:self.setThreshold(x))
         if elementsDetectorDialog.exec_():
-
-            if elementsDetectorDialog.chbxDetectOsc.isChecked():
-                try:
-                    threshold = abs(elementsDetectorDialog.dsbxThreshold.value())
-                    threshold2 = abs(elementsDetectorDialog.dsbxThreshold2.value())
-                    minsize = elementsDetectorDialog.dsbxMinSize.value()
-                    mergefactor = elementsDetectorDialog.dsbxMergeFactor.value()
-                    softfactor = elementsDetectorDialog.sbxSoftFactor.value()
-                    decay = elementsDetectorDialog.dsbxDecay.value()
-                    self.oscilogramDetectionSettings["Threshold"] = -threshold
-                    self.oscilogramDetectionSettings["Threshold2"] = -threshold2
-                    self.oscilogramDetectionSettings["MinSize"] = minsize
-                    self.oscilogramDetectionSettings["MergeFactor"] = mergefactor
-                    self.oscilogramDetectionSettings["SoftFactor"] = softfactor
-                    self.oscilogramDetectionSettings["Decay"] = decay
-                    self.widget.axesOscilogram.threshold.setValue((10.0**((60-threshold)/20.0))*(2**self.widget.signalProcessor.signal.bitDepth)/1000.0)
-                    self.widget.detectElementsInOscilogram(threshold, decay, minsize, softfactor, mergefactor, threshold2)
-                    self.tableParameterOscilogram.clear()
-                    self.tableParameterOscilogram.setRowCount(len(self.widget.OscilogramElements))
-                    paramsTomeasure = [x for x in self.parameterMeasurement["Temporal"] if x[1]]
-                    self.tableParameterOscilogram.setColumnCount(len(paramsTomeasure))
-                    for i in range(self.tableParameterOscilogram.rowCount()):
-                        for j,prop in enumerate(paramsTomeasure):
-                            item = QtGui.QTableWidgetItem(str(round(prop[2](self.widget.OscilogramElements[i]),self.parameterDecimalPlaces)))
-                            item.setBackgroundColor(self.parameterTable_rowcolor_odd if i%2==0 else self.parameterTable_rowcolor_even)
-                            self.tableParameterOscilogram.setItem(i, j, item)
-                except:
-                    pass
+            try:
+                self.detectionSettings["Threshold"] = elementsDetectorDialog.dsbxThreshold.value()
+                self.detectionSettings["Threshold2"] = elementsDetectorDialog.dsbxThreshold2.value()
+                self.detectionSettings["MinSize"] = elementsDetectorDialog.dsbxMinSize.value()
+                self.detectionSettings["MergeFactor"] = elementsDetectorDialog.dsbxMergeFactor.value()
+                self.detectionSettings["SoftFactor"] = elementsDetectorDialog.sbxSoftFactor.value()
+                self.detectionSettings["Decay"] = elementsDetectorDialog.dsbxDecay.value()
+                self.detectionSettings["ThresholdSpectral"] = elementsDetectorDialog.dsbxThresholdSpec.value()
+                self.detectionSettings["minSizeFreqSpectral"] = elementsDetectorDialog.dsbxMinSizeFreq.value()
+                self.detectionSettings["minSizeTimeSpectral"] = elementsDetectorDialog.dsbxminSizeTime.value()
+                self.detectionSettings["mergeFactorTimeSpectral"] = elementsDetectorDialog.sbxMergeFactorTime.value()
+                self.detectionSettings["mergeFactorFreqSpectral"] = elementsDetectorDialog.sbxMergeFactorFreq.value()
+                paramsTomeasure = [x for x in self.parameterMeasurement["Temporal"] if x[1]]
+                self.widget.axesOscilogram.threshold.setValue((10.0**((60+self.detectionSettings["Threshold"])/20.0))*(2**self.widget.signalProcessor.signal.bitDepth)/1000.0)
+                self.widget.detectElements(abs(self.detectionSettings["Threshold"]), self.detectionSettings["Decay"],   self.detectionSettings["MinSize"],
+                                           self.detectionSettings["SoftFactor"], self.detectionSettings["MergeFactor"], abs(self.detectionSettings["Threshold2"]),
+                                           threshold_spectral=self.detectionSettings["ThresholdSpectral"],
+                                           merge_factor_spectral=(self.detectionSettings["mergeFactorFreqSpectral"],self.detectionSettings["mergeFactorTimeSpectral"]),
+                                           minsize_spectral=(self.detectionSettings["minSizeFreqSpectral"],self.detectionSettings["minSizeTimeSpectral"]))
+                self.tableParameterOscilogram.clear()
+                self.tableParameterOscilogram.setRowCount(len(self.widget.Elements))
+                self.tableParameterOscilogram.setColumnCount(len(paramsTomeasure))
+                for i in range(self.tableParameterOscilogram.rowCount()):
+                    for j,prop in enumerate(paramsTomeasure):
+                        item = QtGui.QTableWidgetItem(str(round(prop[2](self.widget.Elements[i]),self.parameterDecimalPlaces)))
+                        item.setBackgroundColor(self.parameterTable_rowcolor_odd if i%2==0 else self.parameterTable_rowcolor_even)
+                        self.tableParameterOscilogram.setItem(i, j, item)
                 self.tableParameterOscilogram.setHorizontalHeaderLabels([label[0] for label in paramsTomeasure])
-            if elementsDetectorDialog.chbxDetectSpec.isChecked():
-                try:
-                    #updating previous data ofr detection
-                    self.specgramDetectionSettings["Threshold"] = elementsDetectorDialog.dsbxThresholdSpec.value()
-                    self.specgramDetectionSettings["minSizeFreq"] = elementsDetectorDialog.dsbxMinSizeFreq.value()
-                    self.specgramDetectionSettings["minSizeTime"] = elementsDetectorDialog.dsbxminSizeTime.value()
-                    self.specgramDetectionSettings["mergeFactorTime"] = elementsDetectorDialog.sbxMergeFactorTime.value()
-                    self.specgramDetectionSettings["mergeFactorFreq"] = elementsDetectorDialog.sbxMergeFactorFreq.value()
-                    print(len(self.widget.specgramSettings.Pxx))
-                    print(len(self.widget.specgramSettings.Pxx[0]))
-                    self.widget.detectElementsInEspectrogram(self.specgramDetectionSettings["Threshold"],
-                                                             (self.specgramDetectionSettings["minSizeFreq"],self.specgramDetectionSettings["minSizeTime"]),
-                        (self.specgramDetectionSettings["mergeFactorFreq"],self.specgramDetectionSettings["mergeFactorTime"]))
-
-                    self.tableParameterSpectrogram.clear()
-                    self.tableParameterSpectrogram.setRowCount(len(self.widget.SpectrogramElements))
-                    paramsTomeasure = [x for x in self.parameterMeasurement["Spectral"] if x[1]]
-                    self.tableParameterSpectrogram.setColumnCount(len(paramsTomeasure))
-                    for i in range(self.tableParameterSpectrogram.rowCount()):
-                        for j,prop in enumerate(paramsTomeasure):
-                            item = QtGui.QTableWidgetItem(str(round(prop[2](self.widget.SpectrogramElements[i]),self.parameterDecimalPlaces)))
-                            item.setBackgroundColor(self.parameterTable_rowcolor_odd if i%2==0 else self.parameterTable_rowcolor_even)
-                            self.tableParameterSpectrogram.setItem(i, j, item)
-                except:
-                    pass
-                self.tableParameterSpectrogram.setHorizontalHeaderLabels([label[0] for label in paramsTomeasure])
+            except:
+                print("some detection errors")
             self.hist.region.lineMoved()
             self.hist.region.lineMoveFinished()
 
@@ -379,10 +346,3 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
     def on_actionZoom_out_entire_file_triggered(self):
         self.widget.zoomNone()
 
-    @QtCore.pyqtSlot()
-    def on_actionSettings_triggered(self):
-        if self.dock_settings.isVisible():
-            self.dock_settings.setVisible(False)
-        else:
-            self.dock_settings.setVisible(True)
-            self.dock_settings.setFloating(False)
