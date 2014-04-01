@@ -5,7 +5,7 @@ import pyqtgraph as pg
 
 
 class DuettoPlotWidget(pg.PlotWidget):
-    def __init__(self, **kargs):
+    def __init__(self,  parent=None,**kargs):
         pg.PlotWidget.__init__(self, **kargs)
         self.mousePressed = False
         self.emitIntervalOscChanged = True
@@ -15,6 +15,7 @@ class DuettoPlotWidget(pg.PlotWidget):
         self.getPlotItem().setMouseEnabled(x=False, y=False)
         self.threshold = pg.InfiniteLine(movable=True, angle=0, pos=0)
         self.mouseZoomEnabled = True
+        self.currentTextInfo = pg.TextItem("oioioioi",color=(255,255,255),anchor=(0.5,0.5))#the label with the current information of the mouse int the widget's s
 
     def on_zoomRegionChanged(self):
         if self.emitIntervalOscChanged:

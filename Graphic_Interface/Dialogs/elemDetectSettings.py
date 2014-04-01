@@ -1,5 +1,6 @@
 from PyQt4.QtCore import pyqtSlot
 from PyQt4.QtGui import QDialog
+import pyqtgraph as pg
 from Duetto_Core.AudioSignals.WavFileSignal import WavFileSignal
 from Graphic_Interface.Dialogs.ui_elemDetectSettings import Ui_Dialog
 
@@ -29,8 +30,19 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         self.widget.mainCursor.min,self.widget.mainCursor.max = 0,len(self.widget.signalProcessor.signal.data)
         self.widget.axesOscilogram.setVisibleThreshold(True)
         self.widget.visualChanges = True
+        self.hist = pg.widgets.HistogramLUTWidget.HistogramLUTItem()
+        self.hist.setImageItem(self.widget.axesSpecgram.imageItem)
         self.widget.refresh()
 
+    def load_Theme(self,theme):
+        self.theme = theme
+        self.hist.region.setRegion(theme.histRange)
+        self.hist.gradient.restoreState(theme.colorBarState)
+        self.widget.load_Theme(theme)
+        self.widget.visualChanges = True
+        self.widget.refresh()
+        self.hist.region.lineMoved()
+        self.hist.region.lineMoveFinished()
 
     @pyqtSlot(bool)
     def on_chbxDetectOsc_toggled(self, checked):
