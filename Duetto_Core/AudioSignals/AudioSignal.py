@@ -49,10 +49,8 @@ class AudioSignal:
             y = rfind(str(self.path), "/")
             index = max(x, y)
 
-            pointindex= rfind(str(self.path), ".")
-            pointindex = len(self.path) if pointindex == -1 else pointindex
-            if index > 0 and pointindex-index>1:
-                return self.path[index + 1:pointindex]
+            if index > 0:
+                return self.path[index + 1:]
             else:
                 return ""
 

@@ -1,12 +1,22 @@
 from math import floor, ceil
-from .TwoDimensionalElement import TwoDimensionalElement
-from ..Detectors.ElementsDetectors.TwoDimensionalElementsDetector import TwoDimensionalElementsDetector
+from Duetto_Core.Segmentation.Detectors.ElementsDetectors.TwoDimensionalElementsDetector import TwoDimensionalElementsDetector
 import numpy as np
 from numpy.fft import fft
 import pyqtgraph as pg
-from .Element import Element
+from Duetto_Core.Segmentation.Elements.Element import Element
 from PyQt4 import QtGui
 
+class SpectralMeasurementLocation:
+    Start = True
+    StartMeasurementColor = QtGui.QColor(255, 0, 0, 255)
+    Quartile25 = False
+    Quartile1MeasurementColor = QtGui.QColor(255, 255, 255, 255)
+    Center = True
+    CenterMeasurementColor = QtGui.QColor(0, 255, 0, 255)
+    Quartile75 = False
+    Quartile3MeasurementColor = QtGui.QColor(255,255,255, 255)
+    End = True
+    EndMeasurementColor = QtGui.QColor(0, 0, 255, 255)
 
 
 class OneDimensionalElement(Element):
@@ -19,33 +29,35 @@ class OneDimensionalElement(Element):
         Element.__init__(self, signal)
         self.indexFrom =  indexFrom#index of start of the element
         self.indexTo = indexTo # end of element in ms
+        self.parameterDecimalPlaces = 4
 
     def startTime(self):
-        return self.indexFrom*1.0/self.signal.samplingRate
+        #the start time in s
+        return round(self.indexFrom*1.0/self.signal.samplingRate,self.parameterDecimalPlaces)
 
     def endTime(self):
-        return self.indexTo*1.0/self.signal.samplingRate
+        return round(self.indexTo*1.0/self.signal.samplingRate,self.parameterDecimalPlaces)
 
     def duration(self):
         """
-        returns the len in ms of an element (float)
+        returns the len in s of an element (float)
         """
-        return (self.indexTo-self.indexFrom)*1000.0/self.signal.samplingRate
+        return round((self.indexTo-self.indexFrom)*1.0/self.signal.samplingRate,self.parameterDecimalPlaces)
 
 
 class OscilogramElement(OneDimensionalElement):
 
     def __init__(self, signal, indexFrom, indexTo,number=0,threshold_spectral=0, pxx=[], freqs=[], bins=[], minsize_spectral=(0,0),
-               merge_factor_spectral=(1,1)):
+               merge_factor_spectral=(1,1), location = None):
         OneDimensionalElement.__init__(self,signal,indexFrom,indexTo)
         text = pg.TextItem(str(number),color=(255,255,255),anchor=(0.5,0.5))
         text.setPos(self.indexFrom/2.0+self.indexTo/2.0, 0.75*2**(signal.bitDepth-1))
-        lr = pg.LinearRegionItem([self.indexFrom,self.indexTo], movable=False,brush=(pg.mkBrush(QtGui.QColor(0, 255, 0, 70)) if number%2==0 else pg.mkBrush(QtGui.QColor(0, 0, 255,70))))
-        self._peakFreq = False
-        self._peekToPeek = False
-        self._rms = False
+        lr = pg.LinearRegionItem([self.indexFrom,self.indexTo], movable=False,brush=(pg.mkBrush(QtGui.QColor(0, 255, 0, 100)) if number%2==0 else pg.mkBrush(QtGui.QColor(0, 0, 255,100))))
         self.number = number
         self.twoDimensionalElements = []
+        #the memoize pattern implemented to compute parameters functions
+        self.parameters = dict(StartToMax=None, peekToPeek=None, rms=None, minFreq=None, maxFreq=None, peakFreq=None,peaksAbove=(None,0))
+        self.spectralMeasurementLocation = location if location is not None else SpectralMeasurementLocation()
         if(pxx != [] and bins != [] and freqs != []):
             #spec_resolution, temp_resolution = signal.samplingRate/2.0*len(freqs),bins[1]-bins[0]
             spec_resolution, temp_resolution = 1000.0/freqs[1],(bins[1]-bins[0])*1000.0
@@ -54,46 +66,42 @@ class OscilogramElement(OneDimensionalElement):
             sr = signal.samplingRate*1.0
             aux = max(0,int(floor(indexFrom/((bins[1]-bins[0])*sr))-1))
             aux2 = min(int(ceil((indexTo/((bins[1]-bins[0])*sr))+1)),len(pxx[0]))
-            matrix = pxx[:,aux:aux2]
+            self.matrix = pxx[:,aux:aux2]
             self.indexFromInPxx,self.indexToInPxx = aux,aux2
-            self.computeTwoDimensionalElements(threshold_spectral,matrix,freqs,bins,minsize_spectral,merge_factor_spectral)
+            self.computeTwoDimensionalElements(threshold_spectral,self.matrix,freqs,bins,minsize_spectral,merge_factor_spectral)
 
 
-        tooltip = "<b> Start Time:</b> "+ str(indexFrom*1000.0/signal.samplingRate) + "ms \n" \
-                  + "<b color='#99f'>End Time:</b>"+ str(indexTo*1000.0/signal.samplingRate) + "ms \n"\
-                  + "<b color='#99f'>RMS: </b>"+ str(self.rms()) + "\n"\
-                  + "<b color='#99f'>PeekToPeek: </b>"+ str(self.peekToPeek())
+        tooltip = "Element: "+str(self.number)+"\nStart Time: "+ str(self.startTime()) + "s\n" \
+                  + "End Time:"+ str(self.endTime()) + "s\n"\
+                  + "RMS: "+ str(self.rms()) + "\n"\
+                  + "PeekToPeek: "+ str(self.peekToPeek())
         lr.setToolTip(tooltip)
-        self.visualwidgets = [text,lr]
+        self.visual_figures.append([lr,True])#item visibility
+        self.visual_text.append([text,True])
 
 
     def computeTwoDimensionalElements(self,threshold_spectral, pxx, freqs, bins, minsize_spectral,merge_factor_spectral):
         detector = TwoDimensionalElementsDetector()
-        detector.detect(self.signal,threshold_spectral, pxx,freqs,bins, minsize_spectral,merge_factor_spectral,one_dimensional_parent=self)
+        detector.detect(self.signal,threshold_spectral, pxx,freqs,bins, minsize_spectral,merge_factor_spectral,one_dimensional_parent=self,location= self.spectralMeasurementLocation)
         for elem in detector.elements():
             self.twoDimensionalElements.append(elem)
 
     def distanceFromStartToMax(self):
-        return np.argmax(self.signal.data[self.indexFrom:self.indexTo])
-
-    def peakFreq(self):
-        if not self._peakFreq:
-            indexFrecuency = self.signal.samplingRate/(self.indexTo-self.indexFrom)*1.0
-            maxindex = np.argmax(fft(self.signal.data[self.indexFrom:self.indexTo]))
-            self._peakFreq = int(round((maxindex)*indexFrecuency))
-        return self._peakFreq
+        if(self.parameters["StartToMax"] is None):
+            self.parameters["StartToMax"] = round(np.argmax(self.signal.data[self.indexFrom:self.indexTo])*1.0/self.signal.samplingRate,self.parameterDecimalPlaces)
+        return self.parameters["StartToMax"]
 
     def peekToPeek(self):
-        if not self._peekToPeek:
-            self._peekToPeek = np.ptp(self.signal.data[self.indexFrom:self.indexTo])
-        return self._peekToPeek
+        if(self.parameters["peekToPeek"] is None):
+            self.parameters["peekToPeek"] = np.ptp(self.signal.data[self.indexFrom:self.indexTo])
+        return self.parameters["peekToPeek"]
 
     def rms(self):
         """
         computes the root mean square of the signal.
         indexFrom,indexTo the optionally limits of the interval
         """
-        if not self._rms:
+        if(self.parameters["rms"] is None):
             n = self.indexTo-self.indexFrom
             globalSum = 0.0
             intervalSum = 0.0
@@ -104,5 +112,30 @@ class OscilogramElement(OneDimensionalElement):
                     intervalSum = 0.0
 
             globalSum += intervalSum * 1.0 / n
-            self._rms = np.sqrt(globalSum)
-        return self._rms
+            self.parameters["rms"] = np.sqrt(globalSum)
+        return self.parameters["rms"]
+
+    #espectral parameters
+
+    def minFreq(self):
+        if(self.parameters["minFreq"] is None):
+            self.parameters["minFreq"] = 0
+        return self.parameters["minFreq"]
+
+    def maxFreq(self):
+        if(self.parameters["maxFreq"] is None):
+            self.parameters["maxFreq"] = 0
+        return self.parameters["maxFreq"]
+
+    def peakFreq(self):
+        if(self.parameters["peakFreq"] is None):
+            self.parameters["peakFreq"] = 0
+        return self.parameters["peakFreq"]
+
+    def peaksAbove(self,threshold):
+        if(self.parameters["peaksAbove"][0] is None or self.parameters["peaksAbove"][1] != threshold):
+            self.parameters["peekToPeek"] = (0,threshold)
+        return self.parameters["peekToPeek"][0]
+
+    def spectralElements(self):
+        return len(self.twoDimensionalElements)

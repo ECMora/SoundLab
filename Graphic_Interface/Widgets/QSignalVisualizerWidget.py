@@ -14,11 +14,12 @@ from Duetto_Core.Cursors.IntervalCursor import IntervalCursor
 from Duetto_Core.Cursors.PointerCursor import PointerCursor
 from Duetto_Core.Cursors.RectangularCursor import RectangularCursor
 from Duetto_Core.Segmentation.Detectors.ElementsDetectors.OneDimensionalElementsDetector import OneDimensionalElementsDetector
-from Duetto_Core.Segmentation.Detectors.ElementsDetectors.TwoDimensionalElementsDetector import TwoDimensionalElementsDetector
+from Duetto_Core.Segmentation.Elements.Element import Element
 from Duetto_Core.SignalProcessors.CommonSignalProcessor import CommonSignalProcessor
 from Duetto_Core.SignalProcessors.FilterSignalProcessor import *
 from Duetto_Core.SignalProcessors.SignalProcessor import SignalProcessor, envelope
 from Duetto_Core.SignalProcessors.EditionSignalProcessor import EditionSignalProcessor
+
 from Duetto_Core.SpecgramSettings import SpecgramSettings
 from DuettoPlotWidget import DuettoPlotWidget
 from Graphic_Interface.Widgets.DuettoImageWidget import DuettoImageWidget
@@ -74,7 +75,7 @@ class QSignalVisualizerWidget(QWidget):
     rangeChanged = pyqtSignal(int, int, int)
     _doRefresh = pyqtSignal(bool, bool, bool, bool)
 
-    def __init__(self, parent):
+    def __init__(self, parent,statusBar=None):
         QWidget.__init__(self, parent)
         self._Z = np.array([[0]])
         self.osc_gridx = True
@@ -88,7 +89,7 @@ class QSignalVisualizerWidget(QWidget):
         self.tool = Tools().Zoom
         self.osc_background = "000"
         self.spec_background = "000"
-
+        self.parentStatusBar = statusBar
 
         self.axesOscilogram.setMouseEnabled(x=False, y=False)
         self.axesOscilogram.getPlotItem().hideButtons()
@@ -180,6 +181,7 @@ class QSignalVisualizerWidget(QWidget):
         self.axesOscilogram.emitIntervalOscChanged = False
         self.axesOscilogram.zoomRegion.setRegion([min, max])
         self.axesOscilogram.emitIntervalOscChanged = True
+
         self.stop()
         #self.axesOscilogram.update()
     #region Sound
@@ -502,20 +504,59 @@ class QSignalVisualizerWidget(QWidget):
     def cursorZoomTransform(self, cursorIndex):
         return cursorIndex - self.mainCursor.min
 
+    def changeElementsVisibility(self,visible,element_type=Element.Figures,oscilogramItems=True):
+        #change the visibility of the visual items in items
+        #that objects must be previously added into oscilogram or specgram widgets
+        iterable = self.Elements
+        if not oscilogramItems:
+            aux = [x.twoDimensionalElements for x in self.Elements]
+            iterable = []
+            for list in aux:
+                iterable.extend(list)
+        for e in iterable:
+            if element_type is Element.Figures:
+                for x in e.visual_figures:
+                    x[1] = visible
+            elif element_type is Element.Text:
+                for x in e.visual_text:
+                    x[1] = visible
+            elif element_type is Element.Locations:
+                for x in e.visual_locations:
+                    x[1] = visible
+            elif element_type is Element.PeakFreqs:
+                for x in e.visual_peaksfreqs:
+                    x[1] = visible
+        self.visualChanges = True
+        self.refresh(updateOscillogram=oscilogramItems,updateSpectrogram=not oscilogramItems)
+
+
+
     def drawElements(self):
         if(self.visibleOscilogram):
             for i in range(len(self.Elements)):
                 if self.Elements[i].visible:
-                    for item in self.Elements[i].visualwidgets:
-                        if(not item in self.axesOscilogram.items()):
+                    for item, visible in self.Elements[i].visualwidgets():
+                        if(not item in self.axesOscilogram.items() and visible):
                             self.axesOscilogram.addItem(item)
+                        elif item in self.axesOscilogram.items() and not visible:
+                            self.axesOscilogram.removeItem(item)
+                else:
+                    for item, visible  in self.Elements[i].visualwidgets():
+                        if(item in self.axesOscilogram.items()):
+                            self.axesOscilogram.removeItem(item)
         if(self.visibleSpectrogram):
             for i in range(len(self.Elements)):
                 for j in range(len(self.Elements[i].twoDimensionalElements)):
                     if self.Elements[i].twoDimensionalElements[j].visible:
-                        for item in self.Elements[i].twoDimensionalElements[j].visualwidgets:
-                            if(not item in self.axesSpecgram.items()):
+                        for item, visible in self.Elements[i].twoDimensionalElements[j].visualwidgets():
+                            if(not item in self.axesSpecgram.items() and visible):
                                 self.axesSpecgram.viewBox.addItem(item)
+                            elif item in self.axesSpecgram.items() and not visible:
+                                self.axesSpecgram.viewBox.removeItem(item)
+                    else:
+                        for item, visible  in self.Elements[i].twoDimensionalElements[j].visualwidgets():
+                            if(item in self.axesSpecgram.items()):
+                                self.axesSpecgram.viewBox.removeItem(item)
 
         self.axesOscilogram.update()
         self.axesSpecgram.update()
@@ -628,13 +669,15 @@ class QSignalVisualizerWidget(QWidget):
     def cleanVisibleCursors(self,oscilogram=True,specgram=True):
         if(oscilogram):
             for elem in self.Elements:
-                for item in elem.visualwidgets:
-                    self.axesOscilogram.removeItem(item)
+                for item, visible in elem.visualwidgets():
+                    if(visible):
+                        self.axesOscilogram.removeItem(item)
         if(specgram):
             for elem in self.Elements:
                 for elem2 in elem.twoDimensionalElements:
-                    for item in elem2.visualwidgets:
-                        self.axesSpecgram.viewBox.removeItem(item)
+                    for item, visible in elem2.visualwidgets():
+                        if(visible):
+                            self.axesSpecgram.viewBox.removeItem(item)
 
     def clearCursors(self,oscilogram=True,specgram=True):
         self.cleanVisibleCursors(oscilogram=True,specgram=True)
@@ -644,13 +687,13 @@ class QSignalVisualizerWidget(QWidget):
 
 
     def detectElements(self,threshold=20, decay=1, minSize=0, softfactor=5, merge_factor=0,threshold2=0, threshold_spectral=95, pxx=[], freqs=[], bins=[], minsize_spectral=(0, 0),
-               merge_factor_spectral=(1,1)):
+               merge_factor_spectral=(1,1),location= None):
         indexFrom, indexTo = self.getIndexFromAndTo()
         self.clearCursors()
         self.elements_detector.detect(self.signalProcessor.signal,indexFrom, indexTo, threshold, decay, minSize, softfactor, merge_factor,threshold2,
                                       threshold_spectral=threshold_spectral, pxx =  self.specgramSettings.Pxx, freqs=self.specgramSettings.freqs,
                                       bins=self.specgramSettings.bins, minsize_spectral=minsize_spectral,
-               merge_factor_spectral=merge_factor_spectral)
+               merge_factor_spectral=merge_factor_spectral,location=location)
         for c in self.elements_detector.elements():
             self.Elements.append(c)# the elment the space for the span selector and the text
         #incorporar deteccion en espectrograma

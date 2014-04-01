@@ -35,10 +35,10 @@ class ChangeVolumeDialog(cvdialog.Ui_Dialog, QDialog):
 class FilterDialog(filterdg.Ui_Dialog, QDialog):
     pass
 
-class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
+class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     dropchanged = QtCore.pyqtSignal(QtCore.QMimeData)
     def __init__(self, parent=None):
-        super(BatSoundWindow, self).__init__(parent)
+        super(DuettoSoundLabMAinWindow, self).__init__(parent)
         self.setupUi(self)
 
         self.hist = DuettoHorizontalHistogramWidget()
@@ -46,7 +46,6 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         #self.DeSerializeTheme(self.Theme)
         self.Theme = 'Themes\\RedBlackTheme.dth'
         self.defaultTheme = self.DeSerializeTheme(self.Theme)
-
         self.widget.spec_background = self.defaultTheme.spec_background
         self.widget.osc_background = self.defaultTheme.osc_background
         self.widget.osc_color = self.defaultTheme.osc_plot
@@ -58,7 +57,9 @@ class BatSoundWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.pow_spec_plotColor = self.defaultTheme.pow_Plot
         self.pow_spec_gridx = self.defaultTheme.pow_GridX
         self.pow_spec_gridy = self.defaultTheme.pow_GridY
-
+        self.statusbar = self.statusBar()
+        self.statusbar.setSizeGripEnabled(False)
+        self.statusbar.showMessage("Welcome to Duetto Sound Lab.", 5000)
         params = [
         {'name': 'Oscillogram Settings', 'type': 'group', 'children': [
             {'name': 'Min amplitude', 'type': 'float', 'value': 0, 'step': 0.1},
