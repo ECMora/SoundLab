@@ -93,7 +93,7 @@ class OscilogramElement(OneDimensionalElement):
 
     def peekToPeek(self):
         if(self.parameters["peekToPeek"] is None):
-            self.parameters["peekToPeek"] = np.ptp(self.signal.data[self.indexFrom:self.indexTo])
+            self.parameters["peekToPeek"] = round(np.ptp(self.signal.data[self.indexFrom:self.indexTo])*1.0/(2**self.signal.bitDepth),self.parameterDecimalPlaces)
         return self.parameters["peekToPeek"]
 
     def rms(self):
@@ -112,7 +112,7 @@ class OscilogramElement(OneDimensionalElement):
                     intervalSum = 0.0
 
             globalSum += intervalSum * 1.0 / n
-            self.parameters["rms"] = np.sqrt(globalSum)
+            self.parameters["rms"] = round(np.sqrt(globalSum)*1.0/(2**self.signal.bitDepth),self.parameterDecimalPlaces)
         return self.parameters["rms"]
 
     #espectral parameters

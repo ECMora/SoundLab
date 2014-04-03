@@ -106,16 +106,16 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         ]
         self.ParamTree = Parameter.create(name='params', type='group', children=params)
         self.ParamTree.sigTreeStateChanged.connect(self.change)
-        self.t = ParameterTree()
-        self.t.setAutoScroll(True)
-        self.t.setFixedWidth(340)
+        self.parameterTree = ParameterTree()
+        self.parameterTree.setAutoScroll(True)
+        self.parameterTree.setFixedWidth(340)
 
-        self.t.setHeaderHidden(True)
-        self.t.setParameters(self.ParamTree, showTop=False)
+        self.parameterTree.setHeaderHidden(True)
+        self.parameterTree.setParameters(self.ParamTree, showTop=False)
 
         lay1 = QtGui.QVBoxLayout()
         lay1.setMargin(0)
-        lay1.addWidget(self.t)
+        lay1.addWidget(self.parameterTree)
 
         self.hist.setFixedWidth(340)
         self.hist.setFixedHeight(100)
