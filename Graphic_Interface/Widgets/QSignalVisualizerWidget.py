@@ -25,6 +25,41 @@ from DuettoPlotWidget import DuettoPlotWidget
 from Graphic_Interface.Widgets.DuettoImageWidget import DuettoImageWidget
 
 
+class UndoRedoManager:
+    def __init__(self):
+        self.actionsList = [None for _ in range(20)] #initial space for actions
+        self.actionIndex = 0
+
+    def undo(self):
+        if(self.actionIndex > 0):
+            tuple = self.actionsList[self.actionIndex]
+            if(tuple[0] is not None):
+                tuple[0]()
+            self.actionIndex -= 1
+
+    def redo(self):
+        if(self.actionIndex < len(self.actionsList)):
+            tuple = self.actionsList[self.actionIndex]
+            if(tuple[1] is not None):
+                tuple[1]()
+            self.actionIndex += 1
+
+    def addAction(self,undoAction=None, redoAction=None):
+        self.actionIndex += 1
+        if(len(self.actionsList)<= self.actionIndex):
+            list = [None for _ in range(2*len(self.actionsList))]
+            for x,i in enumerate(self.actionsList):
+                list[i] = x
+            self.actionsList = list
+        else:
+            for i in range(self.actionIndex,len(self.actionsList)):
+                self.actionsList[i] = (None,None)
+
+        self.actionsList[self.actionIndex] = (undoAction,redoAction)
+
+
+
+
 BACK_COLOR = "gray"
 
 class OscXAxis(pg.AxisItem):
@@ -75,7 +110,7 @@ class QSignalVisualizerWidget(QWidget):
     rangeChanged = pyqtSignal(int, int, int)
     _doRefresh = pyqtSignal(bool, bool, bool, bool)
 
-    def __init__(self, parent,statusBar=None):
+    def __init__(self, parent):
         QWidget.__init__(self, parent)
         self._Z = np.array([[0]])
         self.osc_gridx = True
@@ -89,7 +124,7 @@ class QSignalVisualizerWidget(QWidget):
         self.tool = Tools().Zoom
         self.osc_background = "000"
         self.spec_background = "000"
-        self.parentStatusBar = statusBar
+        self.undoRedoManager = UndoRedoManager()
 
         self.axesOscilogram.setMouseEnabled(x=False, y=False)
         self.axesOscilogram.getPlotItem().hideButtons()
@@ -526,9 +561,7 @@ class QSignalVisualizerWidget(QWidget):
             elif element_type is Element.PeakFreqs:
                 for x in e.visual_peaksfreqs:
                     x[1] = visible
-        self.visualChanges = True
-        self.refresh(updateOscillogram=oscilogramItems,updateSpectrogram=not oscilogramItems)
-
+        self.drawElements()
 
 
     def drawElements(self):
@@ -684,16 +717,14 @@ class QSignalVisualizerWidget(QWidget):
         self.Elements = [] if oscilogram and specgram else self.Elements
 
 
-
-
     def detectElements(self,threshold=20, decay=1, minSize=0, softfactor=5, merge_factor=0,threshold2=0, threshold_spectral=95, pxx=[], freqs=[], bins=[], minsize_spectral=(0, 0),
                merge_factor_spectral=(1,1),location= None):
-        indexFrom, indexTo = self.getIndexFromAndTo()
         self.clearCursors()
-        self.elements_detector.detect(self.signalProcessor.signal,indexFrom, indexTo, threshold, decay, minSize, softfactor, merge_factor,threshold2,
+        self.elements_detector.detect(self.signalProcessor.signal,0,len(self.signalProcessor.signal.data), threshold, decay, minSize, softfactor, merge_factor,threshold2,
                                       threshold_spectral=threshold_spectral, pxx =  self.specgramSettings.Pxx, freqs=self.specgramSettings.freqs,
                                       bins=self.specgramSettings.bins, minsize_spectral=minsize_spectral,
                merge_factor_spectral=merge_factor_spectral,location=location)
+
         for c in self.elements_detector.elements():
             self.Elements.append(c)# the elment the space for the span selector and the text
         #incorporar deteccion en espectrograma
