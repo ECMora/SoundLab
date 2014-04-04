@@ -14,13 +14,14 @@ class PowerSpectrumWindow(QtGui.QMainWindow):
         self.gridx = gridx
         self.gridy = gridy
 
-    def plot(self, data, rate, NFFT, window):
+    def plot(self, data, rate, NFFT, window,overlap):
 
         self.NFFT = NFFT
         self.window = window
         self.rate = rate
-        self.ui.pow_spec.Plot_Power_Spectrum(data, rate, NFFT, window,self.plotColor, self.backColor, self.gridx, self.gridy)
+        self.overlap = overlap
+        self.ui.pow_spec.Plot_Power_Spectrum(data, self.rate, self.NFFT, self.window,self.overlap,self.plotColor, self.backColor, self.gridx, self.gridy)
 
     def updatePowSpectrumInterval(self,data):
-        self.ui.pow_spec.Plot_Power_Spectrum(data,self.rate,self.NFFT,self.window,self.plotColor, self.backColor, self.gridx, self.gridy)
+        self.ui.pow_spec.Plot_Power_Spectrum(data,self.rate,self.NFFT,self.window,self.overlap,self.plotColor, self.backColor, self.gridx, self.gridy)
 

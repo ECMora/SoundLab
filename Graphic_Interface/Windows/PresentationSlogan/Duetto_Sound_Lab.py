@@ -2,7 +2,7 @@ from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 import PyQt4.phonon as phonon
 
-from Graphic_Interface.Windows.BatSound import BatSoundWindow
+from Graphic_Interface.Windows.DuettoSoundLabWindow import DuettoSoundLabMAinWindow
 from Graphic_Interface.Windows.PresentationSlogan.presentation import Ui_MainWindow
 
 
@@ -18,7 +18,7 @@ if __name__ == '__main__':
     import sys
     app = QApplication(sys.argv)
 
-    dmw = BatSoundWindow()
+    dmw = DuettoSoundLabMAinWindow()
 
     duetto_sound_lab_window = Duetto_Sound_Lab()
     # show it
