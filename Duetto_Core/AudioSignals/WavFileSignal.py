@@ -33,7 +33,7 @@ class WavFileSignal(FileAudioSignal):
             self.path=path
 
         except Exception as e:
-            QMessageBox.warning(QMessageBox(), "Error", "Could not load the file. " +self.name()+" "+e.message)
+            QMessageBox.warning(QMessageBox(), "Error", "Could not load the file. "+e.message)
             #pass
 
     def read(self, file):

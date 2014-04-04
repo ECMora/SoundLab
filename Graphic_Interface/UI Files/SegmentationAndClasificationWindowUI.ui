@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>769</width>
-    <height>562</height>
+    <height>569</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -76,13 +76,6 @@ padding:1%;</string>
         <string>Batch Process</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_4">
-        <item row="3" column="0">
-         <widget class="QListWidget" name="listwidgetProgress">
-          <property name="styleSheet">
-           <string notr="true">background-color: rgb(217, 217, 217);</string>
-          </property>
-         </widget>
-        </item>
         <item row="0" column="1">
          <widget class="QPushButton" name="pushButtonInputFolder">
           <property name="text">
@@ -94,6 +87,13 @@ padding:1%;</string>
          </widget>
         </item>
         <item row="4" column="0">
+         <widget class="QListWidget" name="listwidgetProgress">
+          <property name="styleSheet">
+           <string notr="true">background-color: rgb(217, 217, 217);</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="0">
          <widget class="QProgressBar" name="progressBarProcesed">
           <property name="value">
            <number>0</number>
@@ -103,14 +103,7 @@ padding:1%;</string>
         <item row="1" column="0">
          <widget class="QLineEdit" name="lineEditOutputFolder">
           <property name="text">
-           <string>Select the folder of output file meditions</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="2">
-         <widget class="QPushButton" name="pushButtonStart">
-          <property name="text">
-           <string>Process</string>
+           <string>Select the folder of output procesed files</string>
           </property>
          </widget>
         </item>
@@ -128,10 +121,65 @@ padding:1%;</string>
           </property>
          </widget>
         </item>
-        <item row="1" column="2">
+        <item row="4" column="1" colspan="2">
+         <widget class="QGroupBox" name="groupBox">
+          <property name="title">
+           <string>Action</string>
+          </property>
+          <layout class="QFormLayout" name="formLayout">
+           <property name="fieldGrowthPolicy">
+            <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+           </property>
+           <item row="0" column="0">
+            <widget class="QRadioButton" name="rbttnDetection">
+             <property name="text">
+              <string>Detection</string>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QRadioButton" name="rbttnSplitFile">
+             <property name="text">
+              <string>Split Files</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QSpinBox" name="spboxSplitTime">
+             <property name="suffix">
+              <string>sec</string>
+             </property>
+             <property name="minimum">
+              <number>30</number>
+             </property>
+             <property name="maximum">
+              <number>120</number>
+             </property>
+             <property name="value">
+              <number>60</number>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0" colspan="2">
+            <widget class="QPushButton" name="pushButtonStart">
+             <property name="text">
+              <string>Process</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="0" column="2">
          <widget class="QCheckBox" name="cbxSingleFile">
           <property name="text">
-           <string>Single File</string>
+           <string>Single Excell</string>
           </property>
          </widget>
         </item>
@@ -186,13 +234,11 @@ padding:1%;</string>
    <addaction name="actionOscilogram"/>
    <addaction name="actionSpectogram"/>
    <addaction name="separator"/>
-   <addaction name="actionSettings"/>
    <addaction name="actionDetection"/>
-   <addaction name="actionSelect_all"/>
   </widget>
   <widget class="QDockWidget" name="dockWidgetParameterTableOscilogram">
    <property name="windowTitle">
-    <string>Oscilogram Elements</string>
+    <string>Elements</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>4</number>
@@ -205,40 +251,6 @@ padding:1%;</string>
         <string>Oscilogram elements  meditions</string>
        </property>
       </widget>
-     </item>
-    </layout>
-   </widget>
-  </widget>
-  <widget class="QDockWidget" name="dockWidgetParameterTableSpectrogram">
-   <property name="windowTitle">
-    <string>Spectrogram Elements</string>
-   </property>
-   <attribute name="dockWidgetArea">
-    <number>4</number>
-   </attribute>
-   <widget class="QWidget" name="dockWidgetContents_2">
-    <layout class="QVBoxLayout" name="verticalLayout">
-     <item>
-      <widget class="QTableWidget" name="tableParameterSpectrogram">
-       <property name="toolTip">
-        <string>Spectrogram elements meditions</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
-   </widget>
-  </widget>
-  <widget class="QDockWidget" name="dock_settings">
-   <property name="windowTitle">
-    <string>Settings</string>
-   </property>
-   <attribute name="dockWidgetArea">
-    <number>1</number>
-   </attribute>
-   <widget class="QWidget" name="dockWidgetContents_5">
-    <layout class="QGridLayout" name="gridLayout_2">
-     <item row="0" column="0">
-      <widget class="QWidget" name="osc_settings_contents" native="true"/>
      </item>
     </layout>
    </widget>
@@ -260,12 +272,16 @@ padding:1%;</string>
    </widget>
    <widget class="QMenu" name="menuParameters">
     <property name="title">
-     <string>Parameters</string>
+     <string>View</string>
     </property>
     <addaction name="actionView_Parameters"/>
-    <addaction name="actionParameters_Measurement"/>
-    <addaction name="actionClear_Meditions"/>
     <addaction name="actionView_Threshold"/>
+    <addaction name="actionTemporal_Elements"/>
+    <addaction name="actionTemporal_Numbers"/>
+    <addaction name="actionSpectral_Elements"/>
+    <addaction name="actionSpectral_Numbers"/>
+    <addaction name="actionSpectral_Locations"/>
+    <addaction name="actionPeak_Frecuencies"/>
    </widget>
    <addaction name="menuExport"/>
    <addaction name="menuParameters"/>
@@ -292,11 +308,6 @@ padding:1%;</string>
    </property>
    <property name="shortcut">
     <string>-</string>
-   </property>
-  </action>
-  <action name="actionSelect_all">
-   <property name="text">
-    <string>Select all</string>
    </property>
   </action>
   <action name="actionSpectogram">
@@ -417,44 +428,36 @@ padding:1%;</string>
     <string>Ctrl+X</string>
    </property>
   </action>
-  <action name="actionSettings">
-   <property name="icon">
-    <iconset resource="resources/icons.qrc">
-     <normaloff>:/myappicons/LeopardVista V4 Icon 09.ico</normaloff>:/myappicons/LeopardVista V4 Icon 09.ico</iconset>
-   </property>
-   <property name="text">
-    <string>Settings</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+P</string>
-   </property>
-  </action>
   <action name="actionExcel_File">
    <property name="text">
     <string>To Excel</string>
    </property>
   </action>
   <action name="actionView_Parameters">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="text">
-    <string>View Parameters</string>
+    <string>Parameters</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Space</string>
-   </property>
-  </action>
-  <action name="actionParameters_Measurement">
-   <property name="text">
-    <string>Parameters Measurement</string>
    </property>
   </action>
   <action name="actionDetection">
    <property name="text">
     <string>Detection</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+D</string>
+   </property>
   </action>
   <action name="actionClear_Meditions">
    <property name="text">
     <string>Clear Meditions</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+E</string>
    </property>
   </action>
   <action name="actionView_Threshold">
@@ -462,12 +465,73 @@ padding:1%;</string>
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>View Threshold</string>
+    <string>Threshold</string>
+   </property>
+  </action>
+  <action name="actionTemporal_Elements">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Temporal Elements</string>
+   </property>
+  </action>
+  <action name="actionSpectral_Elements">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Spectral Elements</string>
+   </property>
+  </action>
+  <action name="actionPeak_Frecuencies">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Peak Frecuencies</string>
+   </property>
+  </action>
+  <action name="actionSpectral_Locations">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Spectral Locations</string>
+   </property>
+  </action>
+  <action name="actionTemporal_Numbers">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Temporal Numbers</string>
+   </property>
+  </action>
+  <action name="actionSpectral_Numbers">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Spectral Numbers</string>
    </property>
   </action>
   <zorder>dockWidgetParameterTableOscilogram</zorder>
-  <zorder>dockWidgetParameterTableSpectrogram</zorder>
-  <zorder>dock_settings</zorder>
  </widget>
  <customwidgets>
   <customwidget>

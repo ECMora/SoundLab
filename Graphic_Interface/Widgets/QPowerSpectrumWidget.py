@@ -33,6 +33,6 @@ class QPowerSpectrumWidget(QtGui.QWidget):
         self.Pxx.shape = len(self.freqs)
         self.pow_spectrum.setBackground(BackColor)
         self.pow_spectrum.getPlotItem().showGrid(x=gridX, y=gridY)
-        self.pow_spectrum.plot(self.freqs,10*numpy.log10(self.Pxx),clear=True, pen=plotColor)
+        self.pow_spectrum.plot(self.freqs,10*numpy.log10(self.Pxx/numpy.amax(self.Pxx)),clear=True, pen=plotColor)
         self.pow_spectrum.show()
         return self.Pxx, self.freqs

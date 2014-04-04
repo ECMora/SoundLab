@@ -15,7 +15,7 @@ class AudioSignal:
         self._currentChannel = 0
         self.data = np.array([])
         self.channelData = [self.data]
-        self.bitDepth = 0
+        self.bitDepth = 1
         self.path = ""
         #self.media = 0  # mean value of the signal
         self.stream = None
@@ -49,10 +49,8 @@ class AudioSignal:
             y = rfind(str(self.path), "/")
             index = max(x, y)
 
-            pointindex= rfind(str(self.path), ".")
-            pointindex = len(self.path) if pointindex == -1 else pointindex
-            if index > 0 and pointindex-index>1:
-                return self.path[index + 1:pointindex]
+            if index > 0:
+                return self.path[index + 1:]
             else:
                 return ""
 

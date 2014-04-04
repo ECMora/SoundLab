@@ -131,6 +131,8 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
     <addaction name="actionPaste"/>
     <addaction name="actionCut"/>
     <addaction name="separator"/>
+    <addaction name="actionRedo"/>
+    <addaction name="actionUndo"/>
     <addaction name="actionSelect_all"/>
     <addaction name="separator"/>
     <addaction name="action_Reverse"/>
@@ -568,6 +570,33 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
   <action name="actionLoad_Theme">
    <property name="text">
     <string>Load theme</string>
+   </property>
+  </action>
+  <action name="actionDeselect">
+   <property name="text">
+    <string>Deselect</string>
+   </property>
+   <property name="toolTip">
+    <string>clear a zoom selection made by user</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+D</string>
+   </property>
+  </action>
+  <action name="actionUndo">
+   <property name="text">
+    <string>Undo</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Z</string>
+   </property>
+  </action>
+  <action name="actionRedo">
+   <property name="text">
+    <string>Redo</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Y</string>
    </property>
   </action>
   <zorder>dock_settings</zorder>
