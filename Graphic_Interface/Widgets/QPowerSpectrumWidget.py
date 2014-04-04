@@ -25,11 +25,11 @@ class QPowerSpectrumWidget(QtGui.QWidget):
     def get_highest_freq(self):
         return  self.freqs[numpy.argmax(self.Pxx[1:len(self.Pxx)], axis=0)]
 
-    def Plot_Power_Spectrum(self, data, Fs, NFFT, window, plotColor, BackColor, gridX, gridY):
+    def Plot_Power_Spectrum(self, data, Fs, NFFT, window,overlap, plotColor, BackColor, gridX, gridY):
 
         self.pow_spectrum.getPlotItem().setTitle(title='NFFT '+str(NFFT) + ' ' + window.__name__)
         self.pow_spectrum.getPlotItem().hideButtons()
-        (self.Pxx , self.freqs) = mlab.psd(data,Fs= Fs,NFFT=NFFT, window=window,scale_by_freq=False)
+        (self.Pxx , self.freqs) = mlab.psd(data,Fs= Fs,NFFT=NFFT, window=window,noverlap=overlap,scale_by_freq=False)
         self.Pxx.shape = len(self.freqs)
         self.pow_spectrum.setBackground(BackColor)
         self.pow_spectrum.getPlotItem().showGrid(x=gridX, y=gridY)
