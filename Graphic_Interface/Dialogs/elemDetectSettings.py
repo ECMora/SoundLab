@@ -1,5 +1,6 @@
 from PyQt4.QtCore import pyqtSlot
 from PyQt4.QtGui import QDialog
+import pyqtgraph as pg
 from Duetto_Core.AudioSignals.WavFileSignal import WavFileSignal
 from Graphic_Interface.Dialogs.ui_elemDetectSettings import Ui_Dialog
 
@@ -10,27 +11,44 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         self.setupUi(self)
         self.widget.visibleSpectrogram = True
         self.widget.visibleOscilogram = True
+        if parent is not None:
+            self.widget.specgramSettings.NFFT = parent.widget.specgramSettings.NFFT
+            self.widget.specgramSettings.overlap = parent.widget.specgramSettings.overlap
+            self.widget.specgramSettings.window = parent.widget.specgramSettings.window
+
+
 
         #espectrogram
-        self.dsbxThresholdSpec.valueChanged.connect(self.detectSpectrogram)
-        self.dsbxMinSizeFreq.valueChanged.connect(self.detectSpectrogram)
-        self.dsbxminSizeTime.valueChanged.connect(self.detectSpectrogram)
-        self.sbxMergeFactorTime.valueChanged.connect(self.detectSpectrogram)
-        self.sbxMergeFactorFreq.valueChanged.connect(self.detectSpectrogram)
+        self.dsbxThresholdSpec.valueChanged.connect(self.detect)
+        self.dsbxMinSizeFreq.valueChanged.connect(self.detect)
+        self.dsbxminSizeTime.valueChanged.connect(self.detect)
+        self.sbxMergeFactorTime.valueChanged.connect(self.detect)
+        self.sbxMergeFactorFreq.valueChanged.connect(self.detect)
         #oscilogram
-        self.dsbxThreshold.valueChanged.connect(self.detectOscilogram)
+        self.dsbxThreshold.valueChanged.connect(self.detect)
 
-        self.dsbxThreshold2.valueChanged.connect(self.detectOscilogram)
-        self.dsbxDecay.valueChanged.connect(self.detectOscilogram)
-        self.dsbxMinSize.valueChanged.connect(self.detectOscilogram)
-        self.dsbxMergeFactor.valueChanged.connect(self.detectOscilogram)
-        self.sbxSoftFactor.valueChanged.connect(self.detectOscilogram)
+        self.dsbxThreshold2.valueChanged.connect(self.detect)
+        self.dsbxDecay.valueChanged.connect(self.detect)
+        self.dsbxMinSize.valueChanged.connect(self.detect)
+        self.dsbxMergeFactor.valueChanged.connect(self.detect)
+        self.sbxSoftFactor.valueChanged.connect(self.detect)
         self.widget.signalProcessor.signal = WavFileSignal("Didactic Signals\\recognition.wav")
         self.widget.mainCursor.min,self.widget.mainCursor.max = 0,len(self.widget.signalProcessor.signal.data)
         self.widget.axesOscilogram.setVisibleThreshold(True)
         self.widget.visualChanges = True
+        self.hist = pg.widgets.HistogramLUTWidget.HistogramLUTItem()
+        self.hist.setImageItem(self.widget.axesSpecgram.imageItem)
         self.widget.refresh()
 
+    def load_Theme(self,theme):
+        self.theme = theme
+        self.hist.region.setRegion(theme.histRange)
+        self.hist.gradient.restoreState(theme.colorBarState)
+        self.widget.load_Theme(theme)
+        self.widget.visualChanges = True
+        self.widget.refresh()
+        self.hist.region.lineMoved()
+        self.hist.region.lineMoveFinished()
 
     @pyqtSlot(bool)
     def on_chbxDetectOsc_toggled(self, checked):
@@ -50,13 +68,12 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         self.sbxMergeFactorFreq.setEnabled(checked)
 
     @pyqtSlot()
-    def detectOscilogram(self):
-        self.widget.detectElementsInOscilogram()
+    def detect(self):
+        self.widget.detectElements(threshold=abs(self.dsbxThreshold.value()), decay=self.dsbxDecay.value(), minSize= self.dsbxMinSize.value(), softfactor=self.sbxSoftFactor.value(), merge_factor=self.dsbxMergeFactor.value(),threshold2=abs(self.dsbxThreshold2.value())
+        ,threshold_spectral=self.dsbxThresholdSpec.value(), minsize_spectral=(self.dsbxMinSizeFreq.value(),self.dsbxminSizeTime.value()),
+               merge_factor_spectral=(self.sbxMergeFactorFreq.value(),self.sbxMergeFactorTime.value()))
         self.widget.refresh()
 
-    @pyqtSlot()
-    def detectSpectrogram(self):
-        self.widget.detectElementsInEspectrogram()
-        self.widget.refresh()
+
 
 import re, sre_compile, sre_constants, sre_parse

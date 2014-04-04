@@ -1,33 +1,64 @@
+from datetime import datetime
+
 from PyQt4.QtCore import pyqtSignal,QRect, Qt
 from PyQt4.QtGui import *
 from PyQt4 import QtCore, QtGui
-from datetime import datetime
 import pyqtgraph as pg
-from matplotlib.patches import Rectangle
-from matplotlib.transforms import blended_transform_factory
 import numpy as np
 import matplotlib.mlab as mlab
-from matplotlib.image import imsave
-from numpy.lib.function_base import percentile
-from PyQt4.QtCore import SIGNAL
-import matplotlib.pyplot as plt
+from pyqtgraph.Point import Point
+
 from Duetto_Core.AudioSignals.WavFileSignal import WavFileSignal
 from Duetto_Core.AudioSignals.AudioSignal import AudioSignal
 from Duetto_Core.Cursors.IntervalCursor import IntervalCursor
 from Duetto_Core.Cursors.PointerCursor import PointerCursor
 from Duetto_Core.Cursors.RectangularCursor import RectangularCursor
-from Duetto_Core.Detectors.ElementsDetectors.OneDimensionalElementsDetector import OneDimensionalElementsDetector
-from Duetto_Core.Detectors.ElementsDetectors.TwoDimensionalElementsDetector import TwoDimensionalElementsDetector
-from Duetto_Core.Detectors.FeatureExtractionDetectors import MeanDetector, MaxMinPeakDetector
+from Duetto_Core.Segmentation.Detectors.ElementsDetectors.OneDimensionalElementsDetector import OneDimensionalElementsDetector
+from Duetto_Core.Segmentation.Elements.Element import Element
 from Duetto_Core.SignalProcessors.CommonSignalProcessor import CommonSignalProcessor
 from Duetto_Core.SignalProcessors.FilterSignalProcessor import *
 from Duetto_Core.SignalProcessors.SignalProcessor import SignalProcessor, envelope
 from Duetto_Core.SignalProcessors.EditionSignalProcessor import EditionSignalProcessor
+
 from Duetto_Core.SpecgramSettings import SpecgramSettings
 from DuettoPlotWidget import DuettoPlotWidget
 from Graphic_Interface.Widgets.DuettoImageWidget import DuettoImageWidget
-from pyqtgraph.Point import Point
-import pickle
+
+
+class UndoRedoManager:
+    def __init__(self):
+        self.actionsList = [None for _ in range(20)] #initial space for actions
+        self.actionIndex = 0
+
+    def undo(self):
+        if(self.actionIndex > 0):
+            tuple = self.actionsList[self.actionIndex]
+            if(tuple[0] is not None):
+                tuple[0]()
+            self.actionIndex -= 1
+
+    def redo(self):
+        if(self.actionIndex < len(self.actionsList)):
+            tuple = self.actionsList[self.actionIndex]
+            if(tuple[1] is not None):
+                tuple[1]()
+            self.actionIndex += 1
+
+    def addAction(self,undoAction=None, redoAction=None):
+        self.actionIndex += 1
+        if(len(self.actionsList)<= self.actionIndex):
+            list = [None for _ in range(2*len(self.actionsList))]
+            for x,i in enumerate(self.actionsList):
+                list[i] = x
+            self.actionsList = list
+        else:
+            for i in range(self.actionIndex,len(self.actionsList)):
+                self.actionsList[i] = (None,None)
+
+        self.actionsList[self.actionIndex] = (undoAction,redoAction)
+
+
+
 
 BACK_COLOR = "gray"
 
@@ -93,7 +124,11 @@ class QSignalVisualizerWidget(QWidget):
         self.tool = Tools().Zoom
         self.osc_background = "000"
         self.spec_background = "000"
-
+        self.undoRedoManager = UndoRedoManager()
+        self.minYOsc = -100
+        self.maxYOsc =  100
+        self.minYSpc = 0
+        self.maxYSpc = 100
 
         self.axesOscilogram.setMouseEnabled(x=False, y=False)
         self.axesOscilogram.getPlotItem().hideButtons()
@@ -139,17 +174,14 @@ class QSignalVisualizerWidget(QWidget):
         self.cursors = []
         self.cursorsmarkers = []  # the rectangles for the visualizations of cursors
         self.visibleCursors = True
-        self.OscilogramElements = []  # list of elements detected in oscilogram each element contains the object it self and the extra data for visualize it
-
-        self.SpectrogramElements = []  # list of elements detected in spectrogram idem to oscilogram
-        self.elementsRegionsMarkers = []  # the twodimensionalElements for the visualizations of elements in the widget
+        self.Elements = []  # list of elements detected in oscilogram each element contains the object it self and the extra data for visualize it
         self.visibleElements = True
 
         self.colorbar = None
         self.playerSpeed = 100
         self.playerLineOsc = pg.InfiniteLine()
         self.playerLineSpec = pg.InfiniteLine()
-        self.oscilogram_elements_detector = OneDimensionalElementsDetector()
+        self.elements_detector = OneDimensionalElementsDetector()
 
         self._lastRecordRefresh = datetime.now()
         self._recordRefreshRate = 5
@@ -188,6 +220,7 @@ class QSignalVisualizerWidget(QWidget):
         self.axesOscilogram.emitIntervalOscChanged = False
         self.axesOscilogram.zoomRegion.setRegion([min, max])
         self.axesOscilogram.emitIntervalOscChanged = True
+
         self.stop()
         #self.axesOscilogram.update()
     #region Sound
@@ -429,6 +462,10 @@ class QSignalVisualizerWidget(QWidget):
         self.axisXOsc.setTicks([zip(vals,strgs)])
         self.axesSpecgram.xAxis.setTicks(self.axisXOsc._tickLevels)
 
+    def zoomY(self,ymin,ymax):
+        self.axesSpecgram.viewBox.setRange()
+        self.axesSpecgram.getView().setRange()
+
     def refresh(self, dataChanged=True, updateOscillogram=True, updateSpectrogram=True, partial=False):
         # perform some heavy calculations
         if self.visibleSpectrogram and updateSpectrogram and self.signalProcessor.signal \
@@ -460,17 +497,16 @@ class QSignalVisualizerWidget(QWidget):
 
         if not self.visualChanges:
             return
+        self.axesOscilogram.setRange(xRange=(self.mainCursor.min, self.mainCursor.max),
+                                         yRange=(self.minYOsc*0.01*self.signalProcessor.signal.getMaximumValueAllowed(),
+                                                 self.maxYOsc*0.01*self.signalProcessor.signal.getMaximumValueAllowed()), padding=0,update = True)
+
         if (self.visibleOscilogram or self.signalProcessor.signal.playStatus == AudioSignal.RECORDING) \
            and updateOscillogram and self.signalProcessor.signal and self.signalProcessor.signal.opened()\
            and self.mainCursor.max > self.mainCursor.min:
             #if self.mainCursor.max - self.mainCursor.min > 2 * self.INTERVAL_START_DECIMATION:
             #    length = (self.mainCursor.max - self.mainCursor.min)
             #    interval = length / self.INTERVAL_START_DECIMATION
-
-            self.axesOscilogram.setRange(xRange=(self.mainCursor.min, self.mainCursor.max),
-                                         yRange=(self.signalProcessor.signal.getMinimumValueAllowed(),
-                                                 self.signalProcessor.signal.getMaximumValueAllowed()), padding=0)
-
             if dataChanged:
                 self.axesOscilogram.plot(self.signalProcessor.signal.data, clear=True, pen=self.osc_color,
                                          autoDownsample=not partial, clipToView=partial)
@@ -506,23 +542,64 @@ class QSignalVisualizerWidget(QWidget):
         if(self.visibleElements):
             self.drawElements()
 
+        gem = self.parent().geometry()
+        self.parent().resize(gem.width()/3, gem.height())
+        self.parent().resize(gem.width(), gem.height())
 
     def cursorZoomTransform(self, cursorIndex):
         return cursorIndex - self.mainCursor.min
 
+    def changeElementsVisibility(self,visible,element_type=Element.Figures,oscilogramItems=True):
+        #change the visibility of the visual items in items
+        #that objects must be previously added into oscilogram or specgram widgets
+        iterable = self.Elements
+        if not oscilogramItems:
+            aux = [x.twoDimensionalElements for x in self.Elements]
+            iterable = []
+            for list in aux:
+                iterable.extend(list)
+        for e in iterable:
+            if element_type is Element.Figures:
+                for x in e.visual_figures:
+                    x[1] = visible
+            elif element_type is Element.Text:
+                for x in e.visual_text:
+                    x[1] = visible
+            elif element_type is Element.Locations:
+                for x in e.visual_locations:
+                    x[1] = visible
+            elif element_type is Element.PeakFreqs:
+                for x in e.visual_peaksfreqs:
+                    x[1] = visible
+        self.drawElements()
+
+
     def drawElements(self):
         if(self.visibleOscilogram):
-            for i in range(len(self.OscilogramElements)):
-                if self.OscilogramElements[i].visible:
-                    for item in self.OscilogramElements[i].visualwidgets:
-                        if(not item in self.axesOscilogram.items()):
+            for i in range(len(self.Elements)):
+                if self.Elements[i].visible:
+                    for item, visible in self.Elements[i].visualwidgets():
+                        if(not item in self.axesOscilogram.items() and visible):
                             self.axesOscilogram.addItem(item)
+                        elif item in self.axesOscilogram.items() and not visible:
+                            self.axesOscilogram.removeItem(item)
+                else:
+                    for item, visible  in self.Elements[i].visualwidgets():
+                        if(item in self.axesOscilogram.items()):
+                            self.axesOscilogram.removeItem(item)
         if(self.visibleSpectrogram):
-            for i in range(len(self.SpectrogramElements)):
-                if self.SpectrogramElements[i].visible:
-                    for item in self.SpectrogramElements[i].visualwidgets:
-                        if(not item in self.axesSpecgram.items()):
-                            self.axesSpecgram.viewBox.addItem(item)
+            for i in range(len(self.Elements)):
+                for j in range(len(self.Elements[i].twoDimensionalElements)):
+                    if self.Elements[i].twoDimensionalElements[j].visible:
+                        for item, visible in self.Elements[i].twoDimensionalElements[j].visualwidgets():
+                            if(not item in self.axesSpecgram.items() and visible):
+                                self.axesSpecgram.viewBox.addItem(item)
+                            elif item in self.axesSpecgram.items() and not visible:
+                                self.axesSpecgram.viewBox.removeItem(item)
+                    else:
+                        for item, visible  in self.Elements[i].twoDimensionalElements[j].visualwidgets():
+                            if(item in self.axesSpecgram.items()):
+                                self.axesSpecgram.viewBox.removeItem(item)
 
         self.axesOscilogram.update()
         self.axesSpecgram.update()
@@ -634,70 +711,33 @@ class QSignalVisualizerWidget(QWidget):
 
     def cleanVisibleCursors(self,oscilogram=True,specgram=True):
         if(oscilogram):
-            for elem in self.OscilogramElements:
-                for item in elem.visualwidgets:
-                    self.axesOscilogram.removeItem(item)
+            for elem in self.Elements:
+                for item, visible in elem.visualwidgets():
+                    if(visible):
+                        self.axesOscilogram.removeItem(item)
         if(specgram):
-            for elem in self.SpectrogramElements:
-                for item in elem.visualwidgets:
-                    self.axesSpecgram.viewBox.removeItem(item)
-
-
-    def detectElementsInEspectrogram(self, threshold=80,minsize=(0,0),mergefactor=(0,0)):
-        signal = self.signalProcessor.signal
-        self.clearCursors(oscilogram=False)
-        detector = TwoDimensionalElementsDetector()
-        detector.detect(self.signalProcessor.signal, threshold, self.specgramSettings.Pxx,
-                        self.specgramSettings.freqs * signal.samplingRate / 2.0,
-                        1.0 * self.specgramSettings.bins / self.signalProcessor.signal.samplingRate,minsize,mergefactor)
-        imsave('last.png', detector.markedPxx, format='png', origin='lower')
-        for c in detector.twodimensionalElements:
-            self.SpectrogramElements.append(c)
-        self.visualChanges = True
-        self.refresh()
-
-    def rms(self):
-        #indexFrom, indexTo = self.getIndexFromAndTo()
-        #cursor = PointerCursor(self.signalProcessor.rms(indexFrom, indexTo))
-        #cursor.visualOptions.vertical = False
-        #self.clearCursors()
-        #self.OscilogramElements.append(cursor)
-        #self.visualChanges = True
-        #self.refresh()
-        pass
+            for elem in self.Elements:
+                for elem2 in elem.twoDimensionalElements:
+                    for item, visible in elem2.visualwidgets():
+                        if(visible):
+                            self.axesSpecgram.viewBox.removeItem(item)
 
     def clearCursors(self,oscilogram=True,specgram=True):
         self.cleanVisibleCursors(oscilogram=True,specgram=True)
-        self.OscilogramElements = [] if oscilogram else self.OscilogramElements
-        self.SpectrogramElements = [] if specgram else self.SpectrogramElements
+        self.Elements = [] if oscilogram and specgram else self.Elements
 
 
-
-    def detectElementsInOscilogram(self,threshold=20, decay=1, minSize=0, softfactor=5, merge_factor=0,threshold2=0):
-        indexFrom, indexTo = self.getIndexFromAndTo()
-        self.clearCursors(specgram=False)
-        self.oscilogram_elements_detector.detect(self.signalProcessor.signal,indexFrom, indexTo, threshold, decay, minSize, softfactor, merge_factor,threshold2)
-        for c in self.oscilogram_elements_detector.elements():
-            self.OscilogramElements.append(c)# the elment the space for the span selector and the text
-        self.visualChanges = True
-        self.refresh()
-
-    def maxMinPeaks(self):
-        detector = MaxMinPeakDetector()
-        indexFrom, indexTo = self.getIndexFromAndTo()
-        detector.detect(self.signalProcessor.signal, indexFrom, indexTo)
+    def detectElements(self,threshold=20, decay=1, minSize=0, softfactor=5, merge_factor=0,threshold2=0, threshold_spectral=95, pxx=[], freqs=[], bins=[], minsize_spectral=(0, 0),
+               merge_factor_spectral=(1,1),location= None):
         self.clearCursors()
-        for c in detector.elements():
-            self.OscilogramElements.append(c)
-        self.visualChanges = True
-        self.refresh()
+        self.elements_detector.detect(self.signalProcessor.signal,0,len(self.signalProcessor.signal.data), threshold, decay, minSize, softfactor, merge_factor,threshold2,
+                                      threshold_spectral=threshold_spectral, pxx =  self.specgramSettings.Pxx, freqs=self.specgramSettings.freqs,
+                                      bins=self.specgramSettings.bins, minsize_spectral=minsize_spectral,
+               merge_factor_spectral=merge_factor_spectral,location=location)
 
-    def mean(self):
-        detector = MeanDetector()
-        detector.detect(self.signalProcessor.signal, max(self.zoomCursor.min, self.mainCursor.min),
-                        min(self.zoomCursor.max, self.mainCursor.max))
-        self.clearCursors()
-
+        for c in self.elements_detector.elements():
+            self.Elements.append(c)# the elment the space for the span selector and the text
+        #incorporar deteccion en espectrograma
         self.visualChanges = True
         self.refresh()
 
@@ -741,6 +781,7 @@ class QSignalVisualizerWidget(QWidget):
         self.axisXOsc.setFrequency(self.signalProcessor.signal.samplingRate)
         self.axisYOsc.setMaxVal(2**(self.signalProcessor.signal.bitDepth-1))
         self.refresh()
+        self.zoomIn()
         self.zoomNone()
         self.axesOscilogram.getPlotItem().getViewBox().sigRangeChangedManually.connect(self._oscRangeChanged)
         self.axesSpecgram.viewBox.sigRangeChangedManually.connect(self._specRangeChanged)

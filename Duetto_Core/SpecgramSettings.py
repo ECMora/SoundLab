@@ -35,17 +35,8 @@ class SpecgramSettings:
         self.overlap=overlap
         self.window=window
         self.colors=[]
-        regularlcolor=[[.0,.0,.0]]
-        #make a list with the colors ordered
-        #gray=[]
-        #for i in range(1,100):
-        #    gray.append([1-0.01*i,1-0.01*i,1-0.01*i])
-        #self.colors.append(gray)
-        #self.colors.append(gray)
         for cname in cm._cmapnames:
             self.colors.append(cm.get_cmap(cname))
-
-
 
         #self.colorPalette=ListedColormap(self.colors[0],name="DuettoColorMap")
 
