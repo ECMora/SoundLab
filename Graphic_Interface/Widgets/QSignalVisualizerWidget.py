@@ -3,6 +3,7 @@ from datetime import datetime
 from PyQt4.QtCore import pyqtSignal,QRect, Qt
 from PyQt4.QtGui import *
 from PyQt4 import QtCore, QtGui
+from PyQt4.QtCore import SIGNAL
 import pyqtgraph as pg
 import numpy as np
 import matplotlib.mlab as mlab
@@ -56,8 +57,6 @@ class UndoRedoManager:
                 self.actionsList[i] = (None,None)
 
         self.actionsList[self.actionIndex] = (undoAction,redoAction)
-
-
 
 
 BACK_COLOR = "gray"
@@ -219,6 +218,7 @@ class QSignalVisualizerWidget(QWidget):
         max = self._from_spec_to_osc(b)
         self.axesOscilogram.emitIntervalOscChanged = False
         self.axesOscilogram.zoomRegion.setRegion([min, max])
+
         self.axesOscilogram.emitIntervalOscChanged = True
 
         self.stop()
@@ -340,6 +340,8 @@ class QSignalVisualizerWidget(QWidget):
         #actualiza los cursores de zoom segun el area seleccionada por el usuario
         range = self.axesOscilogram.zoomRegion.getRegion()
         self.zoomCursor.min, self.zoomCursor.max = int(range[0]), int(range[1])
+        self.emit(SIGNAL("IntervalChanged"))
+
 
     def dropEvent(self, event):
         data = event.mimeData().data()
