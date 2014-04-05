@@ -736,13 +736,11 @@ class QSignalVisualizerWidget(QWidget):
         self.Elements = [] if oscilogram and specgram else self.Elements
 
 
-    def detectElements(self,threshold=20, decay=1, minSize=0, softfactor=5, merge_factor=0,threshold2=0, threshold_spectral=95, pxx=[], freqs=[], bins=[], minsize_spectral=(0, 0),
-               merge_factor_spectral=(1,1),location= None):
+    def detectElements(self,threshold=20, decay=1, minSize=0, softfactor=5, merge_factor=0,threshold2=0, threshold_spectral=95, pxx=[], freqs=[], bins=[], minsize_spectral=(0, 0),location= None):
         self.clearCursors()
         self.elements_detector.detect(self.signalProcessor.signal,0,len(self.signalProcessor.signal.data), threshold, decay, minSize, softfactor, merge_factor,threshold2,
                                       threshold_spectral=threshold_spectral, pxx =  self.specgramSettings.Pxx, freqs=self.specgramSettings.freqs,
-                                      bins=self.specgramSettings.bins, minsize_spectral=minsize_spectral,
-               merge_factor_spectral=merge_factor_spectral,location=location)
+                                      bins=self.specgramSettings.bins, minsize_spectral=minsize_spectral,location=location)
 
         for c in self.elements_detector.elements():
             self.Elements.append(c)# the elment the space for the span selector and the text

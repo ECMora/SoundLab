@@ -11,9 +11,9 @@ class SpectralMeasurementLocation:
     MEDITIONS = [
         [True,  QtGui.QColor(255, 0, 0, 255)],
         [True, QtGui.QColor(0, 255, 0, 255)],
-        [True,  QtGui.QColor(255, 255, 255, 255)],
+        [True,  QtGui.QColor(0, 0, 255, 255)],
         [False, QtGui.QColor(255,255,255, 255)],
-        [False,  QtGui.QColor(0, 0, 255, 255)]]
+        [False,  QtGui.QColor(255, 255, 255, 255)]]
     #(Active computation, color)
 
 
@@ -45,8 +45,7 @@ class OneDimensionalElement(Element):
 
 class OscilogramElement(OneDimensionalElement):
 
-    def __init__(self, signal, indexFrom, indexTo,number=0,threshold_spectral=0, pxx=[], freqs=[], bins=[], minsize_spectral=(0,0),
-               merge_factor_spectral=(1,1), location = None):
+    def __init__(self, signal, indexFrom, indexTo,number=0,threshold_spectral=0, pxx=[], freqs=[], bins=[], minsize_spectral=(0,0), location = None):
         OneDimensionalElement.__init__(self,signal,indexFrom,indexTo)
         text = pg.TextItem(str(number),color=(255,255,255),anchor=(0.5,0.5))
         text.setPos(self.indexFrom/2.0+self.indexTo/2.0, 0.75*2**(signal.bitDepth-1))
@@ -66,7 +65,7 @@ class OscilogramElement(OneDimensionalElement):
             aux2 = min(int(ceil((indexTo+bins[0]*sr)/((bins[1]-bins[0])*sr))),len(pxx[0]))
             self.matrix = pxx[:,aux:aux2]
             self.indexFromInPxx,self.indexToInPxx = aux,aux2
-            self.computeTwoDimensionalElements(threshold_spectral,self.matrix,freqs,bins,minsize_spectral,merge_factor_spectral)
+            self.computeTwoDimensionalElements(threshold_spectral,self.matrix,freqs,bins,minsize_spectral)
 
 
         tooltip = "Element: "+str(self.number)+"\nStart Time: "+ str(self.startTime()) + "s\n" \
@@ -85,9 +84,9 @@ class OscilogramElement(OneDimensionalElement):
             pass
 
 
-    def computeTwoDimensionalElements(self,threshold_spectral, pxx, freqs, bins, minsize_spectral,merge_factor_spectral):
+    def computeTwoDimensionalElements(self,threshold_spectral, pxx, freqs, bins, minsize_spectral):
         detector = TwoDimensionalElementsDetector()
-        detector.detect(self.signal,threshold_spectral, pxx,freqs,bins, minsize_spectral,merge_factor_spectral,one_dimensional_parent=self,location= self.spectralMeasurementLocation)
+        detector.detect(self.signal,threshold_spectral, pxx,freqs,bins, minsize_spectral,one_dimensional_parent=self,location= self.spectralMeasurementLocation)
         for elem in detector.elements():
             self.twoDimensionalElements.append(elem)
 

@@ -45,68 +45,6 @@
         </property>
         <widget class="QWidget" name="dockWidgetContents_3">
          <layout class="QGridLayout" name="gridLayout_3">
-          <item row="2" column="1">
-           <layout class="QHBoxLayout" name="horizontalLayout_10" stretch="0,1,1">
-            <item>
-             <widget class="QLabel" name="label_9">
-              <property name="text">
-               <string>Merge factor:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QDoubleSpinBox" name="sbxMergeFactorTime">
-              <property name="enabled">
-               <bool>true</bool>
-              </property>
-              <property name="suffix">
-               <string> ms</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QDoubleSpinBox" name="sbxMergeFactorFreq">
-              <property name="enabled">
-               <bool>true</bool>
-              </property>
-              <property name="suffix">
-               <string> kHz</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item row="1" column="1">
-           <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="0,1,1">
-            <item>
-             <widget class="QLabel" name="label_7">
-              <property name="text">
-               <string>Minimum size:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QDoubleSpinBox" name="dsbxminSizeTime">
-              <property name="enabled">
-               <bool>true</bool>
-              </property>
-              <property name="suffix">
-               <string> ms</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QDoubleSpinBox" name="dsbxMinSizeFreq">
-              <property name="enabled">
-               <bool>true</bool>
-              </property>
-              <property name="suffix">
-               <string> kHz</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
           <item row="0" column="1">
            <layout class="QHBoxLayout" name="horizontalLayout_9" stretch="0,1">
             <item>
@@ -149,6 +87,37 @@
             </item>
            </layout>
           </item>
+          <item row="1" column="1">
+           <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="0,1,1">
+            <item>
+             <widget class="QLabel" name="label_7">
+              <property name="text">
+               <string>Minimum size:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QDoubleSpinBox" name="dsbxminSizeTime">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="suffix">
+               <string> ms</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QDoubleSpinBox" name="dsbxMinSizeFreq">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="suffix">
+               <string> kHz</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
          </layout>
         </widget>
        </widget>
@@ -182,7 +151,7 @@
               <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
              </property>
              <item row="1" column="0">
-              <widget class="QCheckBox" name="cbxDistancefromStartToMax_5">
+              <widget class="QCheckBox" name="cbxPeakFreq">
                <property name="text">
                 <string>Peak Frecuency</string>
                </property>
@@ -192,7 +161,7 @@
               </widget>
              </item>
              <item row="2" column="0">
-              <widget class="QCheckBox" name="checkBox">
+              <widget class="QCheckBox" name="cbxMaxFreq">
                <property name="text">
                 <string>Max Frecuency</string>
                </property>
@@ -202,7 +171,7 @@
               </widget>
              </item>
              <item row="3" column="0">
-              <widget class="QCheckBox" name="checkBox_8">
+              <widget class="QCheckBox" name="cbxMinFreq">
                <property name="text">
                 <string>Min Frecuency</string>
                </property>

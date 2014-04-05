@@ -22,8 +22,6 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         self.dsbxThresholdSpec.valueChanged.connect(self.detect)
         self.dsbxMinSizeFreq.valueChanged.connect(self.detect)
         self.dsbxminSizeTime.valueChanged.connect(self.detect)
-        self.sbxMergeFactorTime.valueChanged.connect(self.detect)
-        self.sbxMergeFactorFreq.valueChanged.connect(self.detect)
         #oscilogram
         self.dsbxThreshold.valueChanged.connect(self.detect)
 
@@ -70,8 +68,7 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
     @pyqtSlot()
     def detect(self):
         self.widget.detectElements(threshold=abs(self.dsbxThreshold.value()), decay=self.dsbxDecay.value(), minSize= self.dsbxMinSize.value(), softfactor=self.sbxSoftFactor.value(), merge_factor=self.dsbxMergeFactor.value(),threshold2=abs(self.dsbxThreshold2.value())
-        ,threshold_spectral=self.dsbxThresholdSpec.value(), minsize_spectral=(self.dsbxMinSizeFreq.value(),self.dsbxminSizeTime.value()),
-               merge_factor_spectral=(self.sbxMergeFactorFreq.value(),self.sbxMergeFactorTime.value()))
+        ,threshold_spectral=self.dsbxThresholdSpec.value(), minsize_spectral=(self.dsbxMinSizeFreq.value(),self.dsbxminSizeTime.value()))
         self.widget.refresh()
 
 
