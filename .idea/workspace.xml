@@ -2,10 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="9f80b555-41eb-434c-b510-abe08206f059" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Graphic_Interface/Windows/DuettoSoundLabWindow.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Graphic_Interface/Widgets/DuettoPlotWidget.py" afterPath="$PROJECT_DIR$/Graphic_Interface/Widgets/DuettoPlotWidget.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Graphic_Interface/Widgets/QSignalVisualizerWidget.py" afterPath="$PROJECT_DIR$/Graphic_Interface/Widgets/QSignalVisualizerWidget.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="DuettoSystem.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -58,7 +55,7 @@
       <file leaf-file-name="QSignalVisualizerWidget.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Graphic_Interface/Widgets/QSignalVisualizerWidget.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="500" column="18" selection-start="20958" selection-end="20958" vertical-scroll-proportion="14.735586" vertical-offset="0" max-vertical-offset="13413">
+            <state line="472" column="77" selection-start="19306" selection-end="19306" vertical-scroll-proportion="22.23077" vertical-offset="0" max-vertical-offset="13413">
               <folding>
                 <element signature="e#0#29#0" expanded="true" />
                 <element signature="e#1308#2401#0" expanded="false" />
@@ -113,9 +110,8 @@
       <file leaf-file-name="DuettoImageWidget.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Graphic_Interface/Widgets/DuettoImageWidget.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="48" column="40" selection-start="1876" selection-end="1892" vertical-scroll-proportion="0.0" vertical-offset="394" max-vertical-offset="1122">
+            <state line="21" column="13" selection-start="806" selection-end="806" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1343">
               <folding>
-                <element signature="e#364#848#0" expanded="false" />
                 <element signature="e#2261#2446#0" expanded="false" />
                 <element signature="e#2665#3493#0" expanded="false" />
                 <element signature="e#3541#4545#0" expanded="false" />
@@ -525,7 +521,7 @@
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33673468" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32993197" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32881355" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32482994" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32482994" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="left" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24848485" sideWeight="0.67517006" order="0" side_tool="false" content_ui="combo" />
@@ -695,11 +691,19 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/Graphic_Interface/Widgets/DuettoPlotWidget.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="107" column="0" selection-start="4771" selection-end="4771" vertical-scroll-proportion="0.0" vertical-offset="1479" max-vertical-offset="2431">
+          <folding>
+            <element signature="e#0#24#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Graphic_Interface/Widgets/DuettoImageWidget.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="48" column="40" selection-start="1876" selection-end="1892" vertical-scroll-proportion="0.0" vertical-offset="394" max-vertical-offset="1122">
+        <state line="21" column="13" selection-start="806" selection-end="806" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1343">
           <folding>
-            <element signature="e#364#848#0" expanded="false" />
             <element signature="e#2261#2446#0" expanded="false" />
             <element signature="e#2665#3493#0" expanded="false" />
             <element signature="e#3541#4545#0" expanded="false" />
@@ -712,18 +716,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Graphic_Interface/Widgets/DuettoPlotWidget.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="107" column="0" selection-start="4771" selection-end="4771" vertical-scroll-proportion="0.0" vertical-offset="1479" max-vertical-offset="2431">
-          <folding>
-            <element signature="e#0#24#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Graphic_Interface/Widgets/QSignalVisualizerWidget.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="500" column="18" selection-start="20958" selection-end="20958" vertical-scroll-proportion="14.735586" vertical-offset="0" max-vertical-offset="13413">
+        <state line="472" column="77" selection-start="19306" selection-end="19306" vertical-scroll-proportion="22.23077" vertical-offset="0" max-vertical-offset="13413">
           <folding>
             <element signature="e#0#29#0" expanded="true" />
             <element signature="e#1308#2401#0" expanded="false" />
