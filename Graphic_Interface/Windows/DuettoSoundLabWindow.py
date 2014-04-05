@@ -106,16 +106,16 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         ]
         self.ParamTree = Parameter.create(name='params', type='group', children=params)
         self.ParamTree.sigTreeStateChanged.connect(self.change)
-        self.t = ParameterTree()
-        self.t.setAutoScroll(True)
-        self.t.setFixedWidth(340)
+        self.parameterTree = ParameterTree()
+        self.parameterTree.setAutoScroll(True)
+        self.parameterTree.setFixedWidth(340)
 
-        self.t.setHeaderHidden(True)
-        self.t.setParameters(self.ParamTree, showTop=False)
+        self.parameterTree.setHeaderHidden(True)
+        self.parameterTree.setParameters(self.ParamTree, showTop=False)
 
         lay1 = QtGui.QVBoxLayout()
         lay1.setMargin(0)
-        lay1.addWidget(self.t)
+        lay1.addWidget(self.parameterTree)
 
         self.hist.setFixedWidth(340)
         self.hist.setFixedHeight(100)
@@ -405,6 +405,14 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.hist.item.region.lineMoveFinished()
 
     @pyqtSlot()
+    def on_actionUndo_triggered(self):
+        self.widget.undo()
+
+    @pyqtSlot()
+    def on_actionRedo_triggered(self):
+        self.widget.redo()
+
+    @pyqtSlot()
     def on_actionSmart_Scale_triggered(self):
         scaleDialog = cvdialog.Ui_Dialog()
         scaleDialogWindow = InsertSilenceDialog()
@@ -478,20 +486,24 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     @pyqtSlot()
     def on_actionFilter_triggered(self):
+        #self.widget.undoRedoManager.addAction(self.widget.filterUndoAction,self.widget.filter)
         type_, Fc, Fl, Fu = self.filter_helper()
         if type_ is not None:
             self.widget.filter(type_, Fc, Fl, Fu)
 
     @pyqtSlot()
     def on_actionSilence_triggered(self):
+        self.widget.undoRedoManager.addAction(self.widget.silenceUndoAction,self.widget.silence)
         self.widget.silence()
 
     @pyqtSlot()
     def on_actionNormalize_triggered(self):
+        self.widget.undoRedoManager.addAction(self.widget.normalizeUndoAction,self.widget.normalize)
         self.widget.normalize()
 
     @pyqtSlot()
     def on_action_Reverse_triggered(self):
+        self.widget.undoRedoManager.addAction(self.widget.reverseUndoAction,self.widget.reverse)
         self.widget.reverse()
 
     def updatePowSpecWin(self):
@@ -503,14 +515,17 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     @pyqtSlot()
     def on_actionZoomIn_triggered(self):
+        self.widget.undoRedoManager.addAction(self.widget.zoomOut,self.widget.zoomIn)
         self.widget.zoomIn()
 
     @pyqtSlot()
     def on_actionZoom_out_triggered(self):
+        self.widget.undoRedoManager.addAction(self.widget.zoomIn,self.widget.zoomOut)
         self.widget.zoomOut()
 
     @pyqtSlot()
     def on_actionZoom_out_entire_file_triggered(self):
+        self.widget.undoRedoManager.clearActions()
         self.widget.zoomNone()
 
     @pyqtSlot()
@@ -617,6 +632,27 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.widget.visibleOscilogram=True
         self.widget.visibleSpectrogram=False
         self.widget.refresh(updateSpectrogram=False)
+
+    @pyqtSlot()
+    def on_actionOsgram_Image_triggered(self):
+        if self.widget.visibleOscilogram:
+            self.saveImage(self.widget.axesOscilogram,"oscilogram")
+        else:
+            QtGui.QMessageBox.warning(QtGui.QMessageBox(), "Error", "The Oscilogram plot widget is not visible.\n You should see the data that you are going to save.")
+
+    @pyqtSlot()
+    def on_actionSpecgram_Image_triggered(self):
+        if self.widget.visibleSpectrogram:
+            self.saveImage(self.widget.axesSpecgram,"specgram")
+        else:
+            QtGui.QMessageBox.warning(QtGui.QMessageBox(), "Error", "The Espectrogram plot widget is not visible.\n You should see the data that you are going to save.")
+
+    def saveImage(self,widget,text=""):
+        fname = unicode(QFileDialog.getSaveFileName(self,"Save "+ text +" as an Image ",str(self.widget.signalProcessor.signal.name())+"-"+text+"-Duetto-Image","*.jpg"))
+        if fname:
+            #save as image
+            image = QtGui.QPixmap.grabWindow(widget.winId())
+            image.save(fname, 'jpg')
 
     @pyqtSlot()
     def on_actionSaveColorBar_triggered(self):

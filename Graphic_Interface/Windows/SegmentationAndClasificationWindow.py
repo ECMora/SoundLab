@@ -7,7 +7,6 @@ from matplotlib import mlab
 import xlwt
 from PyQt4.QtGui import QFileDialog
 import pyqtgraph as pg
-#import xlwt
 from Duetto_Core.AudioSignals.AudioSignal import AudioSignal
 from Duetto_Core.AudioSignals.WavFileSignal import WavFileSignal
 from Duetto_Core.Segmentation.Detectors.ElementsDetectors.OneDimensionalElementsDetector import OneDimensionalElementsDetector
@@ -16,8 +15,6 @@ from Duetto_Core.SignalProcessors.SignalProcessor import SignalProcessor
 from Duetto_Core.Segmentation.Elements.OneDimensionalElement import SpectralMeasurementLocation
 from ..Dialogs.elemDetectSettings import ElemDetectSettingsDialog
 from SegmentationAndClasificationWindowUI import Ui_MainWindow
-from Graphic_Interface.Widgets.QSignalVisualizerWidget import QSignalVisualizerWidget
-
 
 class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
 
@@ -27,8 +24,11 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         if(signal is  None):
              QtGui.QMessageBox.warning(QtGui.QMessageBox(), "Error", "There is no signal to analyze.")
         assert isinstance(signal,AudioSignal)
-        if parent is None:
-            self.osc_settings_contents = parent.t
+        if parent is not None:
+            self.widget.specgramSettings = parent.widget.specgramSettings
+        else:
+            self.widget.visualChanges =True
+            self.widget.refresh()
 
         self.widget.signalProcessor.signal = signal
         self.widget.mainCursor.min, self.widget.mainCursor.max = 0, len(self.widget.signalProcessor.signal.data)
@@ -38,32 +38,58 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.parameterTable_rowcolor_odd,self.parameterTable_rowcolor_even = QtGui.QColor(0, 0, 255,150),QtGui.QColor(0, 255, 0, 150)
         self.widget.visibleOscilogram = True
         self.widget.visibleSpectrogram = True
-        self.widget.visualChanges = True
         self.OscilogramThreshold = 0
         self.spectralMeasurementLocation = SpectralMeasurementLocation()
         self.widget.axesOscilogram.threshold.sigPositionChangeFinished.connect(self.updateThreshold)
         self.widget.axesOscilogram.threshold.setBounds((0,2**(self.widget.signalProcessor.signal.bitDepth-1)))
         self.detectionSettings = {"Threshold": -40, "Threshold2": 0, "MergeFactor": 0.5, "MinSize": 1, "Decay": 1, "SoftFactor": 6,"ThresholdSpectral": 95 ,"minSizeTimeSpectral": 0, "minSizeFreqSpectral": 0, "mergeFactorTimeSpectral": 0, "mergeFactorFreqSpectral": 0}
         self.widget.axesOscilogram.threshold.setValue(10.0*(2**self.widget.signalProcessor.signal.bitDepth)/1000.0)
-        self.parameterMeasurement = \
+        self.temporalParameters = \
         [
                       ["Start(s)", True, lambda x: x.startTime()],
                       ["End(s)", True, lambda x: x.endTime()],
-                      ["PeekToPeek", True, lambda x: x.peekToPeek()],
-                      ["RMS", True, lambda x: x.rms()],
+                      ["PeekToPeek(V)", True, lambda x: x.peekToPeek()],
+                      ["RMS(V)", True, lambda x: x.rms()],
                       ["StartToMax(s)", True,lambda x: x.distanceFromStartToMax()],
                       ["Duration(s)", True,lambda x: x.duration()],
                       ["Spectral Elems", True,lambda x: x.spectralElements()]
         ]
+        self.spectralParameters =[
+             ["Max Freq",True,lambda x:x.maxFreq],
+            ["Min Freq",True,lambda x:x.minFreq],
+            ["Peak Freq",True,lambda x:x.peakFreq]
+        ] #the spectral parameters that changes in function of the location measurements
          #funciones que reciben un elemento spectral 2 dimensiones y devuelven el valor del parametro medido
         #the order of the elements in the array of self.parameterMeasurement["Temporal"] is relevant for the visualization in the table and the
         #binding to the checkboxes in the dialog of parameter measurement
         separator = QtGui.QAction(self)
         separator.setSeparator(True)
-        self.widget.createContextCursor([self.actionZoomIn,self.actionZoom_out,self.actionZoom_out_entire_file,separator,self.actionCombined,self.actionOscilogram,self.actionSpectogram,separator,self.actionClear_Meditions,self.actionExcel_File,self.actionView_Parameters])
+        self.widget.createContextCursor([self.actionZoomIn,self.actionZoom_out,self.actionZoom_out_entire_file,separator,self.actionCombined,self.actionOscilogram,self.actionSpectogram,separator,self.actionClear_Meditions,self.actionMeditions,self.actionView_Parameters])
         self.hist = pg.widgets.HistogramLUTWidget.HistogramLUTItem()
         self.hist.setImageItem(self.widget.axesSpecgram.imageItem)
-        self.widget.refresh()
+
+
+    def getspectralParameters(self):
+        """
+        obtain the methods for spectral parameter meausrement of the measurementLocations
+        """
+        params = []
+        if self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.START][0]:
+            for p in self.spectralParameters:
+                params.append([p[0]+"(start)",p[1],p[2](self.spectralMeasurementLocation.START)])
+        if self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.CENTER][0]:
+            for p in self.spectralParameters:
+                params.append([p[0]+"(center)",p[1],p[2](self.spectralMeasurementLocation.CENTER)])
+        if self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.END][0]:
+            for p in self.spectralParameters:
+                params.append([p[0]+"(end)",p[1],p[2](self.spectralMeasurementLocation.END)])
+        if self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.QUARTILE25][0]:
+            for p in self.spectralParameters:
+                params.append([p[0]+"(quartile25)",p[1],p[2](self.spectralMeasurementLocation.QUARTILE25)])
+        if self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.QUARTILE75][0]:
+            for p in self.spectralParameters:
+                params.append([p[0]+"(quartile75)",p[1],p[2](self.spectralMeasurementLocation.QUARTILE75)])
+        return params
 
 
     def updateThreshold(self,line):
@@ -97,8 +123,8 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
 
 
     @pyqtSlot()
-    def on_actionPeak_Frecuencies_triggered(self):
-        visibility = self.actionPeak_Frecuencies.isChecked()
+    def on_actionElements_Peaks_triggered(self):
+        visibility = self.actionElements_Peaks.isChecked()
         self.widget.changeElementsVisibility(visibility,Element.PeakFreqs,oscilogramItems=False)
 
     @pyqtSlot()
@@ -106,8 +132,14 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         visibility = self.actionTemporal_Elements.isChecked()
         for e in self.widget.Elements:
             e.visible = visibility
-            self.widget.visualChanges = True
-            self.widget.refresh(updateSpectrogram=False)
+        self.widget.drawElements(oscilogramItems=True)
+
+    @pyqtSlot()
+    def on_actionSub_Elements_Peaks_triggered(self):
+        visibility = self.actionSub_Elements_Peaks.isChecked()
+        for e in self.widget.Elements:
+            e.sublementsPeakFreqsVisible(visibility)
+        self.widget.drawElements(oscilogramItems=False)
 
     @pyqtSlot()
     def on_actionTemporal_Numbers_triggered(self):
@@ -130,11 +162,31 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         for e in self.widget.Elements:
             for e2 in e.twoDimensionalElements:
                 e2.visible = visibility
-        self.widget.visualChanges = True
-        self.widget.refresh(updateOscillogram=False)
+        self.widget.drawElements(oscilogramItems=False)
 
     @pyqtSlot()
-    def on_actionExcel_File_triggered(self, name="",table = None):
+    def on_actionOsgram_Image_triggered(self):
+        if self.widget.visibleOscilogram:
+            self.saveImage(self.widget.axesOscilogram,"oscilogram")
+        else:
+            QtGui.QMessageBox.warning(QtGui.QMessageBox(), "Error", "The Oscilogram plot widget is not visible.\n You should see the data that you are going to save.")
+
+    @pyqtSlot()
+    def on_actionSpecgram_Image_triggered(self):
+        if self.widget.visibleSpectrogram:
+            self.saveImage(self.widget.axesSpecgram,"specgram")
+        else:
+            QtGui.QMessageBox.warning(QtGui.QMessageBox(), "Error", "The Espectrogram plot widget is not visible.\n You should see the data that you are going to save.")
+
+    def saveImage(self,widget,text=""):
+        fname = unicode(QFileDialog.getSaveFileName(self,"Save "+ text +" as an Image ",str(self.widget.signalProcessor.signal.name())+"-"+text+"-Duetto-Image","*.jpg"))
+        if fname:
+            #save as image
+            image = QtGui.QPixmap.grabWindow(widget.winId())
+            image.save(fname, 'jpg')
+
+    @pyqtSlot()
+    def on_actionMeditions_triggered(self, name="",table = None):
         if name != "":
             fname = name
         else:
@@ -152,6 +204,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
     @pyqtSlot()
     def startBatchProcess(self):
         thread = QtCore.QThread(self)
+
         class worker(QtCore.QObject):
             def __init__(self,worker):
                 QtCore.QObject.__init__(self)
@@ -162,6 +215,9 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         thread.start()
 
     def getSpectralData(self,signal,specgramSettings):
+        """
+        returns the spectral data pxx,bins and freqs of spectrogram
+        """
         overlap = int(specgramSettings.NFFT * specgramSettings.overlap / 100)
         return mlab.specgram(signal.data,specgramSettings.NFFT, Fs=signal.samplingRate,
                                 detrend=mlab.detrend_none, window=specgramSettings.window, noverlap=overlap,
@@ -182,7 +238,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
             raiz = root if raiz == "" else raiz
             for f in files:
                 sounds.append(os.path.join(root, f))
-
+        self.progressBarProcesed.setValue(0)
         processed = 1
         if self.rbttnDetection.isChecked():
 
@@ -191,7 +247,6 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
             singlefile = self.cbxSingleFile.isChecked()
             if singlefile:
                 wb = xlwt.Workbook()
-
 
             for filename in sounds:
                 try:
@@ -209,7 +264,10 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                                            minsize_spectral=(self.detectionSettings["minSizeFreqSpectral"],self.detectionSettings["minSizeTimeSpectral"]),
                                            location= self.spectralMeasurementLocation)
                     table.setRowCount(detector.elementCount())
-                    paramsTomeasure = [x for x in self.parameterMeasurement if x[1]]
+
+                    paramsTomeasure = [x for x in self.temporalParameters if x[1]]
+                    #paramsTomeasure.extend(self.getspectralParameters())
+
                     table.setColumnCount(len(paramsTomeasure))
                     self.listwidgetProgress.addItem("Save data of " +signalProcessor.signal.name())
                     for i,element in enumerate(detector.elements()):
@@ -226,42 +284,38 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                     processed += 1
                 except:
                     self.listwidgetProgress.addItem("Some problem found while processing ")
-                self.progressBarProcesed.setValue(round(100*(processed)/len(sounds)))
+                self.progressBarProcesed.setValue(round(100.0*(processed)/len(sounds)))
             if singlefile:
                 name = "DuettoMeditions"
-                #valorar si ya existe el fichero reescribirlo o guardalo con otro nombre
-                wb.save(os.path.join(directoryoutput,name + ".xls"))
-                #open file
-            else:
-                #open folder
-                pass
+                #valorar si ya existe el fichero reescribirlo o guardalo con otro noBOx signal.samplingRate
+
+            #open folder
         if self.rbttnSplitFile.isChecked():
-            time = self.spboxSplitTime.value()
+            save = WavFileSignal()
             for filename in sounds:
                 try:
                     signal = WavFileSignal(filename)
-                    pieces = len(signal.data)/(time*signal.samplingRate)
-                    pieceSize = time*signal.samplingRate
-                    left = len(signal.data)%(time*signal.samplingRate)
-                    save = WavFileSignal()
-                    save.samplingRate = signal.samplingRate
+                    self.listwidgetProgress.addItem("Processing "+signal.name())
                     save.channels = signal.channels
                     save.bitDepth = signal.bitDepth
-                    self.listwidgetProgress.addItem("Processing "+signal.name())
+                    save.samplingRate = signal.samplingRate
+                    sr = signal.samplingRate
+                    pieceSize = self.spboxSplitTime.value()*sr
+                    pieces = len(signal.data)/pieceSize
+                    left = len(signal.data)%pieceSize
                     if(pieces >= 1):
                         for i in range(pieces):
                             save.data = signal.data[i*pieceSize:(i+1)*pieceSize]
                             save.save(os.path.join(directoryoutput,str(i+1)+"-"+signal.name()))
                     if left > 0:
+                        print("j")
                         save.data = signal.data[len(signal.data)-left:]
                         save.save(os.path.join(directoryoutput,str(pieces+1)+"-"+signal.name()))
                     processed += 1
-                    self.progressBarProcesed.setValue(round((100*processed)/len(sounds)))
+                    self.progressBarProcesed.setValue(round((100.0*processed)/len(sounds)))
                     self.listwidgetProgress.addItem(signal.name()+" has been processed")
                 except:
                     print("some split problems")
-            #open folder
-
         self.progressBarProcesed.setValue(100)
 
     def selectInputFolder(self):
@@ -279,7 +333,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         styleheader = xlwt.easyxf('font: name Times New Roman, color-index blue, bold on, height 300')
         stylebody = xlwt.easyxf('font: name Times New Roman, color-index black, height 220', num_format_str='#,##0.00')
         stylecopyrigth = xlwt.easyxf('font: name Arial, color-index pale_blue, height 250, italic on', num_format_str='#,##0.00')
-        for index,header in enumerate([label[0] for label in self.parameterMeasurement]):
+        for index,header in enumerate([label[0] for label in self.temporalParameters]):
             ws.write(0, index, header,styleheader)
         for i in range(1,tableParameter.model().rowCount()+1):
             for j in range(tableParameter.model().columnCount()):
@@ -288,9 +342,11 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     @pyqtSlot()
     def on_actionDetection_triggered(self):
-        elementsDetectorDialog = ElemDetectSettingsDialog(self)
+        elementsDetectorDialog = ElemDetectSettingsDialog(parent=self)
 
         elementsDetectorDialog.load_Theme(self.theme)
+
+
 
         elementsDetectorDialog.dsbxThreshold.setValue(self.detectionSettings["Threshold"])
         elementsDetectorDialog.sbxSoftFactor.setValue(self.detectionSettings["SoftFactor"])
@@ -307,20 +363,18 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         elementsDetectorDialog.dsbxThreshold.valueChanged.connect(lambda x:self.setThreshold(x))
 
         #parameters
-        elementsDetectorDialog.cbxStartTime.setChecked(self.parameterMeasurement[0][1])#start time
-        elementsDetectorDialog.cbxEndTime.setChecked(self.parameterMeasurement[1][1])#end time
-        elementsDetectorDialog.cbxPeekToPeek.setChecked(self.parameterMeasurement[2][1])#peek to peek
-        elementsDetectorDialog.cbxRms.setChecked(self.parameterMeasurement[3][1])#rms
-        elementsDetectorDialog.cbxStartToMax.setChecked(self.parameterMeasurement[4][1])#distance to max
-        elementsDetectorDialog.cbxDuration.setChecked(self.parameterMeasurement[5][1])#duration
-
+        elementsDetectorDialog.cbxStartTime.setChecked(self.temporalParameters[0][1])#start time
+        elementsDetectorDialog.cbxEndTime.setChecked(self.temporalParameters[1][1])#end time
+        elementsDetectorDialog.cbxPeekToPeek.setChecked(self.temporalParameters[2][1])#peek to peek
+        elementsDetectorDialog.cbxRms.setChecked(self.temporalParameters[3][1])#rms
+        elementsDetectorDialog.cbxStartToMax.setChecked(self.temporalParameters[4][1])#distance to max
+        elementsDetectorDialog.cbxDuration.setChecked(self.temporalParameters[5][1])#duration
         #measurements
-        elementsDetectorDialog.cbxmeasurementLocationStart.setChecked(self.spectralMeasurementLocation.Start)#start medition
-        elementsDetectorDialog.cbxmeasurementLocationEnd.setChecked(self.spectralMeasurementLocation.End)#end medition
-        elementsDetectorDialog.cbxmeasurementLocationCenter.setChecked(self.spectralMeasurementLocation.Center)#center medition
-        elementsDetectorDialog.cbxmeasurementLocationQuartile25.setChecked(self.spectralMeasurementLocation.Quartile25)#25 % medition
-        elementsDetectorDialog.cbxmeasurementLocationQuartile75.setChecked(self.spectralMeasurementLocation.Quartile75)#75 % medition
-
+        elementsDetectorDialog.cbxmeasurementLocationStart.setChecked(self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.START][0])#start medition
+        elementsDetectorDialog.cbxmeasurementLocationEnd.setChecked(self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.END][0])#end medition
+        elementsDetectorDialog.cbxmeasurementLocationCenter.setChecked(self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.CENTER][0])#center medition
+        elementsDetectorDialog.cbxmeasurementLocationQuartile25.setChecked(self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.QUARTILE25][0])#25 % medition
+        elementsDetectorDialog.cbxmeasurementLocationQuartile75.setChecked(self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.QUARTILE75][0])#75 % medition
         if elementsDetectorDialog.exec_():
             try:
                 self.detectionSettings["Threshold"] = elementsDetectorDialog.dsbxThreshold.value()
@@ -336,25 +390,24 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                 self.detectionSettings["mergeFactorTimeSpectral"] = elementsDetectorDialog.sbxMergeFactorTime.value()
                 self.detectionSettings["mergeFactorFreqSpectral"] = elementsDetectorDialog.sbxMergeFactorFreq.value()
                 #parameters
-                self.parameterMeasurement[0][1] = elementsDetectorDialog.cbxStartTime.isChecked()
-                self.parameterMeasurement[1][1] = elementsDetectorDialog.cbxEndTime.isChecked()#end time
-                self.parameterMeasurement[2][1] = elementsDetectorDialog.cbxPeekToPeek.isChecked()#peek to peek
-                self.parameterMeasurement[3][1] = elementsDetectorDialog.cbxRms.isChecked()#rms
-                self.parameterMeasurement[4][1] = elementsDetectorDialog.cbxStartToMax.isChecked()#distance to max
-                self.parameterMeasurement[5][1] = elementsDetectorDialog.cbxDuration.isChecked()#duratio
-
+                self.temporalParameters[0][1] = elementsDetectorDialog.cbxStartTime.isChecked()
+                self.temporalParameters[1][1] = elementsDetectorDialog.cbxEndTime.isChecked()#end time
+                self.temporalParameters[2][1] = elementsDetectorDialog.cbxPeekToPeek.isChecked()#peek to peek
+                self.temporalParameters[3][1] = elementsDetectorDialog.cbxRms.isChecked()#rms
+                self.temporalParameters[4][1] = elementsDetectorDialog.cbxStartToMax.isChecked()#distance to max
+                self.temporalParameters[5][1] = elementsDetectorDialog.cbxDuration.isChecked()#duratio
                 #measurements
-                self.spectralMeasurementLocation.Start = elementsDetectorDialog.cbxmeasurementLocationStart.isChecked()#start medition
-                self.spectralMeasurementLocation.End = elementsDetectorDialog.cbxmeasurementLocationEnd.isChecked()#end medition
-                self.spectralMeasurementLocation.Center = elementsDetectorDialog.cbxmeasurementLocationCenter.isChecked()#center medition
-                self.spectralMeasurementLocation.Quartile25 = elementsDetectorDialog.cbxmeasurementLocationQuartile25.isChecked()#25 % medition
-                self.spectralMeasurementLocation.Quartile75 = elementsDetectorDialog.cbxmeasurementLocationQuartile75.isChecked()#75 % medition
-                print((self.spectralMeasurementLocation.Start,self.spectralMeasurementLocation.End,
-                self.spectralMeasurementLocation.Center,
-                self.spectralMeasurementLocation.Quartile25,
-                self.spectralMeasurementLocation.Quartile75 ))
+                self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.START][0] = elementsDetectorDialog.cbxmeasurementLocationStart.isChecked()#start medition
+                self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.END][0]  = elementsDetectorDialog.cbxmeasurementLocationEnd.isChecked()#end medition
+                self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.CENTER][0]  = elementsDetectorDialog.cbxmeasurementLocationCenter.isChecked()#center medition
+                self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.QUARTILE25][0]  = elementsDetectorDialog.cbxmeasurementLocationQuartile25.isChecked()#25 % medition
+                self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.QUARTILE75][0]  = elementsDetectorDialog.cbxmeasurementLocationQuartile75.isChecked()#75 % medition
 
-                paramsTomeasure = [x for x in self.parameterMeasurement if x[1]]
+                paramsTomeasure = [x for x in self.temporalParameters if x[1]]
+                #self.getspectralParameters()
+                #paramsTomeasure2 = [y for y in self.spectralParameters if y[1]]
+                #paramsTomeasure.extend(paramsTomeasure2)
+                print("aqui")
                 self.widget.axesOscilogram.threshold.setValue((10.0**((60+self.detectionSettings["Threshold"])/20.0))*(2**self.widget.signalProcessor.signal.bitDepth)/1000.0)
                 self.widget.detectElements(abs(self.detectionSettings["Threshold"]), self.detectionSettings["Decay"],   self.detectionSettings["MinSize"],
                                            self.detectionSettings["SoftFactor"], self.detectionSettings["MergeFactor"], abs(self.detectionSettings["Threshold2"]),

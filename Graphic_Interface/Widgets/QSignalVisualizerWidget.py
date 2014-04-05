@@ -1,5 +1,4 @@
 from datetime import datetime
-
 from PyQt4.QtCore import pyqtSignal,QRect, Qt
 from PyQt4.QtGui import *
 from PyQt4 import QtCore, QtGui
@@ -7,7 +6,6 @@ import pyqtgraph as pg
 import numpy as np
 import matplotlib.mlab as mlab
 from pyqtgraph.Point import Point
-
 from Duetto_Core.AudioSignals.WavFileSignal import WavFileSignal
 from Duetto_Core.AudioSignals.AudioSignal import AudioSignal
 from Duetto_Core.Cursors.IntervalCursor import IntervalCursor
@@ -23,6 +21,47 @@ from Duetto_Core.SignalProcessors.EditionSignalProcessor import EditionSignalPro
 from Duetto_Core.SpecgramSettings import SpecgramSettings
 from DuettoPlotWidget import DuettoPlotWidget
 from Graphic_Interface.Widgets.DuettoImageWidget import DuettoImageWidget
+
+
+class UndoRedoManager:
+    def __init__(self):
+        self.actionsList = [None for _ in range(20)] #initial space for actions
+        self.actionIndex = -1
+    UNDO_INDEX = 0
+    REDO_INDEX = 1
+
+    def undo(self):
+        if(self.actionIndex >= 0):
+            tuple = self.actionsList[self.actionIndex]
+            if tuple is not None and callable(tuple[0]):
+                tuple[self.UNDO_INDEX]()
+                print("undo "+ str(self.actionIndex))
+            self.actionIndex -= 1
+
+    def redo(self):
+        if self.actionIndex < len(self.actionsList)-1:
+            self.actionIndex += 1
+            tuple = self.actionsList[self.actionIndex]
+            if tuple is not None and callable(tuple[1]):
+                tuple[self.REDO_INDEX]()
+                print("redo "+ str(self.actionIndex))
+
+
+
+    def addAction(self,undoAction=None, redoAction=None):
+        self.actionIndex += 1
+        if(len(self.actionsList) <= self.actionIndex):
+            self.actionsList = [self.actionsList[i] if i < len(self.actionsList) else None for i in range(2*len(self.actionsList))]
+        elif self.actionIndex > 0:
+            self.actionsList[self.actionIndex:] = (None,None)
+        self.actionsList[self.actionIndex] = (undoAction,redoAction)
+
+    def clearActions(self):
+        self.actionIndex = 0
+        for i in range(len(self.actionsList)):
+            self.actionsList[i] = None
+
+
 
 
 BACK_COLOR = "gray"
@@ -75,7 +114,7 @@ class QSignalVisualizerWidget(QWidget):
     rangeChanged = pyqtSignal(int, int, int)
     _doRefresh = pyqtSignal(bool, bool, bool, bool)
 
-    def __init__(self, parent,statusBar=None):
+    def __init__(self, parent):
         QWidget.__init__(self, parent)
         self._Z = np.array([[0]])
         self.osc_gridx = True
@@ -89,7 +128,7 @@ class QSignalVisualizerWidget(QWidget):
         self.tool = Tools().Zoom
         self.osc_background = "000"
         self.spec_background = "000"
-        self.parentStatusBar = statusBar
+        self.undoRedoManager = UndoRedoManager()
 
         self.axesOscilogram.setMouseEnabled(x=False, y=False)
         self.axesOscilogram.getPlotItem().hideButtons()
@@ -355,6 +394,12 @@ class QSignalVisualizerWidget(QWidget):
         self.rangeChanged.emit(self.mainCursor.min, self.mainCursor.max, len(self.signalProcessor.signal.data))
         #self.axesSpecgram.zoomRegion.setRegion([0, 0])
 
+    def undo(self):
+        self.undoRedoManager.undo()
+
+    def redo(self):
+        self.undoRedoManager.redo()
+
     def zoomIn(self):
         if not self.signalProcessor.signal.opened():
             return
@@ -526,40 +571,43 @@ class QSignalVisualizerWidget(QWidget):
             elif element_type is Element.PeakFreqs:
                 for x in e.visual_peaksfreqs:
                     x[1] = visible
-        self.visualChanges = True
-        self.refresh(updateOscillogram=oscilogramItems,updateSpectrogram=not oscilogramItems)
+        self.drawElements(oscilogramItems)
 
 
+    def drawElements(self,oscilogramItems=None):
+        # if oscilogramItems = None its updated the oscilogram and spectrogram widgets
+        osc = oscilogramItems is None or oscilogramItems
+        spec = oscilogramItems is None or not oscilogramItems
 
-    def drawElements(self):
-        if(self.visibleOscilogram):
+        if(self.visibleOscilogram and osc):
             for i in range(len(self.Elements)):
                 if self.Elements[i].visible:
                     for item, visible in self.Elements[i].visualwidgets():
-                        if(not item in self.axesOscilogram.items() and visible):
-                            self.axesOscilogram.addItem(item)
-                        elif item in self.axesOscilogram.items() and not visible:
+                        if not visible:
                             self.axesOscilogram.removeItem(item)
+                        else:
+                            if(not item in self.axesOscilogram.items() and visible):
+                                self.axesOscilogram.addItem(item)
                 else:
                     for item, visible  in self.Elements[i].visualwidgets():
-                        if(item in self.axesOscilogram.items()):
-                            self.axesOscilogram.removeItem(item)
-        if(self.visibleSpectrogram):
+                        self.axesOscilogram.removeItem(item)
+            self.axesOscilogram.update()
+
+        if(self.visibleSpectrogram and spec):
             for i in range(len(self.Elements)):
                 for j in range(len(self.Elements[i].twoDimensionalElements)):
                     if self.Elements[i].twoDimensionalElements[j].visible:
                         for item, visible in self.Elements[i].twoDimensionalElements[j].visualwidgets():
-                            if(not item in self.axesSpecgram.items() and visible):
-                                self.axesSpecgram.viewBox.addItem(item)
-                            elif item in self.axesSpecgram.items() and not visible:
+                            if not visible:
                                 self.axesSpecgram.viewBox.removeItem(item)
+                            else:
+                                if(not item in self.axesSpecgram.items() and visible):
+                                    self.axesSpecgram.viewBox.addItem(item)
                     else:
                         for item, visible  in self.Elements[i].twoDimensionalElements[j].visualwidgets():
-                            if(item in self.axesSpecgram.items()):
-                                self.axesSpecgram.viewBox.removeItem(item)
+                            self.axesSpecgram.viewBox.removeItem(item)
 
-        self.axesOscilogram.update()
-        self.axesSpecgram.update()
+            self.axesSpecgram.update()
 
     def clear(self):
         self.colorbar = None
@@ -655,6 +703,10 @@ class QSignalVisualizerWidget(QWidget):
     def silence(self):
         self.signalProcessingAction(CommonSignalProcessor(self.signalProcessor.signal).setSilence)
 
+    def silenceUndoAction(self):
+        pass
+
+
     def filter(self, filterType=FILTER_TYPE().LOW_PASS, FCut=0, FLow=0, FUpper=0):
         self.signalProcessingAction(FilterSignalProcessor(self.signalProcessor.signal). \
                                         filter, filterType, FCut, FLow, FUpper)
@@ -684,16 +736,14 @@ class QSignalVisualizerWidget(QWidget):
         self.Elements = [] if oscilogram and specgram else self.Elements
 
 
-
-
     def detectElements(self,threshold=20, decay=1, minSize=0, softfactor=5, merge_factor=0,threshold2=0, threshold_spectral=95, pxx=[], freqs=[], bins=[], minsize_spectral=(0, 0),
                merge_factor_spectral=(1,1),location= None):
-        indexFrom, indexTo = self.getIndexFromAndTo()
         self.clearCursors()
-        self.elements_detector.detect(self.signalProcessor.signal,indexFrom, indexTo, threshold, decay, minSize, softfactor, merge_factor,threshold2,
+        self.elements_detector.detect(self.signalProcessor.signal,0,len(self.signalProcessor.signal.data), threshold, decay, minSize, softfactor, merge_factor,threshold2,
                                       threshold_spectral=threshold_spectral, pxx =  self.specgramSettings.Pxx, freqs=self.specgramSettings.freqs,
                                       bins=self.specgramSettings.bins, minsize_spectral=minsize_spectral,
                merge_factor_spectral=merge_factor_spectral,location=location)
+
         for c in self.elements_detector.elements():
             self.Elements.append(c)# the elment the space for the span selector and the text
         #incorporar deteccion en espectrograma

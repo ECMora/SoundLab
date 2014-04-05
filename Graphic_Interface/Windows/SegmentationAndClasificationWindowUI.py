@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'E:\Biologia\SISTEMA\DuettoSystem\Graphic_Interface\UI Files\SegmentationAndClasificationWindowUI.ui'
 #
-# Created: Tue Apr 01 20:35:04 2014
+# Created: Thu Apr 03 16:09:20 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -146,6 +146,8 @@ class Ui_MainWindow(object):
         self.menuExport.setObjectName(_fromUtf8("menuExport"))
         self.menuParameters = QtGui.QMenu(self.menuBar)
         self.menuParameters.setObjectName(_fromUtf8("menuParameters"))
+        self.menuPeak_Frecuencies = QtGui.QMenu(self.menuParameters)
+        self.menuPeak_Frecuencies.setObjectName(_fromUtf8("menuPeak_Frecuencies"))
         MainWindow.setMenuBar(self.menuBar)
         self.actionZoomIn = QtGui.QAction(MainWindow)
         icon = QtGui.QIcon()
@@ -213,8 +215,8 @@ class Ui_MainWindow(object):
         icon11.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/cut_26x26.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionCut.setIcon(icon11)
         self.actionCut.setObjectName(_fromUtf8("actionCut"))
-        self.actionExcel_File = QtGui.QAction(MainWindow)
-        self.actionExcel_File.setObjectName(_fromUtf8("actionExcel_File"))
+        self.actionMeditions = QtGui.QAction(MainWindow)
+        self.actionMeditions.setObjectName(_fromUtf8("actionMeditions"))
         self.actionView_Parameters = QtGui.QAction(MainWindow)
         self.actionView_Parameters.setCheckable(True)
         self.actionView_Parameters.setObjectName(_fromUtf8("actionView_Parameters"))
@@ -233,9 +235,6 @@ class Ui_MainWindow(object):
         self.actionSpectral_Elements.setCheckable(True)
         self.actionSpectral_Elements.setChecked(True)
         self.actionSpectral_Elements.setObjectName(_fromUtf8("actionSpectral_Elements"))
-        self.actionPeak_Frecuencies = QtGui.QAction(MainWindow)
-        self.actionPeak_Frecuencies.setCheckable(True)
-        self.actionPeak_Frecuencies.setObjectName(_fromUtf8("actionPeak_Frecuencies"))
         self.actionSpectral_Locations = QtGui.QAction(MainWindow)
         self.actionSpectral_Locations.setCheckable(True)
         self.actionSpectral_Locations.setChecked(True)
@@ -248,6 +247,16 @@ class Ui_MainWindow(object):
         self.actionSpectral_Numbers.setCheckable(True)
         self.actionSpectral_Numbers.setChecked(True)
         self.actionSpectral_Numbers.setObjectName(_fromUtf8("actionSpectral_Numbers"))
+        self.actionSub_Elements_Peaks = QtGui.QAction(MainWindow)
+        self.actionSub_Elements_Peaks.setCheckable(True)
+        self.actionSub_Elements_Peaks.setObjectName(_fromUtf8("actionSub_Elements_Peaks"))
+        self.actionElements_Peaks = QtGui.QAction(MainWindow)
+        self.actionElements_Peaks.setCheckable(True)
+        self.actionElements_Peaks.setObjectName(_fromUtf8("actionElements_Peaks"))
+        self.actionOsgram_Image = QtGui.QAction(MainWindow)
+        self.actionOsgram_Image.setObjectName(_fromUtf8("actionOsgram_Image"))
+        self.actionSpecgram_Image = QtGui.QAction(MainWindow)
+        self.actionSpecgram_Image.setObjectName(_fromUtf8("actionSpecgram_Image"))
         self.toolBar.addAction(self.actionPlay_Sound)
         self.toolBar.addAction(self.actionPause_Sound)
         self.toolBar.addAction(self.actionStop_Sound)
@@ -261,7 +270,11 @@ class Ui_MainWindow(object):
         self.toolBar.addAction(self.actionSpectogram)
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionDetection)
-        self.menuExport.addAction(self.actionExcel_File)
+        self.menuExport.addAction(self.actionMeditions)
+        self.menuExport.addAction(self.actionOsgram_Image)
+        self.menuExport.addAction(self.actionSpecgram_Image)
+        self.menuPeak_Frecuencies.addAction(self.actionElements_Peaks)
+        self.menuPeak_Frecuencies.addAction(self.actionSub_Elements_Peaks)
         self.menuParameters.addAction(self.actionView_Parameters)
         self.menuParameters.addAction(self.actionView_Threshold)
         self.menuParameters.addAction(self.actionTemporal_Elements)
@@ -269,7 +282,7 @@ class Ui_MainWindow(object):
         self.menuParameters.addAction(self.actionSpectral_Elements)
         self.menuParameters.addAction(self.actionSpectral_Numbers)
         self.menuParameters.addAction(self.actionSpectral_Locations)
-        self.menuParameters.addAction(self.actionPeak_Frecuencies)
+        self.menuParameters.addAction(self.menuPeak_Frecuencies.menuAction())
         self.menuBar.addAction(self.menuExport.menuAction())
         self.menuBar.addAction(self.menuParameters.menuAction())
 
@@ -298,8 +311,9 @@ class Ui_MainWindow(object):
         self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar", None))
         self.dockWidgetParameterTableOscilogram.setWindowTitle(_translate("MainWindow", "Elements", None))
         self.tableParameterOscilogram.setToolTip(_translate("MainWindow", "Oscilogram elements  meditions", None))
-        self.menuExport.setTitle(_translate("MainWindow", "Export", None))
+        self.menuExport.setTitle(_translate("MainWindow", "Save ", None))
         self.menuParameters.setTitle(_translate("MainWindow", "View", None))
+        self.menuPeak_Frecuencies.setTitle(_translate("MainWindow", "Peak Frecuencies", None))
         self.actionZoomIn.setText(_translate("MainWindow", "Zoom in", None))
         self.actionZoomIn.setShortcut(_translate("MainWindow", "+", None))
         self.actionZoom_out.setText(_translate("MainWindow", "Zoom out", None))
@@ -320,7 +334,7 @@ class Ui_MainWindow(object):
         self.actionPaste.setShortcut(_translate("MainWindow", "Ctrl+V", None))
         self.actionCut.setText(_translate("MainWindow", "Cut", None))
         self.actionCut.setShortcut(_translate("MainWindow", "Ctrl+X", None))
-        self.actionExcel_File.setText(_translate("MainWindow", "To Excel", None))
+        self.actionMeditions.setText(_translate("MainWindow", "Meditions", None))
         self.actionView_Parameters.setText(_translate("MainWindow", "Parameters", None))
         self.actionView_Parameters.setShortcut(_translate("MainWindow", "Ctrl+Space", None))
         self.actionDetection.setText(_translate("MainWindow", "Detection", None))
@@ -330,10 +344,13 @@ class Ui_MainWindow(object):
         self.actionView_Threshold.setText(_translate("MainWindow", "Threshold", None))
         self.actionTemporal_Elements.setText(_translate("MainWindow", "Temporal Elements", None))
         self.actionSpectral_Elements.setText(_translate("MainWindow", "Spectral Elements", None))
-        self.actionPeak_Frecuencies.setText(_translate("MainWindow", "Peak Frecuencies", None))
         self.actionSpectral_Locations.setText(_translate("MainWindow", "Spectral Locations", None))
         self.actionTemporal_Numbers.setText(_translate("MainWindow", "Temporal Numbers", None))
         self.actionSpectral_Numbers.setText(_translate("MainWindow", "Spectral Numbers", None))
+        self.actionSub_Elements_Peaks.setText(_translate("MainWindow", "Sub Elements Peaks", None))
+        self.actionElements_Peaks.setText(_translate("MainWindow", "Elements Peaks", None))
+        self.actionOsgram_Image.setText(_translate("MainWindow", "Osgram Image", None))
+        self.actionSpecgram_Image.setText(_translate("MainWindow", "Specgram Image", None))
 
 from Graphic_Interface.Widgets.QSignalVisualizerWidget import QSignalVisualizerWidget
 import icons_rc
