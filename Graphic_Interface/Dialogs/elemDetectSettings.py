@@ -11,6 +11,12 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         self.setupUi(self)
         self.widget.visibleSpectrogram = True
         self.widget.visibleOscilogram = True
+        if parent is not None:
+            self.widget.specgramSettings.NFFT = parent.widget.specgramSettings.NFFT
+            self.widget.specgramSettings.overlap = parent.widget.specgramSettings.overlap
+            self.widget.specgramSettings.window = parent.widget.specgramSettings.window
+
+
 
         #espectrogram
         self.dsbxThresholdSpec.valueChanged.connect(self.detect)

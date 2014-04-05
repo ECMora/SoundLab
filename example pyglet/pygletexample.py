@@ -1,16 +1,31 @@
-import pyqtgraph.examples
-import pyqtgraph as pg
-#pyqtgraph.examples.run()
-import numpy as np
-app = pg.QtGui.QApplication([])
-x2 = np.linspace(-100, 100, 1000)
-data2 = np.sin(x2) / x2
-p8 = pg.PlotWidget(title="Region Selection")
-p8.plot(data2, pen=(255,255,255,200))
-lr = pg.LinearRegionItem([400,700])
-p8.addItem(lr)
-p8.show()
-if __name__ == '__main__':
-    import sys
-    if (sys.flags.interactive != 1) or not hasattr(QtCore, 'PYQT_VERSION'):
-        pg.QtGui.QApplication.instance().exec_()
+import sys
+from PyQt4.QtGui import *
+from datetime import datetime
+
+date = datetime.now()
+filename = date.strftime('%Y-%m-%d_%H-%M-%S.jpg')
+app = QApplication(sys.argv)
+widget = QWidget()
+# set up the QWidget...
+#widget.setLayout(QVBoxLayout())
+#
+#label = QLabel()
+#widget.layout().addWidget(label)
+#
+#def shoot():
+#    p = QPixmap.grabWindow(widget.winId())
+#    p.save(filename, 'jpg')
+#    label.setPixmap(p)        # just for fun :)
+#    print "shot taken"
+#
+#widget.layout().addWidget(QPushButton('take screenshot', clicked=shoot))
+#
+#widget.show()
+#app.exec_()
+a = []
+b = [1]
+print([x for x in a])
+b.extend(a)
+print("a")
+b.extend([x for x in a if x[1]])
+print(b)

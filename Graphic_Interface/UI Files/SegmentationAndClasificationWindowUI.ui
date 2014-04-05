@@ -266,14 +266,23 @@ padding:1%;</string>
    </property>
    <widget class="QMenu" name="menuExport">
     <property name="title">
-     <string>Export</string>
+     <string>Save </string>
     </property>
-    <addaction name="actionExcel_File"/>
+    <addaction name="actionMeditions"/>
+    <addaction name="actionOsgram_Image"/>
+    <addaction name="actionSpecgram_Image"/>
    </widget>
    <widget class="QMenu" name="menuParameters">
     <property name="title">
      <string>View</string>
     </property>
+    <widget class="QMenu" name="menuPeak_Frecuencies">
+     <property name="title">
+      <string>Peak Frecuencies</string>
+     </property>
+     <addaction name="actionElements_Peaks"/>
+     <addaction name="actionSub_Elements_Peaks"/>
+    </widget>
     <addaction name="actionView_Parameters"/>
     <addaction name="actionView_Threshold"/>
     <addaction name="actionTemporal_Elements"/>
@@ -281,7 +290,7 @@ padding:1%;</string>
     <addaction name="actionSpectral_Elements"/>
     <addaction name="actionSpectral_Numbers"/>
     <addaction name="actionSpectral_Locations"/>
-    <addaction name="actionPeak_Frecuencies"/>
+    <addaction name="menuPeak_Frecuencies"/>
    </widget>
    <addaction name="menuExport"/>
    <addaction name="menuParameters"/>
@@ -428,9 +437,9 @@ padding:1%;</string>
     <string>Ctrl+X</string>
    </property>
   </action>
-  <action name="actionExcel_File">
+  <action name="actionMeditions">
    <property name="text">
-    <string>To Excel</string>
+    <string>Meditions</string>
    </property>
   </action>
   <action name="actionView_Parameters">
@@ -490,14 +499,6 @@ padding:1%;</string>
     <string>Spectral Elements</string>
    </property>
   </action>
-  <action name="actionPeak_Frecuencies">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Peak Frecuencies</string>
-   </property>
-  </action>
   <action name="actionSpectral_Locations">
    <property name="checkable">
     <bool>true</bool>
@@ -529,6 +530,32 @@ padding:1%;</string>
    </property>
    <property name="text">
     <string>Spectral Numbers</string>
+   </property>
+  </action>
+  <action name="actionSub_Elements_Peaks">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Sub Elements Peaks</string>
+   </property>
+  </action>
+  <action name="actionElements_Peaks">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Elements Peaks</string>
+   </property>
+  </action>
+  <action name="actionOsgram_Image">
+   <property name="text">
+    <string>Osgram Image</string>
+   </property>
+  </action>
+  <action name="actionSpecgram_Image">
+   <property name="text">
+    <string>Specgram Image</string>
    </property>
   </action>
   <zorder>dockWidgetParameterTableOscilogram</zorder>

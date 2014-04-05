@@ -7,16 +7,14 @@ from Duetto_Core.Segmentation.Elements.Element import Element
 from PyQt4 import QtGui
 
 class SpectralMeasurementLocation:
-    Start = True
-    StartMeasurementColor = QtGui.QColor(255, 0, 0, 255)
-    Quartile25 = False
-    Quartile1MeasurementColor = QtGui.QColor(255, 255, 255, 255)
-    Center = True
-    CenterMeasurementColor = QtGui.QColor(0, 255, 0, 255)
-    Quartile75 = False
-    Quartile3MeasurementColor = QtGui.QColor(255,255,255, 255)
-    End = True
-    EndMeasurementColor = QtGui.QColor(0, 0, 255, 255)
+    START,CENTER,END,QUARTILE25,QUARTILE75 = range(5)
+    MEDITIONS = [
+        [True,  QtGui.QColor(255, 0, 0, 255)],
+        [True, QtGui.QColor(0, 255, 0, 255)],
+        [True,  QtGui.QColor(255, 255, 255, 255)],
+        [False, QtGui.QColor(255,255,255, 255)],
+        [False,  QtGui.QColor(0, 0, 255, 255)]]
+    #(Active computation, color)
 
 
 class OneDimensionalElement(Element):
@@ -64,8 +62,8 @@ class OscilogramElement(OneDimensionalElement):
             #minsize came with the hz, sec of min size elements and its translated to index values in pxx for comparations
             minsize_spectral = (max(1,int(minsize_spectral[0]*spec_resolution)),max(1,int(minsize_spectral[1]*temp_resolution)))
             sr = signal.samplingRate*1.0
-            aux = max(0,int(floor(indexFrom/((bins[1]-bins[0])*sr))-1))
-            aux2 = min(int(ceil((indexTo/((bins[1]-bins[0])*sr))+1)),len(pxx[0]))
+            aux = max(0,int(floor((indexFrom-bins[0]*sr)/((bins[1]-bins[0])*sr))))
+            aux2 = min(int(ceil((indexTo+bins[0]*sr)/((bins[1]-bins[0])*sr))),len(pxx[0]))
             self.matrix = pxx[:,aux:aux2]
             self.indexFromInPxx,self.indexToInPxx = aux,aux2
             self.computeTwoDimensionalElements(threshold_spectral,self.matrix,freqs,bins,minsize_spectral,merge_factor_spectral)
@@ -78,6 +76,13 @@ class OscilogramElement(OneDimensionalElement):
         lr.setToolTip(tooltip)
         self.visual_figures.append([lr,True])#item visibility
         self.visual_text.append([text,True])
+
+    def sublementsPeakFreqsVisible(self,visibility=False):
+        for x in self.twoDimensionalElements:
+            for p in x.visual_peaksfreqs:
+                p[1] = visibility
+        if not visibility:
+            pass
 
 
     def computeTwoDimensionalElements(self,threshold_spectral, pxx, freqs, bins, minsize_spectral,merge_factor_spectral):
@@ -93,7 +98,7 @@ class OscilogramElement(OneDimensionalElement):
 
     def peekToPeek(self):
         if(self.parameters["peekToPeek"] is None):
-            self.parameters["peekToPeek"] = np.ptp(self.signal.data[self.indexFrom:self.indexTo])
+            self.parameters["peekToPeek"] = round(np.ptp(self.signal.data[self.indexFrom:self.indexTo])*1.0/(2**self.signal.bitDepth),self.parameterDecimalPlaces)
         return self.parameters["peekToPeek"]
 
     def rms(self):
@@ -112,27 +117,27 @@ class OscilogramElement(OneDimensionalElement):
                     intervalSum = 0.0
 
             globalSum += intervalSum * 1.0 / n
-            self.parameters["rms"] = np.sqrt(globalSum)
+            self.parameters["rms"] = round(np.sqrt(globalSum)*1.0/(2**self.signal.bitDepth),self.parameterDecimalPlaces)
         return self.parameters["rms"]
 
     #espectral parameters
 
-    def minFreq(self):
+    def minFreq(self,location=None):
         if(self.parameters["minFreq"] is None):
             self.parameters["minFreq"] = 0
         return self.parameters["minFreq"]
 
-    def maxFreq(self):
+    def maxFreq(self,location=None):
         if(self.parameters["maxFreq"] is None):
             self.parameters["maxFreq"] = 0
         return self.parameters["maxFreq"]
 
-    def peakFreq(self):
+    def peakFreq(self,location=None):
         if(self.parameters["peakFreq"] is None):
             self.parameters["peakFreq"] = 0
         return self.parameters["peakFreq"]
 
-    def peaksAbove(self,threshold):
+    def peaksAbove(self,threshold,location=None):
         if(self.parameters["peaksAbove"][0] is None or self.parameters["peaksAbove"][1] != threshold):
             self.parameters["peekToPeek"] = (0,threshold)
         return self.parameters["peekToPeek"][0]

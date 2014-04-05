@@ -26,4 +26,6 @@ class Element:
             yield l
         for f in self.visual_figures:
             yield f
+        for p in self.visual_peaksfreqs:
+            yield p
         #the objects to represent visually this object
