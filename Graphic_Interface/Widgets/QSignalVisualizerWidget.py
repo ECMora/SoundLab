@@ -764,6 +764,7 @@ class QSignalVisualizerWidget(QWidget):
         else:
             self.signalProcessor.signal = WavFileSignal(samplingRate=samplingRate, duration=duration, bitDepth=bitDepth,
                                                         whiteNoise=whiteNoise)
+        print(self.signalProcessor.signal.samplingRate)
         self.cursors = []
         self.editionSignalProcessor = EditionSignalProcessor(self.signalProcessor.signal)
         #self.signalProcessor.signal.setTickInterval(self.TICK_INTERVAL_MS)
@@ -773,8 +774,6 @@ class QSignalVisualizerWidget(QWidget):
             self.loadUserData(self.signalProcessor.signal.userData)
         self.mainCursor.min = 0
         self.mainCursor.max = len(self.signalProcessor.signal.data)
-        if self.mainCursor.max / self.signalProcessor.signal.samplingRate > 10000:  # 10 seg
-            self.mainCursor.max = 10000 * self.signalProcessor.signal.samplingRate
         self.specgramSettings.threshold = 50
         if self.visibleOscilogram:
             self.axesOscilogram.clear()

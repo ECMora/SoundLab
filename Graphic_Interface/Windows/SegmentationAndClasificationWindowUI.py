@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'E:\Biologia\SISTEMA\DuettoSystem\Graphic_Interface\UI Files\SegmentationAndClasificationWindowUI.ui'
 #
-# Created: Thu Apr 03 16:09:20 2014
+# Created: Sun Apr 06 11:05:23 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -257,6 +257,10 @@ class Ui_MainWindow(object):
         self.actionOsgram_Image.setObjectName(_fromUtf8("actionOsgram_Image"))
         self.actionSpecgram_Image = QtGui.QAction(MainWindow)
         self.actionSpecgram_Image.setObjectName(_fromUtf8("actionSpecgram_Image"))
+        self.actionTemporal_Locations = QtGui.QAction(MainWindow)
+        self.actionTemporal_Locations.setCheckable(True)
+        self.actionTemporal_Locations.setChecked(True)
+        self.actionTemporal_Locations.setObjectName(_fromUtf8("actionTemporal_Locations"))
         self.toolBar.addAction(self.actionPlay_Sound)
         self.toolBar.addAction(self.actionPause_Sound)
         self.toolBar.addAction(self.actionStop_Sound)
@@ -279,6 +283,7 @@ class Ui_MainWindow(object):
         self.menuParameters.addAction(self.actionView_Threshold)
         self.menuParameters.addAction(self.actionTemporal_Elements)
         self.menuParameters.addAction(self.actionTemporal_Numbers)
+        self.menuParameters.addAction(self.actionTemporal_Locations)
         self.menuParameters.addAction(self.actionSpectral_Elements)
         self.menuParameters.addAction(self.actionSpectral_Numbers)
         self.menuParameters.addAction(self.actionSpectral_Locations)
@@ -351,6 +356,7 @@ class Ui_MainWindow(object):
         self.actionElements_Peaks.setText(_translate("MainWindow", "Elements Peaks", None))
         self.actionOsgram_Image.setText(_translate("MainWindow", "Osgram Image", None))
         self.actionSpecgram_Image.setText(_translate("MainWindow", "Specgram Image", None))
+        self.actionTemporal_Locations.setText(_translate("MainWindow", "Temporal Locations", None))
 
 from Graphic_Interface.Widgets.QSignalVisualizerWidget import QSignalVisualizerWidget
 import icons_rc

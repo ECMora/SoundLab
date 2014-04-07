@@ -58,12 +58,12 @@ class SpecgramElement(TwoDimensionalElement):
                 end.setToolTip("Element:"+  str(self.parentnumber) + "\n SubElement: "+str(self.number) +"\nEnd Mesurement Location")
                 self.visual_locations.append([end,True])
             if(self.measurementLocation.MEDITIONS[self.measurementLocation.QUARTILE25][0]):
-                quartile1 = QtGui.QGraphicsRectItem(QtCore.QRectF(self.timeStartIndex+ xpos*0.25 -width/4,self.freqStartIndex+ypos*0.25 -height/4,width,    height))
+                quartile1 = QtGui.QGraphicsRectItem(QtCore.QRectF(self.timeStartIndex+ xpos*0.25 -width/2,self.freqStartIndex+ypos*0.25 -height/2,width,    height))
                 quartile1.setBrush(QtGui.QBrush(self.measurementLocation.MEDITIONS[self.measurementLocation.QUARTILE25][1]))
                 quartile1.setToolTip("Element:"+  str(self.parentnumber) + "\n SubElement: "+str(self.number) +"\nQuartile 25% Mesurement Location")
                 self.visual_locations.append([quartile1,True])
             if(self.measurementLocation.MEDITIONS[self.measurementLocation.QUARTILE75][0]):
-                quartile3 = QtGui.QGraphicsRectItem(QtCore.QRectF(self.timeStartIndex+ xpos*0.75,self.freqStartIndex+ypos*0.75, width,    height))
+                quartile3 = QtGui.QGraphicsRectItem(QtCore.QRectF(self.timeStartIndex+ xpos*0.75-width/2,self.freqStartIndex+ypos*0.75-height/2, width,    height))
                 quartile3.setBrush(QtGui.QBrush(self.measurementLocation.MEDITIONS[self.measurementLocation.QUARTILE75][1]))
                 quartile3.setToolTip("Element:"+  str(self.parentnumber) +  "\n SubElement: "+str(self.number) +"\nQuartile 75% Mesurement Location")
                 self.visual_locations.append([quartile3,True])
@@ -84,8 +84,6 @@ class SpecgramElement(TwoDimensionalElement):
                                                                  self.freqEndIndex-self.freqStartIndex))
         rect.setPen(QtGui.QPen(QtGui.QColor(255, 255, 255)))
         self.visual_figures.append([rect,True])
-
-
 
     def minFreq(self):
         if(self.parameters["minFreq"] is None):
