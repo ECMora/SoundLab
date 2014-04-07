@@ -10,7 +10,7 @@ class AudioSignal:
     PLAYING, PAUSED, STOPPED, RECORDING = range(4)
 
     def __init__(self):
-        self.samplingRate = 0
+        self.samplingRate = 44100
         self.channels = 1
         self._currentChannel = 0
         self.data = np.array([])
@@ -53,6 +53,7 @@ class AudioSignal:
                 return self.path[index + 1:]
             else:
                 return ""
+        return "Error"
 
     def set_currentChannel(self, channel):
         if not 0 <= channel <= self.channels:

@@ -31,6 +31,9 @@ color: rgb(0, 0, 0);
 padding:1%;</string>
   </property>
   <widget class="QWidget" name="centralwidget">
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <property name="sizeConstraint">
      <enum>QLayout::SetDefaultConstraint</enum>
@@ -189,6 +192,9 @@ padding:1%;</string>
     </item>
     <item>
      <widget class="QScrollBar" name="horizontalScrollBar">
+      <property name="styleSheet">
+       <string notr="true">border-color: rgb(26, 255, 10);</string>
+      </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
@@ -287,6 +293,7 @@ padding:1%;</string>
     <addaction name="actionView_Threshold"/>
     <addaction name="actionTemporal_Elements"/>
     <addaction name="actionTemporal_Numbers"/>
+    <addaction name="actionTemporal_Locations"/>
     <addaction name="actionSpectral_Elements"/>
     <addaction name="actionSpectral_Numbers"/>
     <addaction name="actionSpectral_Locations"/>
@@ -556,6 +563,17 @@ padding:1%;</string>
   <action name="actionSpecgram_Image">
    <property name="text">
     <string>Specgram Image</string>
+   </property>
+  </action>
+  <action name="actionTemporal_Locations">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Temporal Locations</string>
    </property>
   </action>
   <zorder>dockWidgetParameterTableOscilogram</zorder>

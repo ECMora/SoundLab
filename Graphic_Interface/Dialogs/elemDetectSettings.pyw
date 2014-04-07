@@ -1,3 +1,4 @@
+from math import log10
 from PyQt4.QtCore import pyqtSlot
 from PyQt4.QtGui import QDialog
 import pyqtgraph as pg
@@ -24,6 +25,8 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         self.dsbxminSizeTime.valueChanged.connect(self.detect)
         #oscilogram
         self.dsbxThreshold.valueChanged.connect(self.detect)
+        self.dsbxThreshold.valueChanged.connect(self.updateThresholdLine)
+
 
         self.dsbxThreshold2.valueChanged.connect(self.detect)
         self.dsbxDecay.valueChanged.connect(self.detect)
@@ -33,10 +36,26 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         self.widget.signalProcessor.signal = WavFileSignal("Didactic Signals\\recognition.wav")
         self.widget.mainCursor.min,self.widget.mainCursor.max = 0,len(self.widget.signalProcessor.signal.data)
         self.widget.axesOscilogram.setVisibleThreshold(True)
+
+        self.widget.axesOscilogram.threshold.sigPositionChangeFinished.connect(self.updateThreshold)
+        self.widget.axesOscilogram.threshold.setBounds((0,2**(self.widget.signalProcessor.signal.bitDepth-1)))
+
         self.widget.visualChanges = True
         self.hist = pg.widgets.HistogramLUTWidget.HistogramLUTItem()
         self.hist.setImageItem(self.widget.axesSpecgram.imageItem)
         self.widget.refresh()
+
+    def updateThreshold(self,line):
+        self.dsbxThreshold.setValue(self.toDB() if line.value() == 0 else self.toDB(line.value()))
+
+    def updateThresholdLine(self):
+        self.widget.axesOscilogram.threshold.setValue(round((10.0**((60+self.dsbxThreshold.value())/20.0))*(2**self.widget.signalProcessor.signal.bitDepth)/1000.0,0))
+
+
+    def toDB(self,value=None):
+        if value is None:
+            return -60
+        return -60 + int(20*log10(abs(value)*1000.0/(2**self.widget.signalProcessor.signal.bitDepth)))
 
     def load_Theme(self,theme):
         self.theme = theme

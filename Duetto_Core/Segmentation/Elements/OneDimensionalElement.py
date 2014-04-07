@@ -1,10 +1,11 @@
-from math import floor, ceil
+from math import floor, ceil, log10
+from matplotlib import mlab
 from Duetto_Core.Segmentation.Detectors.ElementsDetectors.TwoDimensionalElementsDetector import TwoDimensionalElementsDetector
 import numpy as np
-from numpy.fft import fft
 import pyqtgraph as pg
 from Duetto_Core.Segmentation.Elements.Element import Element
-from PyQt4 import QtGui
+from PyQt4 import QtGui, QtCore
+
 
 class SpectralMeasurementLocation:
     START,CENTER,END,QUARTILE25,QUARTILE75 = range(5)
@@ -53,20 +54,8 @@ class OscilogramElement(OneDimensionalElement):
         self.number = number
         self.twoDimensionalElements = []
         #the memoize pattern implemented to compute parameters functions
-        self.parameters = dict(StartToMax=None, peekToPeek=None, rms=None, minFreq=None, maxFreq=None, peakFreq=None,peaksAbove=(None,0))
-        self.spectralMeasurementLocation = location if location is not None else SpectralMeasurementLocation()
-        if(pxx != [] and bins != [] and freqs != []):
-            #spec_resolution, temp_resolution = signal.samplingRate/2.0*len(freqs),bins[1]-bins[0]
-            spec_resolution, temp_resolution = 1000.0/freqs[1],(bins[1]-bins[0])*1000.0
-            #minsize came with the hz, sec of min size elements and its translated to index values in pxx for comparations
-            minsize_spectral = (max(1,int(minsize_spectral[0]*spec_resolution)),max(1,int(minsize_spectral[1]*temp_resolution)))
-            sr = signal.samplingRate*1.0
-            aux = max(0,int(floor((indexFrom-bins[0]*sr)/((bins[1]-bins[0])*sr))))
-            aux2 = min(int(ceil((indexTo+bins[0]*sr)/((bins[1]-bins[0])*sr))),len(pxx[0]))
-            self.matrix = pxx[:,aux:aux2]
-            self.indexFromInPxx,self.indexToInPxx = aux,aux2
-            self.computeTwoDimensionalElements(threshold_spectral,self.matrix,freqs,bins,minsize_spectral)
-
+        self.parameters = dict(StartToMax=None, peekToPeek=None, rms=None, minFreq=dict(), maxFreq=dict(),
+                               peakFreq=dict(),peaksAbove=dict(),peakAmplitude=dict(),bandwidth=dict())
 
         tooltip = "Element: "+str(self.number)+"\nStart Time: "+ str(self.startTime()) + "s\n" \
                   + "End Time:"+ str(self.endTime()) + "s\n"\
@@ -76,6 +65,56 @@ class OscilogramElement(OneDimensionalElement):
         self.visual_figures.append([lr,True])#item visibility
         self.visual_text.append([text,True])
 
+        if(location is not None):
+            self.measurementLocation = location
+            width = (indexTo-indexFrom)/5
+            height = (2**signal.bitDepth)/5
+            ypos = 2**signal.bitDepth
+            xpos = indexTo-indexFrom
+            ystart = -2**(signal.bitDepth-1)
+            #poner tooltips
+            if(self.measurementLocation.MEDITIONS[self.measurementLocation.START][0]):
+                start = QtGui.QGraphicsRectItem(QtCore.QRectF(indexFrom+ xpos*0,ystart + ypos*0,   width,    height))
+                start.setBrush(QtGui.QBrush(self.measurementLocation.MEDITIONS[self.measurementLocation.START][1]))
+                start.setToolTip("Element: "+ str(self.number) +"\nStart Mesurement Location")
+                self.visual_locations.append([start,True])
+            if(self.measurementLocation.MEDITIONS[self.measurementLocation.CENTER][0]):
+                center = QtGui.QGraphicsRectItem(QtCore.QRectF(indexFrom+ xpos*0.5- width/2,ystart +ypos*0.5 -height/2,    width,    height))
+                center.setBrush(QtGui.QBrush(self.measurementLocation.MEDITIONS[self.measurementLocation.CENTER][1]))
+                center.setToolTip("Element:"+str(self.number) +"\nCenter Mesurement Location")
+                self.visual_locations.append([center,True])
+            if(self.measurementLocation.MEDITIONS[self.measurementLocation.END][0]):
+                end = QtGui.QGraphicsRectItem(QtCore.QRectF(indexFrom+ xpos*1- width,ystart+ypos*1- height,    width,    height))
+                end.setBrush(QtGui.QBrush(self.measurementLocation.MEDITIONS[self.measurementLocation.END][1]))
+                end.setToolTip("Element:"+str(self.number) +"\nEnd Mesurement Location")
+                self.visual_locations.append([end,True])
+            if(self.measurementLocation.MEDITIONS[self.measurementLocation.QUARTILE25][0]):
+                quartile1 = QtGui.QGraphicsRectItem(QtCore.QRectF(indexFrom+ xpos*0.25 -width/2,ystart+ypos*0.25 -height/2,width,    height))
+                quartile1.setBrush(QtGui.QBrush(self.measurementLocation.MEDITIONS[self.measurementLocation.QUARTILE25][1]))
+                quartile1.setToolTip("Element:"+str(self.number) +"\nQuartile 25% Mesurement Location")
+                self.visual_locations.append([quartile1,True])
+            if(self.measurementLocation.MEDITIONS[self.measurementLocation.QUARTILE75][0]):
+                quartile3 = QtGui.QGraphicsRectItem(QtCore.QRectF(indexFrom+ xpos*0.75- width/2,ystart+ypos*0.75-height/2, width,    height))
+                quartile3.setBrush(QtGui.QBrush(self.measurementLocation.MEDITIONS[self.measurementLocation.QUARTILE75][1]))
+                quartile3.setToolTip("Element:"+str(self.number) +"\nQuartile 75% Mesurement Location")
+                self.visual_locations.append([quartile3,True])
+        else:
+            self.measurementLocation = SpectralMeasurementLocation()
+
+        if(pxx != [] and bins != [] and freqs != []):
+            #spec_resolution, temp_resolution = signal.samplingRate/2.0*len(freqs),bins[1]-bins[0]
+            spec_resolution, temp_resolution = 1000.0/freqs[1],(bins[1]-bins[0])*1000.0
+            #minsize came with the hz, sec of min size elements and its translated to index values in pxx for comparations
+            minsize_spectral = (max(1,int(minsize_spectral[0]*spec_resolution)),max(1,int(minsize_spectral[1]*temp_resolution)))
+            sr = signal.samplingRate*1.0
+            aux = max(0,int(floor((indexFrom-bins[0]*sr)/((bins[1]-bins[0])*sr))))
+            aux2 = min(int(ceil((indexTo+bins[0]*sr)/((bins[1]-bins[0])*sr))),len(pxx[0]))
+            self.matrix = pxx[:,aux:aux2]
+            self.freqs = freqs
+            self.bins = bins
+            self.indexFromInPxx,self.indexToInPxx = aux,aux2
+            self.computeTwoDimensionalElements(threshold_spectral,self.matrix,freqs,bins,minsize_spectral)
+
     def sublementsPeakFreqsVisible(self,visibility=False):
         for x in self.twoDimensionalElements:
             for p in x.visual_peaksfreqs:
@@ -83,10 +122,9 @@ class OscilogramElement(OneDimensionalElement):
         if not visibility:
             pass
 
-
     def computeTwoDimensionalElements(self,threshold_spectral, pxx, freqs, bins, minsize_spectral):
         detector = TwoDimensionalElementsDetector()
-        detector.detect(self.signal,threshold_spectral, pxx,freqs,bins, minsize_spectral,one_dimensional_parent=self,location= self.spectralMeasurementLocation)
+        detector.detect(self.signal,threshold_spectral, pxx,freqs,bins, minsize_spectral,one_dimensional_parent=self,location= self.measurementLocation)
         for elem in detector.elements():
             self.twoDimensionalElements.append(elem)
 
@@ -119,27 +157,116 @@ class OscilogramElement(OneDimensionalElement):
             self.parameters["rms"] = round(np.sqrt(globalSum)*1.0/(2**self.signal.bitDepth),self.parameterDecimalPlaces)
         return self.parameters["rms"]
 
-    #espectral parameters
-
-    def minFreq(self,location=None):
-        if(self.parameters["minFreq"] is None):
-            self.parameters["minFreq"] = 0
-        return self.parameters["minFreq"]
-
-    def maxFreq(self,location=None):
-        if(self.parameters["maxFreq"] is None):
-            self.parameters["maxFreq"] = 0
-        return self.parameters["maxFreq"]
-
-    def peakFreq(self,location=None):
-        if(self.parameters["peakFreq"] is None):
-            self.parameters["peakFreq"] = 0
-        return self.parameters["peakFreq"]
-
-    def peaksAbove(self,threshold,location=None):
-        if(self.parameters["peaksAbove"][0] is None or self.parameters["peaksAbove"][1] != threshold):
-            self.parameters["peekToPeek"] = (0,threshold)
-        return self.parameters["peekToPeek"][0]
-
     def spectralElements(self):
         return len(self.twoDimensionalElements)
+
+    #espectral parameters
+    def getMatrixIndexFromLocation(self,location):
+        size = len(self.matrix[0])
+        if location == self.measurementLocation.START:
+            return 0
+        if location == self.measurementLocation.CENTER:
+            return size/2
+        if location == self.measurementLocation.END:
+            return size-1
+        if location == self.measurementLocation.QUARTILE25:
+            return size/4
+        if location == self.measurementLocation.QUARTILE75:
+            return 3*size/4
+
+    #The following methods measure properties that needs aditional parameters for its calculation
+    #dict are a dictionary with the aditional data
+    #
+    def peak_f_a(self,index):
+        """
+        returns the peak frecuency and amplitude in db in the index location
+        """
+        freq_index = np.argmax(self.matrix[:, index])
+        minIndex = np.argmin(self.matrix[:, index])
+        value = int(round(self.freqs[freq_index],0))
+        value -= value % 10
+        return value,round(-20*log10(self.freqs[freq_index]),self.parameterDecimalPlaces)
+
+    def peakFreq(self,dict):
+        if "location" in dict:
+            location = dict["location"]
+            index = self.getMatrixIndexFromLocation(location)
+            if index not in self.parameters["peakFreq"]:
+                self.parameters["peakFreq"][index],self.parameters["peakAmplitude"][index] = self.peak_f_a(index)
+            return self.parameters["peakFreq"][index]
+        return "Invalid Params"
+
+    def peakAmplitude(self,dict):
+        if "location" in dict:
+            location = dict["location"]
+            index = self.getMatrixIndexFromLocation(location)
+            if index not in self.parameters["peakAmplitude"]:
+                self.parameters["peakFreq"][index],self.parameters["peakAmplitude"][index] = self.peak_f_a(index)
+            return self.parameters["peakAmplitude"][index]
+        return "Invalid Params"
+
+    def freq_min_max_band_peaksAbove(self,index,threshold, peaksThreshold):
+        arr = self.matrix[:, index]
+        minx,maxx = min(arr),max(arr)
+        thresholdValue = (10.0**((60+threshold)/20.0))*(maxx - minx)/1000.0
+        peaksThresholdValue = (10.0**((60+peaksThreshold)/20.0))*(maxx - minx)/1000.0
+        regions = mlab.contiguous_regions(arr > thresholdValue)
+        regionsPeaks = regions if threshold == peaksThreshold else mlab.contiguous_regions(arr > peaksThreshold)
+        minf = self.freqs[0]-self.freqs[0] % 10
+        maxf = self.freqs[len(self.freqs)-1]-self.freqs[len(self.freqs)-1] % 10
+
+        if len(regions) >0:
+            minf = int(round(self.freqs[regions[0][0]],0))
+            minf -= minf % 10
+            maxf = int(round(self.freqs[regions[len(regions)-1][1]],0))
+            maxf -= maxf % 10
+        return minf,maxf,maxf-minf,len(regionsPeaks)
+
+    def minFreq(self,dict):
+        if "location" in dict and "threshold" in dict and "peaksThreshold" in dict:
+            location = dict["location"]
+            threshold = dict["threshold"]
+            peakthreshold = dict["peaksThreshold"]
+            index = self.getMatrixIndexFromLocation(location)
+            if (index,threshold) not in self.parameters["minFreq"]:
+                self.parameters["minFreq"][(index,threshold)],self.parameters["maxFreq"][(index,threshold)],\
+                self.parameters["bandwidth"][(index,threshold)],self.parameters["peaksAbove"][(index,peakthreshold)] = self.freq_min_max_band_peaksAbove(index,threshold,peakthreshold)
+            return self.parameters["minFreq"][(index,threshold)]
+        return "Invalid Params"
+
+    def maxFreq(self,dict):
+        if "location" in dict and "threshold" in dict and "peaksThreshold" in dict:
+            location = dict["location"]
+            threshold = dict["threshold"]
+            peakthreshold = dict["peaksThreshold"]
+            index = self.getMatrixIndexFromLocation(location)
+            if (index,threshold) not in self.parameters["maxFreq"]:
+                self.parameters["minFreq"][(index,threshold)],self.parameters["maxFreq"][(index,threshold)],\
+                self.parameters["bandwidth"][(index,threshold)],self.parameters["peaksAbove"][(index,peakthreshold)] = self.freq_min_max_band_peaksAbove(index,threshold,peakthreshold)
+            return self.parameters["maxFreq"][(index,threshold)]
+        return "Invalid Params"
+
+    def bandwidth(self,dict):
+        if "location" in dict and "threshold" in dict and "peaksThreshold" in dict:
+            location = dict["location"]
+            threshold = dict["threshold"]
+            peakthreshold = dict["peaksThreshold"]
+            index = self.getMatrixIndexFromLocation(location)
+            if (index,threshold) not in self.parameters["bandwidth"]:
+                self.parameters["minFreq"][(index,threshold)],self.parameters["maxFreq"][(index,threshold)],\
+                self.parameters["bandwidth"][(index,threshold)],self.parameters["peaksAbove"][(index,peakthreshold)] = self.freq_min_max_band_peaksAbove(index,threshold,peakthreshold)
+            return self.parameters["bandwidth"][(index,threshold)]
+        return "Invalid Params"
+
+    def peaksAbove(self,dict):
+        if "location" in dict and "threshold" in dict and "peaksThreshold" in dict:
+            location = dict["location"]
+            threshold = dict["threshold"]
+            peakthreshold = dict["peaksThreshold"]
+            index = self.getMatrixIndexFromLocation(location)
+            if (index,peakthreshold) not in self.parameters["peaksAbove"]:
+                self.parameters["minFreq"][(index,threshold)],self.parameters["maxFreq"][(index,threshold)],\
+                self.parameters["bandwidth"][(index,threshold)],self.parameters["peaksAbove"][(index,peakthreshold)] = self.freq_min_max_band_peaksAbove(index,threshold,peakthreshold)
+            return self.parameters["peaksAbove"][(index,peakthreshold)]
+        return "Invalid Params"
+

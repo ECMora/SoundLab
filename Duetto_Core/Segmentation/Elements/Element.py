@@ -20,12 +20,12 @@ class Element:
 
 
     def visualwidgets(self):
-        for t in self.visual_text:
-            yield t
-        for l in self.visual_locations:
-            yield l
         for f in self.visual_figures:
             yield f
+        for l in self.visual_locations:
+            yield l
+        for t in self.visual_text:
+            yield t
         for p in self.visual_peaksfreqs:
             yield p
         #the objects to represent visually this object
