@@ -103,13 +103,13 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
              {'name': 'Plot color', 'type': 'color', 'value':self.defaultTheme.pow_Plot, 'default': self.defaultTheme.pow_Plot},
         ]},
         {'name': 'Detection Settings', 'type': 'group', 'children': [
-            {'name': 'Min amplitude', 'type': 'color', 'value': '000',},
-            {'name': 'Max amplitude', 'type': 'color', 'value': '000'},
-            {'name':'Background color', 'type':'color','value':'000'},
-            {'name': 'Plot c', 'type': 'color', 'value':'000'},
-            {'name': 'Plot co', 'type': 'color', 'value':'000'},
-            {'name': 'Plot col', 'type': 'color', 'value':'000'},
-        ]},
+            {'name': 'Measurement Location', 'type': 'group', 'children': [
+            {'name': 'Start', 'type': 'color', 'value': self.defaultTheme.startColor,'default': self.defaultTheme.startColor},
+            {'name': 'Quartile25', 'type': 'color', 'value': self.defaultTheme.quart1Color,'default': self.defaultTheme.quart1Color},
+            {'name':'Center', 'type':'color','value':self.defaultTheme.centerColor,'default':self.defaultTheme.centerColor},
+            {'name': 'Quartile75', 'type': 'color', 'value':self.defaultTheme.quart2Color,'default':self.defaultTheme.quart2Color},
+            {'name': 'End', 'type': 'color', 'value':self.defaultTheme.endColor,'default':self.defaultTheme.endColor},
+        ]},]}
 
         ]
         self.ParamTree = Parameter.create(name='params', type='group', children=params)
@@ -180,10 +180,15 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             self.ParamTree.param('Spectrogram Settings').param('Threshold').param('Max').setValue(reg[1])
 
     def SerializeTheme(self,filename):
+        center = self.ParamTree.param('Detection Settings').param('Measurement Location').param('Center').value()
+        start = self.ParamTree.param('Detection Settings').param('Measurement Location').param('Start').value()
+        quart1 = self.ParamTree.param('Detection Settings').param('Measurement Location').param('Quartile25').value()
+        quart2 = self.ParamTree.param('Detection Settings').param('Measurement Location').param('Quartile75').value()
+        end = self.ParamTree.param('Detection Settings').param('Measurement Location').param('End').value()
         data = SerializedData(self.widget.osc_background,self.widget.osc_color,self.widget.osc_gridx,
                               self.widget.osc_gridy,self.pow_spec_backg,self.pow_spec_plotColor,self.pow_spec_gridx,
                               self.pow_spec_gridy,self.widget.spec_background, self.widget.spec_gridx, self.widget.spec_gridy,
-                              self.hist.item.gradient.saveState(),self.hist.item.region.getRegion())
+                              self.hist.item.gradient.saveState(),self.hist.item.region.getRegion(),end,center,start,quart1,quart2)
         file = open(filename,'wb')
         pickle.dump(data,file)
         file.close()
@@ -229,6 +234,10 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.ParamTree.param('Power Spectrum Settings').param('Grid').param('Y').setValue(self.pow_spec_gridy)
         self.ParamTree.param('Power Spectrum Settings').param('Background color').setValue(data.pow_Back)
         self.ParamTree.param('Power Spectrum Settings').param('Plot color').setValue(self.pow_spec_plotColor)
+        self.ParamTree.param('Detection Settings').param('Measurement Location').param('Center').setValue(data.centerColor)
+        self.ParamTree.param('Detection Settings').param('Measurement Location').param('Start').setValue(data.startColor)
+        self.ParamTree.param('Detection Settings').param('Measurement Location').param('Quartile25').setValue(data.quart1Color)
+        self.ParamTree.param('Detection Settings').param('Measurement Location').param('Quartile75').setValue(data.quart2Color)
 
     @pyqtSlot()
     def on_actionLoad_Theme_triggered(self):
@@ -379,11 +388,16 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     @pyqtSlot()
     def on_actionSegmentation_And_Clasification_triggered(self):
+        center = self.ParamTree.param('Detection Settings').param('Measurement Location').param('Center').value()
+        start = self.ParamTree.param('Detection Settings').param('Measurement Location').param('Start').value()
+        quart1 = self.ParamTree.param('Detection Settings').param('Measurement Location').param('Quartile25').value()
+        quart2 = self.ParamTree.param('Detection Settings').param('Measurement Location').param('Quartile75').value()
+        end = self.ParamTree.param('Detection Settings').param('Measurement Location').param('End').value()
         segWindow = SegmentationAndClasificationWindow(parent=self, signal=self.widget.signalProcessor.signal)
         segWindow.load_Theme(SerializedData(self.widget.osc_background,self.widget.osc_color,self.widget.osc_gridx,
                               self.widget.osc_gridy, self.pow_spec_backg,self.pow_spec_plotColor,self.pow_spec_gridx,
                               self.pow_spec_gridy, self.widget.spec_background, self.widget.spec_gridx, self.widget.spec_gridy,
-                              self.hist.item.gradient.saveState(),self.hist.item.region.getRegion()))
+                              self.hist.item.gradient.saveState(),self.hist.item.region.getRegion(),end,center,start,quart1,quart2))
 
     @pyqtSlot()
     def on_actionResampling_triggered(self):

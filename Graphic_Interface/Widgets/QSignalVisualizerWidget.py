@@ -340,7 +340,7 @@ class QSignalVisualizerWidget(QWidget):
         #actualiza los cursores de zoom segun el area seleccionada por el usuario
         range = self.axesOscilogram.zoomRegion.getRegion()
         self.zoomCursor.min, self.zoomCursor.max = int(range[0]), int(range[1])
-        self.emit(SIGNAL("IntervalChanged"))
+        #self.emit(SIGNAL("IntervalChanged"))
 
 
     def dropEvent(self, event):
