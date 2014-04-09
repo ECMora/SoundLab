@@ -1,5 +1,5 @@
 class SerializedData:
-    def __init__(self,oscBack,oscPlot,oscGridX,oscGridY,powBack,powPlot,powGridX,powGridY, specBack,specGridX,specGridY, colorbar,region):
+    def __init__(self,oscBack,oscPlot,oscGridX,oscGridY,powBack,powPlot,powGridX,powGridY, specBack,specGridX,specGridY, colorbar,region,endColor,centerColor,startColor,quart1Color,quart2Color):
         self.osc_background = oscBack
         self.osc_plot = oscPlot
         self.osc_GridX =oscGridX
@@ -13,3 +13,8 @@ class SerializedData:
         self.spec_background = specBack
         self.colorBarState = colorbar
         self.histRange = region
+        self.endColor = endColor
+        self.startColor = startColor
+        self.quart1Color = quart1Color
+        self.centerColor = centerColor
+        self.quart2Color = quart2Color
