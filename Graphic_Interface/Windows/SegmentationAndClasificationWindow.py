@@ -92,6 +92,11 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.widget.refresh()
         self.hist.region.lineMoved()
         self.hist.region.lineMoveFinished()
+        self.spectralMeasurementLocation.CenterMeasurementColor = theme.centerColor
+        self.spectralMeasurementLocation.EndMeasurementColor = theme.endColor
+        self.spectralMeasurementLocation.Quartile1MeasurementColor = theme.quart1Color
+        self.spectralMeasurementLocation.StartMeasurementColor = theme.startColor
+        self.spectralMeasurementLocation.Quartile3MeasurementColor = theme.quart2Color
 
     @pyqtSlot()
     def on_actionView_Parameters_triggered(self):

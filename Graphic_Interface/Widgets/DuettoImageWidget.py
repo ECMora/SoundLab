@@ -46,11 +46,17 @@ class DuettoImageWidget(GraphicsView):
         self.viewBox.setAspectLocked(False)
         self.emitIntervalSpecChanged = True
         self.zoomRegion = pg.LinearRegionItem([0, 0])
+        #self.rectZoomRegion = pg.ROI([0,0],[0,0])
+        #
+        ### handles scaling both vertically and horizontally
+        #self.rectZoomRegion.addScaleHandle([1, 0], [0, 1])
+        #self.rectZoomEnable = True
+        #self.viewBox.addItem(self.rectZoomRegion)
+
         self.zoomRegion.sigRegionChanged.connect(self.on_zoomRegionChanged)
         self.viewBox.addItem(self.zoomRegion)
         self.makeZoom = None
         self.mousePressed = False
-        #self.viewBox.setRange(xRange=(0, 10), padding=0)
         self.mouseZoomEnabled = True
 
     PIXELS_OF_CURSORS_CHANGES = 5
@@ -166,3 +172,17 @@ class DuettoImageWidget(GraphicsView):
         if xPixel > maxx:
             xPixel = maxx
         return a + int(round((xPixel - minx) * (b - a) * 1. / (maxx - minx), 0))
+
+    def fromCanvasToClientY(self, yPixel):
+        """
+        Translates the coordinates from the canvas to its corresponding  index in the signal array
+        """
+        miny = self.viewBox.y()
+        maxy = self.viewBox.height() + miny
+        a, b = self.imageItem.getViewBox().viewRange()[1]
+        yPixel = maxy - yPixel
+        if yPixel < miny:
+            yPixel = miny
+        if yPixel > maxy:
+            yPixel = maxy
+        return a + int(round((yPixel - miny) * (b - a) * 1. / (maxy - miny), 0))

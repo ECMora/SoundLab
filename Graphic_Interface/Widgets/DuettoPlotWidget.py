@@ -104,8 +104,8 @@ class DuettoPlotWidget(pg.PlotWidget):
             self.setCursor(QCursor(QtCore.Qt.OpenHandCursor))
         else:
             self.setCursor(QCursor(QtCore.Qt.ArrowCursor))
-
         self.parent().emit(SIGNAL("IntervalChanged"))
+
 
     def mouseInsideZoomArea(self, xPixel):
         xIndex = self.fromCanvasToClient(xPixel)
