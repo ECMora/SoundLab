@@ -43,6 +43,7 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         self.hist = DuettoHorizontalHistogramWidget()
         self.widget.histogram = self.hist
+        self.pow_overlap = 90
         self.Theme = 'Themes\\RedBlackTheme.dth'
         self.defaultTheme = self.DeSerializeTheme(self.Theme)
         self.widget.spec_background = self.defaultTheme.spec_background
