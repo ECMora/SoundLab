@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="9f80b555-41eb-434c-b510-abe08206f059" name="Default" comment="added auto overlap that improves performance by not calculating more than what the user will see">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
+    <list default="true" id="9f80b555-41eb-434c-b510-abe08206f059" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="DuettoSystem.iws" />
@@ -465,7 +464,11 @@
       <created>1397140462088</created>
       <updated>1397140462088</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="added auto overlap that improves performance by not calculating more than what the user will see">
+      <created>1397143114869</created>
+      <updated>1397143114869</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TodoView" selected-index="4">
