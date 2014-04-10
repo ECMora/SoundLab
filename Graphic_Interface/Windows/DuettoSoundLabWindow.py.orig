@@ -42,7 +42,13 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.setupUi(self)
 
         self.hist = DuettoHorizontalHistogramWidget()
+<<<<<<< HEAD
         self.widget.histogram = self.hist
+        #SerializedData('000','fff',True,True,'000','fff',True,True,'000',True,True,self.hist.item.gradient.saveState(),[5,50])
+        #self.DeSerializeTheme(self.Theme)
+=======
+        self.pow_overlap = 90
+>>>>>>> 38ec9b21d51d1ac6b615acd706b5907ca0d22bce
         self.Theme = 'Themes\\RedBlackTheme.dth'
         self.defaultTheme = self.DeSerializeTheme(self.Theme)
         self.widget.spec_background = self.defaultTheme.spec_background
@@ -80,7 +86,11 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             {'name': 'Max frequency', 'type': 'float', 'value': 22, 'step': 0.1},
             {'name': 'FFT size', 'type': 'list', 'default':512, 'values': {'256': 256, '512': 512, '1024': 1024, '2048': 2048, 'Automatic': 512}, 'value':'Automatic' },
             {'name': 'FFT window', 'type': 'list', 'value':self.widget.specgramSettings.windows[0],'default':self.widget.specgramSettings.windows[0],'values': {"blackman": self.widget.specgramSettings.windows[3],"rectangular": self.widget.specgramSettings.windows[1], "Hanning": self.widget.specgramSettings.windows[2], "Hamming": self.widget.specgramSettings.windows[0],'bartlett':self.widget.specgramSettings.windows[4],'kaiser':self.widget.specgramSettings.windows[5],'None':self.widget.specgramSettings.windows[6]}},
+<<<<<<< HEAD
             {'name': 'FFT overlap', 'type': 'int', 'value':-1, 'limits': (-1, 99)},
+=======
+            {'name': 'FFT overlap', 'type': 'int', 'value':90, 'limits' : (-1,100)},
+>>>>>>> 38ec9b21d51d1ac6b615acd706b5907ca0d22bce
             {'name': 'Threshold', 'type': 'group', 'children': [
                 {'name': 'Min', 'type': 'float','step':0.1,'default': self.defaultTheme.histRange[0], 'value': self.defaultTheme.histRange[0]},
                 {'name': 'Max', 'type': 'float','step':0.1,'default': self.defaultTheme.histRange[1] , 'value': self.defaultTheme.histRange[1]},
