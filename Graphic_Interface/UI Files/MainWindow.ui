@@ -168,10 +168,24 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
     <property name="title">
      <string>Sound</string>
     </property>
+    <widget class="QMenu" name="menuPlay_Speed">
+     <property name="title">
+      <string>Play Speed</string>
+     </property>
+     <addaction name="action1_8x"/>
+     <addaction name="action1_4x"/>
+     <addaction name="action1_2x"/>
+     <addaction name="action1x"/>
+     <addaction name="action2x"/>
+     <addaction name="action4x"/>
+     <addaction name="action8x"/>
+    </widget>
     <addaction name="actionPlay_Sound"/>
     <addaction name="actionStop_Sound"/>
     <addaction name="actionPause_Sound"/>
     <addaction name="actionRecord"/>
+    <addaction name="separator"/>
+    <addaction name="menuPlay_Speed"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -275,6 +289,9 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
   <action name="actionExit">
    <property name="text">
     <string>Exit</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+X</string>
    </property>
   </action>
   <action name="actionZoomIn">
@@ -384,7 +401,7 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
     <string>Play Sound</string>
    </property>
    <property name="shortcut">
-    <string>Space</string>
+    <string>Ctrl+P</string>
    </property>
   </action>
   <action name="actionStop_Sound">
@@ -424,6 +441,9 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
    </property>
    <property name="text">
     <string>Save as</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
    </property>
   </action>
   <action name="actionCopy">
@@ -495,7 +515,7 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
     <string>Settings</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+P</string>
+    <string>Ctrl+Shift+S</string>
    </property>
   </action>
   <action name="actionRecord">
@@ -597,6 +617,65 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
    </property>
    <property name="shortcut">
     <string>Ctrl+Y</string>
+   </property>
+  </action>
+  <action name="action1x">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>1x</string>
+   </property>
+  </action>
+  <action name="action2x">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>2x</string>
+   </property>
+  </action>
+  <action name="action4x">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>4x</string>
+   </property>
+  </action>
+  <action name="action8x">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>8x</string>
+   </property>
+  </action>
+  <action name="action1_2x">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>1/2x</string>
+   </property>
+  </action>
+  <action name="action1_4x">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>1/4x</string>
+   </property>
+  </action>
+  <action name="action1_8x">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>1/8x</string>
    </property>
   </action>
   <zorder>dock_settings</zorder>

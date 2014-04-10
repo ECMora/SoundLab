@@ -5,7 +5,7 @@ import os
 import pyqtgraph
 import pyqtgraph.widgets.HistogramLUTWidget
 from pyqtgraph.parametertree import Parameter, ParameterTree, ParameterItem, registerParameterType
-from PyQt4.QtGui import QDialog, QMessageBox, QFileDialog
+from PyQt4.QtGui import QDialog, QMessageBox, QFileDialog, QActionGroup, QAction
 from PyQt4 import QtCore
 from PyQt4 import QtGui
 from PyQt4.QtCore import SIGNAL, pyqtSlot, QTimer
@@ -42,6 +42,7 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.setupUi(self)
 
         self.hist = DuettoHorizontalHistogramWidget()
+        self.widget.histogram = self.hist
         #SerializedData('000','fff',True,True,'000','fff',True,True,'000',True,True,self.hist.item.gradient.saveState(),[5,50])
         #self.DeSerializeTheme(self.Theme)
         self.Theme = 'Themes\\RedBlackTheme.dth'
@@ -77,7 +78,7 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
             {'name': 'FFT size', 'type': 'list', 'default':512, 'values': {'256': 256, '512': 512, '1024': 1024, '2048': 2048, 'Automatic': 512}, 'value':'Automatic' },
             {'name': 'FFT window', 'type': 'list', 'value':self.widget.specgramSettings.windows[0],'default':self.widget.specgramSettings.windows[0],'values': {"blackman": self.widget.specgramSettings.windows[3],"rectangular": self.widget.specgramSettings.windows[1], "Hanning": self.widget.specgramSettings.windows[2], "Hamming": self.widget.specgramSettings.windows[0],'bartlett':self.widget.specgramSettings.windows[4],'kaiser':self.widget.specgramSettings.windows[5],'None':self.widget.specgramSettings.windows[6]}},
-            {'name': 'FFT overlap', 'type': 'int', 'value':90, 'max' : 100},
+            {'name': 'FFT overlap', 'type': 'int', 'value':-1, 'limits': (-1, 99)},
             {'name': 'Threshold', 'type': 'group', 'children': [
                 {'name': 'Min', 'type': 'float','step':0.1,'default': self.defaultTheme.histRange[0], 'value': self.defaultTheme.histRange[0]},
                 {'name': 'Max', 'type': 'float','step':0.1,'default': self.defaultTheme.histRange[1] , 'value': self.defaultTheme.histRange[1]},
@@ -151,6 +152,16 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.widget.createContextCursor([self.actionCopy,self.actionCut,self.actionPaste,separator,
                                          self.actionPlay_Sound,self.actionPause_Sound,self.actionStop_Sound,self.actionRecord,separator2,
                                          self.action_Reverse,self.actionSilence,self.actionInsert_Silence])
+
+        g = QActionGroup(self)
+        g.addAction(self.action1_8x)
+        g.addAction(self.action1_4x)
+        g.addAction(self.action1_2x)
+        g.addAction(self.action1x)
+        g.addAction(self.action2x)
+        g.addAction(self.action4x)
+        g.addAction(self.action8x)
+        g.triggered.connect(self.on_g_triggered)
 
         QTimer.singleShot(0, self.on_load)
 
@@ -650,6 +661,12 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     @QtCore.pyqtSlot(int)
     def on_horizontalScrollBar_valueChanged(self, value):
         self.widget.changeRange(value, value + self.horizontalScrollBar.pageStep(), emit=False)
+
+    @pyqtSlot(QAction)
+    def on_g_triggered(self, action):
+        self.widget.stop()
+        self.widget.playerSpeed = {'1/8x': 12.5, '1/4x': 25, '1/2x': 50,
+                                   '1x': 100, '2x': 200, '4x': 400, '8x': 800}[str(action.text())]
 
     def loadAllColorBars(self):
         if os.path.exists(self.colorBarsPath):
