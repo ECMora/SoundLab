@@ -36,28 +36,28 @@ class SpecgramElement(TwoDimensionalElement):
             self.measurementLocation = location
             #width = (self.timeEndIndex-self.timeStartIndex)/5
             #height = (self.freqEndIndex-self.freqStartIndex)/5
-            width = min(self.timeEndIndex-self.timeStartIndex,2)
-            height = min(4,self.freqEndIndex-self.freqStartIndex)
+            width = min(self.timeEndIndex-self.timeStartIndex,max(4,(self.timeEndIndex-self.timeStartIndex)/5))
+            height = min(max(4,(self.freqEndIndex-self.freqStartIndex)/5),self.freqEndIndex-self.freqStartIndex)
             ypos = self.freqEndIndex-self.freqStartIndex
             xpos =  self.timeEndIndex-self.timeStartIndex
             #poner tooltips
             if(self.measurementLocation.Start):
-                start = QtGui.QGraphicsRectItem(QtCore.QRectF(self.timeStartIndex+ xpos*0,self.freqStartIndex+ypos*0,    width,    height))
+                start = QtGui.QGraphicsRectItem(QtCore.QRectF(self.timeStartIndex+ xpos*0,self.freqStartIndex+ypos*0,   width,    height))
                 start.setBrush(QtGui.QBrush(self.measurementLocation.StartMeasurementColor))
                 start.setToolTip("Element: "+ str(self.parentnumber) + "\n SubElement: "+str(self.number) +"\nStart Mesurement Location")
                 self.visual_locations.append([start,True])
             if(self.measurementLocation.Center):
-                center = QtGui.QGraphicsRectItem(QtCore.QRectF(self.timeStartIndex+ xpos*0.5-    width/2,self.freqStartIndex+ypos*0.5,    width,    height))
+                center = QtGui.QGraphicsRectItem(QtCore.QRectF(self.timeStartIndex+ xpos*0.5-    width/2,self.freqStartIndex+ypos*0.5 -height/2,    width,    height))
                 center.setBrush(QtGui.QBrush(self.measurementLocation.CenterMeasurementColor))
                 center.setToolTip("Element:"+  str(self.parentnumber) + "\n SubElement: "+str(self.number) +"\nCenter Mesurement Location")
                 self.visual_locations.append([center,True])
             if(self.measurementLocation.End):
-                end = QtGui.QGraphicsRectItem(QtCore.QRectF(self.timeStartIndex+ xpos*1-    width,self.freqStartIndex+ypos*1- width,    width,    height))
+                end = QtGui.QGraphicsRectItem(QtCore.QRectF(self.timeStartIndex+ xpos*1- width,self.freqStartIndex+ypos*1- height,    width,    height))
                 end.setBrush(QtGui.QBrush(self.measurementLocation.EndMeasurementColor))
                 end.setToolTip("Element:"+  str(self.parentnumber) + "\n SubElement: "+str(self.number) +"\nEnd Mesurement Location")
                 self.visual_locations.append([end,True])
             if(self.measurementLocation.Quartile25):
-                quartile1 = QtGui.QGraphicsRectItem(QtCore.QRectF(self.timeStartIndex+ xpos*0.25,self.freqStartIndex+ypos*0.25,width,    height))
+                quartile1 = QtGui.QGraphicsRectItem(QtCore.QRectF(self.timeStartIndex+ xpos*0.25 -width/4,self.freqStartIndex+ypos*0.25 -height/4,width,    height))
                 quartile1.setBrush(QtGui.QBrush(self.measurementLocation.Quartile1MeasurementColor))
                 quartile1.setToolTip("Element:"+  str(self.parentnumber) + "\n SubElement: "+str(self.number) +"\nQuartile 25% Mesurement Location")
                 self.visual_locations.append([quartile1,True])

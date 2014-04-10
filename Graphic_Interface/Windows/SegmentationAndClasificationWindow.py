@@ -27,8 +27,11 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         if(signal is  None):
              QtGui.QMessageBox.warning(QtGui.QMessageBox(), "Error", "There is no signal to analyze.")
         assert isinstance(signal,AudioSignal)
-        if parent is None:
-            self.osc_settings_contents = parent.t
+        if parent is not None:
+            self.widget.specgramSettings = parent.widget.specgramSettings
+        else:
+            self.widget.visualChanges =True
+            self.widget.refresh()
 
         self.widget.signalProcessor.signal = signal
         self.widget.mainCursor.min, self.widget.mainCursor.max = 0, len(self.widget.signalProcessor.signal.data)
@@ -38,7 +41,6 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.parameterTable_rowcolor_odd,self.parameterTable_rowcolor_even = QtGui.QColor(0, 0, 255,150),QtGui.QColor(0, 255, 0, 150)
         self.widget.visibleOscilogram = True
         self.widget.visibleSpectrogram = True
-        self.widget.visualChanges = True
         self.OscilogramThreshold = 0
         self.spectralMeasurementLocation = SpectralMeasurementLocation()
         self.widget.axesOscilogram.threshold.sigPositionChangeFinished.connect(self.updateThreshold)
@@ -49,8 +51,8 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         [
                       ["Start(s)", True, lambda x: x.startTime()],
                       ["End(s)", True, lambda x: x.endTime()],
-                      ["PeekToPeek", True, lambda x: x.peekToPeek()],
-                      ["RMS", True, lambda x: x.rms()],
+                      ["PeekToPeek(V)", True, lambda x: x.peekToPeek()],
+                      ["RMS(V)", True, lambda x: x.rms()],
                       ["StartToMax(s)", True,lambda x: x.distanceFromStartToMax()],
                       ["Duration(s)", True,lambda x: x.duration()],
                       ["Spectral Elems", True,lambda x: x.spectralElements()]
@@ -63,7 +65,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.widget.createContextCursor([self.actionZoomIn,self.actionZoom_out,self.actionZoom_out_entire_file,separator,self.actionCombined,self.actionOscilogram,self.actionSpectogram,separator,self.actionClear_Meditions,self.actionExcel_File,self.actionView_Parameters])
         self.hist = pg.widgets.HistogramLUTWidget.HistogramLUTItem()
         self.hist.setImageItem(self.widget.axesSpecgram.imageItem)
-        self.widget.refresh()
+
 
 
     def updateThreshold(self,line):
@@ -106,8 +108,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         visibility = self.actionTemporal_Elements.isChecked()
         for e in self.widget.Elements:
             e.visible = visibility
-            self.widget.visualChanges = True
-            self.widget.refresh(updateSpectrogram=False)
+        self.widget.drawElements()
 
     @pyqtSlot()
     def on_actionTemporal_Numbers_triggered(self):
@@ -130,8 +131,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         for e in self.widget.Elements:
             for e2 in e.twoDimensionalElements:
                 e2.visible = visibility
-        self.widget.visualChanges = True
-        self.widget.refresh(updateOscillogram=False)
+        self.widget.drawElements()
 
     @pyqtSlot()
     def on_actionExcel_File_triggered(self, name="",table = None):
@@ -182,7 +182,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
             raiz = root if raiz == "" else raiz
             for f in files:
                 sounds.append(os.path.join(root, f))
-
+        self.progressBarProcesed.setValue(0)
         processed = 1
         if self.rbttnDetection.isChecked():
 
@@ -226,7 +226,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                     processed += 1
                 except:
                     self.listwidgetProgress.addItem("Some problem found while processing ")
-                self.progressBarProcesed.setValue(round(100*(processed)/len(sounds)))
+                self.progressBarProcesed.setValue(round(100.0*(processed)/len(sounds)))
             if singlefile:
                 name = "DuettoMeditions"
                 #valorar si ya existe el fichero reescribirlo o guardalo con otro nombre
@@ -256,7 +256,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                         save.data = signal.data[len(signal.data)-left:]
                         save.save(os.path.join(directoryoutput,str(pieces+1)+"-"+signal.name()))
                     processed += 1
-                    self.progressBarProcesed.setValue(round((100*processed)/len(sounds)))
+                    self.progressBarProcesed.setValue(round((100.0*processed)/len(sounds)))
                     self.listwidgetProgress.addItem(signal.name()+" has been processed")
                 except:
                     print("some split problems")
@@ -288,9 +288,11 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     @pyqtSlot()
     def on_actionDetection_triggered(self):
-        elementsDetectorDialog = ElemDetectSettingsDialog(self)
+        elementsDetectorDialog = ElemDetectSettingsDialog(parent=self)
 
         elementsDetectorDialog.load_Theme(self.theme)
+
+
 
         elementsDetectorDialog.dsbxThreshold.setValue(self.detectionSettings["Threshold"])
         elementsDetectorDialog.sbxSoftFactor.setValue(self.detectionSettings["SoftFactor"])
