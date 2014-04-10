@@ -536,9 +536,9 @@ class QSignalVisualizerWidget(QWidget):
             self.axesSpecgram.imageItem.setImage(numpy.transpose(self._Z))
             self.axesSpecgram.imageItem.setRect(QRectF(self._from_osc_to_spec(self.mainCursor.min), 0,
                                                        self._Z.shape[1], self._Z.shape[0]))
+            YSpec = np.searchsorted(self.specgramSettings.freqs, [self.minYSpc*1000, self.maxYSpc*1000])
             self.axesSpecgram.viewBox.setRange(xRange=(self._from_osc_to_spec(self.mainCursor.min),
                                                        self._from_osc_to_spec(self.mainCursor.max)),
-            YSpec = np.searchsorted(self.specgramSettings.freqs,[self.minYSpc*1000, self.maxYSpc*1000])
                                                yRange=(0, self._Z.shape[0]), padding=0)
             self.updateSpectrogramColors()
         self.axesSpecgram.setBackground(self.spec_background)
@@ -547,6 +547,11 @@ class QSignalVisualizerWidget(QWidget):
         self.visualChanges = False
         if self.visibleElements:
             self.drawElements()
+
+        gem = self.parent().geometry()
+        self.parent().resize(gem.width()/3, gem.height())
+        self.parent().resize(gem.width(), gem.height())
+
 
     def updateSpectrogramColors(self):
         self.histogram.item.region.lineMoved()
