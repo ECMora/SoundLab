@@ -61,8 +61,11 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.statusbar.showMessage("Welcome to Duetto Sound Lab.", 5000)
         params = [
         {'name': 'Oscillogram Settings', 'type': 'group', 'children': [
-            {'name': 'Min amplitude', 'type': 'float', 'value': -100, 'step': 0.1},
-            {'name': 'Max amplitude', 'type': 'float', 'value': 100, 'step': 0.1},
+            {'name': 'Amplitude', 'type': 'group', 'children': [
+                 {'name': 'Min', 'type': 'float', 'value': -100, 'step': 0.1},
+                 {'name': 'Max', 'type': 'float', 'value': 100, 'step': 0.1},
+            ]},
+
             {'name': 'Grid', 'type': 'group', 'children': [
                 {'name': 'X', 'type': 'bool','default': self.defaultTheme.osc_GridX, 'value': self.defaultTheme.osc_GridX},
                 {'name': 'Y', 'type': 'bool','default':self.defaultTheme.osc_GridY , 'value': self.defaultTheme.osc_GridY},
@@ -372,11 +375,11 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 self.widget.osc_color = data
                 self.widget.visualChanges = True
                 self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
-            elif childName == 'Oscillogram Settings.Min amplitude':
+            elif childName == 'Oscillogram Settings.Amplitude.Min':
                 self.widget.minYOsc = data
                 self.widget.visualChanges = True
                 self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
-            elif childName == 'Oscillogram Settings.Max amplitude':
+            elif childName == 'Oscillogram Settings.Amplitude.Max':
                 self.widget.maxYOsc = data
                 self.widget.visualChanges = True
                 self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
