@@ -59,6 +59,8 @@ class UndoRedoManager:
         self.actionsList[self.actionIndex] = (undoAction,redoAction)
 
 
+
+
 BACK_COLOR = "gray"
 
 class OscXAxis(pg.AxisItem):
@@ -127,7 +129,7 @@ class QSignalVisualizerWidget(QWidget):
         self.minYOsc = -100
         self.maxYOsc =  100
         self.minYSpc = 0
-        self.maxYSpc = 100
+        self.maxYSpc = 22
 
         self.axesOscilogram.setMouseEnabled(x=False, y=False)
         self.axesOscilogram.getPlotItem().hideButtons()
@@ -534,9 +536,10 @@ class QSignalVisualizerWidget(QWidget):
                 osc_spec_ratio = 1.0 * (len(self.signalProcessor.signal.data) if not partial
                                         else (self.mainCursor.max - self.mainCursor.min))\
                                  / self._Z.shape[1]
+            YSpec = np.searchsorted(self.specgramSettings.freqs,[self.minYSpc*1000, self.maxYSpc*1000])
             self.axesSpecgram.viewBox.setRange(xRange=(self.mainCursor.min / osc_spec_ratio,
                                                          self.mainCursor.max / osc_spec_ratio),
-                                                 yRange=(0, self._Z.shape[0]), padding=0)
+                                                 yRange=(YSpec[0],YSpec[1]), padding=0)
         self.axesSpecgram.setBackground(self.spec_background)
         self.axesSpecgram.showGrid(x=self.spec_gridx,y=self.spec_gridy)
         self.refreshAxes()
@@ -782,6 +785,7 @@ class QSignalVisualizerWidget(QWidget):
         self.visualChanges = True
         self.axisXOsc.setFrequency(self.signalProcessor.signal.samplingRate)
         self.axisYOsc.setMaxVal(2**(self.signalProcessor.signal.bitDepth-1))
+        self.maxYSpc = self.signalProcessor.signal.samplingRate / 2000
         self.refresh()
         self.zoomIn()
         self.zoomNone()

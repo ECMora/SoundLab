@@ -61,11 +61,16 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.statusbar.showMessage("Welcome to Duetto Sound Lab.", 5000)
         params = [
         {'name': 'Oscillogram Settings', 'type': 'group', 'children': [
+<<<<<<< HEAD:Graphic_Interface/Windows/DuettoSoundLabWindow.py
             {'name': 'Amplitude', 'type': 'group', 'children': [
                  {'name': 'Min', 'type': 'float', 'value': -100, 'step': 0.1},
                  {'name': 'Max', 'type': 'float', 'value': 100, 'step': 0.1},
             ]},
 
+=======
+            {'name': 'Min amplitude', 'type': 'float', 'value': -100, 'step': 0.1},
+            {'name': 'Max amplitude', 'type': 'float', 'value': 100, 'step': 0.1},
+>>>>>>> 769fe4168ac080ff32cc86f4c9ed12058d5b5a1c:Graphic_Interface/Windows/DuettoSoundLabWindow.py
             {'name': 'Grid', 'type': 'group', 'children': [
                 {'name': 'X', 'type': 'bool','default': self.defaultTheme.osc_GridX, 'value': self.defaultTheme.osc_GridX},
                 {'name': 'Y', 'type': 'bool','default':self.defaultTheme.osc_GridY , 'value': self.defaultTheme.osc_GridY},
@@ -386,19 +391,19 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 self.widget.osc_color = data
                 self.widget.visualChanges = True
                 self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
-            elif childName == 'Oscillogram Settings.Min amplitude':
-                self.widget.minYOsc = data
-                self.widget.visualChanges = True
-                self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
-            elif childName == 'Oscillogram Settings.Max amplitude':
-                self.widget.maxYOsc = data
-                self.widget.visualChanges = True
-                self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
+<<<<<<< HEAD:Graphic_Interface/Windows/DuettoSoundLabWindow.py
             elif childName == 'Oscillogram Settings.Amplitude.Min':
                 self.widget.minYOsc = data
                 self.widget.visualChanges = True
                 self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
             elif childName == 'Oscillogram Settings.Amplitude.Max':
+=======
+            elif childName == 'Oscillogram Settings.Min amplitude':
+                self.widget.minYOsc = data
+                self.widget.visualChanges = True
+                self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
+            elif childName == 'Oscillogram Settings.Max amplitude':
+>>>>>>> 769fe4168ac080ff32cc86f4c9ed12058d5b5a1c:Graphic_Interface/Windows/DuettoSoundLabWindow.py
                 self.widget.maxYOsc = data
                 self.widget.visualChanges = True
                 self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
