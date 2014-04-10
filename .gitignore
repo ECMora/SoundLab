@@ -1,5 +1,4 @@
 
-/.idea
 *.pyc
 Duetto_Core/AudioSignals/AudioSignal.py.orig
 Duetto_Core/AudioSignals/WavFileSignal.py.orig
