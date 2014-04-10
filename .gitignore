@@ -1,3 +1,10 @@
 
 /.idea
 *.pyc
+Duetto_Core/AudioSignals/AudioSignal.py.orig
+Duetto_Core/AudioSignals/WavFileSignal.py.orig
+Duetto_Core/Detectors/ElementsDetectors/OneDimensionalElementsDetector.py.orig
+Graphic_Interface/UI Files/MainWindow.ui.orig
+Graphic_Interface/Widgets/DuettoImageWidget.py.orig
+Graphic_Interface/Widgets/DuettoPlotWidget.py.orig
+Graphic_Interface/Widgets/QSignalVisualizerWidget.py.orig
