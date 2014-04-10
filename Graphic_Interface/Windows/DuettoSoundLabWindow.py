@@ -62,8 +62,8 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.statusbar.showMessage("Welcome to Duetto Sound Lab.", 5000)
         params = [
         {'name': 'Oscillogram Settings', 'type': 'group', 'children': [
-            {'name': 'Min amplitude', 'type': 'float', 'value': 0, 'step': 0.1},
-            {'name': 'Max amplitude', 'type': 'float', 'value': 0, 'step': 0.1},
+            {'name': 'Min amplitude', 'type': 'float', 'value': -100, 'step': 0.1},
+            {'name': 'Max amplitude', 'type': 'float', 'value': 100, 'step': 0.1},
             {'name': 'Grid', 'type': 'group', 'children': [
                 {'name': 'X', 'type': 'bool','default': self.defaultTheme.osc_GridX, 'value': self.defaultTheme.osc_GridX},
                 {'name': 'Y', 'type': 'bool','default':self.defaultTheme.osc_GridY , 'value': self.defaultTheme.osc_GridY},
@@ -74,7 +74,8 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         ]},
 
         {'name': 'Spectrogram Settings', 'type': 'group', 'children': [
-
+            {'name': 'Min frequency', 'type': 'float', 'value': 0, 'step': 0.1},
+            {'name': 'Max frequency', 'type': 'float', 'value': 22, 'step': 0.1},
             {'name': 'FFT size', 'type': 'list', 'default':512, 'values': {'256': 256, '512': 512, '1024': 1024, '2048': 2048, 'Automatic': 512}, 'value':'Automatic' },
             {'name': 'FFT window', 'type': 'list', 'value':self.widget.specgramSettings.windows[0],'default':self.widget.specgramSettings.windows[0],'values': {"blackman": self.widget.specgramSettings.windows[3],"rectangular": self.widget.specgramSettings.windows[1], "Hanning": self.widget.specgramSettings.windows[2], "Hamming": self.widget.specgramSettings.windows[0],'bartlett':self.widget.specgramSettings.windows[4],'kaiser':self.widget.specgramSettings.windows[5],'None':self.widget.specgramSettings.windows[6]}},
             {'name': 'FFT overlap', 'type': 'int', 'value':90, 'max' : 100},
@@ -106,16 +107,16 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         ]
         self.ParamTree = Parameter.create(name='params', type='group', children=params)
         self.ParamTree.sigTreeStateChanged.connect(self.change)
-        self.t = ParameterTree()
-        self.t.setAutoScroll(True)
-        self.t.setFixedWidth(340)
+        self.parameterTree = ParameterTree()
+        self.parameterTree.setAutoScroll(True)
+        self.parameterTree.setFixedWidth(340)
 
-        self.t.setHeaderHidden(True)
-        self.t.setParameters(self.ParamTree, showTop=False)
+        self.parameterTree.setHeaderHidden(True)
+        self.parameterTree.setParameters(self.ParamTree, showTop=False)
 
         lay1 = QtGui.QVBoxLayout()
         lay1.setMargin(0)
-        lay1.addWidget(self.t)
+        lay1.addWidget(self.parameterTree)
 
         self.hist.setFixedWidth(340)
         self.hist.setFixedHeight(100)
@@ -312,6 +313,16 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             elif childName == 'Spectrogram Settings.ColorMap':
                 self.widget.axesSpecgram.getHistogramWidget().item._pixelVectorCache.append(data)
 
+            elif childName == 'Spectrogram Settings.Min frequency':
+                self.widget.minYSpc = data
+                self.widget.visualChanges = True
+                self.widget.refresh(dataChanged=True, updateOscillogram=False, updateSpectrogram=True)
+
+            elif childName == 'Spectrogram Settings.Max frequency':
+                self.widget.maxYSpc = data
+                self.widget.visualChanges = True
+                self.widget.refresh(dataChanged=True, updateOscillogram=False, updateSpectrogram=True)
+
             elif childName == 'Spectrogram Settings.FFT overlap':
                 self.widget.specgramSettings.overlap = data
                 self.widget.visualChanges = True
@@ -351,6 +362,14 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 self.widget.refresh(dataChanged=True, updateOscillogram=False, updateSpectrogram=False)
             elif childName == 'Oscillogram Settings.Plot color':
                 self.widget.osc_color = data
+                self.widget.visualChanges = True
+                self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
+            elif childName == 'Oscillogram Settings.Min amplitude':
+                self.widget.minYOsc = data
+                self.widget.visualChanges = True
+                self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
+            elif childName == 'Oscillogram Settings.Max amplitude':
+                self.widget.maxYOsc = data
                 self.widget.visualChanges = True
                 self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
 
