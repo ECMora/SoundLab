@@ -27,6 +27,11 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         if(signal is  None):
              QtGui.QMessageBox.warning(QtGui.QMessageBox(), "Error", "There is no signal to analyze.")
         assert isinstance(signal,AudioSignal)
+
+        self.hist = pg.widgets.HistogramLUTWidget.HistogramLUTItem()
+        self.hist.setImageItem(self.widget.axesSpecgram.imageItem)
+        self.widget.histogram.item = self.hist
+
         if parent is not None:
             self.widget.specgramSettings = parent.widget.specgramSettings
         else:
@@ -63,8 +68,6 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         separator = QtGui.QAction(self)
         separator.setSeparator(True)
         self.widget.createContextCursor([self.actionZoomIn,self.actionZoom_out,self.actionZoom_out_entire_file,separator,self.actionCombined,self.actionOscilogram,self.actionSpectogram,separator,self.actionClear_Meditions,self.actionExcel_File,self.actionView_Parameters])
-        self.hist = pg.widgets.HistogramLUTWidget.HistogramLUTItem()
-        self.hist.setImageItem(self.widget.axesSpecgram.imageItem)
 
 
 

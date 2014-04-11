@@ -112,6 +112,9 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
     <addaction name="actionZoomIn"/>
     <addaction name="actionZoom_out"/>
     <addaction name="actionZoom_out_entire_file"/>
+    <addaction name="separator"/>
+    <addaction name="actionZoom_Cursor"/>
+    <addaction name="actionPointer_Cursor"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="styleSheet">
@@ -676,6 +679,37 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
    </property>
    <property name="text">
     <string>1/8x</string>
+   </property>
+  </action>
+  <action name="actionZoom_Cursor">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Zoom Cursor</string>
+   </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
+   </property>
+   <property name="priority">
+    <enum>QAction::HighPriority</enum>
+   </property>
+  </action>
+  <action name="actionPointer_Cursor">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Pointer Cursor</string>
+   </property>
+   <property name="autoRepeat">
+    <bool>false</bool>
+   </property>
+   <property name="priority">
+    <enum>QAction::HighPriority</enum>
    </property>
   </action>
   <zorder>dock_settings</zorder>
