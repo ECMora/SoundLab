@@ -179,6 +179,7 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         QTimer.singleShot(0, self.on_load)
 
+
     def on_load(self):
         self.widget.visibleOscilogram = True
         self.widget.visibleSpectrogram = True
@@ -215,6 +216,7 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         data = pickle.load(file)
         file.close()
         return data
+
 
     @pyqtSlot()
     def on_actionSave_theme_triggered(self):
@@ -437,6 +439,22 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                               self.widget.osc_gridy, self.pow_spec_backg,self.pow_spec_plotColor,self.pow_spec_gridx,
                               self.pow_spec_gridy, self.widget.spec_background, self.widget.spec_gridx, self.widget.spec_gridy,
                               self.hist.item.gradient.saveState(),self.hist.item.region.getRegion(),end,center,start,quart1,quart2))
+
+    @pyqtSlot()
+    def on_actionZoom_Cursor_triggered(self):
+        if self.actionZoom_Cursor.isChecked():
+            self.actionPointer_Cursor.setChecked(False)
+            self.widget.setSelectedTool('ZoomCursor')
+        elif not self.actionPointer_Cursor.isChecked():
+            self.actionZoom_Cursor.setChecked(True)
+
+    @pyqtSlot()
+    def on_actionPointer_Cursor_triggered(self):
+        if self.actionPointer_Cursor.isChecked():
+            self.actionZoom_Cursor.setChecked(False)
+            self.widget.setSelectedTool('PointerCursor')
+        elif not self.actionZoom_Cursor.isChecked():
+            self.actionPointer_Cursor.setChecked(True)
 
     @pyqtSlot()
     def on_actionResampling_triggered(self):

@@ -113,7 +113,7 @@ class QSignalVisualizerWidget(QWidget):
 
     def __init__(self, parent):
         QWidget.__init__(self, parent)
-        self.histogram = None
+        self.histogram = pg.HistogramLUTWidget()
         self._Z = np.array([[0]])
         self.osc_gridx = True
         self.osc_gridy = True
@@ -190,6 +190,9 @@ class QSignalVisualizerWidget(QWidget):
 
         self._doRefresh.connect(self._refresh)
         self.playing.connect(self.notifyPlayingCursor)
+
+    def setSelectedTool(self,tool):
+        self.axesSpecgram.changeSelectedTool(tool)
 
     def load_Theme(self,theme):
         """
@@ -539,7 +542,7 @@ class QSignalVisualizerWidget(QWidget):
             YSpec = np.searchsorted(self.specgramSettings.freqs, [self.minYSpc*1000, self.maxYSpc*1000])
             self.axesSpecgram.viewBox.setRange(xRange=(self._from_osc_to_spec(self.mainCursor.min),
                                                        self._from_osc_to_spec(self.mainCursor.max)),
-                                               yRange=(0, self._Z.shape[0]), padding=0)
+                                               yRange=(YSpec[0], YSpec[1]), padding=0)
             self.updateSpectrogramColors()
         self.axesSpecgram.setBackground(self.spec_background)
         self.axesSpecgram.showGrid(x=self.spec_gridx, y=self.spec_gridy)
@@ -789,6 +792,7 @@ class QSignalVisualizerWidget(QWidget):
             self.axesOscilogram.zoomRegion.sigRegionChanged.connect(self.updatezoomcursor)
             self.signalProcessor.signal.play_finished = self.removePlayerLine
         self.visualChanges = True
+        self.axesSpecgram.resetCursors()
         self.axisXOsc.setFrequency(self.signalProcessor.signal.samplingRate)
         self.axisYOsc.setMaxVal(2**(self.signalProcessor.signal.bitDepth-1))
         self.maxYSpc = self.signalProcessor.signal.samplingRate / 2000

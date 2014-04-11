@@ -46,13 +46,12 @@ class DuettoImageWidget(GraphicsView):
         self.viewBox.setAspectLocked(False)
         self.emitIntervalSpecChanged = True
         self.zoomRegion = pg.LinearRegionItem([0, 0])
-        #self.rectZoomRegion = pg.ROI([0,0],[0,0])
-        #
-        ### handles scaling both vertically and horizontally
-        #self.rectZoomRegion.addScaleHandle([1, 0], [0, 1])
-        #self.rectZoomEnable = True
-        #self.viewBox.addItem(self.rectZoomRegion)
 
+        #pointerCursor-----------------------------------
+        self.pointerCursor = pg.ScatterPlotItem()
+        self.selectedTool = 'ZoomCursor'
+        self.mouseReleased = False
+        self.last = {}
         self.zoomRegion.sigRegionChanged.connect(self.on_zoomRegionChanged)
         self.viewBox.addItem(self.zoomRegion)
         self.makeZoom = None
@@ -61,6 +60,26 @@ class DuettoImageWidget(GraphicsView):
 
     PIXELS_OF_CURSORS_CHANGES = 5
     IntervalSpecChanged = pyqtSignal(int, int)
+
+    def resetCursors(self):
+        self.pointerCursor.clear()
+        self.mouseReleased = False
+
+    def changeSelectedTool(self,tool):
+        if tool != self.selectedTool:
+            self.selectedTool = tool
+            if tool == 'PointerCursor':
+                self.viewBox.removeItem(self.zoomRegion)
+                self.pointerCursor.clear()
+                self.viewBox.addItem(self.pointerCursor)
+                self.mouseZoomEnabled = False
+                self.mouseReleased = False
+            elif tool == 'ZoomCursor':
+                self.viewBox.removeItem(self.pointerCursor)
+                self.viewBox.addItem(self.zoomRegion)
+                self.zoomRegion.setRegion([0,0])
+
+            self.update()
 
     def showGrid(self,x=True,y=True):
         if x:
@@ -78,6 +97,22 @@ class DuettoImageWidget(GraphicsView):
             self.IntervalSpecChanged.emit(*rgn)
 
     def mouseMoveEvent(self, event):
+        if self.selectedTool == 'PointerCursor':
+            pg.GraphicsView.mouseMoveEvent(self, event)
+            self.pointerCursor.clear()
+            if self.mouseReleased:
+
+                self.pointerCursor.addPoints([self.last])
+            x = self.fromCanvasToClient(event.x())
+            y = self.fromCanvasToClientY(event.y())
+            self.pointerCursor.addPoints([{'pos':[ x, y ], 'pen': {'color': 'w', 'width': 2},'brush':pg.intColor(255, 255), 'symbol':'+', 'size':20}])
+            self.viewBox.update()
+            info = self.getFreqTimeAndIntensity(x,y)
+            self.setToolTip(str.format('Time: {0}s, Frequency: {1}, Intensity: {2}',info[0],info[1],info[2]))
+            #self.toolTip().show()
+
+            #calculates distance between points
+
         if not self.mouseZoomEnabled:
             return
         pg.GraphicsView.mouseMoveEvent(self, event)
@@ -96,6 +131,12 @@ class DuettoImageWidget(GraphicsView):
                 self.setCursor(QCursor(QtCore.Qt.ArrowCursor))
 
     def mousePressEvent(self, event):
+        if self.selectedTool == 'PointerCursor':
+            self.pointerCursor.clear()
+            self.last = {'pos':[self.fromCanvasToClient(event.x()),self.fromCanvasToClientY(event.y())], 'pen': {'color': 'w', 'width': 2},'brush':pg.intColor(255, 255), 'symbol':'+', 'size':20}
+            self.pointerCursor.addPoints([self.last])
+            self.mouseReleased = False
+            pg.GraphicsView.mousePressEvent(self,event)
         if not self.mouseZoomEnabled:
             return
         self.mousePressed = True
@@ -128,6 +169,8 @@ class DuettoImageWidget(GraphicsView):
             #self.zoomRegion.lineMoved()
 
     def mouseReleaseEvent(self, event):
+        if self.selectedTool == 'PointerCursor':
+            self.mouseReleased = True
         if not self.mouseZoomEnabled:
             return
         self.mousePressed = False
@@ -186,3 +229,6 @@ class DuettoImageWidget(GraphicsView):
         if yPixel > maxy:
             yPixel = maxy
         return a + int(round((yPixel - miny) * (b - a) * 1. / (maxy - miny), 0))
+
+    def getFreqTimeAndIntensity(self,x,y):
+        return [self.parent().specgramSettings.bins[x],self.parent().specgramSettings.freqs[y],self.parent().specgramSettings.Pxx[y][x]]

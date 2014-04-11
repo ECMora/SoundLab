@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'Graphic_Interface\UI Files\MainWindow.ui'
+# Form implementation generated from reading ui file 'C:\Users\Gaby\Desktop\DuettoSystem latest\Graphic_Interface\UI Files\MainWindow.ui'
 #
-# Created: Thu Apr 03 13:43:56 2014
-#      by: PyQt4 UI code generator 4.10
+# Created: Fri Apr 11 22:53:15 2014
+#      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,16 +12,7 @@ from PyQt4 import QtCore, QtGui
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
 except AttributeError:
-    def _fromUtf8(s):
-        return s
-
-try:
-    _encoding = QtGui.QApplication.UnicodeUTF8
-    def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig, _encoding)
-except AttributeError:
-    def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig)
+    _fromUtf8 = lambda s: s
 
 class Ui_DuettoMainWindow(object):
     def setupUi(self, DuettoMainWindow):
@@ -269,6 +260,17 @@ class Ui_DuettoMainWindow(object):
         self.action1_8x = QtGui.QAction(DuettoMainWindow)
         self.action1_8x.setCheckable(True)
         self.action1_8x.setObjectName(_fromUtf8("action1_8x"))
+        self.actionZoom_Cursor = QtGui.QAction(DuettoMainWindow)
+        self.actionZoom_Cursor.setCheckable(True)
+        self.actionZoom_Cursor.setChecked(True)
+        self.actionZoom_Cursor.setAutoRepeat(False)
+        self.actionZoom_Cursor.setPriority(QtGui.QAction.HighPriority)
+        self.actionZoom_Cursor.setObjectName(_fromUtf8("actionZoom_Cursor"))
+        self.actionPointer_Cursor = QtGui.QAction(DuettoMainWindow)
+        self.actionPointer_Cursor.setCheckable(True)
+        self.actionPointer_Cursor.setAutoRepeat(False)
+        self.actionPointer_Cursor.setPriority(QtGui.QAction.HighPriority)
+        self.actionPointer_Cursor.setObjectName(_fromUtf8("actionPointer_Cursor"))
         self.menuFile.addAction(self.actionNew)
         self.menuFile.addAction(self.actionOpen)
         self.menuFile.addAction(self.actionSave)
@@ -279,6 +281,9 @@ class Ui_DuettoMainWindow(object):
         self.menuTools.addAction(self.actionZoomIn)
         self.menuTools.addAction(self.actionZoom_out)
         self.menuTools.addAction(self.actionZoom_out_entire_file)
+        self.menuTools.addSeparator()
+        self.menuTools.addAction(self.actionZoom_Cursor)
+        self.menuTools.addAction(self.actionPointer_Cursor)
         self.menuGenerate.addAction(self.actionGenerate_White_Noise)
         self.menuGenerate.addAction(self.actionGenerate_Pink_Noise)
         self.menuEdit.addAction(self.actionCopy)
@@ -353,67 +358,67 @@ class Ui_DuettoMainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(DuettoMainWindow)
 
     def retranslateUi(self, DuettoMainWindow):
-        DuettoMainWindow.setWindowTitle(_translate("DuettoMainWindow", "Duetto Sound Lab", None))
-        self.menuFile.setTitle(_translate("DuettoMainWindow", "File", None))
-        self.menuTools.setTitle(_translate("DuettoMainWindow", "Tools", None))
-        self.menuEdit.setTitle(_translate("DuettoMainWindow", "Edit", None))
-        self.menuGenerate.setTitle(_translate("DuettoMainWindow", "Generate", None))
-        self.menuView.setTitle(_translate("DuettoMainWindow", "Analysis", None))
-        self.menuSound.setTitle(_translate("DuettoMainWindow", "Sound", None))
+        DuettoMainWindow.setWindowTitle(QtGui.QApplication.translate("DuettoMainWindow", "Duetto Sound Lab", None, QtGui.QApplication.UnicodeUTF8))
+        self.menuFile.setTitle(QtGui.QApplication.translate("DuettoMainWindow", "File", None, QtGui.QApplication.UnicodeUTF8))
+        self.menuTools.setTitle(QtGui.QApplication.translate("DuettoMainWindow", "Tools", None, QtGui.QApplication.UnicodeUTF8))
+        self.menuEdit.setTitle(QtGui.QApplication.translate("DuettoMainWindow", "Edit", None, QtGui.QApplication.UnicodeUTF8))
+        self.menuGenerate.setTitle(QtGui.QApplication.translate("DuettoMainWindow", "Generate", None, QtGui.QApplication.UnicodeUTF8))
+        self.menuView.setTitle(QtGui.QApplication.translate("DuettoMainWindow", "Analysis", None, QtGui.QApplication.UnicodeUTF8))
+        self.menuSound.setTitle(QtGui.QApplication.translate("DuettoMainWindow", "Sound", None, QtGui.QApplication.UnicodeUTF8))
         self.menuPlay_Speed.setTitle(QtGui.QApplication.translate("DuettoMainWindow", "Play Speed", None, QtGui.QApplication.UnicodeUTF8))
-        self.toolBar.setWindowTitle(_translate("DuettoMainWindow", "toolBar", None))
-        self.actionOpen.setText(_translate("DuettoMainWindow", "Open", None))
-        self.actionOpen.setShortcut(_translate("DuettoMainWindow", "Ctrl+O", None))
-        self.actionExit.setText(_translate("DuettoMainWindow", "Exit", None))
-        self.actionZoomIn.setText(_translate("DuettoMainWindow", "Zoom in", None))
+        self.dock_settings.setWindowTitle(QtGui.QApplication.translate("DuettoMainWindow", "Settings", None, QtGui.QApplication.UnicodeUTF8))
+        self.toolBar.setWindowTitle(QtGui.QApplication.translate("DuettoMainWindow", "toolBar", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionOpen.setText(QtGui.QApplication.translate("DuettoMainWindow", "Open", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionOpen.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Ctrl+O", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionExit.setText(QtGui.QApplication.translate("DuettoMainWindow", "Exit", None, QtGui.QApplication.UnicodeUTF8))
         self.actionExit.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Alt+X", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionZoom_out.setText(_translate("DuettoMainWindow", "Zoom out", None))
-        self.actionZoom_out.setShortcut(_translate("DuettoMainWindow", "-", None))
-        self.actionSelect_all.setText(_translate("DuettoMainWindow", "Select all", None))
-        self.actionSpectogram.setText(_translate("DuettoMainWindow", "Spectogram", None))
-        self.actionOscilogram.setText(_translate("DuettoMainWindow", "Oscillogram", None))
-        self.actionCombined.setText(_translate("DuettoMainWindow", "Combined", None))
-        self.actionNew.setText(_translate("DuettoMainWindow", "New", None))
-        self.actionNew.setShortcut(_translate("DuettoMainWindow", "Ctrl+N", None))
-        self.actionPower_Spectrum.setText(_translate("DuettoMainWindow", "Power Spectrum", None))
-        self.actionOscillogram_Settings.setText(_translate("DuettoMainWindow", "Oscillogram Settings", None))
-        self.actionSpectogram_Settings.setText(_translate("DuettoMainWindow", "Spectrogram Settings", None))
-        self.actionPower_Spectrum_Settings.setText(_translate("DuettoMainWindow", "Power Spectrum Settings", None))
-        self.actionPlay_Sound.setText(_translate("DuettoMainWindow", "Play Sound", None))
-        self.actionPlay_Sound.setShortcut(_translate("DuettoMainWindow", "Space", None))
-        self.actionStop_Sound.setText(_translate("DuettoMainWindow", "Stop Sound", None))
+        self.actionZoomIn.setText(QtGui.QApplication.translate("DuettoMainWindow", "Zoom in", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionZoomIn.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "+", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionZoom_out.setText(QtGui.QApplication.translate("DuettoMainWindow", "Zoom out", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionZoom_out.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "-", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSelect_all.setText(QtGui.QApplication.translate("DuettoMainWindow", "Select all", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSpectogram.setText(QtGui.QApplication.translate("DuettoMainWindow", "Spectogram", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionOscilogram.setText(QtGui.QApplication.translate("DuettoMainWindow", "Oscillogram", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionCombined.setText(QtGui.QApplication.translate("DuettoMainWindow", "Combined", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionNew.setText(QtGui.QApplication.translate("DuettoMainWindow", "New", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionNew.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Ctrl+N", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionPower_Spectrum.setText(QtGui.QApplication.translate("DuettoMainWindow", "Power Spectrum", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionOscillogram_Settings.setText(QtGui.QApplication.translate("DuettoMainWindow", "Oscillogram Settings", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSpectogram_Settings.setText(QtGui.QApplication.translate("DuettoMainWindow", "Spectrogram Settings", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionPower_Spectrum_Settings.setText(QtGui.QApplication.translate("DuettoMainWindow", "Power Spectrum Settings", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionPlay_Sound.setText(QtGui.QApplication.translate("DuettoMainWindow", "Play Sound", None, QtGui.QApplication.UnicodeUTF8))
         self.actionPlay_Sound.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Ctrl+P", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionPause_Sound.setShortcut(_translate("DuettoMainWindow", "P", None))
-        self.actionZoom_out_entire_file.setText(_translate("DuettoMainWindow", "Zoom out entire file", None))
-        self.actionSave.setText(_translate("DuettoMainWindow", "Save as", None))
-        self.actionCopy.setText(_translate("DuettoMainWindow", "Copy", None))
-        self.actionCopy.setShortcut(_translate("DuettoMainWindow", "Ctrl+C", None))
+        self.actionStop_Sound.setText(QtGui.QApplication.translate("DuettoMainWindow", "Stop Sound", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionPause_Sound.setText(QtGui.QApplication.translate("DuettoMainWindow", "Pause Sound", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionPause_Sound.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "P", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionZoom_out_entire_file.setText(QtGui.QApplication.translate("DuettoMainWindow", "Zoom out entire file", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSave.setText(QtGui.QApplication.translate("DuettoMainWindow", "Save as", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSave.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Ctrl+S", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionPaste.setShortcut(_translate("DuettoMainWindow", "Ctrl+V", None))
-        self.actionCut.setText(_translate("DuettoMainWindow", "Cut", None))
-        self.actionCut.setShortcut(_translate("DuettoMainWindow", "Ctrl+X", None))
-        self.actionHighest_frecuency.setText(_translate("DuettoMainWindow", "Highest frequency", None))
-        self.actionHighest_instant_frequency.setText(_translate("DuettoMainWindow", "Highest instant frequency ", None))
-        self.actionClear_Spectogram.setText(_translate("DuettoMainWindow", "Clear Spectrogram", None))
-        self.actionSettings.setText(_translate("DuettoMainWindow", "Settings", None))
-        self.actionSettings.setShortcut(_translate("DuettoMainWindow", "Ctrl+P", None))
-        self.actionRecord.setText(_translate("DuettoMainWindow", "Record", None))
-        self.action_Reverse.setText(_translate("DuettoMainWindow", "Reverse", None))
+        self.actionCopy.setText(QtGui.QApplication.translate("DuettoMainWindow", "Copy", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionCopy.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Ctrl+C", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionPaste.setText(QtGui.QApplication.translate("DuettoMainWindow", "Paste", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionPaste.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Ctrl+V", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionCut.setText(QtGui.QApplication.translate("DuettoMainWindow", "Cut", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionCut.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Ctrl+X", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionHighest_frecuency.setText(QtGui.QApplication.translate("DuettoMainWindow", "Highest frequency", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionHighest_instant_frequency.setText(QtGui.QApplication.translate("DuettoMainWindow", "Highest instant frequency ", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionClear_Spectogram.setText(QtGui.QApplication.translate("DuettoMainWindow", "Clear Spectrogram", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSettings.setText(QtGui.QApplication.translate("DuettoMainWindow", "Settings", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSettings.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Ctrl+Shift+S", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionSilence.setText(_translate("DuettoMainWindow", "Silence", None))
-        self.actionFilter.setText(_translate("DuettoMainWindow", "Filter", None))
-        self.actionSmart_Scale.setText(_translate("DuettoMainWindow", "Change Volume", None))
-        self.actionNormalize.setText(_translate("DuettoMainWindow", "Normalize", None))
-        self.actionResampling.setText(_translate("DuettoMainWindow", "Resampling", None))
-        self.actionGenerate_White_Noise.setText(_translate("DuettoMainWindow", "White Noise", None))
-        self.actionSegmentation_And_Clasification.setText(_translate("DuettoMainWindow", "Segmentation And Clasification", None))
-        self.actionEnvelope.setText(_translate("DuettoMainWindow", "Envelope", None))
-        self.actionGenerate_Pink_Noise.setText(_translate("DuettoMainWindow", "Pink Noise", None))
-        self.actionSave_theme.setText(_translate("DuettoMainWindow", "Save theme as", None))
-        self.actionLoad_Theme.setText(_translate("DuettoMainWindow", "Load theme", None))
-        self.actionDeselect.setText(_translate("DuettoMainWindow", "Deselect", None))
-        self.actionDeselect.setToolTip(_translate("DuettoMainWindow", "clear a zoom selection made by user", None))
-        self.actionDeselect.setShortcut(_translate("DuettoMainWindow", "Ctrl+D", None))
+        self.actionRecord.setText(QtGui.QApplication.translate("DuettoMainWindow", "Record", None, QtGui.QApplication.UnicodeUTF8))
+        self.action_Reverse.setText(QtGui.QApplication.translate("DuettoMainWindow", "Reverse", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionInsert_Silence.setText(QtGui.QApplication.translate("DuettoMainWindow", "Insert Silence", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSilence.setText(QtGui.QApplication.translate("DuettoMainWindow", "Silence", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionFilter.setText(QtGui.QApplication.translate("DuettoMainWindow", "Filter", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSmart_Scale.setText(QtGui.QApplication.translate("DuettoMainWindow", "Change Volume", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionNormalize.setText(QtGui.QApplication.translate("DuettoMainWindow", "Normalize", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionResampling.setText(QtGui.QApplication.translate("DuettoMainWindow", "Resampling", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionGenerate_White_Noise.setText(QtGui.QApplication.translate("DuettoMainWindow", "White Noise", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSegmentation_And_Clasification.setText(QtGui.QApplication.translate("DuettoMainWindow", "Segmentation And Clasification", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionEnvelope.setText(QtGui.QApplication.translate("DuettoMainWindow", "Envelope", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionGenerate_Pink_Noise.setText(QtGui.QApplication.translate("DuettoMainWindow", "Pink Noise", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSave_theme.setText(QtGui.QApplication.translate("DuettoMainWindow", "Save theme as", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionLoad_Theme.setText(QtGui.QApplication.translate("DuettoMainWindow", "Load theme", None, QtGui.QApplication.UnicodeUTF8))
         self.actionDeselect.setText(QtGui.QApplication.translate("DuettoMainWindow", "Deselect", None, QtGui.QApplication.UnicodeUTF8))
         self.actionDeselect.setToolTip(QtGui.QApplication.translate("DuettoMainWindow", "clear a zoom selection made by user", None, QtGui.QApplication.UnicodeUTF8))
         self.actionDeselect.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Ctrl+D", None, QtGui.QApplication.UnicodeUTF8))
@@ -428,6 +433,8 @@ class Ui_DuettoMainWindow(object):
         self.action1_2x.setText(QtGui.QApplication.translate("DuettoMainWindow", "1/2x", None, QtGui.QApplication.UnicodeUTF8))
         self.action1_4x.setText(QtGui.QApplication.translate("DuettoMainWindow", "1/4x", None, QtGui.QApplication.UnicodeUTF8))
         self.action1_8x.setText(QtGui.QApplication.translate("DuettoMainWindow", "1/8x", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionZoom_Cursor.setText(QtGui.QApplication.translate("DuettoMainWindow", "Zoom Cursor", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionPointer_Cursor.setText(QtGui.QApplication.translate("DuettoMainWindow", "Pointer Cursor", None, QtGui.QApplication.UnicodeUTF8))
 
 from Graphic_Interface.Widgets.QSignalVisualizerWidget import QSignalVisualizerWidget
 import icons_rc
