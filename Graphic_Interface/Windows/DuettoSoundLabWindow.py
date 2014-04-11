@@ -77,8 +77,10 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         ]},
 
         {'name': 'Spectrogram Settings', 'type': 'group', 'children': [
-            {'name': 'Min frequency', 'type': 'float', 'value': 0, 'step': 0.1},
-            {'name': 'Max frequency', 'type': 'float', 'value': 22, 'step': 0.1},
+            {'name': 'Frequency', 'type': 'group', 'children': [
+                {'name': 'Min', 'type': 'float', 'value': 0, 'step': 0.1},
+                {'name': 'Max', 'type': 'float', 'value': 22, 'step': 0.1},
+            ]},
             {'name': 'FFT size', 'type': 'list', 'default':512, 'values': {'256': 256, '512': 512, '1024': 1024, '2048': 2048, 'Automatic': 512}, 'value':'Automatic' },
             {'name': 'FFT window', 'type': 'list', 'value':self.widget.specgramSettings.windows[0],'default':self.widget.specgramSettings.windows[0],'values': {"blackman": self.widget.specgramSettings.windows[3],"rectangular": self.widget.specgramSettings.windows[1], "Hanning": self.widget.specgramSettings.windows[2], "Hamming": self.widget.specgramSettings.windows[0],'bartlett':self.widget.specgramSettings.windows[4],'kaiser':self.widget.specgramSettings.windows[5],'None':self.widget.specgramSettings.windows[6]}},
             {'name': 'FFT overlap', 'type': 'int', 'value':-1, 'limits': (-1, 99)},
@@ -344,15 +346,19 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             elif childName == 'Spectrogram Settings.ColorMap':
                 self.widget.axesSpecgram.getHistogramWidget().item._pixelVectorCache.append(data)
 
-            elif childName == 'Spectrogram Settings.Min frequency':
+            elif childName == 'Spectrogram Settings.Frequency.Min':
                 self.widget.minYSpc = data
                 self.widget.visualChanges = True
                 self.widget.refresh(dataChanged=True, updateOscillogram=False, updateSpectrogram=True)
+                self.hist.item.region.lineMoved()
+                self.hist.item.region.lineMoveFinished()
 
-            elif childName == 'Spectrogram Settings.Max frequency':
+            elif childName == 'Spectrogram Settings.Frequency.Max':
                 self.widget.maxYSpc = data
                 self.widget.visualChanges = True
                 self.widget.refresh(dataChanged=True, updateOscillogram=False, updateSpectrogram=True)
+                self.hist.item.region.lineMoved()
+                self.hist.item.region.lineMoveFinished()
 
             elif childName == 'Spectrogram Settings.FFT overlap':
                 self.widget.specgramSettings.overlap = data
@@ -614,8 +620,6 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     def on_actionNew_triggered(self):
         nfd = NewFileDialog(parent=self)
         if nfd.exec_():
-            #self.widget.visibleOscilogram = True
-            #self.widget.visibleSpectrogram = True
             self.widget.specgramSettings.NFFT = self.ParamTree.param('Spectrogram Settings').param('FFT size').value()
             self.widget.specgramSettings.overlap = self.ParamTree.param('Spectrogram Settings').param('FFT overlap').value()
             self.widget.openNew(nfd.SamplingRate, nfd.BitDepth, nfd.Duration, nfd.WhiteNoise)
@@ -627,12 +631,15 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         f = QFileDialog.getOpenFileName(self, "Select a file to open",
                                               filter="Wave Files (*.wav);;All Files (*)")
         if f != '':
-            #self.widget.visibleOscilogram = True
-            #self.widget.visibleSpectrogram = True
             self.widget.specgramSettings.NFFT = self.ParamTree.param('Spectrogram Settings').param('FFT size').value()
             self.widget.specgramSettings.overlap = self.ParamTree.param('Spectrogram Settings').param('FFT overlap').value()
             self.widget.open(f)
             self.setWindowTitle("Duetto Sound Lab - " + self.widget.signalProcessor.signal.name())
+
+            self.ParamTree.param('Spectrogram Settings').param('Frequency').param('Min').setValue(self.widget.minYSpc)
+            self.ParamTree.param('Spectrogram Settings').param('Frequency').param('Min').setDefault(self.widget.minYSpc)
+            self.ParamTree.param('Spectrogram Settings').param('Frequency').param('Max').setValue(self.widget.maxYSpc)
+            self.ParamTree.param('Spectrogram Settings').param('Frequency').param('Max').setDefault(self.widget.maxYSpc)
 
             self.hist.item.region.lineMoved()
             self.hist.item.region.lineMoveFinished()
