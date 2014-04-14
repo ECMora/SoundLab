@@ -59,7 +59,6 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.pow_spec_gridy = self.defaultTheme.pow_GridY
         self.statusbar = self.statusBar()
         self.statusbar.setSizeGripEnabled(False)
-        self.statusbar.showMessage("Welcome to Duetto Sound Lab.", 5000)
         params = [
         {'name': 'Oscillogram Settings', 'type': 'group', 'children': [
             {'name': 'Amplitude', 'type': 'group', 'children': [
@@ -150,6 +149,7 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.dock_settings.setVisible(False)
         self.dock_settings.setFixedWidth(350)
 
+        self.widget.axesSpecgram.PointerSpecChanged.connect(self.updateStatusBar)
         self.connect(self.widget, SIGNAL("IntervalChanged"), self.updatePowSpecWin)
         self.NFFT_pow = 512
 
@@ -179,6 +179,8 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         QTimer.singleShot(0, self.on_load)
 
+    def updateStatusBar(self,line):
+        self.statusbar.showMessage(line)
 
     def on_load(self):
         self.widget.visibleOscilogram = True
@@ -187,6 +189,7 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.widget.specgramSettings.overlap = self.ParamTree.param('Spectrogram Settings').param('FFT overlap').value()
         self.widget.openNew(44100, 16, 5., whiteNoise=False)
         self.setWindowTitle("Duetto Sound Lab - (new)")
+        self.statusbar.showMessage("Welcome to Duetto Sound Lab.")
 
     def updateRegionTheme(self):
         reg = self.hist.item.region.getRegion()
@@ -421,7 +424,6 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 self.widget.maxYOsc = data
                 self.widget.visualChanges = True
                 self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
-
             #print('  parameter: %s' % childName)
             #print('  change:    %s' % change)
             #print('  data:      %s' % str(data))
