@@ -150,6 +150,7 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.dock_settings.setFixedWidth(350)
 
         self.widget.axesSpecgram.PointerSpecChanged.connect(self.updateStatusBar)
+        self.widget.axesOscilogram.PointerOscChanged.connect(self.updateStatusBar)
         self.connect(self.widget, SIGNAL("IntervalChanged"), self.updatePowSpecWin)
         self.NFFT_pow = 512
 

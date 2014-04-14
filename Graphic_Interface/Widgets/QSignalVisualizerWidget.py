@@ -193,6 +193,7 @@ class QSignalVisualizerWidget(QWidget):
 
     def setSelectedTool(self,tool):
         self.axesSpecgram.changeSelectedTool(tool)
+        self.axesOscilogram.changeSelectedTool(tool)
 
     def load_Theme(self,theme):
         """
