@@ -16,6 +16,7 @@ from Duetto_Core.Segmentation.Elements.OneDimensionalElement import SpectralMeas
 from ..Dialogs.elemDetectSettings import ElemDetectSettingsDialog
 from SegmentationAndClasificationWindowUI import Ui_MainWindow
 
+
 class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     def __init__(self, parent=None,signal=None):
@@ -70,6 +71,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         separator = QtGui.QAction(self)
         separator.setSeparator(True)
         self.widget.createContextCursor([self.actionZoomIn,self.actionZoom_out,self.actionZoom_out_entire_file,separator,self.actionCombined,self.actionOscilogram,self.actionSpectogram,separator,self.actionClear_Meditions,self.actionMeditions,self.actionView_Parameters])
+        self.windowProgressDetection = QtGui.QProgressBar(self.widget)
         self.hist = pg.widgets.HistogramLUTWidget.HistogramLUTItem()
         self.hist.setImageItem(self.widget.axesSpecgram.imageItem)
 
@@ -89,6 +91,14 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
     @QtCore.pyqtSlot(int)
     def on_horizontalScrollBar_valueChanged(self, value):
         self.widget.changeRange(value, value + self.horizontalScrollBar.pageStep(), emit=False)
+
+
+    @pyqtSlot()
+    def on_actionFull_Screen_triggered(self):
+        if self.actionFull_Screen.isChecked():
+            self.showFullScreen()
+        else:
+            self.showNormal()
 
     def getspectralParameters(self, spectralMeasurementLocation):
         """
@@ -135,6 +145,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
     @pyqtSlot(bool)
     def setVisibleThreshold(self,bool):
         self.widget.axesOscilogram.setVisibleThreshold(bool)
+        self.widget.visibleEnvelope = bool
 
     def load_Theme(self,theme):
         self.theme = theme
@@ -206,6 +217,14 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
             QtGui.QMessageBox.warning(QtGui.QMessageBox(), "Error", "The Oscilogram plot widget is not visible.\n You should see the data that you are going to save.")
 
     @pyqtSlot()
+    def on_actionCombined_Image_triggered(self):
+        if self.widget.visibleOscilogram and self.widget.visibleSpectrogram:
+            self.saveImage(self.widget,"graph")
+        else:
+            QtGui.QMessageBox.warning(QtGui.QMessageBox(), "Error", "One of the plot widgets is not visible.\n You should see the data that you are going to save.")
+
+
+    @pyqtSlot()
     def on_actionSpecgram_Image_triggered(self):
         if self.widget.visibleSpectrogram:
             self.saveImage(self.widget.axesSpecgram,"specgram")
@@ -268,14 +287,14 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
             return
         sounds = [] #the files
         raiz = ""
+
         for root, dirs, files in os.walk(directoryinput):
             raiz = root if raiz == "" else raiz
             for f in files:
                 sounds.append(os.path.join(root, f))
         self.progressBarProcesed.setValue(0)
-        processed = 1
+        processed = 0
         if self.rbttnDetection.isChecked():
-
             detector = OneDimensionalElementsDetector()
 
             singlefile = self.cbxSingleFile.isChecked()
@@ -322,10 +341,12 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                     else:
                         self.on_actionMeditions_triggered(os.path.join(directoryoutput,signalProcessor.signal.name()+".xls"),table)
                     self.listwidgetProgress.addItem(signalProcessor.signal.name()+" has been processed")
+                    self.listwidgetProgress.update()
                     processed += 1
                 except:
                     self.listwidgetProgress.addItem("Some problem found while processing ")
                 self.progressBarProcesed.setValue(round(100.0*(processed)/len(sounds)))
+                self.progressBarProcesed.update()
                 #valorar si ya existe el fichero reescribirlo o guardalo con otro noBOx signal.samplingRate
                 if singlefile:
                     wb.save(os.path.join(directoryoutput,"Duetto Sound Lab Meditions.xls"))
@@ -351,8 +372,10 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                         save.data = signal.data[len(signal.data)-left:]
                         save.save(os.path.join(directoryoutput,str(pieces+1)+"-"+signal.name()))
                     processed += 1
-                    self.progressBarProcesed.setValue(round((100.0*processed)/len(sounds)))
+                    self.progressBarProcesed.setValue(100.0*processed/len(sounds))
                     self.listwidgetProgress.addItem(signal.name()+" has been processed")
+                    self.progressBarProcesed.update()
+                    self.listwidgetProgress.update()
                 except:
                     print("some split problems")
         self.progressBarProcesed.setValue(100)
@@ -462,7 +485,8 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.QUARTILE25][0]  = elementsDetectorDialog.cbxmeasurementLocationQuartile25.isChecked()#25 % medition
         self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.QUARTILE75][0]  = elementsDetectorDialog.cbxmeasurementLocationQuartile75.isChecked()#75 % medition
 
-
+    def updateDetectionProgressBar(self, x):
+        self.windowProgressDetection.setValue(x)
 
     @pyqtSlot()
     def on_actionDetection_triggered(self):
@@ -477,13 +501,17 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                 spectralparamsTomeasure = self.getspectralParameters(self.spectralMeasurementLocation)
 
                 #locations is the amount of measurements to make
-
+                self.windowProgressDetection.resize(self.widget.width()/3, self.windowProgressDetection.size().height())
+                self.windowProgressDetection.move(self.widget.x()+self.widget.width()/3,self.widget.y()-self.windowProgressDetection.height()/2 + self.widget.height()/2)
+                self.windowProgressDetection.show()
                 self.widget.axesOscilogram.threshold.setValue((10.0**((60+self.detectionSettings["Threshold"])/20.0))*(2**self.widget.signalProcessor.signal.bitDepth)/1000.0)
                 self.widget.detectElements(abs(self.detectionSettings["Threshold"]), self.detectionSettings["Decay"],   self.detectionSettings["MinSize"],
                                            self.detectionSettings["SoftFactor"], self.detectionSettings["MergeFactor"], abs(self.detectionSettings["Threshold2"]),
                                            threshold_spectral=self.detectionSettings["ThresholdSpectral"],
                                            minsize_spectral=(self.detectionSettings["minSizeFreqSpectral"],self.detectionSettings["minSizeTimeSpectral"]),
-                                           location= self.spectralMeasurementLocation)
+                                           location= self.spectralMeasurementLocation, progress=self.updateDetectionProgressBar, findSpectralSublements = elementsDetectorDialog.cbxSpectralSubelements.isChecked())
+
+
 
                 self.tableParameterOscilogram.clear()
                 self.tableParameterOscilogram.setRowCount(len(self.widget.Elements))
@@ -491,21 +519,32 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                 columnNames = [label[0] for label in paramsTomeasure]
                 columnNames.extend([label[0] for label in spectralparamsTomeasure])
                 self.tableParameterOscilogram.setHorizontalHeaderLabels(columnNames)
+                self.updateDetectionProgressBar(95)
                 for i in range(self.tableParameterOscilogram.rowCount()):
                     for j,prop in enumerate(paramsTomeasure):
-                        item = QtGui.QTableWidgetItem(str(prop[2](self.widget.Elements[i])))
-                        item.setBackgroundColor(self.parameterTable_rowcolor_odd if i%2==0 else self.parameterTable_rowcolor_even)
+                        try:
+                            item = QtGui.QTableWidgetItem(str(prop[2](self.widget.Elements[i])))
+                            item.setBackgroundColor(self.parameterTable_rowcolor_odd if i%2==0 else self.parameterTable_rowcolor_even)
+                        except:
+                            item = QtGui.QTableWidgetItem("Error")
                         self.tableParameterOscilogram.setItem(i, j, item)
+
                     for x,prop in enumerate(spectralparamsTomeasure):
-                        item = QtGui.QTableWidgetItem(str(prop[1](self.widget.Elements[i],prop[2])))
-                        item.setBackgroundColor(self.parameterTable_rowcolor_odd if i%2==0 else self.parameterTable_rowcolor_even)
+                        try:
+                            item = QtGui.QTableWidgetItem(str(prop[1](self.widget.Elements[i],prop[2])))
+                            item.setBackgroundColor(self.parameterTable_rowcolor_odd if i%2==0 else self.parameterTable_rowcolor_even)
+                        except:
+                            item = QtGui.QTableWidgetItem("Error")
                         self.tableParameterOscilogram.setItem(i, len(paramsTomeasure) + x, item)
 
+                self.updateDetectionProgressBar(100)
 
             except:
                 print("some detection errors")
+                self.windowProgressDetection.hide()
             self.hist.region.lineMoved()
             self.hist.region.lineMoveFinished()
+            self.windowProgressDetection.hide()
 
 
     @pyqtSlot()
@@ -519,7 +558,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     @QtCore.pyqtSlot()
     def on_actionCombined_triggered(self):
-        self.widget.visibleOscilogram=True
+        self.widget.visibleOscilram=True
         self.widget.visibleSpectrogram=True
         self.widget.refresh(dataChanged=False)
         self.hist.region.lineMoved()

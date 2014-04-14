@@ -35,15 +35,21 @@ class SignalProcessor:
             raise IndexError()
 
 
-def envelope(data, decay=1):
+def envelope(data, decay=1,progress= None,position= (5,20)):
     """
     decay is the min number of samples in data that separates two elements
     """
+    progress_interval = position[1]-position[0]
+    if progress is not None:
+        progress(position[0]+progress_interval/10.0)
     rectified = np.array(abs(data))
+    if progress is not None:
+        progress(position[0]+progress_interval/5.0)
     i = 1
     arr = np.zeros(len(rectified), dtype=np.int32)
     current = rectified[0]
     fall_init = None
+    progress_size = len(arr)/8.0
     while i < len(arr):
         if fall_init is not None:
             value = rectified[fall_init] - rectified[fall_init]*(i-fall_init)/decay
@@ -54,6 +60,8 @@ def envelope(data, decay=1):
             arr[i-1] = current
         current = rectified[i]
         i += 1
+        if i % progress_size == 0 and progress is not None:
+            progress(position[0]+(i/progress_size)*progress_interval/10.0)
     arr[-1] = current
     return arr
 

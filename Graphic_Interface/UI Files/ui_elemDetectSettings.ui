@@ -19,7 +19,6 @@
      <property name="toolTip">
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Signal to learn about algorithm parameters&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
      </property>
-     <zorder>groupBox_2</zorder>
     </widget>
    </item>
    <item row="0" column="1">
@@ -36,6 +35,9 @@
      <layout class="QGridLayout" name="gridLayout_2">
       <item row="1" column="0">
        <widget class="QDockWidget" name="dockWidgetEspgram">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
           <horstretch>0</horstretch>
@@ -102,6 +104,9 @@
            <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="0,1,1">
             <item>
              <widget class="QLabel" name="label_7">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
               <property name="toolTip">
                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Minimum size of spectral subelements in ms and Khz&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
@@ -134,11 +139,14 @@
           </item>
           <item row="0" column="1">
            <widget class="QCheckBox" name="cbxSpectralSubelements">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
             <property name="text">
              <string>Detect Spectral Subelements</string>
             </property>
             <property name="checked">
-             <bool>true</bool>
+             <bool>false</bool>
             </property>
            </widget>
           </item>

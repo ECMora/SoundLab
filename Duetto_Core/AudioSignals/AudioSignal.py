@@ -1,3 +1,4 @@
+import os
 from string import rfind
 from PyQt4.QtCore import pyqtSignal
 from PyQt4.QtGui import QMessageBox
@@ -26,6 +27,7 @@ class AudioSignal:
         self.recordNotifier = None
         self.playNotifier = None
 
+
     def generateWhiteNoise(self, duration=1, begin_at=0):
         wn = np.array([np.random.uniform(-2 ** (self.bitDepth - 1), 2 ** self.bitDepth - 1) for i in
                        range(duration * self.samplingRate / 1000)])
@@ -44,16 +46,7 @@ class AudioSignal:
             self.data = np.zeros(samplingRate * duration, dt)
 
     def name(self):
-        if len(self.path) > 0:
-            x = rfind(str(self.path), "\\")
-            y = rfind(str(self.path), "/")
-            index = max(x, y)
-
-            if index > 0:
-                return self.path[index + 1:]
-            else:
-                return ""
-        return "Error"
+        return os.path.basename(str(self.path))
 
     def set_currentChannel(self, channel):
         if not 0 <= channel <= self.channels:
@@ -77,7 +70,7 @@ class AudioSignal:
             from Duetto_Core.SignalProcessors.FilterSignalProcessor import FilterSignalProcessor, FILTER_TYPE
 
             f = FilterSignalProcessor(self)
-            self.data = f.filter(filterType=FILTER_TYPE().LOW_PASS, Fc=samplinRate / 2).data
+            f.filter(filterType=FILTER_TYPE().LOW_PASS, Fc=samplinRate/2)
             self.data = np.array(
                 self.data[[int(round(index * frac)) for index in range(int(np.floor(len(self.data) / frac)))]])
         else:
@@ -220,5 +213,6 @@ class AudioSignal:
             if (output and self.playAudio.get_device_info_by_index(i)["maxInputChannels"] > 0) or \
                     (not output and self.playAudio.get_device_info_by_index(i)["maxOutputChannels"] > 0):
                 return i
+
         raise Exception("No index found")
 

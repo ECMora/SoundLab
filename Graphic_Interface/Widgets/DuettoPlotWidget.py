@@ -57,6 +57,7 @@ class DuettoPlotWidget(pg.PlotWidget):
             else:
                 self.setCursor(QCursor(QtCore.Qt.ArrowCursor))
 
+
     def mousePressEvent(self, event):
         if not self.mouseZoomEnabled:
             return

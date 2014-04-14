@@ -69,6 +69,6 @@ class FilterSignalProcessor(SignalProcessor):
              self.signal.data=array(real(ifft(data_frec)[0:indexTo-indexFrom]),numpy.int32)
         else:
             self.signal.data=concatenate((self.signal.data[0:indexFrom],array(real(ifft(data_frec)[0:indexTo-indexFrom]),numpy.int32),self.signal.data[indexTo:]))
-        return self.signal
+
 
 

@@ -1,4 +1,5 @@
 import sys
+from apptools.undo.action.undo_action import UndoAction
 from pyqtgraph.Qt import QtCore, QtGui
 import numpy
 import os
@@ -13,6 +14,7 @@ from Graphic_Interface.Dialogs.NewFileDialog import NewFileDialog
 from Graphic_Interface.Widgets.DuettoHistogram import DuettoHorizontalHistogramItem, DuettoHorizontalHistogramWidget
 from SegmentationAndClasificationWindow import SegmentationAndClasificationWindow
 from Duetto_Core.SignalProcessors.FilterSignalProcessor import FILTER_TYPE
+from Graphic_Interface.UndoRedoActions import *
 from MainWindow import Ui_DuettoMainWindow
 from Graphic_Interface.Widgets.MyPowerSpecWindow import PowerSpectrumWindow
 from Graphic_Interface.Dialogs import InsertSilenceDialog as sdialog, FilterOptionsDialog as filterdg, ChangeVolumeDialog as cvdialog
@@ -35,16 +37,17 @@ class ChangeVolumeDialog(cvdialog.Ui_Dialog, QDialog):
 class FilterDialog(filterdg.Ui_Dialog, QDialog):
     pass
 
-class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
+class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     dropchanged = QtCore.pyqtSignal(QtCore.QMimeData)
     def __init__(self, parent=None):
-        super(DuettoSoundLabMAinWindow, self).__init__(parent)
+        super(DuettoSoundLabWindow, self).__init__(parent)
         self.setupUi(self)
+
 
         self.hist = DuettoHorizontalHistogramWidget()
         #SerializedData('000','fff',True,True,'000','fff',True,True,'000',True,True,self.hist.item.gradient.saveState(),[5,50])
         #self.DeSerializeTheme(self.Theme)
-        self.Theme = 'Themes\\RedBlackTheme.dth'
+        self.Theme = "Utils\\Themes\\RedBlackTheme.dth"
         self.defaultTheme = self.DeSerializeTheme(self.Theme)
         self.widget.spec_background = self.defaultTheme.spec_background
         self.widget.osc_background = self.defaultTheme.osc_background
@@ -59,7 +62,8 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.pow_spec_gridy = self.defaultTheme.pow_GridY
         self.statusbar = self.statusBar()
         self.statusbar.setSizeGripEnabled(False)
-        self.statusbar.showMessage("Welcome to Duetto Sound Lab.", 5000)
+        self.widget.statusbar = self.statusbar
+        self.statusbar.showMessage("Welcome to Duetto Sound Lab", 5000)
         params = [
         {'name': 'Oscillogram Settings', 'type': 'group', 'children': [
             {'name': 'Min amplitude', 'type': 'float', 'value': 0, 'step': 0.1},
@@ -135,6 +139,9 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.dock_settings.setVisible(False)
         self.dock_settings.setFixedWidth(350)
 
+        self.filesInFolder = []
+        self.filesInFolderIndex = -1
+
         self.connect(self.widget, SIGNAL("IntervalChanged"), self.updatePowSpecWin)
         self.NFFT_pow = 512
 
@@ -153,6 +160,14 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                                          self.action_Reverse,self.actionSilence,self.actionInsert_Silence])
 
         QTimer.singleShot(0, self.on_load)
+
+    def folderFiles(self,folder):
+        files = []
+        for root, dirs, filenames in os.walk(folder):
+            for f in filenames:
+                files.append(root+"/"+f)   #cambio provisional mientras el sistema no sea multiplataforma
+        return files
+
 
     def on_load(self):
         self.widget.visibleOscilogram = True
@@ -244,7 +259,11 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         self.widget.visibleOscilogram = True
         self.widget.visibleSpectrogram = True
-        self.widget.open(mimeUrl[1:len(mimeUrl)])
+        path = mimeUrl[1:len(mimeUrl)]
+        path_base = os.path.split(path)[0]
+        self.filesInFolder = self.folderFiles(path_base)
+        self.filesInFolderIndex = self.filesInFolder.index(path)
+        self.widget.open(path)
         self.setWindowTitle("Duetto Sound Lab - " + self.widget.signalProcessor.signal.name())
         self.hist.item.region.lineMoved()
         self.hist.item.region.lineMoveFinished()
@@ -366,6 +385,7 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                               self.widget.osc_gridy, self.pow_spec_backg,self.pow_spec_plotColor,self.pow_spec_gridx,
                               self.pow_spec_gridy, self.widget.spec_background, self.widget.spec_gridx, self.widget.spec_gridy,
                               self.hist.item.gradient.saveState(),self.hist.item.region.getRegion()))
+        self.widget.undoRedoManager.clearActions()
 
     @pyqtSlot()
     def on_actionResampling_triggered(self):
@@ -377,6 +397,7 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         if resamplingDialogWindow.exec_():
             val = resamplingDialog.insertSpinBox.value()
             if val > MIN_SAMPLING_RATE and val < MAX_SAMPLING_RATE:
+                self.widget.undoRedoManager.addAction(ResamplingAction(self.widget.signalProcessor.signal,val))
                 self.widget.resampling(val)
             else:
                 if val < MIN_SAMPLING_RATE:
@@ -388,6 +409,8 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     @pyqtSlot()
     def on_actionCut_triggered(self):
+        start, end = self.widget.getIndexFromAndTo()
+        self.widget.undoRedoManager.addAction(CutAction(self.widget.signalProcessor.signal,start,end))
         self.widget.cut()
         self.hist.item.region.lineMoved()
         self.hist.item.region.lineMoveFinished()
@@ -400,6 +423,8 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     @pyqtSlot()
     def on_actionPaste_triggered(self):
+        start, _ = self.widget.getIndexFromAndTo()
+        self.widget.undoRedoManager.addAction(PasteAction(self.widget.signalProcessor.signal,start,self.widget.editionSignalProcessor.clipboard))
         self.widget.paste()
         self.hist.item.region.lineMoved()
         self.hist.item.region.lineMoveFinished()
@@ -428,6 +453,8 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 function = scaleDialog.cboxModulationType.currentText()
             fade = "IN" if scaleDialog.rbuttonFadeIn.isChecked() else (
                 "OUT" if scaleDialog.rbuttonFadeOut.isChecked() else "")
+            start,end = self.widget.getIndexFromAndTo()
+            self.widget.undoRedoManager.addAction(ScaleAction(self.widget.signalProcessor.signal,start,end,factor, function, fade))
             self.widget.scale(factor, function, fade)
 
     @pyqtSlot()
@@ -436,7 +463,10 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         silenceDialogWindow = InsertSilenceDialog()
         silenceDialog.setupUi(silenceDialogWindow)
         if silenceDialogWindow.exec_():
-            self.widget.insertSilence(silenceDialog.insertSpinBox.value())
+            start,end = self.widget.getIndexFromAndTo()
+            ms = silenceDialog.insertSpinBox.value()
+            self.widget.undoRedoManager.addAction(InsertSilenceAction(self.widget.signalProcessor.signal,start,ms))
+            self.widget.insertSilence(ms)
 
     @pyqtSlot()
     def on_actionGenerate_Pink_Noise_triggered(self):
@@ -448,7 +478,10 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         if whiteNoiseDialogWindow.exec_():
             type_, Fc, Fl, Fu = self.filter_helper()
             if type_ != None:
-                self.widget.insertPinkNoise(whiteNoiseDialog.insertSpinBox.value(), type_, Fc, Fl, Fu)
+                ms = whiteNoiseDialog.insertSpinBox.value()
+                start, _ = self.widget.getIndexFromAndTo()
+                self.widget.undoRedoManager.addAction(GeneratePinkNoiseAction(self.widget.signalProcessor.signal,start,ms, type_, Fc, Fl, Fu))
+                self.widget.insertPinkNoise(ms, type_, Fc, Fl, Fu)
 
     @pyqtSlot()
     def on_actionGenerate_White_Noise_triggered(self):
@@ -458,7 +491,10 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         whiteNoiseDialog.label.setText("Select the duration in ms \n of the white noise.")
         whiteNoiseDialog.insertSpinBox.setValue(1000)
         if whiteNoiseDialogWindow.exec_():
-            self.widget.insertWhiteNoise(whiteNoiseDialog.insertSpinBox.value())
+            ms = whiteNoiseDialog.insertSpinBox.value()
+            start,end = self.widget.getIndexFromAndTo()
+            self.widget.undoRedoManager.addAction(GenerateWhiteNoiseAction(self.widget.signalProcessor.signal,start,ms))
+            self.widget.insertWhiteNoise()
 
     def filter_helper(self):
         filterDialog = filterdg.Ui_Dialog()
@@ -489,21 +525,32 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         #self.widget.undoRedoManager.addAction(self.widget.filterUndoAction,self.widget.filter)
         type_, Fc, Fl, Fu = self.filter_helper()
         if type_ is not None:
+            start,end = self.widget.getIndexFromAndTo()
+            self.widget.undoRedoManager.addAction(FilterAction(self.widget.signalProcessor.signal,start,end,type_, Fc, Fl, Fu))
             self.widget.filter(type_, Fc, Fl, Fu)
 
     @pyqtSlot()
     def on_actionSilence_triggered(self):
-        self.widget.undoRedoManager.addAction(self.widget.silenceUndoAction,self.widget.silence)
+        start,end = self.widget.getIndexFromAndTo()
+        self.widget.undoRedoManager.addAction(SilenceAction(self.widget.signalProcessor.signal,start,end))
         self.widget.silence()
 
     @pyqtSlot()
     def on_actionNormalize_triggered(self):
-        self.widget.undoRedoManager.addAction(self.widget.normalizeUndoAction,self.widget.normalize)
+        self.widget.undoRedoManager.addAction(UndoRedoAction(self.widget.normalizeUndoAction,self.widget.normalize))
         self.widget.normalize()
 
     @pyqtSlot()
+    def on_actionFull_Screen_triggered(self):
+        if self.actionFull_Screen.isChecked():
+            self.showFullScreen()
+        else:
+            self.showNormal()
+
+    @pyqtSlot()
     def on_action_Reverse_triggered(self):
-        self.widget.undoRedoManager.addAction(self.widget.reverseUndoAction,self.widget.reverse)
+        start,end = self.widget.getIndexFromAndTo()
+        self.widget.undoRedoManager.addAction(ReverseAction(self.widget.signalProcessor.signal,start,end))
         self.widget.reverse()
 
     def updatePowSpecWin(self):
@@ -515,12 +562,12 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     @pyqtSlot()
     def on_actionZoomIn_triggered(self):
-        self.widget.undoRedoManager.addAction(self.widget.zoomOut,self.widget.zoomIn)
+        self.widget.undoRedoManager.addAction(UndoRedoAction(self.widget.zoomOut,self.widget.zoomIn))
         self.widget.zoomIn()
 
     @pyqtSlot()
     def on_actionZoom_out_triggered(self):
-        self.widget.undoRedoManager.addAction(self.widget.zoomIn,self.widget.zoomOut)
+        self.widget.undoRedoManager.addAction(UndoRedoAction(self.widget.zoomIn,self.widget.zoomOut))
         self.widget.zoomOut()
 
     @pyqtSlot()
@@ -581,11 +628,33 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             #self.widget.visibleSpectrogram = True
             self.widget.specgramSettings.NFFT = self.ParamTree.param('Spectrogram Settings').param('FFT size').value()
             self.widget.specgramSettings.overlap = self.ParamTree.param('Spectrogram Settings').param('FFT overlap').value()
+            path_base = os.path.split(str(f))[0]
+            self.filesInFolder = self.folderFiles(path_base)
+            self.filesInFolderIndex = self.filesInFolder.index(str(f))
             self.widget.open(f)
             self.setWindowTitle("Duetto Sound Lab - " + self.widget.signalProcessor.signal.name())
-
             self.hist.item.region.lineMoved()
             self.hist.item.region.lineMoveFinished()
+
+    @pyqtSlot()
+    def on_actionOpen_File_Up_triggered(self):
+        if self.filesInFolderIndex < len(self.filesInFolder)-1:
+            self.filesInFolderIndex += 1
+            if os.path.exists(self.filesInFolder[self.filesInFolderIndex]):
+                self.widget.open(self.filesInFolder[self.filesInFolderIndex])
+                self.setWindowTitle("Duetto Sound Lab - " + self.widget.signalProcessor.signal.name())
+                self.hist.item.region.lineMoved()
+                self.hist.item.region.lineMoveFinished()
+
+    @pyqtSlot()
+    def on_actionOpen_File_Down_triggered(self):
+        if self.filesInFolderIndex > 0:
+            self.filesInFolderIndex -= 1
+            if os.path.exists(self.filesInFolder[self.filesInFolderIndex]):
+                self.widget.open(self.filesInFolder[self.filesInFolderIndex])
+                self.setWindowTitle("Duetto Sound Lab - " + self.widget.signalProcessor.signal.name())
+                self.hist.item.region.lineMoved()
+                self.hist.item.region.lineMoveFinished()
 
     @pyqtSlot()
     def on_actionSave_triggered(self):
@@ -597,12 +666,13 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     def on_actionPlay_Sound_triggered(self):
         self.widget.play()
 
+
     @pyqtSlot()
     def on_actionStop_Sound_triggered(self):
         self.widget.stop()
         self.hist.item.region.lineMoved()
         self.hist.item.region.lineMoveFinished()
-        
+
     @pyqtSlot()
     def on_actionRecord_triggered(self):
         self.widget.record()
@@ -688,7 +758,8 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.widget.changeRange(value, value + self.horizontalScrollBar.pageStep(), emit=False)
 
     def loadAllColorBars(self):
-        if os.path.exists(self.colorBarsPath):
-            for i in os.listdir(self.colorBarsPath):
-                if os.path.isfile(self.colorBarsPath+'\\'+ i):
-                    print(i)
+        #if os.path.exists(self.colorBarsPath):
+        #    for i in os.listdir(self.colorBarsPath):
+        #        if os.path.isfile(self.colorBarsPath+'\\'+ i):
+        #            print(i)
+        pass

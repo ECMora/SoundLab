@@ -33,7 +33,7 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         self.dsbxMinSize.valueChanged.connect(self.detect)
         self.dsbxMergeFactor.valueChanged.connect(self.detect)
         self.sbxSoftFactor.valueChanged.connect(self.detect)
-        self.widget.signalProcessor.signal = WavFileSignal("Didactic Signals\\recognition.wav")
+        self.widget.signalProcessor.signal = WavFileSignal("Utils\\Didactic Signals\\recognition.wav")
         self.widget.mainCursor.min,self.widget.mainCursor.max = 0,len(self.widget.signalProcessor.signal.data)
         self.widget.axesOscilogram.setVisibleThreshold(True)
 
@@ -87,7 +87,7 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
     @pyqtSlot()
     def detect(self):
         self.widget.detectElements(threshold=abs(self.dsbxThreshold.value()), decay=self.dsbxDecay.value(), minSize= self.dsbxMinSize.value(), softfactor=self.sbxSoftFactor.value(), merge_factor=self.dsbxMergeFactor.value(),threshold2=abs(self.dsbxThreshold2.value())
-        ,threshold_spectral=self.dsbxThresholdSpec.value(), minsize_spectral=(self.dsbxMinSizeFreq.value(),self.dsbxminSizeTime.value()))
+        ,threshold_spectral=self.dsbxThresholdSpec.value(), minsize_spectral=(self.dsbxMinSizeFreq.value(),self.dsbxminSizeTime.value()),findSpectralSublements = False)
         self.widget.refresh()
 
 
