@@ -277,6 +277,7 @@ padding:1%;</string>
     <addaction name="actionMeditions"/>
     <addaction name="actionOsgram_Image"/>
     <addaction name="actionSpecgram_Image"/>
+    <addaction name="actionCombined_Image"/>
    </widget>
    <widget class="QMenu" name="menuParameters">
     <property name="title">
@@ -298,6 +299,7 @@ padding:1%;</string>
     <addaction name="actionSpectral_Numbers"/>
     <addaction name="actionSpectral_Locations"/>
     <addaction name="menuPeak_Frecuencies"/>
+    <addaction name="actionFull_Screen"/>
    </widget>
    <addaction name="menuExport"/>
    <addaction name="menuParameters"/>
@@ -574,6 +576,19 @@ padding:1%;</string>
    </property>
    <property name="text">
     <string>Temporal Locations</string>
+   </property>
+  </action>
+  <action name="actionCombined_Image">
+   <property name="text">
+    <string>Combined Image</string>
+   </property>
+  </action>
+  <action name="actionFull_Screen">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Full Screen</string>
    </property>
   </action>
   <zorder>dockWidgetParameterTableOscilogram</zorder>

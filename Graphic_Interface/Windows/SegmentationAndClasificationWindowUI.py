@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'E:\Biologia\SISTEMA\DuettoSystem\Graphic_Interface\UI Files\SegmentationAndClasificationWindowUI.ui'
 #
-# Created: Sun Apr 06 11:05:23 2014
+# Created: Wed Apr 09 09:42:27 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -38,6 +38,7 @@ class Ui_MainWindow(object):
 "color: rgb(0, 0, 0);\n"
 "padding:1%;"))
         self.centralwidget = QtGui.QWidget(MainWindow)
+        self.centralwidget.setStyleSheet(_fromUtf8(""))
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.verticalLayout_2 = QtGui.QVBoxLayout(self.centralwidget)
         self.verticalLayout_2.setSizeConstraint(QtGui.QLayout.SetDefaultConstraint)
@@ -113,6 +114,7 @@ class Ui_MainWindow(object):
         self.tabwidget.addTab(self.tab_2, _fromUtf8(""))
         self.verticalLayout_2.addWidget(self.tabwidget)
         self.horizontalScrollBar = QtGui.QScrollBar(self.centralwidget)
+        self.horizontalScrollBar.setStyleSheet(_fromUtf8("border-color: rgb(26, 255, 10);"))
         self.horizontalScrollBar.setOrientation(QtCore.Qt.Horizontal)
         self.horizontalScrollBar.setObjectName(_fromUtf8("horizontalScrollBar"))
         self.verticalLayout_2.addWidget(self.horizontalScrollBar)
@@ -261,6 +263,11 @@ class Ui_MainWindow(object):
         self.actionTemporal_Locations.setCheckable(True)
         self.actionTemporal_Locations.setChecked(True)
         self.actionTemporal_Locations.setObjectName(_fromUtf8("actionTemporal_Locations"))
+        self.actionCombined_Image = QtGui.QAction(MainWindow)
+        self.actionCombined_Image.setObjectName(_fromUtf8("actionCombined_Image"))
+        self.actionFull_Screen = QtGui.QAction(MainWindow)
+        self.actionFull_Screen.setCheckable(True)
+        self.actionFull_Screen.setObjectName(_fromUtf8("actionFull_Screen"))
         self.toolBar.addAction(self.actionPlay_Sound)
         self.toolBar.addAction(self.actionPause_Sound)
         self.toolBar.addAction(self.actionStop_Sound)
@@ -277,6 +284,7 @@ class Ui_MainWindow(object):
         self.menuExport.addAction(self.actionMeditions)
         self.menuExport.addAction(self.actionOsgram_Image)
         self.menuExport.addAction(self.actionSpecgram_Image)
+        self.menuExport.addAction(self.actionCombined_Image)
         self.menuPeak_Frecuencies.addAction(self.actionElements_Peaks)
         self.menuPeak_Frecuencies.addAction(self.actionSub_Elements_Peaks)
         self.menuParameters.addAction(self.actionView_Parameters)
@@ -288,6 +296,7 @@ class Ui_MainWindow(object):
         self.menuParameters.addAction(self.actionSpectral_Numbers)
         self.menuParameters.addAction(self.actionSpectral_Locations)
         self.menuParameters.addAction(self.menuPeak_Frecuencies.menuAction())
+        self.menuParameters.addAction(self.actionFull_Screen)
         self.menuBar.addAction(self.menuExport.menuAction())
         self.menuBar.addAction(self.menuParameters.menuAction())
 
@@ -357,6 +366,8 @@ class Ui_MainWindow(object):
         self.actionOsgram_Image.setText(_translate("MainWindow", "Osgram Image", None))
         self.actionSpecgram_Image.setText(_translate("MainWindow", "Specgram Image", None))
         self.actionTemporal_Locations.setText(_translate("MainWindow", "Temporal Locations", None))
+        self.actionCombined_Image.setText(_translate("MainWindow", "Combined Image", None))
+        self.actionFull_Screen.setText(_translate("MainWindow", "Full Screen", None))
 
 from Graphic_Interface.Widgets.QSignalVisualizerWidget import QSignalVisualizerWidget
 import icons_rc

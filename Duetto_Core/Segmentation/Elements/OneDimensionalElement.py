@@ -1,6 +1,7 @@
 from math import floor, ceil, log10
 from matplotlib import mlab
 from Duetto_Core.Segmentation.Detectors.ElementsDetectors.TwoDimensionalElementsDetector import TwoDimensionalElementsDetector
+from Duetto_Core.Segmentation.Elements.TwoDimensionalElement import SpecgramElement
 import numpy as np
 import pyqtgraph as pg
 from Duetto_Core.Segmentation.Elements.Element import Element
@@ -46,7 +47,7 @@ class OneDimensionalElement(Element):
 
 class OscilogramElement(OneDimensionalElement):
 
-    def __init__(self, signal, indexFrom, indexTo,number=0,threshold_spectral=0, pxx=[], freqs=[], bins=[], minsize_spectral=(0,0), location = None):
+    def __init__(self, signal, indexFrom, indexTo,number=0,threshold_spectral=0, pxx=[], freqs=[], bins=[], minsize_spectral=(0,0), location = None,findSpectralSublements = True,overlap = 0):
         OneDimensionalElement.__init__(self,signal,indexFrom,indexTo)
         text = pg.TextItem(str(number),color=(255,255,255),anchor=(0.5,0.5))
         text.setPos(self.indexFrom/2.0+self.indexTo/2.0, 0.75*2**(signal.bitDepth-1))
@@ -67,53 +68,58 @@ class OscilogramElement(OneDimensionalElement):
 
         if(location is not None):
             self.measurementLocation = location
-            width = (indexTo-indexFrom)/5
-            height = (2**signal.bitDepth)/5
-            ypos = 2**signal.bitDepth
-            xpos = indexTo-indexFrom
-            ystart = -2**(signal.bitDepth-1)
+            #width = (indexTo-indexFrom)/5
+            #height = (2**signal.bitDepth)/5
+            #ypos = 2**signal.bitDepth
+            #xpos = indexTo-indexFrom
+            #ystart = -2**(signal.bitDepth-1)
             #poner tooltips
-            if(self.measurementLocation.MEDITIONS[self.measurementLocation.START][0]):
-                start = QtGui.QGraphicsRectItem(QtCore.QRectF(indexFrom+ xpos*0,ystart + ypos*0,   width,    height))
-                start.setBrush(QtGui.QBrush(self.measurementLocation.MEDITIONS[self.measurementLocation.START][1]))
-                start.setToolTip("Element: "+ str(self.number) +"\nStart Mesurement Location")
-                self.visual_locations.append([start,True])
-            if(self.measurementLocation.MEDITIONS[self.measurementLocation.CENTER][0]):
-                center = QtGui.QGraphicsRectItem(QtCore.QRectF(indexFrom+ xpos*0.5- width/2,ystart +ypos*0.5 -height/2,    width,    height))
-                center.setBrush(QtGui.QBrush(self.measurementLocation.MEDITIONS[self.measurementLocation.CENTER][1]))
-                center.setToolTip("Element:"+str(self.number) +"\nCenter Mesurement Location")
-                self.visual_locations.append([center,True])
-            if(self.measurementLocation.MEDITIONS[self.measurementLocation.END][0]):
-                end = QtGui.QGraphicsRectItem(QtCore.QRectF(indexFrom+ xpos*1- width,ystart+ypos*1- height,    width,    height))
-                end.setBrush(QtGui.QBrush(self.measurementLocation.MEDITIONS[self.measurementLocation.END][1]))
-                end.setToolTip("Element:"+str(self.number) +"\nEnd Mesurement Location")
-                self.visual_locations.append([end,True])
-            if(self.measurementLocation.MEDITIONS[self.measurementLocation.QUARTILE25][0]):
-                quartile1 = QtGui.QGraphicsRectItem(QtCore.QRectF(indexFrom+ xpos*0.25 -width/2,ystart+ypos*0.25 -height/2,width,    height))
-                quartile1.setBrush(QtGui.QBrush(self.measurementLocation.MEDITIONS[self.measurementLocation.QUARTILE25][1]))
-                quartile1.setToolTip("Element:"+str(self.number) +"\nQuartile 25% Mesurement Location")
-                self.visual_locations.append([quartile1,True])
-            if(self.measurementLocation.MEDITIONS[self.measurementLocation.QUARTILE75][0]):
-                quartile3 = QtGui.QGraphicsRectItem(QtCore.QRectF(indexFrom+ xpos*0.75- width/2,ystart+ypos*0.75-height/2, width,    height))
-                quartile3.setBrush(QtGui.QBrush(self.measurementLocation.MEDITIONS[self.measurementLocation.QUARTILE75][1]))
-                quartile3.setToolTip("Element:"+str(self.number) +"\nQuartile 75% Mesurement Location")
-                self.visual_locations.append([quartile3,True])
+            #if(self.measurementLocation.MEDITIONS[self.measurementLocation.START][0]):
+            #    start = QtGui.QGraphicsRectItem(QtCore.QRectF(indexFrom+ xpos*0,ystart + ypos*0,   width,    height))
+            #    start.setBrush(QtGui.QBrush(self.measurementLocation.MEDITIONS[self.measurementLocation.START][1]))
+            #    start.setToolTip("Element: "+ str(self.number) +"\nStart Mesurement Location")
+            #    self.visual_locations.append([start,True])
+            #if(self.measurementLocation.MEDITIONS[self.measurementLocation.CENTER][0]):
+            #    center = QtGui.QGraphicsRectItem(QtCore.QRectF(indexFrom+ xpos*0.5- width/2,ystart +ypos*0.5 -height/2,    width,    height))
+            #    center.setBrush(QtGui.QBrush(self.measurementLocation.MEDITIONS[self.measurementLocation.CENTER][1]))
+            #    center.setToolTip("Element:"+str(self.number) +"\nCenter Mesurement Location")
+            #    self.visual_locations.append([center,True])
+            #if(self.measurementLocation.MEDITIONS[self.measurementLocation.END][0]):
+            #    end = QtGui.QGraphicsRectItem(QtCore.QRectF(indexFrom+ xpos*1- width,ystart+ypos*1- height,    width,    height))
+            #    end.setBrush(QtGui.QBrush(self.measurementLocation.MEDITIONS[self.measurementLocation.END][1]))
+            #    end.setToolTip("Element:"+str(self.number) +"\nEnd Mesurement Location")
+            #    self.visual_locations.append([end,True])
+            #if(self.measurementLocation.MEDITIONS[self.measurementLocation.QUARTILE25][0]):
+            #    quartile1 = QtGui.QGraphicsRectItem(QtCore.QRectF(indexFrom+ xpos*0.25 -width/2,ystart+ypos*0.25 -height/2,width,    height))
+            #    quartile1.setBrush(QtGui.QBrush(self.measurementLocation.MEDITIONS[self.measurementLocation.QUARTILE25][1]))
+            #    quartile1.setToolTip("Element:"+str(self.number) +"\nQuartile 25% Mesurement Location")
+            #    self.visual_locations.append([quartile1,True])
+            #if(self.measurementLocation.MEDITIONS[self.measurementLocation.QUARTILE75][0]):
+            #    quartile3 = QtGui.QGraphicsRectItem(QtCore.QRectF(indexFrom+ xpos*0.75- width/2,ystart+ypos*0.75-height/2, width,    height))
+            #    quartile3.setBrush(QtGui.QBrush(self.measurementLocation.MEDITIONS[self.measurementLocation.QUARTILE75][1]))
+            #    quartile3.setToolTip("Element:"+str(self.number) +"\nQuartile 75% Mesurement Location")
+            #    self.visual_locations.append([quartile3,True])
         else:
             self.measurementLocation = SpectralMeasurementLocation()
 
-        if(pxx != [] and bins != [] and freqs != []):
+        if pxx != [] and bins != [] and freqs != []:
             #spec_resolution, temp_resolution = signal.samplingRate/2.0*len(freqs),bins[1]-bins[0]
             spec_resolution, temp_resolution = 1000.0/freqs[1],(bins[1]-bins[0])*1000.0
             #minsize came with the hz, sec of min size elements and its translated to index values in pxx for comparations
             minsize_spectral = (max(1,int(minsize_spectral[0]*spec_resolution)),max(1,int(minsize_spectral[1]*temp_resolution)))
             sr = signal.samplingRate*1.0
-            aux = max(0,int(floor((indexFrom-bins[0]*sr)/((bins[1]-bins[0])*sr))))
-            aux2 = min(int(ceil((indexTo+bins[0]*sr)/((bins[1]-bins[0])*sr))),len(pxx[0]))
+            columnsize = (bins[1] - bins[0])*sr
+            overlap_delay = overlap if overlap == 0 else overlap/(100-overlap)
+            aux = max(0,int(indexFrom/columnsize)-overlap_delay)
+            aux2 = min(int(round(indexTo/columnsize,0))+overlap_delay,len(pxx[0]))
             self.matrix = pxx[:,aux:aux2]
             self.freqs = freqs
             self.bins = bins
             self.indexFromInPxx,self.indexToInPxx = aux,aux2
-            self.computeTwoDimensionalElements(threshold_spectral,self.matrix,freqs,bins,minsize_spectral)
+            if findSpectralSublements:
+                self.computeTwoDimensionalElements(threshold_spectral,self.matrix,freqs,bins,minsize_spectral)
+            else:
+                self.twoDimensionalElements = [SpecgramElement(signal,self.matrix,freqs,0,len(freqs),bins,0,aux2-aux,number,self,location)]
 
     def sublementsPeakFreqsVisible(self,visibility=False):
         for x in self.twoDimensionalElements:
@@ -185,7 +191,7 @@ class OscilogramElement(OneDimensionalElement):
         minIndex = np.argmin(self.matrix[:, index])
         value = int(round(self.freqs[freq_index],0))
         value -= value % 10
-        return value,round(-20*log10(self.freqs[freq_index]),self.parameterDecimalPlaces)
+        return value,round(-20*log10(1 if self.freqs[freq_index]< 0.1 else self.freqs[freq_index]),self.parameterDecimalPlaces)
 
     def peakFreq(self,dict):
         if "location" in dict:

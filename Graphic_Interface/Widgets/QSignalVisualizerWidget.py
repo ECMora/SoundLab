@@ -20,48 +20,8 @@ from Duetto_Core.SignalProcessors.EditionSignalProcessor import EditionSignalPro
 
 from Duetto_Core.SpecgramSettings import SpecgramSettings
 from DuettoPlotWidget import DuettoPlotWidget
+from Graphic_Interface.UndoRedoActions import UndoRedoManager
 from Graphic_Interface.Widgets.DuettoImageWidget import DuettoImageWidget
-
-
-class UndoRedoManager:
-    def __init__(self):
-        self.actionsList = [None for _ in range(20)] #initial space for actions
-        self.actionIndex = -1
-    UNDO_INDEX = 0
-    REDO_INDEX = 1
-
-    def undo(self):
-        if(self.actionIndex >= 0):
-            tuple = self.actionsList[self.actionIndex]
-            if tuple is not None and callable(tuple[0]):
-                tuple[self.UNDO_INDEX]()
-                print("undo "+ str(self.actionIndex))
-            self.actionIndex -= 1
-
-    def redo(self):
-        if self.actionIndex < len(self.actionsList)-1:
-            self.actionIndex += 1
-            tuple = self.actionsList[self.actionIndex]
-            if tuple is not None and callable(tuple[1]):
-                tuple[self.REDO_INDEX]()
-                print("redo "+ str(self.actionIndex))
-
-
-
-    def addAction(self,undoAction=None, redoAction=None):
-        self.actionIndex += 1
-        if(len(self.actionsList) <= self.actionIndex):
-            self.actionsList = [self.actionsList[i] if i < len(self.actionsList) else None for i in range(2*len(self.actionsList))]
-        elif self.actionIndex > 0:
-            self.actionsList[self.actionIndex:] = (None,None)
-        self.actionsList[self.actionIndex] = (undoAction,redoAction)
-
-    def clearActions(self):
-        self.actionIndex = 0
-        for i in range(len(self.actionsList)):
-            self.actionsList[i] = None
-
-
 
 
 BACK_COLOR = "gray"
@@ -128,7 +88,9 @@ class QSignalVisualizerWidget(QWidget):
         self.tool = Tools().Zoom
         self.osc_background = "000"
         self.spec_background = "000"
-        self.undoRedoManager = UndoRedoManager()
+        self.envelopeCurve = np.array([])
+        self.visibleEnvelope = False
+        self.undoRedoManager = UndoRedoManager(self)
 
         self.axesOscilogram.setMouseEnabled(x=False, y=False)
         self.axesOscilogram.getPlotItem().hideButtons()
@@ -136,6 +98,7 @@ class QSignalVisualizerWidget(QWidget):
         self.axesOscilogram.setRange(QRect(0,0,1,1))
         self.axesSpecgram = DuettoImageWidget(parent=self)
         self.axesSpecgram.show()
+
 
         self.axesOscilogram.IntervalOscChanged.connect(self.updateSpecZoomRegion)
         self.axesSpecgram.IntervalSpecChanged.connect(self.updateOscZoomRegion)
@@ -513,11 +476,14 @@ class QSignalVisualizerWidget(QWidget):
             if dataChanged:
                 self.axesOscilogram.plot(self.signalProcessor.signal.data, clear=True, pen=self.osc_color,
                                          autoDownsample=not partial, clipToView=partial)
+                if self.visibleEnvelope and not self.signalProcessor.signal.playStatus == AudioSignal.RECORDING:
+                    self.axesOscilogram.plot(self.envelopeCurve)
 
             #self.axesOscilogram.setRange(xRange=(0, self.mainCursor.max - self.mainCursor.min))
             self.axesSpecgram.zoomRegion.setBounds([0, self._from_osc_to_spec(self.mainCursor.max)])
             self.axesOscilogram.zoomRegion.setBounds([0, self.mainCursor.max])
             self.axesOscilogram.setZoomRegionVisible(True)
+
 
         self.axesOscilogram.getPlotItem().showGrid(x=self.osc_gridx, y=self.osc_gridy)
         self.axesOscilogram.setBackground(self.osc_background)
@@ -628,8 +594,6 @@ class QSignalVisualizerWidget(QWidget):
             self.editionSignalProcessor.cut(self.zoomCursor.min, self.zoomCursor.max)
             self.mainCursor.max -= self.zoomCursor.max - self.zoomCursor.min
             self.visualChanges = True
-            if (self.mainCursor.max < 1):
-                self.zoomOut()
             self.rangeChanged.emit(self.mainCursor.min, self.mainCursor.max, len(self.signalProcessor.signal.data))
             self.refresh()
 
@@ -671,13 +635,8 @@ class QSignalVisualizerWidget(QWidget):
     def envelope(self):
         #add cofig dialog and plot the envelope
         indexFrom, indexTo = self.getIndexFromAndTo()
-        y = envelope(self.signalProcessor.signal.data[indexFrom:indexTo],decay=self.signalProcessor.signal.samplingRate/1000)
-        env_window = pg.PlotWidget()
-        env_window.show()
-        env_window.plot(y)
-
-
-
+        self.envelopeCurve = envelope(self.signalProcessor.signal.data[indexFrom:indexTo],decay=self.signalProcessor.signal.samplingRate/1000)
+        self.visibleEnvelope = True
 
     def getIndexFromAndTo(self):
         indexFrom, indexTo = self.mainCursor.min, self.mainCursor.max
@@ -689,7 +648,7 @@ class QSignalVisualizerWidget(QWidget):
 
     def signalProcessingAction(self, delegate, *args):
         indexFrom, indexTo = self.getIndexFromAndTo()
-        self.signalProcessor.signal = delegate(indexFrom, indexTo, *args)
+        delegate(indexFrom, indexTo, *args)
         self.clearZoomCursor()
         self.visualChanges = True
         self.refresh()
@@ -702,9 +661,6 @@ class QSignalVisualizerWidget(QWidget):
 
     def silence(self):
         self.signalProcessingAction(CommonSignalProcessor(self.signalProcessor.signal).setSilence)
-
-    def silenceUndoAction(self):
-        pass
 
 
     def filter(self, filterType=FILTER_TYPE().LOW_PASS, FCut=0, FLow=0, FUpper=0):
@@ -736,17 +692,19 @@ class QSignalVisualizerWidget(QWidget):
         self.Elements = [] if oscilogram and specgram else self.Elements
 
 
-    def detectElements(self,threshold=20, decay=1, minSize=0, softfactor=5, merge_factor=0,threshold2=0, threshold_spectral=95, pxx=[], freqs=[], bins=[], minsize_spectral=(0, 0),location= None):
+    def detectElements(self,threshold=20, decay=1, minSize=0, softfactor=5, merge_factor=0,threshold2=0, threshold_spectral=95, pxx=[], freqs=[], bins=[], minsize_spectral=(0, 0),location= None, progress=None,findSpectralSublements = True):
         self.clearCursors()
         self.elements_detector.detect(self.signalProcessor.signal,0,len(self.signalProcessor.signal.data), threshold, decay, minSize, softfactor, merge_factor,threshold2,
                                       threshold_spectral=threshold_spectral, pxx =  self.specgramSettings.Pxx, freqs=self.specgramSettings.freqs,
-                                      bins=self.specgramSettings.bins, minsize_spectral=minsize_spectral,location=location)
-
+                                      bins=self.specgramSettings.bins, minsize_spectral=minsize_spectral,location=location,progress=progress,findSpectralSublements = findSpectralSublements,overlap = self.specgramSettings.overlap)
+        self.envelopeCurve = self.elements_detector.envelope
+        if(self.visibleOscilogram):
+            self.axesOscilogram.plot(self.envelopeCurve)
         for c in self.elements_detector.elements():
             self.Elements.append(c)# the elment the space for the span selector and the text
         #incorporar deteccion en espectrograma
-        self.visualChanges = True
-        self.refresh()
+        self.drawElements()
+
 
     #endregion
 
@@ -764,7 +722,7 @@ class QSignalVisualizerWidget(QWidget):
         else:
             self.signalProcessor.signal = WavFileSignal(samplingRate=samplingRate, duration=duration, bitDepth=bitDepth,
                                                         whiteNoise=whiteNoise)
-        print(self.signalProcessor.signal.samplingRate)
+
         self.cursors = []
         self.editionSignalProcessor = EditionSignalProcessor(self.signalProcessor.signal)
         #self.signalProcessor.signal.setTickInterval(self.TICK_INTERVAL_MS)
@@ -848,4 +806,3 @@ class QSignalVisualizerWidget(QWidget):
 
 
     #endregion
-            
