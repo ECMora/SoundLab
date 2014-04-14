@@ -5,6 +5,7 @@ from pyqtgraph import GraphicsView
 from pyqtgraph.graphicsItems.AxisItem import AxisItem
 from pyqtgraph.graphicsItems.ImageItem import ImageItem
 from pyqtgraph.graphicsItems.ViewBox import ViewBox
+import numpy
 import  pyqtgraph as pg
 
 class SpecYAxis(pg.AxisItem):
@@ -49,6 +50,7 @@ class DuettoImageWidget(GraphicsView):
 
         #pointerCursor-----------------------------------
         self.pointerCursor = pg.ScatterPlotItem()
+        self.setDragMode(QtGui.QGraphicsView.NoDrag)
         self.selectedTool = 'ZoomCursor'
         self.mouseReleased = False
         self.last = {}
@@ -60,6 +62,7 @@ class DuettoImageWidget(GraphicsView):
 
     PIXELS_OF_CURSORS_CHANGES = 5
     IntervalSpecChanged = pyqtSignal(int, int)
+    PointerSpecChanged = pyqtSignal(str)
 
     def resetCursors(self):
         self.pointerCursor.clear()
@@ -78,7 +81,7 @@ class DuettoImageWidget(GraphicsView):
                 self.viewBox.removeItem(self.pointerCursor)
                 self.viewBox.addItem(self.zoomRegion)
                 self.zoomRegion.setRegion([0,0])
-
+                self.mouseZoomEnabled = True
             self.update()
 
     def showGrid(self,x=True,y=True):
@@ -96,39 +99,42 @@ class DuettoImageWidget(GraphicsView):
             rgn = self.zoomRegion.getRegion()
             self.IntervalSpecChanged.emit(*rgn)
 
+    def leaveEvent(self, ev):
+        if self.selectedTool == 'PointerCursor':
+            self.pointerCursor.clear()
+            if self.mouseReleased:
+                self.pointerCursor.addPoints([self.last])
+
     def mouseMoveEvent(self, event):
         if self.selectedTool == 'PointerCursor':
             pg.GraphicsView.mouseMoveEvent(self, event)
-            self.pointerCursor.clear()
-            if self.mouseReleased:
 
-                self.pointerCursor.addPoints([self.last])
             x = self.fromCanvasToClient(event.x())
             y = self.fromCanvasToClientY(event.y())
-            self.pointerCursor.addPoints([{'pos':[ x, y ], 'pen': {'color': 'w', 'width': 2},'brush':pg.intColor(255, 255), 'symbol':'+', 'size':20}])
-            self.viewBox.update()
             info = self.getFreqTimeAndIntensity(x,y)
-            self.setToolTip(str.format('Time: {0}s, Frequency: {1}, Intensity: {2}',info[0],info[1],info[2]))
-            #self.toolTip().show()
 
-            #calculates distance between points
-
-        if not self.mouseZoomEnabled:
-            return
-        pg.GraphicsView.mouseMoveEvent(self, event)
-        if self.parent().visibleOscilogram:
-            rgn = self.zoomRegion.getRegion()
-            minx, maxx = self.fromClientToCanvas(rgn[0]), self.fromClientToCanvas(rgn[1])
-            if abs(minx - event.x()) < self.PIXELS_OF_CURSORS_CHANGES or \
-               abs(maxx - event.x()) < self.PIXELS_OF_CURSORS_CHANGES:
-                self.setCursor(QCursor(QtCore.Qt.SizeHorCursor))
-            elif self.mouseInsideZoomArea(event.x()):
-                if self.mousePressed:
-                    self.setCursor(QCursor(QtCore.Qt.ClosedHandCursor))
-                else:
-                    self.setCursor(QCursor(QtCore.Qt.OpenHandCursor))
+            if self.mouseReleased:
+                info0 = self.getFreqTimeAndIntensity(self.last['pos'][0],self.last['pos'][1])
+                self.PointerSpecChanged.emit(str.format('t0: {0}s  dt: {1}s  Intensity: {2}dB',info0[0],info[0] - info0[0] ,info[2]))
             else:
-                self.setCursor(QCursor(QtCore.Qt.ArrowCursor))
+                self.PointerSpecChanged.emit(str.format('Time: {0}s  Frequency: {1}kHz Intensity: {2}dB',info[0],info[1],info[2]))
+            self.viewBox.update()
+            self.setCursor(QCursor(QtCore.Qt.CrossCursor))
+        if self.mouseZoomEnabled:
+            pg.GraphicsView.mouseMoveEvent(self, event)
+            if self.parent().visibleOscilogram:
+                rgn = self.zoomRegion.getRegion()
+                minx, maxx = self.fromClientToCanvas(rgn[0]), self.fromClientToCanvas(rgn[1])
+                if abs(minx - event.x()) < self.PIXELS_OF_CURSORS_CHANGES or \
+                   abs(maxx - event.x()) < self.PIXELS_OF_CURSORS_CHANGES:
+                    self.setCursor(QCursor(QtCore.Qt.SizeHorCursor))
+                elif self.mouseInsideZoomArea(event.x()):
+                    if self.mousePressed:
+                        self.setCursor(QCursor(QtCore.Qt.ClosedHandCursor))
+                    else:
+                        self.setCursor(QCursor(QtCore.Qt.OpenHandCursor))
+                else:
+                    self.setCursor(QCursor(QtCore.Qt.ArrowCursor))
 
     def mousePressEvent(self, event):
         if self.selectedTool == 'PointerCursor':
@@ -137,26 +143,25 @@ class DuettoImageWidget(GraphicsView):
             self.pointerCursor.addPoints([self.last])
             self.mouseReleased = False
             pg.GraphicsView.mousePressEvent(self,event)
-        if not self.mouseZoomEnabled:
-            return
-        self.mousePressed = True
-        if not self.zoomRegion in self.items():
-            self.zoomRegion.setRegion([self.fromCanvasToClient(event.x()),self.fromCanvasToClient(event.x())])
-            #self.setZoomRegionVisible(True)
-            #self.update()
-        else:
-            rgn = self.zoomRegion.getRegion()
-            minx, maxx = self.fromClientToCanvas(rgn[0]),self.fromClientToCanvas(rgn[1])
-            if abs(minx - event.x()) < self.PIXELS_OF_CURSORS_CHANGES or \
-               abs(maxx - event.x()) < self.PIXELS_OF_CURSORS_CHANGES:
-                self.setCursor(QCursor(QtCore.Qt.SizeHorCursor))
-            elif not self.mouseInsideZoomArea(event.x()):
-                x = self.fromCanvasToClient(event.x())
-                self.zoomRegion.setRegion([x, x])
+        if self.mouseZoomEnabled:
+            self.mousePressed = True
+            if not self.zoomRegion in self.items():
+                self.zoomRegion.setRegion([self.fromCanvasToClient(event.x()),self.fromCanvasToClient(event.x())])
+                #self.setZoomRegionVisible(True)
                 #self.update()
             else:
-                self.setCursor(QCursor(QtCore.Qt.ClosedHandCursor))
-        pg.GraphicsView.mousePressEvent(self,event)
+                rgn = self.zoomRegion.getRegion()
+                minx, maxx = self.fromClientToCanvas(rgn[0]),self.fromClientToCanvas(rgn[1])
+                if abs(minx - event.x()) < self.PIXELS_OF_CURSORS_CHANGES or \
+                   abs(maxx - event.x()) < self.PIXELS_OF_CURSORS_CHANGES:
+                    self.setCursor(QCursor(QtCore.Qt.SizeHorCursor))
+                elif not self.mouseInsideZoomArea(event.x()):
+                    x = self.fromCanvasToClient(event.x())
+                    self.zoomRegion.setRegion([x, x])
+                    #self.update()
+                else:
+                    self.setCursor(QCursor(QtCore.Qt.ClosedHandCursor))
+            pg.GraphicsView.mousePressEvent(self,event)
 
     def mouseDoubleClickEvent(self, event):
         if not self.mouseZoomEnabled:
@@ -171,22 +176,21 @@ class DuettoImageWidget(GraphicsView):
     def mouseReleaseEvent(self, event):
         if self.selectedTool == 'PointerCursor':
             self.mouseReleased = True
-        if not self.mouseZoomEnabled:
-            return
-        self.mousePressed = False
-        pg.GraphicsView.mouseReleaseEvent(self, event)
+        if self.mouseZoomEnabled:
+            self.mousePressed = False
+            pg.GraphicsView.mouseReleaseEvent(self, event)
 
-        rgn = self.zoomRegion.getRegion()
-        minx, maxx = self.fromClientToCanvas(rgn[0]), self.fromClientToCanvas(rgn[1])
-        if abs(minx - event.x()) < self.PIXELS_OF_CURSORS_CHANGES or \
-           abs(maxx - event.x()) < self.PIXELS_OF_CURSORS_CHANGES:
-            self.setCursor(QCursor(QtCore.Qt.SizeHorCursor))
-        elif self.mouseInsideZoomArea(event.x()):
-            self.setCursor(QCursor(QtCore.Qt.OpenHandCursor))
-        else:
-            self.setCursor(QCursor(QtCore.Qt.ArrowCursor))
+            rgn = self.zoomRegion.getRegion()
+            minx, maxx = self.fromClientToCanvas(rgn[0]), self.fromClientToCanvas(rgn[1])
+            if abs(minx - event.x()) < self.PIXELS_OF_CURSORS_CHANGES or \
+               abs(maxx - event.x()) < self.PIXELS_OF_CURSORS_CHANGES:
+                self.setCursor(QCursor(QtCore.Qt.SizeHorCursor))
+            elif self.mouseInsideZoomArea(event.x()):
+                self.setCursor(QCursor(QtCore.Qt.OpenHandCursor))
+            else:
+                self.setCursor(QCursor(QtCore.Qt.ArrowCursor))
 
-        self.parent().emit(SIGNAL("IntervalChanged"))
+            self.parent().emit(SIGNAL("IntervalChanged"))
 
     def mouseInsideZoomArea(self, xPixel):
         xIndex = self.fromCanvasToClient(xPixel)
@@ -231,4 +235,7 @@ class DuettoImageWidget(GraphicsView):
         return a + int(round((yPixel - miny) * (b - a) * 1. / (maxy - miny), 0))
 
     def getFreqTimeAndIntensity(self,x,y):
-        return [self.parent().specgramSettings.bins[x],self.parent().specgramSettings.freqs[y],self.parent().specgramSettings.Pxx[y][x]]
+        time = self.parent().specgramSettings.bins[x - self.parent()._from_osc_to_spec(self.parent().mainCursor.min)]
+        freq = numpy.round(self.parent().specgramSettings.freqs[y]*1.0/1000,1)
+        intensity = 10*numpy.log10(self.parent().specgramSettings.Pxx[y][x - self.parent()._from_osc_to_spec(self.parent().mainCursor.min)]*1.0/numpy.amax(self.parent().specgramSettings.Pxx))
+        return [time, freq, intensity]
