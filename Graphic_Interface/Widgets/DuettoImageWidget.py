@@ -99,18 +99,15 @@ class DuettoImageWidget(GraphicsView):
             rgn = self.zoomRegion.getRegion()
             self.IntervalSpecChanged.emit(*rgn)
 
-    def leaveEvent(self, ev):
-        if self.selectedTool == 'PointerCursor':
-            self.pointerCursor.clear()
-            if self.mouseReleased:
-                self.pointerCursor.addPoints([self.last])
-
     def mouseMoveEvent(self, event):
         if self.selectedTool == 'PointerCursor':
             pg.GraphicsView.mouseMoveEvent(self, event)
 
             x = self.fromCanvasToClient(event.x())
             y = self.fromCanvasToClientY(event.y())
+            if x == -1 or y == -1:
+                self.setCursor(QCursor(QtCore.Qt.ArrowCursor))
+                return
             info = self.getFreqTimeAndIntensity(x,y)
 
             if self.mouseReleased:
@@ -139,7 +136,12 @@ class DuettoImageWidget(GraphicsView):
     def mousePressEvent(self, event):
         if self.selectedTool == 'PointerCursor':
             self.pointerCursor.clear()
-            self.last = {'pos':[self.fromCanvasToClient(event.x()),self.fromCanvasToClientY(event.y())], 'pen': {'color': 'w', 'width': 2},'brush':pg.intColor(255, 255), 'symbol':'+', 'size':20}
+            x = self.fromCanvasToClient(event.x())
+            y = self.fromCanvasToClientY(event.y())
+            if x == -1 or y == -1:
+                self.setCursor(QCursor(QtCore.Qt.ArrowCursor))
+                return
+            self.last = {'pos':[x,y], 'pen': {'color': 'w', 'width': 2},'brush':pg.intColor(255, 255), 'symbol':'+', 'size':20}
             self.pointerCursor.addPoints([self.last])
             self.mouseReleased = False
             pg.GraphicsView.mousePressEvent(self,event)
@@ -164,14 +166,13 @@ class DuettoImageWidget(GraphicsView):
             pg.GraphicsView.mousePressEvent(self,event)
 
     def mouseDoubleClickEvent(self, event):
-        if not self.mouseZoomEnabled:
-            return
-        pg.GraphicsView.mouseDoubleClickEvent(self, event)
-        if self.mouseInsideZoomArea(event.x()) and self.makeZoom and callable(self.makeZoom):
-            rgn = self.zoomRegion.getRegion()
-            self.makeZoom(rgn[0], rgn[1], specCoords=True)
-            self.zoomRegion.setRegion([rgn[0], rgn[0]])
-            #self.zoomRegion.lineMoved()
+        if self.mouseZoomEnabled:
+            pg.GraphicsView.mouseDoubleClickEvent(self, event)
+            if self.mouseInsideZoomArea(event.x()) and self.makeZoom and callable(self.makeZoom):
+                rgn = self.zoomRegion.getRegion()
+                self.makeZoom(rgn[0], rgn[1], specCoords=True)
+                self.zoomRegion.setRegion([rgn[0], rgn[0]])
+                #self.zoomRegion.lineMoved()
 
     def mouseReleaseEvent(self, event):
         if self.selectedTool == 'PointerCursor':
@@ -215,9 +216,17 @@ class DuettoImageWidget(GraphicsView):
         maxx = self.viewBox.width() + minx
         a, b = self.imageItem.getViewBox().viewRange()[0]
         if xPixel < minx:
-            xPixel = minx
+            if self.selectedTool == 'PointerCursor':
+                self.pointerCursor.clear()
+                if self.mouseReleased:
+                    self.pointerCursor.addPoints([self.last])
+                return -1
         if xPixel > maxx:
-            xPixel = maxx
+            if self.selectedTool == 'PointerCursor':
+                self.pointerCursor.clear()
+                if self.mouseReleased:
+                    self.pointerCursor.addPoints([self.last])
+                return -1
         return a + int(round((xPixel - minx) * (b - a) * 1. / (maxx - minx), 0))
 
     def fromCanvasToClientY(self, yPixel):
@@ -228,10 +237,12 @@ class DuettoImageWidget(GraphicsView):
         maxy = self.viewBox.height() + miny
         a, b = self.imageItem.getViewBox().viewRange()[1]
         yPixel = maxy - yPixel
-        if yPixel < miny:
-            yPixel = miny
-        if yPixel > maxy:
-            yPixel = maxy
+        if yPixel < miny or yPixel > maxy:
+            self.pointerCursor.clear()
+            if self.mouseReleased:
+                self.pointerCursor.addPoints([self.last])
+            return -1
+
         return a + int(round((yPixel - miny) * (b - a) * 1. / (maxy - miny), 0))
 
     def getFreqTimeAndIntensity(self,x,y):
