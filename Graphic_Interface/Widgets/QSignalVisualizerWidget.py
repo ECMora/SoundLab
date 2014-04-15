@@ -68,7 +68,7 @@ class Tools:
     """
     the tools for interaction with the signal in the QSignalVisualizerWidget.
     """
-    Zoom,RectangularCursor,CircularEraser,RectangularEraser, OscilogramThreshold = range(5)
+    Zoom,RectangularCursor,CircularEraser,RectangularEraser,PointerCursor, OscilogramThreshold = range(6)
 
 
 class QSignalVisualizerWidget(QWidget):
