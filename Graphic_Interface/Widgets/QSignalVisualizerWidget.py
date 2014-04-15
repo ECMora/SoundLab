@@ -402,7 +402,7 @@ class QSignalVisualizerWidget(QWidget):
         self.rangeChanged.emit(self.mainCursor.min, self.mainCursor.max, len(self.signalProcessor.signal.data))
 
     def makeZoom(self, _min, _max, specCoords=False):
-        if not self.signalProcessor.signal.opened():
+        if not self.signalProcessor.signal.opened() or _min == _max:
             return
         if specCoords:
             _min = self._from_spec_to_osc(_min)
