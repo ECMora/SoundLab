@@ -67,7 +67,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.statusbar.showMessage("Welcome to Duetto Sound Lab", 5000)
         params = [
         {'name': 'Oscillogram Settings', 'type': 'group', 'children': [
-            {'name': 'Amplitude', 'type': 'group', 'children': [
+            {'name': 'Amplitude(%)', 'type': 'group', 'children': [
                  {'name': 'Min', 'type': 'float', 'value': -100, 'step': 0.1},
                  {'name': 'Max', 'type': 'float', 'value': 100, 'step': 0.1},
             ]},
@@ -82,14 +82,14 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         ]},
 
         {'name': 'Spectrogram Settings', 'type': 'group', 'children': [
-            {'name': 'Frequency', 'type': 'group', 'children': [
+            {'name': 'Frequency(kHz)', 'type': 'group', 'children': [
                 {'name': 'Min', 'type': 'float', 'value': 0, 'step': 0.1},
                 {'name': 'Max', 'type': 'float', 'value': 22, 'step': 0.1},
             ]},
             {'name': 'FFT size', 'type': 'list', 'default':512, 'values': {'256': 256, '512': 512, '1024': 1024, '2048': 2048, 'Automatic': 512}, 'value':'Automatic' },
             {'name': 'FFT window', 'type': 'list', 'value':self.widget.specgramSettings.windows[0],'default':self.widget.specgramSettings.windows[0],'values': {"blackman": self.widget.specgramSettings.windows[3],"rectangular": self.widget.specgramSettings.windows[1], "Hanning": self.widget.specgramSettings.windows[2], "Hamming": self.widget.specgramSettings.windows[0],'bartlett':self.widget.specgramSettings.windows[4],'kaiser':self.widget.specgramSettings.windows[5],'None':self.widget.specgramSettings.windows[6]}},
             {'name': 'FFT overlap', 'type': 'int', 'value':-1, 'limits': (-1, 99)},
-            {'name': 'Threshold', 'type': 'group', 'children': [
+            {'name': 'Threshold(dB)', 'type': 'group', 'children': [
                 {'name': 'Min', 'type': 'float','step':0.1,'default': self.defaultTheme.histRange[0], 'value': self.defaultTheme.histRange[0]},
                 {'name': 'Max', 'type': 'float','step':0.1,'default': self.defaultTheme.histRange[1] , 'value': self.defaultTheme.histRange[1]},
              ]},
@@ -196,7 +196,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 files.append(root+"/"+f)   #cambio provisional mientras el sistema no sea multiplataforma
         return files
 
-
     def updateStatusBar(self,line):
         self.statusbar.showMessage(line)
 
@@ -211,12 +210,12 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     def updateRegionTheme(self):
         reg = self.hist.item.region.getRegion()
-        valueMin = self.ParamTree.param('Spectrogram Settings').param('Threshold').param('Min').value()
-        valueMax = self.ParamTree.param('Spectrogram Settings').param('Threshold').param('Max').value()
+        valueMin = self.ParamTree.param('Spectrogram Settings').param('Threshold(dB)').param('Min').value()
+        valueMax = self.ParamTree.param('Spectrogram Settings').param('Threshold(dB)').param('Max').value()
         if reg[0] != valueMin:
-            self.ParamTree.param('Spectrogram Settings').param('Threshold').param('Min').setValue(reg[0])
+            self.ParamTree.param('Spectrogram Settings').param('Threshold(dB)').param('Min').setValue(reg[0])
         if reg[1] != valueMax:
-            self.ParamTree.param('Spectrogram Settings').param('Threshold').param('Max').setValue(reg[1])
+            self.ParamTree.param('Spectrogram Settings').param('Threshold(dB)').param('Max').setValue(reg[1])
 
     def SerializeTheme(self,filename):
         center = self.ParamTree.param('Detection Settings').param('Measurement Location').param('Center').value()
@@ -268,8 +267,8 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.ParamTree.param('Oscillogram Settings').param('Background color').setValue(self.widget.osc_background)
         self.ParamTree.param('Oscillogram Settings').param('Plot color').setValue(self.widget.osc_color)
         self.ParamTree.param('Spectrogram Settings').param('Background color').setValue(self.widget.spec_background)
-        self.ParamTree.param('Spectrogram Settings').param('Threshold').param('Min').setValue(data.histRange[0])
-        self.ParamTree.param('Spectrogram Settings').param('Threshold').param('Max').setValue(data.histRange[1])
+        self.ParamTree.param('Spectrogram Settings').param('Threshold(dB)').param('Min').setValue(data.histRange[0])
+        self.ParamTree.param('Spectrogram Settings').param('Threshold(dB)').param('Max').setValue(data.histRange[1])
         self.ParamTree.param('Power Spectrum Settings').param('Grid').param('X').setValue(self.pow_spec_gridx)
         self.ParamTree.param('Power Spectrum Settings').param('Grid').param('Y').setValue(self.pow_spec_gridy)
         self.ParamTree.param('Power Spectrum Settings').param('Background color').setValue(data.pow_Back)
@@ -344,14 +343,22 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 self.widget.visualChanges = True
                 self.widget.refresh(dataChanged=True, updateOscillogram=False, updateSpectrogram=False)
 
-            elif childName == 'Spectrogram Settings.Threshold.Min':
+            elif childName == 'Spectrogram Settings.Threshold(dB).Min':
                 if self.hist.item.region.getRegion()[0] != data:
+                    if data > self.ParamTree.param('Spectrogram Settings').param('Threshold(dB)').param('Max').value():
+                        self.ParamTree.param('Spectrogram Settings').param('Threshold(dB)').param('Min').setToDefault()
+                        self.ParamTree.param('Spectrogram Settings').param('Threshold(dB)').param('Min').show()
+                        return
                     self.hist.item.region.setRegion([data,self.hist.item.region.getRegion()[1]])
                     self.hist.item.region.lineMoved()
                     self.hist.item.region.lineMoveFinished()
 
-            elif childName == 'Spectrogram Settings.Threshold.Max':
+            elif childName == 'Spectrogram Settings.Threshold(db%).Max':
                 if self.hist.item.region.getRegion()[1] != data:
+                    if data < self.ParamTree.param('Spectrogram Settings').param('Threshold(dB)').param('Min').value():
+                        self.ParamTree.param('Spectrogram Settings').param('Threshold(dB)').param('Max').setToDefault()
+                        self.ParamTree.param('Spectrogram Settings').param('Threshold(dB)').param('Max').setValue()
+                        return
                     self.hist.item.region.setRegion([self.hist.item.region.getRegion()[0],data])
                     self.hist.item.region.lineMoved()
                     self.hist.item.region.lineMoveFinished()
@@ -373,14 +380,14 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             elif childName == 'Spectrogram Settings.ColorMap':
                 self.widget.axesSpecgram.getHistogramWidget().item._pixelVectorCache.append(data)
 
-            elif childName == 'Spectrogram Settings.Frequency.Min':
+            elif childName == 'Spectrogram Settings.Frequency(kHz).Min':
                 self.widget.minYSpc = data
                 self.widget.visualChanges = True
                 self.widget.refresh(dataChanged=True, updateOscillogram=False, updateSpectrogram=True)
                 self.hist.item.region.lineMoved()
                 self.hist.item.region.lineMoveFinished()
 
-            elif childName == 'Spectrogram Settings.Frequency.Max':
+            elif childName == 'Spectrogram Settings.Frequency(kHz).Max':
                 self.widget.maxYSpc = data
                 self.widget.visualChanges = True
                 self.widget.refresh(dataChanged=True, updateOscillogram=False, updateSpectrogram=True)
@@ -430,19 +437,11 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 self.widget.osc_color = data
                 self.widget.visualChanges = True
                 self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
-            elif childName == 'Oscillogram Settings.Min amplitude':
+            elif childName == 'Oscillogram Settings.Amplitude(%).Min':
                 self.widget.minYOsc = data
                 self.widget.visualChanges = True
                 self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
-            elif childName == 'Oscillogram Settings.Max amplitude':
-                self.widget.maxYOsc = data
-                self.widget.visualChanges = True
-                self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
-            elif childName == 'Oscillogram Settings.Amplitude.Min':
-                self.widget.minYOsc = data
-                self.widget.visualChanges = True
-                self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
-            elif childName == 'Oscillogram Settings.Amplitude.Max':
+            elif childName == 'Oscillogram Settings.Amplitude(%).Max':
                 self.widget.maxYOsc = data
                 self.widget.visualChanges = True
                 self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
@@ -734,10 +733,10 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             self.widget.open(f)
             self.setWindowTitle("Duetto Sound Lab - " + self.widget.signalProcessor.signal.name())
 
-            self.ParamTree.param('Spectrogram Settings').param('Frequency').param('Min').setValue(self.widget.minYSpc)
-            self.ParamTree.param('Spectrogram Settings').param('Frequency').param('Min').setDefault(self.widget.minYSpc)
-            self.ParamTree.param('Spectrogram Settings').param('Frequency').param('Max').setValue(self.widget.maxYSpc)
-            self.ParamTree.param('Spectrogram Settings').param('Frequency').param('Max').setDefault(self.widget.maxYSpc)
+            self.ParamTree.param('Spectrogram Settings').param('Frequency(kHz)').param('Min').setValue(self.widget.minYSpc)
+            self.ParamTree.param('Spectrogram Settings').param('Frequency(kHz)').param('Min').setDefault(self.widget.minYSpc)
+            self.ParamTree.param('Spectrogram Settings').param('Frequency(kHz)').param('Max').setValue(self.widget.maxYSpc)
+            self.ParamTree.param('Spectrogram Settings').param('Frequency(kHz)').param('Max').setDefault(self.widget.maxYSpc)
 
             self.hist.item.region.lineMoved()
             self.hist.item.region.lineMoveFinished()
