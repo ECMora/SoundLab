@@ -348,11 +348,15 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 self.widget.minYSpc = data
                 self.widget.visualChanges = True
                 self.widget.refresh(dataChanged=True, updateOscillogram=False, updateSpectrogram=True)
+                self.hist.item.region.lineMoved()
+                self.hist.item.region.lineMoveFinished()
 
             elif childName == 'Spectrogram Settings.Max frequency':
                 self.widget.maxYSpc = data
                 self.widget.visualChanges = True
                 self.widget.refresh(dataChanged=True, updateOscillogram=False, updateSpectrogram=True)
+                self.hist.item.region.lineMoved()
+                self.hist.item.region.lineMoveFinished()
 
             elif childName == 'Spectrogram Settings.FFT overlap':
                 self.widget.specgramSettings.overlap = data
@@ -633,6 +637,11 @@ class DuettoSoundLabMAinWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             self.widget.specgramSettings.overlap = self.ParamTree.param('Spectrogram Settings').param('FFT overlap').value()
             self.widget.open(f)
             self.setWindowTitle("Duetto Sound Lab - " + self.widget.signalProcessor.signal.name())
+            self.ParamTree.param('Spectrogram Settings').param('Min frequency').setValue(self.widget.minYSpc)
+            self.ParamTree.param('Spectrogram Settings').param('Max frequency').setValue(self.widget.maxYSpc)
+
+            self.ParamTree.param('Oscillogram Settings').param('Amplitude').param('Min').setValue(-100)
+            self.ParamTree.param('Oscillogram Settings').param('Amplitude').param('Max').setValue(100)
 
             self.hist.item.region.lineMoved()
             self.hist.item.region.lineMoveFinished()
