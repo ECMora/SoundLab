@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'Graphic_Interface\UI Files\new_file_dialog.ui'
 #
-# Created: Thu Mar 20 01:10:28 2014
+# Created: Thu Apr 03 12:24:53 2014
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -61,7 +61,7 @@ class Ui_NewFileDialog(object):
         self.formLayout.setWidget(3, QtGui.QFormLayout.FieldRole, self.cbxBitDepth)
 
         self.retranslateUi(NewFileDialog)
-        self.cbxBitDepth.setCurrentIndex(0)
+        self.cbxBitDepth.setCurrentIndex(1)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), NewFileDialog.accept)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("rejected()")), NewFileDialog.reject)
         QtCore.QMetaObject.connectSlotsByName(NewFileDialog)

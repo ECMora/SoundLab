@@ -83,6 +83,7 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         self.dsbxMinSizeFreq.setEnabled(checked)
         self.sbxMergeFactorTime.setEnabled(checked)
         self.sbxMergeFactorFreq.setEnabled(checked)
+        self.cbxmeasurementLocationCenter
 
     @pyqtSlot()
     def detect(self):
