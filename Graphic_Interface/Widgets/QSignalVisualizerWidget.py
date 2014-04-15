@@ -23,7 +23,7 @@ from Duetto_Core.SpecgramSettings import SpecgramSettings
 from DuettoPlotWidget import DuettoPlotWidget
 from Graphic_Interface.UndoRedoActions import UndoRedoManager
 from Graphic_Interface.Widgets.DuettoImageWidget import DuettoImageWidget
-
+from Graphic_Interface.Widgets.Tools import Tools
 
 BACK_COLOR = "gray"
 
@@ -499,10 +499,11 @@ class QSignalVisualizerWidget(QWidget):
             #self.axesOscilogram.setRange(xRange=(0, self.mainCursor.max - self.mainCursor.min))
             self.axesSpecgram.zoomRegion.setBounds([0, self._from_osc_to_spec(self.mainCursor.max)])
             self.axesOscilogram.zoomRegion.setBounds([0, self.mainCursor.max])
-            self.axesOscilogram.setZoomRegionVisible(True)
+            #self.axesOscilogram.setZoomRegionVisible(True)
 
 
         self.axesOscilogram.getPlotItem().showGrid(x=self.osc_gridx, y=self.osc_gridy)
+        self.axesOscilogram.changeSelectedTool(Tools.Zoom)
         self.axesOscilogram.setBackground(self.osc_background)
 
         if self.visibleSpectrogram and updateSpectrogram and self.signalProcessor.signal \
@@ -518,6 +519,7 @@ class QSignalVisualizerWidget(QWidget):
             self.updateSpectrogramColors()
         self.axesSpecgram.setBackground(self.spec_background)
         self.axesSpecgram.showGrid(x=self.spec_gridx, y=self.spec_gridy)
+        self.axesSpecgram.changeSelectedTool(Tools.Zoom)
         self.refreshAxes()
         self.visualChanges = False
         if self.visibleElements:
@@ -763,8 +765,6 @@ class QSignalVisualizerWidget(QWidget):
             self.axesOscilogram.zoomRegion.sigRegionChanged.connect(self.updatezoomcursor)
             self.signalProcessor.signal.play_finished = self.removePlayerLine
         self.visualChanges = True
-        self.axesSpecgram.resetCursors()
-        self.axesOscilogram.resetCursors()
         self.axisXOsc.setFrequency(self.signalProcessor.signal.samplingRate)
         self.axisYOsc.setMaxVal(2**(self.signalProcessor.signal.bitDepth-1))
         self.maxYSpc = self.signalProcessor.signal.samplingRate / 2000

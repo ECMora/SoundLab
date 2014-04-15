@@ -40,11 +40,12 @@ class DuettoPlotWidget(pg.PlotWidget):
 
     def resetCursors(self):
         if self.selectedTool == Tools.PointerCursor:
-            self.changeSelectedTool(Tools.Zoom)
-            self.changeSelectedTool(Tools.PointerCursor)
+            self.pointerCursor.clear()
+            self.mouseReleased = False
         elif self.selectedTool == Tools.Zoom:
-            self.changeSelectedTool(Tools.PointerCursor)
-            self.changeSelectedTool(Tools.Zoom)
+            self.zoomRegion.setRegion([0,0])
+            self.mouseZoomEnabled = True
+        self.update()
 
     def changeSelectedTool(self,tool):
         if tool != self.selectedTool:
@@ -115,6 +116,7 @@ class DuettoPlotWidget(pg.PlotWidget):
             self.pointerCursor.addPoints([self.last])
             self.mouseReleased = True
             pg.PlotWidget.mousePressEvent(self, event)
+            self.update()
         elif self.selectedTool == Tools.Zoom:
             self.mousePressed = True
             if self.zoomRegion not in self.items():
@@ -149,7 +151,7 @@ class DuettoPlotWidget(pg.PlotWidget):
     def mouseReleaseEvent(self, event):
         if self.selectedTool == Tools.PointerCursor:
             self.mouseReleased = True
-            pg.PlotWidget.mouseReleaseEvent(self, event)
+            #pg.PlotWidget.mouseReleaseEvent(self, event)
         elif self.selectedTool == Tools.Zoom:
             self.mousePressed = False
             pg.PlotWidget.mouseReleaseEvent(self, event)

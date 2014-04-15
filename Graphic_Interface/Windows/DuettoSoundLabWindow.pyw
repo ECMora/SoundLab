@@ -737,7 +737,8 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             self.ParamTree.param('Spectrogram Settings').param('Frequency(kHz)').param('Min').setDefault(self.widget.minYSpc)
             self.ParamTree.param('Spectrogram Settings').param('Frequency(kHz)').param('Max').setValue(self.widget.maxYSpc)
             self.ParamTree.param('Spectrogram Settings').param('Frequency(kHz)').param('Max').setDefault(self.widget.maxYSpc)
-
+            self.actionPointer_Cursor.setChecked(False)
+            self.actionZoom_Cursor.setChecked(True)
             self.hist.item.region.lineMoved()
             self.hist.item.region.lineMoveFinished()
 
