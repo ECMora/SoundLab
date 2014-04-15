@@ -539,7 +539,7 @@ class QSignalVisualizerWidget(QWidget):
             YSpec = np.searchsorted(self.specgramSettings.freqs, [self.minYSpc*1000, self.maxYSpc*1000])
             self.axesSpecgram.viewBox.setRange(xRange=(self._from_osc_to_spec(self.mainCursor.min),
                                                        self._from_osc_to_spec(self.mainCursor.max)),
-                                               yRange=(0, self._Z.shape[0]), padding=0)
+                                               yRange=(YSpec[0], YSpec[1]), padding=0)
             self.updateSpectrogramColors()
         self.axesSpecgram.setBackground(self.spec_background)
         self.axesSpecgram.showGrid(x=self.spec_gridx, y=self.spec_gridy)
