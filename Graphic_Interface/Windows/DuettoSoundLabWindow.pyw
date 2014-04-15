@@ -21,7 +21,7 @@ from Graphic_Interface.Dialogs import InsertSilenceDialog as sdialog, FilterOpti
 from PyQt4 import QtCore, QtGui
 import pickle
 from WorkTheme import SerializedData
-from Graphic_Interface.Widgets.QSignalVisualizerWidget import Tools
+from Graphic_Interface.Widgets.Tools import Tools
 
 MIN_SAMPLING_RATE = 1000
 MAX_SAMPLING_RATE = 2000000
@@ -43,7 +43,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     def __init__(self, parent=None):
         super(DuettoSoundLabWindow, self).__init__(parent)
         self.setupUi(self)
-
 
         self.hist = DuettoHorizontalHistogramWidget()
         self.widget.histogram = self.hist
@@ -478,7 +477,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     def on_actionZoom_Cursor_triggered(self):
         if self.actionZoom_Cursor.isChecked():
             self.actionPointer_Cursor.setChecked(False)
-            self.widget.setSelectedTool('ZoomCursor')
+            self.widget.setSelectedTool(Tools.Zoom)
         elif not self.actionPointer_Cursor.isChecked():
             self.actionZoom_Cursor.setChecked(True)
 
@@ -486,7 +485,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     def on_actionPointer_Cursor_triggered(self):
         if self.actionPointer_Cursor.isChecked():
             self.actionZoom_Cursor.setChecked(False)
-            self.widget.setSelectedTool('PointerCursor')
+            self.widget.setSelectedTool(Tools.PointerCursor)
         elif not self.actionZoom_Cursor.isChecked():
             self.actionPointer_Cursor.setChecked(True)
 
