@@ -63,6 +63,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.statusbar = self.statusBar()
         self.statusbar.setSizeGripEnabled(False)
         self.widget.statusbar = self.statusbar
+        self.lastopen = ''
         self.statusbar.showMessage("Welcome to Duetto Sound Lab", 5000)
         params = [
         {'name': 'Oscillogram Settings', 'type': 'group', 'children': [
@@ -721,9 +722,10 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     @pyqtSlot()
     def on_actionOpen_triggered(self):
         self.actionHighest_instant_frequency.setChecked(False)
-        f = QFileDialog.getOpenFileName(self, "Select a file to open",
+        f = QFileDialog.getOpenFileName(self, "Select a file to open",directory = self.lastopen,
                                               filter="Wave Files (*.wav);;All Files (*)")
         if f != '':
+            self.lastopen = f
             self.widget.specgramSettings.NFFT = self.ParamTree.param('Spectrogram Settings').param('FFT size').value()
             self.widget.specgramSettings.overlap = self.ParamTree.param('Spectrogram Settings').param('FFT overlap').value()
             path_base = os.path.split(str(f))[0]
