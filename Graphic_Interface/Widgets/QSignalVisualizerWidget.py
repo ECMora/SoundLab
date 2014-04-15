@@ -402,7 +402,7 @@ class QSignalVisualizerWidget(QWidget):
         self.rangeChanged.emit(self.mainCursor.min, self.mainCursor.max, len(self.signalProcessor.signal.data))
 
     def makeZoom(self, _min, _max, specCoords=False):
-        if not self.signalProcessor.signal.opened():
+        if not self.signalProcessor.signal.opened() or _min == _max:
             return
         if specCoords:
             _min = self._from_spec_to_osc(_min)
@@ -482,7 +482,6 @@ class QSignalVisualizerWidget(QWidget):
                 self._Z[self._Z < -100] = -100
             self.axesSpecgram.yAxis.refresh(self.specgramSettings.freqs)
         # do actual refresh
-        print(self._Z.shape)
 
         self._doRefresh.emit(dataChanged, updateOscillogram, updateSpectrogram, partial)
 

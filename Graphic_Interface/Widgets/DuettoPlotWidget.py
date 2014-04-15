@@ -132,13 +132,16 @@ class DuettoPlotWidget(pg.PlotWidget):
             pg.PlotWidget.mousePressEvent(self, event)
 
     def mouseDoubleClickEvent(self, event):
-        if self.mouseZoomEnabled:
-            pg.PlotWidget.mouseDoubleClickEvent(self, event)
-            if self.mouseInsideZoomArea(event.x()) and self.makeZoom and callable(self.makeZoom):
-                rgn = self.zoomRegion.getRegion()
-                self.makeZoom(rgn[0], rgn[1])
-                self.zoomRegion.setRegion([rgn[0], rgn[0]])
-                #self.zoomRegion.lineMoved()
+        if not self.mouseZoomEnabled:
+            return
+        pg.PlotWidget.mouseDoubleClickEvent(self, event)
+        if self.mouseInsideZoomArea(event.x()) and self.makeZoom and callable(self.makeZoom):
+            rgn = self.zoomRegion.getRegion()
+            if rgn[0] == rgn[1]:
+                return
+            self.makeZoom(rgn[0], rgn[1])
+            self.zoomRegion.setRegion([rgn[0], rgn[0]])
+            #self.zoomRegion.lineMoved()
 
     def mouseReleaseEvent(self, event):
         if self.selectedTool == 'PointerCursor':
