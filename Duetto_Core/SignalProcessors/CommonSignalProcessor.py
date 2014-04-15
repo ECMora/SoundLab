@@ -29,6 +29,7 @@ class CommonSignalProcessor(SignalProcessor):
         for i in range(indexFrom, indexTo):
             self.signal.data[i] = interval[0] + (interval[1] - interval[0]) * (
                 abs(self.signal.data[i] - minp) / amplitude)
+        return self.signal
 
     def setSilence(self, indexFrom=0, indexTo=-1):
         """
@@ -41,6 +42,7 @@ class CommonSignalProcessor(SignalProcessor):
             indexTo = len(self.signal.data)
         self.checkIndexes(indexFrom, indexTo)
         self.signal.data[indexFrom:indexTo] = 0
+        return self.signal
 
     def reverse(self, indexFrom, indexTo=-1):
         """
@@ -55,20 +57,20 @@ class CommonSignalProcessor(SignalProcessor):
         self.checkIndexes(indexFrom, indexTo)
         data = self.signal.data[indexFrom:indexTo]
         self.signal.data[indexFrom:indexTo] = data[::-1]
+        return self.signal
 
     def insertSilence(self, indexFrom=0, indexTo=-1, ms=0):
         arr = zeros(ms * self.signal.samplingRate / 1000, type(self.signal.data[0]))
         self.signal.data = concatenate((self.signal.data[0:indexFrom],
                                         arr,
                                         self.signal.data[indexFrom:]))
+        return self.signal
 
     def scale(self, indexFrom=0, indexTo=-1, factor=100, function="normalize", fade="IN"):
         n = indexTo - indexFrom if indexTo != -1 else len(self.signal.data) - indexFrom
 
         def f(index):
-            if(function=="normalize"):
-                return factor/100.0
-            elif(function=="Linear"):
+            if(function=="Linear"):
                  if(fade=="OUT"):
                      return 1-(index*1.0)/n
                  elif(fade=="IN"):
@@ -94,7 +96,11 @@ class CommonSignalProcessor(SignalProcessor):
                 elif(fade=="OUT"):
                     return (1-(index*1.0)/n)**2
         if function == "const":
+            factor = 20**(factor/20.0)
+            self.signal.data[indexFrom:indexTo] *= factor
+        elif function == "normalize":
+            factor /= 100.0
             self.signal.data[indexFrom:indexTo] *= factor
         else:
             self.signal.data[indexFrom:indexTo] = [self.signal.data[indexFrom + index] * f(index) for index in range(n)]
-
+        return self.signal
