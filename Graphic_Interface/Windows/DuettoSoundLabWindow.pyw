@@ -722,6 +722,11 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             self.filesInFolderIndex = self.filesInFolder.index(str(f))
             self.widget.open(f)
             self.setWindowTitle("Duetto Sound Lab - " + self.widget.signalProcessor.signal.name())
+            self.ParamTree.param('Spectrogram Settings').param('Min frequency').setValue(self.widget.minYSpc)
+            self.ParamTree.param('Spectrogram Settings').param('Max frequency').setValue(self.widget.maxYSpc)
+
+            self.ParamTree.param('Oscillogram Settings').param('Amplitude').param('Min').setValue(-100)
+            self.ParamTree.param('Oscillogram Settings').param('Amplitude').param('Max').setValue(100)
 
             self.ParamTree.param('Spectrogram Settings').param('Frequency').param('Min').setValue(self.widget.minYSpc)
             self.ParamTree.param('Spectrogram Settings').param('Frequency').param('Min').setDefault(self.widget.minYSpc)
