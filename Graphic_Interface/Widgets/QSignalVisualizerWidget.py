@@ -71,17 +71,19 @@ class OscXAxis(pg.AxisItem):
 
     def tickStrings(self, values, scale, spacing):
         strns = []
-        s = "{:.2f}"
+        delta = spacing/self.Fs
+        a = max(-(int(np.log10(delta))-1),0)
+        a = min(a,4)
+        s = "{:."+str(a)+"f}"
         for x in values:
             strns.append(s.format(x*1.0/self.Fs))
         return strns
 
     def tickSpacing(self, minVal, maxVal, size):
-        return [(max((maxVal-minVal)/(10.0*self.Fs),0.01)*self.Fs,0)]
+        return [(max((maxVal-minVal)/(10.0*self.Fs),0.0001)*self.Fs,0)]
 
     def setFrequency(self,rate):
         self.Fs = rate
-
 
 class OscYAxis(pg.AxisItem):
     def __init__(self,*args,**kwargs):
@@ -488,7 +490,10 @@ class QSignalVisualizerWidget(QWidget):
                                 self.specgramSettings.NFFT, Fs=self.signalProcessor.signal.samplingRate,
                                 detrend=mlab.detrend_none, window=self.specgramSettings.window, noverlap=overlap,
                                 sides=self.SPECGRAM_COMPLEX_SIDE)
-            self._Z = 10. * np.log10(self.specgramSettings.Pxx)
+            temp = np.amax(self.specgramSettings.Pxx)
+            if(temp == 0):
+                temp = 1.0
+            self._Z = 10. * np.log10(self.specgramSettings.Pxx/temp)
             #self._Z = np.flipud(self._Z)
             Zfin = np.isfinite(self._Z)
             if np.any(Zfin):
