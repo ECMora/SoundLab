@@ -458,10 +458,18 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         quart2 = self.ParamTree.param('Detection Settings').param('Measurement Location').param('Quartile75').value()
         end = self.ParamTree.param('Detection Settings').param('Measurement Location').param('End').value()
         segWindow = SegmentationAndClasificationWindow(parent=self, signal=self.widget.signalProcessor.signal)
+
+        segWindow.widget.maxYOsc =  self.ParamTree.param('Oscillogram Settings').param('Amplitude').param('Max').value()
+        segWindow.widget.minYOsc = self.ParamTree.param('Oscillogram Settings').param('Amplitude').param('Min').value()
+        segWindow.widget.minYSpc = self.ParamTree.param('Spectrogram Settings').param('Frequency').param('Min').value()
+        segWindow.widget.maxYSpc = self.ParamTree.param('Spectrogram Settings').param('Frequency').param('Max').value()
+
         segWindow.load_Theme(SerializedData(self.widget.osc_background,self.widget.osc_color,self.widget.osc_gridx,
                               self.widget.osc_gridy, self.pow_spec_backg,self.pow_spec_plotColor,self.pow_spec_gridx,
                               self.pow_spec_gridy, self.widget.spec_background, self.widget.spec_gridx, self.widget.spec_gridy,
                               self.hist.item.gradient.saveState(),self.hist.item.region.getRegion(),end,center,start,quart1,quart2))
+
+
         self.widget.undoRedoManager.clearActions()
 
 

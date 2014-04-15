@@ -89,7 +89,7 @@ class QSignalVisualizerWidget(QWidget):
         self.axisXOsc = OscXAxis(orientation = 'bottom')
         self.axisYOsc = OscYAxis(orientation = 'left')
         self.axesOscilogram = DuettoPlotWidget(parent=self,axisItems={'bottom': self.axisXOsc,'left':self.axisYOsc})
-        self.tool = Tools().Zoom
+
         self.osc_background = "000"
         self.spec_background = "000"
         self.undoRedoManager = UndoRedoManager(self)
@@ -501,8 +501,8 @@ class QSignalVisualizerWidget(QWidget):
             #    length = (self.mainCursor.max - self.mainCursor.min)
             #    interval = length / self.INTERVAL_START_DECIMATION
             if dataChanged:
-                self.axesOscilogram.plot(self.signalProcessor.signal.data, clear=True, pen=self.osc_color,
-                                         autoDownsample=True, clipToView=partial)
+                self.axesOscilogram.setDownsampling(auto=True,mode="peak")
+                self.axesOscilogram.plot(self.signalProcessor.signal.data, clear=True, pen=self.osc_color, clipToView=partial)
                 if self.visibleEnvelope and not self.signalProcessor.signal.playStatus == AudioSignal.RECORDING:
                     self.axesOscilogram.plot(self.envelopeCurve)
             #self.axesOscilogram.setRange(xRange=(0, self.mainCursor.max - self.mainCursor.min))
