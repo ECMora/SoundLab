@@ -1,5 +1,6 @@
 from datetime import datetime
-from PyQt4.QtCore import pyqtSignal,QRect, Qt
+
+from PyQt4.QtCore import pyqtSignal,QRect, Qt, QRectF
 from PyQt4.QtGui import *
 from PyQt4 import QtCore, QtGui
 import pyqtgraph as pg
@@ -76,6 +77,7 @@ class QSignalVisualizerWidget(QWidget):
 
     def __init__(self, parent):
         QWidget.__init__(self, parent)
+        self.histogram = pg.HistogramLUTWidget()
         self._Z = np.array([[0]])
         self.osc_gridx = True
         self.osc_gridy = True
@@ -88,9 +90,15 @@ class QSignalVisualizerWidget(QWidget):
         self.tool = Tools().Zoom
         self.osc_background = "000"
         self.spec_background = "000"
-        self.envelopeCurve = np.array([])
-        self.visibleEnvelope = False
         self.undoRedoManager = UndoRedoManager(self)
+        self.minYOsc = -100
+        self.maxYOsc =  100
+        self.minYSpc = 0
+        self.maxYSpc = 22
+
+        self.visibleEnvelope = False
+        self.envelopeCurve = np.array([])
+
 
         self.axesOscilogram.setMouseEnabled(x=False, y=False)
         self.axesOscilogram.getPlotItem().hideButtons()
@@ -98,7 +106,6 @@ class QSignalVisualizerWidget(QWidget):
         self.axesOscilogram.setRange(QRect(0,0,1,1))
         self.axesSpecgram = DuettoImageWidget(parent=self)
         self.axesSpecgram.show()
-
 
         self.axesOscilogram.IntervalOscChanged.connect(self.updateSpecZoomRegion)
         self.axesSpecgram.IntervalSpecChanged.connect(self.updateOscZoomRegion)
@@ -152,6 +159,10 @@ class QSignalVisualizerWidget(QWidget):
         self._doRefresh.connect(self._refresh)
         self.playing.connect(self.notifyPlayingCursor)
 
+    def setSelectedTool(self,tool):
+        self.axesSpecgram.changeSelectedTool(tool)
+        self.axesOscilogram.changeSelectedTool(tool)
+
     def load_Theme(self,theme):
         """
         this method implements the  way in wich the controls load the theme
@@ -199,6 +210,8 @@ class QSignalVisualizerWidget(QWidget):
             self.axesOscilogram.zoomRegion.setRegion([self.zoomCursor.min, self.zoomCursor.max])
             #self.axesSpecgram.zoomRegion.setRegion([self._from_osc_to_spec(self.zoomCursor.min),
             #                                        self._from_osc_to_spec(self.zoomCursor.max)])
+        elif QKeyEvent.key() == Qt.Key_Space:
+            self.switchPlayStatus()
 
     def play(self):
         if self.zoomCursor.min > 0 and self.zoomCursor.max > 0:
@@ -213,7 +226,7 @@ class QSignalVisualizerWidget(QWidget):
 
     def switchPlayStatus(self):
         if self.signalProcessor.signal.playStatus == self.signalProcessor.signal.PLAYING:
-            self.stop()
+            self.pause()
         else:
             self.play()
 
@@ -303,6 +316,8 @@ class QSignalVisualizerWidget(QWidget):
         #actualiza los cursores de zoom segun el area seleccionada por el usuario
         range = self.axesOscilogram.zoomRegion.getRegion()
         self.zoomCursor.min, self.zoomCursor.max = int(range[0]), int(range[1])
+        #self.emit(SIGNAL("IntervalChanged"))
+
 
     def dropEvent(self, event):
         data = event.mimeData().data()
@@ -334,10 +349,10 @@ class QSignalVisualizerWidget(QWidget):
         self.changeRange(left, right, updateSpectrogram=False)
 
     def _from_spec_to_osc(self, coord):
-        return 1.0 * coord * len(self.signalProcessor.signal.data) / self._Z.shape[1]
+        return 1.0 * coord * (self.mainCursor.max - self.mainCursor.min) / self._Z.shape[1]
 
     def _from_osc_to_spec(self, coord):
-        return 1.0 * coord * self._Z.shape[1] / len(self.signalProcessor.signal.data)
+        return 1.0 * coord * self._Z.shape[1] / (self.mainCursor.max - self.mainCursor.min)
 
     def zoomOut(self):
         if not self.signalProcessor.signal.opened():
@@ -431,15 +446,22 @@ class QSignalVisualizerWidget(QWidget):
         self.axisXOsc.setTicks([zip(vals,strgs)])
         self.axesSpecgram.xAxis.setTicks(self.axisXOsc._tickLevels)
 
+    def zoomY(self,ymin,ymax):
+        self.axesSpecgram.viewBox.setRange()
+        self.axesSpecgram.getView().setRange()
+
     def refresh(self, dataChanged=True, updateOscillogram=True, updateSpectrogram=True, partial=False):
         # perform some heavy calculations
+        width = self.axesSpecgram.viewBox.width()
         if self.visibleSpectrogram and updateSpectrogram and self.signalProcessor.signal \
            and self.signalProcessor.signal.opened() and self.signalProcessor.signal.playStatus != AudioSignal.RECORDING\
-           and self.mainCursor.max > self.mainCursor.min and dataChanged:
-            overlap = int(self.specgramSettings.NFFT * self.specgramSettings.overlap / 100)
+           and self.mainCursor.max > self.mainCursor.min and width:
+            normOverlap = self.specgramSettings.overlap / 100.0
+            if normOverlap < 0:
+                normOverlap = 1 - 1.0 * (self.mainCursor.max-self.mainCursor.min) / (self.specgramSettings.NFFT * width)
+            overlap = int(self.specgramSettings.NFFT * normOverlap)
             self.specgramSettings.Pxx, self.specgramSettings.freqs, self.specgramSettings.bins\
-                = mlab.specgram(self.signalProcessor.signal.data if not partial
-                                else self.signalProcessor.signal.data[self.mainCursor.min:self.mainCursor.max],
+                = mlab.specgram(self.signalProcessor.signal.data[self.mainCursor.min:self.mainCursor.max],
                                 self.specgramSettings.NFFT, Fs=self.signalProcessor.signal.samplingRate,
                                 detrend=mlab.detrend_none, window=self.specgramSettings.window, noverlap=overlap,
                                 sides=self.SPECGRAM_COMPLEX_SIDE)
@@ -455,6 +477,7 @@ class QSignalVisualizerWidget(QWidget):
                 self._Z[self._Z < -100] = -100
             self.axesSpecgram.yAxis.refresh(self.specgramSettings.freqs)
         # do actual refresh
+        print(self._Z.shape)
 
         self._doRefresh.emit(dataChanged, updateOscillogram, updateSpectrogram, partial)
 
@@ -462,23 +485,21 @@ class QSignalVisualizerWidget(QWidget):
 
         if not self.visualChanges:
             return
+        self.axesOscilogram.setRange(xRange=(self.mainCursor.min, self.mainCursor.max),
+                                         yRange=(self.minYOsc*0.01*self.signalProcessor.signal.getMaximumValueAllowed(),
+                                                 self.maxYOsc*0.01*self.signalProcessor.signal.getMaximumValueAllowed()), padding=0,update = True)
+
         if (self.visibleOscilogram or self.signalProcessor.signal.playStatus == AudioSignal.RECORDING) \
            and updateOscillogram and self.signalProcessor.signal and self.signalProcessor.signal.opened()\
            and self.mainCursor.max > self.mainCursor.min:
             #if self.mainCursor.max - self.mainCursor.min > 2 * self.INTERVAL_START_DECIMATION:
             #    length = (self.mainCursor.max - self.mainCursor.min)
             #    interval = length / self.INTERVAL_START_DECIMATION
-
-            self.axesOscilogram.setRange(xRange=(self.mainCursor.min, self.mainCursor.max),
-                                         yRange=(self.signalProcessor.signal.getMinimumValueAllowed(),
-                                                 self.signalProcessor.signal.getMaximumValueAllowed()), padding=0)
-
             if dataChanged:
                 self.axesOscilogram.plot(self.signalProcessor.signal.data, clear=True, pen=self.osc_color,
-                                         autoDownsample=not partial, clipToView=partial)
+                                         autoDownsample=True, clipToView=partial)
                 if self.visibleEnvelope and not self.signalProcessor.signal.playStatus == AudioSignal.RECORDING:
                     self.axesOscilogram.plot(self.envelopeCurve)
-
             #self.axesOscilogram.setRange(xRange=(0, self.mainCursor.max - self.mainCursor.min))
             self.axesSpecgram.zoomRegion.setBounds([0, self._from_osc_to_spec(self.mainCursor.max)])
             self.axesOscilogram.zoomRegion.setBounds([0, self.mainCursor.max])
@@ -491,26 +512,29 @@ class QSignalVisualizerWidget(QWidget):
         if self.visibleSpectrogram and updateSpectrogram and self.signalProcessor.signal \
            and self.signalProcessor.signal.opened() and self.signalProcessor.signal.playStatus != AudioSignal.RECORDING\
            and self.mainCursor.max > self.mainCursor.min:
-            if dataChanged:
-                osc_spec_ratio = 1.0 * (len(self.signalProcessor.signal.data) if not partial
-                                        else (self.mainCursor.max - self.mainCursor.min))\
-                                 / self._Z.shape[1]
-                self.axesSpecgram.imageItem.setImage(numpy.transpose(self._Z),
-                                           pos=((self.mainCursor.min / osc_spec_ratio) if partial else 0, 0))
-            else:
-                osc_spec_ratio = 1.0 * (len(self.signalProcessor.signal.data) if not partial
-                                        else (self.mainCursor.max - self.mainCursor.min))\
-                                 / self._Z.shape[1]
-            self.axesSpecgram.viewBox.setRange(xRange=(self.mainCursor.min / osc_spec_ratio,
-                                                         self.mainCursor.max / osc_spec_ratio),
-                                                 yRange=(0, self._Z.shape[0]), padding=0)
+            self.axesSpecgram.imageItem.setImage(numpy.transpose(self._Z))
+            self.axesSpecgram.imageItem.setRect(QRectF(self._from_osc_to_spec(self.mainCursor.min), 0,
+                                                       self._Z.shape[1], self._Z.shape[0]))
+            YSpec = np.searchsorted(self.specgramSettings.freqs, [self.minYSpc*1000, self.maxYSpc*1000])
+            self.axesSpecgram.viewBox.setRange(xRange=(self._from_osc_to_spec(self.mainCursor.min),
+                                                       self._from_osc_to_spec(self.mainCursor.max)),
+                                               yRange=(YSpec[0], YSpec[1]), padding=0)
+            self.updateSpectrogramColors()
         self.axesSpecgram.setBackground(self.spec_background)
-        self.axesSpecgram.showGrid(x=self.spec_gridx,y=self.spec_gridy)
+        self.axesSpecgram.showGrid(x=self.spec_gridx, y=self.spec_gridy)
         self.refreshAxes()
         self.visualChanges = False
-        if(self.visibleElements):
+        if self.visibleElements:
             self.drawElements()
 
+        gem = self.parent().geometry()
+        self.parent().resize(gem.width()/3, gem.height())
+        self.parent().resize(gem.width(), gem.height())
+
+
+    def updateSpectrogramColors(self):
+        self.histogram.item.region.lineMoved()
+        self.histogram.item.region.lineMoveFinished()
 
     def cursorZoomTransform(self, cursorIndex):
         return cursorIndex - self.mainCursor.min
@@ -537,7 +561,7 @@ class QSignalVisualizerWidget(QWidget):
             elif element_type is Element.PeakFreqs:
                 for x in e.visual_peaksfreqs:
                     x[1] = visible
-        self.drawElements(oscilogramItems)
+        self.drawElements()
 
 
     def drawElements(self,oscilogramItems=None):
@@ -594,6 +618,8 @@ class QSignalVisualizerWidget(QWidget):
             self.editionSignalProcessor.cut(self.zoomCursor.min, self.zoomCursor.max)
             self.mainCursor.max -= self.zoomCursor.max - self.zoomCursor.min
             self.visualChanges = True
+            if (self.mainCursor.max < 1):
+                self.zoomOut()
             self.rangeChanged.emit(self.mainCursor.min, self.mainCursor.max, len(self.signalProcessor.signal.data))
             self.refresh()
 
@@ -698,8 +724,7 @@ class QSignalVisualizerWidget(QWidget):
                                       threshold_spectral=threshold_spectral, pxx =  self.specgramSettings.Pxx, freqs=self.specgramSettings.freqs,
                                       bins=self.specgramSettings.bins, minsize_spectral=minsize_spectral,location=location,progress=progress,findSpectralSublements = findSpectralSublements,overlap = self.specgramSettings.overlap)
         self.envelopeCurve = self.elements_detector.envelope
-        if(self.visibleOscilogram):
-            self.axesOscilogram.plot(self.envelopeCurve)
+
         for c in self.elements_detector.elements():
             self.Elements.append(c)# the elment the space for the span selector and the text
         #incorporar deteccion en espectrograma
@@ -742,9 +767,13 @@ class QSignalVisualizerWidget(QWidget):
             self.axesOscilogram.zoomRegion.sigRegionChanged.connect(self.updatezoomcursor)
             self.signalProcessor.signal.play_finished = self.removePlayerLine
         self.visualChanges = True
+        self.axesSpecgram.resetCursors()
+        self.axesOscilogram.resetCursors()
         self.axisXOsc.setFrequency(self.signalProcessor.signal.samplingRate)
         self.axisYOsc.setMaxVal(2**(self.signalProcessor.signal.bitDepth-1))
+        self.maxYSpc = self.signalProcessor.signal.samplingRate / 2000
         self.refresh()
+        self.zoomIn()
         self.zoomNone()
         self.axesOscilogram.getPlotItem().getViewBox().sigRangeChangedManually.connect(self._oscRangeChanged)
         self.axesSpecgram.viewBox.sigRangeChangedManually.connect(self._specRangeChanged)
@@ -805,4 +834,5 @@ class QSignalVisualizerWidget(QWidget):
             fh.close()
 
 
+    #endregion
     #endregion
