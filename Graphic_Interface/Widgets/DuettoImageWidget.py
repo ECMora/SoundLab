@@ -64,8 +64,9 @@ class DuettoImageWidget(GraphicsView):
     PIXELS_OF_CURSORS_CHANGES = 5
     IntervalSpecChanged = pyqtSignal(int, int)
     PointerSpecChanged = pyqtSignal(str)
+    PointerCursorPressed = pyqtSignal()
 
-    def resetCursors(self):
+    def clearPointerCursor(self):
         self.pointerCursor.clear()
         self.mouseReleased = False
 
@@ -118,7 +119,7 @@ class DuettoImageWidget(GraphicsView):
                 self.PointerSpecChanged.emit(str.format('Time: {0}s  Frequency: {1}kHz Intensity: {2}dB',info[0],info[1],info[2]))
             self.viewBox.update()
             self.setCursor(QCursor(QtCore.Qt.CrossCursor))
-        elif self.selectedTool == 'ZoomCursor':
+        elif self.selectedTool == Tools.Zoom:
             pg.GraphicsView.mouseMoveEvent(self, event)
             if self.parent().visibleOscilogram:
                 rgn = self.zoomRegion.getRegion()
@@ -145,6 +146,7 @@ class DuettoImageWidget(GraphicsView):
             self.last = {'pos':[x,y], 'pen': {'color': 'w', 'width': 2},'brush':pg.intColor(255, 255), 'symbol':'+', 'size':20}
             self.pointerCursor.addPoints([self.last])
             self.mouseReleased = False
+            self.PointerCursorPressed.emit()
         if self.selectedTool == Tools.Zoom:
             self.mousePressed = True
             if not self.zoomRegion in self.items():

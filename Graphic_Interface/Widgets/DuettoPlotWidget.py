@@ -36,16 +36,12 @@ class DuettoPlotWidget(pg.PlotWidget):
 
     PointerOscChanged = pyqtSignal(str)
     IntervalOscChanged = pyqtSignal(int, int)
+    PointerCursorPressed = pyqtSignal()
     PIXELS_OF_CURSORS_CHANGES = 5
 
-    def resetCursors(self):
-        if self.selectedTool == Tools.PointerCursor:
-            self.pointerCursor.clear()
-            self.mouseReleased = False
-        elif self.selectedTool == Tools.Zoom:
-            self.zoomRegion.setRegion([0,0])
-            self.mouseZoomEnabled = True
-        self.update()
+    def clearPointerCursor(self):
+        self.pointerCursor.clear()
+        self.mouseReleased = False
 
     def changeSelectedTool(self,tool):
         if tool != self.selectedTool:
@@ -71,8 +67,9 @@ class DuettoPlotWidget(pg.PlotWidget):
         #self.update()
 
     def mouseMoveEvent(self, event):
+
         if self.selectedTool == Tools.PointerCursor:
-            pg.PlotWidget.mouseMoveEvent(self, event)
+            if self.mousePressed:return
 
             x = self.fromCanvasToClient(event.x())
             y = self.fromCanvasToClientY(event.y())
@@ -105,6 +102,7 @@ class DuettoPlotWidget(pg.PlotWidget):
 
 
     def mousePressEvent(self, event):
+        self.mousePressed = True
         if self.selectedTool == Tools.PointerCursor:
             self.pointerCursor.clear()
             x = self.fromCanvasToClient(event.x())
@@ -114,11 +112,11 @@ class DuettoPlotWidget(pg.PlotWidget):
                 return
             self.last = {'pos':[x,y], 'pen': {'color': 'w', 'width': 2},'brush':pg.intColor(255, 255), 'symbol':'+', 'size':20}
             self.pointerCursor.addPoints([self.last])
-            self.mouseReleased = True
-            pg.PlotWidget.mousePressEvent(self, event)
-            self.update()
+            self.mouseReleased = False
+            #pg.PlotWidget.mousePressEvent(self, event)
+            #self.update()
+            self.PointerCursorPressed.emit()
         elif self.selectedTool == Tools.Zoom:
-            self.mousePressed = True
             if self.zoomRegion not in self.items():
                 self.zoomRegion.setRegion([self.fromCanvasToClient(event.x()), self.fromCanvasToClient(event.x())])
                 self.setZoomRegionVisible(True)
@@ -149,11 +147,12 @@ class DuettoPlotWidget(pg.PlotWidget):
                 #self.zoomRegion.lineMoved()
 
     def mouseReleaseEvent(self, event):
+        self.mousePressed = False
         if self.selectedTool == Tools.PointerCursor:
             self.mouseReleased = True
-            #pg.PlotWidget.mouseReleaseEvent(self, event)
+
         elif self.selectedTool == Tools.Zoom:
-            self.mousePressed = False
+
             pg.PlotWidget.mouseReleaseEvent(self, event)
 
             rgn = self.zoomRegion.getRegion()
