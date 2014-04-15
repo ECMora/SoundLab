@@ -794,6 +794,7 @@ class QSignalVisualizerWidget(QWidget):
             self.signalProcessor.signal.play_finished = self.removePlayerLine
         self.visualChanges = True
         self.axesSpecgram.resetCursors()
+        self.axesOscilogram.resetCursors()
         self.axisXOsc.setFrequency(self.signalProcessor.signal.samplingRate)
         self.axisYOsc.setMaxVal(2**(self.signalProcessor.signal.bitDepth-1))
         self.maxYSpc = self.signalProcessor.signal.samplingRate / 2000
