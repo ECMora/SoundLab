@@ -10,15 +10,15 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
     def __init__(self, parent):
         super(QDialog,self).__init__(parent)
         self.setupUi(self)
-        self.widget.visibleSpectrogram = True
+        self.widget.visibleSpectrogram = False
         self.widget.visibleOscilogram = True
+        self.widget.specgramSettings.overlap = 50
         if parent is not None:
             self.widget.specgramSettings.NFFT = parent.widget.specgramSettings.NFFT
             self.widget.specgramSettings.overlap = parent.widget.specgramSettings.overlap
             self.widget.specgramSettings.window = parent.widget.specgramSettings.window
 
-
-
+        self.widget.setSelectedTool("OscilogramThreshold")
         #espectrogram
         self.dsbxThresholdSpec.valueChanged.connect(self.detect)
         self.dsbxMinSizeFreq.valueChanged.connect(self.detect)
@@ -27,23 +27,31 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         self.dsbxThreshold.valueChanged.connect(self.detect)
         self.dsbxThreshold.valueChanged.connect(self.updateThresholdLine)
 
+        self.cbxSpectralSubelements.stateChanged.connect(self.updateGraphsVisibility)
 
         self.dsbxThreshold2.valueChanged.connect(self.detect)
         self.dsbxDecay.valueChanged.connect(self.detect)
         self.dsbxMinSize.valueChanged.connect(self.detect)
         self.dsbxMergeFactor.valueChanged.connect(self.detect)
         self.sbxSoftFactor.valueChanged.connect(self.detect)
-        self.widget.signalProcessor.signal = WavFileSignal("Utils\\Didactic Signals\\recognition.wav")
-        self.widget.mainCursor.min,self.widget.mainCursor.max = 0,len(self.widget.signalProcessor.signal.data)
+        self.widget.open("Utils\\Didactic Signals\\recognition.wav")
         self.widget.axesOscilogram.setVisibleThreshold(True)
 
         self.widget.axesOscilogram.threshold.sigPositionChangeFinished.connect(self.updateThreshold)
         self.widget.axesOscilogram.threshold.setBounds((0,2**(self.widget.signalProcessor.signal.bitDepth-1)))
 
-        self.widget.visualChanges = True
         self.hist = pg.widgets.HistogramLUTWidget.HistogramLUTItem()
         self.hist.setImageItem(self.widget.axesSpecgram.imageItem)
+        self.hist.region.lineMoved()
+        self.hist.region.lineMoveFinished()
+
+        self.widget.visualChanges = True
         self.widget.refresh()
+
+    def updateGraphsVisibility(self):
+        self.widget.visibleSpectrogram = self.cbxSpectralSubelements.isChecked()
+        self.widget.refresh()
+
 
     def updateThreshold(self,line):
         self.dsbxThreshold.setValue(self.toDB() if line.value() == 0 else self.toDB(line.value()))
