@@ -108,6 +108,7 @@ class DuettoPlotWidget(pg.PlotWidget):
                 return
             self.last = {'pos':[x,y], 'pen': {'color': 'w', 'width': 2},'brush':pg.intColor(255, 255), 'symbol':'+', 'size':20}
             self.pointerCursor.addPoints([self.last])
+            self.mouseReleased = False
             pg.PlotWidget.mousePressEvent(self, event)
         if self.mouseZoomEnabled:
             self.mousePressed = True
