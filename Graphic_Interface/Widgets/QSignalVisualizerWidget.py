@@ -104,6 +104,8 @@ class QSignalVisualizerWidget(QWidget):
 
         self.axesOscilogram.IntervalOscChanged.connect(self.updateSpecZoomRegion)
         self.axesSpecgram.IntervalSpecChanged.connect(self.updateOscZoomRegion)
+        self.axesOscilogram.PointerCursorPressed.connect(self.axesSpecgram.clearPointerCursor)
+        self.axesSpecgram.PointerCursorPressed.connect(self.axesOscilogram.clearPointerCursor)
 
         layout = QVBoxLayout()
         layout.addWidget(self.axesOscilogram)
@@ -503,7 +505,7 @@ class QSignalVisualizerWidget(QWidget):
 
 
         self.axesOscilogram.getPlotItem().showGrid(x=self.osc_gridx, y=self.osc_gridy)
-        self.axesOscilogram.changeSelectedTool(Tools.Zoom)
+
         self.axesOscilogram.setBackground(self.osc_background)
 
         if self.visibleSpectrogram and updateSpectrogram and self.signalProcessor.signal \
@@ -519,7 +521,6 @@ class QSignalVisualizerWidget(QWidget):
             self.updateSpectrogramColors()
         self.axesSpecgram.setBackground(self.spec_background)
         self.axesSpecgram.showGrid(x=self.spec_gridx, y=self.spec_gridy)
-        self.axesSpecgram.changeSelectedTool(Tools.Zoom)
         self.refreshAxes()
         self.visualChanges = False
         if self.visibleElements:
@@ -776,6 +777,8 @@ class QSignalVisualizerWidget(QWidget):
         self.signalProcessor.signal.recordNotifier = self.on_newDataRecorded#self.newDataRecorded.emit
         self.signalProcessor.signal.playNotifier = self.playing.emit
         self.rangeChanged.emit(0, len(self.signalProcessor.signal.data), len(self.signalProcessor.signal.data))
+        self.axesOscilogram.changeSelectedTool(Tools.Zoom)
+        self.axesSpecgram.changeSelectedTool(Tools.Zoom)
 
 
     def save(self, fname):
