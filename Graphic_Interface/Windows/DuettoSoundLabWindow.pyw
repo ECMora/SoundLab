@@ -21,6 +21,7 @@ from Graphic_Interface.Dialogs import InsertSilenceDialog as sdialog, FilterOpti
 from PyQt4 import QtCore, QtGui
 import pickle
 from WorkTheme import SerializedData
+from Graphic_Interface.Widgets.QSignalVisualizerWidget import Tools
 
 MIN_SAMPLING_RATE = 1000
 MAX_SAMPLING_RATE = 2000000
@@ -459,10 +460,10 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         end = self.ParamTree.param('Detection Settings').param('Measurement Location').param('End').value()
         segWindow = SegmentationAndClasificationWindow(parent=self, signal=self.widget.signalProcessor.signal)
 
-        segWindow.widget.maxYOsc =  self.ParamTree.param('Oscillogram Settings').param('Amplitude').param('Max').value()
-        segWindow.widget.minYOsc = self.ParamTree.param('Oscillogram Settings').param('Amplitude').param('Min').value()
-        segWindow.widget.minYSpc = self.ParamTree.param('Spectrogram Settings').param('Frequency').param('Min').value()
-        segWindow.widget.maxYSpc = self.ParamTree.param('Spectrogram Settings').param('Frequency').param('Max').value()
+        segWindow.widget.maxYOsc =  self.ParamTree.param('Oscillogram Settings').param('Amplitude(%)').param('Max').value()
+        segWindow.widget.minYOsc = self.ParamTree.param('Oscillogram Settings').param('Amplitude(%)').param('Min').value()
+        segWindow.widget.minYSpc = self.ParamTree.param('Spectrogram Settings').param('Frequency(kHz)').param('Min').value()
+        segWindow.widget.maxYSpc = self.ParamTree.param('Spectrogram Settings').param('Frequency(kHz)').param('Max').value()
 
         segWindow.load_Theme(SerializedData(self.widget.osc_background,self.widget.osc_color,self.widget.osc_gridx,
                               self.widget.osc_gridy, self.pow_spec_backg,self.pow_spec_plotColor,self.pow_spec_gridx,
