@@ -64,13 +64,6 @@ class OscYAxis(pg.AxisItem):
     def setMaxVal(self,maxVal):
         self.Max = maxVal
 
-class Tools:
-    """
-    the tools for interaction with the signal in the QSignalVisualizerWidget.
-    """
-    Zoom,RectangularCursor,CircularEraser,RectangularEraser,PointerCursor, OscilogramThreshold = range(6)
-
-
 class QSignalVisualizerWidget(QWidget):
     """Class to represent the QSignalVisualizerWidget widget"""
     playing = pyqtSignal(int)
