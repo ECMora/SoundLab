@@ -696,9 +696,10 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.dock_spec_settings.setVisible(True)
         self.dock_spec_settings.setFloating(False)
 
+
     @pyqtSlot()
-    def on_actionEnvelope_triggered(self):
-        self.widget.envelope()
+    def on_actionExit_triggered(self):
+        self.close()
 
     @pyqtSlot()
     def on_actionNew_triggered(self):
@@ -722,11 +723,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             self.filesInFolderIndex = self.filesInFolder.index(str(f))
             self.widget.open(f)
             self.setWindowTitle("Duetto Sound Lab - " + self.widget.signalProcessor.signal.name())
-            self.ParamTree.param('Spectrogram Settings').param('Min frequency').setValue(self.widget.minYSpc)
-            self.ParamTree.param('Spectrogram Settings').param('Max frequency').setValue(self.widget.maxYSpc)
-
-            self.ParamTree.param('Oscillogram Settings').param('Amplitude').param('Min').setValue(-100)
-            self.ParamTree.param('Oscillogram Settings').param('Amplitude').param('Max').setValue(100)
 
             self.ParamTree.param('Spectrogram Settings').param('Frequency').param('Min').setValue(self.widget.minYSpc)
             self.ParamTree.param('Spectrogram Settings').param('Frequency').param('Min').setDefault(self.widget.minYSpc)
@@ -737,7 +733,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             self.hist.item.region.lineMoveFinished()
 
     @pyqtSlot()
-    def on_actionOpen_File_Up_triggered(self):
+    def on_actionFile_Up_triggered(self):
         if self.filesInFolderIndex < len(self.filesInFolder)-1:
             self.filesInFolderIndex += 1
             if os.path.exists(self.filesInFolder[self.filesInFolderIndex]):
@@ -747,7 +743,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 self.hist.item.region.lineMoveFinished()
 
     @pyqtSlot()
-    def on_actionOpen_File_Down_triggered(self):
+    def on_actionFile_Down_triggered(self):
         if self.filesInFolderIndex > 0:
             self.filesInFolderIndex -= 1
             if os.path.exists(self.filesInFolder[self.filesInFolderIndex]):
@@ -804,11 +800,25 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.widget.refresh(updateSpectrogram=False)
 
     @pyqtSlot()
-    def on_actionOsgram_Image_triggered(self):
+    def on_actionOsc_Image_triggered(self):
         if self.widget.visibleOscilogram:
             self.saveImage(self.widget.axesOscilogram,"oscilogram")
         else:
             QtGui.QMessageBox.warning(QtGui.QMessageBox(), "Error", "The Oscilogram plot widget is not visible.\n You should see the data that you are going to save.")
+
+    @pyqtSlot()
+    def on_actionCombined_Image_triggered(self):
+        if self.widget.visibleOscilogram and self.widget.visibleSpectrogram:
+            self.saveImage(self.widget,"graph")
+        else:
+            QtGui.QMessageBox.warning(QtGui.QMessageBox(), "Error", "One of the plot widgets is not visible.\n You should see the data that you are going to save.")
+
+    @pyqtSlot()
+    def on_actionFull_Screen_triggered(self):
+        if self.actionFull_Screen.isChecked():
+            self.showFullScreen()
+        else:
+            self.showNormal()
 
     @pyqtSlot()
     def on_actionSpecgram_Image_triggered(self):
