@@ -476,13 +476,11 @@ class QSignalVisualizerWidget(QWidget):
             if np.any(Zfin):
                 m = self._Z[Zfin].min()
                 self._Z[np.isneginf(self._Z)] = m
-                cut_off = np.amin(self._Z[np.isfinite(self._Z)])
-                self._Z[self._Z < cut_off] = cut_off
             else:
                 self._Z[self._Z < -100] = -100
             self.axesSpecgram.yAxis.refresh(self.specgramSettings.freqs)
         # do actual refresh
-        print(self._Z.shape)
+        #print(self._Z.shape)
 
         self._doRefresh.emit(dataChanged, updateOscillogram, updateSpectrogram, partial)
 
