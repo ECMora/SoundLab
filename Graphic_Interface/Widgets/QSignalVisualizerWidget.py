@@ -69,6 +69,8 @@ class QSignalVisualizerWidget(QWidget):
     playing = pyqtSignal(int)
     rangeChanged = pyqtSignal(int, int, int)
     _doRefresh = pyqtSignal(bool, bool, bool, bool)
+    rangeAmplitudeChanged = pyqtSignal(int, int)
+    rangeFrequencyChanged = pyqtSignal(int, int)
 
     def __init__(self, parent):
         QWidget.__init__(self, parent)
@@ -108,6 +110,9 @@ class QSignalVisualizerWidget(QWidget):
         self.axesSpecgram.PointerCursorPressed.connect(self.axesOscilogram.clearPointerCursor)
         self.axesOscilogram.RectangularCursorPressed.connect(self.axesSpecgram.clearRectangularCursor)
         self.axesSpecgram.RectangularCursorPressed.connect(self.axesOscilogram.clearRectangularCursor)
+        self.axesSpecgram.applyFilter.connect(self.applyFilterSpec)
+        #self.axesOscilogram.NewRectangularRegion.connect(self.applyRectabgularCursorOsc)
+        #self.axesSpecgram.NewRectangularRegion.connect(self.applyRectangularCursorSpec)
         layout = QVBoxLayout()
         layout.addWidget(self.axesOscilogram)
         layout.addWidget(self.axesSpecgram)
@@ -126,7 +131,9 @@ class QSignalVisualizerWidget(QWidget):
         self.axesSpecgram.zoomRegion.sigRegionChanged.connect(self.updatezoomcursor)
         #self.setLayout(layout)
         self.axesOscilogram.makeZoom = self.makeZoom  # metodo a ejecutar si se produce un zoom
+        self.axesOscilogram.makeZoomRect = self.makeZoomRect
         self.axesSpecgram.makeZoom = self.makeZoom
+        self.axesSpecgram.makeZoomRect = self.makeZoomRect
         self.zoomStep = 1
         self.visualChanges = False
         self._visibleOscillogram = False
@@ -176,6 +183,13 @@ class QSignalVisualizerWidget(QWidget):
         self.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
         for act in actions:
             self.addAction(act)
+
+    def applyFilterSpec(self,indexF,indexT,FreqLow,FreqUp):
+        filter = FilterSignalProcessor(self.signalProcessor.signal)
+        filter.filter(indexFrom = self._from_spec_to_osc(indexF),indexTo = self._from_spec_to_osc(indexT),filterType = FILTER_TYPE.BAND_STOP,Fl=FreqLow,Fu=FreqUp)
+        self.filter(filterType=FILTER_TYPE().BAND_STOP,FLow=FreqLow,FUpper=FreqUp)
+        self.visualChanges = True
+        self.refresh()
 
     def updateSpecZoomRegion(self,a,b):
         min = self._from_osc_to_spec(a)
@@ -378,23 +392,29 @@ class QSignalVisualizerWidget(QWidget):
     def redo(self):
         self.undoRedoManager.redo()
 
+    def makeZoomRect(self, specCoords = False):
+        if specCoords:
+            self.makeZoom(self.axesSpecgram.rectRegion['x'][0],self.axesSpecgram.rectRegion['x'][1], specCoords=True)
+            self.minYSpc = self.axesSpecgram.rectRegion['y'][0]
+            self.maxYSpc = self.axesSpecgram.rectRegion['y'][1]
+            self.refresh(dataChanged=False, updateOscillogram=True, updateSpectrogram=True)
+            self.rangeFrequencyChanged.emit(self.minYSpc,self.maxYSpc)
+        else:
+            self.makeZoom(self.axesOscilogram.rectRegion['x'][0],self.axesOscilogram.rectRegion['x'][1], specCoords=True)
+            self.minYOsc = self.axesOscilogram.rectRegion['y'][0]
+            self.maxYOsc = self.axesOscilogram.rectRegion['y'][1]
+            self.refresh(dataChanged=False, updateOscillogram=True, updateSpectrogram=True)
+            self.rangeAmplitudeChanged.emit(self.minYOsc,self.maxYOsc)
+
     def zoomIn(self):
+
         if self.axesSpecgram.selectedTool == Tools.RectangularCursor:
-            if self.axesOscilogram.mouseReleased:
-                self.zoomCursor.min = self.axesOscilogram.rectRegion['x'][0]
-                self.zoomCursor.max = self.axesOscilogram.rectRegion['x'][1]
-                self.minYOsc = self.axesOscilogram.rectRegion['y'][0]
-                self.maxYOsc = self.axesOscilogram.rectRegion['y'][1]
+            if self.axesSpecgram.mouseReleased:
+               self.makeZoomRect(specCoords=True)
+            else: self.makeZoomRect()
+            return
 
-            elif self.axesSpecgram.mouseReleased:
-
-                self.zoomCursor.min = self._from_spec_to_osc(self.axesSpecgram.rectRegion['x'][0])
-                self.zoomCursor.max = self._from_spec_to_osc(self.axesSpecgram.rectRegion['x'][1])
-
-                self.minYSpc = self.axesSpecgram.rectRegion['y'][0]
-                self.maxYSpc = self.axesSpecgram.rectRegion['y'][1]
-
-        if not self.signalProcessor.signal.opened():
+        elif not self.signalProcessor.signal.opened():
             return
         aux = (self.mainCursor.max - self.mainCursor.min) / (4 * self.zoomStep)
         if self.mainCursor.max - aux > self.mainCursor.min + aux:

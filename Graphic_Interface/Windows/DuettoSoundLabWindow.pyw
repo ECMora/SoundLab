@@ -160,6 +160,8 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         self.widget.axesSpecgram.PointerSpecChanged.connect(self.updateStatusBar)
         self.widget.axesOscilogram.PointerOscChanged.connect(self.updateStatusBar)
+        self.widget.rangeFrequencyChanged.connect(self.changeFrequency)
+        self.widget.rangeAmplitudeChanged.connect(self.changeAmplitude)
         self.connect(self.widget, SIGNAL("IntervalChanged"), self.updatePowSpecWin)
         self.NFFT_pow = 512
 
@@ -188,6 +190,14 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         g.triggered.connect(self.on_g_triggered)
 
         QTimer.singleShot(0, self.on_load)
+
+    def changeFrequency(self, min, max):
+        self.ParamTree.param('Spectrogram Settings').param('Frequency(kHz)').param('Min').setValue(min)
+        self.ParamTree.param('Spectrogram Settings').param('Frequency(kHz)').param('Max').setValue(max)
+
+    def changeAmplitude(self, min, max):
+        self.ParamTree.param('Oscillogram Settings').param('Amplitude(%)').param('Min').setValue(min)
+        self.ParamTree.param('Oscillogram Settings').param('Amplitude(%)').param('Max').setValue(max)
 
     def folderFiles(self,folder):
         files = []
@@ -464,6 +474,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         if self.actionZoom_Cursor.isChecked():
             self.actionPointer_Cursor.setChecked(False)
             self.actionRectangular_Cursor.setChecked(False)
+            self.actionRectangular_Eraser.setChecked(False)
             self.widget.setSelectedTool(Tools.Zoom)
         else:
             self.actionZoom_Cursor.setChecked(True)
@@ -473,15 +484,27 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         if self.actionRectangular_Cursor.isChecked():
             self.actionPointer_Cursor.setChecked(False)
             self.actionZoom_Cursor.setChecked(False)
+            self.actionRectangular_Eraser.setChecked(False)
             self.widget.setSelectedTool(Tools.RectangularCursor)
         else:
             self.actionRectangular_Cursor.setChecked(True)
+
+    @pyqtSlot()
+    def on_actionRectangular_Eraser_triggered(self):
+        if self.actionRectangular_Eraser.isChecked():
+            self.actionZoom_Cursor.setChecked(False)
+            self.actionPointer_Cursor.setChecked(False)
+            self.actionRectangular_Cursor.setChecked(False)
+            self.widget.setSelectedTool(Tools.RectangularEraser)
+        else:
+            self.actionRectangular_Eraser.setChecked(True)
 
     @pyqtSlot()
     def on_actionPointer_Cursor_triggered(self):
         if self.actionPointer_Cursor.isChecked():
             self.actionZoom_Cursor.setChecked(False)
             self.actionRectangular_Cursor.setChecked(False)
+            self.actionRectangular_Eraser.setChecked(False)
             self.widget.setSelectedTool(Tools.PointerCursor)
         else:
             self.actionPointer_Cursor.setChecked(True)
@@ -732,6 +755,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             self.actionPointer_Cursor.setChecked(False)
             self.actionRectangular_Cursor.setChecked(False)
             self.actionZoom_Cursor.setChecked(True)
+            self.actionRectangular_Eraser.setChecked(False)
 
     @pyqtSlot()
     def on_actionFile_Up_triggered(self):
