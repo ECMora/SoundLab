@@ -162,6 +162,15 @@ class OscilogramElement(OneDimensionalElement):
         s = len(self.twoDimensionalElements)
         return s-1 if s > 0 else s
 
+    def peakFreqAverage(self):
+        return 0
+
+    def maxFreqAverage(self):
+        return 0
+
+    def minFreqAverage(self):
+        return 0
+
     #espectral parameters
     def getMatrixIndexFromLocation(self,location):
         size = len(self.matrix[0])
@@ -187,17 +196,21 @@ class OscilogramElement(OneDimensionalElement):
         minIndex = np.argmin(self.matrix[:, index])
         value = int(round(self.freqs[freq_index],0))
         value -= value % 10
-        return value,round(-20*log10(1 if self.freqs[freq_index]< 0.1 else self.freqs[freq_index]),self.parameterDecimalPlaces)
+        return value,freq_index,round(-20*log10(1 if self.freqs[freq_index]< 0.1 else self.freqs[freq_index]),self.parameterDecimalPlaces)
 
     def peakFreq(self,dict):
         if "location" in dict:
             location = dict["location"]
             index = self.getMatrixIndexFromLocation(location)
             if index not in self.parameters["peakFreq"]:
+                peak,freq_index,peakamplitude = self.peak_f_a(index)
                 if(len(self.twoDimensionalElements)>0):
-                    pass
+                    rect = QtGui.QGraphicsRectItem(QtCore.QRectF(self.indexFromInPxx + index-1,freq_index-1,2,2))
+                    rect.setPen(QtGui.QPen(QtGui.QColor(255, 0, 0)))
+                    rect.setBrush(QtGui.QBrush(QtGui.QColor(0, 255, 0, 100) if self.number%2==0 else QtGui.QColor(0, 0, 255,100)))
+                    self.twoDimensionalElements[0].visual_figures.append([rect, True])
 
-                self.parameters["peakFreq"][index],self.parameters["peakAmplitude"][index] = self.peak_f_a(index)
+                self.parameters["peakFreq"][index],self.parameters["peakAmplitude"][index] = peak,peakamplitude
             return self.parameters["peakFreq"][index]
         return "Invalid Params"
 
@@ -206,7 +219,8 @@ class OscilogramElement(OneDimensionalElement):
             location = dict["location"]
             index = self.getMatrixIndexFromLocation(location)
             if index not in self.parameters["peakAmplitude"]:
-                self.parameters["peakFreq"][index],self.parameters["peakAmplitude"][index] = self.peak_f_a(index)
+                peak,freq_index,peakamplitude = self.peak_f_a(index)
+                self.parameters["peakFreq"][index],self.parameters["peakAmplitude"][index] = peak,peakamplitude
             return self.parameters["peakAmplitude"][index]
         return "Invalid Params"
 
@@ -250,7 +264,7 @@ class OscilogramElement(OneDimensionalElement):
                     adj = np.array([
                         [0,1]
                         ])
-                    g.setData(pos=pos, size=min(maxfIndex-minfIndex,3), symbol=['d','d'], pxMode=False,adj=adj,pen=(pg.mkPen(QtGui.QColor(0, 255, 0, 100),width=3) if self.number%2==0 else pg.mkPen(QtGui.QColor(0, 0, 255,100),width=3)))
+                    g.setData(pos=pos, size=min(maxfIndex-minfIndex,3), symbol=['+','+'], pxMode=False,adj=adj,pen=(pg.mkPen(QtGui.QColor(0, 255, 0, 100),width=3) if self.number%2==0 else pg.mkPen(QtGui.QColor(0, 0, 255,100),width=3)))
                     self.twoDimensionalElements[0].visual_figures.append([g,True])
             return self.parameters["minFreq"][(index,threshold)]
         return "Invalid Params"
@@ -275,7 +289,7 @@ class OscilogramElement(OneDimensionalElement):
                     adj = np.array([
                         [0,1]
                         ])
-                    g.setData(pos=pos, size=min(maxfIndex-minfIndex,3), symbol=['d','d'], pxMode=False,adj=adj,pen=(pg.mkPen(QtGui.QColor(0, 255, 0, 100),width=3) if self.number%2==0 else pg.mkPen(QtGui.QColor(0, 0, 255,100),width=3)))
+                    g.setData(pos=pos, size=min(maxfIndex-minfIndex,3), symbol=['+','+'], pxMode=False,adj=adj,pen=(pg.mkPen(QtGui.QColor(0, 255, 0, 100),width=3) if self.number%2==0 else pg.mkPen(QtGui.QColor(0, 0, 255,100),width=3)))
                     self.twoDimensionalElements[0].visual_figures.append([g,True])
             return self.parameters["maxFreq"][(index,threshold)]
         return "Invalid Params"

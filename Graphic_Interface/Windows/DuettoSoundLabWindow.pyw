@@ -308,6 +308,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         path_base = os.path.split(path)[0]
         self.filesInFolder = self.folderFiles(path_base)
         self.filesInFolderIndex = self.filesInFolder.index(path)
+        self.widget.visibleSpectrogram = True #to restore the state lose in load
         self.widget.open(path)
         self.setWindowTitle("Duetto Sound Lab - " + self.widget.signalProcessor.signal.name())
         self.hist.item.region.lineMoved()
@@ -751,6 +752,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             path_base = os.path.split(str(f))[0]
             self.filesInFolder = self.folderFiles(path_base)
             self.filesInFolderIndex = self.filesInFolder.index(str(f))
+            self.widget.visibleSpectrogram = True # for restore the state lose in load
             self.widget.open(f)
             self.setWindowTitle("Duetto Sound Lab - " + self.widget.signalProcessor.signal.name())
 

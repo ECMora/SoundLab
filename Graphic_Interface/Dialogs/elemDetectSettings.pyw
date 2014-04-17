@@ -38,12 +38,13 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
 
         self.widget.visibleSpectrogram = False
         self.widget.visibleOscilogram = True
+        self.widget.setEnvelopeVisibility(True)
 
         self.widget.open("Utils\\Didactic Signals\\recognition.wav")
         self.widget.axesOscilogram.setVisibleThreshold(True)
 
         self.widget.axesOscilogram.threshold.sigPositionChangeFinished.connect(self.updateThreshold)
-        self.widget.axesOscilogram.threshold.setBounds((0,2**(self.widget.signalProcessor.signal.bitDepth-1)))
+        self.widget.axesOscilogram.threshold.setBounds((-2**(self.widget.signalProcessor.signal.bitDepth-1),2**(self.widget.signalProcessor.signal.bitDepth-1)))
 
         self.hist = pg.widgets.HistogramLUTWidget.HistogramLUTItem()
         self.hist.setImageItem(self.widget.axesSpecgram.imageItem)
@@ -68,13 +69,15 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         self.dsbxThreshold.setValue(self.toDB() if line.value() == 0 else self.toDB(line.value()))
 
     def updateThresholdLine(self):
-        self.widget.axesOscilogram.threshold.setValue(round((10.0**((60+self.dsbxThreshold.value())/20.0))*(2**self.widget.signalProcessor.signal.bitDepth)/1000.0,0))
+        self.widget.axesOscilogram.threshold.setValue(round((10.0**((60+self.dsbxThreshold.value())/20.0))*(2**self.widget.signalProcessor.signal.bitDepth)/1000.0,0)
+                                                      *self.widget.envelopeFactor-2**(self.widget.signalProcessor.signal.bitDepth-1))
+
 
 
     def toDB(self,value=None):
         if value is None:
             return -60
-        return -60 + int(20*log10(abs(value)*1000.0/(2**self.widget.signalProcessor.signal.bitDepth)))
+        return -60 + int(20*log10(abs((value+2**(self.widget.signalProcessor.signal.bitDepth-1))/self.widget.envelopeFactor)*1000.0/(2**self.widget.signalProcessor.signal.bitDepth)))
 
     def load_Theme(self,theme):
         self.theme = theme
