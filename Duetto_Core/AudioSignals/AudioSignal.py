@@ -4,6 +4,7 @@ from PyQt4.QtCore import pyqtSignal
 from PyQt4.QtGui import QMessageBox
 import pyaudio
 import numpy as np
+from math import *
 
 
 class AudioSignal:
@@ -62,20 +63,25 @@ class AudioSignal:
 
     def resampling(self, samplinRate=44100):
         samplinRate = int(samplinRate)
-        frac = self.samplingRate * 1. / samplinRate
-        if abs(frac - 1) < 0.001:
+        frac = samplinRate * 1. / self.samplingRate
+        if abs(1./frac - 1) < 0.001:
             return
-        from Duetto_Core.SignalProcessors.FilterSignalProcessor import FilterSignalProcessor, FILTER_TYPE
-        f = FilterSignalProcessor(self)
-        if frac > 1:
-            #down sampling
-            f.filter(filterType=FILTER_TYPE().LOW_PASS, Fc=samplinRate/2)
-        self.data = np.array(np.interp(np.linspace(0,len(self.data),int(round(len(self.data) / frac))),range(len(self.data)),self.data),self.data.dtype)
-        oldSR = self.samplingRate
-        self.samplingRate = samplinRate
+
+        n = int(ceil(log(len(self.data),2)))
+        n = 2**n
+        data_frec=np.fft.fft(self.data,n)
         if frac < 1:
+            #down
+            indexFrecuency=(n * 1.0)/self.samplingRate
+            Fc=int(samplinRate*indexFrecuency/2)
+            data_frec = np.concatenate((data_frec[:Fc],data_frec[-Fc:]))
+        else:
             #up
-            f.filter(filterType=FILTER_TYPE().LOW_PASS, Fc=oldSR/2)
+            data_frec = np.concatenate((data_frec[:n/2],np.zeros(int(n*(frac-1))),data_frec[n/2:]))
+
+
+        self.data = np.array(np.real(np.fft.ifft(data_frec)[:int(len(self.data)*frac)]),self.data.dtype)
+        self.samplingRate = samplinRate
 
     def interpolate(self, index, frac):
         """
