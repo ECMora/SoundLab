@@ -306,8 +306,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.filesInFolderIndex = self.filesInFolder.index(path)
         self.widget.open(path)
         self.setWindowTitle("Duetto Sound Lab - " + self.widget.signalProcessor.signal.name())
-        self.hist.item.region.lineMoved()
-        self.hist.item.region.lineMoveFinished()
         event.acceptProposedAction()
 
     def dragLeaveEvent(self, event):
@@ -330,8 +328,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 self.widget.specgramSettings.NFFT = data
                 self.widget.visualChanges = True
                 self.widget.refresh(dataChanged=True, updateOscillogram=False, updateSpectrogram=True)
-                self.hist.item.region.lineMoved()
-                self.hist.item.region.lineMoveFinished()
 
             elif childName == 'Spectrogram Settings.Grid.X':
                 self.widget.spec_gridx = data
@@ -367,15 +363,11 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 self.widget.specgramSettings.window = data
                 self.widget.visualChanges = True
                 self.widget.refresh(dataChanged=True, updateOscillogram=False, updateSpectrogram=True)
-                self.hist.item.region.lineMoved()
-                self.hist.item.region.lineMoveFinished()
 
             elif childName == 'Spectrogram Settings.Background color':
                 self.widget.spec_background = data
                 self.widget.visualChanges = True
                 self.widget.refresh(dataChanged=True,updateOscillogram=False,updateSpectrogram=False)
-                self.hist.item.region.lineMoved()
-                self.hist.item.region.lineMoveFinished()
 
             elif childName == 'Spectrogram Settings.ColorMap':
                 self.widget.axesSpecgram.getHistogramWidget().item._pixelVectorCache.append(data)
@@ -384,22 +376,16 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 self.widget.minYSpc = data
                 self.widget.visualChanges = True
                 self.widget.refresh(dataChanged=True, updateOscillogram=False, updateSpectrogram=True)
-                self.hist.item.region.lineMoved()
-                self.hist.item.region.lineMoveFinished()
 
             elif childName == 'Spectrogram Settings.Frequency(kHz).Max':
                 self.widget.maxYSpc = data
                 self.widget.visualChanges = True
                 self.widget.refresh(dataChanged=True, updateOscillogram=False, updateSpectrogram=True)
-                self.hist.item.region.lineMoved()
-                self.hist.item.region.lineMoveFinished()
 
             elif childName == 'Spectrogram Settings.FFT overlap':
                 self.widget.specgramSettings.overlap = data
                 self.widget.visualChanges = True
                 self.widget.refresh(dataChanged=True, updateOscillogram=False, updateSpectrogram=True)
-                self.hist.item.region.lineMoved()
-                self.hist.item.region.lineMoveFinished()
 
             elif childName == 'Power Spectrum Settings.FFT size':
                 self.NFFT_pow = data
@@ -477,16 +463,27 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     def on_actionZoom_Cursor_triggered(self):
         if self.actionZoom_Cursor.isChecked():
             self.actionPointer_Cursor.setChecked(False)
+            self.actionRectangular_Cursor.setChecked(False)
             self.widget.setSelectedTool(Tools.Zoom)
-        elif not self.actionPointer_Cursor.isChecked():
+        else:
             self.actionZoom_Cursor.setChecked(True)
+
+    @pyqtSlot()
+    def on_actionRectangular_Cursor_triggered(self):
+        if self.actionRectangular_Cursor.isChecked():
+            self.actionPointer_Cursor.setChecked(False)
+            self.actionZoom_Cursor.setChecked(False)
+            self.widget.setSelectedTool(Tools.RectangularCursor)
+        else:
+            self.actionRectangular_Cursor.setChecked(True)
 
     @pyqtSlot()
     def on_actionPointer_Cursor_triggered(self):
         if self.actionPointer_Cursor.isChecked():
             self.actionZoom_Cursor.setChecked(False)
+            self.actionRectangular_Cursor.setChecked(False)
             self.widget.setSelectedTool(Tools.PointerCursor)
-        elif not self.actionZoom_Cursor.isChecked():
+        else:
             self.actionPointer_Cursor.setChecked(True)
 
     @pyqtSlot()
@@ -514,22 +511,16 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         start, end = self.widget.getIndexFromAndTo()
         self.widget.undoRedoManager.addAction(CutAction(self.widget.signalProcessor.signal,start,end))
         self.widget.cut()
-        self.hist.item.region.lineMoved()
-        self.hist.item.region.lineMoveFinished()
 
     @pyqtSlot()
     def on_actionCopy_triggered(self):
         self.widget.copy()
-        self.hist.item.region.lineMoved()
-        self.hist.item.region.lineMoveFinished()
 
     @pyqtSlot()
     def on_actionPaste_triggered(self):
         start, _ = self.widget.getIndexFromAndTo()
         self.widget.undoRedoManager.addAction(PasteAction(self.widget.signalProcessor.signal,start,self.widget.editionSignalProcessor.clipboard))
         self.widget.paste()
-        self.hist.item.region.lineMoved()
-        self.hist.item.region.lineMoveFinished()
 
     @pyqtSlot()
     def on_actionUndo_triggered(self):
@@ -732,15 +723,15 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             self.filesInFolderIndex = self.filesInFolder.index(str(f))
             self.widget.open(f)
             self.setWindowTitle("Duetto Sound Lab - " + self.widget.signalProcessor.signal.name())
-
-            self.ParamTree.param('Spectrogram Settings').param('Frequency(kHz)').param('Min').setValue(self.widget.minYSpc)
-            self.ParamTree.param('Spectrogram Settings').param('Frequency(kHz)').param('Min').setDefault(self.widget.minYSpc)
-            self.ParamTree.param('Spectrogram Settings').param('Frequency(kHz)').param('Max').setValue(self.widget.maxYSpc)
-            self.ParamTree.param('Spectrogram Settings').param('Frequency(kHz)').param('Max').setDefault(self.widget.maxYSpc)
+            valuemin = self.widget.minYSpc
+            valuemax = self.widget.maxYSpc
+            self.ParamTree.param('Spectrogram Settings').param('Frequency(kHz)').param('Min').setValue(valuemin)
+            self.ParamTree.param('Spectrogram Settings').param('Frequency(kHz)').param('Min').setDefault(valuemin)
+            self.ParamTree.param('Spectrogram Settings').param('Frequency(kHz)').param('Max').setValue(valuemax)
+            self.ParamTree.param('Spectrogram Settings').param('Frequency(kHz)').param('Max').setDefault(valuemax)
             self.actionPointer_Cursor.setChecked(False)
+            self.actionRectangular_Cursor.setChecked(False)
             self.actionZoom_Cursor.setChecked(True)
-            self.hist.item.region.lineMoved()
-            self.hist.item.region.lineMoveFinished()
 
     @pyqtSlot()
     def on_actionFile_Up_triggered(self):

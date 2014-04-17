@@ -106,7 +106,8 @@ class QSignalVisualizerWidget(QWidget):
         self.axesSpecgram.IntervalSpecChanged.connect(self.updateOscZoomRegion)
         self.axesOscilogram.PointerCursorPressed.connect(self.axesSpecgram.clearPointerCursor)
         self.axesSpecgram.PointerCursorPressed.connect(self.axesOscilogram.clearPointerCursor)
-
+        self.axesOscilogram.RectangularCursorPressed.connect(self.axesSpecgram.clearRectangularCursor)
+        self.axesSpecgram.RectangularCursorPressed.connect(self.axesOscilogram.clearRectangularCursor)
         layout = QVBoxLayout()
         layout.addWidget(self.axesOscilogram)
         layout.addWidget(self.axesSpecgram)
@@ -366,6 +367,8 @@ class QSignalVisualizerWidget(QWidget):
             self.mainCursor.min = 0
         self.visualChanges = True
         self.refresh(dataChanged=False)
+        self.axesOscilogram.clearPointerCursor()
+        self.axesSpecgram.clearRectangularCursor()
         self.rangeChanged.emit(self.mainCursor.min, self.mainCursor.max, len(self.signalProcessor.signal.data))
         #self.axesSpecgram.zoomRegion.setRegion([0, 0])
 
@@ -376,6 +379,21 @@ class QSignalVisualizerWidget(QWidget):
         self.undoRedoManager.redo()
 
     def zoomIn(self):
+        if self.axesSpecgram.selectedTool == Tools.RectangularCursor:
+            if self.axesOscilogram.mouseReleased:
+                self.zoomCursor.min = self.axesOscilogram.rectRegion['x'][0]
+                self.zoomCursor.max = self.axesOscilogram.rectRegion['x'][1]
+                self.minYOsc = self.axesOscilogram.rectRegion['y'][0]
+                self.maxYOsc = self.axesOscilogram.rectRegion['y'][1]
+
+            elif self.axesSpecgram.mouseReleased:
+
+                self.zoomCursor.min = self._from_spec_to_osc(self.axesSpecgram.rectRegion['x'][0])
+                self.zoomCursor.max = self._from_spec_to_osc(self.axesSpecgram.rectRegion['x'][1])
+
+                self.minYSpc = self.axesSpecgram.rectRegion['y'][0]
+                self.maxYSpc = self.axesSpecgram.rectRegion['y'][1]
+
         if not self.signalProcessor.signal.opened():
             return
         aux = (self.mainCursor.max - self.mainCursor.min) / (4 * self.zoomStep)
@@ -384,6 +402,10 @@ class QSignalVisualizerWidget(QWidget):
             self.mainCursor.min += aux
         self.visualChanges = True
         self.refresh(dataChanged=False)
+        self.axesOscilogram.clearPointerCursor()
+        self.axesOscilogram.clearRectangularCursor()
+        self.axesSpecgram.clearRectangularCursor()
+        self.axesSpecgram.clearPointerCursor()
         self.rangeChanged.emit(self.mainCursor.min, self.mainCursor.max, len(self.signalProcessor.signal.data))
 
     def zoomNone(self):
@@ -394,6 +416,8 @@ class QSignalVisualizerWidget(QWidget):
         #self.clearZoomCursor()
         self.visualChanges = True
         self.refresh(dataChanged=False)
+        self.axesOscilogram.clearPointerCursor()
+        self.axesSpecgram.clearRectangularCursor()
         self.rangeChanged.emit(self.mainCursor.min, self.mainCursor.max, len(self.signalProcessor.signal.data))
 
     def makeZoom(self, _min, _max, specCoords=False):
