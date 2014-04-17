@@ -32,7 +32,7 @@ class FilterSignalProcessor(SignalProcessor):
             indexTo=len(self.signal.data)
 
         #self.signal.data[indexFrom:indexTo]=convolve(self.signal.data[indexFrom:indexTo],[0,0,0,0,0,0,1,0,0,0])
-        n=int(ceil(log(indexTo-indexFrom,2)))
+        n = int(ceil(log(indexTo-indexFrom,2)))
 
         data_frec=fft(self.signal.data[indexFrom:indexTo],2**n)
         n=2**n
@@ -58,17 +58,15 @@ class FilterSignalProcessor(SignalProcessor):
                 data_frec[1:]=complex(0,0)
 
         elif(filterType==FILTER_TYPE().LOW_PASS):
-            if(Fc<n/2):
+            if(Fc != 0 and Fc < n / 2):
                 data_frec[Fc:-Fc]=complex(0,0)
-                #data_frec[n/2+1:n/2+1+Fc]=complex(0,0)
-
-            elif(Fc==0):
+            elif(Fc == 0):
                 data_frec[1:]=complex(0,0)
 
         if(indexFrom==0 and indexTo==len(self.signal.data)):
-             self.signal.data=array(real(ifft(data_frec)[0:indexTo-indexFrom]),numpy.int32)
+             self.signal.data=array(real(ifft(data_frec)[0:indexTo-indexFrom]),numpy.int16)
         else:
-            self.signal.data=concatenate((self.signal.data[0:indexFrom],array(real(ifft(data_frec)[0:indexTo-indexFrom]),numpy.int32),self.signal.data[indexTo:]))
+            self.signal.data=concatenate((self.signal.data[0:indexFrom],array(real(ifft(data_frec)[0:indexTo-indexFrom]),numpy.int16),self.signal.data[indexTo:]))
 
 
 

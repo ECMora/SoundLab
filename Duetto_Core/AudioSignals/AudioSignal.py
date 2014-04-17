@@ -29,8 +29,8 @@ class AudioSignal:
 
 
     def generateWhiteNoise(self, duration=1, begin_at=0):
-        wn = np.array([np.random.uniform(-2 ** (self.bitDepth - 1), 2 ** self.bitDepth - 1) for i in
-                       range(duration * self.samplingRate / 1000)])
+        wn = np.array([np.random.uniform(self.getMinimumValueAllowed(),self.getMaximumValueAllowed()) for i in
+                       range(duration * self.samplingRate / 1000)],self.data.dtype)
         self.data = np.concatenate((self.data[0:begin_at], wn, self.data[begin_at:]))
 
     def openNew(self, samplingRate, duration, bitDepth, whiteNoise):
@@ -65,20 +65,17 @@ class AudioSignal:
         frac = self.samplingRate * 1. / samplinRate
         if abs(frac - 1) < 0.001:
             return
+        from Duetto_Core.SignalProcessors.FilterSignalProcessor import FilterSignalProcessor, FILTER_TYPE
+        f = FilterSignalProcessor(self)
         if frac > 1:
             #down sampling
-            from Duetto_Core.SignalProcessors.FilterSignalProcessor import FilterSignalProcessor, FILTER_TYPE
-
-            f = FilterSignalProcessor(self)
             f.filter(filterType=FILTER_TYPE().LOW_PASS, Fc=samplinRate/2)
-            self.data = np.array(
-                self.data[[int(round(index * frac)) for index in range(int(np.floor(len(self.data) / frac)))]])
-        else:
-            # up
-            arr = np.array([self.interpolate(i, frac) for i in range(int(round(len(self.data) / frac)))])
-            self.data = arr
-
+        self.data = np.array(np.interp(np.linspace(0,len(self.data),int(round(len(self.data) / frac))),range(len(self.data)),self.data),self.data.dtype)
+        oldSR = self.samplingRate
         self.samplingRate = samplinRate
+        if frac < 1:
+            #up
+            f.filter(filterType=FILTER_TYPE().LOW_PASS, Fc=oldSR/2)
 
     def interpolate(self, index, frac):
         """

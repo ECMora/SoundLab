@@ -658,13 +658,16 @@ class QSignalVisualizerWidget(QWidget):
         if(self.signalProcessor.signal is not None):
             self.signalProcessor.signal.generateWhiteNoise(ms,self.zoomCursor.min)
             f = FilterSignalProcessor(self.signalProcessor.signal)
-            self.signalProcessor.signal = f.filter(self.zoomCursor.min,self.zoomCursor.min+ms*self.signalProcessor.signal.samplingRate/1000.0,type,Fc,Fl,Fu)
+            f.filter(self.zoomCursor.min,self.zoomCursor.min+ms*self.signalProcessor.signal.samplingRate/1000.0,type,Fc,Fl,Fu)
             self.visualChanges=True
             self.refresh()
 
     def resampling(self,samplingRate):
         self.signalProcessor.signal.resampling(samplingRate)
-        self.visualChanges=True
+        self.visualChanges = True
+        self.mainCursor.min = 0
+        self.mainCursor.max = len(self.signalProcessor.signal.data)
+        self.maxYSpc = self.signalProcessor.signal.samplingRate
         self.refresh()
 
     def envelope(self):
