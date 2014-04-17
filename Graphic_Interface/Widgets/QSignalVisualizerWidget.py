@@ -94,6 +94,7 @@ class QSignalVisualizerWidget(QWidget):
         self.spec_gridy = True
         self.osc_color = QColor(255, 255, 255)
         self.axisXOsc = OscXAxis(self,orientation = 'bottom')
+        self.axisXOsc.enableAutoSIPrefix(False)
         self.axisYOsc = OscYAxis(self,orientation = 'left')
         self.axesOscilogram = DuettoPlotWidget(parent=self,axisItems={'bottom': self.axisXOsc,'left':self.axisYOsc})
 
