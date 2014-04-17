@@ -545,6 +545,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         scaleDialogWindow = ChangeVolumeDialog()
         scaleDialog.setupUi(scaleDialogWindow)
         if scaleDialogWindow.exec_():
+            fade = ""
             factor = scaleDialog.spinboxConstValue.value()
             if scaleDialog.rbuttonConst.isChecked():
                 function = "const"
@@ -553,8 +554,9 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 factor = scaleDialog.spinboxNormalizePercent.value()
             else:
                 function = scaleDialog.cboxModulationType.currentText()
-            fade = "IN" if scaleDialog.rbuttonFadeIn.isChecked() else (
-                "OUT" if scaleDialog.rbuttonFadeOut.isChecked() else "")
+                fade = "IN" if scaleDialog.rbuttonFadeIn.isChecked() else ("OUT" if scaleDialog.rbuttonFadeOut.isChecked() else "")
+                if fade == "":
+                    return
             start,end = self.widget.getIndexFromAndTo()
             self.widget.undoRedoManager.addAction(ScaleAction(self.widget.signalProcessor.signal,start,end,factor, function, fade))
             self.widget.scale(factor, function, fade)
