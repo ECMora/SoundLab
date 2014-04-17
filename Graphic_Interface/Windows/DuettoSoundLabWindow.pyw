@@ -598,7 +598,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             ms = whiteNoiseDialog.insertSpinBox.value()
             start,end = self.widget.getIndexFromAndTo()
             self.widget.undoRedoManager.addAction(GenerateWhiteNoiseAction(self.widget.signalProcessor.signal,start,ms))
-            self.widget.insertWhiteNoise()
+            self.widget.insertWhiteNoise(ms)
 
     def filter_helper(self):
         filterDialog = filterdg.Ui_Dialog()

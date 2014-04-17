@@ -218,6 +218,6 @@ class DuettoPlotWidget(pg.PlotWidget):
         return a + int(round((yPixel - miny) * (b - a) * 1. / (maxy - miny), 0))
 
     def getAmplitudeTimeInfo(self,x,y):
-        amplt = numpy.round(y*100.0/self.getPlotItem().axes['left']['item'].Max,0)
-        time = x*1.0/self.getPlotItem().axes['bottom']['item'].Fs
+        amplt = numpy.round(y*100.0/self.parent().signalProcessor.signal.getMaximumValueAllowed(),0)
+        time = x*1.0/self.parent().signalProcessor.signal.samplingRate
         return [time, amplt]
