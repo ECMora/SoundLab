@@ -59,6 +59,22 @@ class CommonSignalProcessor(SignalProcessor):
         self.signal.data[indexFrom:indexTo] = data[::-1]
         return self.signal
 
+    def absoluteValue(self, indexFrom, indexTo=-1,sign=1):
+        """
+         the negatives(positives) values of the signal in the interval [indexFrom,indexTo] are eliminated
+         Example:
+         data=[1,-22,3,-4,5]
+         reverse data
+         data=[5,0,3,0,1]
+        """
+        if indexTo == -1:
+            indexTo = len(self.signal.data)
+        self.checkIndexes(indexFrom, indexTo)
+        data = array([x if (x > 0 and sign > 0) or (x < 0 and sign < 0) else 0 for x in self.signal.data[indexFrom:indexTo]])
+        self.signal.data[indexFrom:indexTo] = data[::-1]
+        return self.signal
+
+
     def insertSilence(self, indexFrom=0, indexTo=-1, ms=0):
         arr = zeros(ms * self.signal.samplingRate / 1000, type(self.signal.data[0]))
         self.signal.data = concatenate((self.signal.data[0:indexFrom],

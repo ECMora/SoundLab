@@ -48,7 +48,9 @@ class OneDimensionalElementsDetector(ElementsDetector):
                 minSize = minSize*signal.samplingRate/1000.0
             if progress is not None:
                 self.progress(2)
-            threshold_spectral = percentile(pxx,threshold_spectral)
+            if findSpectralSublements:
+                threshold_spectral = percentile(pxx,threshold_spectral)
+
             if progress is not None:
                 self.progress(5)
 

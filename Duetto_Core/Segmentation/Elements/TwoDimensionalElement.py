@@ -67,12 +67,7 @@ class SpecgramElement(TwoDimensionalElement):
             #    quartile3.setBrush(QtGui.QBrush(self.measurementLocation.MEDITIONS[self.measurementLocation.QUARTILE75][1]))
             #    quartile3.setToolTip("Element:"+  str(self.parentnumber) +  "\n SubElement: "+str(self.number) +"\nQuartile 75% Mesurement Location")
             #    self.visual_locations.append([quartile3,True])
-
-        for i in range(len(matrix[0])):
-            index = np.argmax(matrix[:,i])
-            peak = pg.TextItem("X",color=(255,0,0),anchor=(0,0.5))
-            peak.setPos(self.timeStartIndex+i,self.freqStartIndex+index)
-            self.visual_peaksfreqs.append([peak,False])
+        self.addPeaksVisualObjects()
         if multipleSubelements:
             text = pg.TextItem(str(self.parentnumber),color=(255,255,255),anchor=(0.5,0.8))
             text.setPos(self.timeStartIndex+(self.timeEndIndex-self.timeStartIndex)/2,
@@ -85,8 +80,45 @@ class SpecgramElement(TwoDimensionalElement):
             rect.setPen(QtGui.QPen(QtGui.QColor(255, 255, 255)))
             self.visual_figures.append([rect,True])
         else:
-            lr = pg.LinearRegionItem([self.timeStartIndex,self.timeEndIndex], movable=False,brush=(pg.mkBrush(QtGui.QColor(0, 255, 0, 100)) if number%2==0 else pg.mkBrush(QtGui.QColor(0, 0, 255,100))))
-            self.visual_figures.append([lr,True])
+
+            g = pg.GraphItem()
+            f = self.freqEndIndex-self.freqStartIndex
+            t = self.timeEndIndex-self.timeStartIndex
+            ## Define positions of nodes
+            pos = np.array([
+                [self.timeStartIndex,self.freqEndIndex-f*3/8],
+                [self.timeStartIndex,self.freqEndIndex-f*1/4],
+                [self.timeEndIndex,self.freqEndIndex-f*1/4],
+                [self.timeEndIndex,self.freqEndIndex-f*3/8]
+                ])
+            adj = np.array([
+                [0,1],
+                [1,2],
+                [2,3]
+                ])
+            g.setData(pos=pos, size=1, symbol='d', pxMode=False,adj=adj,pen=(pg.mkPen(QtGui.QColor(0, 255, 0, 100),width=3) if number%2==0 else pg.mkPen(QtGui.QColor(0, 0, 255,100),width=3)))
+            self.visual_figures.append([g,True])
+            text = pg.TextItem(str(one_dimensional_parent.number),color=(255,255,255),anchor=(0.5,0))
+            text.setPos(self.timeStartIndex/2.0+self.timeEndIndex/2.0, self.freqStartIndex+f*3/4)
+            self.visual_text.append([text,True])
+
+    def addPeaksVisualObjects(self):
+        g = pg.GraphItem()
+        f = self.freqEndIndex-self.freqStartIndex
+        t = self.timeEndIndex-self.timeStartIndex
+        ## Define positions of nodes
+        pos = []
+        adj = []
+        index = np.argmax(self.matrix[:,0])
+        pos.append([self.timeStartIndex,self.freqStartIndex+index])
+        for i in range(1,len(self.matrix[0])):
+            index = np.argmax(self.matrix[:,i])
+            pos.append([self.timeStartIndex+i,self.freqStartIndex+index])
+            adj.append([i-1,i])
+        pos = np.array(pos)
+        adj = np.array(adj)
+        g.setData(pos=pos, size=1, symbol='d', pxMode=False,adj=adj,pen=(pg.mkPen(QtGui.QColor(0, 255, 0, 100),width=3) if self.parentnumber%2==0 else pg.mkPen(QtGui.QColor(0, 0, 255,100),width=3)))
+        self.visual_peaksfreqs.append([g,False])
 
     def minFreq(self):
         if(self.parameters["minFreq"] is None):
