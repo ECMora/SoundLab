@@ -70,8 +70,8 @@ class CommonSignalProcessor(SignalProcessor):
         if indexTo == -1:
             indexTo = len(self.signal.data)
         self.checkIndexes(indexFrom, indexTo)
-        data = array([x if (x > 0 and sign > 0) or (x < 0 and sign < 0) else 0 for x in self.signal.data[indexFrom:indexTo]])
-        self.signal.data[indexFrom:indexTo] = data[::-1]
+        for i in range(indexFrom,indexTo):
+            self.signal.data[i] = self.signal.data[i] if (self.signal.data[i] > 0 and sign > 0) or (self.signal.data[i] < 0 and sign < 0) else 0
         return self.signal
 
 

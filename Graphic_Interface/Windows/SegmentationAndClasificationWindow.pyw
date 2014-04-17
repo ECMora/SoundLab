@@ -51,6 +51,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.widget.computeSpecgramSettings()
         self.widget.updatePxxMatrix = False
 
+
         self.widget.visibleOscilogram = True
         self.widget.visibleSpectrogram = True
 
@@ -67,7 +68,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         self.spectralMeasurementLocation = SpectralMeasurementLocation()
         self.widget.axesOscilogram.threshold.sigPositionChangeFinished.connect(self.updateThreshold)
-        self.widget.axesOscilogram.threshold.setBounds((0,2**(self.widget.signalProcessor.signal.bitDepth-1)))
+        self.widget.axesOscilogram.threshold.setBounds((-2**(self.widget.signalProcessor.signal.bitDepth-1),2**(self.widget.signalProcessor.signal.bitDepth-1)))
         self.detectionSettings = {"Threshold": -40, "Threshold2": 0, "MergeFactor": 0.5, "MinSize": 1, "Decay": 1,
                                   "SoftFactor": 6,"ThresholdSpectral": 95 ,"minSizeTimeSpectral": 0, "minSizeFreqSpectral": 0,
                                   "SpectralLocMeasureThreshold": -20,"PeaksThreshold": -20}
@@ -80,7 +81,10 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                       ["RMS(V)", True, lambda x: x.rms()],
                       ["StartToMax(s)", True,lambda x: x.distanceFromStartToMax()],
                       ["Duration(s)", True,lambda x: x.duration()],
-                      ["Spectral Elems", True,lambda x: x.spectralElements()]
+                      ["Spectral Elems", True,lambda x: x.spectralElements()],
+                      ["Peak Freq Average", True,lambda x: x.peakFreqAverage()],
+                      ["Min Freq Average", True,lambda x: x.minFreqAverage()],
+                      ["Max Freq Average", True,lambda x: x.maxFreqAverage()] # poner en el dialogo
         ]
         self.spectralParameters = [
             ["Max Freq(Hz)",True,lambda x,dict :x.maxFreq(dict)],
@@ -159,19 +163,20 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.detectionSettings["Threshold"] = self.toDB() if line.value() == 0 else self.toDB(line.value())
 
     def updateThresholdLine(self):
-        self.widget.axesOscilogram.threshold.setValue(round((10.0**((60+self.detectionSettings["Threshold"])/20.0))*(2**self.widget.signalProcessor.signal.bitDepth)/1000.0,0))
+        self.widget.axesOscilogram.threshold.setValue(round((10.0**((60+self.detectionSettings["Threshold"])/20.0))*(2**self.widget.signalProcessor.signal.bitDepth)/1000.0,0)
+                                                      *self.widget.envelopeFactor-2**(self.widget.signalProcessor.signal.bitDepth-1))
 
 
 
     def toDB(self,value=None):
         if value is None:
             return -60
-        return -60 + int(20*log10(abs(value)*1000.0/(2**self.widget.signalProcessor.signal.bitDepth)))
+        return -60 + int(20*log10(abs((value+2**(self.widget.signalProcessor.signal.bitDepth-1))/self.widget.envelopeFactor)*1000.0/(2**self.widget.signalProcessor.signal.bitDepth)))
 
     @pyqtSlot(bool)
     def setVisibleThreshold(self,bool):
         self.widget.axesOscilogram.setVisibleThreshold(bool)
-        self.widget.visibleEnvelope = bool
+        self.widget.setEnvelopeVisibility(bool)
 
     def load_Theme(self,theme):
         self.theme = theme

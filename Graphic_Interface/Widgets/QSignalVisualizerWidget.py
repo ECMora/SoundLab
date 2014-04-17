@@ -99,9 +99,9 @@ class QSignalVisualizerWidget(QWidget):
         self.maxYSpc = 22
         self.updatePxxMatrix = True
 
-        self.visibleEnvelope = False
-        self.envelopeCurve = []
-        #self.axesOscilogram.addItem(self.envelopeCurve)
+        self.envelopeCurve = pg.PlotCurveItem(y=np.array([0]))
+        self.axesOscilogram.addItem(self.envelopeCurve)
+        self.envelopeFactor = 2 #factor to expand the envelope for best visualization
 
 
         self.axesOscilogram.setMouseEnabled(x=False, y=False)
@@ -510,8 +510,6 @@ class QSignalVisualizerWidget(QWidget):
             #    length = (self.mainCursor.max - self.mainCursor.min)
             #    interval = length / self.INTERVAL_START_DECIMATION
             if dataChanged:
-                if self.mainCursor.max - self.mainCursor.min > self.INTERVAL_START_DECIMATION:
-                    pass
                 self.axesOscilogram.plot(self.signalProcessor.signal.data, clear=True, pen=self.osc_color, clipToView=partial)
 
             #self.axesOscilogram.setRange(xRange=(0, self.mainCursor.max - self.mainCursor.min))
@@ -530,14 +528,22 @@ class QSignalVisualizerWidget(QWidget):
                                         else (self.mainCursor.max - self.mainCursor.min))\
                                  / self._Z.shape[1]
             YSpec = np.searchsorted(self.specgramSettings.freqs, [self.minYSpc*1000, self.maxYSpc*1000])
-            self.axesSpecgram.imageItem.setImage(numpy.transpose(self._Z))
-            if not self.updatePxxMatrix:
-                self.axesSpecgram.imageItem.setRect(QRectF(self._from_osc_to_spec(self.mainCursor.min), YSpec[0],self._from_osc_to_spec(self.mainCursor.max), YSpec[1]))
-                self.axesSpecgram.viewBox.setRange(xRange=(self._from_osc_to_spec(self.mainCursor.min),
-                                                                       self._from_osc_to_spec(self.mainCursor.max)),
-                                                               yRange=(YSpec[0], YSpec[1]), padding=0)
-            else:
 
+            if not self.updatePxxMatrix:
+                osc_spec_ratio = 1.0 * (len(self.signalProcessor.signal.data) if not partial
+                                            else (self.mainCursor.max - self.mainCursor.min))\
+                                     / self._Z.shape[1]
+                if dataChanged:
+                    self.axesSpecgram.imageItem.setImage(numpy.transpose(self._Z),
+                                               pos=((self.mainCursor.min / osc_spec_ratio) if partial else 0, 0))
+
+                self.axesSpecgram.viewBox.setRange(xRange=(self.mainCursor.min / osc_spec_ratio,
+                                                         self.mainCursor.max / osc_spec_ratio),
+                                                 yRange=(YSpec[0], YSpec[1]), padding=0)
+                #self.axesSpecgram.zoomRegion.setBounds([self._from_osc_to_spec(self.mainCursor.min), self._from_osc_to_spec(self.mainCursor.max)])
+
+            else:
+                self.axesSpecgram.imageItem.setImage(numpy.transpose(self._Z))
                 self.axesSpecgram.imageItem.setRect(QRectF(self._from_osc_to_spec(self.mainCursor.min), 0,
                                                            self._Z.shape[1], self._Z.shape[0]))
                 self.axesSpecgram.viewBox.setRange(xRange=(self._from_osc_to_spec(self.mainCursor.min),
@@ -685,10 +691,22 @@ class QSignalVisualizerWidget(QWidget):
     def envelope(self):
         #add cofig dialog and plot the envelope
         indexFrom, indexTo = self.getIndexFromAndTo()
-        #self.axesOscilogram.removeItem(self.envelopeCurve)
-        #self.envelopeCurve = pg.PlotItem(envelope(self.signalProcessor.signal.data[indexFrom:indexTo],decay=self.signalProcessor.signal.samplingRate/1000))
-        #self.axesOscilogram.addItem(self.envelopeCurve)
-        self.visibleEnvelope = True
+        self.envelopeCurve.setData(self.getTransformedEnvelope(envelope(self.signalProcessor.signal.data[indexFrom:indexTo],decay=self.signalProcessor.signal.samplingRate/1000)))
+        self.setEnvelopeVisibility(True)
+
+    def getTransformedEnvelope(self,array):
+        self.envelopeFactor = (2.0**(self.signalProcessor.signal.bitDepth))/array[np.argmax(array)]
+        return (self.envelopeFactor*array-2**(self.signalProcessor.signal.bitDepth-1))
+
+    def setEnvelopeVisibility(self,bool):
+        inaxes = self.envelopeCurve in self.axesOscilogram.items()
+        if bool and not inaxes:
+            self.axesOscilogram.addItem(self.envelopeCurve)
+        elif not bool and inaxes:
+            self.axesOscilogram.removeItem(self.envelopeCurve)
+        self.axesOscilogram.update()
+
+
 
     def getIndexFromAndTo(self):
         indexFrom, indexTo = self.mainCursor.min, self.mainCursor.max
@@ -752,9 +770,9 @@ class QSignalVisualizerWidget(QWidget):
         self.elements_detector.detect(self.signalProcessor.signal,0,len(self.signalProcessor.signal.data), threshold, decay, minSize, softfactor, merge_factor,threshold2,
                                       threshold_spectral=threshold_spectral, pxx=self.specgramSettings.Pxx, freqs=self.specgramSettings.freqs,
                                       bins=self.specgramSettings.bins, minsize_spectral=minsize_spectral,location=location,progress=progress,findSpectralSublements = findSpectralSublements,overlap = self.specgramSettings.overlap)
-        #self.axesOscilogram.removeItem(self.envelopeCurve)
-        #self.envelopeCurve = pg.PlotItem(self.elements_detector.envelope)
-        #self.axesOscilogram.addItem(self.envelopeCurve)
+
+        self.envelopeCurve.setData(self.getTransformedEnvelope(self.elements_detector.envelope))
+        self.setEnvelopeVisibility(True)
 
         for c in self.elements_detector.elements():
             self.Elements.append(c)# the elment the space for the span selector and the text
