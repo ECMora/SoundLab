@@ -47,7 +47,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.hist = DuettoHorizontalHistogramWidget()
         self.widget.histogram = self.hist
         self.pow_overlap = 90
-        self.Theme = 'Utils\\Themes\\RedBlackTheme.dth'
+        self.Theme = 'Utils\\Themes\\MatrixTheme.dth'
         self.defaultTheme = self.DeSerializeTheme(self.Theme)
         self.widget.spec_background = self.defaultTheme.spec_background
         self.widget.osc_background = self.defaultTheme.osc_background
@@ -459,10 +459,10 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         end = self.ParamTree.param('Detection Settings').param('Measurement Location').param('End').value()
         segWindow = SegmentationAndClasificationWindow(parent=self, signal=self.widget.signalProcessor.signal)
 
-        segWindow.widget.maxYOsc =  self.ParamTree.param('Oscillogram Settings').param('Amplitude').param('Max').value()
-        segWindow.widget.minYOsc = self.ParamTree.param('Oscillogram Settings').param('Amplitude').param('Min').value()
-        segWindow.widget.minYSpc = self.ParamTree.param('Spectrogram Settings').param('Frequency').param('Min').value()
-        segWindow.widget.maxYSpc = self.ParamTree.param('Spectrogram Settings').param('Frequency').param('Max').value()
+        #segWindow.widget.maxYOsc =  self.ParamTree.param('Oscillogram Settings').param('Amplitude').param('Max').value()
+        #segWindow.widget.minYOsc = self.ParamTree.param('Oscillogram Settings').param('Amplitude').param('Min').value()
+        #segWindow.widget.minYSpc = self.ParamTree.param('Spectrogram Settings').param('Frequency').param('Min').value()
+        #segWindow.widget.maxYSpc = self.ParamTree.param('Spectrogram Settings').param('Frequency').param('Max').value()
 
         segWindow.load_Theme(SerializedData(self.widget.osc_background,self.widget.osc_color,self.widget.osc_gridx,
                               self.widget.osc_gridy, self.pow_spec_backg,self.pow_spec_plotColor,self.pow_spec_gridx,
