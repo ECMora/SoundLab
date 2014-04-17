@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'C:\Users\Gaby\Desktop\DuettoSystemGabriela\Graphic_Interface\UI Files\MainWindow.ui'
 #
-# Created: Wed Apr 16 22:59:44 2014
+# Created: Thu Apr 17 19:09:14 2014
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -287,6 +287,9 @@ class Ui_DuettoMainWindow(object):
         self.actionRectangular_Cursor = QtGui.QAction(DuettoMainWindow)
         self.actionRectangular_Cursor.setCheckable(True)
         self.actionRectangular_Cursor.setObjectName(_fromUtf8("actionRectangular_Cursor"))
+        self.actionRectangular_Eraser = QtGui.QAction(DuettoMainWindow)
+        self.actionRectangular_Eraser.setCheckable(True)
+        self.actionRectangular_Eraser.setObjectName(_fromUtf8("actionRectangular_Eraser"))
         self.menuFile.addAction(self.actionNew)
         self.menuFile.addAction(self.actionOpen)
         self.menuFile.addAction(self.actionSave)
@@ -307,6 +310,7 @@ class Ui_DuettoMainWindow(object):
         self.menuTools.addAction(self.actionZoom_Cursor)
         self.menuTools.addAction(self.actionPointer_Cursor)
         self.menuTools.addAction(self.actionRectangular_Cursor)
+        self.menuTools.addAction(self.actionRectangular_Eraser)
         self.menuGenerate.addAction(self.actionGenerate_White_Noise)
         self.menuGenerate.addAction(self.actionGenerate_Pink_Noise)
         self.menuEdit.addAction(self.actionCopy)
@@ -465,6 +469,7 @@ class Ui_DuettoMainWindow(object):
         self.actionSpecgram_Image.setText(QtGui.QApplication.translate("DuettoMainWindow", "Specgram Image", None, QtGui.QApplication.UnicodeUTF8))
         self.actionCombined_Image.setText(QtGui.QApplication.translate("DuettoMainWindow", "Combined Image", None, QtGui.QApplication.UnicodeUTF8))
         self.actionRectangular_Cursor.setText(QtGui.QApplication.translate("DuettoMainWindow", "Rectangular Cursor", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionRectangular_Eraser.setText(QtGui.QApplication.translate("DuettoMainWindow", "Rectangular Eraser", None, QtGui.QApplication.UnicodeUTF8))
 
 from Graphic_Interface.Widgets.QSignalVisualizerWidget import QSignalVisualizerWidget
 import icons_rc

@@ -51,6 +51,7 @@ class DuettoImageWidget(GraphicsView):
         #zoomCursor-------------------------------------
         self.zoomRegion = pg.LinearRegionItem([0, 0])
         self.makeZoom = None
+        self.makeZoomRect = None
         self.mousePressed = False
         self.mouseZoomEnabled = True
         self.viewBox.addItem(self.zoomRegion)
@@ -74,6 +75,7 @@ class DuettoImageWidget(GraphicsView):
     PointerSpecChanged = pyqtSignal(str)
     PointerCursorPressed = pyqtSignal()
     RectangularCursorPressed = pyqtSignal()
+    applyFilter = pyqtSignal(int, int, int, int)
 
     def clearRectangularCursor(self):
         self.rectRegion['x'] = [0,0]
@@ -107,6 +109,11 @@ class DuettoImageWidget(GraphicsView):
                 self.rectangularCursor.setSize([0,0])
                 self.mousePressed = False
             elif tool == Tools.RectangularCursor:
+                self.viewBox.removeItem(self.pointerCursor)
+                self.viewBox.removeItem(self.zoomRegion)
+                self.viewBox.addItem(self.rectangularCursor)
+                self.mousePressed = False
+            elif tool == Tools.RectangularEraser:
                 self.viewBox.removeItem(self.pointerCursor)
                 self.viewBox.removeItem(self.zoomRegion)
                 self.viewBox.addItem(self.rectangularCursor)
@@ -161,7 +168,7 @@ class DuettoImageWidget(GraphicsView):
                         self.setCursor(QCursor(QtCore.Qt.OpenHandCursor))
                 else:
                     self.setCursor(QCursor(QtCore.Qt.ArrowCursor))
-        elif self.selectedTool == Tools.RectangularCursor:
+        elif self.selectedTool == Tools.RectangularCursor or self.selectedTool == Tools.RectangularEraser:
             x = self.fromCanvasToClient(event.x())
             y = self.fromCanvasToClientY(event.y())
 
@@ -236,7 +243,7 @@ class DuettoImageWidget(GraphicsView):
                 else:
                     self.setCursor(QCursor(QtCore.Qt.ClosedHandCursor))
             pg.GraphicsView.mousePressEvent(self,event)
-        elif self.selectedTool == Tools.RectangularCursor:
+        elif self.selectedTool == Tools.RectangularCursor or self.selectedTool == Tools.RectangularEraser:
             self.last = {'pos':[self.fromCanvasToClient(event.x()),self.fromCanvasToClientY(event.y())]}
             self.rectangularCursor.setPos(self.last['pos'])
             self.rectangularCursor.setSize([0,0])
@@ -251,6 +258,16 @@ class DuettoImageWidget(GraphicsView):
                 self.makeZoom(rgn[0], rgn[1], specCoords=True)
                 self.zoomRegion.setRegion([rgn[0], rgn[0]])
                 #self.zoomRegion.lineMoved()
+        elif self.selectedTool ==  Tools.RectangularCursor:
+            x = self.fromCanvasToClient(event.x())
+            y = numpy.round(self.parent().specgramSettings.freqs[self.fromCanvasToClientY(event.y())]*1.0/1000,1)
+            if self.mouseInsideRectArea(x,y):
+                self.makeZoomRect(specCoords = True)
+        elif self.selectedTool == Tools.RectangularEraser:
+             x = self.fromCanvasToClient(event.x())
+             y = numpy.round(self.parent().specgramSettings.freqs[self.fromCanvasToClientY(event.y())]*1.0/1000,1)
+             if self.mouseInsideRectArea(x,y):
+                self.applyFilter.emit(self.rectRegion['x'][0],self.rectRegion['x'][1],self.rectRegion['y'][0]*1000,self.rectRegion['y'][1]*1000)
 
     def mouseReleaseEvent(self, event):
         self.mousePressed = False
@@ -270,6 +287,10 @@ class DuettoImageWidget(GraphicsView):
                 self.setCursor(QCursor(QtCore.Qt.ArrowCursor))
 
             self.parent().emit(SIGNAL("IntervalChanged"))
+
+    def mouseInsideRectArea(self,x,y):
+        return x <= self.rectRegion['x'][1] and x >= self.rectRegion['x'][0]\
+               and y <= self.rectRegion['y'][1] and y >= self.rectRegion['y'][0]
 
     def mouseInsideZoomArea(self, xPixel):
         xIndex = self.fromCanvasToClient(xPixel)
@@ -299,7 +320,7 @@ class DuettoImageWidget(GraphicsView):
                 if self.mouseReleased:
                     self.pointerCursor.addPoints([self.last])
                 return -1
-            elif self.selectedTool == Tools.RectangularCursor:
+            elif self.selectedTool == Tools.RectangularCursor  or self.selectedTool == Tools.RectangularEraser:
                 xPixel = minx
         if xPixel > maxx:
             if self.selectedTool == Tools.PointerCursor:
@@ -307,7 +328,7 @@ class DuettoImageWidget(GraphicsView):
                 if self.mouseReleased:
                     self.pointerCursor.addPoints([self.last])
                 return -1
-            elif self.selectedTool == Tools.RectangularCursor:
+            elif self.selectedTool == Tools.RectangularCursor  or self.selectedTool == Tools.RectangularEraser:
                 xPixel = maxx
         return a + int(round((xPixel - minx) * (b - a) * 1. / (maxx - minx), 0))
 
@@ -320,7 +341,7 @@ class DuettoImageWidget(GraphicsView):
         a, b = self.imageItem.getViewBox().viewRange()[1]
         yPixel = maxy - yPixel
         if yPixel < miny:
-            if self.selectedTool == Tools.RectangularCursor:
+            if self.selectedTool == Tools.RectangularCursor or self.selectedTool == Tools.RectangularEraser:
                 yPixel = miny
             else:
                 self.pointerCursor.clear()
@@ -328,7 +349,7 @@ class DuettoImageWidget(GraphicsView):
                     self.pointerCursor.addPoints([self.last])
                 return -1
         if yPixel > maxy:
-            if self.selectedTool == Tools.RectangularCursor:
+            if self.selectedTool == Tools.RectangularCursor  or self.selectedTool == Tools.RectangularEraser:
                 yPixel = maxy
             else:
                 self.pointerCursor.clear()
@@ -339,7 +360,11 @@ class DuettoImageWidget(GraphicsView):
         return a + int(round((yPixel - miny) * (b - a) * 1. / (maxy - miny), 0))
 
     def getFreqTimeAndIntensity(self,x,y):
-        time =  self.parent()._from_spec_to_osc(x)*1.0/self.parent().signalProcessor.signal.samplingRate
+        print(self.imageItem.getPixmap().width())
+        #YSpec = numpy.searchsorted(self.parent().specgramSettings.freqs, self.parent().minYSpc*1000)
+        time =  x * 1.0/self.parent().signalProcessor.signal.samplingRate
         freq = numpy.round(self.parent().specgramSettings.freqs[y]*1.0/1000,1)
-        intensity = 10*numpy.log10(self.parent().specgramSettings.Pxx[y][x - self.parent()._from_osc_to_spec(self.parent().mainCursor.min)]*1.0/numpy.amax(self.parent().specgramSettings.Pxx))
+        print(len(self.parent().specgramSettings.Pxx[y]),x,self.parent()._from_osc_to_spec(self.parent().mainCursor.min))
+        print(len(self.parent().specgramSettings.Pxx),y)
+        intensity = 10*numpy.log10(self.parent().specgramSettings.Pxx[y][x - self.parent()._from_osc_to_spec(self.parent().mainCursor.min)-1]*1.0/numpy.amax(self.parent().specgramSettings.Pxx))
         return [time, freq, intensity]

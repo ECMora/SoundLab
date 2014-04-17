@@ -14,6 +14,8 @@ class DuettoPlotWidget(pg.PlotWidget):
         self.zoomRegion = pg.LinearRegionItem([0, 0])
         self.zoomRegion.sigRegionChanged.connect(self.on_zoomRegionChanged)
         self.makeZoom = None
+        self.makeZoomRect = None
+        self.setZoomRegionVisible(True)
         self.getPlotItem().setMouseEnabled(x=False, y=False)
         self.threshold = pg.InfiniteLine(movable=True, angle=0, pos=0)
         self.mouseZoomEnabled = True
@@ -69,7 +71,7 @@ class DuettoPlotWidget(pg.PlotWidget):
             elif tool == Tools.Zoom:
                 self.removeItem(self.pointerCursor)
                 self.removeItem(self.rectangularCursor)
-                self.addItem(self.zoomRegion)
+                #self.addItem(self.zoomRegion)
                 self.zoomRegion.setRegion([0,0])
                 self.mouseZoomEnabled = True
                 self.mousePressed = False
@@ -80,6 +82,9 @@ class DuettoPlotWidget(pg.PlotWidget):
                 self.removeItem(self.zoomRegion)
                 self.addItem(self.rectangularCursor)
                 self.mousePressed = False
+            elif tool == Tools.RectangularEraser:
+                self.removeItem(self.pointerCursor)
+                self.removeItem(self.zoomRegion)
             self.update()
 
     def setZoomRegionVisible(self, value=False):
@@ -214,6 +219,11 @@ class DuettoPlotWidget(pg.PlotWidget):
                     return
                 self.makeZoom(rgn[0], rgn[1])
                 self.zoomRegion.setRegion([rgn[0], rgn[0]])
+        elif self.selectedTool ==  Tools.RectangularCursor:
+            x = self.fromCanvasToClient(event.x())
+            y = numpy.round(self.parent().specgramSettings.freqs[self.fromCanvasToClientY(event.y())]*1.0/1000,1)
+            if self.mouseInsideRectArea(x,y):
+                self.makeZoomRect(specCoords = False)
 
     def mouseReleaseEvent(self, event):
         self.mousePressed = False
@@ -235,6 +245,9 @@ class DuettoPlotWidget(pg.PlotWidget):
                 self.setCursor(QCursor(QtCore.Qt.ArrowCursor))
             self.parent().emit(SIGNAL("IntervalChanged"))
 
+    def mouseInsideRectArea(self,x,y):
+        return x <= self.rectRegion['x'][1] and x >= self.rectRegion['x'][0]\
+               and y <= self.rectRegion['y'][1] and y >= self.rectRegion['y'][0]
 
     def mouseInsideZoomArea(self, xPixel):
         xIndex = self.fromCanvasToClient(xPixel)
