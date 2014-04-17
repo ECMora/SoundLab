@@ -60,7 +60,7 @@ class CommonSignalProcessor(SignalProcessor):
         return self.signal
 
     def insertSilence(self, indexFrom=0, indexTo=-1, ms=0):
-        arr = zeros(ms * self.signal.samplingRate / 1000, type(self.signal.data[0]))
+        arr = zeros(ms * self.signal.samplingRate / 1000.0, type(self.signal.data[0]))
         self.signal.data = concatenate((self.signal.data[0:indexFrom],
                                         arr,
                                         self.signal.data[indexFrom:]))
@@ -96,7 +96,7 @@ class CommonSignalProcessor(SignalProcessor):
                 elif(fade=="OUT"):
                     return (1-(index*1.0)/n)**2
         if function == "const":
-            factor = 20**(factor/20.0)
+            factor = 10.0**(factor/20.0)
             self.signal.data[indexFrom:indexTo] *= factor
         elif function == "normalize":
             factor /= 100.0
