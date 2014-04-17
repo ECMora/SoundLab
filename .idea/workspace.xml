@@ -2,9 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="f914e76f-5c9c-490d-847b-9d2b44fcbbcc" name="Default" comment="">
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Graphic_Interface/UI Files/MainWindow.ui" afterPath="$PROJECT_DIR$/Graphic_Interface/UI Files/MainWindow.ui" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Graphic_Interface/Widgets/DuettoImageWidget.py" afterPath="$PROJECT_DIR$/Graphic_Interface/Widgets/DuettoImageWidget.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Graphic_Interface/Widgets/DuettoPlotWidget.py" afterPath="$PROJECT_DIR$/Graphic_Interface/Widgets/DuettoPlotWidget.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Graphic_Interface/Windows/DuettoSoundLabWindow.pyw" afterPath="$PROJECT_DIR$/Graphic_Interface/Windows/DuettoSoundLabWindow.pyw" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Graphic_Interface/Windows/MainWindow.py" afterPath="$PROJECT_DIR$/Graphic_Interface/Windows/MainWindow.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Graphic_Interface/Widgets/QSignalVisualizerWidget.py" afterPath="$PROJECT_DIR$/Graphic_Interface/Widgets/QSignalVisualizerWidget.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Graphic_Interface/Widgets/Tools.py" afterPath="$PROJECT_DIR$/Graphic_Interface/Widgets/Tools.py" />
     </list>
     <list id="0fbcdd62-8410-44e7-bbfe-f0bd9b8e17c3" name="Failed commit: Default" comment="cambios" />
     <ignored path="DuettoSystem latest.iws" />
@@ -18,7 +22,7 @@
   <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/DuettoSystem latest$Duetto_Sound_Lab.coverage" NAME="Duetto_Sound_Lab Coverage Results" MODIFIED="1397584793607" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/DuettoSystem$Duetto_Sound_Lab_pyw.coverage" NAME="Duetto_Sound_Lab.pyw Coverage Results" MODIFIED="1397596935461" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/DuettoSystem$Duetto_Sound_Lab_pyw.coverage" NAME="Duetto_Sound_Lab.pyw Coverage Results" MODIFIED="1397692411487" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/DuettoSystem latest$Duetto_Sound_Lab_pyw.coverage" NAME="Duetto_Sound_Lab.pyw Coverage Results" MODIFIED="1397585573442" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
   </component>
   <component name="CreatePatchCommitExecutor">
@@ -36,7 +40,7 @@
       <file leaf-file-name="QSignalVisualizerWidget.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Graphic_Interface/Widgets/QSignalVisualizerWidget.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="523" column="0" selection-start="23534" selection-end="23534" vertical-scroll-proportion="0.48235294" vertical-offset="8727" max-vertical-offset="14331">
+            <state line="435" column="8" selection-start="18242" selection-end="18242" vertical-scroll-proportion="1.5323529" vertical-offset="6874" max-vertical-offset="14739">
               <folding>
                 <element signature="e#0#29#0" expanded="true" />
               </folding>
@@ -47,7 +51,7 @@
       <file leaf-file-name="DuettoSoundLabWindow.pyw" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Graphic_Interface/Windows/DuettoSoundLabWindow.pyw">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="734" column="0" selection-start="38862" selection-end="38862" vertical-scroll-proportion="-64.36" vertical-offset="10869" max-vertical-offset="15232">
+            <state line="569" column="53" selection-start="31206" selection-end="31206" vertical-scroll-proportion="-7.24" vertical-offset="9492" max-vertical-offset="15079">
               <folding>
                 <element signature="e#0#10#0" expanded="true" />
               </folding>
@@ -58,7 +62,7 @@
       <file leaf-file-name="DuettoImageWidget.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Graphic_Interface/Widgets/DuettoImageWidget.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="250" column="78" selection-start="10810" selection-end="10810" vertical-scroll-proportion="-5.96" vertical-offset="4101" max-vertical-offset="4454">
+            <state line="343" column="0" selection-start="15742" selection-end="15742" vertical-scroll-proportion="-6.84" vertical-offset="5660" max-vertical-offset="5950">
               <folding>
                 <element signature="e#0#31#0" expanded="true" />
               </folding>
@@ -66,32 +70,12 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="QPowerSpectrumWidget.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Graphic_Interface/Widgets/QPowerSpectrumWidget.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="204" max-vertical-offset="629">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file leaf-file-name="DuettoPlotWidget.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Graphic_Interface/Widgets/DuettoPlotWidget.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="43" column="34" selection-start="1783" selection-end="1882" vertical-scroll-proportion="-8.68" vertical-offset="514" max-vertical-offset="3961">
+            <state line="219" column="99" selection-start="10774" selection-end="10821" vertical-scroll-proportion="-6.8" vertical-offset="3553" max-vertical-offset="5389">
               <folding>
                 <element signature="e#0#24#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Duetto_Sound_Lab.pyw" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Duetto_Sound_Lab.pyw">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="36" column="0" selection-start="1028" selection-end="1028" vertical-scroll-proportion="0.0" vertical-offset="437" max-vertical-offset="765">
-              <folding>
-                <element signature="e#0#25#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -122,10 +106,10 @@
         <option value="$PROJECT_DIR$/Duetto_Core/SignalProcessors/CommonSignalProcessor.py" />
         <option value="$PROJECT_DIR$/Graphic_Interface/Windows/SegmentationAndClasificationWindow.pyw" />
         <option value="$PROJECT_DIR$/Graphic_Interface/Widgets/Tools.py" />
-        <option value="$PROJECT_DIR$/Graphic_Interface/Windows/DuettoSoundLabWindow.pyw" />
         <option value="$PROJECT_DIR$/Graphic_Interface/Widgets/DuettoPlotWidget.py" />
         <option value="$PROJECT_DIR$/Graphic_Interface/Widgets/DuettoImageWidget.py" />
         <option value="$PROJECT_DIR$/Graphic_Interface/Widgets/QSignalVisualizerWidget.py" />
+        <option value="$PROJECT_DIR$/Graphic_Interface/Windows/DuettoSoundLabWindow.pyw" />
       </list>
     </option>
   </component>
@@ -522,7 +506,14 @@
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="8" />
+      <breakpoints>
+        <line-breakpoint enabled="true" type="python-line">
+          <url>file://$PROJECT_DIR$/Graphic_Interface/Widgets/QSignalVisualizerWidget.py</url>
+          <line>381</line>
+          <option name="timeStamp" value="9" />
+        </line-breakpoint>
+      </breakpoints>
+      <option name="time" value="11" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
@@ -571,18 +562,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Graphic_Interface/Widgets/Tools.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="4" column="105" selection-start="212" selection-end="212" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="170">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Duetto_Sound_Lab.pyw">
       <provider selected="true" editor-type-id="text-editor">
         <state line="36" column="0" selection-start="1028" selection-end="1028" vertical-scroll-proportion="0.0" vertical-offset="437" max-vertical-offset="765">
           <folding>
-            <element signature="e#0#25#0" expanded="true" />
+            <element signature="e#0#25#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -594,20 +578,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Graphic_Interface/Windows/DuettoSoundLabWindow.pyw">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="734" column="0" selection-start="38862" selection-end="38862" vertical-scroll-proportion="-64.36" vertical-offset="10869" max-vertical-offset="15232">
-          <folding>
-            <element signature="e#0#10#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/FeatureExtractionDetectors/MaxInstantFrequencyDetector.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="11" column="39" selection-start="440" selection-end="443" vertical-scroll-proportion="0.49470899" vertical-offset="0" max-vertical-offset="378">
           <folding>
-            <element signature="e#0#27#0" expanded="true" />
+            <element signature="e#0#27#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -619,9 +594,18 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/Graphic_Interface/Widgets/Tools.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="14" column="27" selection-start="553" selection-end="553" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="340">
+          <folding>
+            <element signature="e#40#235#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Graphic_Interface/Widgets/DuettoPlotWidget.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="43" column="34" selection-start="1783" selection-end="1882" vertical-scroll-proportion="-8.68" vertical-offset="514" max-vertical-offset="3961">
+        <state line="219" column="99" selection-start="10774" selection-end="10821" vertical-scroll-proportion="-6.8" vertical-offset="3553" max-vertical-offset="5389">
           <folding>
             <element signature="e#0#24#0" expanded="true" />
           </folding>
@@ -630,16 +614,25 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Graphic_Interface/Widgets/DuettoImageWidget.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="250" column="78" selection-start="10810" selection-end="10810" vertical-scroll-proportion="-5.96" vertical-offset="4101" max-vertical-offset="4454">
+        <state line="343" column="0" selection-start="15742" selection-end="15742" vertical-scroll-proportion="-6.84" vertical-offset="5660" max-vertical-offset="5950">
           <folding>
             <element signature="e#0#31#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/Graphic_Interface/Windows/DuettoSoundLabWindow.pyw">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="569" column="53" selection-start="31206" selection-end="31206" vertical-scroll-proportion="-7.24" vertical-offset="9492" max-vertical-offset="15079">
+          <folding>
+            <element signature="e#0#10#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Graphic_Interface/Widgets/QSignalVisualizerWidget.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="523" column="0" selection-start="23534" selection-end="23534" vertical-scroll-proportion="0.48235294" vertical-offset="8727" max-vertical-offset="14331">
+        <state line="435" column="8" selection-start="18242" selection-end="18242" vertical-scroll-proportion="1.5323529" vertical-offset="6874" max-vertical-offset="14739">
           <folding>
             <element signature="e#0#29#0" expanded="true" />
           </folding>

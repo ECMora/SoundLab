@@ -8,6 +8,7 @@ from pyqtgraph.graphicsItems.ViewBox import ViewBox
 import numpy
 import  pyqtgraph as pg
 from Graphic_Interface.Widgets.Tools import Tools
+from Graphic_Interface.Widgets.Tools import RectROI
 
 class SpecYAxis(pg.AxisItem):
     def __init__(self,*args,**kwargs):
@@ -47,24 +48,38 @@ class DuettoImageWidget(GraphicsView):
         self.viewBox.setMouseEnabled(x=False, y=False)
         self.viewBox.setAspectLocked(False)
         self.emitIntervalSpecChanged = True
+        #zoomCursor-------------------------------------
         self.zoomRegion = pg.LinearRegionItem([0, 0])
-
-        #pointerCursor-----------------------------------
-        self.pointerCursor = pg.ScatterPlotItem()
-        self.setDragMode(QtGui.QGraphicsView.NoDrag)
-        self.selectedTool = Tools.Zoom
-        self.mouseReleased = False
-        self.last = {}
-        self.zoomRegion.sigRegionChanged.connect(self.on_zoomRegionChanged)
-        self.viewBox.addItem(self.zoomRegion)
         self.makeZoom = None
         self.mousePressed = False
         self.mouseZoomEnabled = True
+        self.viewBox.addItem(self.zoomRegion)
+        self.zoomRegion.sigRegionChanged.connect(self.on_zoomRegionChanged)
+        #pointerCursor-----------------------------------
+        self.pointerCursor = pg.ScatterPlotItem()
+        self.mouseReleased = False
+        self.last = {}
+        #RectangularCursor-------------------------------
+        self.rectangularCursor = RectROI([0, 0], [0, 0], pen=(0,9), movable=False)
+        self.rectRegion = {'x':[0,0],'y':[0,0]}
+        #------------------------------------------------
+
+
+        self.setDragMode(QtGui.QGraphicsView.NoDrag)
+        self.selectedTool = Tools.Zoom
+
 
     PIXELS_OF_CURSORS_CHANGES = 5
     IntervalSpecChanged = pyqtSignal(int, int)
     PointerSpecChanged = pyqtSignal(str)
     PointerCursorPressed = pyqtSignal()
+    RectangularCursorPressed = pyqtSignal()
+
+    def clearRectangularCursor(self):
+        self.rectRegion['x'] = [0,0]
+        self.rectRegion['y'] = [0,0]
+        self.rectangularCursor.setPos([0,0])
+        self.rectangularCursor.setSize([0,0])
 
     def clearPointerCursor(self):
         self.pointerCursor.clear()
@@ -75,15 +90,27 @@ class DuettoImageWidget(GraphicsView):
             self.selectedTool = tool
             if tool == Tools.PointerCursor:
                 self.viewBox.removeItem(self.zoomRegion)
+                #self.viewBox.removeItem(self.rectangularCursor)
                 self.pointerCursor.clear()
                 self.viewBox.addItem(self.pointerCursor)
                 self.mouseZoomEnabled = False
                 self.mouseReleased = False
+                self.rectangularCursor.setPos([0,0])
+                self.rectangularCursor.setSize([0,0])
             elif tool == Tools.Zoom:
                 self.viewBox.removeItem(self.pointerCursor)
+                #self.viewBox.removeItem(self.rectangularCursor)
                 self.viewBox.addItem(self.zoomRegion)
                 self.zoomRegion.setRegion([0,0])
                 self.mouseZoomEnabled = True
+                self.rectangularCursor.setPos([0,0])
+                self.rectangularCursor.setSize([0,0])
+                self.mousePressed = False
+            elif tool == Tools.RectangularCursor:
+                self.viewBox.removeItem(self.pointerCursor)
+                self.viewBox.removeItem(self.zoomRegion)
+                self.viewBox.addItem(self.rectangularCursor)
+                self.mousePressed = False
             self.update()
 
     def showGrid(self,x=True,y=True):
@@ -134,8 +161,52 @@ class DuettoImageWidget(GraphicsView):
                         self.setCursor(QCursor(QtCore.Qt.OpenHandCursor))
                 else:
                     self.setCursor(QCursor(QtCore.Qt.ArrowCursor))
+        elif self.selectedTool == Tools.RectangularCursor:
+            x = self.fromCanvasToClient(event.x())
+            y = self.fromCanvasToClientY(event.y())
+
+            if self.mousePressed:
+                self.RectangularCursorPressed.emit()
+                if x < self.last['pos'][0]:
+                    if y < self.last['pos'][1]:
+                        self.rectangularCursor.setPos([x,y])
+                        self.rectRegion['x'][0] = x
+                        self.rectRegion['y'][0] = y
+                    else:
+                        self.rectangularCursor.setPos([x,self.last['pos'][1]])
+                        self.rectRegion['x'][0] = x
+                        self.rectRegion['y'][0] = self.last['pos'][1]
+                elif x >= self.last['pos'][0]:
+                    if y < self.last['pos'][1]:
+                        self.rectangularCursor.setPos([self.last['pos'][0],y])
+                        self.rectRegion['x'][0] = self.last['pos'][0]
+                        self.rectRegion['y'][0] = y
+                    else:
+                        self.rectangularCursor.setPos(self.last['pos'])
+                        self.rectRegion['x'][0] = self.last['pos'][0]
+                        self.rectRegion['y'][0] = self.last['pos'][1]
+                dx = numpy.abs(self.last['pos'][0] - x)
+                dy = numpy.abs(self.last['pos'][1] - y)
+                self.rectangularCursor.setSize([ dx, dy])
+                self.rectRegion['x'][1] = self.rectRegion['x'][0] + dx
+                self.rectRegion['y'][1] = self.rectRegion['y'][0] + dy
+                info = self.getFreqTimeAndIntensity(self.rectRegion['x'][0], self.rectRegion['y'][0])
+                info1 = self.getFreqTimeAndIntensity(self.rectRegion['x'][1], self.rectRegion['y'][1])
+                self.rectRegion['y'][0] = info[1]
+                self.rectRegion['y'][1] = info1[1]
+                self.PointerSpecChanged.emit(str.format('t0: {0}s  t1: {1}s dt: {2}s  Min Frequency: {3}kHz  Max Frequency: {4}kHz ',info[0],info1[0],info1[0] - info[0],info[1],info1[1]))
+            else:
+                info = self.getFreqTimeAndIntensity(x, y)
+                if x == -1 or y == -1:
+                    self.setCursor(QCursor(QtCore.Qt.ArrowCursor))
+                    return
+                else:
+                    self.PointerSpecChanged.emit(str.format('Time: {0}s  Frequency: {1}kHz Intensity: {2}dB',info[0],info[1],info[2]))
+            self.setCursor(QCursor(QtCore.Qt.ArrowCursor))
+            self.update()
 
     def mousePressEvent(self, event):
+        self.mousePressed = True
         if self.selectedTool == Tools.PointerCursor:
             self.pointerCursor.clear()
             x = self.fromCanvasToClient(event.x())
@@ -147,8 +218,7 @@ class DuettoImageWidget(GraphicsView):
             self.pointerCursor.addPoints([self.last])
             self.mouseReleased = False
             self.PointerCursorPressed.emit()
-        if self.selectedTool == Tools.Zoom:
-            self.mousePressed = True
+        elif self.selectedTool == Tools.Zoom:
             if not self.zoomRegion in self.items():
                 self.zoomRegion.setRegion([self.fromCanvasToClient(event.x()),self.fromCanvasToClient(event.x())])
                 #self.setZoomRegionVisible(True)
@@ -166,6 +236,10 @@ class DuettoImageWidget(GraphicsView):
                 else:
                     self.setCursor(QCursor(QtCore.Qt.ClosedHandCursor))
             pg.GraphicsView.mousePressEvent(self,event)
+        elif self.selectedTool == Tools.RectangularCursor:
+            self.last = {'pos':[self.fromCanvasToClient(event.x()),self.fromCanvasToClientY(event.y())]}
+            self.rectangularCursor.setPos(self.last['pos'])
+            self.rectangularCursor.setSize([0,0])
 
     def mouseDoubleClickEvent(self, event):
         if self.selectedTool ==  Tools.Zoom:
@@ -179,13 +253,12 @@ class DuettoImageWidget(GraphicsView):
                 #self.zoomRegion.lineMoved()
 
     def mouseReleaseEvent(self, event):
-        if self.selectedTool == Tools.PointerCursor:
+        self.mousePressed = False
+        if self.selectedTool == Tools.PointerCursor or self.selectedTool == Tools.RectangularCursor:
             self.mouseReleased = True
             #pg.GraphicsView.mouseReleaseEvent(self, event)
         elif self.selectedTool == Tools.Zoom:
-            self.mousePressed = False
             pg.GraphicsView.mouseReleaseEvent(self, event)
-
             rgn = self.zoomRegion.getRegion()
             minx, maxx = self.fromClientToCanvas(rgn[0]), self.fromClientToCanvas(rgn[1])
             if abs(minx - event.x()) < self.PIXELS_OF_CURSORS_CHANGES or \
@@ -226,12 +299,16 @@ class DuettoImageWidget(GraphicsView):
                 if self.mouseReleased:
                     self.pointerCursor.addPoints([self.last])
                 return -1
+            elif self.selectedTool == Tools.RectangularCursor:
+                xPixel = minx
         if xPixel > maxx:
             if self.selectedTool == Tools.PointerCursor:
                 self.pointerCursor.clear()
                 if self.mouseReleased:
                     self.pointerCursor.addPoints([self.last])
                 return -1
+            elif self.selectedTool == Tools.RectangularCursor:
+                xPixel = maxx
         return a + int(round((xPixel - minx) * (b - a) * 1. / (maxx - minx), 0))
 
     def fromCanvasToClientY(self, yPixel):
@@ -242,11 +319,22 @@ class DuettoImageWidget(GraphicsView):
         maxy = self.viewBox.height() + miny
         a, b = self.imageItem.getViewBox().viewRange()[1]
         yPixel = maxy - yPixel
-        if yPixel < miny or yPixel > maxy:
-            self.pointerCursor.clear()
-            if self.mouseReleased:
-                self.pointerCursor.addPoints([self.last])
-            return -1
+        if yPixel < miny:
+            if self.selectedTool == Tools.RectangularCursor:
+                yPixel = miny
+            else:
+                self.pointerCursor.clear()
+                if self.mouseReleased:
+                    self.pointerCursor.addPoints([self.last])
+                return -1
+        if yPixel > maxy:
+            if self.selectedTool == Tools.RectangularCursor:
+                yPixel = maxy
+            else:
+                self.pointerCursor.clear()
+                if self.mouseReleased:
+                    self.pointerCursor.addPoints([self.last])
+                return -1
 
         return a + int(round((yPixel - miny) * (b - a) * 1. / (maxy - miny), 0))
 
