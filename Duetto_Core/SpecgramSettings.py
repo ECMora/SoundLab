@@ -33,6 +33,7 @@ class SpecgramSettings:
     def __init__(self,NFFT=512,overlap=32,window=windows[0]):
         self.NFFT=NFFT
         self.overlap=overlap
+        self.visualOverlap = overlap
         self.window=window
         self.colors=[]
         for cname in cm._cmapnames:

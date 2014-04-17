@@ -148,6 +148,9 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
     <addaction name="actionInsert_Silence"/>
     <addaction name="actionSilence"/>
     <addaction name="separator"/>
+    <addaction name="actionPositive_Values"/>
+    <addaction name="actionNegative_Values"/>
+    <addaction name="separator"/>
     <addaction name="actionFilter"/>
     <addaction name="actionSmart_Scale"/>
     <addaction name="actionResampling"/>
@@ -753,6 +756,16 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
   <action name="actionCombined_Image">
    <property name="text">
     <string>Combined Image</string>
+   </property>
+  </action>
+  <action name="actionPositive_Values">
+   <property name="text">
+    <string>Positive Values</string>
+   </property>
+  </action>
+  <action name="actionNegative_Values">
+   <property name="text">
+    <string>Negative Values</string>
    </property>
   </action>
   <zorder>dock_settings</zorder>

@@ -109,24 +109,19 @@ class OscilogramElement(OneDimensionalElement):
             minsize_spectral = (max(1,int(minsize_spectral[0]*spec_resolution)),max(1,int(minsize_spectral[1]*temp_resolution)))
             sr = signal.samplingRate*1.0
             columnsize = (bins[1] - bins[0])*sr
-            overlap_delay = overlap if overlap == 0 else overlap/(100-overlap)
+            overlap = int(round(overlap,0))
+            overlap_delay = 0 if overlap <= 0 else overlap/(100-overlap)
             aux = max(0,int(indexFrom/columnsize)-overlap_delay)
             aux2 = min(int(round(indexTo/columnsize,0))+overlap_delay,len(pxx[0]))
             self.matrix = pxx[:,aux:aux2]
             self.freqs = freqs
             self.bins = bins
             self.indexFromInPxx,self.indexToInPxx = aux,aux2
+
+            self.twoDimensionalElements = [SpecgramElement(signal,self.matrix,freqs,0,len(freqs),bins,0,aux2-aux,number,self,location,multipleSubelements=False)]
+
             if findSpectralSublements:
                 self.computeTwoDimensionalElements(threshold_spectral,self.matrix,freqs,bins,minsize_spectral)
-            else:
-                self.twoDimensionalElements = [SpecgramElement(signal,self.matrix,freqs,0,len(freqs),bins,0,aux2-aux,number,self,location)]
-
-    def sublementsPeakFreqsVisible(self,visibility=False):
-        for x in self.twoDimensionalElements:
-            for p in x.visual_peaksfreqs:
-                p[1] = visibility
-        if not visibility:
-            pass
 
     def computeTwoDimensionalElements(self,threshold_spectral, pxx, freqs, bins, minsize_spectral):
         detector = TwoDimensionalElementsDetector()
@@ -164,7 +159,8 @@ class OscilogramElement(OneDimensionalElement):
         return self.parameters["rms"]
 
     def spectralElements(self):
-        return len(self.twoDimensionalElements)
+        s = len(self.twoDimensionalElements)
+        return s-1 if s > 0 else s
 
     #espectral parameters
     def getMatrixIndexFromLocation(self,location):
@@ -198,6 +194,9 @@ class OscilogramElement(OneDimensionalElement):
             location = dict["location"]
             index = self.getMatrixIndexFromLocation(location)
             if index not in self.parameters["peakFreq"]:
+                if(len(self.twoDimensionalElements)>0):
+                    pass
+
                 self.parameters["peakFreq"][index],self.parameters["peakAmplitude"][index] = self.peak_f_a(index)
             return self.parameters["peakFreq"][index]
         return "Invalid Params"
@@ -212,6 +211,9 @@ class OscilogramElement(OneDimensionalElement):
         return "Invalid Params"
 
     def freq_min_max_band_peaksAbove(self,index,threshold, peaksThreshold):
+        """
+        returns the min freq with its index , the max freq with its index, the band width and the peaks above the threshold
+        """
         arr = self.matrix[:, index]
         minx,maxx = min(arr),max(arr)
         thresholdValue = (10.0**((60+threshold)/20.0))*(maxx - minx)/1000.0
@@ -226,7 +228,7 @@ class OscilogramElement(OneDimensionalElement):
             minf -= minf % 10
             maxf = int(round(self.freqs[regions[len(regions)-1][1]],0))
             maxf -= maxf % 10
-        return minf,maxf,maxf-minf,len(regionsPeaks)
+        return minf,regions[0][0],maxf,regions[len(regions)-1][1],maxf-minf,len(regionsPeaks)
 
     def minFreq(self,dict):
         if "location" in dict and "threshold" in dict and "peaksThreshold" in dict:
@@ -235,8 +237,21 @@ class OscilogramElement(OneDimensionalElement):
             peakthreshold = dict["peaksThreshold"]
             index = self.getMatrixIndexFromLocation(location)
             if (index,threshold) not in self.parameters["minFreq"]:
+                minf, minfIndex, maxf, maxfIndex, band, peaks = self.freq_min_max_band_peaksAbove(index,threshold,peakthreshold)
                 self.parameters["minFreq"][(index,threshold)],self.parameters["maxFreq"][(index,threshold)],\
-                self.parameters["bandwidth"][(index,threshold)],self.parameters["peaksAbove"][(index,peakthreshold)] = self.freq_min_max_band_peaksAbove(index,threshold,peakthreshold)
+                self.parameters["bandwidth"][(index,threshold)],self.parameters["peaksAbove"][(index,peakthreshold)] = minf, maxf, band, peaks
+                if(len(self.twoDimensionalElements)>0):
+                    g = pg.GraphItem()
+                    ## Define positions of nodes
+                    pos = np.array([
+                        [self.indexFromInPxx + index, minfIndex],
+                        [self.indexFromInPxx + index, maxfIndex]
+                        ])
+                    adj = np.array([
+                        [0,1]
+                        ])
+                    g.setData(pos=pos, size=min(maxfIndex-minfIndex,3), symbol=['d','d'], pxMode=False,adj=adj,pen=(pg.mkPen(QtGui.QColor(0, 255, 0, 100),width=3) if self.number%2==0 else pg.mkPen(QtGui.QColor(0, 0, 255,100),width=3)))
+                    self.twoDimensionalElements[0].visual_figures.append([g,True])
             return self.parameters["minFreq"][(index,threshold)]
         return "Invalid Params"
 
@@ -247,8 +262,21 @@ class OscilogramElement(OneDimensionalElement):
             peakthreshold = dict["peaksThreshold"]
             index = self.getMatrixIndexFromLocation(location)
             if (index,threshold) not in self.parameters["maxFreq"]:
+                minf, minfIndex, maxf, maxfIndex, band, peaks = self.freq_min_max_band_peaksAbove(index,threshold,peakthreshold)
                 self.parameters["minFreq"][(index,threshold)],self.parameters["maxFreq"][(index,threshold)],\
-                self.parameters["bandwidth"][(index,threshold)],self.parameters["peaksAbove"][(index,peakthreshold)] = self.freq_min_max_band_peaksAbove(index,threshold,peakthreshold)
+                self.parameters["bandwidth"][(index,threshold)],self.parameters["peaksAbove"][(index,peakthreshold)] = minf, maxf, band, peaks
+                if(len(self.twoDimensionalElements)>0):
+                    g = pg.GraphItem()
+                    ## Define positions of nodes
+                    pos = np.array([
+                        [self.indexFromInPxx + index, minfIndex],
+                        [self.indexFromInPxx + index, maxfIndex]
+                        ])
+                    adj = np.array([
+                        [0,1]
+                        ])
+                    g.setData(pos=pos, size=min(maxfIndex-minfIndex,3), symbol=['d','d'], pxMode=False,adj=adj,pen=(pg.mkPen(QtGui.QColor(0, 255, 0, 100),width=3) if self.number%2==0 else pg.mkPen(QtGui.QColor(0, 0, 255,100),width=3)))
+                    self.twoDimensionalElements[0].visual_figures.append([g,True])
             return self.parameters["maxFreq"][(index,threshold)]
         return "Invalid Params"
 
@@ -259,7 +287,7 @@ class OscilogramElement(OneDimensionalElement):
             peakthreshold = dict["peaksThreshold"]
             index = self.getMatrixIndexFromLocation(location)
             if (index,threshold) not in self.parameters["bandwidth"]:
-                self.parameters["minFreq"][(index,threshold)],self.parameters["maxFreq"][(index,threshold)],\
+                self.parameters["minFreq"][(index,threshold)], minfIndex, self.parameters["maxFreq"][(index,threshold)],maxfIndex,\
                 self.parameters["bandwidth"][(index,threshold)],self.parameters["peaksAbove"][(index,peakthreshold)] = self.freq_min_max_band_peaksAbove(index,threshold,peakthreshold)
             return self.parameters["bandwidth"][(index,threshold)]
         return "Invalid Params"
@@ -271,7 +299,7 @@ class OscilogramElement(OneDimensionalElement):
             peakthreshold = dict["peaksThreshold"]
             index = self.getMatrixIndexFromLocation(location)
             if (index,peakthreshold) not in self.parameters["peaksAbove"]:
-                self.parameters["minFreq"][(index,threshold)],self.parameters["maxFreq"][(index,threshold)],\
+                self.parameters["minFreq"][(index,threshold)], minfIndex,self.parameters["maxFreq"][(index,threshold)], maxfIndex,\
                 self.parameters["bandwidth"][(index,threshold)],self.parameters["peaksAbove"][(index,peakthreshold)] = self.freq_min_max_band_peaksAbove(index,threshold,peakthreshold)
             return self.parameters["peaksAbove"][(index,peakthreshold)]
         return "Invalid Params"

@@ -89,7 +89,7 @@ class QSignalVisualizerWidget(QWidget):
         self.axisXOsc = OscXAxis(orientation = 'bottom')
         self.axisYOsc = OscYAxis(orientation = 'left')
         self.axesOscilogram = DuettoPlotWidget(parent=self,axisItems={'bottom': self.axisXOsc,'left':self.axisYOsc})
-
+        self.axesOscilogram.setDownsampling(auto=True,mode="peak")
         self.osc_background = "000"
         self.spec_background = "000"
         self.undoRedoManager = UndoRedoManager(self)
@@ -97,9 +97,11 @@ class QSignalVisualizerWidget(QWidget):
         self.maxYOsc =  100
         self.minYSpc = 0
         self.maxYSpc = 22
+        self.updatePxxMatrix = True
 
         self.visibleEnvelope = False
-        self.envelopeCurve = np.array([])
+        self.envelopeCurve = []
+        #self.axesOscilogram.addItem(self.envelopeCurve)
 
 
         self.axesOscilogram.setMouseEnabled(x=False, y=False)
@@ -107,6 +109,7 @@ class QSignalVisualizerWidget(QWidget):
         self.axesOscilogram.show()
         self.axesOscilogram.setRange(QRect(0,0,1,1))
         self.axesSpecgram = DuettoImageWidget(parent=self)
+
         self.axesSpecgram.show()
 
         self.axesOscilogram.IntervalOscChanged.connect(self.updateSpecZoomRegion)
@@ -452,6 +455,17 @@ class QSignalVisualizerWidget(QWidget):
         self.axesSpecgram.viewBox.setRange()
         self.axesSpecgram.getView().setRange()
 
+    def computeSpecgramSettings(self,overlap=None):
+        """
+        Computes the specgram settings for an specified overlap
+        """
+        overlap = overlap if overlap is not None else int(self.specgramSettings.NFFT*self.specgramSettings.overlap/100.0)
+
+        self.specgramSettings.Pxx, self.specgramSettings.freqs, self.specgramSettings.bins =  mlab.specgram(self.signalProcessor.signal.data[self.mainCursor.min:self.mainCursor.max],
+                                self.specgramSettings.NFFT, Fs=self.signalProcessor.signal.samplingRate,
+                                detrend=mlab.detrend_none, window=self.specgramSettings.window, noverlap=overlap,
+                                sides=self.SPECGRAM_COMPLEX_SIDE)
+
     def refresh(self, dataChanged=True, updateOscillogram=True, updateSpectrogram=True, partial=False):
         # perform some heavy calculations
         width = self.axesSpecgram.viewBox.width()
@@ -461,12 +475,11 @@ class QSignalVisualizerWidget(QWidget):
             normOverlap = self.specgramSettings.overlap / 100.0
             if normOverlap < 0:
                 normOverlap = 1 - 1.0 * (self.mainCursor.max-self.mainCursor.min) / (self.specgramSettings.NFFT * width)
-            overlap = int(self.specgramSettings.NFFT * normOverlap)
-            self.specgramSettings.Pxx, self.specgramSettings.freqs, self.specgramSettings.bins\
-                = mlab.specgram(self.signalProcessor.signal.data[self.mainCursor.min:self.mainCursor.max],
-                                self.specgramSettings.NFFT, Fs=self.signalProcessor.signal.samplingRate,
-                                detrend=mlab.detrend_none, window=self.specgramSettings.window, noverlap=overlap,
-                                sides=self.SPECGRAM_COMPLEX_SIDE)
+            self.specgramSettings.visualOverlap = int(self.specgramSettings.NFFT * normOverlap)
+            if self.updatePxxMatrix:
+                self.computeSpecgramSettings(self.specgramSettings.visualOverlap)
+
+            self.specgramSettings.visualOverlap *= 100.0/self.specgramSettings.NFFT
             temp = np.amax(self.specgramSettings.Pxx)
             if(temp == 0):
                 temp = 1.0
@@ -479,8 +492,6 @@ class QSignalVisualizerWidget(QWidget):
             else:
                 self._Z[self._Z < -100] = -100
             self.axesSpecgram.yAxis.refresh(self.specgramSettings.freqs)
-        # do actual refresh
-        #print(self._Z.shape)
 
         self._doRefresh.emit(dataChanged, updateOscillogram, updateSpectrogram, partial)
 
@@ -499,10 +510,10 @@ class QSignalVisualizerWidget(QWidget):
             #    length = (self.mainCursor.max - self.mainCursor.min)
             #    interval = length / self.INTERVAL_START_DECIMATION
             if dataChanged:
-                self.axesOscilogram.setDownsampling(auto=True,mode="peak")
+                if self.mainCursor.max - self.mainCursor.min > self.INTERVAL_START_DECIMATION:
+                    pass
                 self.axesOscilogram.plot(self.signalProcessor.signal.data, clear=True, pen=self.osc_color, clipToView=partial)
-                if self.visibleEnvelope and not self.signalProcessor.signal.playStatus == AudioSignal.RECORDING:
-                    self.axesOscilogram.plot(self.envelopeCurve)
+
             #self.axesOscilogram.setRange(xRange=(0, self.mainCursor.max - self.mainCursor.min))
             self.axesSpecgram.zoomRegion.setBounds([0, self._from_osc_to_spec(self.mainCursor.max)])
             self.axesOscilogram.zoomRegion.setBounds([0, self.mainCursor.max])
@@ -515,13 +526,23 @@ class QSignalVisualizerWidget(QWidget):
         if self.visibleSpectrogram and updateSpectrogram and self.signalProcessor.signal \
            and self.signalProcessor.signal.opened() and self.signalProcessor.signal.playStatus != AudioSignal.RECORDING\
            and self.mainCursor.max > self.mainCursor.min:
-            self.axesSpecgram.imageItem.setImage(numpy.transpose(self._Z))
-            self.axesSpecgram.imageItem.setRect(QRectF(self._from_osc_to_spec(self.mainCursor.min), 0,
-                                                       self._Z.shape[1], self._Z.shape[0]))
+            osc_spec_ratio = 1.0 * (len(self.signalProcessor.signal.data) if not partial
+                                        else (self.mainCursor.max - self.mainCursor.min))\
+                                 / self._Z.shape[1]
             YSpec = np.searchsorted(self.specgramSettings.freqs, [self.minYSpc*1000, self.maxYSpc*1000])
-            self.axesSpecgram.viewBox.setRange(xRange=(self._from_osc_to_spec(self.mainCursor.min),
-                                                       self._from_osc_to_spec(self.mainCursor.max)),
-                                               yRange=(YSpec[0], YSpec[1]), padding=0)
+            self.axesSpecgram.imageItem.setImage(numpy.transpose(self._Z))
+            if not self.updatePxxMatrix:
+                self.axesSpecgram.imageItem.setRect(QRectF(self._from_osc_to_spec(self.mainCursor.min), YSpec[0],self._from_osc_to_spec(self.mainCursor.max), YSpec[1]))
+                self.axesSpecgram.viewBox.setRange(xRange=(self._from_osc_to_spec(self.mainCursor.min),
+                                                                       self._from_osc_to_spec(self.mainCursor.max)),
+                                                               yRange=(YSpec[0], YSpec[1]), padding=0)
+            else:
+
+                self.axesSpecgram.imageItem.setRect(QRectF(self._from_osc_to_spec(self.mainCursor.min), 0,
+                                                           self._Z.shape[1], self._Z.shape[0]))
+                self.axesSpecgram.viewBox.setRange(xRange=(self._from_osc_to_spec(self.mainCursor.min),
+                                                           self._from_osc_to_spec(self.mainCursor.max)),
+                                                   yRange=(YSpec[0], YSpec[1]), padding=0)
             self.updateSpectrogramColors()
         self.axesSpecgram.setBackground(self.spec_background)
         self.axesSpecgram.showGrid(x=self.spec_gridx, y=self.spec_gridy)
@@ -664,7 +685,9 @@ class QSignalVisualizerWidget(QWidget):
     def envelope(self):
         #add cofig dialog and plot the envelope
         indexFrom, indexTo = self.getIndexFromAndTo()
-        self.envelopeCurve = envelope(self.signalProcessor.signal.data[indexFrom:indexTo],decay=self.signalProcessor.signal.samplingRate/1000)
+        #self.axesOscilogram.removeItem(self.envelopeCurve)
+        #self.envelopeCurve = pg.PlotItem(envelope(self.signalProcessor.signal.data[indexFrom:indexTo],decay=self.signalProcessor.signal.samplingRate/1000))
+        #self.axesOscilogram.addItem(self.envelopeCurve)
         self.visibleEnvelope = True
 
     def getIndexFromAndTo(self):
@@ -699,6 +722,9 @@ class QSignalVisualizerWidget(QWidget):
     def normalize(self):
         self.signalProcessingAction(CommonSignalProcessor(self.signalProcessor.signal).normalize)
 
+    def absoluteValue(self,sign):
+        self.signalProcessingAction(CommonSignalProcessor(self.signalProcessor.signal).absoluteValue,sign)
+
     #endregion
 
     #region DETECTION
@@ -724,9 +750,11 @@ class QSignalVisualizerWidget(QWidget):
     def detectElements(self,threshold=20, decay=1, minSize=0, softfactor=5, merge_factor=0,threshold2=0, threshold_spectral=95, pxx=[], freqs=[], bins=[], minsize_spectral=(0, 0),location= None, progress=None,findSpectralSublements = True):
         self.clearCursors()
         self.elements_detector.detect(self.signalProcessor.signal,0,len(self.signalProcessor.signal.data), threshold, decay, minSize, softfactor, merge_factor,threshold2,
-                                      threshold_spectral=threshold_spectral, pxx =  self.specgramSettings.Pxx, freqs=self.specgramSettings.freqs,
+                                      threshold_spectral=threshold_spectral, pxx=self.specgramSettings.Pxx, freqs=self.specgramSettings.freqs,
                                       bins=self.specgramSettings.bins, minsize_spectral=minsize_spectral,location=location,progress=progress,findSpectralSublements = findSpectralSublements,overlap = self.specgramSettings.overlap)
-        self.envelopeCurve = self.elements_detector.envelope
+        #self.axesOscilogram.removeItem(self.envelopeCurve)
+        #self.envelopeCurve = pg.PlotItem(self.elements_detector.envelope)
+        #self.axesOscilogram.addItem(self.envelopeCurve)
 
         for c in self.elements_detector.elements():
             self.Elements.append(c)# the elment the space for the span selector and the text
@@ -745,6 +773,9 @@ class QSignalVisualizerWidget(QWidget):
         #self.axesOscilogram.sigRangeChanged.disconnect()
         #self.axesSpecgram.viewBox.sigRangeChanged.disconnect()
         self.clear()
+        if self.signalProcessor.signal:
+            self.stop()
+
         if filename:
             self.signalProcessor.signal = WavFileSignal(filename)
         else:

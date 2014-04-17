@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'E:\Biologia\SISTEMA\DuettoSystem\Graphic_Interface\UI Files\MainWindow.ui'
 #
-# Created: Tue Apr 15 12:56:04 2014
+# Created: Thu Apr 17 19:17:19 2014
 #      by: PyQt4 UI code generator 4.10
 #
 # WARNING! All changes made in this file will be lost!
@@ -293,6 +293,10 @@ class Ui_DuettoMainWindow(object):
         self.actionSpecgram_Image.setObjectName(_fromUtf8("actionSpecgram_Image"))
         self.actionCombined_Image = QtGui.QAction(DuettoMainWindow)
         self.actionCombined_Image.setObjectName(_fromUtf8("actionCombined_Image"))
+        self.actionPositive_Values = QtGui.QAction(DuettoMainWindow)
+        self.actionPositive_Values.setObjectName(_fromUtf8("actionPositive_Values"))
+        self.actionNegative_Values = QtGui.QAction(DuettoMainWindow)
+        self.actionNegative_Values.setObjectName(_fromUtf8("actionNegative_Values"))
         self.menuFile.addAction(self.actionNew)
         self.menuFile.addAction(self.actionOpen)
         self.menuFile.addAction(self.actionSave)
@@ -325,6 +329,9 @@ class Ui_DuettoMainWindow(object):
         self.menuEdit.addAction(self.action_Reverse)
         self.menuEdit.addAction(self.actionInsert_Silence)
         self.menuEdit.addAction(self.actionSilence)
+        self.menuEdit.addSeparator()
+        self.menuEdit.addAction(self.actionPositive_Values)
+        self.menuEdit.addAction(self.actionNegative_Values)
         self.menuEdit.addSeparator()
         self.menuEdit.addAction(self.actionFilter)
         self.menuEdit.addAction(self.actionSmart_Scale)
@@ -469,6 +476,8 @@ class Ui_DuettoMainWindow(object):
         self.actionOsc_Image.setText(_translate("DuettoMainWindow", "Osc Image", None))
         self.actionSpecgram_Image.setText(_translate("DuettoMainWindow", "Specgram Image", None))
         self.actionCombined_Image.setText(_translate("DuettoMainWindow", "Combined Image", None))
+        self.actionPositive_Values.setText(_translate("DuettoMainWindow", "Positive Values", None))
+        self.actionNegative_Values.setText(_translate("DuettoMainWindow", "Negative Values", None))
 
 from Graphic_Interface.Widgets.QSignalVisualizerWidget import QSignalVisualizerWidget
 import icons_rc

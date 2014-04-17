@@ -10,13 +10,14 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
     def __init__(self, parent):
         super(QDialog,self).__init__(parent)
         self.setupUi(self)
-        self.widget.visibleSpectrogram = False
-        self.widget.visibleOscilogram = True
-        self.widget.specgramSettings.overlap = 50
+
+
         if parent is not None:
             self.widget.specgramSettings.NFFT = parent.widget.specgramSettings.NFFT
             self.widget.specgramSettings.overlap = parent.widget.specgramSettings.overlap
             self.widget.specgramSettings.window = parent.widget.specgramSettings.window
+        else:
+            self.widget.specgramSettings.overlap = 50
 
         self.widget.setSelectedTool("OscilogramThreshold")
         #espectrogram
@@ -34,6 +35,10 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         self.dsbxMinSize.valueChanged.connect(self.detect)
         self.dsbxMergeFactor.valueChanged.connect(self.detect)
         self.sbxSoftFactor.valueChanged.connect(self.detect)
+
+        self.widget.visibleSpectrogram = False
+        self.widget.visibleOscilogram = True
+
         self.widget.open("Utils\\Didactic Signals\\recognition.wav")
         self.widget.axesOscilogram.setVisibleThreshold(True)
 
@@ -45,8 +50,14 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         self.hist.region.lineMoved()
         self.hist.region.lineMoveFinished()
 
+
         self.widget.visualChanges = True
+        self.widget.computeSpecgramSettings()
         self.widget.refresh()
+
+
+
+
 
     def updateGraphsVisibility(self):
         self.widget.visibleSpectrogram = self.cbxSpectralSubelements.isChecked()
@@ -96,7 +107,7 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
     @pyqtSlot()
     def detect(self):
         self.widget.detectElements(threshold=abs(self.dsbxThreshold.value()), decay=self.dsbxDecay.value(), minSize= self.dsbxMinSize.value(), softfactor=self.sbxSoftFactor.value(), merge_factor=self.dsbxMergeFactor.value(),threshold2=abs(self.dsbxThreshold2.value())
-        ,threshold_spectral=self.dsbxThresholdSpec.value(), minsize_spectral=(self.dsbxMinSizeFreq.value(),self.dsbxminSizeTime.value()),findSpectralSublements = False)
+        ,threshold_spectral=self.dsbxThresholdSpec.value(), minsize_spectral=(self.dsbxMinSizeFreq.value(),self.dsbxminSizeTime.value()),findSpectralSublements = self.cbxSpectralSubelements.isChecked())
         self.widget.refresh()
 
 

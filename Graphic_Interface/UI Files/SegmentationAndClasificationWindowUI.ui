@@ -278,6 +278,7 @@ padding:1%;</string>
     <addaction name="actionOsgram_Image"/>
     <addaction name="actionSpecgram_Image"/>
     <addaction name="actionCombined_Image"/>
+    <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuParameters">
     <property name="title">
@@ -294,10 +295,10 @@ padding:1%;</string>
     <addaction name="actionView_Threshold"/>
     <addaction name="actionTemporal_Elements"/>
     <addaction name="actionTemporal_Numbers"/>
-    <addaction name="actionTemporal_Locations"/>
+    <addaction name="actionTemporal_Figures"/>
     <addaction name="actionSpectral_Elements"/>
     <addaction name="actionSpectral_Numbers"/>
-    <addaction name="actionSpectral_Locations"/>
+    <addaction name="actionSpectral_Figures"/>
     <addaction name="menuPeak_Frecuencies"/>
     <addaction name="actionFull_Screen"/>
    </widget>
@@ -508,7 +509,7 @@ padding:1%;</string>
     <string>Spectral Elements</string>
    </property>
   </action>
-  <action name="actionSpectral_Locations">
+  <action name="actionSpectral_Figures">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -516,7 +517,7 @@ padding:1%;</string>
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Spectral Locations</string>
+    <string>Spectral Figures</string>
    </property>
   </action>
   <action name="actionTemporal_Numbers">
@@ -567,7 +568,7 @@ padding:1%;</string>
     <string>Specgram Image</string>
    </property>
   </action>
-  <action name="actionTemporal_Locations">
+  <action name="actionTemporal_Figures">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -575,7 +576,7 @@ padding:1%;</string>
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Temporal Locations</string>
+    <string>Temporal Figures</string>
    </property>
   </action>
   <action name="actionCombined_Image">
@@ -589,6 +590,14 @@ padding:1%;</string>
    </property>
    <property name="text">
     <string>Full Screen</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="text">
+    <string>Exit</string>
+   </property>
+   <property name="shortcut">
+    <string>Esc</string>
    </property>
   </action>
   <zorder>dockWidgetParameterTableOscilogram</zorder>

@@ -194,3 +194,17 @@ class PasteAction(UndoRedoAction):
         self.signal.data = np.concatenate((self.signal.data[:self.start], self.signal.data[self.end:]))
 
 
+class Absolute_ValuesAction(UndoRedoAction):
+    def __init__(self,signal,start,end,sign):
+        self.signal = signal
+        self.start = start
+        self.end = end
+        self.sign = sign
+        self.data = np.array(signal.data[start:end])
+
+    def undo(self):
+        for i in range(self.start,self.end):
+            self.signal.data[i] = self.data[i-self.start]
+
+    def redo(self):
+        CommonSignalProcessor(self.signal).absoluteValue(self.start,self.end,self.sign)

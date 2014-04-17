@@ -24,21 +24,47 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.setupUi(self)
         if(signal is  None):
              QtGui.QMessageBox.warning(QtGui.QMessageBox(), "Error", "There is no signal to analyze.")
-        assert isinstance(signal,AudioSignal)
-        if parent is not None:
-            self.widget.specgramSettings = parent.widget.specgramSettings
-        else:
-            self.widget.visualChanges =True
-            self.widget.refresh()
+        if(len(signal.data)/signal.samplingRate) > 60:
+            QtGui.QMessageBox.warning(QtGui.QMessageBox(), "Error", "The signal has more than 1 min of duration.\n "
+                                                                    "Use the splitter to divide it")
+            self.close()
+            self.rejectSignal = True
+            return
 
+
+        assert isinstance(signal,AudioSignal)
         self.widget.signalProcessor.signal = signal
+        if parent is not None:
+            self.widget.specgramSettings.NFFT = parent.widget.specgramSettings.NFFT
+            self.widget.specgramSettings.overlap = parent.widget.specgramSettings.overlap
+            self.widget.specgramSettings.window = parent.widget.specgramSettings.window
+            self.widget.specgramSettings.visualOverlap = parent.widget.specgramSettings.visualOverlap
+            if self.widget.specgramSettings.overlap < 0:
+                if parent.widget.specgramSettings.visualOverlap < parent.widget.specgramSettings.NFFT:
+                    self.widget.specgramSettings.overlap = parent.widget.specgramSettings.visualOverlap
+                else:
+                    self.widget.specgramSettings.overlap = 50
+
+        self.widget.mainCursor.min = 0
+        self.widget.mainCursor.max = len(self.widget.signalProcessor.signal.data)
+
+        self.widget.computeSpecgramSettings()
+        self.widget.updatePxxMatrix = False
+
+        self.widget.visibleOscilogram = True
+        self.widget.visibleSpectrogram = True
+
+        self.widget.visualChanges =True
+        self.widget.refresh()
+
+
+        self.rejectSignal = False
         self.widget.mainCursor.min, self.widget.mainCursor.max = 0, len(self.widget.signalProcessor.signal.data)
         self.dockWidgetParameterTableOscilogram.setVisible(False)
         self.show()
 
         self.parameterTable_rowcolor_odd,self.parameterTable_rowcolor_even = QtGui.QColor(0, 0, 255,150),QtGui.QColor(0, 255, 0, 150)
-        self.widget.visibleOscilogram = True
-        self.widget.visibleSpectrogram = True
+
         self.spectralMeasurementLocation = SpectralMeasurementLocation()
         self.widget.axesOscilogram.threshold.sigPositionChangeFinished.connect(self.updateThreshold)
         self.widget.axesOscilogram.threshold.setBounds((0,2**(self.widget.signalProcessor.signal.bitDepth-1)))
@@ -174,12 +200,9 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
             e.visible = visibility
         self.widget.drawElements(oscilogramItems=True)
 
-    @pyqtSlot()
-    def on_actionSub_Elements_Peaks_triggered(self):
-        visibility = self.actionSub_Elements_Peaks.isChecked()
-        for e in self.widget.Elements:
-            e.sublementsPeakFreqsVisible(visibility)
-        self.widget.drawElements(oscilogramItems=False)
+        self.actionTemporal_Figures.setEnabled(visibility)
+        self.actionTemporal_Numbers.setEnabled(visibility)
+
 
     @pyqtSlot()
     def on_actionTemporal_Numbers_triggered(self):
@@ -192,14 +215,14 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.widget.changeElementsVisibility(visibility,Element.Text,oscilogramItems=False)
 
     @pyqtSlot()
-    def on_actionSpectral_Locations_triggered(self):
-        visibility = self.actionSpectral_Locations.isChecked()
-        self.widget.changeElementsVisibility(visibility,Element.Locations,oscilogramItems=False)
+    def on_actionSpectral_Figures_triggered(self):
+        visibility = self.actionSpectral_Figures.isChecked()
+        self.widget.changeElementsVisibility(visibility,Element.Figures,oscilogramItems=False)
 
     @pyqtSlot()
-    def on_actionTemporal_Locations_triggered(self):
-        visibility = self.actionTemporal_Locations.isChecked()
-        self.widget.changeElementsVisibility(visibility,Element.Locations,oscilogramItems=True)
+    def on_actionTemporal_Figures_triggered(self):
+        visibility = self.actionTemporal_Figures.isChecked()
+        self.widget.changeElementsVisibility(visibility,Element.Figures,oscilogramItems=True)
 
     @pyqtSlot()
     def on_actionSpectral_Elements_triggered(self):
@@ -208,6 +231,11 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
             for e2 in e.twoDimensionalElements:
                 e2.visible = visibility
         self.widget.drawElements(oscilogramItems=False)
+        self.actionSpectral_Figures.setEnabled(visibility)
+        self.actionSpectral_Numbers.setEnabled(visibility)
+        self.actionSub_Elements_Peaks.setEnabled(visibility)
+
+
 
     @pyqtSlot()
     def on_actionOsgram_Image_triggered(self):
@@ -538,13 +566,13 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                         self.tableParameterOscilogram.setItem(i, len(paramsTomeasure) + x, item)
 
                 self.updateDetectionProgressBar(100)
-
             except:
                 print("some detection errors")
                 self.windowProgressDetection.hide()
             self.hist.region.lineMoved()
             self.hist.region.lineMoveFinished()
             self.windowProgressDetection.hide()
+            self.widget.drawElements(oscilogramItems=False)
 
 
     @pyqtSlot()

@@ -204,8 +204,12 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.widget.visibleSpectrogram = True
         self.widget.specgramSettings.NFFT = self.ParamTree.param('Spectrogram Settings').param('FFT size').value()
         self.widget.specgramSettings.overlap = self.ParamTree.param('Spectrogram Settings').param('FFT overlap').value()
-        self.widget.openNew(44100, 16, 5., whiteNoise=False)
-        self.setWindowTitle("Duetto Sound Lab - (new)")
+        if os.path.exists("Utils\\Didactic Signals\\duetto.wav"):
+            self.widget.open("Utils\\Didactic Signals\\duetto.wav")
+            self.widget.visibleSpectrogram = False
+        else:
+            self.widget.openNew(44100, 16, 5., whiteNoise=False)
+        self.setWindowTitle("Duetto Sound Lab - Welcome to Duetto")
         self.statusbar.showMessage("Welcome to Duetto Sound Lab.")
 
     def updateRegionTheme(self):
@@ -458,17 +462,16 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         quart2 = self.ParamTree.param('Detection Settings').param('Measurement Location').param('Quartile75').value()
         end = self.ParamTree.param('Detection Settings').param('Measurement Location').param('End').value()
         segWindow = SegmentationAndClasificationWindow(parent=self, signal=self.widget.signalProcessor.signal)
+        if not segWindow.rejectSignal:
+            segWindow.widget.maxYOsc =  self.ParamTree.param('Oscillogram Settings').param('Amplitude(%)').param('Max').value()
+            segWindow.widget.minYOsc = self.ParamTree.param('Oscillogram Settings').param('Amplitude(%)').param('Min').value()
+            segWindow.widget.minYSpc = self.ParamTree.param('Spectrogram Settings').param('Frequency(kHz)').param('Min').value()
+            segWindow.widget.maxYSpc = self.ParamTree.param('Spectrogram Settings').param('Frequency(kHz)').param('Max').value()
 
-        segWindow.widget.maxYOsc =  self.ParamTree.param('Oscillogram Settings').param('Amplitude').param('Max').value()
-        segWindow.widget.minYOsc = self.ParamTree.param('Oscillogram Settings').param('Amplitude').param('Min').value()
-        segWindow.widget.minYSpc = self.ParamTree.param('Spectrogram Settings').param('Frequency').param('Min').value()
-        segWindow.widget.maxYSpc = self.ParamTree.param('Spectrogram Settings').param('Frequency').param('Max').value()
-
-        segWindow.load_Theme(SerializedData(self.widget.osc_background,self.widget.osc_color,self.widget.osc_gridx,
-                              self.widget.osc_gridy, self.pow_spec_backg,self.pow_spec_plotColor,self.pow_spec_gridx,
-                              self.pow_spec_gridy, self.widget.spec_background, self.widget.spec_gridx, self.widget.spec_gridy,
-                              self.hist.item.gradient.saveState(),self.hist.item.region.getRegion(),end,center,start,quart1,quart2))
-
+            segWindow.load_Theme(SerializedData(self.widget.osc_background,self.widget.osc_color,self.widget.osc_gridx,
+                                  self.widget.osc_gridy, self.pow_spec_backg,self.pow_spec_plotColor,self.pow_spec_gridx,
+                                  self.pow_spec_gridy, self.widget.spec_background, self.widget.spec_gridx, self.widget.spec_gridy,
+                                  self.hist.item.gradient.saveState(),self.hist.item.region.getRegion(),end,center,start,quart1,quart2))
 
         self.widget.undoRedoManager.clearActions()
 
@@ -488,6 +491,8 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             self.widget.setSelectedTool('PointerCursor')
         elif not self.actionZoom_Cursor.isChecked():
             self.actionPointer_Cursor.setChecked(True)
+
+
 
     @pyqtSlot()
     def on_actionResampling_triggered(self):
@@ -514,6 +519,22 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         start, end = self.widget.getIndexFromAndTo()
         self.widget.undoRedoManager.addAction(CutAction(self.widget.signalProcessor.signal,start,end))
         self.widget.cut()
+        self.hist.item.region.lineMoved()
+        self.hist.item.region.lineMoveFinished()
+
+    @pyqtSlot()
+    def on_actionPositive_Values_triggered(self):
+        start, end = self.widget.getIndexFromAndTo()
+        self.widget.undoRedoManager.addAction(Absolute_ValuesAction(self.widget.signalProcessor.signal,start,end,1))
+        self.widget.absoluteValue(1)
+        self.hist.item.region.lineMoved()
+        self.hist.item.region.lineMoveFinished()
+
+    @pyqtSlot()
+    def on_actionNegative_Values_triggered(self):
+        start, end = self.widget.getIndexFromAndTo()
+        self.widget.undoRedoManager.addAction(Absolute_ValuesAction(self.widget.signalProcessor.signal,start,end,-1))
+        self.widget.absoluteValue(-1)
         self.hist.item.region.lineMoved()
         self.hist.item.region.lineMoveFinished()
 
@@ -716,7 +737,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             self.widget.specgramSettings.NFFT = self.ParamTree.param('Spectrogram Settings').param('FFT size').value()
             self.widget.specgramSettings.overlap = self.ParamTree.param('Spectrogram Settings').param('FFT overlap').value()
             self.widget.openNew(nfd.SamplingRate, nfd.BitDepth, nfd.Duration, nfd.WhiteNoise)
-            self.setWindowTitle("Duetto Sound Lab - (new)")
+            self.setWindowTitle("Duetto Sound Lab")
 
     @pyqtSlot()
     def on_actionOpen_triggered(self):
