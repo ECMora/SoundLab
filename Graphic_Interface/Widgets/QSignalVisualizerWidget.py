@@ -105,7 +105,7 @@ class QSignalVisualizerWidget(QWidget):
         self.maxYSpc = 22
         self.updatePxxMatrix = True
 
-        self.envelopeCurve = pg.PlotCurveItem(y=np.array([0]))
+        self.envelopeCurve = pg.PlotCurveItem(np.array([0]))
         self.axesOscilogram.addItem(self.envelopeCurve)
         self.envelopeFactor = 2 #factor to expand the envelope for best visualization
 
@@ -845,7 +845,6 @@ class QSignalVisualizerWidget(QWidget):
         self.elements_detector.detect(self.signalProcessor.signal,0,len(self.signalProcessor.signal.data), threshold, decay, minSize, softfactor, merge_factor,threshold2,
                                       threshold_spectral=threshold_spectral, pxx=self.specgramSettings.Pxx, freqs=self.specgramSettings.freqs,
                                       bins=self.specgramSettings.bins, minsize_spectral=minsize_spectral,location=location,progress=progress,findSpectralSublements = findSpectralSublements,overlap = self.specgramSettings.overlap)
-        self.envelopeCurve = self.elements_detector.envelope
 
         self.envelopeCurve.setData(self.getTransformedEnvelope(self.elements_detector.envelope))
         self.setEnvelopeVisibility(True)
