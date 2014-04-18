@@ -64,9 +64,9 @@ class FilterSignalProcessor(SignalProcessor):
                 data_frec[1:]=complex(0,0)
 
         if(indexFrom==0 and indexTo==len(self.signal.data)):
-             self.signal.data=array(real(ifft(data_frec)[0:indexTo-indexFrom]),numpy.int16)
+             self.signal.data=array(real(ifft(data_frec)[0:indexTo-indexFrom]),self.signal.data.dtype)
         else:
-            self.signal.data=concatenate((self.signal.data[0:indexFrom],array(real(ifft(data_frec)[0:indexTo-indexFrom]),numpy.int16),self.signal.data[indexTo:]))
+            self.signal.data=concatenate((self.signal.data[0:indexFrom],array(real(ifft(data_frec)[0:indexTo-indexFrom]),self.signal.data.dtype),self.signal.data[indexTo:]))
 
 
 
