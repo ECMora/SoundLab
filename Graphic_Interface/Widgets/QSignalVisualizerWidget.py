@@ -1,6 +1,5 @@
 from datetime import datetime
-
-from PyQt4.QtCore import pyqtSignal,QRect, Qt, QRectF
+from PyQt4.QtCore import pyqtSignal,QRect, Qt, QRectF,QTimer
 from PyQt4.QtGui import *
 from PyQt4 import QtCore, QtGui
 import pyqtgraph as pg
@@ -97,6 +96,7 @@ class QSignalVisualizerWidget(QWidget):
         self.axisXOsc.enableAutoSIPrefix(False)
         self.axisYOsc = OscYAxis(self,orientation = 'left')
         self.axesOscilogram = DuettoPlotWidget(parent=self,axisItems={'bottom': self.axisXOsc,'left':self.axisYOsc})
+        self.axesOscilogram.setClipToView(True)
         self.axesOscilogram.setDownsampling(auto=True,mode="peak")
         self.osc_background = "000"
         self.spec_background = "000"
@@ -166,6 +166,10 @@ class QSignalVisualizerWidget(QWidget):
         self.playerLineSpec = pg.InfiniteLine()
         self.elements_detector = OneDimensionalElementsDetector()
 
+        self._playDelta = 1
+        self._playerLineTimer = QTimer(self)
+        self._playerLineTimer.timeout.connect(lambda : self.notifyPlayingCursor(int(self.playerLineOsc.value()+self._playDelta)))
+
         self._lastRecordRefresh = datetime.now()
         self._recordRefreshRate = 5
 
@@ -227,6 +231,11 @@ class QSignalVisualizerWidget(QWidget):
             self.switchPlayStatus()
 
     def play(self):
+        if self.signalProcessor.signal.playStatus == self.signalProcessor.signal.PAUSED:
+            self.signalProcessor.signal.play()
+            self.createPlayerLine(self.playerLineOsc.value())
+            return
+
         if self.zoomCursor.min > 0 and self.zoomCursor.max > 0:
             if self.zoomCursor.max - self.zoomCursor.min > self.signalProcessor.signal.samplingRate / 100.0:
                 self.signalProcessor.signal.play(self.zoomCursor.min, self.zoomCursor.max, self.playerSpeed)
@@ -266,6 +275,7 @@ class QSignalVisualizerWidget(QWidget):
     def createPlayerLine(self, value):
         if not isinstance(value, int):
             return
+
         #creates the player cursor to display the signal playing speed
         self.playerLineOsc.setValue(value)
         self.playerLineSpec.setValue(self._from_osc_to_spec(value))
@@ -274,14 +284,25 @@ class QSignalVisualizerWidget(QWidget):
         if self.playerLineSpec not in self.axesSpecgram.viewBox.addedItems:
             self.axesSpecgram.viewBox.addItem(self.playerLineSpec)
 
+        updateTime = 41 #1/24 seg
+        self._playDelta = self.signalProcessor.signal.samplingRate*self.playerSpeed/100*updateTime/1000
+        self._playerLineTimer.start(updateTime)
+
+
+
+
     def removePlayerLine(self):
+        self._playerLineTimer.stop()
         if self.playerLineOsc in self.axesOscilogram.getPlotItem().getViewBox().addedItems:
             self.axesOscilogram.getPlotItem().getViewBox().removeItem(self.playerLineOsc)
         if self.playerLineSpec in self.axesSpecgram.viewBox.addedItems:
             self.axesSpecgram.viewBox.removeItem(self.playerLineSpec)
 
+
     def pause(self):
+        self._playerLineTimer.stop()
         self.signalProcessor.signal.pause()
+
 
     def notifyPlayingCursor(self, frame):
         #if self.signalProcessor.signal.playStatus == self.signalProcessor.signal.PLAYING:
@@ -290,7 +311,6 @@ class QSignalVisualizerWidget(QWidget):
         self.playerLineSpec.setValue(self._from_osc_to_spec(frame))
         if self.signalProcessor.signal.playStatus == self.signalProcessor.signal.STOPPED:
             self.removePlayerLine()
-
             #if self.signalProcessor.signal.playStatus == self.signalProcessor.signal.RECORDING:
             #    size = len(self.signalProcessor.signal.data)
             #    self.mainCursor.min, self.mainCursor.max = 5 * size / 10, 9 * size / 10
