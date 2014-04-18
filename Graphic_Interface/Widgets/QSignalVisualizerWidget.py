@@ -27,10 +27,11 @@ from Graphic_Interface.Widgets.Tools import Tools
 
 BACK_COLOR = "gray"
 
+
 class OscXAxis(pg.AxisItem):
     def __init__(self,parent,*args,**kwargs):
         pg.AxisItem.__init__(self,*args,**kwargs)
-        self.Fs = 1
+        self.parent = parent
         self.setLabel(text="Time (s)")
 
     def tickStrings(self, values, scale, spacing):
@@ -70,9 +71,6 @@ class OscYAxis(pg.AxisItem):
         for x in values:
             strns.append("{:.0f}".format(x*100.0/self.parent.signalProcessor.signal.getMaximumValueAllowed()))
         return strns
-
-    def setMaxVal(self,maxVal):
-        self.Max = maxVal
 
 
 class QSignalVisualizerWidget(QWidget):
@@ -563,7 +561,6 @@ class QSignalVisualizerWidget(QWidget):
                 self._Z[np.isneginf(self._Z)] = m
             else:
                 self._Z[self._Z < -100] = -100
-            self.axesSpecgram.yAxis.refresh(self.specgramSettings.freqs)
         # do actual refresh
         #print(self._Z.shape)
 
@@ -898,10 +895,6 @@ class QSignalVisualizerWidget(QWidget):
             self.axesOscilogram.zoomRegion.sigRegionChanged.connect(self.updatezoomcursor)
             self.signalProcessor.signal.play_finished = self.removePlayerLine
         self.visualChanges = True
-        self.axesSpecgram.resetCursors()
-        self.axesOscilogram.resetCursors()
-        self.axisXOsc.setFrequency(self.signalProcessor.signal.samplingRate)
-        self.axisYOsc.setMaxVal(2**(self.signalProcessor.signal.bitDepth-1))
         self.maxYSpc = self.signalProcessor.signal.samplingRate / 2000
         self.refresh()
         #self.zoomNone()
