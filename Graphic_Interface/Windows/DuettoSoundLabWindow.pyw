@@ -308,7 +308,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         path_base = os.path.split(path)[0]
         self.filesInFolder = self.folderFiles(path_base)
         self.filesInFolderIndex = self.filesInFolder.index(path)
-        self.widget.visibleSpectrogram = True #to restore the state lose in load
         self.widget.open(path)
         self.setWindowTitle("Duetto Sound Lab - " + self.widget.signalProcessor.signal.name())
         self.hist.item.region.lineMoved()
@@ -493,8 +492,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         elif not self.actionZoom_Cursor.isChecked():
             self.actionPointer_Cursor.setChecked(True)
 
-
-
     @pyqtSlot()
     def on_actionResampling_triggered(self):
         resamplingDialog = sdialog.Ui_Dialog()
@@ -567,6 +564,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         scaleDialogWindow = ChangeVolumeDialog()
         scaleDialog.setupUi(scaleDialogWindow)
         if scaleDialogWindow.exec_():
+            fade = ""
             factor = scaleDialog.spinboxConstValue.value()
             if scaleDialog.rbuttonConst.isChecked():
                 function = "const"
@@ -575,8 +573,9 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 factor = scaleDialog.spinboxNormalizePercent.value()
             else:
                 function = scaleDialog.cboxModulationType.currentText()
-            fade = "IN" if scaleDialog.rbuttonFadeIn.isChecked() else (
-                "OUT" if scaleDialog.rbuttonFadeOut.isChecked() else "")
+                fade = "IN" if scaleDialog.rbuttonFadeIn.isChecked() else ("OUT" if scaleDialog.rbuttonFadeOut.isChecked() else "")
+                if fade == "":
+                    return
             start,end = self.widget.getIndexFromAndTo()
             self.widget.undoRedoManager.addAction(ScaleAction(self.widget.signalProcessor.signal,start,end,factor, function, fade))
             self.widget.scale(factor, function, fade)
@@ -618,7 +617,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             ms = whiteNoiseDialog.insertSpinBox.value()
             start,end = self.widget.getIndexFromAndTo()
             self.widget.undoRedoManager.addAction(GenerateWhiteNoiseAction(self.widget.signalProcessor.signal,start,ms))
-            self.widget.insertWhiteNoise()
+            self.widget.insertWhiteNoise(ms)
 
     def filter_helper(self):
         filterDialog = filterdg.Ui_Dialog()
@@ -738,7 +737,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             self.widget.specgramSettings.NFFT = self.ParamTree.param('Spectrogram Settings').param('FFT size').value()
             self.widget.specgramSettings.overlap = self.ParamTree.param('Spectrogram Settings').param('FFT overlap').value()
             self.widget.openNew(nfd.SamplingRate, nfd.BitDepth, nfd.Duration, nfd.WhiteNoise)
-            self.setWindowTitle("Duetto Sound Lab")
+            self.setWindowTitle("Duetto Sound Lab - (new)")
 
     @pyqtSlot()
     def on_actionOpen_triggered(self):

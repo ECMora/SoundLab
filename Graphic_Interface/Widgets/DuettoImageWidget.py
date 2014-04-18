@@ -9,20 +9,18 @@ import numpy
 import  pyqtgraph as pg
 
 class SpecYAxis(pg.AxisItem):
-    def __init__(self,*args,**kwargs):
+    def __init__(self,parent,*args,**kwargs):
         pg.AxisItem.__init__(self,*args,**kwargs)
-        self.freqs = None
+        self.parent = parent;
         self.setLabel(text="Frequency (KHz)")
     def tickStrings(self, values, scale, spacing):
+        self.freqs = self.parent.parent().specgramSettings.freqs
         if self.freqs is None:
             return values
         r = self.freqs[[x for x in values if x < len(self.freqs)]]
         for i in range(len(r)):
             r[i] = "{:.1f}".format(r[i]/1000.0)
         return r
-    def refresh(self,freqs):
-        self.freqs = freqs
-
 
 
 class DuettoImageWidget(GraphicsView):
@@ -40,7 +38,7 @@ class DuettoImageWidget(GraphicsView):
         self.xAxis = pg.AxisItem(orientation = 'bottom',linkView=self.parent().axesOscilogram.getPlotItem().getViewBox())
         self.xAxis.setGrid(88)
         l.addItem(self.xAxis, 1, 1)
-        self.yAxis = SpecYAxis(orientation='left', linkView=self.viewBox)
+        self.yAxis = SpecYAxis(self,orientation='left', linkView=self.viewBox)
         self.yAxis.setGrid(88)
         l.addItem(self.yAxis, 0, 0)
         self.viewBox.setMouseEnabled(x=False, y=False)

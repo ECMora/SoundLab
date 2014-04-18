@@ -28,41 +28,48 @@ from Graphic_Interface.Widgets.DuettoImageWidget import DuettoImageWidget
 BACK_COLOR = "gray"
 
 class OscXAxis(pg.AxisItem):
-    def __init__(self,*args,**kwargs):
+    def __init__(self,parent,*args,**kwargs):
         pg.AxisItem.__init__(self,*args,**kwargs)
-        self.Fs = 1
+        self.parent = parent
         self.setLabel(text="Time (s)")
 
     def tickStrings(self, values, scale, spacing):
         strns = []
-        delta = spacing/self.Fs
+        delta = spacing/self.parent.signalProcessor.signal.samplingRate
         a = max(-(int(np.log10(delta))-1),0)
         a = min(a,4)
         s = "{:."+str(a)+"f}"
         for x in values:
-            strns.append(s.format(x*1.0/self.Fs))
+            strns.append(s.format(x*1.0/self.parent.signalProcessor.signal.samplingRate))
         return strns
 
-    def tickSpacing(self, minVal, maxVal, size):
-        return [(max((maxVal-minVal)/(10.0*self.Fs),0.0001)*self.Fs,0)]
+    def tickValues(self,minVal, maxVal, size):
+        minVal = self.parent.mainCursor.min
+        maxVal = self.parent.mainCursor.max
+        spacing = self.tickSpacing(minVal,maxVal,size)[0][0]
+        values = []
+        temp = minVal
+        while(temp < maxVal):
+            values.append(temp)
+            temp += spacing
+        return [(spacing,values)]
 
-    def setFrequency(self,rate):
-        self.Fs = rate
+    def tickSpacing(self, minVal, maxVal, size):
+        minVal = self.parent.mainCursor.min
+        maxVal = self.parent.mainCursor.max
+        return [(max((maxVal-minVal)/(10.0*self.parent.signalProcessor.signal.samplingRate),0.0001)*self.parent.signalProcessor.signal.samplingRate,0)]
 
 class OscYAxis(pg.AxisItem):
-    def __init__(self,*args,**kwargs):
+    def __init__(self,parent,*args,**kwargs):
         pg.AxisItem.__init__(self,*args,**kwargs)
-        self.Max = 1
+        self.parent = parent
         self.setLabel(text="Amplitude (%)")
 
     def tickStrings(self, values, scale, spacing):
         strns = []
         for x in values:
-            strns.append("{:.0f}".format(x*100.0/self.Max))
+            strns.append("{:.0f}".format(x*100.0/self.parent.signalProcessor.signal.getMaximumValueAllowed()))
         return strns
-
-    def setMaxVal(self,maxVal):
-        self.Max = maxVal
 
 class Tools:
     """
@@ -86,8 +93,9 @@ class QSignalVisualizerWidget(QWidget):
         self.spec_gridx = True
         self.spec_gridy = True
         self.osc_color = QColor(255, 255, 255)
-        self.axisXOsc = OscXAxis(orientation = 'bottom')
-        self.axisYOsc = OscYAxis(orientation = 'left')
+        self.axisXOsc = OscXAxis(self,orientation = 'bottom')
+        self.axisXOsc.enableAutoSIPrefix(False)
+        self.axisYOsc = OscYAxis(self,orientation = 'left')
         self.axesOscilogram = DuettoPlotWidget(parent=self,axisItems={'bottom': self.axisXOsc,'left':self.axisYOsc})
         self.axesOscilogram.setDownsampling(auto=True,mode="peak")
         self.osc_background = "000"
@@ -491,7 +499,8 @@ class QSignalVisualizerWidget(QWidget):
                 self._Z[np.isneginf(self._Z)] = m
             else:
                 self._Z[self._Z < -100] = -100
-            self.axesSpecgram.yAxis.refresh(self.specgramSettings.freqs)
+        # do actual refresh
+        #print(self._Z.shape)
 
         self._doRefresh.emit(dataChanged, updateOscillogram, updateSpectrogram, partial)
 
@@ -679,13 +688,16 @@ class QSignalVisualizerWidget(QWidget):
         if(self.signalProcessor.signal is not None):
             self.signalProcessor.signal.generateWhiteNoise(ms,self.zoomCursor.min)
             f = FilterSignalProcessor(self.signalProcessor.signal)
-            self.signalProcessor.signal = f.filter(self.zoomCursor.min,self.zoomCursor.min+ms*self.signalProcessor.signal.samplingRate/1000.0,type,Fc,Fl,Fu)
+            f.filter(self.zoomCursor.min,self.zoomCursor.min+ms*self.signalProcessor.signal.samplingRate/1000.0,type,Fc,Fl,Fu)
             self.visualChanges=True
             self.refresh()
 
     def resampling(self,samplingRate):
         self.signalProcessor.signal.resampling(samplingRate)
-        self.visualChanges=True
+        self.visualChanges = True
+        self.mainCursor.min = 0
+        self.mainCursor.max = len(self.signalProcessor.signal.data)
+        self.maxYSpc = self.signalProcessor.signal.samplingRate
         self.refresh()
 
     def envelope(self):
@@ -821,12 +833,9 @@ class QSignalVisualizerWidget(QWidget):
         self.visualChanges = True
         self.axesSpecgram.resetCursors()
         self.axesOscilogram.resetCursors()
-        self.axisXOsc.setFrequency(self.signalProcessor.signal.samplingRate)
-        self.axisYOsc.setMaxVal(2**(self.signalProcessor.signal.bitDepth-1))
         self.maxYSpc = self.signalProcessor.signal.samplingRate / 2000
         self.refresh()
-        self.zoomIn()
-        self.zoomNone()
+        #self.zoomNone()
         self.axesOscilogram.getPlotItem().getViewBox().sigRangeChangedManually.connect(self._oscRangeChanged)
         self.axesSpecgram.viewBox.sigRangeChangedManually.connect(self._specRangeChanged)
         self.signalProcessor.signal.recordNotifier = self.on_newDataRecorded#self.newDataRecorded.emit
