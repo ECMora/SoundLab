@@ -35,6 +35,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         assert isinstance(signal,AudioSignal)
         self.widget.signalProcessor.signal = signal
         if parent is not None:
+            self.widget.minYSpc,self.widget.maxYSpc =parent.widget.minYSpc,parent.widget.maxYSpc
             self.widget.specgramSettings.NFFT = parent.widget.specgramSettings.NFFT
             self.widget.specgramSettings.overlap = parent.widget.specgramSettings.overlap
             self.widget.specgramSettings.window = parent.widget.specgramSettings.window

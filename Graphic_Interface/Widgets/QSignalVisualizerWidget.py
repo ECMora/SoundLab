@@ -102,7 +102,7 @@ class QSignalVisualizerWidget(QWidget):
         self.minYOsc = -100
         self.maxYOsc =  100
         self.minYSpc = 0
-        self.maxYSpc = 22
+        self.maxYSpc = 100
         self.updatePxxMatrix = True
 
         self.envelopeCurve = pg.PlotCurveItem(np.array([0]))
@@ -205,7 +205,6 @@ class QSignalVisualizerWidget(QWidget):
     def applyFilterSpec(self,indexF,indexT,FreqLow,FreqUp):
         filter = FilterSignalProcessor(self.signalProcessor.signal)
         filter.filter(indexFrom = self._from_spec_to_osc(indexF),indexTo = self._from_spec_to_osc(indexT),filterType = FILTER_TYPE.BAND_STOP,Fl=FreqLow,Fu=FreqUp)
-        self.filter(filterType=FILTER_TYPE().BAND_STOP,FLow=FreqLow,FUpper=FreqUp)
         self.visualChanges = True
         self.refresh()
 
@@ -297,7 +296,7 @@ class QSignalVisualizerWidget(QWidget):
         if self.playerLineSpec not in self.axesSpecgram.viewBox.addedItems:
             self.axesSpecgram.viewBox.addItem(self.playerLineSpec)
 
-        updateTime = 41 #1/24 seg
+        updateTime =  16 #1/24 seg
         self._playDelta = self.signalProcessor.signal.samplingRate*self.playerSpeed/100*updateTime/1000
         self._playerLineTimer.start(updateTime)
 
@@ -434,7 +433,7 @@ class QSignalVisualizerWidget(QWidget):
             self.refresh(dataChanged=False, updateOscillogram=True, updateSpectrogram=True)
             self.rangeFrequencyChanged.emit(self.minYSpc,self.maxYSpc)
         else:
-            self.makeZoom(self.axesOscilogram.rectRegion['x'][0],self.axesOscilogram.rectRegion['x'][1], specCoords=True)
+            self.makeZoom(self.axesOscilogram.rectRegion['x'][0],self.axesOscilogram.rectRegion['x'][1], specCoords=False)
             self.minYOsc = self.axesOscilogram.rectRegion['y'][0]
             self.maxYOsc = self.axesOscilogram.rectRegion['y'][1]
             self.refresh(dataChanged=False, updateOscillogram=True, updateSpectrogram=True)
@@ -880,6 +879,8 @@ class QSignalVisualizerWidget(QWidget):
         #self.signalProcessor.signal.setTickInterval(self.TICK_INTERVAL_MS)
         #self.signalProcessor.signal.timer.timeout.connect(self.notifyPlayingCursor)
 
+
+
         if isinstance(self.signalProcessor.signal, WavFileSignal):
             self.loadUserData(self.signalProcessor.signal.userData)
         self.mainCursor.min = 0
@@ -894,7 +895,8 @@ class QSignalVisualizerWidget(QWidget):
             self.axesOscilogram.zoomRegion.sigRegionChanged.connect(self.updatezoomcursor)
             self.signalProcessor.signal.play_finished = self.removePlayerLine
         self.visualChanges = True
-        self.maxYSpc = self.signalProcessor.signal.samplingRate / 2000
+        self.maxYSpc = self.signalProcessor.signal.samplingRate/2000
+        self.minYSpc = 0
         self.refresh()
         #self.zoomNone()
         self.axesOscilogram.getPlotItem().getViewBox().sigRangeChangedManually.connect(self._oscRangeChanged)

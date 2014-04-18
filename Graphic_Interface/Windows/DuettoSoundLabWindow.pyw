@@ -87,8 +87,8 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 {'name': 'Min', 'type': 'float', 'value': 0, 'step': 0.1},
                 {'name': 'Max', 'type': 'float', 'value': 22, 'step': 0.1},
             ]},
-            {'name': 'FFT size', 'type': 'list', 'default':512, 'values': {'256': 256, '512': 512, '1024': 1024, '2048': 2048, 'Automatic': 512}, 'value':'Automatic' },
-            {'name': 'FFT window', 'type': 'list', 'value':self.widget.specgramSettings.windows[0],'default':self.widget.specgramSettings.windows[0],'values': {"blackman": self.widget.specgramSettings.windows[3],"rectangular": self.widget.specgramSettings.windows[1], "Hanning": self.widget.specgramSettings.windows[2], "Hamming": self.widget.specgramSettings.windows[0],'bartlett':self.widget.specgramSettings.windows[4],'kaiser':self.widget.specgramSettings.windows[5],'None':self.widget.specgramSettings.windows[6]}},
+            {'name': 'FFT size', 'type': 'list', 'default':512, 'values': { 'Automatic': 512,"32":32,"64": 64,"128": 128, "512": 512, "1024": 1024, '2048': 2048,'4096': 4096}, 'value': 'Automatic'},
+            {'name': 'FFT window', 'type': 'list', 'value': self.widget.specgramSettings.windows[0],'default':self.widget.specgramSettings.windows[0],'values': {"blackman": self.widget.specgramSettings.windows[3],"rectangular": self.widget.specgramSettings.windows[1], "Hanning": self.widget.specgramSettings.windows[2], "Hamming": self.widget.specgramSettings.windows[0],'bartlett':self.widget.specgramSettings.windows[4],'kaiser':self.widget.specgramSettings.windows[5],'None':self.widget.specgramSettings.windows[6]}},
             {'name': 'FFT overlap', 'type': 'int', 'value':-1, 'limits': (-1, 99)},
             {'name': 'Threshold(dB)', 'type': 'group', 'children': [
                 {'name': 'Min', 'type': 'float','step':0.1,'default': self.defaultTheme.histRange[0], 'value': self.defaultTheme.histRange[0]},
@@ -104,7 +104,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         {'name': 'Power Spectrum Settings', 'type': 'group', 'children': [
 
-             {'name': 'FFT size', 'type': 'list','default':512, 'values': {"256": 256, "512": 512, "1024": 1024, '2048': 2048, 'Automatic': 512}, 'value': 2},
+             {'name': 'FFT size', 'type': 'list','default':512, 'values': { 'Automatic': 512,"32":32,"64": 64,"128": 128, "512": 512, "1024": 1024, '2048': 2048,'4096': 4096}, 'value': 2},
              {'name': 'FFT window', 'type': 'list', 'value':self.widget.specgramSettings.windows[0],'default':self.widget.specgramSettings.windows[0],'values': {"blackman": self.widget.specgramSettings.windows[3],"rectangular": self.widget.specgramSettings.windows[1], "Hanning": self.widget.specgramSettings.windows[2], "Hamming": self.widget.specgramSettings.windows[0],'bartlett':self.widget.specgramSettings.windows[4],'kaiser':self.widget.specgramSettings.windows[5],'None':self.widget.specgramSettings.windows[6]}},
              {'name': 'FFT overlap', 'type': 'int', 'value':self.pow_overlap, 'limits' : (-1,100)},
              {'name': 'Grid', 'type': 'group', 'children': [
@@ -319,8 +319,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         path_base = os.path.split(path)[0]
         self.filesInFolder = self.folderFiles(path_base)
         self.filesInFolderIndex = self.filesInFolder.index(path)
-        self.widget.open(path)
-        self.setWindowTitle("Duetto Sound Lab - " + self.widget.signalProcessor.signal.name())
+        self._open(path)
         event.acceptProposedAction()
 
     def dragLeaveEvent(self, event):
@@ -699,17 +698,14 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     @pyqtSlot()
     def on_actionZoomIn_triggered(self):
-        self.widget.undoRedoManager.addAction(UndoRedoAction(self.widget.zoomOut,self.widget.zoomIn))
         self.widget.zoomIn()
 
     @pyqtSlot()
     def on_actionZoom_out_triggered(self):
-        self.widget.undoRedoManager.addAction(UndoRedoAction(self.widget.zoomIn,self.widget.zoomOut))
         self.widget.zoomOut()
 
     @pyqtSlot()
     def on_actionZoom_out_entire_file_triggered(self):
-        self.widget.undoRedoManager.clearActions()
         self.widget.zoomNone()
 
     @pyqtSlot()
@@ -759,6 +755,9 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.actionHighest_instant_frequency.setChecked(False)
         f = QFileDialog.getOpenFileName(self, "Select a file to open",directory = self.lastopen,
                                               filter="Wave Files (*.wav);;All Files (*)")
+        self._open(f)
+
+    def _open(self,f=''):
         if f != '':
             self.lastopen = f
             self.widget.specgramSettings.NFFT = self.ParamTree.param('Spectrogram Settings').param('FFT size').value()
@@ -771,6 +770,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             self.setWindowTitle("Duetto Sound Lab - " + self.widget.signalProcessor.signal.name())
             valuemin = self.widget.minYSpc
             valuemax = self.widget.maxYSpc
+            print((valuemax,valuemin))
             self.ParamTree.param('Spectrogram Settings').param('Frequency(kHz)').param('Min').setValue(valuemin)
             self.ParamTree.param('Spectrogram Settings').param('Frequency(kHz)').param('Min').setDefault(valuemin)
             self.ParamTree.param('Spectrogram Settings').param('Frequency(kHz)').param('Max').setValue(valuemax)
@@ -785,20 +785,16 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         if self.filesInFolderIndex < len(self.filesInFolder)-1:
             self.filesInFolderIndex += 1
             if os.path.exists(self.filesInFolder[self.filesInFolderIndex]):
-                self.widget.open(self.filesInFolder[self.filesInFolderIndex])
-                self.setWindowTitle("Duetto Sound Lab - " + self.widget.signalProcessor.signal.name())
-                self.hist.item.region.lineMoved()
-                self.hist.item.region.lineMoveFinished()
+                self._open(self.filesInFolder[self.filesInFolderIndex])
+
 
     @pyqtSlot()
     def on_actionFile_Down_triggered(self):
         if self.filesInFolderIndex > 0:
             self.filesInFolderIndex -= 1
             if os.path.exists(self.filesInFolder[self.filesInFolderIndex]):
-                self.widget.open(self.filesInFolder[self.filesInFolderIndex])
-                self.setWindowTitle("Duetto Sound Lab - " + self.widget.signalProcessor.signal.name())
-                self.hist.item.region.lineMoved()
-                self.hist.item.region.lineMoveFinished()
+                self._open(self.filesInFolder[self.filesInFolderIndex])
+
 
     @pyqtSlot()
     def on_actionSave_triggered(self):
