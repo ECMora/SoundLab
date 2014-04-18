@@ -2,8 +2,8 @@
 
 # Form implementation generated from reading ui file 'ChangeVolume.ui'
 #
-# Created: Tue Dec 10 14:49:23 2013
-#      by: PyQt4 UI code generator 4.10
+# Created: Wed Apr 16 23:36:55 2014
+#      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,16 +12,7 @@ from PyQt4 import QtCore, QtGui
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
 except AttributeError:
-    def _fromUtf8(s):
-        return s
-
-try:
-    _encoding = QtGui.QApplication.UnicodeUTF8
-    def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig, _encoding)
-except AttributeError:
-    def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig)
+    _fromUtf8 = lambda s: s
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
@@ -47,6 +38,7 @@ class Ui_Dialog(object):
         self.rbuttonConst.setObjectName(_fromUtf8("rbuttonConst"))
         self.spinboxConstValue = QtGui.QSpinBox(self.groupBox_4)
         self.spinboxConstValue.setGeometry(QtCore.QRect(100, 16, 61, 22))
+        self.spinboxConstValue.setMinimum(-200)
         self.spinboxConstValue.setObjectName(_fromUtf8("spinboxConstValue"))
         self.cboxModulationType = QtGui.QComboBox(self.groupBox_4)
         self.cboxModulationType.setGeometry(QtCore.QRect(100, 107, 81, 22))
@@ -89,18 +81,16 @@ class Ui_Dialog(object):
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(_translate("Dialog", "Change Volume", None))
-        self.label.setText(_translate("Dialog", "dB", None))
-        self.rbuttonConst.setText(_translate("Dialog", "Constant", None))
-        self.cboxModulationType.setItemText(0, _translate("Dialog", "Linear", None))
-        self.cboxModulationType.setItemText(1, _translate("Dialog", "sin", None))
-        self.cboxModulationType.setItemText(2, _translate("Dialog", "sin-sqrt", None))
-        self.cboxModulationType.setItemText(3, _translate("Dialog", "sin^2", None))
-        self.cboxModulationType.setItemText(4, _translate("Dialog", "cuadratic", None))
-        self.rbuttonFadeIn.setText(_translate("Dialog", "Fade In", None))
-        self.rbuttonFadeOut.setText(_translate("Dialog", "Fade Out", None))
-        self.rbuttonNormalize.setText(_translate("Dialog", "Normalize", None))
-        self.label_2.setText(_translate("Dialog", "%", None))
+        Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "Change Volume", None, QtGui.QApplication.UnicodeUTF8))
+        self.label.setText(QtGui.QApplication.translate("Dialog", "dB", None, QtGui.QApplication.UnicodeUTF8))
+        self.rbuttonConst.setText(QtGui.QApplication.translate("Dialog", "Constant", None, QtGui.QApplication.UnicodeUTF8))
+        self.cboxModulationType.setItemText(0, QtGui.QApplication.translate("Dialog", "Linear", None, QtGui.QApplication.UnicodeUTF8))
+        self.cboxModulationType.setItemText(1, QtGui.QApplication.translate("Dialog", "sin", None, QtGui.QApplication.UnicodeUTF8))
+        self.cboxModulationType.setItemText(2, QtGui.QApplication.translate("Dialog", "sin-sqrt", None, QtGui.QApplication.UnicodeUTF8))
+        self.cboxModulationType.setItemText(3, QtGui.QApplication.translate("Dialog", "sin^2", None, QtGui.QApplication.UnicodeUTF8))
+        self.cboxModulationType.setItemText(4, QtGui.QApplication.translate("Dialog", "cuadratic", None, QtGui.QApplication.UnicodeUTF8))
+        self.rbuttonFadeIn.setText(QtGui.QApplication.translate("Dialog", "Fade In", None, QtGui.QApplication.UnicodeUTF8))
+        self.rbuttonFadeOut.setText(QtGui.QApplication.translate("Dialog", "Fade Out", None, QtGui.QApplication.UnicodeUTF8))
+        self.rbuttonNormalize.setText(QtGui.QApplication.translate("Dialog", "Normalize", None, QtGui.QApplication.UnicodeUTF8))
+        self.label_2.setText(QtGui.QApplication.translate("Dialog", "%", None, QtGui.QApplication.UnicodeUTF8))
 
-
-import re, sre_compile, sre_constants, sre_parse

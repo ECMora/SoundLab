@@ -4,6 +4,7 @@ from PyQt4.QtCore import pyqtSignal
 from PyQt4.QtGui import QMessageBox
 import pyaudio
 import numpy as np
+from math import *
 
 
 class AudioSignal:
@@ -29,8 +30,8 @@ class AudioSignal:
 
 
     def generateWhiteNoise(self, duration=1, begin_at=0):
-        wn = np.array([np.random.uniform(-2 ** (self.bitDepth - 1), 2 ** self.bitDepth - 1) for i in
-                       range(duration * self.samplingRate / 1000)])
+        wn = np.array([np.random.uniform(self.getMinimumValueAllowed(),self.getMaximumValueAllowed()) for i in
+                       range(duration * self.samplingRate / 1000)],self.data.dtype)
         self.data = np.concatenate((self.data[0:begin_at], wn, self.data[begin_at:]))
 
     def openNew(self, samplingRate, duration, bitDepth, whiteNoise):
@@ -62,22 +63,24 @@ class AudioSignal:
 
     def resampling(self, samplinRate=44100):
         samplinRate = int(samplinRate)
-        frac = self.samplingRate * 1. / samplinRate
-        if abs(frac - 1) < 0.001:
+        frac = samplinRate * 1. / self.samplingRate
+        if abs(1./frac - 1) < 0.001:
             return
-        if frac > 1:
-            #down sampling
-            from Duetto_Core.SignalProcessors.FilterSignalProcessor import FilterSignalProcessor, FILTER_TYPE
 
-            f = FilterSignalProcessor(self)
-            f.filter(filterType=FILTER_TYPE().LOW_PASS, Fc=samplinRate/2)
-            self.data = np.array(
-                self.data[[int(round(index * frac)) for index in range(int(np.floor(len(self.data) / frac)))]])
+        n = int(ceil(log(len(self.data),2)))
+        n = 2**n
+        data_frec=np.fft.fft(self.data,n)
+        if frac < 1:
+            #down
+            indexFrecuency=(n * 1.0)/self.samplingRate
+            Fc=int(samplinRate*indexFrecuency/2)
+            data_frec = np.concatenate((data_frec[:Fc],data_frec[-Fc:]))
         else:
-            # up
-            arr = np.array([self.interpolate(i, frac) for i in range(int(round(len(self.data) / frac)))])
-            self.data = arr
+            #up
+            data_frec = np.concatenate((data_frec[:n/2],np.zeros(int(n*(frac-1))),data_frec[n/2:]))
 
+
+        self.data = np.array(np.real(np.fft.ifft(data_frec)[:int(len(self.data)*frac)]),self.data.dtype)
         self.samplingRate = samplinRate
 
     def interpolate(self, index, frac):
