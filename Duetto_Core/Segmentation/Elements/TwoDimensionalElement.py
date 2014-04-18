@@ -86,10 +86,10 @@ class SpecgramElement(TwoDimensionalElement):
             t = self.timeEndIndex-self.timeStartIndex
             ## Define positions of nodes
             pos = np.array([
-                [self.timeStartIndex,self.freqEndIndex-f*3/8],
-                [self.timeStartIndex,self.freqEndIndex-f*1/4],
-                [self.timeEndIndex,self.freqEndIndex-f*1/4],
-                [self.timeEndIndex,self.freqEndIndex-f*3/8]
+                [self.timeStartIndex,self.freqEndIndex-f*13/100],
+                [self.timeStartIndex,self.freqEndIndex-f/10],
+                [self.timeEndIndex,self.freqEndIndex-f/10],
+                [self.timeEndIndex,self.freqEndIndex-f*13/100]
                 ])
             adj = np.array([
                 [0,1],
@@ -99,7 +99,7 @@ class SpecgramElement(TwoDimensionalElement):
             g.setData(pos=pos, size=1, symbol='d', pxMode=False,adj=adj,pen=(pg.mkPen(QtGui.QColor(0, 255, 0, 100),width=3) if number%2==0 else pg.mkPen(QtGui.QColor(0, 0, 255,100),width=3)))
             self.visual_figures.append([g,True])
             text = pg.TextItem(str(one_dimensional_parent.number),color=(255,255,255),anchor=(0.5,0))
-            text.setPos(self.timeStartIndex/2.0+self.timeEndIndex/2.0, self.freqStartIndex+f*3/4)
+            text.setPos(self.timeStartIndex/2.0+self.timeEndIndex/2.0, self.freqStartIndex+f*95/100)
             self.visual_text.append([text,True])
 
     def addPeaksVisualObjects(self):

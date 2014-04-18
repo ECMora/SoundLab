@@ -39,29 +39,30 @@ class FilterSignalProcessor(SignalProcessor):
         indexFrecuency=(n*1.0)/self.signal.samplingRate
         Fl,Fu=int(round(Fl*indexFrecuency)),int(round(Fu*indexFrecuency))
         Fc=int(Fc*indexFrecuency)
+        size = len(data_frec)
 
         if(filterType==FILTER_TYPE().BAND_PASS):
-            data_frec[1+Fu:-Fu]=complex(0,0)
-            data_frec[1:Fl]=complex(0,0)
+            data_frec[Fu:size-Fu+1]=complex(0,0)
+            data_frec[:Fl+1]=complex(0,0)
             data_frec[-Fl:]=complex(0,0)
 
 
         elif(filterType==FILTER_TYPE().BAND_STOP):
-            data_frec[Fl:Fu]=complex(0,0)
-            data_frec[-Fu:-Fl]=complex(0,0)
+            data_frec[Fl:Fu+1]=complex(0,0)
+            data_frec[-Fu:size-Fl+1]=complex(0,0)
 
         elif(filterType==FILTER_TYPE().HIGH_PASS):
             if(Fc<n/2):
-                data_frec[1:Fc]=complex(0,0)
+                data_frec[:Fc]=complex(0,0)
                 data_frec[-Fc:]=complex(0,0)
             elif(Fc==n/2):
-                data_frec[1:]=complex(0,0)
+                data_frec[:]=complex(0,0)
 
         elif(filterType==FILTER_TYPE().LOW_PASS):
             if(Fc != 0 and Fc < n / 2):
-                data_frec[Fc:-Fc]=complex(0,0)
+                data_frec[Fc:size-Fc+1]=complex(0,0)
             elif(Fc == 0):
-                data_frec[1:]=complex(0,0)
+                data_frec[:]=complex(0,0)
 
         if(indexFrom==0 and indexTo==len(self.signal.data)):
              self.signal.data=array(real(ifft(data_frec)[0:indexTo-indexFrom]),self.signal.data.dtype)
