@@ -146,6 +146,9 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
     <addaction name="actionUndo"/>
     <addaction name="actionSelect_all"/>
     <addaction name="separator"/>
+    <addaction name="actionPositive_Values"/>
+    <addaction name="actionNegative_Values"/>
+    <addaction name="separator"/>
     <addaction name="action_Reverse"/>
     <addaction name="actionInsert_Silence"/>
     <addaction name="actionSilence"/>
@@ -771,6 +774,16 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
    </property>
    <property name="text">
     <string>Rectangular Eraser</string>
+   </property>
+  </action>
+  <action name="actionPositive_Values">
+   <property name="text">
+    <string>Positive Values</string>
+   </property>
+  </action>
+  <action name="actionNegative_Values">
+   <property name="text">
+    <string>Negative Values</string>
    </property>
   </action>
   <zorder>dock_settings</zorder>
