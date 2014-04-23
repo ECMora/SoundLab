@@ -2,16 +2,32 @@
 <ui version="4.0">
  <class>Dialog</class>
  <widget class="QDialog" name="Dialog">
+  <property name="windowModality">
+   <enum>Qt::WindowModal</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>892</width>
-    <height>694</height>
+    <width>969</width>
+    <height>804</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>Detection Settings</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">background-color: qlineargradient(spread:pad, x1:0.006, y1:0.017, x2:0.886, y2:0.892045, stop:0.0340909 rgba(94, 116, 236, 255), stop:1 rgba(255, 255, 255, 255));
+font: 75 10pt &quot;MS Shell Dlg 2&quot;;</string>
+  </property>
+  <property name="modal">
+   <bool>false</bool>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0">
@@ -44,6 +60,9 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(255, 255, 255);</string>
+        </property>
         <property name="floating">
          <bool>false</bool>
         </property>
@@ -54,6 +73,9 @@
          <string>Espectrogram</string>
         </property>
         <widget class="QWidget" name="dockWidgetContents_3">
+         <property name="styleSheet">
+          <string notr="true">background-color: qconicalgradient(cx:0.949, cy:0.0852273, angle:26.3, stop:0 rgba(100, 144, 255, 255), stop:0.994318 rgba(245, 245, 245, 255));</string>
+         </property>
          <layout class="QGridLayout" name="gridLayout_3">
           <item row="1" column="1">
            <layout class="QHBoxLayout" name="horizontalLayout_9" stretch="0,1">
@@ -61,6 +83,9 @@
              <widget class="QLabel" name="label_8">
               <property name="toolTip">
                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The percentile threshold to detect subelements in spectrogram. Regions above this value are detected&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">background-color: rgb(244, 244, 244);</string>
               </property>
               <property name="text">
                <string>Threshold:</string>
@@ -77,6 +102,9 @@
                 <horstretch>0</horstretch>
                 <verstretch>0</verstretch>
                </sizepolicy>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">background-color: rgb(244, 244, 244);</string>
               </property>
               <property name="wrapping">
                <bool>false</bool>
@@ -110,6 +138,9 @@
               <property name="toolTip">
                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Minimum size of spectral subelements in ms and Khz&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
+              <property name="styleSheet">
+               <string notr="true">background-color: rgb(244, 244, 244);</string>
+              </property>
               <property name="text">
                <string>Minimum size:</string>
               </property>
@@ -120,6 +151,9 @@
               <property name="enabled">
                <bool>true</bool>
               </property>
+              <property name="styleSheet">
+               <string notr="true">background-color: rgb(244, 244, 244);</string>
+              </property>
               <property name="suffix">
                <string> ms</string>
               </property>
@@ -129,6 +163,9 @@
              <widget class="QDoubleSpinBox" name="dsbxMinSizeFreq">
               <property name="enabled">
                <bool>true</bool>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">background-color: rgb(244, 244, 244);</string>
               </property>
               <property name="suffix">
                <string> kHz</string>
@@ -141,6 +178,9 @@
            <widget class="QCheckBox" name="cbxSpectralSubelements">
             <property name="enabled">
              <bool>true</bool>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">background-color: rgb(244, 244, 244);</string>
             </property>
             <property name="text">
              <string>Detect Spectral Subelements</string>
@@ -162,6 +202,9 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(255, 255, 255);</string>
+        </property>
         <property name="floating">
          <bool>false</bool>
         </property>
@@ -172,6 +215,9 @@
          <string>Parameters</string>
         </property>
         <widget class="QWidget" name="dockWidgetContents">
+         <property name="styleSheet">
+          <string notr="true">background-color: qconicalgradient(cx:0.949, cy:0.0852273, angle:26.3, stop:0 rgba(100, 144, 255, 255), stop:0.994318 rgba(245, 245, 245, 255));</string>
+         </property>
          <layout class="QGridLayout" name="gridLayout_4">
           <item row="1" column="0">
            <widget class="QGroupBox" name="gboxSpectral">
@@ -200,6 +246,9 @@
                <property name="toolTip">
                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The peak frecuency of the measurement location&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(244, 244, 244);</string>
+               </property>
                <property name="text">
                 <string>Peak Frecuency</string>
                </property>
@@ -208,10 +257,13 @@
                </property>
               </widget>
              </item>
-             <item row="3" column="0">
+             <item row="5" column="0">
               <widget class="QCheckBox" name="cbxPeakAmplitude">
                <property name="toolTip">
                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The amplitude of spectrum in the peak frecuency.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(244, 244, 244);</string>
                </property>
                <property name="text">
                 <string>Peak Amplitude</string>
@@ -221,10 +273,13 @@
                </property>
               </widget>
              </item>
-             <item row="4" column="0">
+             <item row="6" column="0">
               <widget class="QCheckBox" name="cbxMaxFreq">
                <property name="toolTip">
                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The min frecuency above threshold in the spectral location of measurement&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(244, 244, 244);</string>
                </property>
                <property name="text">
                 <string>Max Frecuency</string>
@@ -234,8 +289,11 @@
                </property>
               </widget>
              </item>
-             <item row="4" column="1">
+             <item row="6" column="1">
               <widget class="QSpinBox" name="spbxSpectralLocMeasureThreshold">
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(244, 244, 244);</string>
+               </property>
                <property name="suffix">
                 <string>dB</string>
                </property>
@@ -250,10 +308,13 @@
                </property>
               </widget>
              </item>
-             <item row="5" column="0">
+             <item row="8" column="0">
               <widget class="QCheckBox" name="cbxMinFreq">
                <property name="toolTip">
                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The max frecuency above the threshold in the spectral location of measurement&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(244, 244, 244);</string>
                </property>
                <property name="text">
                 <string>Min Frecuency</string>
@@ -263,8 +324,11 @@
                </property>
               </widget>
              </item>
-             <item row="6" column="0">
+             <item row="10" column="0">
               <widget class="QCheckBox" name="cbxBandWidth">
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(244, 244, 244);</string>
+               </property>
                <property name="text">
                 <string>Band Width</string>
                </property>
@@ -273,10 +337,13 @@
                </property>
               </widget>
              </item>
-             <item row="7" column="0">
+             <item row="11" column="0">
               <widget class="QCheckBox" name="cbxPeaksAbove">
                <property name="toolTip">
                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The amount of peaks above threshold in the spectral location of measurement&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(244, 244, 244);</string>
                </property>
                <property name="text">
                 <string>Peaks Above</string>
@@ -286,8 +353,11 @@
                </property>
               </widget>
              </item>
-             <item row="7" column="1">
+             <item row="11" column="1">
               <widget class="QSpinBox" name="spbxPeaksThreshold">
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(244, 244, 244);</string>
+               </property>
                <property name="suffix">
                 <string>dB</string>
                </property>
@@ -304,11 +374,59 @@
              </item>
              <item row="1" column="0">
               <widget class="QCheckBox" name="cbxSpectralElems">
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(244, 244, 244);</string>
+               </property>
                <property name="text">
                 <string>Spectral Elems</string>
                </property>
                <property name="checked">
                 <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0">
+              <widget class="QCheckBox" name="cbxPeakFreqAverage">
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(244, 244, 244);</string>
+               </property>
+               <property name="text">
+                <string>Peak Frecuency (Avg)</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="7" column="0">
+              <widget class="QCheckBox" name="cbxMaxFreqAverage">
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(244, 244, 244);</string>
+               </property>
+               <property name="text">
+                <string>Max Frecuency (Avg)</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+               <property name="tristate">
+                <bool>false</bool>
+               </property>
+              </widget>
+             </item>
+             <item row="9" column="0">
+              <widget class="QCheckBox" name="cbxMinFreqAverage">
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(244, 244, 244);</string>
+               </property>
+               <property name="text">
+                <string>Min Frecuency (Avg)</string>
+               </property>
+               <property name="checked">
+                <bool>true</bool>
+               </property>
+               <property name="tristate">
+                <bool>false</bool>
                </property>
               </widget>
              </item>
@@ -329,6 +447,9 @@
                <property name="toolTip">
                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt; Spectral parameters location of measurement. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(244, 244, 244);</string>
+               </property>
                <property name="text">
                 <string>Start</string>
                </property>
@@ -341,6 +462,9 @@
               <widget class="QCheckBox" name="cbxmeasurementLocationCenter">
                <property name="toolTip">
                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt; Spectral parameters location of measurement. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(244, 244, 244);</string>
                </property>
                <property name="text">
                 <string>Center</string>
@@ -355,6 +479,9 @@
                <property name="toolTip">
                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt; Spectral parameters location of measurement. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(244, 244, 244);</string>
+               </property>
                <property name="text">
                 <string>End</string>
                </property>
@@ -367,6 +494,9 @@
               <widget class="QCheckBox" name="cbxmeasurementLocationQuartile25">
                <property name="toolTip">
                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt; Spectral parameters location of measurement. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(244, 244, 244);</string>
                </property>
                <property name="text">
                 <string>Quartile25</string>
@@ -381,6 +511,9 @@
                <property name="toolTip">
                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt; Spectral parameters location of measurement. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(244, 244, 244);</string>
+               </property>
                <property name="text">
                 <string>Quartile75</string>
                </property>
@@ -389,15 +522,18 @@
                </property>
               </widget>
              </item>
-             <item row="0" column="0">
+             <item row="0" column="0" colspan="2">
               <spacer name="verticalSpacer_2">
                <property name="orientation">
                 <enum>Qt::Vertical</enum>
                </property>
+               <property name="sizeType">
+                <enum>QSizePolicy::Fixed</enum>
+               </property>
                <property name="sizeHint" stdset="0">
                 <size>
                  <width>20</width>
-                 <height>40</height>
+                 <height>15</height>
                 </size>
                </property>
               </spacer>
@@ -425,6 +561,9 @@
                <property name="toolTip">
                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Start time of element&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(244, 244, 244);</string>
+               </property>
                <property name="text">
                 <string>Start Time</string>
                </property>
@@ -437,6 +576,9 @@
               <widget class="QCheckBox" name="cbxEndTime">
                <property name="toolTip">
                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;End time of element&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(244, 244, 244);</string>
                </property>
                <property name="text">
                 <string>End Time</string>
@@ -451,6 +593,9 @@
                <property name="toolTip">
                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;rms of the element&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(244, 244, 244);</string>
+               </property>
                <property name="text">
                 <string>RMS</string>
                </property>
@@ -463,6 +608,9 @@
               <widget class="QCheckBox" name="cbxStartToMax">
                <property name="toolTip">
                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Distance from the element start to its max value&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(244, 244, 244);</string>
                </property>
                <property name="text">
                 <string>Start To Max</string>
@@ -477,6 +625,9 @@
                <property name="toolTip">
                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Duration time of element&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(244, 244, 244);</string>
+               </property>
                <property name="text">
                 <string>Duration</string>
                </property>
@@ -489,6 +640,9 @@
               <widget class="QCheckBox" name="cbxPeekToPeek">
                <property name="toolTip">
                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;peek to peek value of the element&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">background-color: rgb(244, 244, 244);</string>
                </property>
                <property name="text">
                 <string>Peek to Peek</string>
@@ -516,6 +670,11 @@
           </item>
           <item row="2" column="0" colspan="2">
            <widget class="QDialogButtonBox" name="buttonBox">
+            <property name="styleSheet">
+             <string notr="true">font: 75 11pt &quot;MS Shell Dlg 2&quot;;
+background-color: rgb(8, 100, 180);
+color: rgb(255, 255, 255);</string>
+            </property>
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
@@ -539,6 +698,9 @@
           <verstretch>0</verstretch>
          </sizepolicy>
         </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(255, 255, 255);</string>
+        </property>
         <property name="floating">
          <bool>false</bool>
         </property>
@@ -549,6 +711,9 @@
          <string>Oscilogram </string>
         </property>
         <widget class="QWidget" name="dockWidgetContents_2">
+         <property name="styleSheet">
+          <string notr="true">background-color: qconicalgradient(cx:0.949, cy:0.0852273, angle:26.3, stop:0 rgba(100, 144, 255, 255), stop:0.994318 rgba(245, 245, 245, 255));</string>
+         </property>
          <layout class="QVBoxLayout" name="verticalLayout">
           <item>
            <layout class="QHBoxLayout" name="horizontalLayout_7" stretch="0,0,0">
@@ -560,6 +725,9 @@
               <property name="toolTip">
                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The elements above detection threshold&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
+              <property name="styleSheet">
+               <string notr="true">background-color: rgb(244, 244, 244);</string>
+              </property>
               <property name="text">
                <string>Threshold:</string>
               </property>
@@ -567,6 +735,9 @@
             </item>
             <item>
              <widget class="QDoubleSpinBox" name="dsbxThreshold">
+              <property name="styleSheet">
+               <string notr="true">background-color: rgb(244, 244, 244);</string>
+              </property>
               <property name="buttonSymbols">
                <enum>QAbstractSpinBox::UpDownArrows</enum>
               </property>
@@ -591,6 +762,9 @@
                 <property name="toolTip">
                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The elements above second trheshold and with a piece above detection threshold&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
+                <property name="styleSheet">
+                 <string notr="true">background-color: rgb(244, 244, 244);</string>
+                </property>
                 <property name="text">
                  <string>Threshold 2:</string>
                 </property>
@@ -598,6 +772,9 @@
               </item>
               <item>
                <widget class="QDoubleSpinBox" name="dsbxThreshold2">
+                <property name="styleSheet">
+                 <string notr="true">background-color: rgb(244, 244, 244);</string>
+                </property>
                 <property name="buttonSymbols">
                  <enum>QAbstractSpinBox::UpDownArrows</enum>
                 </property>
@@ -626,6 +803,9 @@
               <property name="toolTip">
                <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Jump to prevent locals falls of signal. Noiser signal bigger decay&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
               </property>
+              <property name="styleSheet">
+               <string notr="true">background-color: rgb(244, 244, 244);</string>
+              </property>
               <property name="text">
                <string>Decay:</string>
               </property>
@@ -633,6 +813,9 @@
             </item>
             <item>
              <widget class="QDoubleSpinBox" name="dsbxDecay">
+              <property name="styleSheet">
+               <string notr="true">background-color: rgb(244, 244, 244);</string>
+              </property>
               <property name="suffix">
                <string> ms</string>
               </property>
@@ -651,6 +834,9 @@
                 <property name="toolTip">
                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Element minimum size &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
+                <property name="styleSheet">
+                 <string notr="true">background-color: rgb(244, 244, 244);</string>
+                </property>
                 <property name="text">
                  <string>Minimum size:</string>
                 </property>
@@ -658,6 +844,9 @@
               </item>
               <item>
                <widget class="QDoubleSpinBox" name="dsbxMinSize">
+                <property name="styleSheet">
+                 <string notr="true">background-color: rgb(244, 244, 244);</string>
+                </property>
                 <property name="suffix">
                  <string> ms</string>
                 </property>
@@ -671,6 +860,9 @@
            <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="0,0,0">
             <item>
              <widget class="QLabel" name="label_5">
+              <property name="styleSheet">
+               <string notr="true">background-color: rgb(244, 244, 244);</string>
+              </property>
               <property name="text">
                <string>Soft factor:</string>
               </property>
@@ -678,6 +870,9 @@
             </item>
             <item>
              <widget class="QSpinBox" name="sbxSoftFactor">
+              <property name="styleSheet">
+               <string notr="true">background-color: rgb(244, 244, 244);</string>
+              </property>
               <property name="minimum">
                <number>2</number>
               </property>
@@ -699,6 +894,9 @@
                 <property name="toolTip">
                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Merge elements closer than this factor&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
+                <property name="styleSheet">
+                 <string notr="true">background-color: rgb(244, 244, 244);</string>
+                </property>
                 <property name="text">
                  <string>Merge factor:</string>
                 </property>
@@ -706,6 +904,9 @@
               </item>
               <item>
                <widget class="QDoubleSpinBox" name="dsbxMergeFactor">
+                <property name="styleSheet">
+                 <string notr="true">background-color: rgb(244, 244, 244);</string>
+                </property>
                 <property name="suffix">
                  <string> ms</string>
                 </property>

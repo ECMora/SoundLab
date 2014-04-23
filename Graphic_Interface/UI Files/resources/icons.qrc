@@ -1,11 +1,22 @@
 <RCC>
   <qresource prefix="myappicons">
+    <file>Process Viewer.png</file>
+    <file>ColorSync Utility.png</file>
+    <file>Behavior.png</file>
+    <file>Macromedia.png</file>
+    <file>undo.png</file>
+    <file>redo.png</file>
+    <file>cerrar.png</file>
+    <file>Photofiltre.png</file>
+    <file>Camera.ico</file>
+    <file>Position.png</file>
+    <file>Behavior.png</file>
     <file>pausa.png</file>
     <file>record_26x26.png</file>
-    <file>LeopardVista V4 Icon 09.ico</file>
     <file>spec.ico</file>
     <file>osc.ico</file>
     <file>combined.ico</file>
+    <file>Excel.png</file>
     <file>powerspec.ico</file>
     <file>copy_26x26.png</file>
     <file>cut_26x26.png</file>

@@ -18,7 +18,7 @@ class OneDimensionalElementsDetector(ElementsDetector):
         self.envelope = array([])
 
     def detect(self,signal, indexFrom=0, indexTo=-1, threshold=0, decay=1,minSize=0,softfactor = 5,merge_factor=0,secondThreshold=0,
-               threshold_spectral=95, pxx=[], freqs=[], bins=[], minsize_spectral=(0, 0),location = None,progress=None,findSpectralSublements = False,overlap=0):
+               threshold_spectral=95, minsize_spectral=(0, 0),location = None,progress=None,findSpectralSublements = False,specgramSettings=None):
             """
             decay in ms to prevent locals falls, should be as long as the min size of the separation between
             elements
@@ -26,6 +26,8 @@ class OneDimensionalElementsDetector(ElementsDetector):
             merge_factor in ms
             threshold in dB from the max value
             """
+            if specgramSettings is None:
+                return
             if progress is not None:
                 self.progress = progress
             if(signal is None):
@@ -48,20 +50,20 @@ class OneDimensionalElementsDetector(ElementsDetector):
                 minSize = minSize*signal.samplingRate/1000.0
             if progress is not None:
                 self.progress(2)
-            if findSpectralSublements:
-                threshold_spectral = percentile(pxx,threshold_spectral)
 
+            threshold_spectral = percentile(specgramSettings.Pxx,threshold_spectral)
+            trim_threshold =  threshold_spectral
             if progress is not None:
                 self.progress(5)
 
             elems = self.one_dimensional_elements_detector(signal.data[indexFrom : indexTo],threshold, minSize=minSize, decay=decay, softfactor=softfactor, merge_factor=merge_factor,secondThreshold=secondThreshold)
-            #print(len(elems)+str("LENNNNN"))
+
             l = len(elems)
             progress_size = l/10 if l > 10 else 3
             stepsize = 50/(10 if l > 10 else 3)
             self.oneDimensionalElements = [None for _ in elems]
             for i,c in enumerate(elems):
-                self.oneDimensionalElements[i] = OscilogramElement(signal,c[0], c[1],number=i+1,threshold_spectral= threshold_spectral, pxx=pxx, freqs=freqs, bins=bins, minsize_spectral=minsize_spectral,location=location,findSpectralSublements = findSpectralSublements,overlap=overlap)
+                self.oneDimensionalElements[i] = OscilogramElement(signal,c[0], c[1],number=i+1,threshold_spectral= threshold_spectral, minsize_spectral=minsize_spectral,location=location,findSpectralSublements = findSpectralSublements,specgramSettings=specgramSettings,trim_threshold=trim_threshold)
                  #descartar elemento si no posee informacion espectral suficiente
                 if progress is not None and i % progress_size == 0:
                     self.progress(40 + (i/progress_size)*stepsize)

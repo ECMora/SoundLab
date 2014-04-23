@@ -176,9 +176,11 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         separator.setSeparator(True)
         separator2 = QtGui.QAction(self)
         separator2.setSeparator(True)
+        separator3 = QtGui.QAction(self)
+        separator3.setSeparator(True)
         self.widget.createContextCursor([self.actionCopy,self.actionCut,self.actionPaste,separator,
                                          self.actionPlay_Sound,self.actionPause_Sound,self.actionStop_Sound,self.actionRecord,separator2,
-                                         self.action_Reverse,self.actionSilence,self.actionInsert_Silence])
+                                         self.action_Reverse,self.actionSilence,self.actionInsert_Silence,separator3,self.actionOsc_Image,self.actionSpecgram_Image,self.actionCombined_Image])
 
         g = QActionGroup(self)
         g.addAction(self.action1_8x)
@@ -739,6 +741,12 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     @pyqtSlot()
     def on_actionExit_triggered(self):
+        self.close()
+
+    def closeEvent(self,event):
+        mbox = QtGui.QMessageBox(QtGui.QMessageBox.Question,"Save","Do you want to save the signal?",QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel,self)
+        if mbox.exec_() == QtGui.QMessageBox.Ok:
+            self.on_actionSave_triggered()
         self.close()
 
     @pyqtSlot()

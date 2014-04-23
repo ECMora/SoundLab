@@ -26,6 +26,7 @@ class SpecgramElement(TwoDimensionalElement):
             self.parentnumber = one_dimensional_parent.number
         self.bins = bins
         self.number = number
+        self.color = QtGui.QColor(0, 255, 0, 100) if number%2==0 else QtGui.QColor(0, 0, 255,100)
         self.freqs = freqs
         self.timeStartIndex = starttime
         self.timeEndIndex = endtime
@@ -96,7 +97,7 @@ class SpecgramElement(TwoDimensionalElement):
                 [1,2],
                 [2,3]
                 ])
-            g.setData(pos=pos, size=1, symbol='d', pxMode=False,adj=adj,pen=(pg.mkPen(QtGui.QColor(0, 255, 0, 100),width=3) if number%2==0 else pg.mkPen(QtGui.QColor(0, 0, 255,100),width=3)))
+            g.setData(pos=pos, size=1, symbol='d', pxMode=False,adj=adj,pen=(pg.mkPen(self.color,width=3)))
             self.visual_figures.append([g,True])
             text = pg.TextItem(str(one_dimensional_parent.number),color=(255,255,255),anchor=(0.5,0))
             text.setPos(self.timeStartIndex/2.0+self.timeEndIndex/2.0, self.freqStartIndex+f*95/100)
@@ -117,7 +118,7 @@ class SpecgramElement(TwoDimensionalElement):
             adj.append([i-1,i])
         pos = np.array(pos)
         adj = np.array(adj)
-        g.setData(pos=pos, size=1, symbol='d', pxMode=False,adj=adj,pen=(pg.mkPen(QtGui.QColor(0, 255, 0, 100),width=3) if self.parentnumber%2==0 else pg.mkPen(QtGui.QColor(0, 0, 255,100),width=3)))
+        g.setData(pos=pos, size=1, symbol='d', pxMode=False,adj=adj,pen=(pg.mkPen(self.color,width=3)))
         self.visual_peaksfreqs.append([g,False])
 
     def minFreq(self):

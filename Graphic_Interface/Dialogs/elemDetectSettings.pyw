@@ -59,7 +59,6 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
 
 
 
-
     def updateGraphsVisibility(self):
         self.widget.visibleSpectrogram = self.cbxSpectralSubelements.isChecked()
         self.widget.refresh()

@@ -76,8 +76,8 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
    <widget class="QMenu" name="menuFile">
     <property name="geometry">
      <rect>
-      <x>91</x>
-      <y>143</y>
+      <x>97</x>
+      <y>137</y>
       <width>143</width>
       <height>235</height>
      </rect>
@@ -184,6 +184,10 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
      <property name="title">
       <string>Play Speed</string>
      </property>
+     <property name="icon">
+      <iconset resource="resources/icons.qrc">
+       <normaloff>:/myappicons/Macromedia.png</normaloff>:/myappicons/Macromedia.png</iconset>
+     </property>
      <addaction name="action1_8x"/>
      <addaction name="action1_4x"/>
      <addaction name="action1_2x"/>
@@ -268,6 +272,8 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
    <addaction name="actionCopy"/>
    <addaction name="actionCut"/>
    <addaction name="actionPaste"/>
+   <addaction name="actionUndo"/>
+   <addaction name="actionRedo"/>
    <addaction name="separator"/>
    <addaction name="actionRecord"/>
    <addaction name="actionPause_Sound"/>
@@ -299,11 +305,15 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
    </property>
   </action>
   <action name="actionExit">
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/cerrar.png</normaloff>:/myappicons/cerrar.png</iconset>
+   </property>
    <property name="text">
     <string>Exit</string>
    </property>
    <property name="shortcut">
-    <string>Alt+X</string>
+    <string>Esc</string>
    </property>
   </action>
   <action name="actionZoomIn">
@@ -521,7 +531,7 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
   <action name="actionSettings">
    <property name="icon">
     <iconset resource="resources/icons.qrc">
-     <normaloff>:/myappicons/LeopardVista V4 Icon 09.ico</normaloff>:/myappicons/LeopardVista V4 Icon 09.ico</iconset>
+     <normaloff>:/myappicons/ColorSync Utility.png</normaloff>:/myappicons/ColorSync Utility.png</iconset>
    </property>
    <property name="text">
     <string>Settings</string>
@@ -580,6 +590,10 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
    </property>
   </action>
   <action name="actionSegmentation_And_Clasification">
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/Process Viewer.png</normaloff>:/myappicons/Process Viewer.png</iconset>
+   </property>
    <property name="text">
     <string>Segmentation And Clasification</string>
    </property>
@@ -616,6 +630,10 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
    </property>
   </action>
   <action name="actionUndo">
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/undo.png</normaloff>:/myappicons/undo.png</iconset>
+   </property>
    <property name="text">
     <string>Undo</string>
    </property>
@@ -624,6 +642,10 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
    </property>
   </action>
   <action name="actionRedo">
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/redo.png</normaloff>:/myappicons/redo.png</iconset>
+   </property>
    <property name="text">
     <string>Redo</string>
    </property>
@@ -725,11 +747,19 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
    <property name="checkable">
     <bool>true</bool>
    </property>
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/Position.png</normaloff>:/myappicons/Position.png</iconset>
+   </property>
    <property name="text">
     <string>Full Screen</string>
    </property>
   </action>
   <action name="actionFile_Up">
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/Behavior.png</normaloff>:/myappicons/Behavior.png</iconset>
+   </property>
    <property name="text">
     <string>File Up</string>
    </property>
@@ -738,6 +768,10 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
    </property>
   </action>
   <action name="actionFile_Down">
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/Behavior.png</normaloff>:/myappicons/Behavior.png</iconset>
+   </property>
    <property name="text">
     <string>File Down</string>
    </property>
@@ -746,16 +780,28 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
    </property>
   </action>
   <action name="actionOsc_Image">
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/Camera.ico</normaloff>:/myappicons/Camera.ico</iconset>
+   </property>
    <property name="text">
     <string>Osc Image</string>
    </property>
   </action>
   <action name="actionSpecgram_Image">
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/Camera.ico</normaloff>:/myappicons/Camera.ico</iconset>
+   </property>
    <property name="text">
     <string>Specgram Image</string>
    </property>
   </action>
   <action name="actionCombined_Image">
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/Photofiltre.png</normaloff>:/myappicons/Photofiltre.png</iconset>
+   </property>
    <property name="text">
     <string>Combined Image</string>
    </property>

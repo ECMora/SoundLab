@@ -59,10 +59,10 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.widget.visualChanges =True
         self.widget.refresh()
 
-
         self.rejectSignal = False
         self.widget.mainCursor.min, self.widget.mainCursor.max = 0, len(self.widget.signalProcessor.signal.data)
         self.dockWidgetParameterTableOscilogram.setVisible(False)
+
         self.show()
 
         self.parameterTable_rowcolor_odd,self.parameterTable_rowcolor_even = QtGui.QColor(0, 0, 255,150),QtGui.QColor(0, 255, 0, 150)
@@ -73,27 +73,28 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.detectionSettings = {"Threshold": -40, "Threshold2": 0, "MergeFactor": 0.5, "MinSize": 1, "Decay": 1,
                                   "SoftFactor": 6,"ThresholdSpectral": 95 ,"minSizeTimeSpectral": 0, "minSizeFreqSpectral": 0,
                                   "SpectralLocMeasureThreshold": -20,"PeaksThreshold": -20}
-        self.widget.axesOscilogram.threshold.setValue(10.0*(2**self.widget.signalProcessor.signal.bitDepth)/1000.0)
-        self.temporalParameters = \
+        self.noParametrizedmeditions = \
         [
-                      ["Start(s)", True, lambda x: x.startTime()],
-                      ["End(s)", True, lambda x: x.endTime()],
-                      ["PeekToPeek(V)", True, lambda x: x.peekToPeek()],
-                      ["RMS(V)", True, lambda x: x.rms()],
-                      ["StartToMax(s)", True,lambda x: x.distanceFromStartToMax()],
-                      ["Duration(s)", True,lambda x: x.duration()],
-                      ["Spectral Elems", True,lambda x: x.spectralElements()],
-                      ["Peak Freq Average", True,lambda x: x.peakFreqAverage()],
-                      ["Min Freq Average", True,lambda x: x.minFreqAverage()],
-                      ["Max Freq Average", True,lambda x: x.maxFreqAverage()] # poner en el dialogo
+                      ["Start(s)", True, lambda x,d: x.startTime()],
+                      ["End(s)", True, lambda x,d: x.endTime()],
+                      ["PeekToPeek(V)", True, lambda x,d: x.peekToPeek()],
+                      ["RMS(V)", True, lambda x,d: x.rms()],
+                      ["StartToMax(s)", True,lambda x,d: x.distanceFromStartToMax()],
+                      ["Duration(s)", True,lambda x,d: x.duration()],
+                      ["Spectral Elems", True,lambda x,d: x.spectralElements()],
+                      ["Peak Freq Average(Hz)", True,lambda x,d: x.peakFreqAverage()],
+                      ["Min Freq Average(Hz)", True,lambda x,d: x.minFreqAverage(d)],
+                      ["Max Freq Average(Hz)", True,lambda x,d: x.maxFreqAverage(d)]
+
         ]
-        self.spectralParameters = [
-            ["Max Freq(Hz)",True,lambda x,dict :x.maxFreq(dict)],
-            ["Min Freq(Hz)",True,lambda x,dict :x.minFreq(dict)],
-            ["Peak Freq(Hz)",True,lambda x,dict :x.peakFreq(dict)],
-            ["Peak Amplitude(dB)",True,lambda x,dict :x.peakAmplitude(dict)],
-            ["Band Width(Hz)",True,lambda x,dict :x.bandwidth(dict)],
-            ["Peaks Above",True,lambda x,dict :x.peaksAbove(dict)]
+        self.parametrizedMeditions = [
+            ["Max Freq(Hz)",True,lambda x,d :x.maxFreq(d)],
+            ["Min Freq(Hz)",True,lambda x,d :x.minFreq(d)],
+            ["Peak Freq(Hz)",True,lambda x,d :x.peakFreq(d)],
+            ["Peak Amplitude(dB)",True,lambda x,d :x.peakAmplitude(d)],
+            ["Band Width(Hz)",True,lambda x,d :x.bandwidth(d)],
+            ["Peaks Above",True,lambda x,d :x.peaksAbove(d)],
+
 
         ] #the spectral parameters that changes in function of the location measurements
          #funciones que reciben un elemento spectral 2 dimensiones y devuelven el valor del parametro medido
@@ -101,7 +102,11 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         #binding to the checkboxes in the dialog of parameter measurement
         separator = QtGui.QAction(self)
         separator.setSeparator(True)
-        self.widget.createContextCursor([self.actionZoomIn,self.actionZoom_out,self.actionZoom_out_entire_file,separator,self.actionCombined,self.actionOscilogram,self.actionSpectogram,separator,self.actionClear_Meditions,self.actionMeditions,self.actionView_Parameters])
+        separator1 = QtGui.QAction(self)
+        separator1.setSeparator(True)
+        separator2 = QtGui.QAction(self)
+        separator2.setSeparator(True)
+        self.widget.createContextCursor([self.actionZoomIn,self.actionZoom_out,self.actionZoom_out_entire_file,separator1,self.actionCombined,self.actionOscilogram,self.actionSpectogram,separator,self.actionClear_Meditions,self.actionMeditions,self.actionView_Parameters,separator2,self.actionOsgram_Image,self.actionSpecgram_Image,self.actionCombined_Image])
         self.windowProgressDetection = QtGui.QProgressBar(self.widget)
         self.hist = pg.widgets.HistogramLUTWidget.HistogramLUTItem()
         self.hist.setImageItem(self.widget.axesSpecgram.imageItem)
@@ -139,23 +144,23 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         threshold = self.detectionSettings["SpectralLocMeasureThreshold"]
         peaksThreshold = self.detectionSettings["PeaksThreshold"]
         if spectralMeasurementLocation.MEDITIONS[spectralMeasurementLocation.START][0]:
-            for p in self.spectralParameters:
+            for p in self.parametrizedMeditions:
                 if p[1]:
                     params.append([p[0]+"(start)", p[2], {"location": spectralMeasurementLocation.START, "threshold": threshold, "peaksThreshold": peaksThreshold}])
         if spectralMeasurementLocation.MEDITIONS[spectralMeasurementLocation.CENTER][0]:
-            for p in self.spectralParameters:
+            for p in self.parametrizedMeditions:
                 if p[1]:
                     params.append([p[0]+"(center)", p[2], {"location": spectralMeasurementLocation.CENTER, "threshold": threshold, "peaksThreshold": peaksThreshold}])
         if spectralMeasurementLocation.MEDITIONS[spectralMeasurementLocation.END][0]:
-            for p in self.spectralParameters:
+            for p in self.parametrizedMeditions:
                 if p[1]:
                     params.append([p[0]+"(end)", p[2], {"location": spectralMeasurementLocation.END, "threshold": threshold, "peaksThreshold": peaksThreshold}])
         if spectralMeasurementLocation.MEDITIONS[spectralMeasurementLocation.QUARTILE25][0]:
-            for p in self.spectralParameters:
+            for p in self.parametrizedMeditions:
                 if p[1]:
                     params.append([p[0]+"(quartile25)", p[2], {"location": spectralMeasurementLocation.QUARTILE25, "threshold": threshold, "peaksThreshold": peaksThreshold}])
         if spectralMeasurementLocation.MEDITIONS[spectralMeasurementLocation.QUARTILE75][0]:
-            for p in self.spectralParameters:
+            for p in self.parametrizedMeditions:
                 if p[1]:
                     params.append([p[0]+"(quartile75)",p[2], {"location": spectralMeasurementLocation.QUARTILE75, "threshold": threshold, "peaksThreshold": peaksThreshold}])
         return params
@@ -166,8 +171,6 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
     def updateThresholdLine(self):
         self.widget.axesOscilogram.threshold.setValue(round((10.0**((60+self.detectionSettings["Threshold"])/20.0))*(2**self.widget.signalProcessor.signal.bitDepth)/1000.0,0)
                                                       *self.widget.envelopeFactor-2**(self.widget.signalProcessor.signal.bitDepth-1))
-
-
 
     def toDB(self,value=None):
         if value is None:
@@ -184,6 +187,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.hist.region.setRegion(theme.histRange)
         self.hist.gradient.restoreState(theme.colorBarState)
         self.widget.load_Theme(theme)
+        #self.tableParameterOscilogram.setStyleSheet("background-color: #" +str(self.widget.osc_background) + ";")
         self.widget.visualChanges = True
         self.widget.refresh()
         self.hist.region.lineMoved()
@@ -192,7 +196,6 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
     @pyqtSlot()
     def on_actionView_Parameters_triggered(self):
         self.dockWidgetParameterTableOscilogram.setVisible(self.actionView_Parameters.isChecked())
-
 
     @pyqtSlot()
     def on_actionElements_Peaks_triggered(self):
@@ -350,7 +353,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                                            minsize_spectral=(self.detectionSettings["minSizeFreqSpectral"],self.detectionSettings["minSizeTimeSpectral"]),
                                            location= self.spectralMeasurementLocation)
 
-                    paramsTomeasure = [x for x in self.temporalParameters if x[1]]
+                    paramsTomeasure = [x for x in self.noParametrizedmeditions if x[1]]
                     spectralparamsTomeasure = self.getspectralParameters(self.spectralMeasurementLocation)
 
                     table.setRowCount(detector.elementCount())
@@ -363,7 +366,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
 
                     for i,element in enumerate(detector.elements()):
                         for j,prop in enumerate(paramsTomeasure):
-                            item = QtGui.QTableWidgetItem(str(prop[2](element)))
+                            item = QtGui.QTableWidgetItem(str(prop[2](element,{"threshold": self.detectionSettings["SpectralLocMeasureThreshold"]})))
                             table.setItem(i, j, item)
                         for x,prop in enumerate(spectralparamsTomeasure):
                             item = QtGui.QTableWidgetItem(str(prop[1](element,prop[2])))
@@ -431,7 +434,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         stylebody = xlwt.easyxf('font: name Times New Roman, color-index black, height 220', num_format_str='#,##0.00')
         stylecopyrigth = xlwt.easyxf('font: name Arial, color-index pale_blue, height 250, italic on', num_format_str='#,##0.00')
         spectralparamsTomeasure = self.getspectralParameters(self.spectralMeasurementLocation)
-        columnNames = [x[0] for x in self.temporalParameters if x[1]]
+        columnNames = [x[0] for x in self.noParametrizedmeditions if x[1]]
         columnNames.extend([label[0] for label in spectralparamsTomeasure])
         for index,header in enumerate(columnNames):
             ws.write(0, index, header,styleheader)
@@ -457,22 +460,27 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         elementsDetectorDialog.spbxPeaksThreshold.setValue(self.detectionSettings["PeaksThreshold"])
 
         #parameters
-        elementsDetectorDialog.cbxStartTime.setChecked(self.temporalParameters[0][1])#start time
-        elementsDetectorDialog.cbxEndTime.setChecked(self.temporalParameters[1][1])#end time
-        elementsDetectorDialog.cbxPeekToPeek.setChecked(self.temporalParameters[2][1])#peek to peek
-        elementsDetectorDialog.cbxRms.setChecked(self.temporalParameters[3][1])#rms
-        elementsDetectorDialog.cbxStartToMax.setChecked(self.temporalParameters[4][1])#distance to max
-        elementsDetectorDialog.cbxDuration.setChecked(self.temporalParameters[5][1])#duration
-        elementsDetectorDialog.cbxSpectralElems.setChecked(self.temporalParameters[6][1])#duration
+        elementsDetectorDialog.cbxStartTime.setChecked(self.noParametrizedmeditions[0][1])#start time
+        elementsDetectorDialog.cbxEndTime.setChecked(self.noParametrizedmeditions[1][1])#end time
+        elementsDetectorDialog.cbxPeekToPeek.setChecked(self.noParametrizedmeditions[2][1])#peek to peek
+        elementsDetectorDialog.cbxRms.setChecked(self.noParametrizedmeditions[3][1])#rms
+        elementsDetectorDialog.cbxStartToMax.setChecked(self.noParametrizedmeditions[4][1])#distance to max
+        elementsDetectorDialog.cbxDuration.setChecked(self.noParametrizedmeditions[5][1])#duration
+        elementsDetectorDialog.cbxSpectralElems.setChecked(self.noParametrizedmeditions[6][1])#duration
+        elementsDetectorDialog.cbxPeakFreqAverage.setChecked(self.noParametrizedmeditions[7][1])#peak freq average
+        elementsDetectorDialog.cbxMinFreqAverage.setChecked(self.noParametrizedmeditions[8][1])#min freq average
+        elementsDetectorDialog.cbxMaxFreqAverage.setChecked(self.noParametrizedmeditions[9][1])#max freq average
+
+        elementsDetectorDialog.cbxMaxFreq.setChecked(self.parametrizedMeditions[0][1])#max freq
+        elementsDetectorDialog.cbxMinFreq.setChecked(self.parametrizedMeditions[1][1])#min freq
+        elementsDetectorDialog.cbxPeakFreq.setChecked(self.parametrizedMeditions[2][1])#peak freq
+
+        elementsDetectorDialog.cbxPeakAmplitude.setChecked(self.parametrizedMeditions[3][1])#peaak amplitude
+        elementsDetectorDialog.cbxBandWidth.setChecked(self.parametrizedMeditions[4][1])#band width
+        elementsDetectorDialog.cbxPeaksAbove.setChecked(self.parametrizedMeditions[5][1])#peaks above
 
 
-        elementsDetectorDialog.cbxMaxFreq.setChecked(self.spectralParameters[0][1])#max freq
-        elementsDetectorDialog.cbxMinFreq.setChecked(self.spectralParameters[1][1])#min freq
-        elementsDetectorDialog.cbxPeakFreq.setChecked(self.spectralParameters[2][1])#peak freq
 
-        elementsDetectorDialog.cbxPeakAmplitude.setChecked(self.spectralParameters[3][1])#peaak amplitude
-        elementsDetectorDialog.cbxBandWidth.setChecked(self.spectralParameters[4][1])#band width
-        elementsDetectorDialog.cbxPeaksAbove.setChecked(self.spectralParameters[5][1])#peaks above
 
         #measurements
         elementsDetectorDialog.cbxmeasurementLocationStart.setChecked(self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.START][0])#start medition
@@ -496,21 +504,24 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.detectionSettings["PeaksThreshold"] = elementsDetectorDialog.spbxPeaksThreshold.value()
         self.updateThresholdLine()
         #parameters
-        self.temporalParameters[0][1] = elementsDetectorDialog.cbxStartTime.isChecked()
-        self.temporalParameters[1][1] = elementsDetectorDialog.cbxEndTime.isChecked()#end time
-        self.temporalParameters[2][1] = elementsDetectorDialog.cbxPeekToPeek.isChecked()#peek to peek
-        self.temporalParameters[3][1] = elementsDetectorDialog.cbxRms.isChecked()#rms
-        self.temporalParameters[4][1] = elementsDetectorDialog.cbxStartToMax.isChecked()#distance to max
-        self.temporalParameters[5][1] = elementsDetectorDialog.cbxDuration.isChecked()#duratio
-        self.temporalParameters[6][1] = elementsDetectorDialog.cbxSpectralElems.isChecked()#duratio
+        self.noParametrizedmeditions[0][1] = elementsDetectorDialog.cbxStartTime.isChecked()
+        self.noParametrizedmeditions[1][1] = elementsDetectorDialog.cbxEndTime.isChecked()#end time
+        self.noParametrizedmeditions[2][1] = elementsDetectorDialog.cbxPeekToPeek.isChecked()#peek to peek
+        self.noParametrizedmeditions[3][1] = elementsDetectorDialog.cbxRms.isChecked()#rms
+        self.noParametrizedmeditions[4][1] = elementsDetectorDialog.cbxStartToMax.isChecked()#distance to max
+        self.noParametrizedmeditions[5][1] = elementsDetectorDialog.cbxDuration.isChecked()#duratio
+        self.noParametrizedmeditions[6][1] = elementsDetectorDialog.cbxSpectralElems.isChecked()#duratio
+        self.noParametrizedmeditions[7][1] = elementsDetectorDialog.cbxPeakFreqAverage.isChecked()#peak freq average
+        self.noParametrizedmeditions[8][1] = elementsDetectorDialog.cbxMinFreqAverage.isChecked()#min freq average
+        self.noParametrizedmeditions[9][1] = elementsDetectorDialog.cbxMaxFreqAverage.isChecked()#max freq average
 
 
-        self.spectralParameters[0][1] = elementsDetectorDialog.cbxMaxFreq.isChecked()#max freq
-        self.spectralParameters[1][1] = elementsDetectorDialog.cbxMinFreq.isChecked()#min freq
-        self.spectralParameters[2][1] = elementsDetectorDialog.cbxPeakFreq.isChecked()#peak freq
-        self.spectralParameters[3][1] = elementsDetectorDialog.cbxPeakAmplitude.isChecked()#peaak amplitude
-        self.spectralParameters[4][1] = elementsDetectorDialog.cbxBandWidth.isChecked()#band width
-        self.spectralParameters[5][1] = elementsDetectorDialog.cbxPeaksAbove.isChecked()#peak above
+        self.parametrizedMeditions[0][1] = elementsDetectorDialog.cbxMaxFreq.isChecked()#max freq
+        self.parametrizedMeditions[1][1] = elementsDetectorDialog.cbxMinFreq.isChecked()#min freq
+        self.parametrizedMeditions[2][1] = elementsDetectorDialog.cbxPeakFreq.isChecked()#peak freq
+        self.parametrizedMeditions[3][1] = elementsDetectorDialog.cbxPeakAmplitude.isChecked()#peaak amplitude
+        self.parametrizedMeditions[4][1] = elementsDetectorDialog.cbxBandWidth.isChecked()#band width
+        self.parametrizedMeditions[5][1] = elementsDetectorDialog.cbxPeaksAbove.isChecked()#peak above
 
         #measurements
         self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.START][0] = elementsDetectorDialog.cbxmeasurementLocationStart.isChecked()#start medition
@@ -522,47 +533,48 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
     def updateDetectionProgressBar(self, x):
         self.windowProgressDetection.setValue(x)
 
+    def elementSelectedInTable(self,row,column):
+        self.tableParameterOscilogram.setRangeSelected(QtGui.QTableWidgetSelectionRange(row,0,row,self.tableParameterOscilogram.columnCount()-1),True)
+        self.widget.selectElement(row)#select the correct element in oscilogram
+
     @pyqtSlot()
     def on_actionDetection_triggered(self):
         elementsDetectorDialog = ElemDetectSettingsDialog(parent=self)
         self.setSettings(elementsDetectorDialog)
+        self.widget.selectElement(-1)
 
         if elementsDetectorDialog.exec_():
             try:
                 self.getSettings(elementsDetectorDialog)
-                paramsTomeasure = [x for x in self.temporalParameters if x[1]]
-
+                self.actionView_Threshold.setChecked(True)
+                paramsTomeasure = [x for x in self.noParametrizedmeditions if x[1]]
                 spectralparamsTomeasure = self.getspectralParameters(self.spectralMeasurementLocation)
-
-                #locations is the amount of measurements to make
                 self.windowProgressDetection.resize(self.widget.width()/3, self.windowProgressDetection.size().height())
                 self.windowProgressDetection.move(self.widget.x()+self.widget.width()/3,self.widget.y()-self.windowProgressDetection.height()/2 + self.widget.height()/2)
                 self.windowProgressDetection.show()
-                self.widget.axesOscilogram.threshold.setValue((10.0**((60+self.detectionSettings["Threshold"])/20.0))*(2**self.widget.signalProcessor.signal.bitDepth)/1000.0)
                 self.widget.detectElements(abs(self.detectionSettings["Threshold"]), self.detectionSettings["Decay"],   self.detectionSettings["MinSize"],
                                            self.detectionSettings["SoftFactor"], self.detectionSettings["MergeFactor"], abs(self.detectionSettings["Threshold2"]),
                                            threshold_spectral=self.detectionSettings["ThresholdSpectral"],
                                            minsize_spectral=(self.detectionSettings["minSizeFreqSpectral"],self.detectionSettings["minSizeTimeSpectral"]),
                                            location= self.spectralMeasurementLocation, progress=self.updateDetectionProgressBar, findSpectralSublements = elementsDetectorDialog.cbxSpectralSubelements.isChecked())
 
-
-
                 self.tableParameterOscilogram.clear()
+                self.tableParameterOscilogram.cellPressed.connect(self.elementSelectedInTable)
                 self.tableParameterOscilogram.setRowCount(len(self.widget.Elements))
                 self.tableParameterOscilogram.setColumnCount(len(paramsTomeasure) + len(spectralparamsTomeasure))
                 columnNames = [label[0] for label in paramsTomeasure]
                 columnNames.extend([label[0] for label in spectralparamsTomeasure])
                 self.tableParameterOscilogram.setHorizontalHeaderLabels(columnNames)
                 self.updateDetectionProgressBar(95)
+
                 for i in range(self.tableParameterOscilogram.rowCount()):
                     for j,prop in enumerate(paramsTomeasure):
                         try:
-                            item = QtGui.QTableWidgetItem(str(prop[2](self.widget.Elements[i])))
+                            item = QtGui.QTableWidgetItem(str(prop[2](self.widget.Elements[i],{"threshold": self.detectionSettings["SpectralLocMeasureThreshold"]})))
                             item.setBackgroundColor(self.parameterTable_rowcolor_odd if i%2==0 else self.parameterTable_rowcolor_even)
                         except:
                             item = QtGui.QTableWidgetItem("Error")
                         self.tableParameterOscilogram.setItem(i, j, item)
-
                     for x,prop in enumerate(spectralparamsTomeasure):
                         try:
                             item = QtGui.QTableWidgetItem(str(prop[1](self.widget.Elements[i],prop[2])))
@@ -570,6 +582,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                         except:
                             item = QtGui.QTableWidgetItem("Error")
                         self.tableParameterOscilogram.setItem(i, len(paramsTomeasure) + x, item)
+
 
                 self.updateDetectionProgressBar(100)
             except:
@@ -580,10 +593,25 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
             self.windowProgressDetection.hide()
             self.widget.drawElements(oscilogramItems=False)
 
+    @pyqtSlot()
+    def on_actionExit_triggered(self):
+        self.close()
+
+    def closeEvent(self,event):
+        mbox = QtGui.QMessageBox(QtGui.QMessageBox.Question,"Save meditions","Do you want to save the meditions?",QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel,self)
+        if self.tableParameterOscilogram.rowCount() > 0 and mbox.exec_() == QtGui.QMessageBox.Ok:
+            wb = xlwt.Workbook()
+            ws = wb.add_sheet(self.widget.signalProcessor.signal.name())
+            self.writedata(ws, self.tableParameterOscilogram)
+            fname = unicode(QFileDialog.getSaveFileName(self,"Save meditions as excel file",self.widget.signalProcessor.signal.name()+".xls","*.xls"))
+            if fname:
+                wb.save(fname)
+        self.close()
 
     @pyqtSlot()
     def on_actionClear_Meditions_triggered(self):
         self.widget.clearCursors()
+        self.widget.selectElement()
         self.widget.visualChanges = True
         self.widget.refresh()
         self.hist.region.lineMoved()
