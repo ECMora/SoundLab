@@ -105,7 +105,7 @@ class QSignalVisualizerWidget(QWidget):
         self.maxYSpc = 100
         self.updatePxxMatrix = True
 
-        self.envelopeCurve = pg.PlotCurveItem(np.array([0]))
+        self.envelopeCurve = pg.PlotCurveItem(np.array([0]),pen=pg.mkPen(self.osc_color,width=1),shadowPen=pg.mkPen(QtGui.QColor(255,0,0),width=3))
         self.axesOscilogram.addItem(self.envelopeCurve)
         self.envelopeFactor = 2 #factor to expand the envelope for best visualization
 
@@ -195,6 +195,8 @@ class QSignalVisualizerWidget(QWidget):
         self.osc_color = theme.osc_plot
         self.osc_gridx = theme.osc_GridX
         self.osc_gridy = theme.osc_GridY
+        self.envelopeCurve.setPen(pg.mkPen(self.osc_color,width=1))
+        self.envelopeCurve.setShadowPen(pg.mkPen(QtGui.QColor(255,0,0),width=3))
 
 
     def createContextCursor(self,actions):
@@ -628,6 +630,7 @@ class QSignalVisualizerWidget(QWidget):
         if self.visibleElements:
             self.drawElements()
 
+
         gem = self.parent().geometry()
         self.parent().resize(gem.width()/3, gem.height())
         self.parent().resize(gem.width(), gem.height())
@@ -838,15 +841,20 @@ class QSignalVisualizerWidget(QWidget):
         self.cleanVisibleCursors(oscilogram=True,specgram=True)
         self.Elements = [] if oscilogram and specgram else self.Elements
 
+    def selectElement(self,number=-1):
+        if len(self.Elements) > number and number >= 0:
+            self.axesOscilogram.selectElement(self.Elements[number].indexFrom,self.Elements[number].indexTo,pg.mkBrush(QtGui.QColor(255, 255, 255, 150)))
+        else:
+            self.axesOscilogram.selectElement(0,0)
 
     def detectElements(self,threshold=20, decay=1, minSize=0, softfactor=5, merge_factor=0,threshold2=0, threshold_spectral=95, pxx=[], freqs=[], bins=[], minsize_spectral=(0, 0),location= None, progress=None,findSpectralSublements = True):
         self.clearCursors()
         self.elements_detector.detect(self.signalProcessor.signal,0,len(self.signalProcessor.signal.data), threshold, decay, minSize, softfactor, merge_factor,threshold2,
-                                      threshold_spectral=threshold_spectral, pxx=self.specgramSettings.Pxx, freqs=self.specgramSettings.freqs,
-                                      bins=self.specgramSettings.bins, minsize_spectral=minsize_spectral,location=location,progress=progress,findSpectralSublements = findSpectralSublements,overlap = self.specgramSettings.overlap)
+                                      threshold_spectral=threshold_spectral, minsize_spectral=minsize_spectral,location=location,progress=progress,findSpectralSublements = findSpectralSublements, specgramSettings= self.specgramSettings)
 
         self.envelopeCurve.setData(self.getTransformedEnvelope(self.elements_detector.envelope))
         self.setEnvelopeVisibility(True)
+        self.axesOscilogram.setVisibleThreshold(True)
 
         for c in self.elements_detector.elements():
             self.Elements.append(c)# the elment the space for the span selector and the text

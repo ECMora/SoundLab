@@ -1,6 +1,6 @@
 from PyQt4 import QtCore
 from PyQt4.QtCore import SIGNAL, pyqtSignal
-from PyQt4.QtGui import QCursor
+from PyQt4.QtGui import QCursor,QColor
 import pyqtgraph as pg
 import numpy
 from Graphic_Interface.Widgets.Tools import Tools
@@ -18,8 +18,12 @@ class DuettoPlotWidget(pg.PlotWidget):
         self.setZoomRegionVisible(True)
         self.getPlotItem().setMouseEnabled(x=False, y=False)
         self.threshold = pg.InfiniteLine(movable=True, angle=0, pos=0)
+
+        self.highligthedElement =  pg.LinearRegionItem([0, 0],movable=False, brush=pg.mkBrush(QColor(255,255,255)))
+        self.getPlotItem().getViewBox().addItem(self.highligthedElement)
+
         self.mouseZoomEnabled = True
-        self.currentTextInfo = pg.TextItem("oioioioi",color=(255,255,255),anchor=(0.5,0.5))#the label with the current information of the mouse int the widget's s
+        self.currentTextInfo = pg.TextItem("Duetto",color=(255,255,255),anchor=(0.5,0.5))#the label with the current information of the mouse int the widget's s
          #pointerCursor-----------------------------------
         self.pointerCursor = pg.ScatterPlotItem()
         self.isSelectedRect = False
@@ -28,6 +32,11 @@ class DuettoPlotWidget(pg.PlotWidget):
         self.selectedTool = Tools.Zoom
         self.mouseReleased = False
         self.last = {}
+
+    def selectElement(self,indexFrom,indexTo,brush=None):
+        self.highligthedElement.setRegion([indexFrom,indexTo])
+        self.highligthedElement.setBrush(brush if brush is not None else pg.mkBrush(QColor(255,255,255)))
+        self.update(indexFrom,-2**16,indexTo,2**16)
 
     def on_zoomRegionChanged(self):
         if self.emitIntervalOscChanged:

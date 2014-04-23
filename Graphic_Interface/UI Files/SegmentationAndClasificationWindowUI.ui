@@ -235,6 +235,7 @@ padding:1%;</string>
    <addaction name="actionZoomIn"/>
    <addaction name="actionZoom_out"/>
    <addaction name="actionZoom_out_entire_file"/>
+   <addaction name="actionFull_Screen"/>
    <addaction name="separator"/>
    <addaction name="actionCombined"/>
    <addaction name="actionOscilogram"/>
@@ -448,6 +449,10 @@ padding:1%;</string>
    </property>
   </action>
   <action name="actionMeditions">
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/Excel.png</normaloff>:/myappicons/Excel.png</iconset>
+   </property>
    <property name="text">
     <string>Meditions</string>
    </property>
@@ -464,6 +469,10 @@ padding:1%;</string>
    </property>
   </action>
   <action name="actionDetection">
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/Process Viewer.png</normaloff>:/myappicons/Process Viewer.png</iconset>
+   </property>
    <property name="text">
     <string>Detection</string>
    </property>
@@ -559,11 +568,19 @@ padding:1%;</string>
    </property>
   </action>
   <action name="actionOsgram_Image">
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/Camera.ico</normaloff>:/myappicons/Camera.ico</iconset>
+   </property>
    <property name="text">
     <string>Osgram Image</string>
    </property>
   </action>
   <action name="actionSpecgram_Image">
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/Camera.ico</normaloff>:/myappicons/Camera.ico</iconset>
+   </property>
    <property name="text">
     <string>Specgram Image</string>
    </property>
@@ -580,6 +597,10 @@ padding:1%;</string>
    </property>
   </action>
   <action name="actionCombined_Image">
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/Photofiltre.png</normaloff>:/myappicons/Photofiltre.png</iconset>
+   </property>
    <property name="text">
     <string>Combined Image</string>
    </property>
@@ -588,11 +609,19 @@ padding:1%;</string>
    <property name="checkable">
     <bool>true</bool>
    </property>
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/Position.png</normaloff>:/myappicons/Position.png</iconset>
+   </property>
    <property name="text">
     <string>Full Screen</string>
    </property>
   </action>
   <action name="actionExit">
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/cerrar.png</normaloff>:/myappicons/cerrar.png</iconset>
+   </property>
    <property name="text">
     <string>Exit</string>
    </property>
