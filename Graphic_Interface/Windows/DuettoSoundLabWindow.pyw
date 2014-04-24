@@ -11,6 +11,7 @@ from PyQt4 import QtCore
 from PyQt4 import QtGui
 from PyQt4.QtCore import SIGNAL, pyqtSlot, QTimer
 from Graphic_Interface.Dialogs.NewFileDialog import NewFileDialog
+from Duetto_Core.AudioSignals.WavFileSignal import WavFileSignal
 from Graphic_Interface.Widgets.DuettoHistogram import DuettoHorizontalHistogramItem, DuettoHorizontalHistogramWidget
 from SegmentationAndClasificationWindow import SegmentationAndClasificationWindow
 from Duetto_Core.SignalProcessors.FilterSignalProcessor import FILTER_TYPE
@@ -178,9 +179,11 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         separator2.setSeparator(True)
         separator3 = QtGui.QAction(self)
         separator3.setSeparator(True)
+        separator4 = QtGui.QAction(self)
+        separator4.setSeparator(True)
         self.widget.createContextCursor([self.actionCopy,self.actionCut,self.actionPaste,separator,
                                          self.actionPlay_Sound,self.actionPause_Sound,self.actionStop_Sound,self.actionRecord,separator2,
-                                         self.action_Reverse,self.actionSilence,self.actionInsert_Silence,separator3,self.actionOsc_Image,self.actionSpecgram_Image,self.actionCombined_Image])
+                                         self.action_Reverse,self.actionSilence,self.actionInsert_Silence,separator3,self.actionOsc_Image,self.actionSpecgram_Image,self.actionCombined_Image,separator4,])
 
         g = QActionGroup(self)
         g.addAction(self.action1_8x)
@@ -459,7 +462,10 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         quart1 = self.ParamTree.param('Detection Settings').param('Measurement Location').param('Quartile25').value()
         quart2 = self.ParamTree.param('Detection Settings').param('Measurement Location').param('Quartile75').value()
         end = self.ParamTree.param('Detection Settings').param('Measurement Location').param('End').value()
-        segWindow = SegmentationAndClasificationWindow(parent=self, signal=self.widget.signalProcessor.signal)
+        signal = WavFileSignal(self.widget.signalProcessor.signal.path)
+        f,t = self.widget.getIndexFromAndTo()
+        signal.data = signal.data[f:t]
+        segWindow = SegmentationAndClasificationWindow(parent=self, signal=signal)
         if not segWindow.rejectSignal:
             segWindow.widget.maxYOsc =  self.ParamTree.param('Oscillogram Settings').param('Amplitude(%)').param('Max').value()
             segWindow.widget.minYOsc = self.ParamTree.param('Oscillogram Settings').param('Amplitude(%)').param('Min').value()

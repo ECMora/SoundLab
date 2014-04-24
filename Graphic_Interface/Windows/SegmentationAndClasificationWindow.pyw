@@ -46,6 +46,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                 else:
                     self.widget.specgramSettings.overlap = 50
 
+
         self.widget.mainCursor.min = 0
         self.widget.mainCursor.max = len(self.widget.signalProcessor.signal.data)
 
