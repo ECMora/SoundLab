@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>209</width>
-    <height>158</height>
+    <width>247</width>
+    <height>155</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,6 +16,9 @@
   <layout class="QFormLayout" name="formLayout">
    <item row="1" column="1">
     <widget class="QSpinBox" name="sbxSamplingRate">
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
+     </property>
      <property name="suffix">
       <string> Hz</string>
      </property>
@@ -32,6 +35,9 @@
    </item>
    <item row="2" column="0">
     <widget class="QLabel" name="label_2">
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
+     </property>
      <property name="text">
       <string>Duration:</string>
      </property>
@@ -39,6 +45,9 @@
    </item>
    <item row="2" column="1">
     <widget class="QDoubleSpinBox" name="dsbxDuration">
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
+     </property>
      <property name="suffix">
       <string> sec</string>
      </property>
@@ -52,6 +61,9 @@
    </item>
    <item row="1" column="0">
     <widget class="QLabel" name="label">
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
+     </property>
      <property name="text">
       <string>Sampling rate:</string>
      </property>
@@ -59,6 +71,9 @@
    </item>
    <item row="3" column="0">
     <widget class="QLabel" name="label_3">
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
+     </property>
      <property name="text">
       <string>Bit depth:</string>
      </property>
@@ -66,6 +81,9 @@
    </item>
    <item row="4" column="0">
     <widget class="QRadioButton" name="rbtnSilence">
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
+     </property>
      <property name="text">
       <string>Silence</string>
      </property>
@@ -76,6 +94,9 @@
    </item>
    <item row="4" column="1">
     <widget class="QRadioButton" name="rbtnWhiteNoise">
+     <property name="styleSheet">
+      <string notr="true">background-color: rgb(255, 255, 255);</string>
+     </property>
      <property name="text">
       <string>White noise</string>
      </property>

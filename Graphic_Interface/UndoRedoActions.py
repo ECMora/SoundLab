@@ -43,6 +43,9 @@ class UndoRedoManager:
         for i in range(len(self.actionsList)):
             self.actionsList[i] = None
 
+    def count(self):
+        return self.actionIndex+1
+
 
 class UndoRedoAction:
     def __init__(self, undo, redo):

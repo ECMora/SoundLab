@@ -787,7 +787,7 @@ class QSignalVisualizerWidget(QWidget):
 
     def getIndexFromAndTo(self):
         indexFrom, indexTo = self.mainCursor.min, self.mainCursor.max
-        if self.zoomCursor.min > 0 and self.zoomCursor.max > 0:
+        if self.zoomCursor.min > 0 and self.zoomCursor.max > 0 and self.zoomCursor.max > self.zoomCursor.min:
             indexFrom, indexTo = self.zoomCursor.min, self.zoomCursor.max
             #the delegate has the responsability of modify just the portion of the signal
             #given by indexFrom:indexTo for an eficient action.
@@ -843,7 +843,14 @@ class QSignalVisualizerWidget(QWidget):
 
     def selectElement(self,number=-1):
         if len(self.Elements) > number and number >= 0:
-            self.axesOscilogram.selectElement(self.Elements[number].indexFrom,self.Elements[number].indexTo,pg.mkBrush(QtGui.QColor(255, 255, 255, 150)))
+            f,t = self.Elements[number].indexFrom,self.Elements[number].indexTo
+            self.axesOscilogram.selectElement(f,t,pg.mkBrush(QtGui.QColor(255, 255, 255, 150)))
+            if f < self.mainCursor.min or t > self.mainCursor.max:
+                sizeInterval = self.mainCursor.max-self.mainCursor.min
+                self.mainCursor.min = max(0,(f+t-sizeInterval)/2)
+                self.mainCursor.max = min(self.mainCursor.min + sizeInterval,len(self.signalProcessor.signal.data))
+                self.visualChanges= True
+                self.refresh()
         else:
             self.axesOscilogram.selectElement(0,0)
 

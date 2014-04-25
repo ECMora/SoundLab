@@ -22,19 +22,13 @@ class WavFileSignal(FileAudioSignal):
 
     def open(self, path):
         """open a wav file for its processing"""
-        try:
-            FileAudioSignal.open(self, path)
-            self.read(path)
+        FileAudioSignal.open(self, path)
+        self.read(path)
 
-            self.removeDCOffset()
-            self.channelData = [self.data[:, i] for i in range(self.channels)] if self.channels > 1 else [self.data]
-            self.data = self.channelData[0]
-
-            self.path=path
-
-        except Exception as e:
-            QMessageBox.warning(QMessageBox(), "Error", "Could not load the file. "+e.message)
-            #pass
+        self.removeDCOffset()
+        self.channelData = [self.data[:, i] for i in range(self.channels)] if self.channels > 1 else [self.data]
+        self.data = self.channelData[0]
+        self.path=path
 
     def read(self, file):
         if hasattr(file, 'read'):
