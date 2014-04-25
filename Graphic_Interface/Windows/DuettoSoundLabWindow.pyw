@@ -7,8 +7,6 @@ import pyqtgraph
 import pyqtgraph.widgets.HistogramLUTWidget
 from pyqtgraph.parametertree import Parameter, ParameterTree, ParameterItem, registerParameterType
 from PyQt4.QtGui import QDialog, QMessageBox, QFileDialog, QActionGroup, QAction
-from PyQt4 import QtCore
-from PyQt4 import QtGui
 from PyQt4.QtCore import SIGNAL, pyqtSlot, QTimer
 from Graphic_Interface.Dialogs.NewFileDialog import NewFileDialog
 from Duetto_Core.AudioSignals.WavFileSignal import WavFileSignal
@@ -19,7 +17,6 @@ from Graphic_Interface.UndoRedoActions import *
 from MainWindow import Ui_DuettoMainWindow
 from Graphic_Interface.Widgets.MyPowerSpecWindow import PowerSpectrumWindow
 from Graphic_Interface.Dialogs import InsertSilenceDialog as sdialog, FilterOptionsDialog as filterdg, ChangeVolumeDialog as cvdialog
-from PyQt4 import QtCore, QtGui
 import pickle
 from WorkTheme import SerializedData
 from Graphic_Interface.Widgets.Tools import Tools
@@ -183,8 +180,11 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         separator4.setSeparator(True)
         self.widget.createContextCursor([self.actionCopy,self.actionCut,self.actionPaste,separator,
                                          self.actionPlay_Sound,self.actionPause_Sound,self.actionStop_Sound,self.actionRecord,separator2,
-                                         self.action_Reverse,self.actionSilence,self.actionInsert_Silence,separator3,self.actionOsc_Image,self.actionSpecgram_Image,self.actionCombined_Image,separator4,])
+                                         self.action_Reverse,self.actionSilence,self.actionInsert_Silence,separator3,
+                                         self.actionZoom_Cursor,self.actionPointer_Cursor,self.actionRectangular_Cursor,self.actionRectangular_Eraser,separator4,
+                                         self.actionOsc_Image,self.actionSpecgram_Image,self.actionCombined_Image])
 
+        self.actionSignalName.setText("")
         g = QActionGroup(self)
         g.addAction(self.action1_8x)
         g.addAction(self.action1_4x)
@@ -464,7 +464,9 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         end = self.ParamTree.param('Detection Settings').param('Measurement Location').param('End').value()
         signal = WavFileSignal(self.widget.signalProcessor.signal.path)
         f,t = self.widget.getIndexFromAndTo()
-        signal.data = signal.data[f:t]
+        if t > f:
+            signal.data = signal.data[f:t]
+
         segWindow = SegmentationAndClasificationWindow(parent=self, signal=signal)
         if not segWindow.rejectSignal:
             segWindow.widget.maxYOsc =  self.ParamTree.param('Oscillogram Settings').param('Amplitude(%)').param('Max').value()
@@ -523,7 +525,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     @pyqtSlot()
     def on_actionResampling_triggered(self):
         resamplingDialog = sdialog.Ui_Dialog()
-        resamplingDialogWindow = InsertSilenceDialog()
+        resamplingDialogWindow = InsertSilenceDialog(self)
         resamplingDialog.setupUi(resamplingDialogWindow)
         resamplingDialog.label.setText("Select the new Sampling Rate.")
         resamplingDialog.insertSpinBox.setValue(self.widget.signalProcessor.signal.samplingRate)
@@ -583,7 +585,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     @pyqtSlot()
     def on_actionSmart_Scale_triggered(self):
         scaleDialog = cvdialog.Ui_Dialog()
-        scaleDialogWindow = ChangeVolumeDialog()
+        scaleDialogWindow = ChangeVolumeDialog(self)
         scaleDialog.setupUi(scaleDialogWindow)
         if scaleDialogWindow.exec_():
             fade = ""
@@ -605,7 +607,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     @pyqtSlot()
     def on_actionInsert_Silence_triggered(self):
         silenceDialog = sdialog.Ui_Dialog()
-        silenceDialogWindow = InsertSilenceDialog()
+        silenceDialogWindow = InsertSilenceDialog(self)
         silenceDialog.setupUi(silenceDialogWindow)
         if silenceDialogWindow.exec_():
             start,end = self.widget.getIndexFromAndTo()
@@ -616,7 +618,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     @pyqtSlot()
     def on_actionGenerate_Pink_Noise_triggered(self):
         whiteNoiseDialog = sdialog.Ui_Dialog()
-        whiteNoiseDialogWindow = InsertSilenceDialog()
+        whiteNoiseDialogWindow = InsertSilenceDialog(self)
         whiteNoiseDialog.setupUi(whiteNoiseDialogWindow)
         whiteNoiseDialog.label.setText("Select the duration in ms \n of the Pink Noise.")
         whiteNoiseDialog.insertSpinBox.setValue(1000)
@@ -631,7 +633,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     @pyqtSlot()
     def on_actionGenerate_White_Noise_triggered(self):
         whiteNoiseDialog = sdialog.Ui_Dialog()
-        whiteNoiseDialogWindow = InsertSilenceDialog()
+        whiteNoiseDialogWindow = InsertSilenceDialog(self)
         whiteNoiseDialog.setupUi(whiteNoiseDialogWindow)
         whiteNoiseDialog.label.setText("Select the duration in ms \n of the white noise.")
         whiteNoiseDialog.insertSpinBox.setValue(1000)
@@ -643,7 +645,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     def filter_helper(self):
         filterDialog = filterdg.Ui_Dialog()
-        filterDialogWindow = InsertSilenceDialog()
+        filterDialogWindow = InsertSilenceDialog(self)
         filterDialog.setupUi(filterDialogWindow)
         if filterDialogWindow.exec_():
             type_ = None
@@ -750,8 +752,9 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.close()
 
     def closeEvent(self,event):
-        mbox = QtGui.QMessageBox(QtGui.QMessageBox.Question,"Save","Do you want to save the signal?",QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel,self)
-        if mbox.exec_() == QtGui.QMessageBox.Ok:
+        mbox = QtGui.QMessageBox(QtGui.QMessageBox.Question,"Save","Do you want to save the signal?",QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,self)
+        print(self.widget.undoRedoManager.count())
+        if self.widget.undoRedoManager.count() > 0 and mbox.exec_() == QtGui.QMessageBox.Yes:
             self.on_actionSave_triggered()
         self.close()
 
@@ -766,7 +769,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     @pyqtSlot()
     def on_actionOpen_triggered(self):
-        self.actionHighest_instant_frequency.setChecked(False)
         f = QFileDialog.getOpenFileName(self, "Select a file to open",directory = self.lastopen,
                                               filter="Wave Files (*.wav);;All Files (*)")
         self._open(f)
@@ -780,8 +782,15 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             self.filesInFolder = self.folderFiles(path_base)
             self.filesInFolderIndex = self.filesInFolder.index(str(f))
             self.widget.visibleSpectrogram = True # for restore the state lose in load
-            self.widget.open(f)
-            self.setWindowTitle("Duetto Sound Lab - " + self.widget.signalProcessor.signal.name())
+            try:
+                self.widget.open(f)
+                self.setWindowTitle("Duetto Sound Lab - " + self.widget.signalProcessor.signal.name())
+                self.actionSignalName.setText(self.widget.signalProcessor.signal.name())
+            except:
+                QMessageBox.warning(QMessageBox(), "Error", "Could not load the file.\n"+f)
+                self.widget.openNew(44100,16,1)
+
+
             valuemin = self.widget.minYSpc
             valuemax = self.widget.maxYSpc
             print((valuemax,valuemin))

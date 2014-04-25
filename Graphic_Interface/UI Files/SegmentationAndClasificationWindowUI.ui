@@ -27,6 +27,7 @@
   </property>
   <property name="styleSheet">
    <string notr="true">font: 10pt &quot;Arial&quot;;
+background-color: qlineargradient(spread:pad, x1:0.358, y1:0.017, x2:0.341, y2:1, stop:0.0397727 rgba(101, 138, 255, 129), stop:0.988636 rgba(255, 255, 255, 255));
 color: rgb(0, 0, 0);
 padding:1%;</string>
   </property>
@@ -81,6 +82,9 @@ padding:1%;</string>
        <layout class="QGridLayout" name="gridLayout_4">
         <item row="0" column="1">
          <widget class="QPushButton" name="pushButtonInputFolder">
+          <property name="styleSheet">
+           <string notr="true">background-color: rgba(94, 116, 236, 207);</string>
+          </property>
           <property name="text">
            <string>Explore</string>
           </property>
@@ -105,6 +109,9 @@ padding:1%;</string>
         </item>
         <item row="1" column="0">
          <widget class="QLineEdit" name="lineEditOutputFolder">
+          <property name="styleSheet">
+           <string notr="true">background-color: rgba(94, 116, 236, 207);</string>
+          </property>
           <property name="text">
            <string>Select the folder of output procesed files</string>
           </property>
@@ -112,6 +119,9 @@ padding:1%;</string>
         </item>
         <item row="0" column="0">
          <widget class="QLineEdit" name="lineeditFilePath">
+          <property name="styleSheet">
+           <string notr="true">background-color: rgba(94, 116, 236, 207);</string>
+          </property>
           <property name="text">
            <string>Select the folder of input audio files</string>
           </property>
@@ -119,6 +129,9 @@ padding:1%;</string>
         </item>
         <item row="1" column="1">
          <widget class="QPushButton" name="pushButtonOutputFolder">
+          <property name="styleSheet">
+           <string notr="true">background-color: rgba(94, 116, 236, 207);</string>
+          </property>
           <property name="text">
            <string>Explore</string>
           </property>
@@ -126,6 +139,9 @@ padding:1%;</string>
         </item>
         <item row="4" column="1" colspan="2">
          <widget class="QGroupBox" name="groupBox">
+          <property name="styleSheet">
+           <string notr="true">background-color: rgba(94, 116, 236, 207);</string>
+          </property>
           <property name="title">
            <string>Action</string>
           </property>
@@ -135,6 +151,9 @@ padding:1%;</string>
            </property>
            <item row="0" column="0">
             <widget class="QRadioButton" name="rbttnDetection">
+             <property name="styleSheet">
+              <string notr="true">background-color: rgba(94, 116, 236, 207);</string>
+             </property>
              <property name="text">
               <string>Detection</string>
              </property>
@@ -148,6 +167,9 @@ padding:1%;</string>
            </item>
            <item row="2" column="0">
             <widget class="QRadioButton" name="rbttnSplitFile">
+             <property name="styleSheet">
+              <string notr="true">background-color: rgba(94, 116, 236, 207);</string>
+             </property>
              <property name="text">
               <string>Split Files</string>
              </property>
@@ -155,6 +177,9 @@ padding:1%;</string>
            </item>
            <item row="2" column="1">
             <widget class="QSpinBox" name="spboxSplitTime">
+             <property name="styleSheet">
+              <string notr="true">background-color: rgba(94, 116, 236, 207);</string>
+             </property>
              <property name="suffix">
               <string>sec</string>
              </property>
@@ -181,6 +206,9 @@ padding:1%;</string>
         </item>
         <item row="0" column="2">
          <widget class="QCheckBox" name="cbxSingleFile">
+          <property name="styleSheet">
+           <string notr="true">background-color: rgba(94, 116, 236, 207);</string>
+          </property>
           <property name="text">
            <string>Single Excell</string>
           </property>
@@ -193,7 +221,8 @@ padding:1%;</string>
     <item>
      <widget class="QScrollBar" name="horizontalScrollBar">
       <property name="styleSheet">
-       <string notr="true">border-color: rgb(26, 255, 10);</string>
+       <string notr="true">border-color: rgb(26, 255, 10);
+background-color: rgb(99, 128, 255);</string>
       </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
@@ -228,22 +257,25 @@ padding:1%;</string>
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionZoomIn"/>
+   <addaction name="actionZoom_out"/>
+   <addaction name="actionZoom_out_entire_file"/>
+   <addaction name="separator"/>
    <addaction name="actionPlay_Sound"/>
    <addaction name="actionPause_Sound"/>
    <addaction name="actionStop_Sound"/>
    <addaction name="separator"/>
-   <addaction name="actionZoomIn"/>
-   <addaction name="actionZoom_out"/>
-   <addaction name="actionZoom_out_entire_file"/>
    <addaction name="actionFull_Screen"/>
-   <addaction name="separator"/>
    <addaction name="actionCombined"/>
    <addaction name="actionOscilogram"/>
    <addaction name="actionSpectogram"/>
    <addaction name="separator"/>
-   <addaction name="actionDetection"/>
+   <addaction name="actionSignalName"/>
   </widget>
   <widget class="QDockWidget" name="dockWidgetParameterTableOscilogram">
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(255, 255, 255);</string>
+   </property>
    <property name="windowTitle">
     <string>Elements</string>
    </property>
@@ -271,16 +303,6 @@ padding:1%;</string>
      <height>24</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuExport">
-    <property name="title">
-     <string>Save </string>
-    </property>
-    <addaction name="actionMeditions"/>
-    <addaction name="actionOsgram_Image"/>
-    <addaction name="actionSpecgram_Image"/>
-    <addaction name="actionCombined_Image"/>
-    <addaction name="actionExit"/>
-   </widget>
    <widget class="QMenu" name="menuParameters">
     <property name="title">
      <string>View</string>
@@ -303,7 +325,33 @@ padding:1%;</string>
     <addaction name="menuPeak_Frecuencies"/>
     <addaction name="actionFull_Screen"/>
    </widget>
-   <addaction name="menuExport"/>
+   <widget class="QMenu" name="menuDetection">
+    <property name="title">
+     <string>Detection</string>
+    </property>
+    <addaction name="actionDetection"/>
+    <addaction name="actionMeditions"/>
+   </widget>
+   <widget class="QMenu" name="menuTools">
+    <property name="title">
+     <string>Tools</string>
+    </property>
+    <addaction name="actionZoomIn"/>
+    <addaction name="actionZoom_out"/>
+    <addaction name="actionZoom_out_entire_file"/>
+    <addaction name="actionFull_Screen"/>
+    <addaction name="separator"/>
+    <addaction name="actionOsgram_Image"/>
+    <addaction name="actionSpecgram_Image"/>
+    <addaction name="actionCombined_Image"/>
+    <addaction name="separator"/>
+    <addaction name="actionZoom_Cursor"/>
+    <addaction name="actionPointer_Cursor"/>
+    <addaction name="actionRectangular_Cursor"/>
+    <addaction name="actionRectangular_Eraser"/>
+   </widget>
+   <addaction name="menuDetection"/>
+   <addaction name="menuTools"/>
    <addaction name="menuParameters"/>
   </widget>
   <action name="actionZoomIn">
@@ -361,16 +409,6 @@ padding:1%;</string>
    </property>
    <property name="text">
     <string>Combined</string>
-   </property>
-  </action>
-  <action name="actionOscillogram_Settings">
-   <property name="text">
-    <string>Oscillogram Settings</string>
-   </property>
-  </action>
-  <action name="actionSpectogram_Settings">
-   <property name="text">
-    <string>Spectrogram Settings</string>
    </property>
   </action>
   <action name="actionPlay_Sound">
@@ -454,7 +492,7 @@ padding:1%;</string>
      <normaloff>:/myappicons/Excel.png</normaloff>:/myappicons/Excel.png</iconset>
    </property>
    <property name="text">
-    <string>Meditions</string>
+    <string>Save Meditions</string>
    </property>
   </action>
   <action name="actionView_Parameters">
@@ -474,7 +512,7 @@ padding:1%;</string>
      <normaloff>:/myappicons/Process Viewer.png</normaloff>:/myappicons/Process Viewer.png</iconset>
    </property>
    <property name="text">
-    <string>Detection</string>
+    <string>Detect Elements</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+D</string>
@@ -627,6 +665,46 @@ padding:1%;</string>
    </property>
    <property name="shortcut">
     <string>Esc</string>
+   </property>
+  </action>
+  <action name="actionRectangular_Cursor">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Rectangular_Cursor</string>
+   </property>
+  </action>
+  <action name="actionRectangular_Eraser">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Rectangular_Eraser</string>
+   </property>
+  </action>
+  <action name="actionZoom_Cursor">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Zoom_Cursor</string>
+   </property>
+  </action>
+  <action name="actionPointer_Cursor">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Pointer Cursor</string>
+   </property>
+  </action>
+  <action name="actionSignalName">
+   <property name="text">
+    <string>SignalName</string>
    </property>
   </action>
   <zorder>dockWidgetParameterTableOscilogram</zorder>

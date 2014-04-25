@@ -19,6 +19,8 @@ class DuettoPlotWidget(pg.PlotWidget):
         self.getPlotItem().setMouseEnabled(x=False, y=False)
         self.threshold = pg.InfiniteLine(movable=True, angle=0, pos=0)
 
+        self.decimalPlaces = 5
+
         self.highligthedElement =  pg.LinearRegionItem([0, 0],movable=False, brush=pg.mkBrush(QColor(255,255,255)))
         self.getPlotItem().getViewBox().addItem(self.highligthedElement)
 
@@ -111,11 +113,14 @@ class DuettoPlotWidget(pg.PlotWidget):
             x = self.fromCanvasToClient(event.x())
             y = self.fromCanvasToClientY(event.y())
             info = self.getAmplitudeTimeInfo(x,y)
+            info = round(info[0],self.decimalPlaces),round(info[1],self.decimalPlaces)
             if x == -1 or y == -1:
                 self.setCursor(QCursor(QtCore.Qt.ArrowCursor))
                 return
             if self.mouseReleased:
                  info0 = self.getAmplitudeTimeInfo(self.last['pos'][0],self.last['pos'][1])
+                 info0 = round(info0[0],self.decimalPlaces),round(info0[1],self.decimalPlaces)
+
                  self.PointerOscChanged.emit(str.format('t0: {0}s  dt: {1}s  Amplitude: {2}%',info0[0],info[0] - info0[0] ,info[1]))
             else:
                 self.PointerOscChanged.emit(str.format('Time: {0}s  Amplitude: {1}%',info[0],info[1]))
@@ -166,12 +171,18 @@ class DuettoPlotWidget(pg.PlotWidget):
                 self.rectRegion['x'][1] = self.rectRegion['x'][0] + dx
                 self.rectRegion['y'][1] = self.rectRegion['y'][0] + dy
                 info = self.getAmplitudeTimeInfo(self.rectRegion['x'][0], self.rectRegion['y'][0])
+                info = round(info[0],self.decimalPlaces),round(info[1],self.decimalPlaces)
+
                 info1 = self.getAmplitudeTimeInfo(self.rectRegion['x'][1], self.rectRegion['y'][1])
+                info1 = round(info1[0],self.decimalPlaces),round(info1[1],self.decimalPlaces)
+
                 self.rectRegion['y'][0] = info[1]
                 self.rectRegion['y'][1] = info1[1]
                 self.PointerOscChanged.emit(str.format('t0: {0}s  t1: {1}s dt: {2}s  Max Amplitude: {3}% Min Amplitude: {4}% ',info[0],info1[0],info1[0] - info[0],info[1],info1[1]))
             else:
                 info = self.getAmplitudeTimeInfo(x, y)
+                info = round(info[0],self.decimalPlaces),round(info[1],self.decimalPlaces)
+
 
                 if x == -1 or y == -1:
                     self.setCursor(QCursor(QtCore.Qt.ArrowCursor))

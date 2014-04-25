@@ -26,7 +26,9 @@
    <bool>false</bool>
   </property>
   <property name="styleSheet">
-   <string notr="true"/>
+   <string notr="true">color: rgb(0, 0, 0);
+background-color: qlineargradient(spread:pad, x1:0.517, y1:0.0337727, x2:0.528682, y2:1, stop:0.0284091 rgba(88, 120, 223, 255), stop:0.988636 rgba(255, 255, 255, 250));
+selection-color: rgb(0, 0, 0);</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -76,8 +78,8 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
    <widget class="QMenu" name="menuFile">
     <property name="geometry">
      <rect>
-      <x>97</x>
-      <y>137</y>
+      <x>50</x>
+      <y>147</y>
       <width>143</width>
       <height>235</height>
      </rect>
@@ -144,7 +146,6 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
     <addaction name="separator"/>
     <addaction name="actionRedo"/>
     <addaction name="actionUndo"/>
-    <addaction name="actionSelect_all"/>
     <addaction name="separator"/>
     <addaction name="actionPositive_Values"/>
     <addaction name="actionNegative_Values"/>
@@ -230,7 +231,7 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
     </size>
    </property>
    <property name="styleSheet">
-    <string notr="true"/>
+    <string notr="true">background-color: rgb(255, 255, 255);</string>
    </property>
    <property name="floating">
     <bool>true</bool>
@@ -293,6 +294,7 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
    <addaction name="actionSegmentation_And_Clasification"/>
    <addaction name="actionFile_Up"/>
    <addaction name="actionFile_Down"/>
+   <addaction name="actionSignalName"/>
   </widget>
   <action name="actionOpen">
    <property name="icon">
@@ -340,11 +342,6 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
    </property>
    <property name="shortcut">
     <string>-</string>
-   </property>
-  </action>
-  <action name="actionSelect_all">
-   <property name="text">
-    <string>Select all</string>
    </property>
   </action>
   <action name="actionSpectogram">
@@ -506,30 +503,6 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
     <string>Ctrl+X</string>
    </property>
   </action>
-  <action name="actionHighest_frecuency">
-   <property name="checkable">
-    <bool>false</bool>
-   </property>
-   <property name="enabled">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Highest frequency</string>
-   </property>
-  </action>
-  <action name="actionHighest_instant_frequency">
-   <property name="checkable">
-    <bool>false</bool>
-   </property>
-   <property name="text">
-    <string>Highest instant frequency </string>
-   </property>
-  </action>
-  <action name="actionClear_Spectogram">
-   <property name="text">
-    <string>Clear Spectrogram</string>
-   </property>
-  </action>
   <action name="actionSettings">
    <property name="icon">
     <iconset resource="resources/icons.qrc">
@@ -555,35 +528,48 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
    <property name="text">
     <string>Reverse</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
+   </property>
   </action>
   <action name="actionInsert_Silence">
    <property name="text">
     <string>Insert Silence</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+I, Ctrl+S</string>
    </property>
   </action>
   <action name="actionSilence">
    <property name="text">
     <string>Silence</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
   </action>
   <action name="actionFilter">
    <property name="text">
     <string>Filter</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
    </property>
   </action>
   <action name="actionSmart_Scale">
    <property name="text">
     <string>Change Volume</string>
    </property>
-  </action>
-  <action name="actionNormalize">
-   <property name="text">
-    <string>Normalize</string>
+   <property name="shortcut">
+    <string>Ctrl+A</string>
    </property>
   </action>
   <action name="actionResampling">
    <property name="text">
     <string>Resampling</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R, Ctrl+S</string>
    </property>
   </action>
   <action name="actionGenerate_White_Noise">
@@ -600,11 +586,6 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
     <string>Segmentation And Clasification</string>
    </property>
   </action>
-  <action name="actionEnvelope">
-   <property name="text">
-    <string>Envelope</string>
-   </property>
-  </action>
   <action name="actionGenerate_Pink_Noise">
    <property name="text">
     <string>Pink Noise</string>
@@ -614,21 +595,16 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
    <property name="text">
     <string>Save theme as</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+T</string>
+   </property>
   </action>
   <action name="actionLoad_Theme">
    <property name="text">
     <string>Load theme</string>
    </property>
-  </action>
-  <action name="actionDeselect">
-   <property name="text">
-    <string>Deselect</string>
-   </property>
-   <property name="toolTip">
-    <string>clear a zoom selection made by user</string>
-   </property>
    <property name="shortcut">
-    <string>Ctrl+D</string>
+    <string>Ctrl+T</string>
    </property>
   </action>
   <action name="actionUndo">
@@ -655,65 +631,6 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
     <string>Ctrl+Y</string>
    </property>
   </action>
-  <action name="action1x">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>1x</string>
-   </property>
-  </action>
-  <action name="action2x">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>2x</string>
-   </property>
-  </action>
-  <action name="action4x">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>4x</string>
-   </property>
-  </action>
-  <action name="action8x">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>8x</string>
-   </property>
-  </action>
-  <action name="action1_2x">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>1/2x</string>
-   </property>
-  </action>
-  <action name="action1_4x">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>1/4x</string>
-   </property>
-  </action>
-  <action name="action1_8x">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>1/8x</string>
-   </property>
-  </action>
   <action name="actionZoom_Cursor">
    <property name="checkable">
     <bool>true</bool>
@@ -723,6 +640,9 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
    </property>
    <property name="text">
     <string>Zoom Cursor</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+Z</string>
    </property>
    <property name="autoRepeat">
     <bool>false</bool>
@@ -737,6 +657,9 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
    </property>
    <property name="text">
     <string>Pointer Cursor</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+P</string>
    </property>
    <property name="autoRepeat">
     <bool>false</bool>
@@ -756,11 +679,14 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
    <property name="text">
     <string>Full Screen</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+S, Ctrl+F</string>
+   </property>
   </action>
   <action name="actionFile_Up">
    <property name="icon">
     <iconset resource="resources/icons.qrc">
-     <normaloff>:/myappicons/Behavior.png</normaloff>:/myappicons/Behavior.png</iconset>
+     <normaloff>:/myappicons/downfile.png</normaloff>:/myappicons/downfile.png</iconset>
    </property>
    <property name="text">
     <string>File Up</string>
@@ -772,7 +698,7 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
   <action name="actionFile_Down">
    <property name="icon">
     <iconset resource="resources/icons.qrc">
-     <normaloff>:/myappicons/Behavior.png</normaloff>:/myappicons/Behavior.png</iconset>
+     <normaloff>:/myappicons/upfile.png</normaloff>:/myappicons/upfile.png</iconset>
    </property>
    <property name="text">
     <string>File Down</string>
@@ -815,6 +741,9 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
    <property name="text">
     <string>Rectangular Cursor</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+R, Ctrl+C</string>
+   </property>
   </action>
   <action name="actionRectangular_Eraser">
    <property name="checkable">
@@ -823,15 +752,88 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
    <property name="text">
     <string>Rectangular Eraser</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+R, Ctrl+C</string>
+   </property>
   </action>
   <action name="actionPositive_Values">
    <property name="text">
     <string>Positive Values</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+M</string>
+   </property>
   </action>
   <action name="actionNegative_Values">
    <property name="text">
     <string>Negative Values</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
+  </action>
+  <action name="actionSignalName">
+   <property name="text">
+    <string>SignalName</string>
+   </property>
+  </action>
+  <action name="action1_8x">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>1/8x</string>
+   </property>
+  </action>
+  <action name="action1_4x">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>1/4x</string>
+   </property>
+  </action>
+  <action name="action1_2x">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>1/2x</string>
+   </property>
+  </action>
+  <action name="action8x">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>8x</string>
+   </property>
+  </action>
+  <action name="action4x">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>4x</string>
+   </property>
+  </action>
+  <action name="action2x">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>2x</string>
+   </property>
+  </action>
+  <action name="action1x">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>1x</string>
    </property>
   </action>
   <zorder>dock_settings</zorder>

@@ -14,6 +14,7 @@ from Duetto_Core.Segmentation.Elements.Element import Element
 from Duetto_Core.SignalProcessors.SignalProcessor import SignalProcessor
 from Duetto_Core.Segmentation.Elements.OneDimensionalElement import SpectralMeasurementLocation
 from ..Dialogs.elemDetectSettings import ElemDetectSettingsDialog
+from Graphic_Interface.Widgets.Tools import Tools
 from SegmentationAndClasificationWindowUI import Ui_MainWindow
 
 
@@ -76,39 +77,48 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                                   "SpectralLocMeasureThreshold": -20,"PeaksThreshold": -20}
         self.noParametrizedmeditions = \
         [
-                      ["Start(s)", True, lambda x,d: x.startTime()],
-                      ["End(s)", True, lambda x,d: x.endTime()],
-                      ["PeekToPeek(V)", True, lambda x,d: x.peekToPeek()],
-                      ["RMS(V)", True, lambda x,d: x.rms()],
-                      ["StartToMax(s)", True,lambda x,d: x.distanceFromStartToMax()],
-                      ["Duration(s)", True,lambda x,d: x.duration()],
-                      ["Spectral Elems", True,lambda x,d: x.spectralElements()],
-                      ["Peak Freq Average(Hz)", True,lambda x,d: x.peakFreqAverage()],
-                      ["Min Freq Average(Hz)", True,lambda x,d: x.minFreqAverage(d)],
-                      ["Max Freq Average(Hz)", True,lambda x,d: x.maxFreqAverage(d)]
+                      ["Start(s)", False, lambda x,d: x.startTime()],
+                      ["End(s)", False, lambda x,d: x.endTime()],
+                      ["PeekToPeek(V)", False, lambda x,d: x.peekToPeek()],
+                      ["RMS(V)", False, lambda x,d: x.rms()],
+                      ["StartToMax(s)", False,lambda x,d: x.distanceFromStartToMax()],
+                      ["Duration(s)", False,lambda x,d: x.duration()],
+                      ["Spectral Elems", False,lambda x,d: x.spectralElements()],
+                      ["Peak Freq Average(Hz)", False,lambda x,d: x.peakFreqAverage()],
+                      ["Min Freq Average(Hz)", False,lambda x,d: x.minFreqAverage(d)],
+                      ["Max Freq Average(Hz)", False,lambda x,d: x.maxFreqAverage(d)]
+
 
         ]
         self.parametrizedMeditions = [
-            ["Max Freq(Hz)",True,lambda x,d :x.maxFreq(d)],
-            ["Min Freq(Hz)",True,lambda x,d :x.minFreq(d)],
-            ["Peak Freq(Hz)",True,lambda x,d :x.peakFreq(d)],
-            ["Peak Amplitude(dB)",True,lambda x,d :x.peakAmplitude(d)],
-            ["Band Width(Hz)",True,lambda x,d :x.bandwidth(d)],
-            ["Peaks Above",True,lambda x,d :x.peaksAbove(d)],
+            ["Max Freq(Hz)",False,lambda x,d :x.maxFreq(d)],
+            ["Min Freq(Hz)",False,lambda x,d :x.minFreq(d)],
+            ["Peak Freq(Hz)",False,lambda x,d :x.peakFreq(d)],
+            ["Peak Amplitude(dB)",False,lambda x,d :x.peakAmplitude(d)],
+            ["Band Width(Hz)",False,lambda x,d :x.bandwidth(d)],
+            ["Peaks Above",False,lambda x,d :x.peaksAbove(d)],
 
 
         ] #the spectral parameters that changes in function of the location measurements
          #funciones que reciben un elemento spectral 2 dimensiones y devuelven el valor del parametro medido
         #the order of the elements in the array of self.parameterMeasurement["Temporal"] is relevant for the visualization in the table and the
         #binding to the checkboxes in the dialog of parameter measurement
+        self.widget.axesSpecgram.PointerSpecChanged.connect(self.updateStatusBar)
+        self.widget.axesOscilogram.PointerOscChanged.connect(self.updateStatusBar)
         separator = QtGui.QAction(self)
         separator.setSeparator(True)
         separator1 = QtGui.QAction(self)
         separator1.setSeparator(True)
         separator2 = QtGui.QAction(self)
         separator2.setSeparator(True)
-        self.widget.createContextCursor([self.actionZoomIn,self.actionZoom_out,self.actionZoom_out_entire_file,separator1,self.actionCombined,self.actionOscilogram,self.actionSpectogram,separator,self.actionClear_Meditions,self.actionMeditions,self.actionView_Parameters,separator2,self.actionOsgram_Image,self.actionSpecgram_Image,self.actionCombined_Image])
+        separator3 = QtGui.QAction(self)
+        separator3.setSeparator(True)
+        self.widget.createContextCursor([self.actionZoomIn,self.actionZoom_out,self.actionZoom_out_entire_file,separator1,self.actionCombined,self.actionOscilogram,self.actionSpectogram,
+                                         separator,self.actionClear_Meditions,self.actionMeditions,self.actionView_Parameters,separator2,
+                                         self.actionZoom_Cursor,self.actionPointer_Cursor,self.actionRectangular_Cursor,self.actionRectangular_Eraser,
+                                         separator3,self.actionOsgram_Image,self.actionSpecgram_Image,self.actionCombined_Image])
         self.windowProgressDetection = QtGui.QProgressBar(self.widget)
+        self.actionSignalName.setText(self.widget.signalProcessor.signal.name())
         self.hist = pg.widgets.HistogramLUTWidget.HistogramLUTItem()
         self.hist.setImageItem(self.widget.axesSpecgram.imageItem)
 
@@ -125,6 +135,9 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.horizontalScrollBar.blockSignals(True)
         self.horizontalScrollBar.blockSignals(False)
 
+    def updateStatusBar(self,line):
+        self.statusbar.showMessage(line)
+
     @QtCore.pyqtSlot(int)
     def on_horizontalScrollBar_valueChanged(self, value):
         self.widget.changeRange(value, value + self.horizontalScrollBar.pageStep(), emit=False)
@@ -136,6 +149,46 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
             self.showFullScreen()
         else:
             self.showNormal()
+
+    @pyqtSlot()
+    def on_actionZoom_Cursor_triggered(self):
+        if self.actionZoom_Cursor.isChecked():
+            self.actionPointer_Cursor.setChecked(False)
+            self.actionRectangular_Cursor.setChecked(False)
+            self.actionRectangular_Eraser.setChecked(False)
+            self.widget.setSelectedTool(Tools.Zoom)
+        else:
+            self.actionZoom_Cursor.setChecked(True)
+
+    @pyqtSlot()
+    def on_actionPointer_Cursor_triggered(self):
+        if self.actionPointer_Cursor.isChecked():
+            self.actionZoom_Cursor.setChecked(False)
+            self.actionRectangular_Cursor.setChecked(False)
+            self.actionRectangular_Eraser.setChecked(False)
+            self.widget.setSelectedTool(Tools.PointerCursor)
+        else:
+            self.actionPointer_Cursor.setChecked(True)
+
+    @pyqtSlot()
+    def on_actionRectangular_Cursor_triggered(self):
+        if self.actionRectangular_Cursor.isChecked():
+            self.actionPointer_Cursor.setChecked(False)
+            self.actionZoom_Cursor.setChecked(False)
+            self.actionRectangular_Eraser.setChecked(False)
+            self.widget.setSelectedTool(Tools.RectangularCursor)
+        else:
+            self.actionRectangular_Cursor.setChecked(True)
+
+    @pyqtSlot()
+    def on_actionRectangular_Eraser_triggered(self):
+        if self.actionRectangular_Eraser.isChecked():
+            self.actionZoom_Cursor.setChecked(False)
+            self.actionPointer_Cursor.setChecked(False)
+            self.actionRectangular_Cursor.setChecked(False)
+            self.widget.setSelectedTool(Tools.RectangularEraser)
+        else:
+            self.actionRectangular_Eraser.setChecked(True)
 
     def getspectralParameters(self, spectralMeasurementLocation):
         """
@@ -467,10 +520,8 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         elementsDetectorDialog.cbxRms.setChecked(self.noParametrizedmeditions[3][1])#rms
         elementsDetectorDialog.cbxStartToMax.setChecked(self.noParametrizedmeditions[4][1])#distance to max
         elementsDetectorDialog.cbxDuration.setChecked(self.noParametrizedmeditions[5][1])#duration
-        elementsDetectorDialog.cbxSpectralElems.setChecked(self.noParametrizedmeditions[6][1])#duration
-        elementsDetectorDialog.cbxPeakFreqAverage.setChecked(self.noParametrizedmeditions[7][1])#peak freq average
-        elementsDetectorDialog.cbxMinFreqAverage.setChecked(self.noParametrizedmeditions[8][1])#min freq average
-        elementsDetectorDialog.cbxMaxFreqAverage.setChecked(self.noParametrizedmeditions[9][1])#max freq average
+        elementsDetectorDialog.cbxSpectralElems.setChecked(self.noParametrizedmeditions[6][1])#spectral elems
+
 
         elementsDetectorDialog.cbxMaxFreq.setChecked(self.parametrizedMeditions[0][1])#max freq
         elementsDetectorDialog.cbxMinFreq.setChecked(self.parametrizedMeditions[1][1])#min freq
@@ -489,6 +540,8 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         elementsDetectorDialog.cbxmeasurementLocationCenter.setChecked(self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.CENTER][0])#center medition
         elementsDetectorDialog.cbxmeasurementLocationQuartile25.setChecked(self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.QUARTILE25][0])#25 % medition
         elementsDetectorDialog.cbxmeasurementLocationQuartile75.setChecked(self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.QUARTILE75][0])#75 % medition
+        elementsDetectorDialog.cbxmeasurementLocationAverage.setChecked(self.noParametrizedmeditions[7][1])#75 % medition
+
 
     def getSettings(self,elementsDetectorDialog):
         self.detectionSettings["Threshold"] = elementsDetectorDialog.dsbxThreshold.value()
@@ -511,10 +564,11 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.noParametrizedmeditions[3][1] = elementsDetectorDialog.cbxRms.isChecked()#rms
         self.noParametrizedmeditions[4][1] = elementsDetectorDialog.cbxStartToMax.isChecked()#distance to max
         self.noParametrizedmeditions[5][1] = elementsDetectorDialog.cbxDuration.isChecked()#duratio
-        self.noParametrizedmeditions[6][1] = elementsDetectorDialog.cbxSpectralElems.isChecked()#duratio
-        self.noParametrizedmeditions[7][1] = elementsDetectorDialog.cbxPeakFreqAverage.isChecked()#peak freq average
-        self.noParametrizedmeditions[8][1] = elementsDetectorDialog.cbxMinFreqAverage.isChecked()#min freq average
-        self.noParametrizedmeditions[9][1] = elementsDetectorDialog.cbxMaxFreqAverage.isChecked()#max freq average
+        self.noParametrizedmeditions[6][1] = elementsDetectorDialog.cbxSpectralElems.isChecked()#duratio\
+        compute = elementsDetectorDialog.cbxmeasurementLocationAverage.isChecked()
+        self.noParametrizedmeditions[7][1] = compute#peak freq average
+        self.noParametrizedmeditions[8][1] = compute#min freq average
+        self.noParametrizedmeditions[9][1] = compute#max freq average
 
 
         self.parametrizedMeditions[0][1] = elementsDetectorDialog.cbxMaxFreq.isChecked()#max freq
