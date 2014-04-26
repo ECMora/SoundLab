@@ -68,7 +68,10 @@ class SpecgramElement(TwoDimensionalElement):
             #    quartile3.setBrush(QtGui.QBrush(self.measurementLocation.MEDITIONS[self.measurementLocation.QUARTILE75][1]))
             #    quartile3.setToolTip("Element:"+  str(self.parentnumber) +  "\n SubElement: "+str(self.number) +"\nQuartile 75% Mesurement Location")
             #    self.visual_locations.append([quartile3,True])
-        self.addPeaksVisualObjects()
+        try:
+            self.addPeaksVisualObjects()
+        except:
+            print("Could not visualize the peaks")
         if multipleSubelements:
             text = pg.TextItem(str(self.parentnumber),color=(255,255,255),anchor=(0.5,0.8))
             text.setPos(self.timeStartIndex+(self.timeEndIndex-self.timeStartIndex)/2,
@@ -109,15 +112,13 @@ class SpecgramElement(TwoDimensionalElement):
         t = self.timeEndIndex-self.timeStartIndex
         ## Define positions of nodes
         pos = []
-        adj = []
         index = np.argmax(self.matrix[:,0])
         pos.append([self.timeStartIndex,self.freqStartIndex+index])
         for i in range(1,len(self.matrix[0])):
             index = np.argmax(self.matrix[:,i])
             pos.append([self.timeStartIndex+i,self.freqStartIndex+index])
-            adj.append([i-1,i])
         pos = np.array(pos)
-        adj = np.array(adj)
+        adj = np.array([[i,i-1] for _,i in enumerate(pos,1)])
         g.setData(pos=pos, size=1, symbol='d', pxMode=False,adj=adj,pen=(pg.mkPen(self.color,width=3)))
         self.visual_peaksfreqs.append([g,False])
 

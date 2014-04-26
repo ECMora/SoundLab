@@ -535,12 +535,13 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
 
 
         #measurements
+        averageComputation = self.noParametrizedmeditions[7][1] or self.noParametrizedmeditions[8][1] or self.noParametrizedmeditions[9][1]
         elementsDetectorDialog.cbxmeasurementLocationStart.setChecked(self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.START][0])#start medition
         elementsDetectorDialog.cbxmeasurementLocationEnd.setChecked(self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.END][0])#end medition
         elementsDetectorDialog.cbxmeasurementLocationCenter.setChecked(self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.CENTER][0])#center medition
         elementsDetectorDialog.cbxmeasurementLocationQuartile25.setChecked(self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.QUARTILE25][0])#25 % medition
         elementsDetectorDialog.cbxmeasurementLocationQuartile75.setChecked(self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.QUARTILE75][0])#75 % medition
-        elementsDetectorDialog.cbxmeasurementLocationAverage.setChecked(self.noParametrizedmeditions[7][1])#75 % medition
+        elementsDetectorDialog.cbxmeasurementLocationAverage.setChecked(averageComputation)#75 % medition
 
 
     def getSettings(self,elementsDetectorDialog):
@@ -565,10 +566,10 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.noParametrizedmeditions[4][1] = elementsDetectorDialog.cbxStartToMax.isChecked()#distance to max
         self.noParametrizedmeditions[5][1] = elementsDetectorDialog.cbxDuration.isChecked()#duratio
         self.noParametrizedmeditions[6][1] = elementsDetectorDialog.cbxSpectralElems.isChecked()#duratio\
-        compute = elementsDetectorDialog.cbxmeasurementLocationAverage.isChecked()
-        self.noParametrizedmeditions[7][1] = compute#peak freq average
-        self.noParametrizedmeditions[8][1] = compute#min freq average
-        self.noParametrizedmeditions[9][1] = compute#max freq average
+
+        self.noParametrizedmeditions[7][1] = elementsDetectorDialog.cbxPeakFreq.isChecked()#peak freq average
+        self.noParametrizedmeditions[8][1] = elementsDetectorDialog.cbxMinFreq.isChecked()#min freq average
+        self.noParametrizedmeditions[9][1] = elementsDetectorDialog.cbxMaxFreq.isChecked()#max freq average
 
 
         self.parametrizedMeditions[0][1] = elementsDetectorDialog.cbxMaxFreq.isChecked()#max freq
@@ -600,6 +601,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         if elementsDetectorDialog.exec_():
             try:
+
                 self.getSettings(elementsDetectorDialog)
                 self.actionView_Threshold.setChecked(True)
                 paramsTomeasure = [x for x in self.noParametrizedmeditions if x[1]]
