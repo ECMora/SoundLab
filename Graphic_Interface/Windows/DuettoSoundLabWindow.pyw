@@ -46,7 +46,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.hist = DuettoHorizontalHistogramWidget()
         self.widget.histogram = self.hist
         self.pow_overlap = 90
-        self.Theme = 'Utils\\Themes\\RedBlackTheme.dth'
+        self.Theme = os.path.join(os.path.join("Utils","Themes"),"RedBlackTheme.dth")
         self.defaultTheme = self.DeSerializeTheme(self.Theme)
         self.widget.spec_background = self.defaultTheme.spec_background
         self.widget.osc_background = self.defaultTheme.osc_background
@@ -85,7 +85,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 {'name': 'Min', 'type': 'float', 'value': 0, 'step': 0.1},
                 {'name': 'Max', 'type': 'float', 'value': 22, 'step': 0.1},
             ]},
-            {'name': 'FFT size', 'type': 'list', 'default':512, 'values': { 'Automatic': 512,"32":32,"64": 64,"128": 128, "512": 512, "1024": 1024, '2048': 2048,'4096': 4096}, 'value': 'Automatic'},
+            {'name': 'FFT size', 'type': 'list', 'default':512, 'values': { 'Automatic': 512,"32":32,"64": 64,"128": 128,"256":256 ,"512": 512, "1024": 1024, '2048': 2048,'4096': 4096}, 'value': 'Automatic'},
             {'name': 'FFT window', 'type': 'list', 'value': self.widget.specgramSettings.windows[0],'default':self.widget.specgramSettings.windows[0],'values': {"blackman": self.widget.specgramSettings.windows[3],"rectangular": self.widget.specgramSettings.windows[1], "Hanning": self.widget.specgramSettings.windows[2], "Hamming": self.widget.specgramSettings.windows[0],'bartlett':self.widget.specgramSettings.windows[4],'kaiser':self.widget.specgramSettings.windows[5],'None':self.widget.specgramSettings.windows[6]}},
             {'name': 'FFT overlap', 'type': 'int', 'value':-1, 'limits': (-1, 99)},
             {'name': 'Threshold(dB)', 'type': 'group', 'children': [
@@ -102,7 +102,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         {'name': 'Power Spectrum Settings', 'type': 'group', 'children': [
 
-             {'name': 'FFT size', 'type': 'list','default':512, 'values': { 'Automatic': 512,"32":32,"64": 64,"128": 128, "512": 512, "1024": 1024, '2048': 2048,'4096': 4096}, 'value': 2},
+             {'name': 'FFT size', 'type': 'list','default':512, 'values': { 'Automatic': 512,"32":32,"64": 64,"128":128,"256":256, "1024": 1024, "512": 512, '2048': 2048,'4096': 4096}, 'value': 2},
              {'name': 'FFT window', 'type': 'list', 'value':self.widget.specgramSettings.windows[0],'default':self.widget.specgramSettings.windows[0],'values': {"blackman": self.widget.specgramSettings.windows[3],"rectangular": self.widget.specgramSettings.windows[1], "Hanning": self.widget.specgramSettings.windows[2], "Hamming": self.widget.specgramSettings.windows[0],'bartlett':self.widget.specgramSettings.windows[4],'kaiser':self.widget.specgramSettings.windows[5],'None':self.widget.specgramSettings.windows[6]}},
              {'name': 'FFT overlap', 'type': 'int', 'value':self.pow_overlap, 'limits' : (-1,100)},
              {'name': 'Grid', 'type': 'group', 'children': [
@@ -238,30 +238,33 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             self.ParamTree.param('Spectrogram Settings').param('Threshold(dB)').param('Max').setValue(reg[1])
 
     def SerializeTheme(self,filename):
-        center = self.ParamTree.param('Detection Settings').param('Measurement Location').param('Center').value()
-        start = self.ParamTree.param('Detection Settings').param('Measurement Location').param('Start').value()
-        quart1 = self.ParamTree.param('Detection Settings').param('Measurement Location').param('Quartile25').value()
-        quart2 = self.ParamTree.param('Detection Settings').param('Measurement Location').param('Quartile75').value()
-        end = self.ParamTree.param('Detection Settings').param('Measurement Location').param('End').value()
-        data = SerializedData(self.widget.osc_background,self.widget.osc_color,self.widget.osc_gridx,
-                              self.widget.osc_gridy,self.pow_spec_backg,self.pow_spec_plotColor,self.pow_spec_gridx,
-                              self.pow_spec_gridy,self.widget.spec_background, self.widget.spec_gridx, self.widget.spec_gridy,
-                              self.hist.item.gradient.saveState(),self.hist.item.region.getRegion(),end,center,start,quart1,quart2)
-        file = open(filename,'wb')
-        pickle.dump(data,file)
-        file.close()
+        if filename:
+            center = self.ParamTree.param('Detection Settings').param('Measurement Location').param('Center').value()
+            start = self.ParamTree.param('Detection Settings').param('Measurement Location').param('Start').value()
+            quart1 = self.ParamTree.param('Detection Settings').param('Measurement Location').param('Quartile25').value()
+            quart2 = self.ParamTree.param('Detection Settings').param('Measurement Location').param('Quartile75').value()
+            end = self.ParamTree.param('Detection Settings').param('Measurement Location').param('End').value()
+            data = SerializedData(self.widget.osc_background,self.widget.osc_color,self.widget.osc_gridx,
+                                  self.widget.osc_gridy,self.pow_spec_backg,self.pow_spec_plotColor,self.pow_spec_gridx,
+                                  self.pow_spec_gridy,self.widget.spec_background, self.widget.spec_gridx, self.widget.spec_gridy,
+                                  self.hist.item.gradient.saveState(),self.hist.item.region.getRegion(),end,center,start,quart1,quart2)
+            file = open(filename,'wb')
+            pickle.dump(data,file)
+            file.close()
 
     def DeSerializeTheme(self,filename):
-        file = open(filename,'rb')
-        data = pickle.load(file)
-        file.close()
-        return data
+        if filename:
+            file = open(filename,'rb')
+            data = pickle.load(file)
+            file.close()
+            return data
 
 
     @pyqtSlot()
     def on_actionSave_theme_triggered(self):
-        filename = QFileDialog.getSaveFileName(parent=self,caption="Save Theme",filter="Duetto Theme Files (*.dth);;All Files (*)")
-        self.SerializeTheme(filename)
+        filename = QFileDialog.getSaveFileName(parent=self,caption="Save Theme",directory = os.path.join("Utils","Themes"),filter="Duetto Theme Files (*.dth);;All Files (*)")
+        if filename:
+            self.SerializeTheme(filename)
 
     def updateMyTheme(self,data):
         self.widget.spec_background = data.spec_background
@@ -300,7 +303,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     @pyqtSlot()
     def on_actionLoad_Theme_triggered(self):
-        filename = QFileDialog.getOpenFileName(parent=self, caption="Load Theme",filter="Duetto Theme Files (*.dth);;All Files (*)")
+        filename = QFileDialog.getOpenFileName(parent=self,directory = os.path.join("Utils","Themes"), caption="Load Theme",filter="Duetto Theme Files (*.dth);;All Files (*)")
         data = self.DeSerializeTheme(filename)
         self.updateMyTheme(data)
 
@@ -464,8 +467,9 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         end = self.ParamTree.param('Detection Settings').param('Measurement Location').param('End').value()
         signal = WavFileSignal(self.widget.signalProcessor.signal.path)
         f,t = self.widget.getIndexFromAndTo()
+
         if t > f:
-            signal.data = signal.data[f:t]
+            signal.data = self.widget.signalProcessor.signal.data[f:t]
 
         segWindow = SegmentationAndClasificationWindow(parent=self, signal=signal)
         if not segWindow.rejectSignal:
@@ -821,7 +825,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     @pyqtSlot()
     def on_actionSave_triggered(self):
-        fname = unicode(QFileDialog.getSaveFileName())
+        fname = unicode(QFileDialog.getSaveFileName(self,"Save signal",self.widget.signalProcessor.signal.name(),"*.wav"))
         if fname:
             self.widget.save(fname)
 

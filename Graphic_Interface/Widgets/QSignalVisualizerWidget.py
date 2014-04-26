@@ -192,6 +192,7 @@ class QSignalVisualizerWidget(QWidget):
         all changes made by the theme are made in this place
         """
         self.osc_background = theme.osc_background
+        self.spec_background = theme.spec_background
         self.osc_color = theme.osc_plot
         self.osc_gridx = theme.osc_GridX
         self.osc_gridy = theme.osc_GridY
@@ -772,8 +773,8 @@ class QSignalVisualizerWidget(QWidget):
         self.setEnvelopeVisibility(True)
 
     def getTransformedEnvelope(self,array):
-        self.envelopeFactor = (2.0**(self.signalProcessor.signal.bitDepth))/array[np.argmax(array)]
-        return (self.envelopeFactor*array-2**(self.signalProcessor.signal.bitDepth-1))
+        self.envelopeFactor = (2.0**(self.signalProcessor.signal.bitDepth)*self.maxYOsc/100)/array[np.argmax(array)]
+        return (self.envelopeFactor*array-2**(self.signalProcessor.signal.bitDepth-1)*self.maxYOsc/100)
 
     def setEnvelopeVisibility(self,bool):
         inaxes = self.envelopeCurve in self.axesOscilogram.items()

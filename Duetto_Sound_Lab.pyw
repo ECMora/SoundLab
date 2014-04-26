@@ -1,17 +1,18 @@
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 import PyQt4.phonon as phonon
-
+import os
 from Graphic_Interface.Windows.DuettoSoundLabWindow import DuettoSoundLabWindow
 from Graphic_Interface.Windows.PresentationSlogan.presentation import Ui_MainWindow
 
 
 class Duetto_Sound_Lab(QMainWindow, Ui_MainWindow):
-    def __init__(self,parent=None):
+    def __init__(self,parent=None,path=""):
         super(Duetto_Sound_Lab, self).__init__(parent)
         self.setupUi(self)
         self.setWindowFlags(Qt.SplashScreen)
-        self.videoPlayer.load(phonon.Phonon.MediaSource("Utils\\PresentationVideo\\duettoinit.wmv"))
+        if path != "":
+            self.videoPlayer.load(phonon.Phonon.MediaSource(path))
 
 
 if __name__ == '__main__':
@@ -19,18 +20,21 @@ if __name__ == '__main__':
     app = QApplication(sys.argv)
 
     dmw = DuettoSoundLabWindow()
-
-    duetto_sound_lab_window = Duetto_Sound_Lab()
+    path = os.path.join(os.path.join("Utils","PresentationVideo"),"duettoinit.mp4")
+    duetto_sound_lab_window = Duetto_Sound_Lab(path=path)
     # show it
+    if os.path.exists(path):
+        def s():
+            dmw.show()
+            duetto_sound_lab_window.close()
 
-    def s():
-        dmw.show()
+        duetto_sound_lab_window.videoPlayer.finished.connect(s)
+        duetto_sound_lab_window.show()
+        duetto_sound_lab_window.videoPlayer.play()
+    else:
         duetto_sound_lab_window.close()
-
-    duetto_sound_lab_window.videoPlayer.finished.connect(s)
-    duetto_sound_lab_window.show()
-    duetto_sound_lab_window.videoPlayer.play()
-    s()
+        dmw.show()
+    #s()
     # create the GUI application
     # show it
     #dmw.show()
