@@ -64,7 +64,7 @@ class CommonSignalProcessor(SignalProcessor):
          the negatives(positives) values of the signal in the interval [indexFrom,indexTo] are eliminated
          Example:
          data=[1,-22,3,-4,5]
-         reverse data
+         result data
          data=[5,0,3,0,1]
         """
         if indexTo == -1:
@@ -72,6 +72,19 @@ class CommonSignalProcessor(SignalProcessor):
         self.checkIndexes(indexFrom, indexTo)
         for i in range(indexFrom,indexTo):
             self.signal.data[i] = self.signal.data[i] if (self.signal.data[i] > 0 and sign > 0) or (self.signal.data[i] < 0 and sign < 0) else 0
+        return self.signal
+
+    def changeSign(self, indexFrom, indexTo=-1):
+        """
+         change the sign of the  values of the signal in the interval [indexFrom,indexTo]
+         Example:
+         data=[1,-22,3,-4,5]
+         data=[-1,22,-3,4,-5]
+        """
+        if indexTo == -1:
+            indexTo = len(self.signal.data)
+        self.checkIndexes(indexFrom, indexTo)
+        self.signal.data[indexFrom:indexTo] = -self.signal.data[indexFrom:indexTo]
         return self.signal
 
 

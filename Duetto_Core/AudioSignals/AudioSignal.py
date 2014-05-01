@@ -46,6 +46,8 @@ class AudioSignal:
             dt = np.dtype(s)
             self.data = np.zeros(samplingRate * duration, dt)
 
+
+
     def name(self):
         return os.path.basename(str(self.path))
 

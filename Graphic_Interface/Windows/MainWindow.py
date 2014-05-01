@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'E:\Biologia\SISTEMA\DuettoSystem\Graphic_Interface\UI Files\MainWindow.ui'
 #
-# Created: Fri Apr 25 12:01:02 2014
+# Created: Tue Apr 29 23:30:56 2014
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -312,6 +312,10 @@ class Ui_DuettoMainWindow(object):
         self.action1x.setCheckable(True)
         self.action1x.setChecked(True)
         self.action1x.setObjectName(_fromUtf8("action1x"))
+        self.actionChange_Sign = QtGui.QAction(DuettoMainWindow)
+        self.actionChange_Sign.setObjectName(_fromUtf8("actionChange_Sign"))
+        self.actionChangePlayStatus = QtGui.QAction(DuettoMainWindow)
+        self.actionChangePlayStatus.setObjectName(_fromUtf8("actionChangePlayStatus"))
         self.menuFile.addAction(self.actionNew)
         self.menuFile.addAction(self.actionOpen)
         self.menuFile.addAction(self.actionSave)
@@ -344,6 +348,7 @@ class Ui_DuettoMainWindow(object):
         self.menuEdit.addSeparator()
         self.menuEdit.addAction(self.actionPositive_Values)
         self.menuEdit.addAction(self.actionNegative_Values)
+        self.menuEdit.addAction(self.actionChange_Sign)
         self.menuEdit.addSeparator()
         self.menuEdit.addAction(self.action_Reverse)
         self.menuEdit.addAction(self.actionInsert_Silence)
@@ -446,7 +451,7 @@ class Ui_DuettoMainWindow(object):
         self.actionPause_Sound.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "P", None, QtGui.QApplication.UnicodeUTF8))
         self.actionZoom_out_entire_file.setText(QtGui.QApplication.translate("DuettoMainWindow", "Zoom out entire file", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSave.setText(QtGui.QApplication.translate("DuettoMainWindow", "Save as", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionSave.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Ctrl+S", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSave.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Ctrl+G", None, QtGui.QApplication.UnicodeUTF8))
         self.actionCopy.setText(QtGui.QApplication.translate("DuettoMainWindow", "Copy", None, QtGui.QApplication.UnicodeUTF8))
         self.actionCopy.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Ctrl+C", None, QtGui.QApplication.UnicodeUTF8))
         self.actionPaste.setText(QtGui.QApplication.translate("DuettoMainWindow", "Paste", None, QtGui.QApplication.UnicodeUTF8))
@@ -454,12 +459,12 @@ class Ui_DuettoMainWindow(object):
         self.actionCut.setText(QtGui.QApplication.translate("DuettoMainWindow", "Cut", None, QtGui.QApplication.UnicodeUTF8))
         self.actionCut.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Ctrl+X", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSettings.setText(QtGui.QApplication.translate("DuettoMainWindow", "Settings", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionSettings.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Ctrl+Shift+S", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSettings.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Ctrl+Space", None, QtGui.QApplication.UnicodeUTF8))
         self.actionRecord.setText(QtGui.QApplication.translate("DuettoMainWindow", "Record", None, QtGui.QApplication.UnicodeUTF8))
         self.action_Reverse.setText(QtGui.QApplication.translate("DuettoMainWindow", "Reverse", None, QtGui.QApplication.UnicodeUTF8))
         self.action_Reverse.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Ctrl+R", None, QtGui.QApplication.UnicodeUTF8))
         self.actionInsert_Silence.setText(QtGui.QApplication.translate("DuettoMainWindow", "Insert Silence", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionInsert_Silence.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Ctrl+I, Ctrl+S", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionInsert_Silence.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Ctrl+I", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSilence.setText(QtGui.QApplication.translate("DuettoMainWindow", "Silence", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSilence.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Ctrl+S", None, QtGui.QApplication.UnicodeUTF8))
         self.actionFilter.setText(QtGui.QApplication.translate("DuettoMainWindow", "Filter", None, QtGui.QApplication.UnicodeUTF8))
@@ -467,7 +472,6 @@ class Ui_DuettoMainWindow(object):
         self.actionSmart_Scale.setText(QtGui.QApplication.translate("DuettoMainWindow", "Change Volume", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSmart_Scale.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Ctrl+A", None, QtGui.QApplication.UnicodeUTF8))
         self.actionResampling.setText(QtGui.QApplication.translate("DuettoMainWindow", "Resampling", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionResampling.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Ctrl+R, Ctrl+S", None, QtGui.QApplication.UnicodeUTF8))
         self.actionGenerate_White_Noise.setText(QtGui.QApplication.translate("DuettoMainWindow", "White Noise", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSegmentation_And_Clasification.setText(QtGui.QApplication.translate("DuettoMainWindow", "Segmentation And Clasification", None, QtGui.QApplication.UnicodeUTF8))
         self.actionGenerate_Pink_Noise.setText(QtGui.QApplication.translate("DuettoMainWindow", "Pink Noise", None, QtGui.QApplication.UnicodeUTF8))
@@ -493,13 +497,9 @@ class Ui_DuettoMainWindow(object):
         self.actionSpecgram_Image.setText(QtGui.QApplication.translate("DuettoMainWindow", "Specgram Image", None, QtGui.QApplication.UnicodeUTF8))
         self.actionCombined_Image.setText(QtGui.QApplication.translate("DuettoMainWindow", "Combined Image", None, QtGui.QApplication.UnicodeUTF8))
         self.actionRectangular_Cursor.setText(QtGui.QApplication.translate("DuettoMainWindow", "Rectangular Cursor", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionRectangular_Cursor.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Ctrl+R, Ctrl+C", None, QtGui.QApplication.UnicodeUTF8))
         self.actionRectangular_Eraser.setText(QtGui.QApplication.translate("DuettoMainWindow", "Rectangular Eraser", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionRectangular_Eraser.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Ctrl+R, Ctrl+C", None, QtGui.QApplication.UnicodeUTF8))
         self.actionPositive_Values.setText(QtGui.QApplication.translate("DuettoMainWindow", "Positive Values", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionPositive_Values.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Ctrl+M", None, QtGui.QApplication.UnicodeUTF8))
         self.actionNegative_Values.setText(QtGui.QApplication.translate("DuettoMainWindow", "Negative Values", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionNegative_Values.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Ctrl+N", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSignalName.setText(QtGui.QApplication.translate("DuettoMainWindow", "SignalName", None, QtGui.QApplication.UnicodeUTF8))
         self.action1_8x.setText(QtGui.QApplication.translate("DuettoMainWindow", "1/8x", None, QtGui.QApplication.UnicodeUTF8))
         self.action1_4x.setText(QtGui.QApplication.translate("DuettoMainWindow", "1/4x", None, QtGui.QApplication.UnicodeUTF8))
@@ -508,6 +508,9 @@ class Ui_DuettoMainWindow(object):
         self.action4x.setText(QtGui.QApplication.translate("DuettoMainWindow", "4x", None, QtGui.QApplication.UnicodeUTF8))
         self.action2x.setText(QtGui.QApplication.translate("DuettoMainWindow", "2x", None, QtGui.QApplication.UnicodeUTF8))
         self.action1x.setText(QtGui.QApplication.translate("DuettoMainWindow", "1x", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionChange_Sign.setText(QtGui.QApplication.translate("DuettoMainWindow", "Change Sign", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionChangePlayStatus.setText(QtGui.QApplication.translate("DuettoMainWindow", "changePlayStatus", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionChangePlayStatus.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Space", None, QtGui.QApplication.UnicodeUTF8))
 
 from Graphic_Interface.Widgets.QSignalVisualizerWidget import QSignalVisualizerWidget
 import icons_rc

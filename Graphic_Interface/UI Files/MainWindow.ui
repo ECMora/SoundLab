@@ -149,6 +149,7 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
     <addaction name="separator"/>
     <addaction name="actionPositive_Values"/>
     <addaction name="actionNegative_Values"/>
+    <addaction name="actionChange_Sign"/>
     <addaction name="separator"/>
     <addaction name="action_Reverse"/>
     <addaction name="actionInsert_Silence"/>
@@ -464,7 +465,7 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
     <string>Save as</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+S</string>
+    <string>Ctrl+G</string>
    </property>
   </action>
   <action name="actionCopy">
@@ -512,7 +513,7 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
     <string>Settings</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Shift+S</string>
+    <string>Ctrl+Space</string>
    </property>
   </action>
   <action name="actionRecord">
@@ -537,7 +538,7 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
     <string>Insert Silence</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+I, Ctrl+S</string>
+    <string>Ctrl+I</string>
    </property>
   </action>
   <action name="actionSilence">
@@ -567,9 +568,6 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
   <action name="actionResampling">
    <property name="text">
     <string>Resampling</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+R, Ctrl+S</string>
    </property>
   </action>
   <action name="actionGenerate_White_Noise">
@@ -741,9 +739,6 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
    <property name="text">
     <string>Rectangular Cursor</string>
    </property>
-   <property name="shortcut">
-    <string>Ctrl+R, Ctrl+C</string>
-   </property>
   </action>
   <action name="actionRectangular_Eraser">
    <property name="checkable">
@@ -752,24 +747,15 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
    <property name="text">
     <string>Rectangular Eraser</string>
    </property>
-   <property name="shortcut">
-    <string>Ctrl+R, Ctrl+C</string>
-   </property>
   </action>
   <action name="actionPositive_Values">
    <property name="text">
     <string>Positive Values</string>
    </property>
-   <property name="shortcut">
-    <string>Ctrl+M</string>
-   </property>
   </action>
   <action name="actionNegative_Values">
    <property name="text">
     <string>Negative Values</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+N</string>
    </property>
   </action>
   <action name="actionSignalName">
@@ -834,6 +820,19 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
    </property>
    <property name="text">
     <string>1x</string>
+   </property>
+  </action>
+  <action name="actionChange_Sign">
+   <property name="text">
+    <string>Change Sign</string>
+   </property>
+  </action>
+  <action name="actionChangePlayStatus">
+   <property name="text">
+    <string>changePlayStatus</string>
+   </property>
+   <property name="shortcut">
+    <string>Space</string>
    </property>
   </action>
   <zorder>dock_settings</zorder>
