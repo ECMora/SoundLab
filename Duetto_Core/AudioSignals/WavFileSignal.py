@@ -1,7 +1,9 @@
 from PyQt4.QtGui import QMessageBox
 from scipy.io import wavfile
 from numpy.compat import asbytes
+from numpy import copy
 import struct
+import random
 from Duetto_Core.AudioSignals.FileAudioSignal import FileAudioSignal
 
 
@@ -12,13 +14,15 @@ class WavFileSignal(FileAudioSignal):
 
     # if path is supplied the rest of the arguments are ignored
     # otherwise a new signal is created with the value of the other arguments
-    def __init__(self, path=None, samplingRate=44100, duration=5, bitDepth=8, whiteNoise=False):
+    def __init__(self, path=None, samplingRate=44100, duration=5, bitDepth=16, whiteNoise=False):
         FileAudioSignal.__init__(self)
+        self.small = None
         if path:
             self.open(path)
         else:
             self.openNew(samplingRate, duration, bitDepth, whiteNoise)
         self.userData = []
+        self.small = None
 
     def open(self, path):
         """open a wav file for its processing"""
@@ -29,6 +33,19 @@ class WavFileSignal(FileAudioSignal):
         self.channelData = [self.data[:, i] for i in range(self.channels)] if self.channels > 1 else [self.data]
         self.data = self.channelData[0]
         self.path=path
+
+    def smallSignal(self):
+        if self.small is not None:
+            return self.small
+        s = WavFileSignal(samplingRate=self.samplingRate, duration=0.02, bitDepth=self.bitDepth, whiteNoise=False)
+        #s.data = copy(self.data[:self.samplingRate/100])
+        for i in range(10):
+            x = random.randint(0,10)
+            index =i*len(self.data)/10+x*len(self.data)/100
+            ms = int(self.samplingRate/1000)
+            s.data[i*ms:(i+1)*ms] = self.data[index:index+ms]
+        self.small = s
+        return s
 
     def read(self, file):
         if hasattr(file, 'read'):

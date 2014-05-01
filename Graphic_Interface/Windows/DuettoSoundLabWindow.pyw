@@ -178,8 +178,10 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         separator3.setSeparator(True)
         separator4 = QtGui.QAction(self)
         separator4.setSeparator(True)
+
+        self.widget.setStyleSheet(self.styleSheet())
         self.widget.createContextCursor([self.actionCopy,self.actionCut,self.actionPaste,separator,
-                                         self.actionPlay_Sound,self.actionPause_Sound,self.actionStop_Sound,self.actionRecord,separator2,
+                                         self.actionNegative_Values,self.actionPositive_Values,self.actionChange_Sign,separator2,
                                          self.action_Reverse,self.actionSilence,self.actionInsert_Silence,separator3,
                                          self.actionZoom_Cursor,self.actionPointer_Cursor,self.actionRectangular_Cursor,self.actionRectangular_Eraser,separator4,
                                          self.actionOsc_Image,self.actionSpecgram_Image,self.actionCombined_Image])
@@ -259,6 +261,10 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             file.close()
             return data
 
+
+    @pyqtSlot()
+    def on_actionChangePlayStatus_triggered(self):
+        self.widget.changePlayStatus()
 
     @pyqtSlot()
     def on_actionSave_theme_triggered(self):
@@ -557,6 +563,14 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         start, end = self.widget.getIndexFromAndTo()
         self.widget.undoRedoManager.addAction(Absolute_ValuesAction(self.widget.signalProcessor.signal,start,end,1))
         self.widget.absoluteValue(1)
+        self.hist.item.region.lineMoved()
+        self.hist.item.region.lineMoveFinished()
+
+    @pyqtSlot()
+    def on_actionChange_Sign_triggered(self):
+        start, end = self.widget.getIndexFromAndTo()
+        self.widget.undoRedoManager.addAction(ChangeSignAction(self.widget.signalProcessor.signal,start,end))
+        self.widget.changeSign()
         self.hist.item.region.lineMoved()
         self.hist.item.region.lineMoveFinished()
 

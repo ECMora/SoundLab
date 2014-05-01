@@ -15,7 +15,7 @@ from Duetto_Core.Segmentation.Detectors.ElementsDetectors.OneDimensionalElements
 from Duetto_Core.Segmentation.Elements.Element import Element
 from Duetto_Core.SignalProcessors.CommonSignalProcessor import CommonSignalProcessor
 from Duetto_Core.SignalProcessors.FilterSignalProcessor import *
-from Duetto_Core.SignalProcessors.SignalProcessor import SignalProcessor, envelope
+from Duetto_Core.SignalProcessors.SignalProcessor import SignalProcessor
 from Duetto_Core.SignalProcessors.EditionSignalProcessor import EditionSignalProcessor
 
 from Duetto_Core.SpecgramSettings import SpecgramSettings
@@ -244,6 +244,13 @@ class QSignalVisualizerWidget(QWidget):
             #                                        self._from_osc_to_spec(self.zoomCursor.max)])
         elif QKeyEvent.key() == Qt.Key_Space:
             self.switchPlayStatus()
+
+    def changePlayStatus(self):
+        if self.signalProcessor.signal.playStatus == self.signalProcessor.signal.PAUSED or \
+           self.signalProcessor.signal.playStatus == self.signalProcessor.signal.STOPPED:
+            self.play()
+        elif self.signalProcessor.signal.playStatus == self.signalProcessor.signal.PLAYING:
+            self.pause()
 
     def play(self):
         if self.signalProcessor.signal.playStatus == self.signalProcessor.signal.PAUSED:
@@ -540,6 +547,7 @@ class QSignalVisualizerWidget(QWidget):
 
     def refresh(self, dataChanged=True, updateOscillogram=True, updateSpectrogram=True, partial=False):
         # perform some heavy calculations
+        self.mainCursor.max = min(self.mainCursor.max,len(self.signalProcessor.signal.data))
         width = self.axesSpecgram.viewBox.width()
         if self.visibleSpectrogram and updateSpectrogram and self.signalProcessor.signal \
            and self.signalProcessor.signal.opened() and self.signalProcessor.signal.playStatus != AudioSignal.RECORDING\
@@ -821,6 +829,10 @@ class QSignalVisualizerWidget(QWidget):
     def absoluteValue(self,sign):
         self.signalProcessingAction(CommonSignalProcessor(self.signalProcessor.signal).absoluteValue,sign)
 
+    def changeSign(self):
+        self.signalProcessingAction(CommonSignalProcessor(self.signalProcessor.signal).changeSign)
+
+
     #endregion
 
     #region DETECTION
@@ -855,13 +867,15 @@ class QSignalVisualizerWidget(QWidget):
         else:
             self.axesOscilogram.selectElement(0,0)
 
-    def detectElements(self,threshold=20, decay=1, minSize=0, softfactor=5, merge_factor=0,threshold2=0, threshold_spectral=95, pxx=[], freqs=[], bins=[], minsize_spectral=(0, 0),location= None, progress=None,findSpectralSublements = True):
+    def detectElements(self,threshold=20, decay=1, minSize=0, softfactor=5, merge_factor=50,threshold2=0, threshold_spectral=95, pxx=[], freqs=[], bins=[], minsize_spectral=(0, 0),location= None, progress=None,findSpectralSublements = True):
         self.clearCursors()
         self.elements_detector.detect(self.signalProcessor.signal,0,len(self.signalProcessor.signal.data), threshold, decay, minSize, softfactor, merge_factor,threshold2,
                                       threshold_spectral=threshold_spectral, minsize_spectral=minsize_spectral,location=location,progress=progress,findSpectralSublements = findSpectralSublements, specgramSettings= self.specgramSettings)
 
         self.envelopeCurve.setData(self.getTransformedEnvelope(self.elements_detector.envelope))
         self.setEnvelopeVisibility(True)
+        self.axesOscilogram.threshold.setValue(self.elements_detector.getThreshold())
+
         self.axesOscilogram.setVisibleThreshold(True)
 
         for c in self.elements_detector.elements():

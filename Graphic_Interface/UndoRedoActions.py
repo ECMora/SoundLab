@@ -67,6 +67,19 @@ class ReverseAction(UndoRedoAction):
         CommonSignalProcessor(self.signal).reverse(self.start,self.end)
 
 
+class ChangeSignAction(UndoRedoAction):
+    def __init__(self,signal,start,end):
+        self.signal = signal
+        self.start = start
+        self.end = end
+
+    def undo(self):
+        CommonSignalProcessor(self.signal).changeSign(self.start,self.end)
+
+    def redo(self):
+        CommonSignalProcessor(self.signal).changeSign(self.start,self.end)
+
+
 class SilenceAction(UndoRedoAction):
     def __init__(self,signal,start,end):
         self.signal = signal
@@ -89,7 +102,7 @@ class InsertSilenceAction(UndoRedoAction):
         self.ms = ms
 
     def undo(self):
-        self.signal.data= np.concatenate((self.signal.data[:self.start],self.signal.data[self.start+int(self.ms*self.signal.samplingRate/1000.0):]))
+        self.signal.data = np.concatenate((self.signal.data[:self.start],self.signal.data[self.start+int(self.ms*self.signal.samplingRate/1000.0):]))
 
     def redo(self):
         CommonSignalProcessor(self.signal).insertSilence(self.start,ms=self.ms)

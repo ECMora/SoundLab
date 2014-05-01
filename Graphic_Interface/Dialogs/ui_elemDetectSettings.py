@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'E:\Biologia\SISTEMA\DuettoSystem\Graphic_Interface\UI Files\ui_elemDetectSettings.ui'
 #
-# Created: Fri Apr 25 11:57:17 2014
+# Created: Tue Apr 29 17:11:33 2014
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -134,6 +134,10 @@ class Ui_Dialog(object):
         self.horizontalLayout_4.addWidget(self.label_3)
         self.dsbxMergeFactor = QtGui.QDoubleSpinBox(self.dockWidgetContents_2)
         self.dsbxMergeFactor.setStyleSheet(_fromUtf8("background-color: rgb(244, 244, 244);"))
+        self.dsbxMergeFactor.setDecimals(0)
+        self.dsbxMergeFactor.setMaximum(49.0)
+        self.dsbxMergeFactor.setSingleStep(1.0)
+        self.dsbxMergeFactor.setProperty("value", 5.0)
         self.dsbxMergeFactor.setObjectName(_fromUtf8("dsbxMergeFactor"))
         self.horizontalLayout_4.addWidget(self.dsbxMergeFactor)
         self.horizontalLayout_6.addLayout(self.horizontalLayout_4)
@@ -396,7 +400,7 @@ class Ui_Dialog(object):
         self.label_5.setText(QtGui.QApplication.translate("Dialog", "Soft factor:", None, QtGui.QApplication.UnicodeUTF8))
         self.label_3.setToolTip(QtGui.QApplication.translate("Dialog", "<html><head/><body><p>Merge elements closer than this factor</p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
         self.label_3.setText(QtGui.QApplication.translate("Dialog", "Merge factor:", None, QtGui.QApplication.UnicodeUTF8))
-        self.dsbxMergeFactor.setSuffix(QtGui.QApplication.translate("Dialog", " ms", None, QtGui.QApplication.UnicodeUTF8))
+        self.dsbxMergeFactor.setSuffix(QtGui.QApplication.translate("Dialog", " %", None, QtGui.QApplication.UnicodeUTF8))
         self.dockWidgetEspgram.setWindowTitle(QtGui.QApplication.translate("Dialog", "Espectrogram", None, QtGui.QApplication.UnicodeUTF8))
         self.label_8.setToolTip(QtGui.QApplication.translate("Dialog", "<html><head/><body><p>The percentile threshold to detect subelements in spectrogram. Regions above this value are detected</p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
         self.label_8.setText(QtGui.QApplication.translate("Dialog", "Threshold:", None, QtGui.QApplication.UnicodeUTF8))

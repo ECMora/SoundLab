@@ -16,6 +16,7 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
             self.widget.specgramSettings.NFFT = parent.widget.specgramSettings.NFFT
             self.widget.specgramSettings.overlap = parent.widget.specgramSettings.overlap
             self.widget.specgramSettings.window = parent.widget.specgramSettings.window
+            self.widget.signalProcessor.signal = parent.widget.signalProcessor.signal
         else:
             self.widget.specgramSettings.overlap = 50
 
@@ -41,6 +42,11 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         self.widget.setEnvelopeVisibility(True)
 
         self.widget.open("Utils\\Didactic Signals\\recognition.wav")
+        #self.widget.signalProcessor.signal = self.widget.signalProcessor.signal.smallSignal()
+        #self.widget.mainCursor.min,self.widget.mainCursor.max = 0,len(self.widget.signalProcessor.signal.data)
+
+
+
         self.widget.axesOscilogram.setVisibleThreshold(True)
 
         self.widget.axesOscilogram.threshold.sigPositionChangeFinished.connect(self.updateThreshold)

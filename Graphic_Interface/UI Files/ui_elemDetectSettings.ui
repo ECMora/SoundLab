@@ -49,7 +49,152 @@ font: 75 10pt &quot;MS Shell Dlg 2&quot;;</string>
       <string/>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
-      <item row="0" column="0">
+      <item row="4" column="1">
+       <widget class="QDockWidget" name="dockWidgetEspgram">
+        <property name="enabled">
+         <bool>true</bool>
+        </property>
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">background-color: rgb(255, 255, 255);</string>
+        </property>
+        <property name="floating">
+         <bool>false</bool>
+        </property>
+        <property name="features">
+         <set>QDockWidget::AllDockWidgetFeatures</set>
+        </property>
+        <property name="windowTitle">
+         <string>Espectrogram</string>
+        </property>
+        <widget class="QWidget" name="dockWidgetContents_3">
+         <property name="styleSheet">
+          <string notr="true">background-color: qconicalgradient(cx:0.949, cy:0.0852273, angle:26.3, stop:0 rgba(100, 144, 255, 255), stop:0.994318 rgba(245, 245, 245, 255));</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_3">
+          <item row="1" column="1">
+           <layout class="QHBoxLayout" name="horizontalLayout_9" stretch="0,1">
+            <item>
+             <widget class="QLabel" name="label_8">
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The percentile threshold to detect subelements in spectrogram. Regions above this value are detected&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">background-color: rgb(244, 244, 244);</string>
+              </property>
+              <property name="text">
+               <string>Threshold:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QDoubleSpinBox" name="dsbxThresholdSpec">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">background-color: rgb(244, 244, 244);</string>
+              </property>
+              <property name="wrapping">
+               <bool>false</bool>
+              </property>
+              <property name="buttonSymbols">
+               <enum>QAbstractSpinBox::UpDownArrows</enum>
+              </property>
+              <property name="suffix">
+               <string>%</string>
+              </property>
+              <property name="minimum">
+               <double>1.000000000000000</double>
+              </property>
+              <property name="singleStep">
+               <double>5.000000000000000</double>
+              </property>
+              <property name="value">
+               <double>95.000000000000000</double>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="2" column="1">
+           <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="0,1,1">
+            <item>
+             <widget class="QLabel" name="label_7">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="toolTip">
+               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Minimum size of spectral subelements in ms and Khz&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">background-color: rgb(244, 244, 244);</string>
+              </property>
+              <property name="text">
+               <string>Minimum size:</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QDoubleSpinBox" name="dsbxminSizeTime">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">background-color: rgb(244, 244, 244);</string>
+              </property>
+              <property name="suffix">
+               <string> ms</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QDoubleSpinBox" name="dsbxMinSizeFreq">
+              <property name="enabled">
+               <bool>true</bool>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">background-color: rgb(244, 244, 244);</string>
+              </property>
+              <property name="suffix">
+               <string> kHz</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </item>
+          <item row="0" column="1">
+           <widget class="QCheckBox" name="cbxSpectralSubelements">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
+            <property name="styleSheet">
+             <string notr="true">background-color: rgb(244, 244, 244);</string>
+            </property>
+            <property name="text">
+             <string>Detect Spectral Subelements</string>
+            </property>
+            <property name="checked">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+      </item>
+      <item row="1" column="1">
        <widget class="QDockWidget" name="dockWidgetOscilogram">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -267,7 +412,19 @@ font: 75 10pt &quot;MS Shell Dlg 2&quot;;</string>
                  <string notr="true">background-color: rgb(244, 244, 244);</string>
                 </property>
                 <property name="suffix">
-                 <string> ms</string>
+                 <string> %</string>
+                </property>
+                <property name="decimals">
+                 <number>0</number>
+                </property>
+                <property name="maximum">
+                 <double>49.000000000000000</double>
+                </property>
+                <property name="singleStep">
+                 <double>1.000000000000000</double>
+                </property>
+                <property name="value">
+                 <double>5.000000000000000</double>
                 </property>
                </widget>
               </item>
@@ -279,152 +436,7 @@ font: 75 10pt &quot;MS Shell Dlg 2&quot;;</string>
         </widget>
        </widget>
       </item>
-      <item row="1" column="0">
-       <widget class="QDockWidget" name="dockWidgetEspgram">
-        <property name="enabled">
-         <bool>true</bool>
-        </property>
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">background-color: rgb(255, 255, 255);</string>
-        </property>
-        <property name="floating">
-         <bool>false</bool>
-        </property>
-        <property name="features">
-         <set>QDockWidget::AllDockWidgetFeatures</set>
-        </property>
-        <property name="windowTitle">
-         <string>Espectrogram</string>
-        </property>
-        <widget class="QWidget" name="dockWidgetContents_3">
-         <property name="styleSheet">
-          <string notr="true">background-color: qconicalgradient(cx:0.949, cy:0.0852273, angle:26.3, stop:0 rgba(100, 144, 255, 255), stop:0.994318 rgba(245, 245, 245, 255));</string>
-         </property>
-         <layout class="QGridLayout" name="gridLayout_3">
-          <item row="1" column="1">
-           <layout class="QHBoxLayout" name="horizontalLayout_9" stretch="0,1">
-            <item>
-             <widget class="QLabel" name="label_8">
-              <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The percentile threshold to detect subelements in spectrogram. Regions above this value are detected&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">background-color: rgb(244, 244, 244);</string>
-              </property>
-              <property name="text">
-               <string>Threshold:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QDoubleSpinBox" name="dsbxThresholdSpec">
-              <property name="enabled">
-               <bool>true</bool>
-              </property>
-              <property name="sizePolicy">
-               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
-                <horstretch>0</horstretch>
-                <verstretch>0</verstretch>
-               </sizepolicy>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">background-color: rgb(244, 244, 244);</string>
-              </property>
-              <property name="wrapping">
-               <bool>false</bool>
-              </property>
-              <property name="buttonSymbols">
-               <enum>QAbstractSpinBox::UpDownArrows</enum>
-              </property>
-              <property name="suffix">
-               <string>%</string>
-              </property>
-              <property name="minimum">
-               <double>1.000000000000000</double>
-              </property>
-              <property name="singleStep">
-               <double>5.000000000000000</double>
-              </property>
-              <property name="value">
-               <double>95.000000000000000</double>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item row="2" column="1">
-           <layout class="QHBoxLayout" name="horizontalLayout_8" stretch="0,1,1">
-            <item>
-             <widget class="QLabel" name="label_7">
-              <property name="enabled">
-               <bool>true</bool>
-              </property>
-              <property name="toolTip">
-               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Minimum size of spectral subelements in ms and Khz&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">background-color: rgb(244, 244, 244);</string>
-              </property>
-              <property name="text">
-               <string>Minimum size:</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QDoubleSpinBox" name="dsbxminSizeTime">
-              <property name="enabled">
-               <bool>true</bool>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">background-color: rgb(244, 244, 244);</string>
-              </property>
-              <property name="suffix">
-               <string> ms</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QDoubleSpinBox" name="dsbxMinSizeFreq">
-              <property name="enabled">
-               <bool>true</bool>
-              </property>
-              <property name="styleSheet">
-               <string notr="true">background-color: rgb(244, 244, 244);</string>
-              </property>
-              <property name="suffix">
-               <string> kHz</string>
-              </property>
-             </widget>
-            </item>
-           </layout>
-          </item>
-          <item row="0" column="1">
-           <widget class="QCheckBox" name="cbxSpectralSubelements">
-            <property name="enabled">
-             <bool>true</bool>
-            </property>
-            <property name="styleSheet">
-             <string notr="true">background-color: rgb(244, 244, 244);</string>
-            </property>
-            <property name="text">
-             <string>Detect Spectral Subelements</string>
-            </property>
-            <property name="checked">
-             <bool>false</bool>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </widget>
-       </widget>
-      </item>
-      <item row="3" column="0">
+      <item row="6" column="1">
        <widget class="QDockWidget" name="dockWidgetParametrers">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -883,6 +895,15 @@ color: rgb(255, 255, 255);</string>
           </item>
          </layout>
         </widget>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QTreeWidget" name="treeWidgetDetectionItems">
+        <column>
+         <property name="text">
+          <string notr="true">1</string>
+         </property>
+        </column>
        </widget>
       </item>
      </layout>
