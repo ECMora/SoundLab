@@ -11,7 +11,7 @@ from Duetto_Core.AudioSignals.AudioSignal import AudioSignal
 from Duetto_Core.Cursors.IntervalCursor import IntervalCursor
 from Duetto_Core.Cursors.PointerCursor import PointerCursor
 from Duetto_Core.Cursors.RectangularCursor import RectangularCursor
-from Duetto_Core.Segmentation.Detectors.ElementsDetectors.OneDimensionalElementsDetector import OneDimensionalElementsDetector
+from Duetto_Core.Segmentation.Detectors.ElementsDetectors.OneDimensionalElementsDetector import OneDimensionalElementsDetector, DetectionType
 from Duetto_Core.Segmentation.Elements.Element import Element
 from Duetto_Core.SignalProcessors.CommonSignalProcessor import CommonSignalProcessor
 from Duetto_Core.SignalProcessors.FilterSignalProcessor import *
@@ -867,14 +867,17 @@ class QSignalVisualizerWidget(QWidget):
         else:
             self.axesOscilogram.selectElement(0,0)
 
-    def detectElements(self,threshold=20, decay=1, minSize=0, softfactor=5, merge_factor=50,threshold2=0, threshold_spectral=95, pxx=[], freqs=[], bins=[], minsize_spectral=(0, 0),location= None, progress=None,findSpectralSublements = True):
+    def detectElements(self,threshold=20, decay=1, minSize=0, detectionsettings=None,softfactor=5, merge_factor=50,threshold2=0, threshold_spectral=95, pxx=[], freqs=[], bins=[], minsize_spectral=(0, 0),location= None, progress=None,findSpectralSublements = True):
         self.clearCursors()
-        self.elements_detector.detect(self.signalProcessor.signal,0,len(self.signalProcessor.signal.data), threshold, decay, minSize, softfactor, merge_factor,threshold2,
-                                      threshold_spectral=threshold_spectral, minsize_spectral=minsize_spectral,location=location,progress=progress,findSpectralSublements = findSpectralSublements, specgramSettings= self.specgramSettings)
+        self.elements_detector.detect(self.signalProcessor.signal,0,len(self.signalProcessor.signal.data),threshold= threshold,detectionsettings=detectionsettings,decay=decay,minSize= minSize,softfactor= softfactor,merge_factor= merge_factor,secondThreshold=threshold2,threshold_spectral=threshold_spectral,
+                                      minsize_spectral = minsize_spectral,location=location,progress=progress,findSpectralSublements = findSpectralSublements, specgramSettings= self.specgramSettings)
 
-        self.envelopeCurve.setData(self.getTransformedEnvelope(self.elements_detector.envelope))
-        self.setEnvelopeVisibility(True)
-        self.axesOscilogram.threshold.setValue(self.elements_detector.getThreshold())
+        if detectionsettings is None or detectionsettings.detectiontype == DetectionType.Envelope_Abs_Decay_Averaged or detectionsettings.detectiontype == DetectionType.Envelope_Rms:
+            self.envelopeCurve.setData(self.getTransformedEnvelope(self.elements_detector.envelope))
+            self.setEnvelopeVisibility(True)
+            self.axesOscilogram.threshold.setValue(self.elements_detector.getThreshold())
+        else:
+            self.setEnvelopeVisibility(False)
 
         self.axesOscilogram.setVisibleThreshold(True)
 
@@ -940,8 +943,15 @@ class QSignalVisualizerWidget(QWidget):
 
     def save(self, fname):
         chunk = self.cursorsData()
-        self.signalProcessor.signal = self.signalProcessor.signal.toWav()
         self.signalProcessor.signal.save(fname, chunk)
+
+    def saveSelected(self,fname):
+        indexF,indexTo = self.getIndexFromAndTo()
+        chunk = self.cursorsData()
+        signal = WavFileSignal(samplingRate=self.signalProcessor.signal.samplingRate,whiteNoise=False)
+        signal.data = self.signalProcessor.signal.data[indexF:indexTo]
+        signal.save(fname,chunk)
+
 
     def cursorsData(self):
         cursData = PointerCursor().intToByteArray(len(self.cursors))

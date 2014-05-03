@@ -3,6 +3,7 @@ from PyQt4.QtCore import pyqtSlot
 from PyQt4.QtGui import QDialog
 import pyqtgraph as pg
 from Duetto_Core.AudioSignals.WavFileSignal import WavFileSignal
+from Duetto_Core.Segmentation.Detectors.ElementsDetectors.OneDimensionalElementsDetector import DetectionSettings, DetectionType,AutomaticThresholdType
 from Graphic_Interface.Dialogs.ui_elemDetectSettings import Ui_Dialog
 
 
@@ -19,6 +20,14 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
             self.widget.signalProcessor.signal = parent.widget.signalProcessor.signal
         else:
             self.widget.specgramSettings.overlap = 50
+        self.detectortypeData = [DetectionType.LocalMax,DetectionType.LocalHoldTime,DetectionType.LocalMaxProportion,
+                             DetectionType.IntervalRms,DetectionType.IntervalMaxMedia,DetectionType.IntervalMaxProportion,DetectionType.IntervalFrecuencies,
+                             DetectionType.Envelope_Abs_Decay_Averaged,DetectionType.Envelope_Rms]
+
+        self.detectionSettings = DetectionSettings(DetectionType.Envelope_Abs_Decay_Averaged,AutomaticThresholdType.Global_MaxMean_Sdv)
+        self.cmbxDetectionMethod.setCurrentIndex(7)
+
+        self.cmbxDetectionMethod.currentIndexChanged.connect(self.changeDetectionMethod)
 
         self.widget.setSelectedTool("OscilogramThreshold")
         #espectrogram
@@ -30,6 +39,7 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         self.dsbxThreshold.valueChanged.connect(self.updateThresholdLine)
 
         self.cbxSpectralSubelements.stateChanged.connect(self.updateGraphsVisibility)
+        self.checboxAutomaticThreshold.stateChanged.connect(self.changeDetectionMethod)
 
         self.dsbxThreshold2.valueChanged.connect(self.detect)
         self.dsbxDecay.valueChanged.connect(self.detect)
@@ -41,9 +51,11 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         self.widget.visibleOscilogram = True
         self.widget.setEnvelopeVisibility(True)
 
-        self.widget.open("Utils\\Didactic Signals\\recognition.wav")
-        #self.widget.signalProcessor.signal = self.widget.signalProcessor.signal.smallSignal()
-        #self.widget.mainCursor.min,self.widget.mainCursor.max = 0,len(self.widget.signalProcessor.signal.data)
+        self.widget.signalProcessor.signal = self.widget.signalProcessor.signal.smallSignal()
+        if self.widget.signalProcessor.signal is None:
+            self.widget.open("Utils\\Didactic Signals\\recognition.wav")
+        else:
+            self.widget.mainCursor.min,self.widget.mainCursor.max = 0,len(self.widget.signalProcessor.signal.data)
 
 
 
@@ -63,7 +75,11 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         self.widget.refresh()
 
 
+    def changeDetectionMethod(self,text):
+        self.detectionSettings.detectiontype = self.detectortypeData[self.cmbxDetectionMethod.currentIndex()]
+        self.detectionSettings.automaticthresholdtype = AutomaticThresholdType.Global_MaxMean if  self.checboxAutomaticThreshold.isChecked() else AutomaticThresholdType.UserDefined
 
+        self.detect()
 
     def updateGraphsVisibility(self):
         self.widget.visibleSpectrogram = self.cbxSpectralSubelements.isChecked()
@@ -114,7 +130,7 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
 
     @pyqtSlot()
     def detect(self):
-        self.widget.detectElements(threshold=abs(self.dsbxThreshold.value()), decay=self.dsbxDecay.value(), minSize= self.dsbxMinSize.value(), softfactor=self.sbxSoftFactor.value(), merge_factor=self.dsbxMergeFactor.value(),threshold2=abs(self.dsbxThreshold2.value())
+        self.widget.detectElements(threshold=abs(self.dsbxThreshold.value()),detectionsettings=self.detectionSettings, decay=self.dsbxDecay.value(), minSize= self.dsbxMinSize.value(), softfactor=self.sbxSoftFactor.value(), merge_factor=self.dsbxMergeFactor.value(),threshold2=abs(self.dsbxThreshold2.value())
         ,threshold_spectral=self.dsbxThresholdSpec.value(), minsize_spectral=(self.dsbxMinSizeFreq.value(),self.dsbxminSizeTime.value()),findSpectralSublements = self.cbxSpectralSubelements.isChecked())
         self.widget.refresh()
 

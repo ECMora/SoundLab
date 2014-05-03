@@ -844,6 +844,12 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             self.widget.save(fname)
 
     @pyqtSlot()
+    def on_actionSave_selected_interval_as_triggered(self):
+        fname = unicode(QFileDialog.getSaveFileName(self,"Save signal","Selection-"+self.widget.signalProcessor.signal.name(),"*.wav"))
+        if fname:
+            self.widget.saveSelected(fname)
+
+    @pyqtSlot()
     def on_actionPlay_Sound_triggered(self):
         self.widget.play()
 

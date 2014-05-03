@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'E:\Biologia\SISTEMA\DuettoSystem\Graphic_Interface\UI Files\MainWindow.ui'
 #
-# Created: Tue Apr 29 23:30:56 2014
+# Created: Sat May 03 15:34:36 2014
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -51,7 +51,7 @@ class Ui_DuettoMainWindow(object):
         self.menubar.setStyleSheet(_fromUtf8(""))
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuFile = QtGui.QMenu(self.menubar)
-        self.menuFile.setGeometry(QtCore.QRect(50, 147, 143, 235))
+        self.menuFile.setGeometry(QtCore.QRect(203, 155, 158, 257))
         self.menuFile.setAutoFillBackground(False)
         self.menuFile.setStyleSheet(_fromUtf8(""))
         self.menuFile.setTearOffEnabled(False)
@@ -316,8 +316,12 @@ class Ui_DuettoMainWindow(object):
         self.actionChange_Sign.setObjectName(_fromUtf8("actionChange_Sign"))
         self.actionChangePlayStatus = QtGui.QAction(DuettoMainWindow)
         self.actionChangePlayStatus.setObjectName(_fromUtf8("actionChangePlayStatus"))
+        self.actionSave_selected_interval_as = QtGui.QAction(DuettoMainWindow)
+        self.actionSave_selected_interval_as.setIcon(icon14)
+        self.actionSave_selected_interval_as.setObjectName(_fromUtf8("actionSave_selected_interval_as"))
         self.menuFile.addAction(self.actionNew)
         self.menuFile.addAction(self.actionOpen)
+        self.menuFile.addAction(self.actionSave_selected_interval_as)
         self.menuFile.addAction(self.actionSave)
         self.menuFile.addAction(self.actionFile_Up)
         self.menuFile.addAction(self.actionFile_Down)
@@ -511,6 +515,7 @@ class Ui_DuettoMainWindow(object):
         self.actionChange_Sign.setText(QtGui.QApplication.translate("DuettoMainWindow", "Change Sign", None, QtGui.QApplication.UnicodeUTF8))
         self.actionChangePlayStatus.setText(QtGui.QApplication.translate("DuettoMainWindow", "changePlayStatus", None, QtGui.QApplication.UnicodeUTF8))
         self.actionChangePlayStatus.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Space", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSave_selected_interval_as.setText(QtGui.QApplication.translate("DuettoMainWindow", "Save selected as", None, QtGui.QApplication.UnicodeUTF8))
 
 from Graphic_Interface.Widgets.QSignalVisualizerWidget import QSignalVisualizerWidget
 import icons_rc

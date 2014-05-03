@@ -157,16 +157,15 @@ class OscilogramElement(OneDimensionalElement):
         indexFrom,indexTo the optionally limits of the interval
         """
         if(self.parameters["rms"] is None):
-            n = self.indexTo-self.indexFrom
             globalSum = 0.0
             intervalSum = 0.0
-            for i in range(n):
-                intervalSum += (self.signal.data[self.indexFrom+i]**2)
+            for i in range(self.indexFrom, self.indexTo):
+                intervalSum += (self.signal.data[i]**2)
                 if i % 10 == 0:
-                    globalSum += intervalSum * 1.0 / n
+                    globalSum += intervalSum * 1.0 / max(self.indexTo-self.indexFrom,1)
                     intervalSum = 0.0
 
-            globalSum += intervalSum * 1.0 / n
+            globalSum += intervalSum * 1.0 / max(self.indexTo-self.indexFrom,1)
             self.parameters["rms"] = round(np.sqrt(globalSum)*1.0/(2**self.signal.bitDepth),self.parameterDecimalPlaces)
         return self.parameters["rms"]
 
