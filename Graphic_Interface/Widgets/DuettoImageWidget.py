@@ -33,7 +33,10 @@ class DuettoImageWidget(GraphicsView):
         l.setVerticalSpacing(0)
         l.setContentsMargins(0, 0, 0, 0)
         self.viewBox = ViewBox()
+
         self.imageItem = ImageItem()
+        self.viewBox.setMenuEnabled(False)
+
         self.viewBox.addItem(self.imageItem)
         l.addItem(self.viewBox, 0, 1)
         self.centralWidget.setLayout(l)

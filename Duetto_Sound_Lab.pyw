@@ -2,6 +2,7 @@ from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 import PyQt4.phonon as phonon
 import os
+from datetime import  time
 from Graphic_Interface.Windows.DuettoSoundLabWindow import DuettoSoundLabWindow
 from Graphic_Interface.Windows.PresentationSlogan.presentation import Ui_MainWindow
 
@@ -15,12 +16,15 @@ class Duetto_Sound_Lab(QMainWindow, Ui_MainWindow):
             self.videoPlayer.load(phonon.Phonon.MediaSource(path))
 
 
+def validLicense():
+    return True
+
+
 if __name__ == '__main__':
     import sys
     app = QApplication(sys.argv)
 
     dmw = DuettoSoundLabWindow()
-
     path = os.path.join(os.path.join("Utils","PresentationVideo"),"duettoinit.mp4")
     duetto_sound_lab_window = Duetto_Sound_Lab(path=path if os.path.exists(path) else "")
 
@@ -37,8 +41,13 @@ if __name__ == '__main__':
     s()
     # create the GUI application
     # show it
-
-    sys.exit(app.exec_())
+    if validLicense():
+        sys.exit(app.exec_())
+    else:
+         QMessageBox.warning(QMessageBox(), "Error",
+                                        "Your Duetto Sound Lab Licence its expired or has some troubles.\n"
+                                        " Could be because your trial version is over. Try to open again.")
+         sys.exit(0)
 
     # start the Qt main loop execution, exiting from this script
     # with the same return code of Qt application

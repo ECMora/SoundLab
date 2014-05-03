@@ -1,7 +1,7 @@
 from PyQt4.QtGui import QMessageBox
 from scipy.io import wavfile
 from numpy.compat import asbytes
-from numpy import copy
+from numpy import copy,argmax,argmin,sum,abs
 import struct
 import random
 from Duetto_Core.AudioSignals.FileAudioSignal import FileAudioSignal
@@ -35,15 +35,26 @@ class WavFileSignal(FileAudioSignal):
         self.path=path
 
     def smallSignal(self):
+        if  len(self.data) < 0.1 * self.samplingRate: #<100 ms
+            return self
         if self.small is not None:
             return self.small
-        s = WavFileSignal(samplingRate=self.samplingRate, duration=0.02, bitDepth=self.bitDepth, whiteNoise=False)
-        #s.data = copy(self.data[:self.samplingRate/100])
-        for i in range(10):
+        print("Hola")
+        s = WavFileSignal(samplingRate=self.samplingRate, duration=0.04, bitDepth=self.bitDepth, whiteNoise=False)
+
+        #10 intervals of 3 ms sep by 1 ms of  silence
+        i_max,media = argmax(self.data),sum(abs(self.data))/len(self.data)
+
+        ms = int(self.samplingRate/1000)
+
+        s.data[16*ms : 19*ms] = self.data[max(i_max-1.5*ms , 0): min(i_max+1.5*ms,len(self.data))]
+
+        for i in range(0,10):
+            if i == 4:
+                continue
             x = random.randint(0,10)
             index =i*len(self.data)/10+x*len(self.data)/100
-            ms = int(self.samplingRate/1000)
-            s.data[i*ms:(i+1)*ms] = self.data[index:index+ms]
+            s.data[i * 4 * ms: (i * 4 + 3) * ms] = self.data[index:index + 3 * ms]
         self.small = s
         return s
 

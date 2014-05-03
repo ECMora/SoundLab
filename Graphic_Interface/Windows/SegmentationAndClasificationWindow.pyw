@@ -9,7 +9,7 @@ from PyQt4.QtGui import QFileDialog
 import pyqtgraph as pg
 from Duetto_Core.AudioSignals.AudioSignal import AudioSignal
 from Duetto_Core.AudioSignals.WavFileSignal import WavFileSignal
-from Duetto_Core.Segmentation.Detectors.ElementsDetectors.OneDimensionalElementsDetector import OneDimensionalElementsDetector
+from Duetto_Core.Segmentation.Detectors.ElementsDetectors.OneDimensionalElementsDetector import OneDimensionalElementsDetector, DetectionType, AutomaticThresholdType, DetectionSettings
 from Duetto_Core.Segmentation.Elements.Element import Element
 from Duetto_Core.SignalProcessors.SignalProcessor import SignalProcessor
 from Duetto_Core.Segmentation.Elements.OneDimensionalElement import SpectralMeasurementLocation
@@ -67,6 +67,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.show()
 
         self.parameterTable_rowcolor_odd,self.parameterTable_rowcolor_even = QtGui.QColor(0, 0, 255,150),QtGui.QColor(0, 255, 0, 150)
+        self.algorithmDetectorSettings = DetectionSettings(DetectionType.Envelope_Abs_Decay_Averaged,AutomaticThresholdType.Global_MaxMean_Sdv)
 
         self.spectralMeasurementLocation = SpectralMeasurementLocation()
         self.widget.axesOscilogram.threshold.sigPositionChangeFinished.connect(self.updateThreshold)
@@ -498,13 +499,13 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     def setSettings(self,elementsDetectorDialog):
         elementsDetectorDialog.load_Theme(self.theme)
-
         elementsDetectorDialog.dsbxThreshold.setValue(self.detectionSettings["Threshold"])
         elementsDetectorDialog.sbxSoftFactor.setValue(self.detectionSettings["SoftFactor"])
         elementsDetectorDialog.dsbxMinSize.setValue(self.detectionSettings["MinSize"])
         elementsDetectorDialog.dsbxThreshold2.setValue(self.detectionSettings["Threshold2"])
         elementsDetectorDialog.dsbxMergeFactor.setValue(self.detectionSettings["MergeFactor"])
         elementsDetectorDialog.dsbxDecay.setValue(self.detectionSettings["Decay"])
+        elementsDetectorDialog.detectionSettings =  self.algorithmDetectorSettings
         #specgram settings
         elementsDetectorDialog.dsbxThresholdSpec.setValue(self.detectionSettings["ThresholdSpectral"])
         elementsDetectorDialog.dsbxMinSizeFreq.setValue(self.detectionSettings["minSizeFreqSpectral"])
@@ -550,6 +551,8 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.detectionSettings["MergeFactor"] = elementsDetectorDialog.dsbxMergeFactor.value()
         self.detectionSettings["SoftFactor"] = elementsDetectorDialog.sbxSoftFactor.value()
         self.detectionSettings["Decay"] = elementsDetectorDialog.dsbxDecay.value()
+        self.algorithmDetectorSettings = elementsDetectorDialog.detectionSettings
+
         #spectral
         self.detectionSettings["ThresholdSpectral"] = elementsDetectorDialog.dsbxThresholdSpec.value()
         self.detectionSettings["minSizeFreqSpectral"] = elementsDetectorDialog.dsbxMinSizeFreq.value()
@@ -602,14 +605,15 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
             try:
 
                 self.getSettings(elementsDetectorDialog)
+
                 self.actionView_Threshold.setChecked(True)
                 paramsTomeasure = [x for x in self.noParametrizedmeditions if x[1]]
                 spectralparamsTomeasure = self.getspectralParameters(self.spectralMeasurementLocation)
                 self.windowProgressDetection.resize(self.widget.width()/3, self.windowProgressDetection.size().height())
                 self.windowProgressDetection.move(self.widget.x()+self.widget.width()/3,self.widget.y()-self.windowProgressDetection.height()/2 + self.widget.height()/2)
                 self.windowProgressDetection.show()
-                self.widget.detectElements(abs(self.detectionSettings["Threshold"]), self.detectionSettings["Decay"],   self.detectionSettings["MinSize"],
-                                           self.detectionSettings["SoftFactor"], self.detectionSettings["MergeFactor"], abs(self.detectionSettings["Threshold2"]),
+                self.widget.detectElements(threshold=abs(self.detectionSettings["Threshold"]),detectionsettings=self.algorithmDetectorSettings,decay= self.detectionSettings["Decay"], minSize= self.detectionSettings["MinSize"],
+                                           softfactor=self.detectionSettings["SoftFactor"], merge_factor=self.detectionSettings["MergeFactor"], threshold2= abs(self.detectionSettings["Threshold2"]),
                                            threshold_spectral=self.detectionSettings["ThresholdSpectral"],
                                            minsize_spectral=(self.detectionSettings["minSizeFreqSpectral"],self.detectionSettings["minSizeTimeSpectral"]),
                                            location= self.spectralMeasurementLocation, progress=self.updateDetectionProgressBar, findSpectralSublements = elementsDetectorDialog.cbxSpectralSubelements.isChecked())
