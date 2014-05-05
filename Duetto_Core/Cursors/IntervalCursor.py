@@ -1,6 +1,5 @@
 from numpy import concatenate
 from Duetto_Core.Cursors.Cursor import Cursor
-from numpy.compat import asbytes
 
 
 class IntervalCursor(Cursor):

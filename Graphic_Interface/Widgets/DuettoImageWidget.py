@@ -2,7 +2,6 @@ from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import SIGNAL, pyqtSignal
 from PyQt4.QtGui import QCursor
 from pyqtgraph import GraphicsView
-from pyqtgraph.graphicsItems.AxisItem import AxisItem
 from pyqtgraph.graphicsItems.ImageItem import ImageItem
 from pyqtgraph.graphicsItems.ViewBox import ViewBox
 import numpy

@@ -1,6 +1,4 @@
-from string import join
 from numpy import *
-from numpy.ma import left_shift
 from Duetto_Core.Storable import Storable
 
 class LineType:

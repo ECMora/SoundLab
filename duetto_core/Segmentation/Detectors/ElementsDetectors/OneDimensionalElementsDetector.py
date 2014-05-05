@@ -1,4 +1,3 @@
-from PyQt4.QtCore import pyqtSignal
 from numpy import *
 import matplotlib.mlab as mlab
 from Duetto_Core.Segmentation.Detectors.ElementsDetectors.ElementsDetector import ElementsDetector
@@ -59,7 +58,7 @@ class OneDimensionalElementsDetector(ElementsDetector):
             indexTo = len(signal.data)
         decay = int(decay*signal.samplingRate/1000)  #salto para evitar caidas locales
         if abs(threshold) < 0.01:  # to prevent numeric errors
-            self.computeThreshold(signal.data[indexFrom : indexTo],method=DetectionSettings.Global_MaxMean)
+            self.computeThreshold(signal.data[indexFrom : indexTo],method=AutomaticThresholdType.Global_MaxMean)
             threshold = self.getThreshold(0)
         else:
             #translate the threshold from dB scale to V value

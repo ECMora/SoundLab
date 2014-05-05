@@ -611,7 +611,7 @@ class QSignalVisualizerWidget(QWidget):
                                  / self._Z.shape[1]
             YSpec = np.searchsorted(self.specgramSettings.freqs, [self.minYSpc*1000, self.maxYSpc*1000])
 
-            self.axesSpecgram.imageItem.setImage(numpy.transpose(self._Z))
+            self.axesSpecgram.imageItem.setImage(np.transpose(self._Z))
             self.axesSpecgram.imageItem.setRect(QRectF(self._from_osc_to_spec(self.mainCursor.min), 0,
                                                        self._Z.shape[1], self._Z.shape[0]))
 

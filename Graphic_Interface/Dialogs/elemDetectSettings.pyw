@@ -2,7 +2,6 @@ from math import log10
 from PyQt4.QtCore import pyqtSlot
 from PyQt4.QtGui import QDialog
 import pyqtgraph as pg
-from Duetto_Core.AudioSignals.WavFileSignal import WavFileSignal
 from Duetto_Core.Segmentation.Detectors.ElementsDetectors.OneDimensionalElementsDetector import DetectionSettings, DetectionType,AutomaticThresholdType
 from Graphic_Interface.Dialogs.ui_elemDetectSettings import Ui_Dialog
 

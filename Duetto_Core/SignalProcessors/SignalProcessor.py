@@ -1,9 +1,5 @@
-from math import *
 import numpy as np
-import matplotlib.mlab as mlab
-from numpy.fft import fft
 from ..AudioSignals.AudioSignal import AudioSignal
-from Duetto_Core.AudioSignals.WavFileSignal import WavFileSignal
 
 
 class SignalProcessor:

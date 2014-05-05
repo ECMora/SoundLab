@@ -1,10 +1,9 @@
 from PyQt4 import QtCore
-from PyQt4.QtCore import SIGNAL, pyqtSignal
-from PyQt4.QtGui import QCursor,QColor
+from PyQt4.QtCore import pyqtSignal
+from PyQt4.QtGui import QCursor
 import pyqtgraph as pg
 import numpy
 from Graphic_Interface.Widgets.Tools import Tools
-from Graphic_Interface.Widgets.Tools import RectROI
 
 class PowSpecPlotWidget(pg.PlotWidget):
     def __init__(self,  parent=None,**kargs):

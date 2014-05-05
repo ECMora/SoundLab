@@ -1,4 +1,4 @@
-from math import floor, ceil, log10
+from math import  log10
 from matplotlib import mlab
 from Duetto_Core.Segmentation.Detectors.ElementsDetectors.TwoDimensionalElementsDetector import TwoDimensionalElementsDetector
 from Duetto_Core.Segmentation.Elements.TwoDimensionalElement import SpecgramElement
