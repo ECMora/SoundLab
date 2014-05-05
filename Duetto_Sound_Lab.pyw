@@ -1,8 +1,7 @@
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 import PyQt4.phonon as phonon
-import os
-from datetime import  time
+import os,hashlib
 from Graphic_Interface.Windows.DuettoSoundLabWindow import DuettoSoundLabWindow
 from Graphic_Interface.Windows.PresentationSlogan.presentation import Ui_MainWindow
 
@@ -17,7 +16,17 @@ class Duetto_Sound_Lab(QMainWindow, Ui_MainWindow):
 
 
 def validLicense():
-    return True
+    try:
+        drives = ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y", "Z"]
+        for p in drives:
+            x = p + ":" + os.sep
+            if os.path.exists(x) and os.path.exists(os.path.join(x,"duetto")):
+                result = hashlib.md5(open(os.path.join(x,"duetto")).readline()).hexdigest() == "b41b3527dd6c497c67d0f67a642574ea"
+                if result:
+                    return True
+    except:
+        pass
+    return False
 
 
 if __name__ == '__main__':

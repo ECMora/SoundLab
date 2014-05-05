@@ -51,7 +51,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.widget.mainCursor.max = len(self.widget.signalProcessor.signal.data)
 
         self.widget.computeSpecgramSettings()
-        self.widget.updatePxxMatrix = False
+
 
 
         self.widget.visibleOscilogram = True

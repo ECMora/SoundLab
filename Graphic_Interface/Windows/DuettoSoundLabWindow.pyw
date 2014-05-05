@@ -1,11 +1,8 @@
 import sys
 from apptools.undo.action.undo_action import UndoAction
-from pyqtgraph.Qt import QtCore, QtGui
-import numpy
+from PyQt4 import QtCore, QtGui
 import os
-import pyqtgraph
-import pyqtgraph.widgets.HistogramLUTWidget
-from pyqtgraph.parametertree import Parameter, ParameterTree, ParameterItem, registerParameterType
+from pyqtgraph.parametertree import Parameter, ParameterTree
 from PyQt4.QtGui import QDialog, QMessageBox, QFileDialog, QActionGroup, QAction
 from PyQt4.QtCore import SIGNAL, pyqtSlot, QTimer
 from Graphic_Interface.Dialogs.NewFileDialog import NewFileDialog
