@@ -6,12 +6,12 @@ from PyQt4 import QtGui
 from matplotlib import mlab
 import xlwt
 from PyQt4.QtGui import QFileDialog
-import pyqtgraph as pg
 from Duetto_Core.AudioSignals.AudioSignal import AudioSignal
 from Duetto_Core.AudioSignals.WavFileSignal import WavFileSignal
 from Duetto_Core.Segmentation.Detectors.ElementsDetectors.OneDimensionalElementsDetector import OneDimensionalElementsDetector, DetectionType, AutomaticThresholdType, DetectionSettings
 from Duetto_Core.Segmentation.Elements.Element import Element
 from Duetto_Core.SignalProcessors.SignalProcessor import SignalProcessor
+from Duetto_Core.SpecgramSettings import SpecgramSettings
 from Duetto_Core.Segmentation.Elements.OneDimensionalElement import SpectralMeasurementLocation
 from ..Dialogs.elemDetectSettings import ElemDetectSettingsDialog
 from Graphic_Interface.Widgets.Tools import Tools
@@ -397,13 +397,19 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                     self.listwidgetProgress.addItem("Processing "+signalProcessor.signal.name())
 
                     table = QtGui.QTableWidget()
-                    pxx,freqs,bins = self.getSpectralData(signalProcessor.signal,self.widget.specgramSettings)
-                    detector.detect(signalProcessor.signal,0,len(signalProcessor.signal.data),abs(self.detectionSettings["Threshold"]), self.detectionSettings["Decay"],   self.detectionSettings["MinSize"],
-                                           self.detectionSettings["SoftFactor"], self.detectionSettings["MergeFactor"], abs(self.detectionSettings["Threshold2"]),
-                                           pxx=pxx,freqs=freqs,bins=bins,
+                    spSettngs = SpecgramSettings(self.widget.specgramSettings.NFFT,self.widget.specgramSettings.overlap,self.widget.specgramSettings.window)
+                    spSettngs.Pxx,spSettngs.freqs,spSettngs.bins = self.getSpectralData(signalProcessor.signal,self.widget.specgramSettings)
+
+                    detector.detect(signalProcessor.signal,0,len(signalProcessor.signal.data),threshold=abs(self.detectionSettings["Threshold"]),
+                                    decay=self.detectionSettings["Decay"], minSize=  self.detectionSettings["MinSize"],
+                                           softfactor=self.detectionSettings["SoftFactor"], merge_factor=self.detectionSettings["MergeFactor"],
+                                           secondThreshold=abs(self.detectionSettings["Threshold2"]),
+                                           specgramSettings=spSettngs,
+                                           detectionsettings=self.algorithmDetectorSettings,
                                            threshold_spectral=self.detectionSettings["ThresholdSpectral"],
                                            minsize_spectral=(self.detectionSettings["minSizeFreqSpectral"],self.detectionSettings["minSizeTimeSpectral"]),
-                                           location= self.spectralMeasurementLocation)
+                                           location= self.spectralMeasurementLocation,
+                                           findSpectralSublements=False)
 
                     paramsTomeasure = [x for x in self.noParametrizedmeditions if x[1]]
                     spectralparamsTomeasure = self.getspectralParameters(self.spectralMeasurementLocation)
@@ -436,7 +442,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                     self.listwidgetProgress.addItem("Some problem found while processing ")
                 self.progressBarProcesed.setValue(round(100.0*(processed)/len(sounds)))
                 self.progressBarProcesed.update()
-                #valorar si ya existe el fichero reescribirlo o guardalo con otro noBOx signal.samplingRate
+                #valorar si ya existe el fichero reescribirlo o guardalo con otro nombre
                 if singlefile:
                     wb.save(os.path.join(directoryoutput,"Duetto Sound Lab Meditions.xls"))
             #open folder
@@ -649,7 +655,6 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                 self.windowProgressDetection.hide()
 
             self.windowProgressDetection.hide()
-            self.widget.drawElements(oscilogramItems=False)
 
     @pyqtSlot()
     def on_actionExit_triggered(self):
