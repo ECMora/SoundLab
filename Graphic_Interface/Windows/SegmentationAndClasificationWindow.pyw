@@ -67,7 +67,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.show()
 
         self.parameterTable_rowcolor_odd,self.parameterTable_rowcolor_even = QtGui.QColor(0, 0, 255,150),QtGui.QColor(0, 255, 0, 150)
-        self.algorithmDetectorSettings = DetectionSettings(DetectionType.Envelope_Abs_Decay_Averaged,AutomaticThresholdType.Global_MaxMean_Sdv)
+        self.algorithmDetectorSettings = DetectionSettings(DetectionType.Envelope_Abs_Decay_Averaged,AutomaticThresholdType.Global_MaxMean)
 
         self.spectralMeasurementLocation = SpectralMeasurementLocation()
         self.widget.axesOscilogram.threshold.sigPositionChangeFinished.connect(self.updateThreshold)
@@ -119,8 +119,8 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                                          separator3,self.actionOsgram_Image,self.actionSpecgram_Image,self.actionCombined_Image])
         self.windowProgressDetection = QtGui.QProgressBar(self.widget)
         self.actionSignalName.setText(self.widget.signalProcessor.signal.name())
-        self.hist = pg.widgets.HistogramLUTWidget.HistogramLUTItem()
-        self.hist.setImageItem(self.widget.axesSpecgram.imageItem)
+
+        self.widget.histogram.setImageItem(self.widget.axesSpecgram.imageItem)
 
 
     @QtCore.pyqtSlot(int, int, int)
@@ -238,14 +238,12 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     def load_Theme(self,theme):
         self.theme = theme
-        self.hist.region.setRegion(theme.histRange)
-        self.hist.gradient.restoreState(theme.colorBarState)
+        self.widget.histogram.region.setRegion(theme.histRange)
+        self.widget.histogram.gradient.restoreState(theme.colorBarState)
         self.widget.load_Theme(theme)
         #self.tableParameterOscilogram.setStyleSheet("background-color: #" +str(self.widget.osc_background) + ";")
         self.widget.visualChanges = True
         self.widget.refresh()
-        self.hist.region.lineMoved()
-        self.hist.region.lineMoveFinished()
 
     @pyqtSlot()
     def on_actionView_Parameters_triggered(self):
@@ -506,6 +504,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         elementsDetectorDialog.dsbxMergeFactor.setValue(self.detectionSettings["MergeFactor"])
         elementsDetectorDialog.dsbxDecay.setValue(self.detectionSettings["Decay"])
         elementsDetectorDialog.detectionSettings =  self.algorithmDetectorSettings
+        elementsDetectorDialog.cmbxDetectionMethod.setCurrentIndex(self.algorithmDetectorSettings.detectiontype)
         #specgram settings
         elementsDetectorDialog.dsbxThresholdSpec.setValue(self.detectionSettings["ThresholdSpectral"])
         elementsDetectorDialog.dsbxMinSizeFreq.setValue(self.detectionSettings["minSizeFreqSpectral"])
@@ -648,8 +647,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
             except:
                 print("some detection errors")
                 self.windowProgressDetection.hide()
-            self.hist.region.lineMoved()
-            self.hist.region.lineMoveFinished()
+
             self.windowProgressDetection.hide()
             self.widget.drawElements(oscilogramItems=False)
 
@@ -674,8 +672,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.widget.selectElement()
         self.widget.visualChanges = True
         self.widget.refresh()
-        self.hist.region.lineMoved()
-        self.hist.region.lineMoveFinished()
+
 
 
     @QtCore.pyqtSlot()
@@ -683,24 +680,21 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.widget.visibleOscilram=True
         self.widget.visibleSpectrogram=True
         self.widget.refresh(dataChanged=False)
-        self.hist.region.lineMoved()
-        self.hist.region.lineMoveFinished()
+
 
     @QtCore.pyqtSlot()
     def on_actionSpectogram_triggered(self):
         self.widget.visibleOscilogram=False
         self.widget.visibleSpectrogram=True
         self.widget.refresh(dataChanged=False)
-        self.hist.region.lineMoved()
-        self.hist.region.lineMoveFinished()
+
 
     @QtCore.pyqtSlot()
     def on_actionOscilogram_triggered(self):
         self.widget.visibleOscilogram=True
         self.widget.visibleSpectrogram=False
         self.widget.refresh(dataChanged=False)
-        self.hist.region.lineMoved()
-        self.hist.region.lineMoveFinished()
+
 
     @QtCore.pyqtSlot()
     def on_actionPlay_Sound_triggered(self):

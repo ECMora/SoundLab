@@ -103,7 +103,7 @@ class QSignalVisualizerWidget(QWidget):
         self.maxYOsc =  100
         self.minYSpc = 0
         self.maxYSpc = 100
-        self.updatePxxMatrix = True
+
 
         self.envelopeCurve = pg.PlotCurveItem(np.array([0]),pen=pg.mkPen(self.osc_color,width=1),shadowPen=pg.mkPen(QtGui.QColor(255,0,0),width=3))
         self.axesOscilogram.addItem(self.envelopeCurve)
@@ -556,8 +556,8 @@ class QSignalVisualizerWidget(QWidget):
             if normOverlap < 0:
                 normOverlap = 1 - 1.0 * (self.mainCursor.max-self.mainCursor.min) / (self.specgramSettings.NFFT * width)
             self.specgramSettings.visualOverlap = int(self.specgramSettings.NFFT * normOverlap)
-            if self.updatePxxMatrix:
-                self.computeSpecgramSettings(self.specgramSettings.visualOverlap)
+
+            self.computeSpecgramSettings(self.specgramSettings.visualOverlap)
 
             self.specgramSettings.visualOverlap *= 100.0/self.specgramSettings.NFFT
             temp = np.amax(self.specgramSettings.Pxx)
@@ -611,26 +611,13 @@ class QSignalVisualizerWidget(QWidget):
                                  / self._Z.shape[1]
             YSpec = np.searchsorted(self.specgramSettings.freqs, [self.minYSpc*1000, self.maxYSpc*1000])
 
-            if not self.updatePxxMatrix:
-                osc_spec_ratio = 1.0 * (len(self.signalProcessor.signal.data) if not partial
-                                            else (self.mainCursor.max - self.mainCursor.min))\
-                                     / self._Z.shape[1]
-                if dataChanged:
-                    self.axesSpecgram.imageItem.setImage(numpy.transpose(self._Z),
-                                               pos=((self.mainCursor.min / osc_spec_ratio) if partial else 0, 0))
+            self.axesSpecgram.imageItem.setImage(numpy.transpose(self._Z))
+            self.axesSpecgram.imageItem.setRect(QRectF(self._from_osc_to_spec(self.mainCursor.min), 0,
+                                                       self._Z.shape[1], self._Z.shape[0]))
 
-                self.axesSpecgram.viewBox.setRange(xRange=(self.mainCursor.min / osc_spec_ratio,
-                                                         self.mainCursor.max / osc_spec_ratio),
-                                                 yRange=(YSpec[0], YSpec[1]), padding=0)
-                #self.axesSpecgram.zoomRegion.setBounds([self._from_osc_to_spec(self.mainCursor.min), self._from_osc_to_spec(self.mainCursor.max)])
-
-            else:
-                self.axesSpecgram.imageItem.setImage(numpy.transpose(self._Z))
-                self.axesSpecgram.imageItem.setRect(QRectF(self._from_osc_to_spec(self.mainCursor.min), 0,
-                                                           self._Z.shape[1], self._Z.shape[0]))
-                self.axesSpecgram.viewBox.setRange(xRange=(self._from_osc_to_spec(self.mainCursor.min),
-                                                           self._from_osc_to_spec(self.mainCursor.max)),
-                                                   yRange=(YSpec[0], YSpec[1]), padding=0)
+            self.axesSpecgram.viewBox.setRange(xRange=(self._from_osc_to_spec(self.mainCursor.min),
+                                                       self._from_osc_to_spec(self.mainCursor.max)),
+                                               yRange=(YSpec[0], YSpec[1]), padding=0)
             self.updateSpectrogramColors()
         self.axesSpecgram.setBackground(self.spec_background)
         self.axesSpecgram.showGrid(x=self.spec_gridx, y=self.spec_gridy)
@@ -884,7 +871,10 @@ class QSignalVisualizerWidget(QWidget):
         for c in self.elements_detector.elements():
             self.Elements.append(c)# the elment the space for the span selector and the text
         #incorporar deteccion en espectrograma
-        self.drawElements()
+        if findSpectralSublements:
+            self.drawElements()
+        else:
+            self.drawElements(oscilogramItems=True)
 
 
     #endregion

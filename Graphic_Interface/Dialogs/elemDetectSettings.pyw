@@ -24,7 +24,7 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
                              DetectionType.IntervalRms,DetectionType.IntervalMaxMedia,DetectionType.IntervalMaxProportion,DetectionType.IntervalFrecuencies,
                              DetectionType.Envelope_Abs_Decay_Averaged,DetectionType.Envelope_Rms]
 
-        self.detectionSettings = DetectionSettings(DetectionType.Envelope_Abs_Decay_Averaged,AutomaticThresholdType.Global_MaxMean_Sdv)
+        self.detectionSettings = DetectionSettings(DetectionType.Envelope_Abs_Decay_Averaged,AutomaticThresholdType.Global_MaxMean)
         self.cmbxDetectionMethod.setCurrentIndex(7)
 
         self.cmbxDetectionMethod.currentIndexChanged.connect(self.changeDetectionMethod)
