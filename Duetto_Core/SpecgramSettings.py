@@ -1,6 +1,4 @@
-from matplotlib.colors import ListedColormap
 import matplotlib.mlab as mlab
-import matplotlib.cm as cm
 
 import numpy
 
@@ -35,23 +33,11 @@ class SpecgramSettings:
         self.overlap=overlap
         self.visualOverlap = overlap
         self.window=window
-        self.colors=[]
-        for cname in cm._cmapnames:
-            self.colors.append(cm.get_cmap(cname))
-
         #self.colorPalette=ListedColormap(self.colors[0],name="DuettoColorMap")
 
         self._colorPaletteIndex=0#the color palette with the specgram is displayed its a matplotlib.cm.Colormap object
         self.threshold=30#the % of the specgram that is not visible
         self.grid=False
 
-    def _getColorPaletteIndex(self):
-        return self._colorPaletteIndex
-    def _setColorPaletteIndex(self, value):
-        self._colorPaletteIndex=0 if (value > len(self.colors) or value < 0) else value
-
-    colorPaletteIndex= property(_getColorPaletteIndex,_setColorPaletteIndex)
-    def colorPalette(self):
-        return self.colors[self._colorPaletteIndex]
 
 

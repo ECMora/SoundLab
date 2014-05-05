@@ -1,8 +1,6 @@
 from math import *
 from numpy import real,concatenate, array
-import numpy
 from numpy.fft import *
-from Duetto_Core.AudioSignals.WavFileSignal import WavFileSignal
 from Duetto_Core.SignalProcessors.SignalProcessor import SignalProcessor
 
 class FILTER_TYPE():

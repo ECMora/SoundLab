@@ -1,6 +1,4 @@
 import os
-from string import rfind
-from PyQt4.QtCore import pyqtSignal
 from PyQt4.QtGui import QMessageBox
 import pyaudio
 import numpy as np

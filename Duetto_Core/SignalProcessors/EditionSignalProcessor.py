@@ -1,6 +1,5 @@
 # coding=utf-8
 from numpy import array, concatenate
-from Duetto_Core.AudioSignals.WavFileSignal import WavFileSignal
 from Duetto_Core.SignalProcessors.SignalProcessor import SignalProcessor
 
 class EditionSignalProcessor(SignalProcessor):

@@ -1,7 +1,6 @@
-from PyQt4.QtGui import QMessageBox
 from scipy.io import wavfile
 from numpy.compat import asbytes
-from numpy import copy,argmax,argmin,sum,abs
+from numpy import argmax,sum,abs
 import struct
 import random
 from Duetto_Core.AudioSignals.FileAudioSignal import FileAudioSignal

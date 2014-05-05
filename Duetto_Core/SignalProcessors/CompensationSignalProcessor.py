@@ -1,4 +1,4 @@
-from numpy.fft import rfft, irfft, fftfreq
+from numpy.fft import rfft
 import numpy
 from Duetto_Core.SignalProcessors.SignalProcessor import SignalProcessor
 
