@@ -46,7 +46,7 @@ class OneDimensionalElementsDetector(ElementsDetector):
         if detectionsettings is not None:
             self.detectionsettings = detectionsettings
         else:
-            self.detectionsettings = DetectionSettings(DetectionType.Envelope_Abs_Decay_Averaged,AutomaticThresholdType.Global_MaxMean_Sdv)
+            self.detectionsettings = DetectionSettings(DetectionType.Envelope_Abs_Decay_Averaged,AutomaticThresholdType.Global_MaxMean)
 
         if specgramSettings is None:
             return

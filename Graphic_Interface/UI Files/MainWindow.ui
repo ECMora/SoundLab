@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>800</width>
+    <width>932</width>
     <height>600</height>
    </rect>
   </property>
@@ -65,7 +65,7 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>800</width>
+     <width>932</width>
      <height>21</height>
     </rect>
    </property>
@@ -78,10 +78,10 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
    <widget class="QMenu" name="menuFile">
     <property name="geometry">
      <rect>
-      <x>203</x>
-      <y>155</y>
+      <x>42</x>
+      <y>141</y>
       <width>158</width>
-      <height>257</height>
+      <height>288</height>
      </rect>
     </property>
     <property name="autoFillBackground">
@@ -105,6 +105,8 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
     <addaction name="separator"/>
     <addaction name="actionLoad_Theme"/>
     <addaction name="actionSave_theme"/>
+    <addaction name="separator"/>
+    <addaction name="actionClose"/>
     <addaction name="actionExit"/>
    </widget>
    <widget class="QMenu" name="menuTools">
@@ -295,8 +297,8 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
    <addaction name="actionSettings"/>
    <addaction name="actionSegmentation_And_Clasification"/>
    <addaction name="actionFile_Up"/>
-   <addaction name="actionFile_Down"/>
    <addaction name="actionSignalName"/>
+   <addaction name="actionFile_Down"/>
   </widget>
   <action name="actionOpen">
    <property name="icon">
@@ -843,6 +845,11 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
    </property>
    <property name="text">
     <string>Save selected as</string>
+   </property>
+  </action>
+  <action name="actionClose">
+   <property name="text">
+    <string>Close</string>
    </property>
   </action>
   <zorder>dock_settings</zorder>
