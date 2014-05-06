@@ -192,9 +192,6 @@ padding:1%;</string>
     </item>
     <item>
      <widget class="QScrollBar" name="horizontalScrollBar">
-      <property name="styleSheet">
-       <string notr="true">border-color: rgb(26, 255, 10);</string>
-      </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
@@ -242,6 +239,8 @@ padding:1%;</string>
    <addaction name="actionSpectogram"/>
    <addaction name="separator"/>
    <addaction name="actionDetection"/>
+   <addaction name="actionPeak_To_Peak"/>
+   <addaction name="actionIntervals"/>
   </widget>
   <widget class="QDockWidget" name="dockWidgetParameterTableOscilogram">
    <property name="windowTitle">
@@ -627,6 +626,16 @@ padding:1%;</string>
    </property>
    <property name="shortcut">
     <string>Esc</string>
+   </property>
+  </action>
+  <action name="actionPeak_To_Peak">
+   <property name="text">
+    <string>Peak To Peak</string>
+   </property>
+  </action>
+  <action name="actionIntervals">
+   <property name="text">
+    <string>Intervals</string>
    </property>
   </action>
   <zorder>dockWidgetParameterTableOscilogram</zorder>

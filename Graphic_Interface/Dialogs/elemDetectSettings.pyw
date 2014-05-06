@@ -20,11 +20,11 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
             self.widget.specgramSettings.overlap = 50
 
         self.widget.setSelectedTool("OscilogramThreshold")
-        #espectrogram
+        #spectrogram
         self.dsbxThresholdSpec.valueChanged.connect(self.detect)
         self.dsbxMinSizeFreq.valueChanged.connect(self.detect)
         self.dsbxminSizeTime.valueChanged.connect(self.detect)
-        #oscilogram
+        #oscillogram
         self.dsbxThreshold.valueChanged.connect(self.detect)
         self.dsbxThreshold.valueChanged.connect(self.updateThresholdLine)
 
