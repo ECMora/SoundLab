@@ -269,7 +269,6 @@ class QSignalVisualizerWidget(QWidget):
         elif QKeyEvent.key() == Qt.Key_Space:
             self.switchPlayStatus()
         elif QKeyEvent.key() == Qt.Key_Shift:
-            print('shift pressed')
             self._pivot = self.zoomCursor.min
 
     def changePlayStatus(self):
@@ -568,17 +567,17 @@ class QSignalVisualizerWidget(QWidget):
         Computes the specgram settings for a specified overlap
         """
         overlap = overlap if overlap is not None else int(self.specgramSettings.NFFT*self.specgramSettings.overlap/100.)
-        smin = self.mainCursor.min - self.specgramSettings.NFFT
-        smax = self.mainCursor.max + self.specgramSettings.NFFT
-        print("overlap "+str(overlap))
+        #smin = self.mainCursor.min - self.specgramSettings.NFFT
+        #smax = self.mainCursor.max + self.specgramSettings.NFFT
+        #
+        #pre, post = np.zeros(max(-smin, 0)), np.zeros(max(smax - len(self.signalProcessor.signal.data), 0))
+        #data = np.concatenate((pre, self.signalProcessor.signal.data[max(smin, 0): min(smax, len(self.signalProcessor.signal.data))], post))
 
-        pre, post = np.zeros(max(-smin, 0)), np.zeros(max(smax - len(self.signalProcessor.signal.data), 0))
-
-        data = np.concatenate((pre, self.signalProcessor.signal.data[max(smin, 0): min(smax, len(self.signalProcessor.signal.data))], post))
-        self.specgramSettings.Pxx, self.specgramSettings.freqs, self.specgramSettings.bins = mlab.specgram(data,
-                                self.specgramSettings.NFFT, Fs=self.signalProcessor.signal.samplingRate,
-                                detrend=mlab.detrend_none, window=self.specgramSettings.window, noverlap=overlap,
-                                sides=self.SPECGRAM_COMPLEX_SIDE)
+        self.specgramSettings.Pxx, self.specgramSettings.freqs, self.specgramSettings.bins = mlab.specgram(
+            self.signalProcessor.signal.data[self.mainCursor.min:self.mainCursor.max],
+            self.specgramSettings.NFFT, Fs=self.signalProcessor.signal.samplingRate,
+            detrend=mlab.detrend_none, window=self.specgramSettings.window, noverlap=overlap,
+            sides=self.SPECGRAM_COMPLEX_SIDE)
 
     def refresh(self, dataChanged=True, updateOscillogram=True, updateSpectrogram=True, partial=True):
         # perform some heavy calculations
@@ -591,7 +590,6 @@ class QSignalVisualizerWidget(QWidget):
                 normOverlap = 1 - 1.0 * (self.mainCursor.max-self.mainCursor.min) / (self.specgramSettings.NFFT * width)
             self.specgramSettings.visualOverlap = int(self.specgramSettings.NFFT * normOverlap)
             self.computeSpecgramSettings(self.specgramSettings.visualOverlap)
-            print("OK")
 
             #self.specgramSettings.visualOverlap *= 100.0/self.specgramSettings.NFFT
             temp = np.amax(self.specgramSettings.Pxx)
@@ -620,7 +618,8 @@ class QSignalVisualizerWidget(QWidget):
         if (self.visibleOscilogram or self.signalProcessor.signal.playStatus == AudioSignal.RECORDING) \
            and updateOscillogram and self.signalProcessor.signal and self.signalProcessor.signal.opened()\
            and self.mainCursor.max > self.mainCursor.min:
-            self.axesOscilogram.plot(range(int(self.mainCursor.min),int(self.mainCursor.max)),self.signalProcessor.signal.data[self.mainCursor.min:self.mainCursor.max], clear=True, pen = self.osc_color if self.lines else None, symbol=None if self.lines else 'x', symbolSize = 1,symbolPen = self.osc_color, clipToView=partial)
+            if dataChanged :
+                self.axesOscilogram.plot(np.arange(int(self.mainCursor.min),int(self.mainCursor.max)),self.signalProcessor.signal.data[self.mainCursor.min:self.mainCursor.max], clear=True, pen = self.osc_color if self.lines else None, symbol=None if self.lines else 'x', symbolSize = 1,symbolPen = self.osc_color, clipToView=partial)
 
         self.axesOscilogram.getPlotItem().showGrid(x=self.osc_gridx, y=self.osc_gridy)
         self.axesOscilogram.setBackground(self.osc_background)
