@@ -111,7 +111,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
              {'name': 'Plot color', 'type': 'color', 'value':self.defaultTheme.pow_Plot, 'default': self.defaultTheme.pow_Plot},
         ]},
         {'name': 'Themes', 'type': 'group', 'children': [
-         {'name': 'Theme Selected', 'type': 'list', 'value':"RedBlackTheme.dth",'default':"RedBlackTheme.dth",'values': {"BatsoundLikeTheme":"BatsoundLikeTheme.dth","BlackWhiteTheme":"BlackWhiteTheme.dth","PinkBlueTheme":"PinkBlueTheme.dth","RedBlackTheme":"RedBlackTheme.dth","GreenTheme":"GreenTheme.dth","WhiteBlueTheme":"WhiteBlueTheme.dth"}},
+         {'name': 'Theme Selected', 'type': 'list', 'value':"RedBlackTheme.dth",'default':"RedBlackTheme.dth",'values': {"BatsoundLikeTheme":"BatsoundLikeTheme.dth","PinkBlueTheme":"PinkBlueTheme.dth","RedBlackTheme":"RedBlackTheme.dth","WhiteBlueTheme":"WhiteBlueTheme.dth"}},
         ]
         } ,
         {'name': 'Detection Settings', 'type': 'group', 'children': [
