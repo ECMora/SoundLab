@@ -6,6 +6,9 @@ from matplotlib.figure import Figure
 import numpy
 import pyqtgraph as pg
 from matplotlib import mlab
+from Graphic_Interface.Widgets.PowSpecPlotWidget import PowSpecPlotWidget
+from Graphic_Interface.Widgets.Tools import Tools
+
 
 
 class QPowerSpectrumWidget(QtGui.QWidget):
@@ -13,7 +16,7 @@ class QPowerSpectrumWidget(QtGui.QWidget):
 
         QtGui.QWidget.__init__(self,parent)
         self.setParent(parent)
-        self.pow_spectrum = pg.PlotWidget(parent=self)
+        self.pow_spectrum = PowSpecPlotWidget(parent=self)
         self.pow_spectrum.getPlotItem().setMouseEnabled(False,False)
         self.pow_spectrum.getPlotItem().setLabel(axis='bottom',text='Frequency',units='Hz')
         self.pow_spectrum.getPlotItem().setLabel(axis='left', text='Intensity', units='db')
@@ -21,6 +24,8 @@ class QPowerSpectrumWidget(QtGui.QWidget):
         layout.addWidget(self.pow_spectrum)
         layout.setStretch(1,1)
         self.setLayout(layout)
+        self.Pxx = None
+        self.freqs = None
 
     def get_highest_freq(self):
         return  self.freqs[numpy.argmax(self.Pxx[1:len(self.Pxx)], axis=0)]
@@ -34,5 +39,6 @@ class QPowerSpectrumWidget(QtGui.QWidget):
         self.pow_spectrum.setBackground(BackColor)
         self.pow_spectrum.getPlotItem().showGrid(x=gridX, y=gridY)
         self.pow_spectrum.plot(self.freqs,10*numpy.log10(self.Pxx/numpy.amax(self.Pxx)),clear=True, pen=plotColor)
+        self.pow_spectrum.setRange(xRange = (0,self.freqs[len(self.freqs) - 1]),padding=0,update=True)
         self.pow_spectrum.show()
         return self.Pxx, self.freqs
