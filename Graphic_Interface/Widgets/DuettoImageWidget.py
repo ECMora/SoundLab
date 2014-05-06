@@ -368,7 +368,6 @@ class DuettoImageWidget(GraphicsView):
         return a + int(round((yPixel - miny) * (b - a) * 1. / (maxy - miny), 0))
 
     def getFreqTimeAndIntensity(self,x,y):
-        print(self.imageItem.getPixmap().width())
         #YSpec = numpy.searchsorted(self.parent().specgramSettings.freqs, self.parent().minYSpc*1000)
         time =  x * 1.0/self.parent().signalProcessor.signal.samplingRate
         freq = numpy.round(self.parent().specgramSettings.freqs[y]*1.0/1000,1)
