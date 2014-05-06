@@ -56,6 +56,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.pow_spec_plotColor = self.defaultTheme.pow_Plot
         self.pow_spec_gridx = self.defaultTheme.pow_GridX
         self.pow_spec_gridy = self.defaultTheme.pow_GridY
+        self.widget.lines = True
         self.statusbar = self.statusBar()
         self.statusbar.setSizeGripEnabled(False)
         self.widget.statusbar = self.statusbar
@@ -75,6 +76,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             ]},
             {'name':'Background color', 'type':'color','value':self.defaultTheme.osc_background, 'default':self.defaultTheme.osc_background},
             {'name': 'Plot color', 'type': 'color', 'value':self.defaultTheme.osc_plot, 'default': self.defaultTheme.osc_plot},
+            {'name': 'Connect Lines', 'type': 'bool','default': self.widget.lines, 'value': self.widget.lines},
         ]},
 
         {'name': 'Spectrogram Settings', 'type': 'group', 'children': [
@@ -463,6 +465,10 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 self.widget.maxYOsc = data
                 self.widget.visualChanges = True
                 self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
+            elif childName == 'Oscillogram Settings.Connect Lines':
+                self.widget.lines = data
+                self.widget.visualChanges = True
+                self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
 
             elif childName == 'Themes.Theme Selected':
                 p = os.path.join(os.path.join("Utils","Themes"),data)
@@ -806,7 +812,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self._save()
         self.on_load()
 
-
     def _open(self,f=''):
         if f != '':
             self.lastopen = f
@@ -827,7 +832,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
             valuemin = self.widget.minYSpc
             valuemax = self.widget.maxYSpc
-            print((valuemax,valuemin))
+            #print((valuemax,valuemin))
             self.ParamTree.param('Spectrogram Settings').param('Frequency(kHz)').param('Min').setValue(valuemin)
             self.ParamTree.param('Spectrogram Settings').param('Frequency(kHz)').param('Min').setDefault(valuemin)
             self.ParamTree.param('Spectrogram Settings').param('Frequency(kHz)').param('Max').setValue(valuemax)
@@ -966,7 +971,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.horizontalScrollBar.setMaximum(total - (right - left))
         self.horizontalScrollBar.setValue(left)
         self.horizontalScrollBar.setPageStep(right - left)
-        self.horizontalScrollBar.setSingleStep((right - left) / 16)
+        self.horizontalScrollBar.setSingleStep((right - left) / 8)
         self.horizontalScrollBar.blockSignals(True)
         self.horizontalScrollBar.blockSignals(False)
 

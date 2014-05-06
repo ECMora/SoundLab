@@ -23,27 +23,26 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None,signal=None):
         super(QtGui.QMainWindow, self).__init__(parent)
         self.setupUi(self)
-        if(signal is  None):
-             QtGui.QMessageBox.warning(QtGui.QMessageBox(), "Error", "There is no signal to analyze.")
-        if(len(signal.data)/signal.samplingRate) > 60:
+        if not signal:
+            QtGui.QMessageBox.warning(QtGui.QMessageBox(), "Error", "There is no signal to analyze.")
+        if len(signal.data) / signal.samplingRate > 60:
             QtGui.QMessageBox.warning(QtGui.QMessageBox(), "Error", "The signal has more than 1 min of duration.\n "
                                                                     "Use the splitter to divide it")
             self.close()
             self.rejectSignal = True
             return
 
-
-        assert isinstance(signal,AudioSignal)
+        assert isinstance(signal, AudioSignal)
         self.widget.signalProcessor.signal = signal
         if parent is not None:
-            self.widget.minYSpc,self.widget.maxYSpc =parent.widget.minYSpc,parent.widget.maxYSpc
+            self.widget.minYSpc, self.widget.maxYSpc = parent.widget.minYSpc, parent.widget.maxYSpc
             self.widget.specgramSettings.NFFT = parent.widget.specgramSettings.NFFT
             self.widget.specgramSettings.overlap = parent.widget.specgramSettings.overlap
             self.widget.specgramSettings.window = parent.widget.specgramSettings.window
             self.widget.specgramSettings.visualOverlap = parent.widget.specgramSettings.visualOverlap
             if self.widget.specgramSettings.overlap < 0:
                 if parent.widget.specgramSettings.visualOverlap < parent.widget.specgramSettings.NFFT:
-                    self.widget.specgramSettings.overlap = parent.widget.specgramSettings.visualOverlap
+                    self.widget.specgramSettings.overlap = parent.widget.specgramSettings.visualOverlap * 100.0 / parent.widget.specgramSettings.NFFT
                 else:
                     self.widget.specgramSettings.overlap = 50
 
@@ -620,8 +619,11 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                 self.widget.detectElements(threshold=abs(self.detectionSettings["Threshold"]),detectionsettings=self.algorithmDetectorSettings,decay= self.detectionSettings["Decay"], minSize= self.detectionSettings["MinSize"],
                                            softfactor=self.detectionSettings["SoftFactor"], merge_factor=self.detectionSettings["MergeFactor"], threshold2= abs(self.detectionSettings["Threshold2"]),
                                            threshold_spectral=self.detectionSettings["ThresholdSpectral"],
-                                           minsize_spectral=(self.detectionSettings["minSizeFreqSpectral"],self.detectionSettings["minSizeTimeSpectral"]),
-                                           location= self.spectralMeasurementLocation, progress=self.updateDetectionProgressBar, findSpectralSublements = elementsDetectorDialog.cbxSpectralSubelements.isChecked())
+                                           minsize_spectral=(self.detectionSettings["minSizeFreqSpectral"],
+                                                             self.detectionSettings["minSizeTimeSpectral"]),
+                                           location=self.spectralMeasurementLocation,
+                                           progress=self.updateDetectionProgressBar,
+                                           findSpectralSublements=elementsDetectorDialog.cbxSpectralSubelements.isChecked())
 
                 self.tableParameterOscilogram.clear()
                 self.tableParameterOscilogram.cellPressed.connect(self.elementSelectedInTable)
@@ -661,15 +663,25 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.close()
 
     def closeEvent(self,event):
-        mbox = QtGui.QMessageBox(QtGui.QMessageBox.Question,"Save meditions","Do you want to save the meditions?",QtGui.QMessageBox.Ok | QtGui.QMessageBox.Cancel,self)
-        if self.tableParameterOscilogram.rowCount() > 0 and mbox.exec_() == QtGui.QMessageBox.Ok:
-            wb = xlwt.Workbook()
-            ws = wb.add_sheet(self.widget.signalProcessor.signal.name())
-            self.writedata(ws, self.tableParameterOscilogram)
-            fname = unicode(QFileDialog.getSaveFileName(self,"Save meditions as excel file",self.widget.signalProcessor.signal.name()+".xls","*.xls"))
-            if fname:
-                wb.save(fname)
-        self.close()
+        mbox = QtGui.QMessageBox(QtGui.QMessageBox.Question,"Save","Do you want to save the signal?",QtGui.QMessageBox.Yes | QtGui.QMessageBox.No | QtGui.QMessageBox.Cancel,self)
+        result = mbox.exec_()
+        if result == QtGui.QMessageBox.Yes:
+            self.on_actionSave_triggered()
+        if result != QtGui.QMessageBox.Cancel:
+            self.close()
+
+        mbox = QtGui.QMessageBox(QtGui.QMessageBox.Question,"Save meditions","Do you want to save the meditions?",QtGui.QMessageBox.Yes | QtGui.QMessageBox.No | QtGui.QMessageBox.Cancel,self)
+        if self.tableParameterOscilogram.rowCount() > 0:
+            result = mbox.exec_()
+            if result == QtGui.QMessageBox.Yes:
+                wb = xlwt.Workbook()
+                ws = wb.add_sheet(self.widget.signalProcessor.signal.name())
+                self.writedata(ws, self.tableParameterOscilogram)
+                fname = unicode(QFileDialog.getSaveFileName(self,"Save meditions as excel file",self.widget.signalProcessor.signal.name()+".xls","*.xls"))
+                if fname:
+                    wb.save(fname)
+            elif result == QtGui.QMessageBox.Cancel:
+                event.ignore()
 
     @pyqtSlot()
     def on_actionClear_Meditions_triggered(self):
@@ -682,7 +694,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     @QtCore.pyqtSlot()
     def on_actionCombined_triggered(self):
-        self.widget.visibleOscilram=True
+        self.widget.visibleOscilogram=True
         self.widget.visibleSpectrogram=True
         self.widget.refresh(dataChanged=False)
 
