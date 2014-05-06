@@ -1,6 +1,6 @@
 
 from Power_Spectrum import Ui_PowSpecWindow
-from PyQt4 import QtGui
+from PyQt4 import QtGui,QtCore
 
 
 class PowerSpectrumWindow(QtGui.QMainWindow):
@@ -13,6 +13,10 @@ class PowerSpectrumWindow(QtGui.QMainWindow):
         self.backColor = backColor
         self.gridx = gridx
         self.gridy = gridy
+        self.ui.pow_spec.pow_spectrum.PointerChanged.connect(self.updateStatusBar)
+
+    def updateStatusBar(self,message):
+        self.ui.statusbar.showMessage(message, 5000)
 
     def plot(self, data, rate, NFFT, window,overlap):
 
