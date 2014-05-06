@@ -402,7 +402,7 @@ font: 75 10pt &quot;MS Shell Dlg 2&quot;;</string>
          <item row="1" column="0">
           <widget class="QLabel" name="label">
            <property name="styleSheet">
-            <string notr="true">background-color: rgb(255, 255, 255);</string>
+            <string notr="true">background-color: rgb(108, 168, 214);</string>
            </property>
            <property name="text">
             <string> Detection Method </string>
@@ -475,7 +475,7 @@ font: 75 10pt &quot;MS Shell Dlg 2&quot;;</string>
               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The elements above detection threshold&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="styleSheet">
-              <string notr="true">background-color: rgb(244, 244, 244);</string>
+              <string notr="true">background-color: rgb(108, 168, 214);</string>
              </property>
              <property name="text">
               <string>Threshold:</string>
@@ -525,7 +525,7 @@ font: 75 10pt &quot;MS Shell Dlg 2&quot;;</string>
                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Element minimum size &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="styleSheet">
-                <string notr="true">background-color: rgb(244, 244, 244);</string>
+                <string notr="true">background-color: rgb(108, 168, 214);</string>
                </property>
                <property name="text">
                 <string>Min size:</string>
@@ -560,7 +560,7 @@ font: 75 10pt &quot;MS Shell Dlg 2&quot;;</string>
               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Jump to prevent locals falls of signal. Noiser signal bigger decay&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="styleSheet">
-              <string notr="true">background-color: rgb(244, 244, 244);</string>
+              <string notr="true">background-color: rgb(108, 168, 214);</string>
              </property>
              <property name="text">
               <string>Decay:</string>
@@ -594,7 +594,7 @@ font: 75 10pt &quot;MS Shell Dlg 2&quot;;</string>
                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The elements above second trheshold and with a piece above detection threshold&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="styleSheet">
-                <string notr="true">background-color: rgb(244, 244, 244);</string>
+                <string notr="true">background-color: rgb(108, 168, 214);</string>
                </property>
                <property name="text">
                 <string>Threshold 2:</string>
@@ -632,7 +632,7 @@ font: 75 10pt &quot;MS Shell Dlg 2&quot;;</string>
            <item>
             <widget class="QLabel" name="label_5">
              <property name="styleSheet">
-              <string notr="true">background-color: rgb(244, 244, 244);</string>
+              <string notr="true">background-color: rgb(108, 168, 214);</string>
              </property>
              <property name="text">
               <string>Soft factor:</string>
@@ -666,7 +666,7 @@ font: 75 10pt &quot;MS Shell Dlg 2&quot;;</string>
                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Merge elements closer than this factor&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                </property>
                <property name="styleSheet">
-                <string notr="true">background-color: rgb(244, 244, 244);</string>
+                <string notr="true">background-color: rgb(108, 168, 214);</string>
                </property>
                <property name="text">
                 <string>Merge factor:</string>

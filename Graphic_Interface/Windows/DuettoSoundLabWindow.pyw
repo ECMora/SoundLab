@@ -83,7 +83,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 {'name': 'Max', 'type': 'float', 'value': 22, 'step': 0.1},
             ]},
             {'name': 'FFT size', 'type': 'list', 'default':512, 'values': { 'Automatic': 512,"32":32,"64": 64,"128": 128,"256":256 ,"512": 512, "1024": 1024, '2048': 2048,'4096': 4096}, 'value': 'Automatic'},
-            {'name': 'FFT window', 'type': 'list', 'value': self.widget.specgramSettings.windows[0],'default':self.widget.specgramSettings.windows[0],'values': {"blackman": self.widget.specgramSettings.windows[3],"rectangular": self.widget.specgramSettings.windows[1], "Hanning": self.widget.specgramSettings.windows[2], "Hamming": self.widget.specgramSettings.windows[0],'bartlett':self.widget.specgramSettings.windows[4],'kaiser':self.widget.specgramSettings.windows[5],'None':self.widget.specgramSettings.windows[6]}},
+            {'name': 'FFT window', 'type': 'list', 'value': self.widget.specgramSettings.windows[0],'default':self.widget.specgramSettings.windows[0],'values': {"Blackman": self.widget.specgramSettings.windows[3],"Rectangular": self.widget.specgramSettings.windows[1], "Hanning": self.widget.specgramSettings.windows[2], "Hamming": self.widget.specgramSettings.windows[0],'Bartlett':self.widget.specgramSettings.windows[4],'Kaiser':self.widget.specgramSettings.windows[5],'None':self.widget.specgramSettings.windows[6]}},
             {'name': 'FFT overlap', 'type': 'int', 'value':-1, 'limits': (-1, 99)},
             {'name': 'Threshold(dB)', 'type': 'group', 'children': [
                 {'name': 'Min', 'type': 'float','step':0.1,'default': self.defaultTheme.histRange[0], 'value': self.defaultTheme.histRange[0]},
@@ -100,7 +100,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         {'name': 'Power Spectrum Settings', 'type': 'group', 'children': [
 
              {'name': 'FFT size', 'type': 'list','default':512, 'values': { 'Automatic': 512,"32":32,"64": 64,"128":128,"256":256, "1024": 1024, "512": 512, '2048': 2048,'4096': 4096}, 'value': 2},
-             {'name': 'FFT window', 'type': 'list', 'value':self.widget.specgramSettings.windows[0],'default':self.widget.specgramSettings.windows[0],'values': {"blackman": self.widget.specgramSettings.windows[3],"rectangular": self.widget.specgramSettings.windows[1], "Hanning": self.widget.specgramSettings.windows[2], "Hamming": self.widget.specgramSettings.windows[0],'bartlett':self.widget.specgramSettings.windows[4],'kaiser':self.widget.specgramSettings.windows[5],'None':self.widget.specgramSettings.windows[6]}},
+             {'name': 'FFT window', 'type': 'list', 'value':self.widget.specgramSettings.windows[0],'default':self.widget.specgramSettings.windows[0],'values': {"Blackman": self.widget.specgramSettings.windows[3],"Rectangular": self.widget.specgramSettings.windows[1], "Hanning": self.widget.specgramSettings.windows[2], "Hamming": self.widget.specgramSettings.windows[0],'Bartlett':self.widget.specgramSettings.windows[4],'Kaiser':self.widget.specgramSettings.windows[5],'None':self.widget.specgramSettings.windows[6]}},
              {'name': 'FFT overlap', 'type': 'int', 'value':self.pow_overlap, 'limits' : (-1,100)},
              {'name': 'Grid', 'type': 'group', 'children': [
                 {'name': 'X', 'type': 'bool','default': self.defaultTheme.pow_GridX, 'value': self.defaultTheme.pow_GridX},
@@ -110,6 +110,10 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
              {'name':'Background color', 'type':'color','value':self.defaultTheme.pow_Back, 'default':self.defaultTheme.pow_Back},
              {'name': 'Plot color', 'type': 'color', 'value':self.defaultTheme.pow_Plot, 'default': self.defaultTheme.pow_Plot},
         ]},
+        {'name': 'Themes', 'type': 'group', 'children': [
+         {'name': 'Theme Selected', 'type': 'list', 'value':"RedBlackTheme.dth",'default':"RedBlackTheme.dth",'values': {"BatsoundLikeTheme":"BatsoundLikeTheme.dth","BlackWhiteTheme":"BlackWhiteTheme.dth","PinkBlueTheme":"PinkBlueTheme.dth","RedBlackTheme":"RedBlackTheme.dth","GreenTheme":"GreenTheme.dth","WhiteBlueTheme":"WhiteBlueTheme.dth"}},
+        ]
+        } ,
         {'name': 'Detection Settings', 'type': 'group', 'children': [
             {'name': 'Measurement Location', 'type': 'group', 'children': [
             {'name': 'Start', 'type': 'color', 'value': self.defaultTheme.startColor,'default': self.defaultTheme.startColor},
@@ -219,11 +223,13 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.widget.visibleSpectrogram = True
         self.widget.specgramSettings.NFFT = self.ParamTree.param('Spectrogram Settings').param('FFT size').value()
         self.widget.specgramSettings.overlap = self.ParamTree.param('Spectrogram Settings').param('FFT overlap').value()
-        if os.path.exists("Utils\\Didactic Signals\\duetto.wav"):
-            self.widget.open("Utils\\Didactic Signals\\duetto.wav")
+        p = os.path.join(os.path.join("Utils","Didactic Signals"),"duetto.wav")
+        if os.path.exists(p):
+            self.widget.open(p)
             self.widget.visibleSpectrogram = False
         else:
             self.widget.openNew(44100, 16, 5., whiteNoise=False)
+        self.actionSignalName.setText(u"File Name: "+ self.widget.signalProcessor.signal.name())
         self.setWindowTitle("Duetto Sound Lab - Welcome to Duetto")
         self.statusbar.showMessage("Welcome to Duetto Sound Lab.")
 
@@ -342,6 +348,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     def change(self, param, changes):
         #print("tree changes:")
         #pow = False
+
         for param, change, data in changes:
             path = self.ParamTree.childPath(param)
             if path is not None:
@@ -456,6 +463,11 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 self.widget.maxYOsc = data
                 self.widget.visualChanges = True
                 self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
+
+            elif childName == 'Themes.Theme Selected':
+                p = os.path.join(os.path.join("Utils","Themes"),data)
+                theme = self.DeSerializeTheme(p)
+                self.updateMyTheme(theme)
             #print('  parameter: %s' % childName)
             #print('  change:    %s' % change)
             #print('  data:      %s' % str(data))
@@ -767,11 +779,13 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.close()
 
     def closeEvent(self,event):
+        self._save()
+        self.close()
+
+    def _save(self):
         mbox = QtGui.QMessageBox(QtGui.QMessageBox.Question,"Save","Do you want to save the signal?",QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,self)
-        print(self.widget.undoRedoManager.count())
         if self.widget.undoRedoManager.count() > 0 and mbox.exec_() == QtGui.QMessageBox.Yes:
             self.on_actionSave_triggered()
-        self.close()
 
     @pyqtSlot()
     def on_actionNew_triggered(self):
@@ -787,20 +801,25 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         f = QFileDialog.getOpenFileName(self, "Select a file to open",directory = self.lastopen,
                                               filter="Wave Files (*.wav);;All Files (*)")
         self._open(f)
+    @pyqtSlot()
+    def on_actionClose_triggered(self):
+        self._save()
+        self.on_load()
+
 
     def _open(self,f=''):
         if f != '':
             self.lastopen = f
             self.widget.specgramSettings.NFFT = self.ParamTree.param('Spectrogram Settings').param('FFT size').value()
             self.widget.specgramSettings.overlap = self.ParamTree.param('Spectrogram Settings').param('FFT overlap').value()
-            path_base = os.path.split(str(f))[0]
+            path_base = os.path.split(unicode(f))[0]
             self.filesInFolder = self.folderFiles(path_base)
             self.filesInFolderIndex = self.filesInFolder.index(str(f))
             self.widget.visibleSpectrogram = True # for restore the state lose in load
             try:
                 self.widget.open(f)
                 self.setWindowTitle("Duetto Sound Lab - " + self.widget.signalProcessor.signal.name())
-                self.actionSignalName.setText(self.widget.signalProcessor.signal.name())
+                self.actionSignalName.setText(u"File Name: "+self.widget.signalProcessor.signal.name())
             except:
                 QMessageBox.warning(QMessageBox(), "Error", "Could not load the file.\n"+f)
                 self.widget.openNew(44100,16,1)

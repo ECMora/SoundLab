@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'E:\Biologia\SISTEMA\DuettoSystem\Graphic_Interface\UI Files\ui_elemDetectSettings.ui'
 #
-# Created: Fri May 02 15:00:37 2014
+# Created: Tue May 06 12:33:07 2014
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -175,7 +175,7 @@ class Ui_Dialog(object):
         self.formLayout_7 = QtGui.QFormLayout(self.groupBox_4)
         self.formLayout_7.setObjectName(_fromUtf8("formLayout_7"))
         self.label = QtGui.QLabel(self.groupBox_4)
-        self.label.setStyleSheet(_fromUtf8("background-color: rgb(255, 255, 255);"))
+        self.label.setStyleSheet(_fromUtf8("background-color: rgb(108, 168, 214);"))
         self.label.setObjectName(_fromUtf8("label"))
         self.formLayout_7.setWidget(1, QtGui.QFormLayout.LabelRole, self.label)
         self.cmbxDetectionMethod = QtGui.QComboBox(self.groupBox_4)
@@ -196,7 +196,7 @@ class Ui_Dialog(object):
         self.horizontalLayout_7.setObjectName(_fromUtf8("horizontalLayout_7"))
         self.label_6 = QtGui.QLabel(self.groupBox_4)
         self.label_6.setEnabled(True)
-        self.label_6.setStyleSheet(_fromUtf8("background-color: rgb(244, 244, 244);"))
+        self.label_6.setStyleSheet(_fromUtf8("background-color: rgb(108, 168, 214);"))
         self.label_6.setObjectName(_fromUtf8("label_6"))
         self.horizontalLayout_7.addWidget(self.label_6)
         self.dsbxThreshold = QtGui.QDoubleSpinBox(self.groupBox_4)
@@ -214,7 +214,7 @@ class Ui_Dialog(object):
         self.checboxAutomaticThreshold.setObjectName(_fromUtf8("checboxAutomaticThreshold"))
         self.horizontalLayout_11.addWidget(self.checboxAutomaticThreshold)
         self.label_2 = QtGui.QLabel(self.groupBox_4)
-        self.label_2.setStyleSheet(_fromUtf8("background-color: rgb(244, 244, 244);"))
+        self.label_2.setStyleSheet(_fromUtf8("background-color: rgb(108, 168, 214);"))
         self.label_2.setObjectName(_fromUtf8("label_2"))
         self.horizontalLayout_11.addWidget(self.label_2)
         self.dsbxMinSize = QtGui.QDoubleSpinBox(self.groupBox_4)
@@ -228,7 +228,7 @@ class Ui_Dialog(object):
         self.horizontalLayout_5 = QtGui.QHBoxLayout()
         self.horizontalLayout_5.setObjectName(_fromUtf8("horizontalLayout_5"))
         self.label_4 = QtGui.QLabel(self.groupBox_4)
-        self.label_4.setStyleSheet(_fromUtf8("background-color: rgb(244, 244, 244);"))
+        self.label_4.setStyleSheet(_fromUtf8("background-color: rgb(108, 168, 214);"))
         self.label_4.setObjectName(_fromUtf8("label_4"))
         self.horizontalLayout_5.addWidget(self.label_4)
         self.dsbxDecay = QtGui.QDoubleSpinBox(self.groupBox_4)
@@ -241,7 +241,7 @@ class Ui_Dialog(object):
         self.horizontalLayout_3 = QtGui.QHBoxLayout()
         self.horizontalLayout_3.setObjectName(_fromUtf8("horizontalLayout_3"))
         self.label_10 = QtGui.QLabel(self.groupBox_4)
-        self.label_10.setStyleSheet(_fromUtf8("background-color: rgb(244, 244, 244);"))
+        self.label_10.setStyleSheet(_fromUtf8("background-color: rgb(108, 168, 214);"))
         self.label_10.setObjectName(_fromUtf8("label_10"))
         self.horizontalLayout_3.addWidget(self.label_10)
         self.dsbxThreshold2 = QtGui.QDoubleSpinBox(self.groupBox_4)
@@ -257,7 +257,7 @@ class Ui_Dialog(object):
         self.horizontalLayout_6 = QtGui.QHBoxLayout()
         self.horizontalLayout_6.setObjectName(_fromUtf8("horizontalLayout_6"))
         self.label_5 = QtGui.QLabel(self.groupBox_4)
-        self.label_5.setStyleSheet(_fromUtf8("background-color: rgb(244, 244, 244);"))
+        self.label_5.setStyleSheet(_fromUtf8("background-color: rgb(108, 168, 214);"))
         self.label_5.setObjectName(_fromUtf8("label_5"))
         self.horizontalLayout_6.addWidget(self.label_5)
         self.sbxSoftFactor = QtGui.QSpinBox(self.groupBox_4)
@@ -271,7 +271,7 @@ class Ui_Dialog(object):
         self.horizontalLayout_4 = QtGui.QHBoxLayout()
         self.horizontalLayout_4.setObjectName(_fromUtf8("horizontalLayout_4"))
         self.label_3 = QtGui.QLabel(self.groupBox_4)
-        self.label_3.setStyleSheet(_fromUtf8("background-color: rgb(244, 244, 244);"))
+        self.label_3.setStyleSheet(_fromUtf8("background-color: rgb(108, 168, 214);"))
         self.label_3.setObjectName(_fromUtf8("label_3"))
         self.horizontalLayout_4.addWidget(self.label_3)
         self.dsbxMergeFactor = QtGui.QDoubleSpinBox(self.groupBox_4)

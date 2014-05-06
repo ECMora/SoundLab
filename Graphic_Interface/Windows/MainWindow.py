@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'E:\Biologia\SISTEMA\DuettoSystem\Graphic_Interface\UI Files\MainWindow.ui'
 #
-# Created: Sat May 03 15:34:36 2014
+# Created: Tue May 06 11:41:47 2014
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -18,7 +18,7 @@ class Ui_DuettoMainWindow(object):
     def setupUi(self, DuettoMainWindow):
         DuettoMainWindow.setObjectName(_fromUtf8("DuettoMainWindow"))
         DuettoMainWindow.setWindowModality(QtCore.Qt.ApplicationModal)
-        DuettoMainWindow.resize(800, 600)
+        DuettoMainWindow.resize(932, 600)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -46,12 +46,12 @@ class Ui_DuettoMainWindow(object):
         self.verticalLayout_2.addWidget(self.horizontalScrollBar)
         DuettoMainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(DuettoMainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 932, 21))
         self.menubar.setAutoFillBackground(False)
         self.menubar.setStyleSheet(_fromUtf8(""))
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuFile = QtGui.QMenu(self.menubar)
-        self.menuFile.setGeometry(QtCore.QRect(203, 155, 158, 257))
+        self.menuFile.setGeometry(QtCore.QRect(42, 141, 158, 288))
         self.menuFile.setAutoFillBackground(False)
         self.menuFile.setStyleSheet(_fromUtf8(""))
         self.menuFile.setTearOffEnabled(False)
@@ -319,6 +319,8 @@ class Ui_DuettoMainWindow(object):
         self.actionSave_selected_interval_as = QtGui.QAction(DuettoMainWindow)
         self.actionSave_selected_interval_as.setIcon(icon14)
         self.actionSave_selected_interval_as.setObjectName(_fromUtf8("actionSave_selected_interval_as"))
+        self.actionClose = QtGui.QAction(DuettoMainWindow)
+        self.actionClose.setObjectName(_fromUtf8("actionClose"))
         self.menuFile.addAction(self.actionNew)
         self.menuFile.addAction(self.actionOpen)
         self.menuFile.addAction(self.actionSave_selected_interval_as)
@@ -328,6 +330,8 @@ class Ui_DuettoMainWindow(object):
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionLoad_Theme)
         self.menuFile.addAction(self.actionSave_theme)
+        self.menuFile.addSeparator()
+        self.menuFile.addAction(self.actionClose)
         self.menuFile.addAction(self.actionExit)
         self.menuTools.addAction(self.actionZoomIn)
         self.menuTools.addAction(self.actionZoom_out)
@@ -414,8 +418,8 @@ class Ui_DuettoMainWindow(object):
         self.toolBar.addAction(self.actionSettings)
         self.toolBar.addAction(self.actionSegmentation_And_Clasification)
         self.toolBar.addAction(self.actionFile_Up)
-        self.toolBar.addAction(self.actionFile_Down)
         self.toolBar.addAction(self.actionSignalName)
+        self.toolBar.addAction(self.actionFile_Down)
 
         self.retranslateUi(DuettoMainWindow)
         QtCore.QMetaObject.connectSlotsByName(DuettoMainWindow)
@@ -516,6 +520,7 @@ class Ui_DuettoMainWindow(object):
         self.actionChangePlayStatus.setText(QtGui.QApplication.translate("DuettoMainWindow", "changePlayStatus", None, QtGui.QApplication.UnicodeUTF8))
         self.actionChangePlayStatus.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Space", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSave_selected_interval_as.setText(QtGui.QApplication.translate("DuettoMainWindow", "Save selected as", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionClose.setText(QtGui.QApplication.translate("DuettoMainWindow", "Close", None, QtGui.QApplication.UnicodeUTF8))
 
 from Graphic_Interface.Widgets.QSignalVisualizerWidget import QSignalVisualizerWidget
 import icons_rc
