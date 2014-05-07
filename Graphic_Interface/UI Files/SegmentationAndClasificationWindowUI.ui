@@ -1,0 +1,726 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="windowModality">
+   <enum>Qt::ApplicationModal</enum>
+  </property>
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>769</width>
+    <height>569</height>
+   </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
+  </property>
+  <property name="windowTitle">
+   <string>Duetto Sound Lab</string>
+  </property>
+  <property name="autoFillBackground">
+   <bool>false</bool>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">font: 10pt &quot;Arial&quot;;
+color: rgb(0, 0, 0);
+padding:1%;</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
+   <layout class="QVBoxLayout" name="verticalLayout_2">
+    <property name="sizeConstraint">
+     <enum>QLayout::SetDefaultConstraint</enum>
+    </property>
+    <property name="margin">
+     <number>0</number>
+    </property>
+    <item>
+     <widget class="QTabWidget" name="tabwidget">
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
+      <property name="tabShape">
+       <enum>QTabWidget::Rounded</enum>
+      </property>
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <property name="elideMode">
+       <enum>Qt::ElideNone</enum>
+      </property>
+      <property name="usesScrollButtons">
+       <bool>true</bool>
+      </property>
+      <property name="tabsClosable">
+       <bool>false</bool>
+      </property>
+      <property name="movable">
+       <bool>true</bool>
+      </property>
+      <widget class="QWidget" name="tab">
+       <attribute name="title">
+        <string>Detection</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout">
+        <item row="0" column="0">
+         <widget class="QSignalVisualizerWidget" name="widget" native="true"/>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="tab_2">
+       <attribute name="title">
+        <string>Batch Process</string>
+       </attribute>
+       <layout class="QGridLayout" name="gridLayout_4">
+        <item row="0" column="1">
+         <widget class="QPushButton" name="pushButtonInputFolder">
+          <property name="text">
+           <string>Explore</string>
+          </property>
+          <property name="flat">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="0">
+         <widget class="QListWidget" name="listwidgetProgress">
+          <property name="styleSheet">
+           <string notr="true">background-color: rgb(217, 217, 217);</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="0">
+         <widget class="QProgressBar" name="progressBarProcesed">
+          <property name="value">
+           <number>0</number>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLineEdit" name="lineEditOutputFolder">
+          <property name="text">
+           <string>Select the folder of output procesed files</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLineEdit" name="lineeditFilePath">
+          <property name="text">
+           <string>Select the folder of input audio files</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QPushButton" name="pushButtonOutputFolder">
+          <property name="text">
+           <string>Explore</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1" colspan="2">
+         <widget class="QGroupBox" name="groupBox">
+          <property name="title">
+           <string>Action</string>
+          </property>
+          <layout class="QFormLayout" name="formLayout">
+           <property name="fieldGrowthPolicy">
+            <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+           </property>
+           <item row="0" column="0">
+            <widget class="QRadioButton" name="rbttnDetection">
+             <property name="text">
+              <string>Detection</string>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+             <property name="checked">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="0">
+            <widget class="QRadioButton" name="rbttnSplitFile">
+             <property name="text">
+              <string>Split Files</string>
+             </property>
+            </widget>
+           </item>
+           <item row="2" column="1">
+            <widget class="QSpinBox" name="spboxSplitTime">
+             <property name="suffix">
+              <string>sec</string>
+             </property>
+             <property name="minimum">
+              <number>30</number>
+             </property>
+             <property name="maximum">
+              <number>120</number>
+             </property>
+             <property name="value">
+              <number>60</number>
+             </property>
+            </widget>
+           </item>
+           <item row="3" column="0" colspan="2">
+            <widget class="QPushButton" name="pushButtonStart">
+             <property name="text">
+              <string>Process</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+        <item row="0" column="2">
+         <widget class="QCheckBox" name="cbxSingleFile">
+          <property name="text">
+           <string>Single Excell</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+    <item>
+     <widget class="QScrollBar" name="horizontalScrollBar">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QToolBar" name="toolBar">
+   <property name="maximumSize">
+    <size>
+     <width>16777215</width>
+     <height>16777201</height>
+    </size>
+   </property>
+   <property name="windowTitle">
+    <string>toolBar</string>
+   </property>
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>20</width>
+     <height>20</height>
+    </size>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionPlay_Sound"/>
+   <addaction name="actionPause_Sound"/>
+   <addaction name="actionStop_Sound"/>
+   <addaction name="separator"/>
+   <addaction name="actionZoomIn"/>
+   <addaction name="actionZoom_out"/>
+   <addaction name="actionZoom_out_entire_file"/>
+   <addaction name="actionFull_Screen"/>
+   <addaction name="separator"/>
+   <addaction name="actionCombined"/>
+   <addaction name="actionOscilogram"/>
+   <addaction name="actionSpectogram"/>
+   <addaction name="separator"/>
+   <addaction name="actionDetection"/>
+   <addaction name="actionPeak_To_Peak"/>
+   <addaction name="actionIntervals"/>
+  </widget>
+  <widget class="QDockWidget" name="dockWidgetParameterTableOscilogram">
+   <property name="windowTitle">
+    <string>Elements</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>4</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents">
+    <layout class="QVBoxLayout" name="verticalLayout_3">
+     <item>
+      <widget class="QTableWidget" name="tableParameterOscilogram">
+       <property name="toolTip">
+        <string>Oscilogram elements  meditions</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>769</width>
+     <height>24</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuExport">
+    <property name="title">
+     <string>Save </string>
+    </property>
+    <addaction name="actionMeditions"/>
+    <addaction name="actionOsgram_Image"/>
+    <addaction name="actionSpecgram_Image"/>
+    <addaction name="actionCombined_Image"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuParameters">
+    <property name="title">
+     <string>View</string>
+    </property>
+    <widget class="QMenu" name="menuPeak_Frecuencies">
+     <property name="title">
+      <string>Peak Frecuencies</string>
+     </property>
+     <addaction name="actionElements_Peaks"/>
+     <addaction name="actionSub_Elements_Peaks"/>
+    </widget>
+    <addaction name="actionView_Parameters"/>
+    <addaction name="actionView_Threshold"/>
+    <addaction name="actionTemporal_Elements"/>
+    <addaction name="actionTemporal_Numbers"/>
+    <addaction name="actionTemporal_Figures"/>
+    <addaction name="actionSpectral_Elements"/>
+    <addaction name="actionSpectral_Numbers"/>
+    <addaction name="actionSpectral_Figures"/>
+    <addaction name="menuPeak_Frecuencies"/>
+    <addaction name="actionFull_Screen"/>
+   </widget>
+   <addaction name="menuExport"/>
+   <addaction name="menuParameters"/>
+  </widget>
+  <action name="actionZoomIn">
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/zoomin_26x26.png</normaloff>:/myappicons/zoomin_26x26.png</iconset>
+   </property>
+   <property name="text">
+    <string>Zoom in</string>
+   </property>
+   <property name="shortcut">
+    <string>+</string>
+   </property>
+  </action>
+  <action name="actionZoom_out">
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/zoomout_26x26.png</normaloff>:/myappicons/zoomout_26x26.png</iconset>
+   </property>
+   <property name="text">
+    <string>Zoom out</string>
+   </property>
+   <property name="shortcut">
+    <string>-</string>
+   </property>
+  </action>
+  <action name="actionSpectogram">
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/spec.ico</normaloff>:/myappicons/spec.ico</iconset>
+   </property>
+   <property name="text">
+    <string>Spectogram</string>
+   </property>
+  </action>
+  <action name="actionOscilogram">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/osc.ico</normaloff>:/myappicons/osc.ico</iconset>
+   </property>
+   <property name="text">
+    <string>Oscillogram</string>
+   </property>
+   <property name="visible">
+    <bool>true</bool>
+   </property>
+  </action>
+  <action name="actionCombined">
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/combined.ico</normaloff>:/myappicons/combined.ico</iconset>
+   </property>
+   <property name="text">
+    <string>Combined</string>
+   </property>
+  </action>
+  <action name="actionOscillogram_Settings">
+   <property name="text">
+    <string>Oscillogram Settings</string>
+   </property>
+  </action>
+  <action name="actionSpectogram_Settings">
+   <property name="text">
+    <string>Spectrogram Settings</string>
+   </property>
+  </action>
+  <action name="actionPlay_Sound">
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/02049_26x26.png</normaloff>:/myappicons/02049_26x26.png</iconset>
+   </property>
+   <property name="text">
+    <string>Play Sound</string>
+   </property>
+   <property name="shortcut">
+    <string>Space</string>
+   </property>
+  </action>
+  <action name="actionStop_Sound">
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/02051_26x26.png</normaloff>:/myappicons/02051_26x26.png</iconset>
+   </property>
+   <property name="text">
+    <string>Stop Sound</string>
+   </property>
+  </action>
+  <action name="actionPause_Sound">
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/pausa.png</normaloff>:/myappicons/pausa.png</iconset>
+   </property>
+   <property name="text">
+    <string>Pause Sound</string>
+   </property>
+  </action>
+  <action name="actionZoom_out_entire_file">
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/zoom_26x26.png</normaloff>:/myappicons/zoom_26x26.png</iconset>
+   </property>
+   <property name="text">
+    <string>Zoom out entire file</string>
+   </property>
+  </action>
+  <action name="actionCopy">
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/copy_26x26.png</normaloff>:/myappicons/copy_26x26.png</iconset>
+   </property>
+   <property name="text">
+    <string>Copy</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+C</string>
+   </property>
+  </action>
+  <action name="actionPaste">
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/paste_26x26.png</normaloff>:/myappicons/paste_26x26.png</iconset>
+   </property>
+   <property name="text">
+    <string>Paste</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+V</string>
+   </property>
+  </action>
+  <action name="actionCut">
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/cut_26x26.png</normaloff>:/myappicons/cut_26x26.png</iconset>
+   </property>
+   <property name="text">
+    <string>Cut</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+X</string>
+   </property>
+  </action>
+  <action name="actionMeditions">
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/Excel.png</normaloff>:/myappicons/Excel.png</iconset>
+   </property>
+   <property name="text">
+    <string>Meditions</string>
+   </property>
+  </action>
+  <action name="actionView_Parameters">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Parameters</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Space</string>
+   </property>
+  </action>
+  <action name="actionDetection">
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/Process Viewer.png</normaloff>:/myappicons/Process Viewer.png</iconset>
+   </property>
+   <property name="text">
+    <string>Detection</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+D</string>
+   </property>
+  </action>
+  <action name="actionClear_Meditions">
+   <property name="text">
+    <string>Clear Meditions</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+E</string>
+   </property>
+  </action>
+  <action name="actionView_Threshold">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Threshold</string>
+   </property>
+  </action>
+  <action name="actionTemporal_Elements">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Temporal Elements</string>
+   </property>
+  </action>
+  <action name="actionSpectral_Elements">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Spectral Elements</string>
+   </property>
+  </action>
+  <action name="actionSpectral_Figures">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Spectral Figures</string>
+   </property>
+  </action>
+  <action name="actionTemporal_Numbers">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Temporal Numbers</string>
+   </property>
+  </action>
+  <action name="actionSpectral_Numbers">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Spectral Numbers</string>
+   </property>
+  </action>
+  <action name="actionSub_Elements_Peaks">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Sub Elements Peaks</string>
+   </property>
+  </action>
+  <action name="actionElements_Peaks">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Elements Peaks</string>
+   </property>
+  </action>
+  <action name="actionOsgram_Image">
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/Camera.ico</normaloff>:/myappicons/Camera.ico</iconset>
+   </property>
+   <property name="text">
+    <string>Osgram Image</string>
+   </property>
+  </action>
+  <action name="actionSpecgram_Image">
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/Camera.ico</normaloff>:/myappicons/Camera.ico</iconset>
+   </property>
+   <property name="text">
+    <string>Specgram Image</string>
+   </property>
+  </action>
+  <action name="actionTemporal_Figures">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Temporal Figures</string>
+   </property>
+  </action>
+  <action name="actionCombined_Image">
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/Photofiltre.png</normaloff>:/myappicons/Photofiltre.png</iconset>
+   </property>
+   <property name="text">
+    <string>Combined Image</string>
+   </property>
+  </action>
+  <action name="actionFull_Screen">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/Position.png</normaloff>:/myappicons/Position.png</iconset>
+   </property>
+   <property name="text">
+    <string>Full Screen</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/cerrar.png</normaloff>:/myappicons/cerrar.png</iconset>
+   </property>
+   <property name="text">
+    <string>Exit</string>
+   </property>
+   <property name="shortcut">
+    <string>Esc</string>
+   </property>
+  </action>
+  <action name="actionPeak_To_Peak">
+   <property name="text">
+    <string>Peak To Peak</string>
+   </property>
+  </action>
+  <action name="actionIntervals">
+   <property name="text">
+    <string>Intervals</string>
+   </property>
+  </action>
+  <zorder>dockWidgetParameterTableOscilogram</zorder>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QSignalVisualizerWidget</class>
+   <extends>QWidget</extends>
+   <header>Graphic_Interface.Widgets.QSignalVisualizerWidget</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="resources/icons.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>pushButtonInputFolder</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>selectInputFolder()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>666</x>
+     <y>350</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>442</x>
+     <y>-19</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButtonOutputFolder</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>selectOutputFolder()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>666</x>
+     <y>378</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>595</x>
+     <y>-10</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>pushButtonStart</sender>
+   <signal>clicked()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>startBatchProcess()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>754</x>
+     <y>350</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>681</x>
+     <y>-19</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionView_Threshold</sender>
+   <signal>triggered(bool)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>setVisibleThreshold()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>384</x>
+     <y>280</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>selectInputFolder()</slot>
+  <slot>selectOutputFolder()</slot>
+  <slot>startBatchProcess()</slot>
+  <slot>setVisibleThreshold()</slot>
+ </slots>
+</ui>
