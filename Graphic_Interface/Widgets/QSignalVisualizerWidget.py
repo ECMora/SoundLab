@@ -532,10 +532,11 @@ class QSignalVisualizerWidget(QWidget):
             self.rangeChanged.emit(self.mainCursor.min, self.mainCursor.max, len(self.signalProcessor.signal.data))
 
     def on_newDataRecorded(self, frame_count):
-        self.mainCursor.min = max(0, len(self.signalProcessor.signal.data) - frame_count)
         self.mainCursor.max = len(self.signalProcessor.signal.data)
+        self.mainCursor.min = max(0, len(self.signalProcessor.signal.data) - frame_count)
         self.visualChanges = True
-        self.refresh(updateSpectrogram=False)
+        print(self.signalProcessor.signal.data.size)
+        #self.refresh(updateSpectrogram=False)
         self.rangeChanged.emit(self.mainCursor.min, self.mainCursor.max, len(self.signalProcessor.signal.data))
 
     SPECGRAM_YTICS_DECIMAL_PLACES = 5
@@ -638,8 +639,8 @@ class QSignalVisualizerWidget(QWidget):
                                                        self._from_osc_to_spec(self.mainCursor.max)),
                                                yRange=(YSpec[0], YSpec[1]), padding=0)
             self.updateSpectrogramColors()
-        self.axesSpecgram.setBackground(self.spec_background)
-        self.axesSpecgram.showGrid(x=self.spec_gridx, y=self.spec_gridy)
+            self.axesSpecgram.setBackground(self.spec_background)
+            self.axesSpecgram.showGrid(x=self.spec_gridx, y=self.spec_gridy)
         self.refreshAxes()
         self.visualChanges = False
         if self.visibleElements:

@@ -56,9 +56,10 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.pow_spec_plotColor = self.defaultTheme.pow_Plot
         self.pow_spec_gridx = self.defaultTheme.pow_GridX
         self.pow_spec_gridy = self.defaultTheme.pow_GridY
+        self.pow_spec_lines = True
 
         self.pow_spec_maxY = 5
-        self.pow_spec_minY = -60
+        self.pow_spec_minY = -50
         self.widget.lines = True
         self.statusbar = self.statusBar()
         self.statusbar.setSizeGripEnabled(False)
@@ -112,6 +113,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 {'name': 'Y', 'type': 'bool','default':self.defaultTheme.pow_GridY , 'value': self.defaultTheme.pow_GridY},
 
              ]},
+             {'name': 'Connect Lines', 'type': 'bool','default': self.pow_spec_lines, 'value': self.pow_spec_lines},
              {'name': 'YBounds', 'type': 'group', 'children': [
                 {'name': 'MinY', 'type': 'int', 'limits' : (-60,5),'default': -50, 'value': -50},
                 {'name': 'MaxY', 'type': 'int', 'limits' : (-60,5),'default': 5 , 'value': 5},
@@ -475,6 +477,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 self.widget.visualChanges = True
                 self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
             elif childName == 'Oscillogram Settings.Connect Lines':
+                self.pow_spec_lines = data
                 self.widget.lines = data
                 self.widget.visualChanges = True
                 self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
@@ -487,6 +490,8 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 self.pow_spec_maxY = data
             elif childName == 'Power Spectrum Settings.YBounds.MinY':
                 self.pow_spec_minY = data
+            elif childName == 'Power Spectrum Settings.Connect Lines':
+                self.pow_spec_lines = data
             #print('  parameter: %s' % childName)
             #print('  change:    %s' % change)
             #print('  data:      %s' % str(data))
@@ -774,7 +779,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     @pyqtSlot()
     def on_actionPower_Spectrum_triggered(self):
-        dg_pow_spec = PowerSpectrumWindow(self,self.pow_spec_plotColor, self.pow_spec_backg, self.pow_spec_gridx, self.pow_spec_gridy,self.pow_spec_minY,self.pow_spec_maxY)
+        dg_pow_spec = PowerSpectrumWindow(self,self.pow_spec_plotColor, self.pow_spec_backg, self.pow_spec_gridx, self.pow_spec_gridy,self.pow_spec_minY,self.pow_spec_maxY,self.pow_spec_lines)
 
         minx = self.widget.zoomCursor.min
         maxx = max(self.widget.zoomCursor.max, min(minx + self.NFFT_pow, len(self.widget.signalProcessor.signal.data)))
