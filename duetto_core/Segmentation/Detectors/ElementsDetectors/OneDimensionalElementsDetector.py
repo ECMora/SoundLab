@@ -17,58 +17,68 @@ class OneDimensionalElementsDetector(ElementsDetector):
         self.progress = progress
         self.envelope = array([])
 
-    def detect(self,signal, indexFrom=0, indexTo=-1, threshold=0, decay=1,minSize=0,softfactor = 5,merge_factor=0,secondThreshold=0,
-               threshold_spectral=95, minsize_spectral=(0, 0),location = None,progress=None,findSpectralSublements = False,specgramSettings=None):
-            """
-            decay in ms to prevent locals falls, should be as long as the min size of the separation between
-            elements
-            softfactor points to make a moving average in data
-            merge_factor in ms
-            threshold in dB from the max value
-            """
-            if specgramSettings is None:
-                return
-            if progress is not None:
-                self.progress = progress
-            if(signal is None):
-                return
-            if indexTo == -1:
-                indexTo = len(signal.data)
-            decay = int(decay*signal.samplingRate/1000)  #salto para evitar caidas locales
-            if abs(threshold) < 0.01:  # to prevent numeric errors
-                threshold = mean(signal.data[indexFrom : indexTo])/2
-                self.threshold = 20*log10(threshold*1000.0/(2**signal.bitDepth))
-            else:
-                #translate the threshold from dB scale to V value
-                #maxThreshold is 60 when you simplify --> 20*log10((2**signal.bitDepth)*1000.0/(2**signal.bitDepth))
-                threshold = (10.0**((60-threshold)/20.0))*(2**signal.bitDepth)/1000.0
-            if secondThreshold > 0:
-                secondThreshold = (10.0**((60-secondThreshold)/20.0))*(2**signal.bitDepth)/1000.0
-            if merge_factor != 0:
-                merge_factor = merge_factor*signal.samplingRate/1000.0
-            if minSize != 0:
-                minSize = minSize*signal.samplingRate/1000.0
-            if progress is not None:
-                self.progress(2)
 
-            threshold_spectral = percentile(specgramSettings.Pxx,threshold_spectral)
-            trim_threshold =  threshold_spectral
-            if progress is not None:
-                self.progress(5)
+    def detect(self, signal, indexFrom=0, indexTo=-1, threshold=0, decay=1, minSize=0, softfactor=5, merge_factor=0,
+               secondThreshold=0, threshold_spectral=95, minsize_spectral=(0, 0), location = None, progress=None,
+               findSpectralSublements=False, specgramSettings=None, **kwargs):
+        """
+        @param decay: in ms to prevent locals falls, should be as long as the min size of the separation between elements
+        @param softfactor: points to make a moving average in data
+        @param merge_factor: in ms
+        @param threshold: in dB from the max value
+        """
 
-            elems = self.one_dimensional_elements_detector(signal.data[indexFrom : indexTo],threshold, minSize=minSize, decay=decay, softfactor=softfactor, merge_factor=merge_factor,secondThreshold=secondThreshold)
+        if specgramSettings is None:
+            return
+        if progress is not None:
+            self.progress = progress
+        if not signal:
+            return
+        if indexTo == -1:
+            indexTo = len(signal.data)
+        decay = int(decay * signal.samplingRate / 1000)  #salto para evitar caidas locales
+        if abs(threshold) < 0.01:  # to prevent numeric errors
+            threshold = mean(signal.data[indexFrom: indexTo]) / 2
+            self.threshold = 20 * log10(threshold * 1000.0 / (2 ** signal.bitDepth))
+        else:
+            #translate the threshold from dB scale to V value
+            #maxThreshold is 60 when you simplify --> 20*log10((2**signal.bitDepth)*1000.0/(2**signal.bitDepth))
+            threshold = (10.0 ** ((60 - threshold) / 20.0)) * (2 ** signal.bitDepth) / 1000.0
+        if secondThreshold > 0:
+            secondThreshold = (10.0 ** ((60 - secondThreshold) / 20.0)) * (2 ** signal.bitDepth) / 1000.0
+        if merge_factor != 0:
+            merge_factor = merge_factor * signal.samplingRate / 1000.0
+        if minSize != 0:
+            minSize = minSize * signal.samplingRate / 1000.0
+        if progress is not None:
+            self.progress(2)
 
-            l = len(elems)
-            progress_size = l/10 if l > 10 else 3
-            stepsize = 50/(10 if l > 10 else 3)
-            self.oneDimensionalElements = [None for _ in elems]
-            for i,c in enumerate(elems):
-                self.oneDimensionalElements[i] = OscilogramElement(signal,c[0], c[1],number=i+1,threshold_spectral= threshold_spectral, minsize_spectral=minsize_spectral,location=location,findSpectralSublements = findSpectralSublements,specgramSettings=specgramSettings,trim_threshold=trim_threshold)
-                 #descartar elemento si no posee informacion espectral suficiente
-                if progress is not None and i % progress_size == 0:
-                    self.progress(40 + (i/progress_size)*stepsize)
+        threshold_spectral = percentile(specgramSettings.Pxx, threshold_spectral)
+        trim_threshold = threshold_spectral
+        if progress is not None:
+            self.progress(5)
 
-    def one_dimensional_elements_detector(self, data,threshold=0, minSize=1, decay=1, softfactor=10, merge_factor=0,secondThreshold=0):
+        elems = self.one_dimensional_elements_detector(signal.data[indexFrom : indexTo], threshold, minSize=minSize,
+                                                       decay=decay, softfactor=softfactor, merge_factor=merge_factor,
+                                                       secondThreshold=secondThreshold)
+
+        l = len(elems)
+        progress_size = l / 10 if l > 10 else 3
+        stepsize = 50 / (10 if l > 10 else 3)
+        self.oneDimensionalElements = [None for _ in elems]
+        for i, c in enumerate(elems):
+            self.oneDimensionalElements[i] = OscilogramElement(signal, c[0], c[1], number=i + 1,
+                                                               threshold_spectral=threshold_spectral,
+                                                               minsize_spectral=minsize_spectral, location=location,
+                                                               findSpectralSublements=findSpectralSublements,
+                                                               specgramSettings=specgramSettings,
+                                                               trim_threshold=trim_threshold)
+             #descartar elemento si no posee informacion espectral suficiente
+            if progress is not None and i % progress_size == 0:
+                self.progress(40 + (i / progress_size) * stepsize)
+
+    def one_dimensional_elements_detector(self, data, threshold=0, minSize=1, decay=1, softfactor=10, merge_factor=0,
+                                          secondThreshold=0):
         """
         data is a numpy array
         minSize is the min amplitude of an element
@@ -101,4 +111,3 @@ class OneDimensionalElementsDetector(ElementsDetector):
         if self.progress is not None:
             self.progress(40)
         return regions
-

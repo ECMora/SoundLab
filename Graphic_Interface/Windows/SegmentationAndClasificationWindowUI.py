@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'E:\Biologia\SISTEMA\DuettoSystem\Graphic_Interface\UI Files\SegmentationAndClasificationWindowUI.ui'
+# Form implementation generated from reading ui file 'UI Files\SegmentationAndClasificationWindowUI.ui'
 #
-# Created: Wed Apr 23 23:28:54 2014
-#      by: PyQt4 UI code generator 4.10
+# Created: Fri May 02 01:27:12 2014
+#      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
 
@@ -12,16 +12,7 @@ from PyQt4 import QtCore, QtGui
 try:
     _fromUtf8 = QtCore.QString.fromUtf8
 except AttributeError:
-    def _fromUtf8(s):
-        return s
-
-try:
-    _encoding = QtGui.QApplication.UnicodeUTF8
-    def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig, _encoding)
-except AttributeError:
-    def _translate(context, text, disambig):
-        return QtGui.QApplication.translate(context, text, disambig)
+    _fromUtf8 = lambda s: s
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
@@ -114,7 +105,6 @@ class Ui_MainWindow(object):
         self.tabwidget.addTab(self.tab_2, _fromUtf8(""))
         self.verticalLayout_2.addWidget(self.tabwidget)
         self.horizontalScrollBar = QtGui.QScrollBar(self.centralwidget)
-        self.horizontalScrollBar.setStyleSheet(_fromUtf8("border-color: rgb(26, 255, 10);"))
         self.horizontalScrollBar.setOrientation(QtCore.Qt.Horizontal)
         self.horizontalScrollBar.setObjectName(_fromUtf8("horizontalScrollBar"))
         self.verticalLayout_2.addWidget(self.horizontalScrollBar)
@@ -289,6 +279,10 @@ class Ui_MainWindow(object):
         icon17.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/cerrar.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionExit.setIcon(icon17)
         self.actionExit.setObjectName(_fromUtf8("actionExit"))
+        self.actionPeak_To_Peak = QtGui.QAction(MainWindow)
+        self.actionPeak_To_Peak.setObjectName(_fromUtf8("actionPeak_To_Peak"))
+        self.actionIntervals = QtGui.QAction(MainWindow)
+        self.actionIntervals.setObjectName(_fromUtf8("actionIntervals"))
         self.toolBar.addAction(self.actionPlay_Sound)
         self.toolBar.addAction(self.actionPause_Sound)
         self.toolBar.addAction(self.actionStop_Sound)
@@ -303,6 +297,8 @@ class Ui_MainWindow(object):
         self.toolBar.addAction(self.actionSpectogram)
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionDetection)
+        self.toolBar.addAction(self.actionPeak_To_Peak)
+        self.toolBar.addAction(self.actionIntervals)
         self.menuExport.addAction(self.actionMeditions)
         self.menuExport.addAction(self.actionOsgram_Image)
         self.menuExport.addAction(self.actionSpecgram_Image)
@@ -332,67 +328,69 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(_translate("MainWindow", "Duetto Sound Lab", None))
-        self.tabwidget.setTabText(self.tabwidget.indexOf(self.tab), _translate("MainWindow", "Detection", None))
-        self.pushButtonInputFolder.setText(_translate("MainWindow", "Explore", None))
-        self.lineEditOutputFolder.setText(_translate("MainWindow", "Select the folder of output procesed files", None))
-        self.lineeditFilePath.setText(_translate("MainWindow", "Select the folder of input audio files", None))
-        self.pushButtonOutputFolder.setText(_translate("MainWindow", "Explore", None))
-        self.groupBox.setTitle(_translate("MainWindow", "Action", None))
-        self.rbttnDetection.setText(_translate("MainWindow", "Detection", None))
-        self.rbttnSplitFile.setText(_translate("MainWindow", "Split Files", None))
-        self.spboxSplitTime.setSuffix(_translate("MainWindow", "sec", None))
-        self.pushButtonStart.setText(_translate("MainWindow", "Process", None))
-        self.cbxSingleFile.setText(_translate("MainWindow", "Single Excell", None))
-        self.tabwidget.setTabText(self.tabwidget.indexOf(self.tab_2), _translate("MainWindow", "Batch Process", None))
-        self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar", None))
-        self.dockWidgetParameterTableOscilogram.setWindowTitle(_translate("MainWindow", "Elements", None))
-        self.tableParameterOscilogram.setToolTip(_translate("MainWindow", "Oscilogram elements  meditions", None))
-        self.menuExport.setTitle(_translate("MainWindow", "Save ", None))
-        self.menuParameters.setTitle(_translate("MainWindow", "View", None))
-        self.menuPeak_Frecuencies.setTitle(_translate("MainWindow", "Peak Frecuencies", None))
-        self.actionZoomIn.setText(_translate("MainWindow", "Zoom in", None))
-        self.actionZoomIn.setShortcut(_translate("MainWindow", "+", None))
-        self.actionZoom_out.setText(_translate("MainWindow", "Zoom out", None))
-        self.actionZoom_out.setShortcut(_translate("MainWindow", "-", None))
-        self.actionSpectogram.setText(_translate("MainWindow", "Spectogram", None))
-        self.actionOscilogram.setText(_translate("MainWindow", "Oscillogram", None))
-        self.actionCombined.setText(_translate("MainWindow", "Combined", None))
-        self.actionOscillogram_Settings.setText(_translate("MainWindow", "Oscillogram Settings", None))
-        self.actionSpectogram_Settings.setText(_translate("MainWindow", "Spectrogram Settings", None))
-        self.actionPlay_Sound.setText(_translate("MainWindow", "Play Sound", None))
-        self.actionPlay_Sound.setShortcut(_translate("MainWindow", "Space", None))
-        self.actionStop_Sound.setText(_translate("MainWindow", "Stop Sound", None))
-        self.actionPause_Sound.setText(_translate("MainWindow", "Pause Sound", None))
-        self.actionZoom_out_entire_file.setText(_translate("MainWindow", "Zoom out entire file", None))
-        self.actionCopy.setText(_translate("MainWindow", "Copy", None))
-        self.actionCopy.setShortcut(_translate("MainWindow", "Ctrl+C", None))
-        self.actionPaste.setText(_translate("MainWindow", "Paste", None))
-        self.actionPaste.setShortcut(_translate("MainWindow", "Ctrl+V", None))
-        self.actionCut.setText(_translate("MainWindow", "Cut", None))
-        self.actionCut.setShortcut(_translate("MainWindow", "Ctrl+X", None))
-        self.actionMeditions.setText(_translate("MainWindow", "Meditions", None))
-        self.actionView_Parameters.setText(_translate("MainWindow", "Parameters", None))
-        self.actionView_Parameters.setShortcut(_translate("MainWindow", "Ctrl+Space", None))
-        self.actionDetection.setText(_translate("MainWindow", "Detection", None))
-        self.actionDetection.setShortcut(_translate("MainWindow", "Ctrl+D", None))
-        self.actionClear_Meditions.setText(_translate("MainWindow", "Clear Meditions", None))
-        self.actionClear_Meditions.setShortcut(_translate("MainWindow", "Alt+E", None))
-        self.actionView_Threshold.setText(_translate("MainWindow", "Threshold", None))
-        self.actionTemporal_Elements.setText(_translate("MainWindow", "Temporal Elements", None))
-        self.actionSpectral_Elements.setText(_translate("MainWindow", "Spectral Elements", None))
-        self.actionSpectral_Figures.setText(_translate("MainWindow", "Spectral Figures", None))
-        self.actionTemporal_Numbers.setText(_translate("MainWindow", "Temporal Numbers", None))
-        self.actionSpectral_Numbers.setText(_translate("MainWindow", "Spectral Numbers", None))
-        self.actionSub_Elements_Peaks.setText(_translate("MainWindow", "Sub Elements Peaks", None))
-        self.actionElements_Peaks.setText(_translate("MainWindow", "Elements Peaks", None))
-        self.actionOsgram_Image.setText(_translate("MainWindow", "Osgram Image", None))
-        self.actionSpecgram_Image.setText(_translate("MainWindow", "Specgram Image", None))
-        self.actionTemporal_Figures.setText(_translate("MainWindow", "Temporal Figures", None))
-        self.actionCombined_Image.setText(_translate("MainWindow", "Combined Image", None))
-        self.actionFull_Screen.setText(_translate("MainWindow", "Full Screen", None))
-        self.actionExit.setText(_translate("MainWindow", "Exit", None))
-        self.actionExit.setShortcut(_translate("MainWindow", "Esc", None))
+        MainWindow.setWindowTitle(QtGui.QApplication.translate("MainWindow", "Duetto Sound Lab", None, QtGui.QApplication.UnicodeUTF8))
+        self.tabwidget.setTabText(self.tabwidget.indexOf(self.tab), QtGui.QApplication.translate("MainWindow", "Detection", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushButtonInputFolder.setText(QtGui.QApplication.translate("MainWindow", "Explore", None, QtGui.QApplication.UnicodeUTF8))
+        self.lineEditOutputFolder.setText(QtGui.QApplication.translate("MainWindow", "Select the folder of output procesed files", None, QtGui.QApplication.UnicodeUTF8))
+        self.lineeditFilePath.setText(QtGui.QApplication.translate("MainWindow", "Select the folder of input audio files", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushButtonOutputFolder.setText(QtGui.QApplication.translate("MainWindow", "Explore", None, QtGui.QApplication.UnicodeUTF8))
+        self.groupBox.setTitle(QtGui.QApplication.translate("MainWindow", "Action", None, QtGui.QApplication.UnicodeUTF8))
+        self.rbttnDetection.setText(QtGui.QApplication.translate("MainWindow", "Detection", None, QtGui.QApplication.UnicodeUTF8))
+        self.rbttnSplitFile.setText(QtGui.QApplication.translate("MainWindow", "Split Files", None, QtGui.QApplication.UnicodeUTF8))
+        self.spboxSplitTime.setSuffix(QtGui.QApplication.translate("MainWindow", "sec", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushButtonStart.setText(QtGui.QApplication.translate("MainWindow", "Process", None, QtGui.QApplication.UnicodeUTF8))
+        self.cbxSingleFile.setText(QtGui.QApplication.translate("MainWindow", "Single Excell", None, QtGui.QApplication.UnicodeUTF8))
+        self.tabwidget.setTabText(self.tabwidget.indexOf(self.tab_2), QtGui.QApplication.translate("MainWindow", "Batch Process", None, QtGui.QApplication.UnicodeUTF8))
+        self.toolBar.setWindowTitle(QtGui.QApplication.translate("MainWindow", "toolBar", None, QtGui.QApplication.UnicodeUTF8))
+        self.dockWidgetParameterTableOscilogram.setWindowTitle(QtGui.QApplication.translate("MainWindow", "Elements", None, QtGui.QApplication.UnicodeUTF8))
+        self.tableParameterOscilogram.setToolTip(QtGui.QApplication.translate("MainWindow", "Oscilogram elements  meditions", None, QtGui.QApplication.UnicodeUTF8))
+        self.menuExport.setTitle(QtGui.QApplication.translate("MainWindow", "Save ", None, QtGui.QApplication.UnicodeUTF8))
+        self.menuParameters.setTitle(QtGui.QApplication.translate("MainWindow", "View", None, QtGui.QApplication.UnicodeUTF8))
+        self.menuPeak_Frecuencies.setTitle(QtGui.QApplication.translate("MainWindow", "Peak Frecuencies", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionZoomIn.setText(QtGui.QApplication.translate("MainWindow", "Zoom in", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionZoomIn.setShortcut(QtGui.QApplication.translate("MainWindow", "+", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionZoom_out.setText(QtGui.QApplication.translate("MainWindow", "Zoom out", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionZoom_out.setShortcut(QtGui.QApplication.translate("MainWindow", "-", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSpectogram.setText(QtGui.QApplication.translate("MainWindow", "Spectogram", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionOscilogram.setText(QtGui.QApplication.translate("MainWindow", "Oscillogram", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionCombined.setText(QtGui.QApplication.translate("MainWindow", "Combined", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionOscillogram_Settings.setText(QtGui.QApplication.translate("MainWindow", "Oscillogram Settings", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSpectogram_Settings.setText(QtGui.QApplication.translate("MainWindow", "Spectrogram Settings", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionPlay_Sound.setText(QtGui.QApplication.translate("MainWindow", "Play Sound", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionPlay_Sound.setShortcut(QtGui.QApplication.translate("MainWindow", "Space", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionStop_Sound.setText(QtGui.QApplication.translate("MainWindow", "Stop Sound", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionPause_Sound.setText(QtGui.QApplication.translate("MainWindow", "Pause Sound", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionZoom_out_entire_file.setText(QtGui.QApplication.translate("MainWindow", "Zoom out entire file", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionCopy.setText(QtGui.QApplication.translate("MainWindow", "Copy", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionCopy.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+C", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionPaste.setText(QtGui.QApplication.translate("MainWindow", "Paste", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionPaste.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+V", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionCut.setText(QtGui.QApplication.translate("MainWindow", "Cut", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionCut.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+X", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionMeditions.setText(QtGui.QApplication.translate("MainWindow", "Meditions", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionView_Parameters.setText(QtGui.QApplication.translate("MainWindow", "Parameters", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionView_Parameters.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+Space", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionDetection.setText(QtGui.QApplication.translate("MainWindow", "Detection", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionDetection.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+D", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionClear_Meditions.setText(QtGui.QApplication.translate("MainWindow", "Clear Meditions", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionClear_Meditions.setShortcut(QtGui.QApplication.translate("MainWindow", "Alt+E", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionView_Threshold.setText(QtGui.QApplication.translate("MainWindow", "Threshold", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionTemporal_Elements.setText(QtGui.QApplication.translate("MainWindow", "Temporal Elements", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSpectral_Elements.setText(QtGui.QApplication.translate("MainWindow", "Spectral Elements", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSpectral_Figures.setText(QtGui.QApplication.translate("MainWindow", "Spectral Figures", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionTemporal_Numbers.setText(QtGui.QApplication.translate("MainWindow", "Temporal Numbers", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSpectral_Numbers.setText(QtGui.QApplication.translate("MainWindow", "Spectral Numbers", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSub_Elements_Peaks.setText(QtGui.QApplication.translate("MainWindow", "Sub Elements Peaks", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionElements_Peaks.setText(QtGui.QApplication.translate("MainWindow", "Elements Peaks", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionOsgram_Image.setText(QtGui.QApplication.translate("MainWindow", "Osgram Image", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSpecgram_Image.setText(QtGui.QApplication.translate("MainWindow", "Specgram Image", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionTemporal_Figures.setText(QtGui.QApplication.translate("MainWindow", "Temporal Figures", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionCombined_Image.setText(QtGui.QApplication.translate("MainWindow", "Combined Image", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionFull_Screen.setText(QtGui.QApplication.translate("MainWindow", "Full Screen", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionExit.setText(QtGui.QApplication.translate("MainWindow", "Exit", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionExit.setShortcut(QtGui.QApplication.translate("MainWindow", "Esc", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionPeak_To_Peak.setText(QtGui.QApplication.translate("MainWindow", "Peak To Peak", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionIntervals.setText(QtGui.QApplication.translate("MainWindow", "Intervals", None, QtGui.QApplication.UnicodeUTF8))
 
 from Graphic_Interface.Widgets.QSignalVisualizerWidget import QSignalVisualizerWidget
 import icons_rc
