@@ -44,8 +44,6 @@ class AudioSignal:
             dt = np.dtype(s)
             self.data = np.zeros(samplingRate * duration, dt)
 
-
-
     def name(self):
         return os.path.basename(str(self.path))
 
@@ -138,11 +136,11 @@ class AudioSignal:
     def _recordCallback(self, in_data, frame_count, time_info, status):
         if self.playStatus != self.RECORDING:
             return None, pyaudio.paAbort
-
         self.data = np.concatenate((self.data, np.fromstring(in_data, dtype=self.data.dtype)))
         self.playSection = (0, len(self.data), len(self.data))
         if self.recordNotifier:
             self.recordNotifier(frame_count)
+
 
         return None, pyaudio.paContinue
 
