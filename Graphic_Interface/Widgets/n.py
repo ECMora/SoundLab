@@ -19,6 +19,7 @@ class QPowerSpectrumWidget(QtGui.QWidget):
         self.pow_spectrum = pg.PlotWidget(parent=self)
         (self.Pxx , self.freqs) = mlab.psd(data,Fs= Fs,NFFT=NFFT, window=window)
         self.Pxx.shape = len(self.freqs)
-        self.pow_spectrum.plot(self.freqs,10*numpy.log10(self.Pxx))
+        x = 20*numpy.log10(self.Pxx)
+        self.pow_spectrum.plot(self.freqs,)
 
         return self.Pxx, self.freqs

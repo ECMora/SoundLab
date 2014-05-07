@@ -56,6 +56,9 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.pow_spec_plotColor = self.defaultTheme.pow_Plot
         self.pow_spec_gridx = self.defaultTheme.pow_GridX
         self.pow_spec_gridy = self.defaultTheme.pow_GridY
+
+        self.pow_spec_maxY = 5
+        self.pow_spec_minY = -60
         self.widget.lines = True
         self.statusbar = self.statusBar()
         self.statusbar.setSizeGripEnabled(False)
@@ -107,6 +110,12 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
              {'name': 'Grid', 'type': 'group', 'children': [
                 {'name': 'X', 'type': 'bool','default': self.defaultTheme.pow_GridX, 'value': self.defaultTheme.pow_GridX},
                 {'name': 'Y', 'type': 'bool','default':self.defaultTheme.pow_GridY , 'value': self.defaultTheme.pow_GridY},
+
+             ]},
+             {'name': 'YBounds', 'type': 'group', 'children': [
+                {'name': 'MinY', 'type': 'int', 'limits' : (-60,5),'default': -50, 'value': -50},
+                {'name': 'MaxY', 'type': 'int', 'limits' : (-60,5),'default': 5 , 'value': 5},
+
 
              ]},
              {'name':'Background color', 'type':'color','value':self.defaultTheme.pow_Back, 'default':self.defaultTheme.pow_Back},
@@ -474,6 +483,10 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 p = os.path.join(os.path.join("Utils","Themes"),data)
                 theme = self.DeSerializeTheme(p)
                 self.updateMyTheme(theme)
+            elif childName == 'Power Spectrum Settings.YBounds.MaxY':
+                self.pow_spec_maxY = data
+            elif childName == 'Power Spectrum Settings.YBounds.MinY':
+                self.pow_spec_minY = data
             #print('  parameter: %s' % childName)
             #print('  change:    %s' % change)
             #print('  data:      %s' % str(data))
@@ -761,7 +774,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     @pyqtSlot()
     def on_actionPower_Spectrum_triggered(self):
-        dg_pow_spec = PowerSpectrumWindow(self,self.pow_spec_plotColor, self.pow_spec_backg, self.pow_spec_gridx, self.pow_spec_gridy)
+        dg_pow_spec = PowerSpectrumWindow(self,self.pow_spec_plotColor, self.pow_spec_backg, self.pow_spec_gridx, self.pow_spec_gridy,self.pow_spec_minY,self.pow_spec_maxY)
 
         minx = self.widget.zoomCursor.min
         maxx = max(self.widget.zoomCursor.max, min(minx + self.NFFT_pow, len(self.widget.signalProcessor.signal.data)))

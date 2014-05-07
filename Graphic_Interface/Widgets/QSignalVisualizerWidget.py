@@ -532,7 +532,7 @@ class QSignalVisualizerWidget(QWidget):
             self.rangeChanged.emit(self.mainCursor.min, self.mainCursor.max, len(self.signalProcessor.signal.data))
 
     def on_newDataRecorded(self, frame_count):
-        self.mainCursor.min = max(0, len(self.signalProcessor.signal.data) - 50000)
+        self.mainCursor.min = max(0, len(self.signalProcessor.signal.data) - frame_count)
         self.mainCursor.max = len(self.signalProcessor.signal.data)
         self.visualChanges = True
         self.refresh(updateSpectrogram=False)
@@ -581,7 +581,8 @@ class QSignalVisualizerWidget(QWidget):
 
     def refresh(self, dataChanged=True, updateOscillogram=True, updateSpectrogram=True, partial=True):
         # perform some heavy calculations
-        width = self.axesSpecgram.viewBox.width()
+        self.mainCursor.max = min(self.mainCursor.max,len(self.signalProcessor.signal.data))
+        width = False if not self.visibleSpectrogram else self.axesSpecgram.viewBox.width()
         if self.visibleSpectrogram and updateSpectrogram and self.signalProcessor.signal \
            and self.signalProcessor.signal.opened() and self.signalProcessor.signal.playStatus != AudioSignal.RECORDING\
            and self.mainCursor.max > self.mainCursor.min and width:
@@ -610,6 +611,7 @@ class QSignalVisualizerWidget(QWidget):
 
         if not self.visualChanges:
             return
+
         self.axesOscilogram.setRange(xRange=(self.mainCursor.min, self.mainCursor.max),
                                      yRange=(self.minYOsc*0.01*self.signalProcessor.signal.getMaximumValueAllowed(),
                                              self.maxYOsc*0.01*self.signalProcessor.signal.getMaximumValueAllowed()),
@@ -618,7 +620,7 @@ class QSignalVisualizerWidget(QWidget):
         if (self.visibleOscilogram or self.signalProcessor.signal.playStatus == AudioSignal.RECORDING) \
            and updateOscillogram and self.signalProcessor.signal and self.signalProcessor.signal.opened()\
            and self.mainCursor.max > self.mainCursor.min:
-            if dataChanged :
+            if dataChanged:
                 self.axesOscilogram.plot(np.arange(int(self.mainCursor.min),int(self.mainCursor.max)),self.signalProcessor.signal.data[self.mainCursor.min:self.mainCursor.max], clear=True, pen = self.osc_color if self.lines else None, symbol=None if self.lines else 'x', symbolSize = 1,symbolPen = self.osc_color, clipToView=partial)
 
         self.axesOscilogram.getPlotItem().showGrid(x=self.osc_gridx, y=self.osc_gridy)
