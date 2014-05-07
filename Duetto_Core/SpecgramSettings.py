@@ -5,28 +5,36 @@ import numpy
 "Clase que implementa los metodos" \
 " para el trabajo con distintas ventanas en el spectrograma"
 class FFTWindows:
-    def rectangular(self,M):
+    def Hanning(self,M):
+        return numpy.hanning(len(M))*M
+
+    def Rectangular(self,M):
         "La doc de kaiser indica que con beta=0 es similar a una ventana rectangular"
         return numpy.kaiser(len(M),0)
-    def kaiser(self,M):
+    def Kaiser(self,M):
         return numpy.kaiser(len(M),14)
-    def blackman(self,M):
+    def Blackman(self,M):
         return numpy.blackman(len(M))
-    def bartlett(self,M):
+    def Bartlett(self,M):
         return numpy.bartlett(len(M))
-    def hamming(self,M):
+    def Hamming(self,M):
         return numpy.hamming(len(M))
+
+
+
+    def WindowNone(self,M):
+        return mlab.window_none(len(M))
 
 class SpecgramSettings:
     """Struct for the representation of usefull FFT params"""
     fwin=FFTWindows()
-    windows=[fwin.hamming,
-             fwin.rectangular,
-             mlab.window_hanning,
-             fwin.blackman,
-             fwin.bartlett,
-             fwin.kaiser,
-             mlab.window_none]
+    windows=[fwin.Hamming,
+             fwin.Rectangular,
+            fwin.Hanning,
+             fwin.Blackman,
+             fwin.Bartlett,
+             fwin.Kaiser,
+            fwin.WindowNone ]
 
     def __init__(self,NFFT=512,overlap=32,window=windows[0]):
         self.NFFT=NFFT
