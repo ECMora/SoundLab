@@ -5,7 +5,7 @@ import numpy as np
 from math import *
 
 
-class AudioSignal:
+class AudioSignal(object):
     """an abstract class for the representation of an audio signal"""
     PLAYING, PAUSED, STOPPED, RECORDING = range(4)
 
@@ -26,6 +26,17 @@ class AudioSignal:
         self.recordNotifier = None
         self.playNotifier = None
 
+    def _get_data(self):
+        return self._data if not self._padded else self._data[4096:-4096]
+    def _set_data(self, data):
+        self._data = data
+        self._padded = False
+    data = property(_get_data, _set_data)
+
+    def pad(self):
+        z = np.zeros(4096)
+        self._data = np.concatenate((z, self._data, z))
+        self._padded = True
 
     def generateWhiteNoise(self, duration=1, begin_at=0):
         wn = np.array([np.random.uniform(self.getMinimumValueAllowed(),self.getMaximumValueAllowed()) for i in
@@ -43,6 +54,7 @@ class AudioSignal:
             s = 'int' + str(bitDepth)
             dt = np.dtype(s)
             self.data = np.zeros(samplingRate * duration, dt)
+        #self.pad()
 
     def name(self):
         return os.path.basename(str(self.path))
