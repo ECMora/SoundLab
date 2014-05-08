@@ -43,6 +43,7 @@ class OneDimensionalElementsDetector(ElementsDetector):
         merge_factor in %
         threshold in dB from the max value
         """
+        #
         if detectionsettings is not None:
             self.detectionsettings = detectionsettings
         else:
