@@ -211,7 +211,6 @@ class QSignalVisualizerWidget(QWidget):
         self.envelopeCurve.setPen(pg.mkPen(self.osc_color,width=1))
         self.envelopeCurve.setShadowPen(pg.mkPen(QtGui.QColor(255,0,0),width=3))
 
-
     def createContextCursor(self,actions):
         self.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
         for act in actions:
@@ -230,14 +229,15 @@ class QSignalVisualizerWidget(QWidget):
         min = self._from_osc_to_spec(a)
         max = self._from_osc_to_spec(b)
         self.axesSpecgram.emitIntervalSpecChanged = False
+        self.axesOscilogram.setZoomRegionVisible(True)
         self.axesSpecgram.zoomRegion.setRegion([min, max])
         self.axesSpecgram.emitIntervalSpecChanged = True
         self.stop()
         #self.axesSpecgram.update()
 
     def updateOscZoomRegion(self,a,b):
-        min = self._from_spec_to_osc(a)
-        max = self._from_spec_to_osc(b)
+        min = self._from_spec_to_osc(a) + self.mainCursor.min
+        max = self._from_spec_to_osc(b) + self.mainCursor.min
         self.axesOscilogram.emitIntervalOscChanged = False
         self.axesOscilogram.zoomRegion.setRegion([min, max])
         self.axesOscilogram.emitIntervalOscChanged = True
@@ -915,6 +915,7 @@ class QSignalVisualizerWidget(QWidget):
         self.specgramSettings.threshold = 50
         if self.visibleOscilogram:
             self.axesOscilogram.clear()
+            self.axesOscilogram.changeSelectedTool(Tools.Zoom)
             self.axesOscilogram.zoomRegion.setBounds([self.mainCursor.min, self.mainCursor.max])
             self.axesOscilogram.setRange(QRect(0, -2 ** (self.signalProcessor.signal.bitDepth-1),
                                                self.mainCursor.max-self.mainCursor.min,
@@ -922,6 +923,7 @@ class QSignalVisualizerWidget(QWidget):
             self.axesOscilogram.zoomRegion.sigRegionChanged.connect(self.updatezoomcursor)
             self.signalProcessor.signal.play_finished = self.removePlayerLine
         self.visualChanges = True
+        self.axesSpecgram.changeSelectedTool(Tools.Zoom)
         self.maxYSpc = self.signalProcessor.signal.samplingRate/2000
         self.minYSpc = 0
         self.refresh()
@@ -931,8 +933,7 @@ class QSignalVisualizerWidget(QWidget):
         self.signalProcessor.signal.recordNotifier = self.on_newDataRecorded#self.newDataRecorded.emit
         self.signalProcessor.signal.playNotifier = self.playing.emit
         self.rangeChanged.emit(0, len(self.signalProcessor.signal.data), len(self.signalProcessor.signal.data))
-        self.axesOscilogram.changeSelectedTool(Tools.Zoom)
-        self.axesSpecgram.changeSelectedTool(Tools.Zoom)
+
 
 
     def save(self, fname):

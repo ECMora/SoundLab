@@ -103,6 +103,7 @@ class DuettoImageWidget(GraphicsView):
                 self.viewBox.addItem(self.zoomRegion)
                 self.zoomRegion.setRegion([0,0])
                 self.mouseZoomEnabled = True
+                self.emitIntervalSpecChanged = True
                 self.rectangularCursor.setPos([0,0])
                 self.rectangularCursor.setSize([0,0])
                 self.mousePressed = False
@@ -134,9 +135,8 @@ class DuettoImageWidget(GraphicsView):
             self.IntervalSpecChanged.emit(*rgn)
 
     def mouseMoveEvent(self, event):
+        pg.GraphicsView.mouseMoveEvent(self, event)
         if self.selectedTool == Tools.PointerCursor:
-            pg.GraphicsView.mouseMoveEvent(self, event)
-
             x = self.fromCanvasToClient(event.x())
             y = self.fromCanvasToClientY(event.y())
             if x == -1 or y == -1:
@@ -153,7 +153,7 @@ class DuettoImageWidget(GraphicsView):
             self.setCursor(QCursor(QtCore.Qt.CrossCursor))
         elif self.selectedTool == Tools.Zoom:
             pg.GraphicsView.mouseMoveEvent(self, event)
-            if self.parent().visibleOscilogram:
+            if self.parent().visibleSpectrogram:
                 rgn = self.zoomRegion.getRegion()
                 minx, maxx = self.fromClientToCanvas(rgn[0]), self.fromClientToCanvas(rgn[1])
                 if abs(minx - event.x()) < self.PIXELS_OF_CURSORS_CHANGES or \
@@ -358,11 +358,8 @@ class DuettoImageWidget(GraphicsView):
         return a + int(round((yPixel - miny) * (b - a) * 1. / (maxy - miny), 0))
 
     def getFreqTimeAndIntensity(self,x,y):
-        print(self.imageItem.getPixmap().width())
         #YSpec = numpy.searchsorted(self.parent().specgramSettings.freqs, self.parent().minYSpc*1000)
         time =  x * 1.0/self.parent().signalProcessor.signal.samplingRate
         freq = numpy.round(self.parent().specgramSettings.freqs[y]*1.0/1000,1)
-        print(len(self.parent().specgramSettings.Pxx[y]),x,self.parent()._from_osc_to_spec(self.parent().mainCursor.min))
-        print(len(self.parent().specgramSettings.Pxx),y)
         intensity = 10*numpy.log10(self.parent().specgramSettings.Pxx[y][x - self.parent()._from_osc_to_spec(self.parent().mainCursor.min)-1]*1.0/numpy.amax(self.parent().specgramSettings.Pxx))
         return [time, freq, intensity]
