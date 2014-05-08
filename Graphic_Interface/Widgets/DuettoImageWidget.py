@@ -2,6 +2,7 @@ from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import SIGNAL, pyqtSignal
 from PyQt4.QtGui import QCursor
 from pyqtgraph import GraphicsView
+from pyqtgraph.graphicsItems.AxisItem import AxisItem
 from pyqtgraph.graphicsItems.ImageItem import ImageItem
 from pyqtgraph.graphicsItems.ViewBox import ViewBox
 import numpy
@@ -32,10 +33,7 @@ class DuettoImageWidget(GraphicsView):
         l.setVerticalSpacing(0)
         l.setContentsMargins(0, 0, 0, 0)
         self.viewBox = ViewBox()
-
         self.imageItem = ImageItem()
-        self.viewBox.setMenuEnabled(False)
-
         self.viewBox.addItem(self.imageItem)
         l.addItem(self.viewBox, 0, 1)
         self.centralWidget.setLayout(l)
@@ -65,7 +63,6 @@ class DuettoImageWidget(GraphicsView):
         self.rectRegion = {'x':[0,0],'y':[0,0]}
         #------------------------------------------------
 
-        self.decimalPlaces = 5
 
         self.setDragMode(QtGui.QGraphicsView.NoDrag)
         self.selectedTool = Tools.Zoom
@@ -106,6 +103,7 @@ class DuettoImageWidget(GraphicsView):
                 self.viewBox.addItem(self.zoomRegion)
                 self.zoomRegion.setRegion([0,0])
                 self.mouseZoomEnabled = True
+                self.emitIntervalSpecChanged = True
                 self.rectangularCursor.setPos([0,0])
                 self.rectangularCursor.setSize([0,0])
                 self.mousePressed = False
@@ -137,29 +135,25 @@ class DuettoImageWidget(GraphicsView):
             self.IntervalSpecChanged.emit(*rgn)
 
     def mouseMoveEvent(self, event):
+        pg.GraphicsView.mouseMoveEvent(self, event)
         if self.selectedTool == Tools.PointerCursor:
-            pg.GraphicsView.mouseMoveEvent(self, event)
-
             x = self.fromCanvasToClient(event.x())
             y = self.fromCanvasToClientY(event.y())
             if x == -1 or y == -1:
                 self.setCursor(QCursor(QtCore.Qt.ArrowCursor))
                 return
             info = self.getFreqTimeAndIntensity(x,y)
-            info = round(info[0],self.decimalPlaces),round(info[1],self.decimalPlaces),round(info[2],self.decimalPlaces)
-
 
             if self.mouseReleased:
                 info0 = self.getFreqTimeAndIntensity(self.last['pos'][0],self.last['pos'][1])
-                info0 = round(info0[0],self.decimalPlaces),round(info0[1],self.decimalPlaces),round(info0[2],self.decimalPlaces)
-                self.PointerSpecChanged.emit(str.format('t0: {0}s  dt: {1}s  Amplitude: {2}dB',info0[0],info[0] - info0[0] ,info[2]))
+                self.PointerSpecChanged.emit(str.format('t0: {0}s  dt: {1}s  Intensity: {2}dB',info0[0],info[0] - info0[0] ,info[2]))
             else:
-                self.PointerSpecChanged.emit(str.format('Time: {0}s  Frequency: {1}kHz Amplitude: {2}dB',info[0],info[1],info[2]))
+                self.PointerSpecChanged.emit(str.format('Time: {0}s  Frequency: {1}kHz Intensity: {2}dB',info[0],info[1],info[2]))
             self.viewBox.update()
             self.setCursor(QCursor(QtCore.Qt.CrossCursor))
         elif self.selectedTool == Tools.Zoom:
             pg.GraphicsView.mouseMoveEvent(self, event)
-            if self.parent().visibleOscilogram:
+            if self.parent().visibleSpectrogram:
                 rgn = self.zoomRegion.getRegion()
                 minx, maxx = self.fromClientToCanvas(rgn[0]), self.fromClientToCanvas(rgn[1])
                 if abs(minx - event.x()) < self.PIXELS_OF_CURSORS_CHANGES or \
@@ -202,21 +196,17 @@ class DuettoImageWidget(GraphicsView):
                 self.rectRegion['x'][1] = self.rectRegion['x'][0] + dx
                 self.rectRegion['y'][1] = self.rectRegion['y'][0] + dy
                 info = self.getFreqTimeAndIntensity(self.rectRegion['x'][0], self.rectRegion['y'][0])
-                info = round(info[0],self.decimalPlaces),round(info[1],self.decimalPlaces),round(info[2],self.decimalPlaces)
                 info1 = self.getFreqTimeAndIntensity(self.rectRegion['x'][1], self.rectRegion['y'][1])
-                info1 = round(info1[0],self.decimalPlaces),round(info1[1],self.decimalPlaces),round(info1[2],self.decimalPlaces)
-
                 self.rectRegion['y'][0] = info[1]
                 self.rectRegion['y'][1] = info1[1]
                 self.PointerSpecChanged.emit(str.format('t0: {0}s  t1: {1}s dt: {2}s  Min Frequency: {3}kHz  Max Frequency: {4}kHz ',info[0],info1[0],info1[0] - info[0],info[1],info1[1]))
             else:
                 info = self.getFreqTimeAndIntensity(x, y)
-                info = round(info[0],self.decimalPlaces),round(info[1],self.decimalPlaces),round(info[2],self.decimalPlaces)
                 if x == -1 or y == -1:
                     self.setCursor(QCursor(QtCore.Qt.ArrowCursor))
                     return
                 else:
-                    self.PointerSpecChanged.emit(str.format('Time: {0}s  Frequency: {1}kHz Amplitude: {2}dB',info[0],info[1],info[2]))
+                    self.PointerSpecChanged.emit(str.format('Time: {0}s  Frequency: {1}kHz Intensity: {2}dB',info[0],info[1],info[2]))
             self.setCursor(QCursor(QtCore.Qt.ArrowCursor))
             self.update()
 
@@ -371,6 +361,5 @@ class DuettoImageWidget(GraphicsView):
         #YSpec = numpy.searchsorted(self.parent().specgramSettings.freqs, self.parent().minYSpc*1000)
         time =  x * 1.0/self.parent().signalProcessor.signal.samplingRate
         freq = numpy.round(self.parent().specgramSettings.freqs[y]*1.0/1000,1)
-
         intensity = 10*numpy.log10(self.parent().specgramSettings.Pxx[y][x - self.parent()._from_osc_to_spec(self.parent().mainCursor.min)-1]*1.0/numpy.amax(self.parent().specgramSettings.Pxx))
-        return [time,freq, intensity]
+        return [time, freq, intensity]

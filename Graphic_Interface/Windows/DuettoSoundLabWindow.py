@@ -14,6 +14,7 @@ from Graphic_Interface.UndoRedoActions import *
 from MainWindow import Ui_DuettoMainWindow
 from Graphic_Interface.Widgets.MyPowerSpecWindow import PowerSpectrumWindow
 from Graphic_Interface.Dialogs import InsertSilenceDialog as sdialog, FilterOptionsDialog as filterdg, ChangeVolumeDialog as cvdialog
+from PyQt4 import QtCore, QtGui
 import pickle
 from WorkTheme import SerializedData
 from Graphic_Interface.Widgets.Tools import Tools
@@ -474,6 +475,10 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
             elif childName == 'Oscillogram Settings.Amplitude(%).Max':
                 self.widget.maxYOsc = data
+                self.widget.visualChanges = True
+                self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
+            elif childName == 'Oscillogram Settings.Connect Lines':
+                self.widget.lines = data
                 self.widget.visualChanges = True
                 self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
             elif childName == 'Oscillogram Settings.Connect Lines':
