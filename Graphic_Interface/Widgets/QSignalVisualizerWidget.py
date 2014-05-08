@@ -551,7 +551,8 @@ class QSignalVisualizerWidget(QWidget):
         self.mainCursor.max = len(self.signalProcessor.signal.data)
         self.mainCursor.min = max(0, len(self.signalProcessor.signal.data) - 3*self.signalProcessor.signal.samplingRate)
         self.visualChanges = True
-        self.refresh(updateSpectrogram=False,partial=True)
+        #print(self.signalProcessor.signal.data.size)
+        self.refresh(updateSpectrogram=False)
         self.rangeChanged.emit(self.mainCursor.min, self.mainCursor.max, len(self.signalProcessor.signal.data))
 
     SPECGRAM_COMPLEX_SIDE = "onesided"
@@ -575,15 +576,20 @@ class QSignalVisualizerWidget(QWidget):
         Computes the specgram settings for a specified overlap
         """
         overlap = overlap if overlap is not None else int(self.specgramSettings.NFFT*self.specgramSettings.overlap/100.)
-        smin = self.mainCursor.min - self.specgramSettings.NFFT
-        smax = self.mainCursor.max + self.specgramSettings.NFFT
 
-        pre, post = np.zeros(max(-smin, 0)), np.zeros(max(smax - len(self.signalProcessor.signal.data), 0))
-        #data = np.concatenate((pre, self.signalProcessor.signal.data[max(smin, 0): min(smax, len(self.signalProcessor.signal.data))], post))
+        #print(self.signalProcessor.signal._padded)
+        if self.signalProcessor.signal._padded:
+            smin = self.mainCursor.min - self.specgramSettings.NFFT + 4096
+            smax = self.mainCursor.max + self.specgramSettings.NFFT + 4096
+            data = self.signalProcessor.signal._data[smin: smax]
+        else:
+            smin = self.mainCursor.min - self.specgramSettings.NFFT
+            smax = self.mainCursor.max + self.specgramSettings.NFFT
+            pre, post = np.zeros(max(-smin, 0)), np.zeros(max(smax - len(self.signalProcessor.signal.data), 0))
+            data = np.concatenate((pre, self.signalProcessor.signal.data[max(smin, 0): min(smax, len(self.signalProcessor.signal.data))], post))
 
         self.specgramSettings.Pxx, self.specgramSettings.freqs, self.specgramSettings.bins = mlab.specgram(
-            self.signalProcessor.signal.data[self.mainCursor.min:self.mainCursor.max],
-            self.specgramSettings.NFFT, Fs=self.signalProcessor.signal.samplingRate,
+            data, self.specgramSettings.NFFT, Fs=self.signalProcessor.signal.samplingRate,
             detrend=mlab.detrend_none, window=self.specgramSettings.window, noverlap=overlap,
             sides=self.SPECGRAM_COMPLEX_SIDE)
 
@@ -656,9 +662,11 @@ class QSignalVisualizerWidget(QWidget):
                                                yRange=(YSpec[0], YSpec[1]), padding=0)
             self.updateSpecZoomRegion(self.zoomCursor.min, self.zoomCursor.max)
 
-        self.updateSpectrogramColors()
-        self.axesSpecgram.setBackground(self.spec_background)
-        self.axesSpecgram.showGrid(x=self.spec_gridx, y=self.spec_gridy)
+            self.updateSpectrogramColors()
+            self.axesSpecgram.setBackground(self.spec_background)
+            self.axesSpecgram.showGrid(x=self.spec_gridx, y=self.spec_gridy)
+            self.updateSpecZoomRegion(self.zoomCursor.min, self.zoomCursor.max)
+
         self.refreshAxes()
         self.visualChanges = False
         if self.visibleElements:
