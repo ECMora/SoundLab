@@ -305,13 +305,15 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.widget.specgramSettings.NFFT = self.ParamTree.param('Spectrogram Settings').param('FFT size').value()
         self.widget.specgramSettings.overlap = self.ParamTree.param('Spectrogram Settings').param('FFT overlap').value()
         p = os.path.join(os.path.join("Utils","Didactic Signals"),"duetto.wav")
+        self.widget.visibleSpectrogram = False
+        self.actionCombined.setEnabled(False)
+        self.actionSpectogram.setEnabled(False)
         if os.path.exists(p):
             self.widget.open(p)
-            self.widget.visibleSpectrogram = False
             self.actionSignalName.setText(u"File Name: "+ self.widget.signalProcessor.signal.name())
         else:
             self.widget.openNew(44100, 16, 5., whiteNoise=False)
-            self.actionSignalName.setText(u"File Name: "+ self.widget.signalProcessor.signal.name())
+            self.actionSignalName.setText(u"File Name: Welcome to duetto")
 
         self.setWindowTitle("Duetto Sound Lab - Welcome to Duetto")
         self.statusbar.showMessage("Welcome to Duetto Sound Lab.")
@@ -900,6 +902,9 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             self.widget.openNew(nfd.SamplingRate, nfd.BitDepth, nfd.Duration, nfd.WhiteNoise)
             self.setWindowTitle("Duetto Sound Lab - (new)")
 
+            self.actionCombined.setEnabled(True)
+            self.actionSpectogram.setEnabled(True)
+
     @pyqtSlot()
     def on_actionOpen_triggered(self):
         f = QFileDialog.getOpenFileName(self, "Select a file to open",directory = self.lastopen,
@@ -912,6 +917,9 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.on_load()
 
     def _open(self,f=''):
+
+        self.actionCombined.setEnabled(True)
+        self.actionSpectogram.setEnabled(True)
         if f != '':
             try:
                 self.lastopen = f
