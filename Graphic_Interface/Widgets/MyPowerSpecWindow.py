@@ -4,7 +4,7 @@ from PyQt4 import QtGui,QtCore
 
 
 class PowerSpectrumWindow(QtGui.QMainWindow):
-    def __init__(self,parent=None,plotColor="FFF",backColor="FFF",gridx=True,gridy=True):
+    def __init__(self,parent=None,plotColor="FFF",backColor="FFF",gridx=True,gridy=True,minY=-50,maxY=5,lines=True):
         super(PowerSpectrumWindow, self).__init__(parent)
         self.ui = Ui_PowSpecWindow()
         self.ui.setupUi(self)
