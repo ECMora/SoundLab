@@ -31,6 +31,7 @@ class WavFileSignal(FileAudioSignal):
         self.removeDCOffset()
         self.channelData = [self.data[:, i] for i in range(self.channels)] if self.channels > 1 else [self.data]
         self.data = self.channelData[0]
+        #self.pad()
         self.path=path
 
     def smallSignal(self):
