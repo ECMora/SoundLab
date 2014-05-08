@@ -621,11 +621,13 @@ class QSignalVisualizerWidget(QWidget):
         if (self.visibleOscilogram or self.signalProcessor.signal.playStatus == AudioSignal.RECORDING) \
            and updateOscillogram and self.signalProcessor.signal and self.signalProcessor.signal.opened()\
            and self.mainCursor.max > self.mainCursor.min:
-            if dataChanged:
-                self.axesOscilogram.plot(np.arange(int(self.mainCursor.min),int(self.mainCursor.max)),self.signalProcessor.signal.data[self.mainCursor.min:self.mainCursor.max], clear=True, pen = self.osc_color if self.lines else None, symbol=None if self.lines else 'x', symbolSize = 1,symbolPen = self.osc_color, clipToView=partial)
+            if self.lines or self.axesOscilogram.width() < self.mainCursor.max - self.mainCursor.min:
+                self.axesOscilogram.plot(self.signalProcessor.signal.data, clear=True, pen = self.osc_color , clipToView=partial)
+            else:
+                self.axesOscilogram.plot(np.arange(int(self.mainCursor.min),int(self.mainCursor.max)),self.signalProcessor.signal.data[self.mainCursor.min:self.mainCursor.max], clear=True, pen = None, symbol = 's', symbolSize = 1,symbolPen = self.osc_color, clipToView=partial)
 
-        self.axesOscilogram.getPlotItem().showGrid(x=self.osc_gridx, y=self.osc_gridy)
-        self.axesOscilogram.setBackground(self.osc_background)
+            self.axesOscilogram.getPlotItem().showGrid(x=self.osc_gridx, y=self.osc_gridy)
+            self.axesOscilogram.setBackground(self.osc_background)
 
         if self.visibleSpectrogram and updateSpectrogram and self.signalProcessor.signal \
            and self.signalProcessor.signal.opened() and self.signalProcessor.signal.playStatus != AudioSignal.RECORDING\
