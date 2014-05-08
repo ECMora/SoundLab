@@ -1,0 +1,669 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="f914e76f-5c9c-490d-847b-9d2b44fcbbcc" name="Default" comment="" />
+    <list id="0fbcdd62-8410-44e7-bbfe-f0bd9b8e17c3" name="Failed commit: Default" comment="cambios" />
+    <ignored path="DuettoSystem latest.iws" />
+    <ignored path=".idea/workspace.xml" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
+  <component name="CoverageDataManager">
+    <SUITE FILE_PATH="coverage/DuettoSystem latest$Duetto_Sound_Lab_pyw.coverage" NAME="Duetto_Sound_Lab.pyw Coverage Results" MODIFIED="1397585573442" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/DuettoSystem$Segment.coverage" NAME="Segment Coverage Results" MODIFIED="1398034079364" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Duetto_Core/Segmentation" />
+    <SUITE FILE_PATH="coverage/DuettoSystem latest$Duetto_Sound_Lab.coverage" NAME="Duetto_Sound_Lab Coverage Results" MODIFIED="1397584793607" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/DuettoSystem$Duetto_Sound_Lab_pyw.coverage" NAME="Duetto_Sound_Lab.pyw Coverage Results" MODIFIED="1399484408414" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/DuettoSystem$pygletexample.coverage" NAME="pygletexample Coverage Results" MODIFIED="1397661310170" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/example pyglet" />
+  </component>
+  <component name="CreatePatchCommitExecutor">
+    <option name="PATCH_PATH" value="" />
+  </component>
+  <component name="DaemonCodeAnalyzer">
+    <disable_hints />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
+  <component name="FavoritesManager">
+    <favorites_list name="DuettoSystem latest" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf>
+      <file leaf-file-name="OneDimensionalElementsDetector.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/ElementsDetectors/OneDimensionalElementsDetector.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="61" column="91" selection-start="2904" selection-end="2904" vertical-scroll-proportion="0.0" vertical-offset="1037" max-vertical-offset="2023">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SegmentationAndClasificationWindow.pyw" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Graphic_Interface/Windows/SegmentationAndClasificationWindow.pyw">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="763" column="0" selection-start="44254" selection-end="44254" vertical-scroll-proportion="0.0" vertical-offset="12971" max-vertical-offset="13294">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="QSignalVisualizerWidget.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Graphic_Interface/Widgets/QSignalVisualizerWidget.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="17000">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SpecgramSettings.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Duetto_Core/SpecgramSettings.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="36" column="8" selection-start="1114" selection-end="1114" vertical-scroll-proportion="0.0" vertical-offset="612" max-vertical-offset="1071">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="DuettoSoundLabWindow.pyw" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/Graphic_Interface/Windows/DuettoSoundLabWindow.pyw">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="225" column="58" selection-start="12868" selection-end="12868" vertical-scroll-proportion="-1.0822281" vertical-offset="3825" max-vertical-offset="16864">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="DuettoImageWidget.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Graphic_Interface/Widgets/DuettoImageWidget.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="18" column="0" selection-start="698" selection-end="698" vertical-scroll-proportion="0.0" vertical-offset="306" max-vertical-offset="6341">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FindManager">
+    <FindUsagesManager>
+      <setting name="OPEN_NEW_TAB" value="false" />
+    </FindUsagesManager>
+  </component>
+  <component name="Git.Settings">
+    <option name="PREVIOUS_COMMIT_AUTHORS">
+      <list>
+        <option value="yasel" />
+      </list>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitLogSettings">
+    <option name="myDateState">
+      <MyDateState />
+    </option>
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="changedFiles">
+      <list>
+        <option value="$PROJECT_DIR$/Graphic_Interface/Widgets/QPowerSpectrumWidget.py" />
+        <option value="$PROJECT_DIR$/Duetto_Core/Segmentation/Elements/TwoDimensionalElement.py" />
+        <option value="$PROJECT_DIR$/Graphic_Interface/Widgets/DuettoPlotWidget.py" />
+        <option value="$PROJECT_DIR$/Graphic_Interface/Windows/MainWindow.py" />
+        <option value="$PROJECT_DIR$/Duetto_Core/Segmentation/Elements/OneDimensionalElement.py" />
+        <option value="$PROJECT_DIR$/Graphic_Interface/Dialogs/elemDetectSettings.pyw" />
+        <option value="$PROJECT_DIR$/Graphic_Interface/Windows/SegmentationAndClasificationWindowUI.py" />
+        <option value="$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/ElementsDetectors/OneDimensionalElementsDetector.py" />
+        <option value="$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/ElementsDetectors/PeakToPeakElemDetector.py" />
+        <option value="$PROJECT_DIR$/Graphic_Interface/Windows/SegmentationAndClasificationWindow.pyw" />
+        <option value="$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/ElementsDetectors/IntervalElemDetector.py" />
+        <option value="$PROJECT_DIR$/Graphic_Interface/Dialogs/ui_elemDetectSettings.py" />
+        <option value="$PROJECT_DIR$/Graphic_Interface/Widgets/QSignalVisualizerWidget.py" />
+        <option value="C:/Python27/Lib/site-packages/pyqtgraph/parametertree/parameterTypes.py" />
+        <option value="$PROJECT_DIR$/Graphic_Interface/Widgets/DuettoImageWidget.py" />
+        <option value="$PROJECT_DIR$/Graphic_Interface/Windows/DuettoSoundLabWindow.pyw" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds">
+    <option name="x" value="-8" />
+    <option name="y" value="-8" />
+    <option name="width" value="1296" />
+    <option name="height" value="776" />
+  </component>
+  <component name="ProjectLevelVcsManager" settingsEditedManually="false">
+    <OptionsSetting value="true" id="Add" />
+    <OptionsSetting value="true" id="Remove" />
+    <OptionsSetting value="true" id="Checkout" />
+    <OptionsSetting value="true" id="Update" />
+    <OptionsSetting value="true" id="Status" />
+    <OptionsSetting value="true" id="Edit" />
+    <ConfirmationsSetting value="2" id="Add" />
+    <ConfirmationsSetting value="0" id="Remove" />
+  </component>
+  <component name="ProjectReloadState">
+    <option name="STATE" value="0" />
+  </component>
+  <component name="ProjectView">
+    <navigator proportions="" version="1" splitterProportion="0.5">
+      <flattenPackages />
+      <showMembers />
+      <showModules />
+      <showLibraryContents />
+      <hideEmptyPackages />
+      <abbreviatePackageNames />
+      <autoscrollToSource />
+      <autoscrollFromSource />
+      <sortByType />
+    </navigator>
+    <panes />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="GoToFile.includeJavaFiles" value="false" />
+    <property name="options.splitter.main.proportions" value="0.3" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="options.lastSelected" value="fileColors" />
+    <property name="recentsLimit" value="5" />
+    <property name="restartRequiresConfirmation" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../old/DuettoSystem11" />
+    <property name="FullScreen" value="false" />
+    <property name="options.splitter.details.proportions" value="0.2" />
+    <property name="options.searchVisible" value="true" />
+  </component>
+  <component name="PyConsoleOptionsProvider">
+    <option name="myPythonConsoleState">
+      <PyConsoleSettings />
+    </option>
+  </component>
+  <component name="RunManager" selected="Python.Duetto_Sound_Lab.pyw">
+    <configuration default="false" name="Duetto_Sound_Lab" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="DuettoSystem latest" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Graphic_Interface/Windows/PresentationSlogan/Duetto_Sound_Lab.py" />
+      <option name="PARAMETERS" value="" />
+      <RunnerSettings RunnerId="PyDebugRunner" />
+      <RunnerSettings RunnerId="PythonRunner" />
+      <ConfigurationWrapper RunnerId="PyDebugRunner" />
+      <ConfigurationWrapper RunnerId="PythonRunner" />
+      <method />
+    </configuration>
+    <configuration default="false" name="Duetto_Sound_Lab.pyw" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:/Python27/pythonw.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="DuettoSystem" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Duetto_Sound_Lab.pyw" />
+      <option name="PARAMETERS" value="" />
+      <RunnerSettings RunnerId="PyDebugRunner" />
+      <RunnerSettings RunnerId="PythonRunner" />
+      <ConfigurationWrapper RunnerId="PyDebugRunner" />
+      <ConfigurationWrapper RunnerId="PythonRunner" />
+      <method />
+    </configuration>
+    <configuration default="false" name="pygletexample" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/example pyglet" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="DuettoSystem" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/example pyglet/pygletexample.py" />
+      <option name="PARAMETERS" value="" />
+      <RunnerSettings RunnerId="PythonRunner" />
+      <ConfigurationWrapper RunnerId="PythonRunner" />
+      <method />
+    </configuration>
+    <configuration default="true" type="DjangoTestsConfigurationType" factoryName="Django tests">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="DuettoSystem latest" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <option name="TARGET" value="" />
+      <option name="SETTINGS_FILE" value="" />
+      <option name="CUSTOM_SETTINGS" value="false" />
+      <option name="USE_OPTIONS" value="false" />
+      <option name="OPTIONS" value="" />
+      <method />
+    </configuration>
+    <configuration default="true" type="tests" factoryName="py.test">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="DuettoSystem latest" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="CLASS_NAME" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="FOLDER_NAME" value="" />
+      <option name="TEST_TYPE" value="TEST_SCRIPT" />
+      <option name="PATTERN" value="" />
+      <option name="USE_PATTERN" value="false" />
+      <option name="testToRun" value="" />
+      <option name="keywords" value="" />
+      <option name="params" value="" />
+      <option name="USE_PARAM" value="false" />
+      <option name="USE_KEYWORD" value="false" />
+      <method />
+    </configuration>
+    <configuration default="true" type="tests" factoryName="Nosetests">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="DuettoSystem latest" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="CLASS_NAME" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="FOLDER_NAME" value="" />
+      <option name="TEST_TYPE" value="TEST_SCRIPT" />
+      <option name="PATTERN" value="" />
+      <option name="USE_PATTERN" value="false" />
+      <option name="PARAMS" value="" />
+      <option name="USE_PARAM" value="false" />
+      <method />
+    </configuration>
+    <configuration default="true" type="PythonConfigurationType" factoryName="Python">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="DuettoSystem latest" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="PARAMETERS" value="" />
+      <method />
+    </configuration>
+    <configuration default="true" type="tests" factoryName="Unittests">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="DuettoSystem latest" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="CLASS_NAME" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="FOLDER_NAME" value="" />
+      <option name="TEST_TYPE" value="TEST_SCRIPT" />
+      <option name="PATTERN" value="" />
+      <option name="USE_PATTERN" value="false" />
+      <option name="PUREUNITTEST" value="true" />
+      <option name="PARAMS" value="" />
+      <option name="USE_PARAM" value="false" />
+      <method />
+    </configuration>
+    <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug" singleton="true">
+      <method />
+    </configuration>
+    <configuration default="true" type="tests" factoryName="Doctests">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="DuettoSystem latest" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="CLASS_NAME" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="FOLDER_NAME" value="" />
+      <option name="TEST_TYPE" value="TEST_SCRIPT" />
+      <option name="PATTERN" value="" />
+      <option name="USE_PATTERN" value="false" />
+      <method />
+    </configuration>
+    <configuration default="true" type="tests" factoryName="Attests">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="DuettoSystem latest" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="CLASS_NAME" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="FOLDER_NAME" value="" />
+      <option name="TEST_TYPE" value="TEST_SCRIPT" />
+      <option name="PATTERN" value="" />
+      <option name="USE_PATTERN" value="false" />
+      <method />
+    </configuration>
+    <configuration default="false" name="Segment" type="PythonConfigurationType" factoryName="Python">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:/Python27/pythonw.exe" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Duetto_Core/Segmentation" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="DuettoSystem" />
+      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Duetto_Core/Segmentation/Segment.py" />
+      <option name="PARAMETERS" value="" />
+      <RunnerSettings RunnerId="PythonRunner" />
+      <ConfigurationWrapper RunnerId="PythonRunner" />
+      <method />
+    </configuration>
+    <list size="4">
+      <item index="0" class="java.lang.String" itemvalue="Python.Segment" />
+      <item index="1" class="java.lang.String" itemvalue="Python.Duetto_Sound_Lab" />
+      <item index="2" class="java.lang.String" itemvalue="Python.Duetto_Sound_Lab.pyw" />
+      <item index="3" class="java.lang.String" itemvalue="Python.pygletexample" />
+    </list>
+    <recent_temporary>
+      <list size="3">
+        <item index="0" class="java.lang.String" itemvalue="Python.Duetto_Sound_Lab.pyw" />
+        <item index="1" class="java.lang.String" itemvalue="Python.pygletexample" />
+        <item index="2" class="java.lang.String" itemvalue="Python.Duetto_Sound_Lab" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="ShelveChangesManager" show_recycled="false" />
+  <component name="SvnConfiguration" maxAnnotateRevisions="500" myUseAcceleration="nothing" myAutoUpdateAfterCommit="false" cleanupOnStartRun="false" SSL_PROTOCOLS="all">
+    <option name="USER" value="" />
+    <option name="PASSWORD" value="" />
+    <option name="mySSHConnectionTimeout" value="30000" />
+    <option name="mySSHReadTimeout" value="30000" />
+    <option name="LAST_MERGED_REVISION" />
+    <option name="MERGE_DRY_RUN" value="false" />
+    <option name="MERGE_DIFF_USE_ANCESTRY" value="true" />
+    <option name="UPDATE_LOCK_ON_DEMAND" value="false" />
+    <option name="IGNORE_SPACES_IN_MERGE" value="false" />
+    <option name="CHECK_NESTED_FOR_QUICK_MERGE" value="false" />
+    <option name="IGNORE_SPACES_IN_ANNOTATE" value="true" />
+    <option name="SHOW_MERGE_SOURCES_IN_ANNOTATE" value="true" />
+    <option name="FORCE_UPDATE" value="false" />
+    <option name="IGNORE_EXTERNALS" value="false" />
+    <myIsUseDefaultProxy>false</myIsUseDefaultProxy>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="f914e76f-5c9c-490d-847b-9d2b44fcbbcc" name="Default" comment="" />
+      <created>1397144316359</created>
+      <updated>1397144316359</updated>
+    </task>
+    <task id="LOCAL-00001" summary="fin de la union">
+      <created>1397556870094</created>
+      <updated>1397556870094</updated>
+    </task>
+    <task id="LOCAL-00002" summary="unificacion">
+      <created>1397565543403</created>
+      <updated>1397565543403</updated>
+    </task>
+    <task id="LOCAL-00003" summary="unificacion&#10;">
+      <created>1397565775622</created>
+      <updated>1397565775622</updated>
+    </task>
+    <task id="LOCAL-00004" summary="fin de la unificacion">
+      <created>1397565907806</created>
+      <updated>1397565907806</updated>
+    </task>
+    <task id="LOCAL-00005" summary="Duetto didactic signal&#10;absolute value pos and neg &#10;start of enveleope display&#10;display of elements in segmentation&#10;">
+      <created>1397761087310</created>
+      <updated>1397761087310</updated>
+    </task>
+    <task id="LOCAL-00006" summary="ENVELOPE DISPLAY&#10;THRESHOLD AND ENVELOPE UPDATES">
+      <created>1397769484951</created>
+      <updated>1397769484951</updated>
+    </task>
+    <task id="LOCAL-00007" summary="ENVELOPE DISPLAY&#10;THRESHOLD AND ENVELOPE UPDATES">
+      <created>1397775349749</created>
+      <updated>1397775349749</updated>
+    </task>
+    <task id="LOCAL-00008" summary="cambios yasel&#10;">
+      <created>1397806401735</created>
+      <updated>1397806401735</updated>
+    </task>
+    <task id="LOCAL-00009" summary="Cambios&#10;">
+      <created>1397810480398</created>
+      <updated>1397810480398</updated>
+    </task>
+    <task id="LOCAL-00010" summary="Cambios&#10;">
+      <created>1397816170971</created>
+      <updated>1397816170971</updated>
+    </task>
+    <task id="LOCAL-00011" summary="Cambios&#10;">
+      <created>1397825897599</created>
+      <updated>1397825897599</updated>
+    </task>
+    <task id="LOCAL-00012" summary="ventana principal">
+      <created>1398340069451</created>
+      <updated>1398340069451</updated>
+    </task>
+    <task id="LOCAL-00013" summary="ventana principal">
+      <created>1399479452519</created>
+      <updated>1399479452519</updated>
+    </task>
+    <task id="LOCAL-00014" summary="sfsg">
+      <created>1399484803985</created>
+      <updated>1399484803986</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
+    <servers />
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-8" y="-8" width="1296" height="776" extended-state="6" />
+    <editor active="false" />
+    <layout>
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.18901454" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Changes" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3279483" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.29322034" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24964131" sideWeight="0.7822469" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="true" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.19081779" sideWeight="0.67128986" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39256865" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3298217" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3263328" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.32859176" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.36610168" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3994452" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+    </layout>
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="CHECK_NEW_TODO" value="false" />
+    <option name="myTodoPanelSettings">
+      <TodoPanelSettings />
+    </option>
+    <confirmMoveToFailedCommit value="2" />
+    <MESSAGE value="cambios gab&#10;" />
+    <MESSAGE value="cambios&#10;" />
+    <MESSAGE value="cambios" />
+    <MESSAGE value="fin de la union" />
+    <MESSAGE value="unificacion" />
+    <MESSAGE value="unificacion&#10;" />
+    <MESSAGE value="fin de la unificacion" />
+    <MESSAGE value="Duetto didactic signal&#10;absolute value pos and neg &#10;start of enveleope display&#10;display of elements in segmentation&#10;" />
+    <MESSAGE value="ENVELOPE DISPLAY&#10;THRESHOLD AND ENVELOPE UPDATES" />
+    <MESSAGE value="cambios yasel&#10;" />
+    <MESSAGE value="Cambios&#10;" />
+    <MESSAGE value="ventana principal" />
+    <MESSAGE value="sfsg" />
+    <option name="LAST_COMMIT_MESSAGE" value="sfsg" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="python-line">
+          <url>file://$PROJECT_DIR$/Graphic_Interface/Widgets/DuettoImageWidget.py</url>
+          <line>18</line>
+          <option name="timeStamp" value="37" />
+        </line-breakpoint>
+      </breakpoints>
+      <option name="time" value="41" />
+    </breakpoint-manager>
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/ElementsDetectors/PeakToPeakElemDetector.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="12" column="35" selection-start="513" selection-end="513" vertical-scroll-proportion="0.0" vertical-offset="170" max-vertical-offset="1445">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Graphic_Interface/Windows/SegmentationAndClasificationWindow.pyw">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="763" column="0" selection-start="44254" selection-end="44254" vertical-scroll-proportion="0.0" vertical-offset="12971" max-vertical-offset="13294">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Graphic_Interface/Dialogs/ui_elemDetectSettings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="471" column="35" selection-start="37124" selection-end="37124" vertical-scroll-proportion="0.26226416" vertical-offset="7868" max-vertical-offset="8398" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/ElementsDetectors/IntervalElemDetector.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="27" column="47" selection-start="1156" selection-end="1156" vertical-scroll-proportion="0.0" vertical-offset="204" max-vertical-offset="1581">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Graphic_Interface/UndoRedoActions.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="111" column="8" selection-start="3561" selection-end="3561" vertical-scroll-proportion="0.33333334" vertical-offset="1655" max-vertical-offset="3604" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/Detector.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="16" column="8" selection-start="457" selection-end="457" vertical-scroll-proportion="0.0" vertical-offset="84" max-vertical-offset="799" />
+      </provider>
+    </entry>
+    <entry file="file://C:/Python27/Lib/site-packages/pyqtgraph/graphicsItems/ScatterPlotItem.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="17" column="32" selection-start="562" selection-end="562" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="15674" />
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.PyCharm30/system/python_stubs/-762174762/PyQt4/QtGui.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="8647" column="8" selection-start="312493" selection-end="312493" vertical-scroll-proportion="0.33333334" vertical-offset="146873" max-vertical-offset="906151" />
+      </provider>
+    </entry>
+    <entry file="file://C:/Python27/Lib/site-packages/pyqtgraph/parametertree/parameterTypes.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="75" column="0" selection-start="3084" selection-end="3084" vertical-scroll-proportion="0.0" vertical-offset="1159" max-vertical-offset="11118" />
+      </provider>
+    </entry>
+    <entry file="file://C:/Python27/Lib/site-packages/pyqtgraph/parametertree/ParameterTree.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="44" column="0" selection-start="1608" selection-end="1608" vertical-scroll-proportion="0.0" vertical-offset="588" max-vertical-offset="2074" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/ElementsDetectors/OneDimensionalElementsDetector.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="61" column="91" selection-start="2904" selection-end="2904" vertical-scroll-proportion="0.0" vertical-offset="748" max-vertical-offset="1921">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Graphic_Interface/Widgets/DuettoImageWidget.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="18" column="0" selection-start="698" selection-end="698" vertical-scroll-proportion="0.0" vertical-offset="17" max-vertical-offset="6171">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/Python27/Lib/site-packages/pyqtgraph/parametertree/Parameter.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="259" column="33" selection-start="12527" selection-end="12545" vertical-scroll-proportion="0.0" vertical-offset="4243" max-vertical-offset="12121" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Duetto_Core/SpecgramSettings.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="36" column="8" selection-start="1114" selection-end="1114" vertical-scroll-proportion="0.0" vertical-offset="208" max-vertical-offset="1003">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Graphic_Interface/Widgets/QSignalVisualizerWidget.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="17000">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Graphic_Interface/Windows/DuettoSoundLabWindow.pyw">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="225" column="58" selection-start="12868" selection-end="12868" vertical-scroll-proportion="-1.0822281" vertical-offset="3825" max-vertical-offset="16864">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>
+
