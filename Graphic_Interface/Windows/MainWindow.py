@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'E:\Biologia\SISTEMA\DuettoSystem\Graphic_Interface\UI Files\MainWindow.ui'
 #
-# Created: Tue May 06 11:41:47 2014
+# Created: Thu May 08 11:08:08 2014
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -59,6 +59,8 @@ class Ui_DuettoMainWindow(object):
         self.menuTools = QtGui.QMenu(self.menubar)
         self.menuTools.setStyleSheet(_fromUtf8(""))
         self.menuTools.setObjectName(_fromUtf8("menuTools"))
+        self.menuExport = QtGui.QMenu(self.menuTools)
+        self.menuExport.setObjectName(_fromUtf8("menuExport"))
         self.menuEdit = QtGui.QMenu(self.menubar)
         self.menuEdit.setStyleSheet(_fromUtf8(""))
         self.menuEdit.setObjectName(_fromUtf8("menuEdit"))
@@ -333,18 +335,20 @@ class Ui_DuettoMainWindow(object):
         self.menuFile.addSeparator()
         self.menuFile.addAction(self.actionClose)
         self.menuFile.addAction(self.actionExit)
+        self.menuExport.addAction(self.actionOsc_Image)
+        self.menuExport.addAction(self.actionSpecgram_Image)
+        self.menuExport.addAction(self.actionCombined_Image)
         self.menuTools.addAction(self.actionZoomIn)
         self.menuTools.addAction(self.actionZoom_out)
         self.menuTools.addAction(self.actionZoom_out_entire_file)
         self.menuTools.addAction(self.actionFull_Screen)
         self.menuTools.addSeparator()
-        self.menuTools.addAction(self.actionOsc_Image)
-        self.menuTools.addAction(self.actionSpecgram_Image)
-        self.menuTools.addAction(self.actionCombined_Image)
         self.menuTools.addAction(self.actionZoom_Cursor)
         self.menuTools.addAction(self.actionPointer_Cursor)
         self.menuTools.addAction(self.actionRectangular_Cursor)
         self.menuTools.addAction(self.actionRectangular_Eraser)
+        self.menuTools.addSeparator()
+        self.menuTools.addAction(self.menuExport.menuAction())
         self.menuGenerate.addAction(self.actionGenerate_White_Noise)
         self.menuGenerate.addAction(self.actionGenerate_Pink_Noise)
         self.menuEdit.addAction(self.actionCopy)
@@ -428,6 +432,7 @@ class Ui_DuettoMainWindow(object):
         DuettoMainWindow.setWindowTitle(QtGui.QApplication.translate("DuettoMainWindow", "Duetto Sound Lab", None, QtGui.QApplication.UnicodeUTF8))
         self.menuFile.setTitle(QtGui.QApplication.translate("DuettoMainWindow", "File", None, QtGui.QApplication.UnicodeUTF8))
         self.menuTools.setTitle(QtGui.QApplication.translate("DuettoMainWindow", "Tools", None, QtGui.QApplication.UnicodeUTF8))
+        self.menuExport.setTitle(QtGui.QApplication.translate("DuettoMainWindow", "Export", None, QtGui.QApplication.UnicodeUTF8))
         self.menuEdit.setTitle(QtGui.QApplication.translate("DuettoMainWindow", "Edit", None, QtGui.QApplication.UnicodeUTF8))
         self.menuGenerate.setTitle(QtGui.QApplication.translate("DuettoMainWindow", "Generate", None, QtGui.QApplication.UnicodeUTF8))
         self.menuView.setTitle(QtGui.QApplication.translate("DuettoMainWindow", "Analysis", None, QtGui.QApplication.UnicodeUTF8))

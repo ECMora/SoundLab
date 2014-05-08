@@ -116,18 +116,25 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
     <property name="title">
      <string>Tools</string>
     </property>
+    <widget class="QMenu" name="menuExport">
+     <property name="title">
+      <string>Export</string>
+     </property>
+     <addaction name="actionOsc_Image"/>
+     <addaction name="actionSpecgram_Image"/>
+     <addaction name="actionCombined_Image"/>
+    </widget>
     <addaction name="actionZoomIn"/>
     <addaction name="actionZoom_out"/>
     <addaction name="actionZoom_out_entire_file"/>
     <addaction name="actionFull_Screen"/>
     <addaction name="separator"/>
-    <addaction name="actionOsc_Image"/>
-    <addaction name="actionSpecgram_Image"/>
-    <addaction name="actionCombined_Image"/>
     <addaction name="actionZoom_Cursor"/>
     <addaction name="actionPointer_Cursor"/>
     <addaction name="actionRectangular_Cursor"/>
     <addaction name="actionRectangular_Eraser"/>
+    <addaction name="separator"/>
+    <addaction name="menuExport"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="styleSheet">
