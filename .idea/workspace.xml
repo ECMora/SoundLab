@@ -2,16 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="48337854-64fc-444d-bf1c-d8a83511c4ea" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Utils/Themes/BatsoundLikeTheme.dth" afterPath="$PROJECT_DIR$/Utils/Themes/BatsoundLikeTheme.dth" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/Detector.py" afterPath="$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/Detector.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Graphic_Interface/Windows/DuettoSoundLabWindow.py" afterPath="$PROJECT_DIR$/Graphic_Interface/Windows/DuettoSoundLabWindow.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/ElementsDetectors/OneDimensionalElementsDetector.py" afterPath="$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/ElementsDetectors/OneDimensionalElementsDetector.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Utils/Themes/PinkBlueTheme.dth" afterPath="$PROJECT_DIR$/Utils/Themes/PinkBlueTheme.dth" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Graphic_Interface/Widgets/QSignalVisualizerWidget.py" afterPath="$PROJECT_DIR$/Graphic_Interface/Widgets/QSignalVisualizerWidget.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Utils/Themes/RedBlackTheme.dth" afterPath="$PROJECT_DIR$/Utils/Themes/RedBlackTheme.dth" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Utils/Themes/WhiteBlackTheme.dth" afterPath="$PROJECT_DIR$/Utils/Themes/WhiteBlackTheme.dth" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Utils/Themes/WhiteBlueTheme.dth" afterPath="$PROJECT_DIR$/Utils/Themes/WhiteBlueTheme.dth" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Utils/Themes/testt.dth" afterPath="$PROJECT_DIR$/Utils/Themes/testt.dth" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="DuettoSystem.iws" />
@@ -50,7 +42,7 @@
       <file leaf-file-name="QSignalVisualizerWidget.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Graphic_Interface/Widgets/QSignalVisualizerWidget.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="627" column="58" selection-start="28348" selection-end="28348" vertical-scroll-proportion="0.6646526" vertical-offset="10439" max-vertical-offset="17544">
+            <state line="626" column="58" selection-start="28289" selection-end="28289" vertical-scroll-proportion="0.61329305" vertical-offset="10439" max-vertical-offset="17544">
               <folding>
                 <element signature="e#0#29#0" expanded="true" />
               </folding>
@@ -195,6 +187,7 @@
     <property name="WebServerToolWindowFactoryState" value="true" />
     <property name="recentsLimit" value="5" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="FullScreen" value="false" />
   </component>
   <component name="PyConsoleOptionsProvider">
     <option name="myPythonConsoleState">
@@ -389,13 +382,18 @@
       <created>1399540400955</created>
       <updated>1399540400955</updated>
     </task>
+    <task id="LOCAL-00001" summary="sfsg">
+      <created>1399535797632</created>
+      <updated>1399535797632</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1296" height="776" extended-state="6" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
-      <window_info id="Changes" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3279483" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3279483" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32850242" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32850242" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -546,7 +544,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Graphic_Interface/Widgets/QSignalVisualizerWidget.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="627" column="58" selection-start="28348" selection-end="28348" vertical-scroll-proportion="0.6646526" vertical-offset="10439" max-vertical-offset="17544">
+        <state line="626" column="58" selection-start="28289" selection-end="28289" vertical-scroll-proportion="0.61329305" vertical-offset="10439" max-vertical-offset="17544">
           <folding>
             <element signature="e#0#29#0" expanded="true" />
           </folding>
