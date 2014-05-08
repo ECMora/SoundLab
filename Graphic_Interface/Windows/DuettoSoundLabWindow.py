@@ -843,7 +843,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             path_base = os.path.split(unicode(f))[0]
             self.filesInFolder = self.folderFiles(path_base)
             self.filesInFolderIndex = self.filesInFolder.index(str(f))
-            self.widget.visibleSpectrogram = True # for restore the state lose in load
+            #self.widget.visibleSpectrogram = True # for restore the state lose in load
             try:
                 self.widget.open(f)
                 self.setWindowTitle("Duetto Sound Lab - " + self.widget.signalProcessor.signal.name())
@@ -901,11 +901,21 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     @pyqtSlot()
     def on_actionStop_Sound_triggered(self):
         self.widget.stop()
-        self.hist.item.region.lineMoved()
-        self.hist.item.region.lineMoveFinished()
+        self.actionPlay_Sound.setEnabled(True)
+        self.actionPause_Sound.setEnabled(True)
+        self.actionZoom_out.setEnabled(True)
+        self.actionZoomIn.setEnabled(True)
+        self.actionZoom_out_entire_file.setEnabled(True)
+        #self.hist.item.region.lineMoved()
+        #self.hist.item.region.lineMoveFinished()
 
     @pyqtSlot()
     def on_actionRecord_triggered(self):
+        self.actionPlay_Sound.setEnabled(False)
+        self.actionPause_Sound.setEnabled(False)
+        self.actionZoom_out.setEnabled(False)
+        self.actionZoomIn.setEnabled(False)
+        self.actionZoom_out_entire_file.setEnabled(False)
         self.widget.record()
 
     @pyqtSlot()
