@@ -2,6 +2,8 @@ import sys
 from apptools.undo.action.undo_action import UndoAction
 from PyQt4 import QtCore, QtGui
 import os
+from pyqtgraph.parametertree.parameterTypes import WidgetParameterItem,ListParameter
+from pyqtgraph.python2_3 import asUnicode
 from pyqtgraph.parametertree import Parameter, ParameterTree
 from PyQt4.QtGui import QDialog, QMessageBox, QFileDialog, QActionGroup, QAction
 from PyQt4.QtCore import SIGNAL, pyqtSlot, QTimer
@@ -33,6 +35,69 @@ class ChangeVolumeDialog(cvdialog.Ui_Dialog, QDialog):
 
 class FilterDialog(filterdg.Ui_Dialog, QDialog):
     pass
+
+class DuettoListParameterItem(WidgetParameterItem):
+    """
+    WidgetParameterItem subclass providing comboBox that lets the user select from a list of options.
+
+    """
+    def __init__(self, param, depth):
+        param.opts['value'] = param.opts['value'][1]
+        self.targetValue = None
+        self.values = param.opts.get('values',[])
+        self.valuesDict = {}
+        for (a, b) in self.values:
+            self.valuesDict[a] = b
+        WidgetParameterItem.__init__(self, param, depth)
+
+    def makeWidget(self):
+        opts = self.param.opts
+        t = opts['type']
+        w = QtGui.QComboBox()
+        w.setMaximumHeight(20)  ## set to match height of spin box and line edit
+        w.sigChanged = w.currentIndexChanged
+        w.value = self.value
+        w.setValue = self.setValue
+        self.widget = w  ## needs to be set before limits are changed
+        self.limitsChanged(self.param, self.param.opts['limits'])
+        if len(self.values) > 0:
+            self.setValue(self.param.value())
+        return w
+
+    def value(self):
+        key = asUnicode(self.widget.currentText())
+        return self.valuesDict.get(key, None)
+
+    def setValue(self, val):
+        self.targetValue = val
+        if val not in self.valuesDict.values():
+            self.widget.setCurrentIndex(0)
+        else:
+            for i in range(len(self.values)):
+                if self.values[i][1] == val:
+                    self.widget.setCurrentIndex(i)
+                    break
+
+    def limitsChanged(self, param, limits):
+        # set up forward / reverse mappings for name:value
+
+        if len(limits) == 0:
+            limits = ['']  ## Can never have an empty list--there is always at least a singhe blank item.
+
+        try:
+            self.widget.blockSignals(True)
+            val = self.targetValue  #asUnicode(self.widget.currentText())
+
+            self.widget.clear()
+            for (k,v) in self.values:
+                self.widget.addItem(k)
+                if v == val:
+                    self.widget.setCurrentIndex(self.widget.count()-1)
+                    self.updateDisplayLabel()
+        finally:
+            self.widget.blockSignals(False)
+
+
 
 class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     dropchanged = QtCore.pyqtSignal(QtCore.QMimeData)
@@ -89,8 +154,8 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 {'name': 'Min', 'type': 'float', 'value': 0, 'step': 0.1},
                 {'name': 'Max', 'type': 'float', 'value': 22, 'step': 0.1},
             ]},
-            {'name': 'FFT size', 'type': 'list', 'default':512, 'values': { 'Automatic': 512,"32":32,"64": 64,"128": 128,"256":256 ,"512": 512, "1024": 1024, '2048': 2048,'4096': 4096}, 'value': 'Automatic'},
-            {'name': 'FFT window', 'type': 'list', 'value': self.widget.specgramSettings.windows[0],'default':self.widget.specgramSettings.windows[0],'values': {"Blackman": self.widget.specgramSettings.windows[3],"Rectangular": self.widget.specgramSettings.windows[1], "Hanning": self.widget.specgramSettings.windows[2], "Hamming": self.widget.specgramSettings.windows[0],'Bartlett':self.widget.specgramSettings.windows[4],'Kaiser':self.widget.specgramSettings.windows[5],'None':self.widget.specgramSettings.windows[6]}},
+           {'name': 'FFT size', 'type': 'list', 'default':512, 'values': [('Automatic', 512),("32",32),("64", 64),("128", 128), ("512", 512), ("1024", 1024), ('2048', 2048),('4096', 4096)], 'value': '512'},
+          {'name': 'FFT window', 'type': 'list', 'value':self.widget.specgramSettings.windows[0],'default':self.widget.specgramSettings.windows[0],'values': [('Bartlett',self.widget.specgramSettings.windows[4]),("Blackman", self.widget.specgramSettings.windows[3]),("Hamming", self.widget.specgramSettings.windows[0]), ("Hanning", self.widget.specgramSettings.windows[2]),('Kaiser',self.widget.specgramSettings.windows[5]),('None',self.widget.specgramSettings.windows[6]),("Rectangular", self.widget.specgramSettings.windows[1])]},
             {'name': 'FFT overlap', 'type': 'int', 'value':-1, 'limits': (-1, 99)},
             {'name': 'Threshold(dB)', 'type': 'group', 'children': [
                 {'name': 'Min', 'type': 'float','step':0.1,'default': self.defaultTheme.histRange[0], 'value': self.defaultTheme.histRange[0]},
@@ -106,10 +171,10 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         {'name': 'Power Spectrum Settings', 'type': 'group', 'children': [
 
-             {'name': 'FFT size', 'type': 'list','default':512, 'values': { 'Automatic': 512,"32":32,"64": 64,"128":128,"256":256, "1024": 1024, "512": 512, '2048': 2048,'4096': 4096}, 'value': 2},
-             {'name': 'FFT window', 'type': 'list', 'value':self.widget.specgramSettings.windows[0],'default':self.widget.specgramSettings.windows[0],'values': {"Blackman": self.widget.specgramSettings.windows[3],"Rectangular": self.widget.specgramSettings.windows[1], "Hanning": self.widget.specgramSettings.windows[2], "Hamming": self.widget.specgramSettings.windows[0],'Bartlett':self.widget.specgramSettings.windows[4],'Kaiser':self.widget.specgramSettings.windows[5],'None':self.widget.specgramSettings.windows[6]}},
-             {'name': 'FFT overlap', 'type': 'int', 'value':self.pow_overlap, 'limits' : (-1,100)},
-             {'name': 'Grid', 'type': 'group', 'children': [
+            {'name': 'FFT size', 'type': 'list', 'default':512, 'values': [('Automatic', 512),("32",32),("64", 64),("128", 128), ("512", 512), ("1024", 1024), ('2048', 2048),('4096', 4096)], 'value': 'Automatic'},
+            {'name': 'FFT window', 'type': 'list', 'value':self.widget.specgramSettings.windows[0],'default':self.widget.specgramSettings.windows[0],'values': [('Bartlett',self.widget.specgramSettings.windows[4]),("Blackman", self.widget.specgramSettings.windows[3]),("Hamming", self.widget.specgramSettings.windows[0]), ("Hanning", self.widget.specgramSettings.windows[2]),('Kaiser',self.widget.specgramSettings.windows[5]),('None',self.widget.specgramSettings.windows[6]),("Rectangular", self.widget.specgramSettings.windows[1])]},
+            {'name': 'FFT overlap', 'type': 'int', 'value':self.pow_overlap, 'limits' : (-1,100)},
+            {'name': 'Grid', 'type': 'group', 'children': [
                 {'name': 'X', 'type': 'bool','default': self.defaultTheme.pow_GridX, 'value': self.defaultTheme.pow_GridX},
                 {'name': 'Y', 'type': 'bool','default':self.defaultTheme.pow_GridY , 'value': self.defaultTheme.pow_GridY},
 
@@ -125,7 +190,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
              {'name': 'Plot color', 'type': 'color', 'value':self.defaultTheme.pow_Plot, 'default': self.defaultTheme.pow_Plot},
         ]},
         {'name': 'Themes', 'type': 'group', 'children': [
-         {'name': 'Theme Selected', 'type': 'list', 'value':"RedBlackTheme.dth",'default':"RedBlackTheme.dth",'values': {"BatsoundLikeTheme":"BatsoundLikeTheme.dth","PinkBlueTheme":"PinkBlueTheme.dth","RedBlackTheme":"RedBlackTheme.dth","WhiteBlueTheme":"WhiteBlueTheme.dth"}},
+         {'name': 'Theme Selected', 'type': 'list', 'value':"RedBlackTheme.dth",'default':"RedBlackTheme.dth",'values': [("BatsoundLikeTheme","BatsoundLikeTheme.dth"),("PinkBlueTheme","PinkBlueTheme.dth"),("RedBlackTheme","RedBlackTheme.dth"),("WhiteBlueTheme","WhiteBlueTheme.dth")]},
         ]
         } ,
         {'name': 'Detection Settings', 'type': 'group', 'children': [
@@ -138,6 +203,8 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         ]},]}
 
         ]
+
+        ListParameter.itemClass = DuettoListParameterItem
         self.ParamTree = Parameter.create(name='params', type='group', children=params)
         self.ParamTree.sigTreeStateChanged.connect(self.change)
         self.parameterTree = ParameterTree()
@@ -241,9 +308,11 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         if os.path.exists(p):
             self.widget.open(p)
             self.widget.visibleSpectrogram = False
+            self.actionSignalName.setText(u"File Name: "+ self.widget.signalProcessor.signal.name())
         else:
             self.widget.openNew(44100, 16, 5., whiteNoise=False)
-        self.actionSignalName.setText(u"File Name: "+ self.widget.signalProcessor.signal.name())
+            self.actionSignalName.setText(u"File Name: "+ self.widget.signalProcessor.signal.name())
+
         self.setWindowTitle("Duetto Sound Lab - Welcome to Duetto")
         self.statusbar.showMessage("Welcome to Duetto Sound Lab.")
 
@@ -413,7 +482,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             elif childName == 'Spectrogram Settings.Background color':
                 self.widget.spec_background = data
                 self.widget.visualChanges = True
-                self.widget.refresh(dataChanged=True,updateOscillogram=False,updateSpectrogram=False)
+                self.widget.refresh(dataChanged=False,updateOscillogram=False,updateSpectrogram=True)
 
             elif childName == 'Spectrogram Settings.ColorMap':
                 self.widget.axesSpecgram.getHistogramWidget().item._pixelVectorCache.append(data)
@@ -456,7 +525,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             elif childName == 'Oscillogram Settings.Background color':
                 self.widget.osc_background = data
                 self.widget.visualChanges = True
-                self.widget.refresh(dataChanged=True, updateOscillogram=False, updateSpectrogram=False)
+                self.widget.refresh(dataChanged=False, updateOscillogram=True, updateSpectrogram=False)
             elif childName == 'Oscillogram Settings.Grid.X':
                 self.widget.osc_gridx = data
                 self.widget.visualChanges = True
@@ -808,13 +877,19 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.close()
 
     def closeEvent(self,event):
-        self._save()
+        self._save(event)
         self.close()
 
-    def _save(self):
-        mbox = QtGui.QMessageBox(QtGui.QMessageBox.Question,"Save","Do you want to save the signal?",QtGui.QMessageBox.Yes | QtGui.QMessageBox.No,self)
-        if self.widget.undoRedoManager.count() > 0 and mbox.exec_() == QtGui.QMessageBox.Yes:
+    def _save(self,event = None):
+        mbox = QtGui.QMessageBox(QtGui.QMessageBox.Question,"Save","Do you want to save the signal?",QtGui.QMessageBox.Yes | QtGui.QMessageBox.No|QtGui.QMessageBox.Cancel,self)
+        result = mbox.exec_()
+        if self.widget.undoRedoManager.count() > 0 and  result == QtGui.QMessageBox.Yes:
             self.on_actionSave_triggered()
+        elif result == QtGui.QMessageBox.Cancel and event is not None:
+            event.ignore()
+
+
+
 
     @pyqtSlot()
     def on_actionNew_triggered(self):
@@ -830,6 +905,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         f = QFileDialog.getOpenFileName(self, "Select a file to open",directory = self.lastopen,
                                               filter="Wave Files (*.wav);;All Files (*)")
         self._open(f)
+
     @pyqtSlot()
     def on_actionClose_triggered(self):
         self._save()
@@ -837,20 +913,22 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     def _open(self,f=''):
         if f != '':
-            self.lastopen = f
-            self.widget.specgramSettings.NFFT = self.ParamTree.param('Spectrogram Settings').param('FFT size').value()
-            self.widget.specgramSettings.overlap = self.ParamTree.param('Spectrogram Settings').param('FFT overlap').value()
-            path_base = os.path.split(unicode(f))[0]
-            self.filesInFolder = self.folderFiles(path_base)
-            self.filesInFolderIndex = self.filesInFolder.index(str(f))
-            self.widget.visibleSpectrogram = True # for restore the state lose in load
             try:
+                self.lastopen = f
+                self.widget.specgramSettings.NFFT = self.ParamTree.param('Spectrogram Settings').param('FFT size').value()
+                self.widget.specgramSettings.overlap = self.ParamTree.param('Spectrogram Settings').param('FFT overlap').value()
+                path_base = os.path.split(unicode(f))[0]
+                self.filesInFolder = self.folderFiles(path_base)
+                self.filesInFolderIndex = self.filesInFolder.index(str(f))
+                self.widget.visibleSpectrogram = True # for restore the state lose in load
+
                 self.widget.open(f)
                 self.setWindowTitle("Duetto Sound Lab - " + self.widget.signalProcessor.signal.name())
                 self.actionSignalName.setText(u"File Name: "+self.widget.signalProcessor.signal.name())
             except:
                 QMessageBox.warning(QMessageBox(), "Error", "Could not load the file.\n"+f)
                 self.widget.openNew(44100,16,1)
+
 
 
             valuemin = self.widget.minYSpc
