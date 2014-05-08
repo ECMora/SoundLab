@@ -32,9 +32,8 @@ class Detector:
 
         current = a[0]
         for tuple in a[1:]:
-            if (tuple[0]-current[1])*100.0/(tuple[1]-current[0]) < distancefactor:
+            if (tuple[0]-current[1]) < distancefactor:
                 current = (current[0], tuple[1])
-
             else:
                 b.append(current)
                 current=tuple

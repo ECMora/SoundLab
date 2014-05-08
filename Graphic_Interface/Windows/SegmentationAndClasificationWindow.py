@@ -663,13 +663,6 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.close()
 
     def closeEvent(self,event):
-        mbox = QtGui.QMessageBox(QtGui.QMessageBox.Question,"Save","Do you want to save the signal?",QtGui.QMessageBox.Yes | QtGui.QMessageBox.No | QtGui.QMessageBox.Cancel,self)
-        result = mbox.exec_()
-        if result == QtGui.QMessageBox.Yes:
-            self.on_actionSave_triggered()
-        if result != QtGui.QMessageBox.Cancel:
-            self.close()
-
         mbox = QtGui.QMessageBox(QtGui.QMessageBox.Question,"Save meditions","Do you want to save the meditions?",QtGui.QMessageBox.Yes | QtGui.QMessageBox.No | QtGui.QMessageBox.Cancel,self)
         if self.tableParameterOscilogram.rowCount() > 0:
             result = mbox.exec_()
