@@ -39,13 +39,16 @@ class PowSpecPlotWidget(pg.PlotWidget):
             (y,insidey) = self.fromCanvasToClientY(event.y())
             info = self.getFrequencyAmplitudeInfo(x)
 
-
             self.xLine.setValue(info[0])
             self.yLine.setValue(info[1])
 
             if self.mouseReleased:
                  info0 = self.getFrequencyAmplitudeInfo(self.last['pos'][0])
-                 self.PointerChanged.emit(str.format('f0: {0}kHz  Amplitude0: {1}dB f1: {2}kHz Amplitude1: {3}dB',numpy.round(info0[0]/1000,1),numpy.round(info0[1],1) ,numpy.round(info[0]/1000,1), numpy.round(info[1],1)))
+                 f0 = numpy.round(info0[0]/1000,1)
+                 a0 = numpy.round(info0[1],1)
+                 f1 = numpy.round(info[0]/1000,1)
+                 a1 = numpy.round(info[1],1)
+                 self.PointerChanged.emit(str.format('f0: {0}kHz  Amplitude0: {1}dB f1: {2}kHz Amplitude1: {3}dB df: {4}kHz dAmplitude: {5}dB',f0,a0 ,f1, a1,numpy.abs(f1-f0),numpy.abs(a1-a0)))
             else:
                 self.PointerChanged.emit(str.format('Frequency: {0}kHz  Amplitude: {1}dB',numpy.round(info[0]/1000,1),numpy.round(info[1],1)))
             if not insidex or not insidey:
@@ -83,20 +86,6 @@ class PowSpecPlotWidget(pg.PlotWidget):
         return int(vb.x() + round((maxx) * (indexX - a) * 1. / (b - a), 0))
 
     #PIXELS_BETWEEN_AXES_AND_DATA = 10 #the pixels for the numbers in the left side
-
-    def fromCanvasToClientIndex(self, xPixel):
-        """
-        Translates the coordinates from the canvas to its corresponding  index in the signal array
-        """
-        vb = self.getPlotItem().getViewBox()
-        minx = vb.x()
-        maxx = vb.width() + minx
-        a , b = self.viewRange()[0]
-        if xPixel < minx:
-            xPixel = minx
-        if xPixel > maxx:
-            xPixel = maxx
-        return a + int(round((xPixel - minx) * len(self.parent().freqs) * 1. / (maxx - minx), 0)) - 1
 
     def fromCanvasToClient(self, xPixel):
         """

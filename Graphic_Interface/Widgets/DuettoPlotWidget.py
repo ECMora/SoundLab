@@ -71,8 +71,8 @@ class DuettoPlotWidget(pg.PlotWidget):
         if tool != self.selectedTool:
             self.selectedTool = tool
             if tool == Tools.PointerCursor:
-                self.removeItem(self.zoomRegion)
-                self.removeItem(self.rectangularCursor)
+                self.setZoomRegionVisible(value = False)
+                #self.removeItem(self.rectangularCursor)
                 self.pointerCursor.clear()
                 self.addItem(self.pointerCursor)
                 self.mouseZoomEnabled = False
@@ -81,8 +81,8 @@ class DuettoPlotWidget(pg.PlotWidget):
                 self.rectangularCursor.setSize([0,0])
             elif tool == Tools.Zoom:
                 self.removeItem(self.pointerCursor)
-                self.removeItem(self.rectangularCursor)
-                #self.addItem(self.zoomRegion)
+                #self.removeItem(self.rectangularCursor)
+                self.setZoomRegionVisible(value = True)
                 self.zoomRegion.setRegion([0,0])
                 self.mouseZoomEnabled = True
                 self.mousePressed = False
@@ -90,12 +90,12 @@ class DuettoPlotWidget(pg.PlotWidget):
                 self.rectangularCursor.setSize([0,0])
             elif tool == Tools.RectangularCursor:
                 self.removeItem(self.pointerCursor)
-                self.removeItem(self.zoomRegion)
+                self.setZoomRegionVisible(value = False)
                 self.addItem(self.rectangularCursor)
                 self.mousePressed = False
             elif tool == Tools.RectangularEraser:
                 self.removeItem(self.pointerCursor)
-                self.removeItem(self.zoomRegion)
+                self.setZoomRegionVisible(value = False)
             self.update()
 
     def setZoomRegionVisible(self, value=False):
@@ -141,7 +141,11 @@ class DuettoPlotWidget(pg.PlotWidget):
                         self.setCursor(QCursor(QtCore.Qt.OpenHandCursor))
                 else:
                     self.setCursor(QCursor(QtCore.Qt.ArrowCursor))
+        elif self.selectedTool == Tools.RectangularEraser:
+            self.setCursor(QCursor(QtCore.Qt.ArrowCursor))
         elif self.selectedTool == Tools.RectangularCursor:
+            if self.rectangularCursor not in self.items():
+                self.addItem(self.rectangularCursor)
             x = self.fromCanvasToClient(event.x())
             y = self.fromCanvasToClientY(event.y())
 
@@ -241,9 +245,10 @@ class DuettoPlotWidget(pg.PlotWidget):
                 self.zoomRegion.setRegion([rgn[0], rgn[0]])
         elif self.selectedTool ==  Tools.RectangularCursor:
             x = self.fromCanvasToClient(event.x())
-            y = numpy.round(self.parent().specgramSettings.freqs[self.fromCanvasToClientY(event.y())]*1.0/1000,1)
+            y = self.fromCanvasToClientY(event.y())
+            y = numpy.round(y*100.0/self.parent().signalProcessor.signal.getMaximumValueAllowed(),0)
             if self.mouseInsideRectArea(x,y):
-                self.makeZoomRect(specCoords = False)
+                self.makeZoomRect()
 
     def mouseReleaseEvent(self, event):
         self.mousePressed = False
