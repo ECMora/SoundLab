@@ -254,8 +254,7 @@ class DuettoImageWidget(GraphicsView):
                 if rgn[0] == rgn[1]:
                     return
                 self.makeZoom(rgn[0], rgn[1], specCoords=True)
-                self.zoomRegion.setRegion([rgn[0], rgn[0]])
-                #self.zoomRegion.lineMoved()
+               
         elif self.selectedTool ==  Tools.RectangularCursor:
             x = self.fromCanvasToClient(event.x())
             y = numpy.round(self.parent().specgramSettings.freqs[self.fromCanvasToClientY(event.y())]*1.0/1000,1)
