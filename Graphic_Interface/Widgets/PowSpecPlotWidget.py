@@ -87,20 +87,6 @@ class PowSpecPlotWidget(pg.PlotWidget):
 
     #PIXELS_BETWEEN_AXES_AND_DATA = 10 #the pixels for the numbers in the left side
 
-    def fromCanvasToClientIndex(self, xPixel):
-        """
-        Translates the coordinates from the canvas to its corresponding  index in the signal array
-        """
-        vb = self.getPlotItem().getViewBox()
-        minx = vb.x()
-        maxx = vb.width() + minx
-        a , b = self.viewRange()[0]
-        if xPixel < minx:
-            xPixel = minx
-        if xPixel > maxx:
-            xPixel = maxx
-        return a + int(round((xPixel - minx) * len(self.parent().freqs) * 1. / (maxx - minx), 0)) - 1
-
     def fromCanvasToClient(self, xPixel):
         """
         Translates the coordinates from the canvas to its corresponding  index in the signal array
