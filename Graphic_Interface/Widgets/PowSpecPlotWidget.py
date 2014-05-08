@@ -10,6 +10,7 @@ class PowSpecPlotWidget(pg.PlotWidget):
     def __init__(self,  parent=None,**kargs):
         pg.PlotWidget.__init__(self, **kargs)
         self.mousePressed = False
+        pg.LegendItem()
         self.getPlotItem().setMouseEnabled(x=False, y=False)
         self.xLine = pg.InfiniteLine(angle = 90,pen=(0,9))
         self.yLine = pg.InfiniteLine(angle = 0,pen=(0,9))
@@ -19,8 +20,17 @@ class PowSpecPlotWidget(pg.PlotWidget):
         self.getPlotItem().getViewBox().addItem(self.pointerCursor)
         self.getPlotItem().getViewBox().addItem(self.xLine)
         self.getPlotItem().getViewBox().addItem(self.yLine)
+        self.getPlotItem().setMouseEnabled(False,False)
+        self.getPlotItem().setLabel(axis='bottom',text='Frequency',units='Hz')
+        self.getPlotItem().setLabel(axis='left', text='Intensity', units='db')
         self.mouseReleased = False
         self.last = {}
+        self.freqs =[]
+        self.Pxx =[]
+
+    def setInfo(self, Pxx, freqs):
+        self.Pxx = Pxx
+        self.freqs = freqs
 
     PointerChanged = pyqtSignal(str)
     PointerCursorPressed = pyqtSignal()
@@ -123,8 +133,8 @@ class PowSpecPlotWidget(pg.PlotWidget):
         return (a + int(round((yPixel - miny) * (b - a) * 1. / (maxy - miny), 0)), inside)
 
     def getFrequencyAmplitudeInfo(self,x):
-        index = numpy.searchsorted(self.parent().freqs,x)
-        freq = self.parent().freqs[index]
-        amplt = 10*numpy.log10(self.parent().Pxx[index]/numpy.amax(self.parent().Pxx))
+        index = numpy.searchsorted(self.freqs,x)
+        freq = self.freqs[index]
+        amplt = 10*numpy.log10(self.Pxx[index]/numpy.amax(self.Pxx))
         return [freq, amplt]
 

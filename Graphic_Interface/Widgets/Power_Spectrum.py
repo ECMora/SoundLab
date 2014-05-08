@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\Gaby\Desktop\DuettoSystemCarlos\Graphic_Interface\UI Files\power_spectrum.ui'
+# Form implementation generated from reading ui file 'C:\Users\Gaby\Desktop\DuettoSystem\Graphic_Interface\UI Files\power_spectrum.ui'
 #
-# Created: Fri Jan 31 00:17:17 2014
+# Created: Thu May 08 11:36:09 2014
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,7 +17,7 @@ except AttributeError:
 class Ui_PowSpecWindow(object):
     def setupUi(self, PowSpecWindow):
         PowSpecWindow.setObjectName(_fromUtf8("PowSpecWindow"))
-        PowSpecWindow.resize(340, 340)
+        PowSpecWindow.resize(483, 377)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -29,9 +29,9 @@ class Ui_PowSpecWindow(object):
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.verticalLayout = QtGui.QVBoxLayout(self.centralwidget)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
-        self.pow_spec = QPowerSpectrumWidget(self.centralwidget)
-        self.pow_spec.setObjectName(_fromUtf8("pow_spec"))
-        self.verticalLayout.addWidget(self.pow_spec)
+        self.widget = PowSpecPlotWidget(self.centralwidget)
+        self.widget.setObjectName(_fromUtf8("widget"))
+        self.verticalLayout.addWidget(self.widget)
         PowSpecWindow.setCentralWidget(self.centralwidget)
         self.statusbar = QtGui.QStatusBar(PowSpecWindow)
         self.statusbar.setObjectName(_fromUtf8("statusbar"))
@@ -46,4 +46,4 @@ class Ui_PowSpecWindow(object):
         PowSpecWindow.setWindowTitle(QtGui.QApplication.translate("PowSpecWindow", "Power Spectrum", None, QtGui.QApplication.UnicodeUTF8))
         self.actionHighest_frequency.setText(QtGui.QApplication.translate("PowSpecWindow", "Highest frequency", None, QtGui.QApplication.UnicodeUTF8))
 
-from QPowerSpectrumWidget import QPowerSpectrumWidget
+from PowSpecPlotWidget import PowSpecPlotWidget
