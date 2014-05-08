@@ -2,31 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="48337854-64fc-444d-bf1c-d8a83511c4ea" name="Default" comment="">
-      <change type="DELETED" beforePath="E:\Biologia\SISTEMA\DuettoSystem\Graphic_Interface\Dialogs\ChangeVolumeDialog.pyw" afterPath="" />
-      <change type="DELETED" beforePath="E:\Biologia\SISTEMA\DuettoSystem\Graphic_Interface\Dialogs\FilterOptionsDialog.pyw" afterPath="" />
-      <change type="DELETED" beforePath="E:\Biologia\SISTEMA\DuettoSystem\Graphic_Interface\Dialogs\InsertSilenceDialog.pyw" afterPath="" />
-      <change type="DELETED" beforePath="E:\Biologia\SISTEMA\DuettoSystem\Graphic_Interface\Dialogs\NewFileDialog.pyw" afterPath="" />
-      <change type="DELETED" beforePath="E:\Biologia\SISTEMA\DuettoSystem\Graphic_Interface\Dialogs\ParameterMeasurementDialog.py" afterPath="" />
-      <change type="DELETED" beforePath="E:\Biologia\SISTEMA\DuettoSystem\Graphic_Interface\Dialogs\ParameterMeasurementDialog.pyw" afterPath="" />
-      <change type="DELETED" beforePath="E:\Biologia\SISTEMA\DuettoSystem\Graphic_Interface\Dialogs\elemDetectSettings.pyw" afterPath="" />
-      <change type="DELETED" beforePath="E:\Biologia\SISTEMA\DuettoSystem\Graphic_Interface\Dialogs\ui_new_file_dialog.pyw" afterPath="" />
-      <change type="DELETED" beforePath="E:\Biologia\SISTEMA\DuettoSystem\Graphic_Interface\Widgets\segmentationAndCalsificationUI.py" afterPath="" />
-      <change type="DELETED" beforePath="E:\Biologia\SISTEMA\DuettoSystem\Graphic_Interface\Windows\DuettoSoundLabWindow.pyw" afterPath="" />
-      <change type="DELETED" beforePath="E:\Biologia\SISTEMA\DuettoSystem\Graphic_Interface\Windows\SegmentationAndClasificationWindow.pyw" afterPath="" />
-      <change type="DELETED" beforePath="E:\Biologia\SISTEMA\DuettoSystem\Utils\Themes\MatrixTheme.dth" afterPath="" />
-      <change type="DELETED" beforePath="E:\Biologia\SISTEMA\DuettoSystem\Utils\Themes\testt.dth" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/Detector.py" afterPath="$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/Detector.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Graphic_Interface/Windows/DuettoSoundLabWindow.py" afterPath="$PROJECT_DIR$/Graphic_Interface/Windows/DuettoSoundLabWindow.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/FeatureExtractionDetectors/FrequencyPeeksDetector.py" afterPath="$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/FeatureExtractionDetectors/FrequencyPeeksDetector.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/FeatureExtractionDetectors/HarmonicDetector.py" afterPath="$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/FeatureExtractionDetectors/HarmonicDetector.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/FeatureExtractionDetectors/InflectionPointDetector.py" afterPath="$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/FeatureExtractionDetectors/InflectionPointDetector.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/FeatureExtractionDetectors/MaxMinPeakDetector.py" afterPath="$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/FeatureExtractionDetectors/MaxMinPeakDetector.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/FeatureExtractionDetectors/MeanDetector.py" afterPath="$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/FeatureExtractionDetectors/MeanDetector.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/FeatureExtractionDetectors/MinMaxFrequencyDetector.py" afterPath="$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/FeatureExtractionDetectors/MinMaxFrequencyDetector.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/ElementsDetectors/OneDimensionalElementsDetector.py" afterPath="$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/ElementsDetectors/OneDimensionalElementsDetector.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Graphic_Interface/Widgets/QSignalVisualizerWidget.py" afterPath="$PROJECT_DIR$/Graphic_Interface/Widgets/QSignalVisualizerWidget.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Graphic_Interface/Windows/SegmentationAndClasificationWindow.py" afterPath="$PROJECT_DIR$/Graphic_Interface/Windows/SegmentationAndClasificationWindow.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="DuettoSystem.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -51,31 +27,7 @@
     <favorites_list name="DuettoSystem" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
-      <file leaf-file-name="DuettoSoundLabWindow.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Graphic_Interface/Windows/DuettoSoundLabWindow.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="929" column="47" selection-start="47510" selection-end="47510" vertical-scroll-proportion="-5.0" vertical-offset="18833" max-vertical-offset="22533">
-              <folding>
-                <element signature="e#1382#1386#0" expanded="false" />
-                <element signature="e#1448#1452#0" expanded="false" />
-                <element signature="e#1508#1512#0" expanded="false" />
-                <element signature="e#2579#2667#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Duetto_Sound_Lab.pyw" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/Duetto_Sound_Lab.pyw">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="52" column="22" selection-start="1758" selection-end="1758" vertical-scroll-proportion="0.49201277" vertical-offset="679" max-vertical-offset="1323">
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <leaf />
   </component>
   <component name="FindManager">
     <FindUsagesManager>
@@ -403,8 +355,8 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1456" height="876" extended-state="6" />
-    <editor active="true" />
+    <frame x="-8" y="-8" width="1456" height="876" extended-state="7" />
+    <editor active="false" />
     <layout>
       <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32962447" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
@@ -418,7 +370,7 @@
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32962447" sideWeight="0.5" order="-1" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.21162124" sideWeight="0.81363004" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="true" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.21162124" sideWeight="0.9095967" order="0" side_tool="false" content_ui="combo" />
       <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.09040334" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -547,11 +499,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Graphic_Interface/Widgets/duetto.jpg">
-      <provider selected="true" editor-type-id="images">
-        <state />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Graphic_Interface/Widgets/QSignalVisualizerWidget.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="902" column="8" selection-start="41794" selection-end="41794" vertical-scroll-proportion="0.0" vertical-offset="18320" max-vertical-offset="20727">
@@ -566,22 +513,22 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/Duetto_Sound_Lab.pyw">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="52" column="22" selection-start="1758" selection-end="1758" vertical-scroll-proportion="0.49201277" vertical-offset="679" max-vertical-offset="1323">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Graphic_Interface/Windows/DuettoSoundLabWindow.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="929" column="47" selection-start="47510" selection-end="47510" vertical-scroll-proportion="-5.0" vertical-offset="18833" max-vertical-offset="22533">
+        <state line="929" column="47" selection-start="47510" selection-end="47510" vertical-scroll-proportion="0.22146508" vertical-offset="18833" max-vertical-offset="22533">
           <folding>
             <element signature="e#1382#1386#0" expanded="false" />
             <element signature="e#1448#1452#0" expanded="false" />
             <element signature="e#1508#1512#0" expanded="false" />
             <element signature="e#2579#2667#0" expanded="false" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Duetto_Sound_Lab.pyw">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="52" column="22" selection-start="1758" selection-end="1758" vertical-scroll-proportion="0.49201277" vertical-offset="679" max-vertical-offset="1323">
-          <folding />
         </state>
       </provider>
     </entry>
