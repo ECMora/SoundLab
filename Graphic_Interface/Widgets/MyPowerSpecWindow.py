@@ -15,6 +15,10 @@ class PowerSpectrumWindow(QtGui.QMainWindow):
         self.backColor = backColor
         self.gridx = gridx
         self.gridy = gridy
+        self.maxY = maxY
+        self.minY = minY
+	self.lines =lines
+
         self.ui.widget.PointerChanged.connect(self.updateStatusBar)
         self.Pxx = None
         self.freqs = None
@@ -35,8 +39,8 @@ class PowerSpectrumWindow(QtGui.QMainWindow):
         self.ui.widget.setInfo(self.Pxx,self.freqs)
         self.ui.widget.setBackground(self.backColor)
         self.ui.widget.getPlotItem().showGrid(x=self.gridx, y=self.gridy)
-        self.ui.widget.plot(self.freqs,10*numpy.log10(self.Pxx/numpy.amax(self.Pxx)),clear=True, pen=self.plotColor)
-        self.ui.widget.setRange(xRange = (0,self.freqs[len(self.freqs) - 1]),padding=0,update=True)
+        self.ui.widget.plot(self.freqs,10*numpy.log10(self.Pxx/numpy.amax(self.Pxx)),clear=True, pen = self.plotColor if self.lines else None, symbol = 's', symbolSize = 1,symbolPen = self.plotColor)
+        self.ui.widget.setRange(xRange = (0,self.freqs[len(self.freqs) - 1]),yRange=(self.maxY,self.minY),padding=0,update=True)
         self.ui.widget.show()
 
     def updatePowSpectrumInterval(self,data):

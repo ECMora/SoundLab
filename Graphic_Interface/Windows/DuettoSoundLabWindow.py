@@ -154,7 +154,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 {'name': 'Min', 'type': 'float', 'value': 0, 'step': 0.1},
                 {'name': 'Max', 'type': 'float', 'value': 22, 'step': 0.1},
             ]},
-           {'name': 'FFT size', 'type': 'list', 'default':512, 'values': [('Automatic', 512),("32",32),("64", 64),("128", 128), ("512", 512), ("1024", 1024), ('2048', 2048),('4096', 4096)], 'value': '512'},
+           {'name': 'FFT size', 'type': 'list', 'default':512, 'values': [('Automatic', 512),("128", 128), ("256", 256),("512", 512), ("1024", 1024)], 'value': '512'},
           {'name': 'FFT window', 'type': 'list', 'value':self.widget.specgramSettings.windows[0],'default':self.widget.specgramSettings.windows[0],'values': [('Bartlett',self.widget.specgramSettings.windows[4]),("Blackman", self.widget.specgramSettings.windows[3]),("Hamming", self.widget.specgramSettings.windows[0]), ("Hanning", self.widget.specgramSettings.windows[2]),('Kaiser',self.widget.specgramSettings.windows[5]),('None',self.widget.specgramSettings.windows[6]),("Rectangular", self.widget.specgramSettings.windows[1])]},
             {'name': 'FFT overlap', 'type': 'int', 'value':-1, 'limits': (-1, 99)},
             {'name': 'Threshold(dB)', 'type': 'group', 'children': [
@@ -171,7 +171,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         {'name': 'Power Spectrum Settings', 'type': 'group', 'children': [
 
-            {'name': 'FFT size', 'type': 'list', 'default':512, 'values': [('Automatic', 512),("32",32),("64", 64),("128", 128), ("512", 512), ("1024", 1024), ('2048', 2048),('4096', 4096)], 'value': 'Automatic'},
+            {'name': 'FFT size', 'type': 'list', 'default':512, 'values': [('Automatic', 512),("128", 128),("256", 256), ("512", 512), ("1024", 1024)], 'value': 'Automatic'},
             {'name': 'FFT window', 'type': 'list', 'value':self.widget.specgramSettings.windows[0],'default':self.widget.specgramSettings.windows[0],'values': [('Bartlett',self.widget.specgramSettings.windows[4]),("Blackman", self.widget.specgramSettings.windows[3]),("Hamming", self.widget.specgramSettings.windows[0]), ("Hanning", self.widget.specgramSettings.windows[2]),('Kaiser',self.widget.specgramSettings.windows[5]),('None',self.widget.specgramSettings.windows[6]),("Rectangular", self.widget.specgramSettings.windows[1])]},
             {'name': 'FFT overlap', 'type': 'int', 'value':self.pow_overlap, 'limits' : (-1,100)},
             {'name': 'Grid', 'type': 'group', 'children': [

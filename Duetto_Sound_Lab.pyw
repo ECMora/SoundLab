@@ -54,7 +54,7 @@ if __name__ == '__main__':
         sys.exit(app.exec_())
     else:
          QMessageBox.warning(QMessageBox(), "Error",
-                                        "Your Duetto Sound Lab Licence its expired or has some troubles.\n"
+                                        "Your Duetto Sound Lab Licence has some troubles.\n"
                                         " Could be because your trial version is over. Try to open again.")
          sys.exit(0)
 
