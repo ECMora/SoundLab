@@ -1,3 +1,4 @@
+import os
 from scipy.io import wavfile
 from numpy.compat import asbytes
 from numpy import argmax,sum,abs
@@ -18,10 +19,11 @@ class WavFileSignal(FileAudioSignal):
         self.small = None
         if path:
             self.open(path)
+            self.name = os.path.basename(unicode(self.path))
         else:
             self.openNew(samplingRate, duration, bitDepth, whiteNoise)
         self.userData = []
-        self.small = None
+
 
     def open(self, path):
         """open a wav file for its processing"""
@@ -39,7 +41,6 @@ class WavFileSignal(FileAudioSignal):
             return self
         if self.small is not None:
             return self.small
-        print("Hola")
         s = WavFileSignal(samplingRate=self.samplingRate, duration=0.04, bitDepth=self.bitDepth, whiteNoise=False)
 
         #10 intervals of 3 ms sep by 1 ms of  silence

@@ -117,7 +117,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                                          self.actionZoom_Cursor,self.actionPointer_Cursor,self.actionRectangular_Cursor,self.actionRectangular_Eraser,
                                          separator3,self.actionOsgram_Image,self.actionSpecgram_Image,self.actionCombined_Image])
         self.windowProgressDetection = QtGui.QProgressBar(self.widget)
-        self.actionSignalName.setText(self.widget.signalProcessor.signal.name())
+        self.actionSignalName.setText(self.widget.signalProcessor.signal.name)
 
         self.widget.histogram.setImageItem(self.widget.axesSpecgram.imageItem)
 
@@ -450,7 +450,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
             for filename in sounds:
                 try:
                     signal = WavFileSignal(filename)
-                    self.listwidgetProgress.addItem("Processing "+signal.name())
+                    self.listwidgetProgress.addItem("Processing "+signal.name)
                     save.channels = signal.channels
                     save.bitDepth = signal.bitDepth
                     save.samplingRate = signal.samplingRate
@@ -461,13 +461,13 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                     if(pieces >= 1):
                         for i in range(pieces):
                             save.data = signal.data[i*pieceSize:(i+1)*pieceSize]
-                            save.save(os.path.join(directoryoutput,str(i+1)+"-"+signal.name()))
+                            save.save(os.path.join(directoryoutput,str(i+1)+"-"+signal.name))
                     if left > 0:
                         save.data = signal.data[len(signal.data)-left:]
-                        save.save(os.path.join(directoryoutput,str(pieces+1)+"-"+signal.name()))
+                        save.save(os.path.join(directoryoutput,str(pieces+1)+"-"+signal.name))
                     processed += 1
                     self.progressBarProcesed.setValue(100.0*processed/len(sounds))
-                    self.listwidgetProgress.addItem(signal.name()+" has been processed")
+                    self.listwidgetProgress.addItem(signal.name+" has been processed")
                     self.progressBarProcesed.update()
                     self.listwidgetProgress.update()
                 except:

@@ -25,7 +25,7 @@ class SpecYAxis(pg.AxisItem):
         return r
 
 
-class DuettoImageWidget(GraphicsView):
+class SpectrogramPlotWidget(GraphicsView):
     def __init__(self, *args, **kwargs):
         GraphicsView.__init__(self, *args, **kwargs)
         l = QtGui.QGraphicsGridLayout()

@@ -6,7 +6,7 @@ import numpy
 from Graphic_Interface.Widgets.Tools import Tools
 from Graphic_Interface.Widgets.Tools import RectROI
 
-class DuettoPlotWidget(pg.PlotWidget):
+class OscilogramPlotWidget(pg.PlotWidget):
     def __init__(self,  parent=None,**kargs):
         pg.PlotWidget.__init__(self, **kargs)
         self.mousePressed = False

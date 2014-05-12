@@ -1,7 +1,7 @@
-import sys
-from apptools.undo.action.undo_action import UndoAction
-from PyQt4 import QtCore, QtGui
 import os
+import pickle
+
+from PyQt4 import QtCore, QtGui
 from pyqtgraph.parametertree.parameterTypes import WidgetParameterItem,ListParameter
 from pyqtgraph.python2_3 import asUnicode
 from pyqtgraph.parametertree import Parameter, ParameterTree
@@ -9,17 +9,16 @@ from PyQt4.QtGui import QDialog, QMessageBox, QFileDialog, QActionGroup, QAction
 from PyQt4.QtCore import SIGNAL, pyqtSlot, QTimer
 from Graphic_Interface.Dialogs.NewFileDialog import NewFileDialog
 from Duetto_Core.AudioSignals.WavFileSignal import WavFileSignal
-from Graphic_Interface.Widgets.DuettoHistogram import DuettoHorizontalHistogramItem, DuettoHorizontalHistogramWidget
+from Graphic_Interface.Widgets.HorizontalHistogram import HorizontalHistogramWidget
+from Graphic_Interface.Windows.PowerSpectrumWindow import PowerSpectrumWindow
 from SegmentationAndClasificationWindow import SegmentationAndClasificationWindow
 from Duetto_Core.SignalProcessors.FilterSignalProcessor import FILTER_TYPE
-from Graphic_Interface.UndoRedoActions import *
+from Graphic_Interface.Widgets.UndoRedoActions import *
 from MainWindow import Ui_DuettoMainWindow
-from Graphic_Interface.Widgets.MyPowerSpecWindow import PowerSpectrumWindow
 from Graphic_Interface.Dialogs import InsertSilenceDialog as sdialog, FilterOptionsDialog as filterdg, ChangeVolumeDialog as cvdialog
-from PyQt4 import QtCore, QtGui
-import pickle
 from WorkTheme import SerializedData
 from Graphic_Interface.Widgets.Tools import Tools
+
 
 MIN_SAMPLING_RATE = 1000
 MAX_SAMPLING_RATE = 2000000
@@ -106,7 +105,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.setupUi(self)
 
 
-        self.hist = DuettoHorizontalHistogramWidget()
+        self.hist = HorizontalHistogramWidget()
         self.widget.histogram = self.hist
         self.pow_overlap = 90
         self.Theme = os.path.join(os.path.join("Utils","Themes"),"RedBlackTheme.dth")
@@ -293,7 +292,8 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         files = []
         for root, dirs, filenames in os.walk(folder):
             for f in filenames:
-                files.append(root+"/"+f)   #cambio provisional mientras el sistema no sea multiplataforma
+                #if f.endswith(".wav"):
+                files.append(root +"/" +f) #os.path.join(
         return files
 
     def updateStatusBar(self,line):
@@ -302,21 +302,21 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     def on_load(self):
         self.widget.visibleOscilogram = True
         self.widget.visibleSpectrogram = True
-        self.widget.specgramSettings.NFFT = self.ParamTree.param('Spectrogram Settings').param('FFT size').value()
-        self.widget.specgramSettings.overlap = self.ParamTree.param('Spectrogram Settings').param('FFT overlap').value()
-        p = os.path.join(os.path.join("Utils","Didactic Signals"),"duetto.wav")
+        self.widget.specgramSettings.NFFT = self.ParamTree.param(u'Spectrogram Settings').param(u'FFT size').value()
+        self.widget.specgramSettings.overlap = self.ParamTree.param(u'Spectrogram Settings').param(u'FFT overlap').value()
+        p = os.path.join(os.path.join(u"Utils",u"Didactic Signals"),u"duetto.wav")
         self.widget.visibleSpectrogram = False
         self.actionCombined.setEnabled(False)
         self.actionSpectogram.setEnabled(False)
         if os.path.exists(p):
             self.widget.open(p)
-            self.actionSignalName.setText(u"File Name: "+ self.widget.signalProcessor.signal.name())
+            self.actionSignalName.setText(u"File Name: "+ self.widget.signalProcessor.signal.name)
         else:
             self.widget.openNew(44100, 16, 5., whiteNoise=False)
             self.actionSignalName.setText(u"File Name: Welcome to duetto")
 
-        self.setWindowTitle("Duetto Sound Lab - Welcome to Duetto")
-        self.statusbar.showMessage("Welcome to Duetto Sound Lab.")
+        self.setWindowTitle(u"Duetto Sound Lab - Welcome to Duetto")
+        self.statusbar.showMessage(u"Welcome to Duetto Sound Lab.")
 
     def updateRegionTheme(self):
         reg = self.hist.item.region.getRegion()
@@ -900,7 +900,8 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             self.widget.specgramSettings.NFFT = self.ParamTree.param('Spectrogram Settings').param('FFT size').value()
             self.widget.specgramSettings.overlap = self.ParamTree.param('Spectrogram Settings').param('FFT overlap').value()
             self.widget.openNew(nfd.SamplingRate, nfd.BitDepth, nfd.Duration, nfd.WhiteNoise)
-            self.setWindowTitle("Duetto Sound Lab - (new)")
+            self.setWindowTitle("Duetto Sound Lab - " + self.widget.signalProcessor.signal.name)
+            self.actionSignalName.setText(u"File Name: "+self.widget.signalProcessor.signal.name)
 
             self.actionCombined.setEnabled(True)
             self.actionSpectogram.setEnabled(True)
@@ -927,12 +928,12 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 self.widget.specgramSettings.overlap = self.ParamTree.param('Spectrogram Settings').param('FFT overlap').value()
                 path_base = os.path.split(unicode(f))[0]
                 self.filesInFolder = self.folderFiles(path_base)
-                self.filesInFolderIndex = self.filesInFolder.index(str(f))
+                self.filesInFolderIndex = self.filesInFolder.index(unicode(f))
                 self.widget.visibleSpectrogram = True # for restore the state lose in load
 
                 self.widget.open(f)
-                self.setWindowTitle("Duetto Sound Lab - " + self.widget.signalProcessor.signal.name())
-                self.actionSignalName.setText(u"File Name: "+self.widget.signalProcessor.signal.name())
+                self.setWindowTitle("Duetto Sound Lab - " + self.widget.signalProcessor.signal.name)
+                self.actionSignalName.setText(u"File Name: "+self.widget.signalProcessor.signal.name)
             except:
                 QMessageBox.warning(QMessageBox(), "Error", "Could not load the file.\n"+f)
                 self.widget.openNew(44100,16,1)
@@ -969,13 +970,13 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     @pyqtSlot()
     def on_actionSave_triggered(self):
-        fname = unicode(QFileDialog.getSaveFileName(self,"Save signal",self.widget.signalProcessor.signal.name(),"*.wav"))
+        fname = unicode(QFileDialog.getSaveFileName(self,"Save signal",self.widget.signalProcessor.signal.name,"*.wav"))
         if fname:
             self.widget.save(fname)
 
     @pyqtSlot()
     def on_actionSave_selected_interval_as_triggered(self):
-        fname = unicode(QFileDialog.getSaveFileName(self,"Save signal","Selection-"+self.widget.signalProcessor.signal.name(),"*.wav"))
+        fname = unicode(QFileDialog.getSaveFileName(self,"Save signal","Selection-"+self.widget.signalProcessor.signal.name,"*.wav"))
         if fname:
             self.widget.saveSelected(fname)
 
@@ -1059,7 +1060,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             QtGui.QMessageBox.warning(QtGui.QMessageBox(), "Error", "The Espectrogram plot widget is not visible.\n You should see the data that you are going to save.")
 
     def saveImage(self,widget,text=""):
-        fname = unicode(QFileDialog.getSaveFileName(self,"Save "+ text +" as an Image ",str(self.widget.signalProcessor.signal.name())+"-"+text+"-Duetto-Image","*.jpg"))
+        fname = unicode(QFileDialog.getSaveFileName(self,"Save "+ text +" as an Image ",str(self.widget.signalProcessor.signal.name)+"-"+text+"-Duetto-Image","*.jpg"))
         if fname:
             #save as image
             image = QtGui.QPixmap.grabWindow(widget.winId())

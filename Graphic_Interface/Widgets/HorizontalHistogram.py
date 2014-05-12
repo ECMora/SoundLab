@@ -9,16 +9,16 @@ from pyqtgraph.graphicsItems.ViewBox import ViewBox
 from pyqtgraph.widgets.HistogramLUTWidget import HistogramLUTWidget
 
 
-class DuettoHorizontalHistogramWidget(HistogramLUTWidget):
+class HorizontalHistogramWidget(HistogramLUTWidget):
     def __init__(self, parent=None,  *args, **kargs):
         HistogramLUTWidget.__init__(self, parent, *args, **kargs)
-        self.item = DuettoHorizontalHistogramItem(*args, **kargs)
+        self.item = HorizontalHistogramItem(*args, **kargs)
         self.setCentralItem(self.item)
         self.setSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Preferred)
         self.setMinimumHeight(95)
 
 
-class DuettoHorizontalHistogramItem(HistogramLUTItem):
+class HorizontalHistogramItem(HistogramLUTItem):
     """
     This is a graphicsWidget which provides controls for adjusting the display of an image.
     Includes:

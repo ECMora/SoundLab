@@ -1,11 +1,11 @@
 from matplotlib import mlab
 import numpy
-from Power_Spectrum import Ui_PowSpecWindow
+from Graphic_Interface.Widgets.Power_Spectrum  import Ui_PowSpecWindow
 from PyQt4 import QtGui,QtCore
 
 
 
-class PowerSpectrumWindow(QtGui.QMainWindow):
+class PowerSpectrumWindow(QtGui.QMainWindow,Ui_PowSpecWindow):
     def __init__(self,parent=None,plotColor="FFF",backColor="FFF",gridx=True,gridy=True,minY=-50,maxY=5,lines=True):
         super(PowerSpectrumWindow, self).__init__(parent)
         self.ui = Ui_PowSpecWindow()
