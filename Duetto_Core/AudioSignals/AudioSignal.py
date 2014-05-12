@@ -1,4 +1,3 @@
-import os
 from PyQt4.QtGui import QMessageBox
 import pyaudio
 import numpy as np
@@ -16,12 +15,10 @@ class AudioSignal(object):
         self.data = np.array([])
         self.channelData = [self.data]
         self.bitDepth = 1
-        self.path = ""
-        #self.media = 0  # mean value of the signal
+        self.name = ""
         self.stream = None
         self.playAudio = pyaudio.PyAudio()
         self.playStatus = self.STOPPED
-        self.playSpeed = 100  # percent of the speed
         self.playSection = (0, 0, 0)  # (init,end,current)
         self.recordNotifier = None
         self.playNotifier = None
@@ -54,10 +51,9 @@ class AudioSignal(object):
             s = 'int' + str(bitDepth)
             dt = np.dtype(s)
             self.data = np.zeros(samplingRate * duration, dt)
+        self.name = "(new)"
         #self.pad()
 
-    def name(self):
-        return os.path.basename(str(self.path))
 
     def set_currentChannel(self, channel):
         if not 0 <= channel <= self.channels:
@@ -92,19 +88,6 @@ class AudioSignal(object):
 
         self.data = np.array(np.real(np.fft.ifft(data_frec)[:int(len(self.data)*frac)]),self.data.dtype)
         self.samplingRate = samplinRate
-
-    def interpolate(self, index, frac):
-        """
-        returns a interpolated new value corresponding to the index position
-        in the new resampled array of data with frac fraction of resampling
-        """
-        if index == 0:
-            return self.data[0]
-        current_low_index, current_high_index = int(np.floor(index * frac)), int(np.ceil(index * frac))
-        if current_low_index == len(self.data) - 1:
-            return self.data[-1]
-        y0, y1 = self.data[current_low_index], self.data[current_high_index]
-        return y0 + (index * frac - current_low_index) * (y1 - y0)
 
     def currentPlayingFrame(self):
         return self.playSection[2]
