@@ -646,8 +646,8 @@ class QSignalVisualizerWidget(QWidget):
                 self.axesOscilogram.plot(np.arange(self.mainCursor.min,self.mainCursor.max),self.signalProcessor.signal.data[self.mainCursor.min:self.mainCursor.max], clear=True, pen = None, symbol = 's', symbolSize = 1,symbolPen = self.osc_color, clipToView=True)
                 self.lastRefreshPoint = True
 
-            self.axesOscilogram.getPlotItem().showGrid(x=self.osc_gridx, y=self.osc_gridy)
-            self.axesOscilogram.setBackground(self.osc_background)
+        self.axesOscilogram.getPlotItem().showGrid(x=self.osc_gridx, y=self.osc_gridy)
+        self.axesOscilogram.setBackground(self.osc_background)
 
         if self.visibleSpectrogram and updateSpectrogram and self.signalProcessor.signal \
            and self.signalProcessor.signal.opened() and self.signalProcessor.signal.playStatus != AudioSignal.RECORDING\
@@ -663,9 +663,11 @@ class QSignalVisualizerWidget(QWidget):
             self.updateSpecZoomRegion(self.zoomCursor.min, self.zoomCursor.max)
 
             self.updateSpectrogramColors()
-            self.axesSpecgram.setBackground(self.spec_background)
-            self.axesSpecgram.showGrid(x=self.spec_gridx, y=self.spec_gridy)
-            self.updateSpecZoomRegion(self.zoomCursor.min, self.zoomCursor.max)
+	    self.updateSpecZoomRegion(self.zoomCursor.min, self.zoomCursor.max)
+ 	
+        self.axesSpecgram.setBackground(self.spec_background)
+        self.axesSpecgram.showGrid(x=self.spec_gridx, y=self.spec_gridy)
+        
 
         self.refreshAxes()
         self.visualChanges = False
