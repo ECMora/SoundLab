@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from PyQt4 import QtCore
-from PyQt4.QtCore import SIGNAL, pyqtSignal
+from PyQt4.QtCore import SIGNAL, pyqtSignal, QRect
 from PyQt4.QtGui import QCursor,QColor
 import pyqtgraph as pg
 import numpy
@@ -18,6 +18,13 @@ class OscilogramPlotWidget(pg.PlotWidget):
         self.makeZoomRect = None
         self.setZoomRegionVisible(True)
         self.getPlotItem().setMouseEnabled(x=False, y=False)
+
+        self.setClipToView(True)
+        self.setDownsampling(auto=True, mode="peak")
+        self.setMouseEnabled(x=False, y=False)
+        self.getPlotItem().hideButtons()
+        self.setRange(QRect(0, 0, 1, 1))
+
         self.threshold = pg.InfiniteLine(movable=True, angle=0, pos=0)
 
         self.decimalPlaces = 5
@@ -35,8 +42,17 @@ class OscilogramPlotWidget(pg.PlotWidget):
         self.selectedTool = Tools.Zoom
         self.mouseReleased = False
         self.last = {}
+        self.show()
 
-    def selectElement(self,indexFrom,indexTo,brush=None):
+
+
+    def select_region(self,indexFrom,indexTo,brush=None):
+        """
+        Highlight a section in the graph.
+        @param indexFrom: The start of the selected  section
+        @param indexTo: The end of the selected  section
+        @param brush: optional brush to paint inside the section
+        """
         self.highligthedElement.setRegion([indexFrom,indexTo])
         self.highligthedElement.setBrush(brush if brush is not None else pg.mkBrush(QColor(255,255,255)))
         self.update(indexFrom,-2**16,indexTo,2**16)
@@ -283,13 +299,13 @@ class OscilogramPlotWidget(pg.PlotWidget):
     def fromClientToCanvas(self, indexX):
         """
         Translates the index in the signal array to its corresponding coordinates in the canvas
+        @param indexX:  The signal index
+        @return:  the canvas coordinates
         """
         vb = self.getPlotItem().getViewBox()
         maxx = vb.width()
         a, b = self.getPlotItem().viewRange()[0]
         return int(vb.x() + round((maxx) * (indexX - a) * 1. / (b - a), 0))
-
-    #PIXELS_BETWEEN_AXES_AND_DATA = 10 #the pixels for the numbers in the left side
 
     def fromCanvasToClient(self, xPixel):
         """
