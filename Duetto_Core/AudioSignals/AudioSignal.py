@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from PyQt4.QtGui import QMessageBox
 import pyaudio
 import numpy as np

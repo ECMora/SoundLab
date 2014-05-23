@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import os
 from scipy.io import wavfile
 from numpy.compat import asbytes
@@ -48,14 +49,18 @@ class WavFileSignal(FileAudioSignal):
 
         ms = int(self.samplingRate/1000)
 
-        s.data[16*ms : 19*ms] = self.data[max(i_max-1.5*ms , 0): min(i_max+1.5*ms,len(self.data))]
+        aux =  self.data[max(i_max-1.5*ms , 0): min(i_max+1.5*ms,len(self.data))]
+        s.data[16*ms : 16*ms+aux.size] = aux
 
         for i in range(0,10):
             if i == 4:
                 continue
-            x = random.randint(0,10)
-            index =i*len(self.data)/10+x*len(self.data)/100
-            s.data[i * 4 * ms: (i * 4 + 3) * ms] = self.data[index:index + 3 * ms]
+            try:
+                x = random.randint(0,10)
+                index =i*len(self.data)/10+x*len(self.data)/100
+                s.data[i * 4 * ms: (i * 4 + 3) * ms] = self.data[index:index + 3 * ms]
+            except:
+                pass
         self.small = s
         return s
 
@@ -142,3 +147,5 @@ class WavFileSignal(FileAudioSignal):
     #    self.AudioPlayer.setCurrentSource(Phonon.MediaSource(self.TEMP_FILE_NAME))
     #    self.save(self.TEMP_FILE_NAME)
     #    self.AudioPlayer.setCurrentSource(Phonon.MediaSource(self.TEMP_FILE_NAME))
+
+

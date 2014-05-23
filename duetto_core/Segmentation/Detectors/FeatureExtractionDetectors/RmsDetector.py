@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from Duetto_Core.Cursors.PointerCursor import PointerCursor
 from Duetto_Core.Segmentation.Detectors import Detector
 from Duetto_Core.SignalProcessors.SignalProcessor import SignalProcessor

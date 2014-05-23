@@ -19,7 +19,7 @@ class EditionSignalProcessor(SignalProcessor):
         self.clipboard = array(self.signal.data[start_index:end_index])
         return self.signal
 
-    def paste(self, data, startpos):
-        self.signal.data = concatenate((self.signal.data[0:startpos], array(data), self.signal.data[startpos:]))
+    def paste(self, data, start_index):
+        self.signal.data = concatenate((self.signal.data[0:start_index], array(data), self.signal.data[start_index:]))
         return self.signal
 

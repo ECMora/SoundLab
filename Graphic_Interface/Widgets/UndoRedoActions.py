@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 from Duetto_Core.SignalProcessors.CommonSignalProcessor import CommonSignalProcessor
 from Duetto_Core.SignalProcessors.FilterSignalProcessor import FilterSignalProcessor
 

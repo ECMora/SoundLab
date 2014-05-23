@@ -1,28 +1,15 @@
+# -*- coding: utf-8 -*-
 from PyQt4 import QtGui, QtCore
 from PyQt4.QtCore import SIGNAL, pyqtSignal
 from PyQt4.QtGui import QCursor
 from pyqtgraph import GraphicsView
-from pyqtgraph.graphicsItems.AxisItem import AxisItem
 from pyqtgraph.graphicsItems.ImageItem import ImageItem
 from pyqtgraph.graphicsItems.ViewBox import ViewBox
 import numpy
 import  pyqtgraph as pg
+from Graphic_Interface.Widgets.Axis import SpecYAxis
 from Graphic_Interface.Widgets.Tools import Tools
 from Graphic_Interface.Widgets.Tools import RectROI
-
-class SpecYAxis(pg.AxisItem):
-    def __init__(self,parent,*args,**kwargs):
-        pg.AxisItem.__init__(self,*args,**kwargs)
-        self.parent = parent;
-        self.setLabel(text="Frequency (KHz)")
-    def tickStrings(self, values, scale, spacing):
-        self.freqs = self.parent.parent().specgramSettings.freqs
-        if self.freqs is None:
-            return values
-        r = self.freqs[[x for x in values if x < len(self.freqs)]]
-        for i in range(len(r)):
-            r[i] = "{:.1f}".format(r[i]/1000.0)
-        return r
 
 
 class SpectrogramPlotWidget(GraphicsView):

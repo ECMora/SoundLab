@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from math import log10
 import os.path
 from PyQt4.QtCore import pyqtSlot, Qt
@@ -76,12 +77,12 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                                   "SpectralLocMeasureThreshold": -20,"PeaksThreshold": -20}
         self.noParametrizedmeditions = \
         [
-                      ["Start(s)", False, lambda x,d: x.startTime()],
-                      ["End(s)", False, lambda x,d: x.endTime()],
+                      ["Start(s)", True, lambda x,d: x.startTime()],
+                      ["End(s)", True, lambda x,d: x.endTime()],
                       ["PeekToPeek(V)", False, lambda x,d: x.peekToPeek()],
                       ["RMS(V)", False, lambda x,d: x.rms()],
                       ["StartToMax(s)", False,lambda x,d: x.distanceFromStartToMax()],
-                      ["Duration(s)", False,lambda x,d: x.duration()],
+                      ["Duration(s)", True,lambda x,d: x.duration()],
                       ["Spectral Elems", False,lambda x,d: x.spectralElements()],
                       ["Peak Freq Average(Hz)", False,lambda x,d: x.peakFreqAverage()],
                       ["Min Freq Average(Hz)", False,lambda x,d: x.minFreqAverage(d)],
@@ -320,7 +321,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
             QtGui.QMessageBox.warning(QtGui.QMessageBox(), "Error", "The Espectrogram plot widget is not visible.\n You should see the data that you are going to save.")
 
     def saveImage(self,widget,text=""):
-        fname = unicode(QFileDialog.getSaveFileName(self,"Save "+ text +" as an Image ",str(self.widget.signalProcessor.signal.name())+"-"+text+"-Duetto-Image","*.jpg"))
+        fname = unicode(QFileDialog.getSaveFileName(self,"Save "+ text +" as an Image ",str(self.widget.signalProcessor.signal.name)+"-"+text+"-Duetto-Image","*.jpg"))
         if fname:
             #save as image
             image = QtGui.QPixmap.grabWindow(widget.winId())
@@ -333,7 +334,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         else:
             if not self.widget.signalProcessor.signal.opened():
                 return
-            fname = unicode(QFileDialog.getSaveFileName(self,"Save meditions as excel file",self.widget.signalProcessor.signal.name()+".xls","*.xls"))
+            fname = unicode(QFileDialog.getSaveFileName(self,"Save meditions as excel file",self.widget.signalProcessor.signal.name+".xls","*.xls"))
         if fname:
             wb = xlwt.Workbook()
             a =  "Elements Meditions"
@@ -393,7 +394,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                 try:
                     signalProcessor = SignalProcessor()
                     signalProcessor.signal = WavFileSignal(filename)
-                    self.listwidgetProgress.addItem("Processing "+signalProcessor.signal.name())
+                    self.listwidgetProgress.addItem("Processing "+signalProcessor.signal.name)
 
                     table = QtGui.QTableWidget()
                     spSettngs = SpecgramSettings(self.widget.specgramSettings.NFFT,self.widget.specgramSettings.overlap,self.widget.specgramSettings.window)
@@ -419,7 +420,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                     columnNames = [label[0] for label in paramsTomeasure]
                     columnNames.extend([label[0] for label in spectralparamsTomeasure])
                     table.setHorizontalHeaderLabels(columnNames)
-                    self.listwidgetProgress.addItem("Save data of " +signalProcessor.signal.name())
+                    self.listwidgetProgress.addItem("Save data of " +signalProcessor.signal.name)
 
                     for i,element in enumerate(detector.elements()):
                         for j,prop in enumerate(paramsTomeasure):
@@ -430,11 +431,11 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                             item.setBackgroundColor(self.parameterTable_rowcolor_odd if i%2==0 else self.parameterTable_rowcolor_even)
                             table.setItem(i, len(paramsTomeasure) + x, item)
                     if singlefile:
-                        ws = wb.add_sheet(signalProcessor.signal.name())
+                        ws = wb.add_sheet(signalProcessor.signal.name)
                         self.writedata(ws,table)
                     else:
-                        self.on_actionMeditions_triggered(os.path.join(directoryoutput,signalProcessor.signal.name()+".xls"),table)
-                    self.listwidgetProgress.addItem(signalProcessor.signal.name()+" has been processed")
+                        self.on_actionMeditions_triggered(os.path.join(directoryoutput,signalProcessor.signal.name+".xls"),table)
+                    self.listwidgetProgress.addItem(signalProcessor.signal.name+" has been processed")
                     self.listwidgetProgress.update()
                     processed += 1
                 except:
@@ -535,6 +536,8 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         elementsDetectorDialog.cbxBandWidth.setChecked(self.parametrizedMeditions[4][1])#band width
         elementsDetectorDialog.cbxPeaksAbove.setChecked(self.parametrizedMeditions[5][1])#peaks above
 
+        elementsDetectorDialog.widget.histogram.region.setRegion(self.theme.histRange)
+        elementsDetectorDialog.widget.histogram.gradient.restoreState(self.theme.colorBarState)
 
 
 
@@ -644,7 +647,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                         self.tableParameterOscilogram.setItem(i, j, item)
                     for x,prop in enumerate(spectralparamsTomeasure):
                         try:
-                            item = QtGui.QTableWidgetItem(str(prop[1](self.widget.Elements[i],prop[2])))
+                            item = QtGui.QTableWidgetItem(unicode(prop[1](self.widget.Elements[i],prop[2])))
                             item.setBackgroundColor(self.parameterTable_rowcolor_odd if i%2==0 else self.parameterTable_rowcolor_even)
                         except:
                             item = QtGui.QTableWidgetItem("Error")
@@ -663,14 +666,17 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.close()
 
     def closeEvent(self,event):
+        if self.widget.signalProcessor.signal.playStatus == AudioSignal.PLAYING or\
+                        self.widget.signalProcessor.signal.playStatus == AudioSignal.RECORDING:
+            self.widget.stop()
         mbox = QtGui.QMessageBox(QtGui.QMessageBox.Question,"Save meditions","Do you want to save the meditions?",QtGui.QMessageBox.Yes | QtGui.QMessageBox.No | QtGui.QMessageBox.Cancel,self)
         if self.tableParameterOscilogram.rowCount() > 0:
             result = mbox.exec_()
             if result == QtGui.QMessageBox.Yes:
                 wb = xlwt.Workbook()
-                ws = wb.add_sheet(self.widget.signalProcessor.signal.name())
+                ws = wb.add_sheet(self.widget.signalProcessor.signal.name)
                 self.writedata(ws, self.tableParameterOscilogram)
-                fname = unicode(QFileDialog.getSaveFileName(self,"Save meditions as excel file",self.widget.signalProcessor.signal.name()+".xls","*.xls"))
+                fname = unicode(QFileDialog.getSaveFileName(self,"Save meditions as excel file",self.widget.signalProcessor.signal.name+".xls","*.xls"))
                 if fname:
                     wb.save(fname)
             elif result == QtGui.QMessageBox.Cancel:

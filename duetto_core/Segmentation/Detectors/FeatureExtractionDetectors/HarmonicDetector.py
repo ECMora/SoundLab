@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from matplotlib import mlab
 
 from Duetto_Core.Segmentation.Detectors.MinMaxFrequencyDetector import MinMaxFrequencyDetector

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from Duetto_Core.AudioSignals.AudioSignal import AudioSignal
 
 

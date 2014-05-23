@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from pyqtgraph.Qt import QtGui
 import pyqtgraph.functions as fn
 from pyqtgraph.Point import Point

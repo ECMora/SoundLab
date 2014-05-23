@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from matplotlib import mlab
 import numpy
 from Duetto_Core.Segmentation.Detectors import Detector

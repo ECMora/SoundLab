@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import numpy as np
 from Duetto_Core.Segmentation.Detectors.ElementsDetectors.OneDimensionalElementsDetector import OneDimensionalElementsDetector
 from Duetto_Core.Segmentation.Elements.OneDimensionalElement import OscilogramElement

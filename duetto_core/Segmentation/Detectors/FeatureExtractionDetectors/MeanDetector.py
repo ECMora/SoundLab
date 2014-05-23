@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from numpy import mean
 
 from Duetto_Core.Cursors.PointerCursor import PointerCursor

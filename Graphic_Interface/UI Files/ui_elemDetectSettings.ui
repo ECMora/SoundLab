@@ -252,7 +252,7 @@ font: 75 10pt &quot;MS Shell Dlg 2&quot;;</string>
       <item row="1" column="0" colspan="2">
        <widget class="QGroupBox" name="groupBox_5">
         <property name="enabled">
-         <bool>false</bool>
+         <bool>true</bool>
         </property>
         <property name="title">
          <string>Spectral Detection Settings</string>
@@ -262,6 +262,9 @@ font: 75 10pt &quot;MS Shell Dlg 2&quot;;</string>
           <layout class="QHBoxLayout" name="horizontalLayout_9" stretch="0,1">
            <item>
             <widget class="QLabel" name="label_8">
+             <property name="enabled">
+              <bool>true</bool>
+             </property>
              <property name="toolTip">
               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;The percentile threshold to detect subelements in spectrogram. Regions above this value are detected&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
@@ -276,7 +279,7 @@ font: 75 10pt &quot;MS Shell Dlg 2&quot;;</string>
            <item>
             <widget class="QDoubleSpinBox" name="dsbxThresholdSpec">
              <property name="enabled">
-              <bool>false</bool>
+              <bool>true</bool>
              </property>
              <property name="sizePolicy">
               <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -312,7 +315,7 @@ font: 75 10pt &quot;MS Shell Dlg 2&quot;;</string>
          <item row="1" column="0">
           <widget class="QCheckBox" name="cbxSpectralSubelements">
            <property name="enabled">
-            <bool>false</bool>
+            <bool>true</bool>
            </property>
            <property name="styleSheet">
             <string notr="true">background-color: rgb(244, 244, 244);</string>
@@ -330,7 +333,7 @@ font: 75 10pt &quot;MS Shell Dlg 2&quot;;</string>
            <item>
             <widget class="QLabel" name="label_7">
              <property name="enabled">
-              <bool>false</bool>
+              <bool>true</bool>
              </property>
              <property name="toolTip">
               <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Minimum size of spectral subelements in ms and Khz&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -346,7 +349,7 @@ font: 75 10pt &quot;MS Shell Dlg 2&quot;;</string>
            <item>
             <widget class="QDoubleSpinBox" name="dsbxminSizeTime">
              <property name="enabled">
-              <bool>false</bool>
+              <bool>true</bool>
              </property>
              <property name="styleSheet">
               <string notr="true">background-color: rgb(244, 244, 244);</string>
@@ -359,7 +362,7 @@ font: 75 10pt &quot;MS Shell Dlg 2&quot;;</string>
            <item>
             <widget class="QDoubleSpinBox" name="dsbxMinSizeFreq">
              <property name="enabled">
-              <bool>false</bool>
+              <bool>true</bool>
              </property>
              <property name="styleSheet">
               <string notr="true">background-color: rgb(244, 244, 244);</string>
@@ -542,6 +545,9 @@ font: 75 10pt &quot;MS Shell Dlg 2&quot;;</string>
                </property>
                <property name="minimum">
                 <double>0.010000000000000</double>
+               </property>
+               <property name="singleStep">
+                <double>0.500000000000000</double>
                </property>
                <property name="value">
                 <double>1.000000000000000</double>
