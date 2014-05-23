@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from math import log10
 from PyQt4.QtCore import pyqtSlot
 from PyQt4.QtGui import QDialog
@@ -63,10 +64,7 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         self.widget.axesOscilogram.threshold.sigPositionChangeFinished.connect(self.updateThreshold)
         self.widget.axesOscilogram.threshold.setBounds((-2**(self.widget.signalProcessor.signal.bitDepth-1),2**(self.widget.signalProcessor.signal.bitDepth-1)))
 
-        self.hist = pg.widgets.HistogramLUTWidget.HistogramLUTItem()
-        self.hist.setImageItem(self.widget.axesSpecgram.imageItem)
-        self.hist.region.lineMoved()
-        self.hist.region.lineMoveFinished()
+        self.widget.histogram.setImageItem(self.widget.axesSpecgram.imageItem)
 
 
         self.widget.visualChanges = True
@@ -101,13 +99,13 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
 
     def load_Theme(self,theme):
         self.theme = theme
-        self.hist.region.setRegion(theme.histRange)
-        self.hist.gradient.restoreState(theme.colorBarState)
+        self.widget.histogram.region.setRegion(theme.histRange)
+        self.widget.histogram.gradient.restoreState(theme.colorBarState)
         self.widget.load_Theme(theme)
         self.widget.visualChanges = True
         self.widget.refresh()
-        self.hist.region.lineMoved()
-        self.hist.region.lineMoveFinished()
+        self.widget.histogram.region.lineMoved()
+        self.widget.histogram.region.lineMoveFinished()
 
     @pyqtSlot(bool)
     def on_chbxDetectOsc_toggled(self, checked):
@@ -118,6 +116,8 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         self.dsbxDecay.setEnabled(checked)
         self.sbxSoftFactor.setEnabled(checked)
 
+
+#region  HOLA ALE
     @pyqtSlot(bool)
     def on_chbxDetectSpec_toggled(self, checked):
         self.dsbxThresholdSpec.setEnabled(checked)
@@ -126,6 +126,8 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         self.sbxMergeFactorTime.setEnabled(checked)
         self.sbxMergeFactorFreq.setEnabled(checked)
         self.cbxmeasurementLocationCenter
+#endregion
+
 
     @pyqtSlot()
     def detect(self):

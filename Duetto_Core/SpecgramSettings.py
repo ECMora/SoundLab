@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import matplotlib.mlab as mlab
 
 import numpy

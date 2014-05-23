@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'E:\Biologia\SISTEMA\DuettoSystem\Graphic_Interface\UI Files\ui_elemDetectSettings.ui'
+# Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Sound Lab\DuettoSystem\Graphic_Interface\UI Files\ui_elemDetectSettings.ui'
 #
-# Created: Tue May 06 12:33:07 2014
+# Created: Sun May 18 14:17:05 2014
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -112,18 +112,19 @@ class Ui_Dialog(object):
         self.gridLayout_4.addItem(spacerItem, 0, 0, 1, 1)
         self.formLayout_6.setWidget(3, QtGui.QFormLayout.LabelRole, self.gboxSpectral)
         self.groupBox_5 = QtGui.QGroupBox(self.groupBox_3)
-        self.groupBox_5.setEnabled(False)
+        self.groupBox_5.setEnabled(True)
         self.groupBox_5.setObjectName(_fromUtf8("groupBox_5"))
         self.gridLayout = QtGui.QGridLayout(self.groupBox_5)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
         self.horizontalLayout_9 = QtGui.QHBoxLayout()
         self.horizontalLayout_9.setObjectName(_fromUtf8("horizontalLayout_9"))
         self.label_8 = QtGui.QLabel(self.groupBox_5)
+        self.label_8.setEnabled(True)
         self.label_8.setStyleSheet(_fromUtf8("background-color: rgb(244, 244, 244);"))
         self.label_8.setObjectName(_fromUtf8("label_8"))
         self.horizontalLayout_9.addWidget(self.label_8)
         self.dsbxThresholdSpec = QtGui.QDoubleSpinBox(self.groupBox_5)
-        self.dsbxThresholdSpec.setEnabled(False)
+        self.dsbxThresholdSpec.setEnabled(True)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -140,7 +141,7 @@ class Ui_Dialog(object):
         self.horizontalLayout_9.setStretch(1, 1)
         self.gridLayout.addLayout(self.horizontalLayout_9, 2, 0, 1, 1)
         self.cbxSpectralSubelements = QtGui.QCheckBox(self.groupBox_5)
-        self.cbxSpectralSubelements.setEnabled(False)
+        self.cbxSpectralSubelements.setEnabled(True)
         self.cbxSpectralSubelements.setStyleSheet(_fromUtf8("background-color: rgb(244, 244, 244);"))
         self.cbxSpectralSubelements.setChecked(False)
         self.cbxSpectralSubelements.setObjectName(_fromUtf8("cbxSpectralSubelements"))
@@ -148,17 +149,17 @@ class Ui_Dialog(object):
         self.horizontalLayout_8 = QtGui.QHBoxLayout()
         self.horizontalLayout_8.setObjectName(_fromUtf8("horizontalLayout_8"))
         self.label_7 = QtGui.QLabel(self.groupBox_5)
-        self.label_7.setEnabled(False)
+        self.label_7.setEnabled(True)
         self.label_7.setStyleSheet(_fromUtf8("background-color: rgb(244, 244, 244);"))
         self.label_7.setObjectName(_fromUtf8("label_7"))
         self.horizontalLayout_8.addWidget(self.label_7)
         self.dsbxminSizeTime = QtGui.QDoubleSpinBox(self.groupBox_5)
-        self.dsbxminSizeTime.setEnabled(False)
+        self.dsbxminSizeTime.setEnabled(True)
         self.dsbxminSizeTime.setStyleSheet(_fromUtf8("background-color: rgb(244, 244, 244);"))
         self.dsbxminSizeTime.setObjectName(_fromUtf8("dsbxminSizeTime"))
         self.horizontalLayout_8.addWidget(self.dsbxminSizeTime)
         self.dsbxMinSizeFreq = QtGui.QDoubleSpinBox(self.groupBox_5)
-        self.dsbxMinSizeFreq.setEnabled(False)
+        self.dsbxMinSizeFreq.setEnabled(True)
         self.dsbxMinSizeFreq.setStyleSheet(_fromUtf8("background-color: rgb(244, 244, 244);"))
         self.dsbxMinSizeFreq.setObjectName(_fromUtf8("dsbxMinSizeFreq"))
         self.horizontalLayout_8.addWidget(self.dsbxMinSizeFreq)
@@ -220,6 +221,7 @@ class Ui_Dialog(object):
         self.dsbxMinSize = QtGui.QDoubleSpinBox(self.groupBox_4)
         self.dsbxMinSize.setStyleSheet(_fromUtf8("background-color: rgb(244, 244, 244);"))
         self.dsbxMinSize.setMinimum(0.01)
+        self.dsbxMinSize.setSingleStep(0.5)
         self.dsbxMinSize.setProperty("value", 1.0)
         self.dsbxMinSize.setObjectName(_fromUtf8("dsbxMinSize"))
         self.horizontalLayout_11.addWidget(self.dsbxMinSize)

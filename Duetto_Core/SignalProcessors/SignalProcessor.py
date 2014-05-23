@@ -5,6 +5,7 @@ from ..AudioSignals.AudioSignal import AudioSignal
 class SignalProcessor:
     """
     Class that execute several functionalities with an AudioSignal
+    Provides methods that modify the values on the signal but not its size
     """
     def __init__(self, signal=None):
         self._signal = signal
@@ -19,15 +20,12 @@ class SignalProcessor:
     signal = property(_getSignal, _setSignal)
     #endregion
 
-    def mean(self, indexFrom=0, indexTo=-1):
-        return np.mean(self.signal.data[indexFrom:indexTo])
-
     def checkIndexes(self, indexFrom, indexTo):
         """
         check that the specified indexes are in the range of the signal data
         """
         dataLength = len(self.signal.data)
-        if indexFrom > indexTo or indexFrom >= dataLength or indexTo > dataLength:
+        if indexFrom < 0 or indexFrom > indexTo or indexTo > dataLength:
             raise IndexError()
 
 

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from datetime import datetime
 from PyQt4.QtCore import pyqtSignal, QRect, Qt, QTimer
 from PyQt4.QtGui import *
@@ -17,7 +18,7 @@ from Duetto_Core.SignalProcessors.CommonSignalProcessor import CommonSignalProce
 from Duetto_Core.SignalProcessors.FilterSignalProcessor import *
 from Duetto_Core.SignalProcessors.SignalProcessor import SignalProcessor
 from Duetto_Core.SignalProcessors.EditionSignalProcessor import EditionSignalProcessor
-
+from Graphic_Interface.Widgets.Axis import *
 from Duetto_Core.SpecgramSettings import SpecgramSettings
 from OscilogramPlotWidget import OscilogramPlotWidget
 from Graphic_Interface.Widgets.UndoRedoActions import UndoRedoManager, FilterAction
@@ -25,67 +26,11 @@ from Graphic_Interface.Widgets.SpectrogramPlotWidget import SpectrogramPlotWidge
 from Graphic_Interface.Widgets.Tools import Tools
 
 
-BACK_COLOR = "gray"
-
-
-class OscXAxis(pg.AxisItem):
-    def __init__(self, parent, *args, **kwargs):
-        pg.AxisItem.__init__(self, *args, **kwargs)
-        self.parent = parent
-        self.setLabel(text="Time (s)")
-        font = QFont(self.font)
-        font.setPointSize(8)
-        self.setTickFont(font)
-
-    def tickStrings(self, values, scale, spacing):
-        strns = []
-        delta = spacing / self.parent.signalProcessor.signal.samplingRate
-        a = max(-(int(np.log10(delta)) - 1), 0)
-        a = min(a, 4)
-        s = "{:." + str(a) + "f}"
-        for x in values:
-            strns.append(s.format(x * 1.0 / self.parent.signalProcessor.signal.samplingRate))
-        return strns
-
-    def tickValues(self, minVal, maxVal, size):
-        minVal = self.parent.mainCursor.min
-        maxVal = self.parent.mainCursor.max
-        spacing = self.tickSpacing(minVal, maxVal, size)[0][0]
-        values = []
-        temp = minVal
-        while (temp < maxVal):
-            values.append(temp)
-            temp += spacing
-        return [(spacing, values)]
-
-    def tickSpacing(self, minVal, maxVal, size):
-        minVal = self.parent.mainCursor.min
-        maxVal = self.parent.mainCursor.max
-        return [(max((maxVal - minVal) / (10.0 * self.parent.signalProcessor.signal.samplingRate),
-                     0.0001) * self.parent.signalProcessor.signal.samplingRate, 0)]
-
-
-class OscYAxis(pg.AxisItem):
-    def __init__(self, parent, *args, **kwargs):
-        pg.AxisItem.__init__(self, *args, **kwargs)
-        self.parent = parent
-        self.setLabel(text="Amplitude (%)")
-        font = QFont(self.font)
-        font.setPointSize(8)
-        self.setTickFont(font)
-
-    def tickStrings(self, values, scale, spacing):
-        strns = []
-        for x in values:
-            strns.append("{:.0f}".format(x * 100.0 / self.parent.signalProcessor.signal.getMaximumValueAllowed()))
-        return strns
-
-
 class QSignalVisualizerWidget(QWidget):
-    """Class to represent the QSignalVisualizerWidget widget"""
-    playing = pyqtSignal(int)
-    rangeChanged = pyqtSignal(int, int, int)
-    _doRefresh = pyqtSignal(bool, bool, bool, bool)
+    """Widget to visualize a signal in time and frequency domain"""
+    playing = pyqtSignal(int)  #signal that its raised when the audio is been played
+    rangeChanged = pyqtSignal(int, int, int) #signal that its raised when the range of visible signal has changed
+    _doRefresh = pyqtSignal(bool, bool, bool, bool) #?
     rangeAmplitudeChanged = pyqtSignal(int, int)
     rangeFrequencyChanged = pyqtSignal(int, int)
 
@@ -563,8 +508,6 @@ class QSignalVisualizerWidget(QWidget):
 
     SPECGRAM_COMPLEX_SIDE = "onesided"
 
-    TICK_INTERVAL_MS = 10
-
     def refreshAxes(self):
         bounds = self.axisXOsc.mapRectFromParent(self.axisXOsc.geometry())
         points = list(map(self.axisXOsc.mapToDevice, (bounds.topLeft(), bounds.topRight())))
@@ -775,7 +718,7 @@ class QSignalVisualizerWidget(QWidget):
 
     #region SIGNAL PROCESSING
 
-    #region Edition CUT,COPY PASTE
+#region Edition CUT,COPY PASTE
     def cut(self):
         if (len(self.signalProcessor.signal.data) > 0 and self.signalProcessor.signal.opened()):
             self.editionSignalProcessor.cut(self.zoomCursor.min, self.zoomCursor.max)
@@ -798,7 +741,8 @@ class QSignalVisualizerWidget(QWidget):
             self.rangeChanged.emit(self.mainCursor.min, self.mainCursor.max, len(self.signalProcessor.signal.data))
             self.refresh()
 
-    #endregion
+
+
 
     def reverse(self):
         self.signalProcessingAction(CommonSignalProcessor(self.signalProcessor.signal).reverse)
@@ -887,7 +831,7 @@ class QSignalVisualizerWidget(QWidget):
         self.signalProcessingAction(CommonSignalProcessor(self.signalProcessor.signal).changeSign)
 
 
-    #endregion
+ #endregion
 
     #region DETECTION
 

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from Duetto_Core.Segmentation.Detectors.Detector import Detector
 
 

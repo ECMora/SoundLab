@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from matplotlib import mlab
 
 from Duetto_Core.Cursors.IntervalCursor import IntervalCursor

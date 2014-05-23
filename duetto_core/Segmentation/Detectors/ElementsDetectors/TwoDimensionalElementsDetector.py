@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from collections import deque
 import numpy as np
 from Duetto_Core.Segmentation.Detectors.Detector import Detector

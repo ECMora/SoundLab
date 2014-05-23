@@ -1,6 +1,6 @@
+# -*- coding: utf-8 -*-
 import os
 import pickle
-
 from PyQt4 import QtCore, QtGui
 from pyqtgraph.parametertree.parameterTypes import WidgetParameterItem,ListParameter
 from pyqtgraph.python2_3 import asUnicode
@@ -413,7 +413,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     def dropEvent(self, event):
         mimeData = event.mimeData()
         if len(mimeData.urls())>1:return
-        mimeUrl = "".join([str(url.path()) for url in mimeData.urls()])
+        mimeUrl = u"".join([unicode(url.path()) for url in mimeData.urls()])
 
         self.widget.visibleOscilogram = True
         self.widget.visibleSpectrogram = True
@@ -580,9 +580,9 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         quart1 = self.ParamTree.param('Detection Settings').param('Measurement Location').param('Quartile25').value()
         quart2 = self.ParamTree.param('Detection Settings').param('Measurement Location').param('Quartile75').value()
         end = self.ParamTree.param('Detection Settings').param('Measurement Location').param('End').value()
-        signal = WavFileSignal(self.widget.signalProcessor.signal.path)
         f,t = self.widget.getIndexFromAndTo()
-
+        signal = WavFileSignal(samplingRate=self.widget.signalProcessor.signal.samplingRate,bitDepth=self.widget.signalProcessor.signal.bitDepth,whiteNoise=False)
+        signal.name = self.widget.signalProcessor.signal.name
         if t > f:
             signal.data = self.widget.signalProcessor.signal.data[f:t]
 
