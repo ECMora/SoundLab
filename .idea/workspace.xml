@@ -3,6 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="48337854-64fc-444d-bf1c-d8a83511c4ea" name="Default" comment="">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/Detector.py" afterPath="$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/Detector.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Graphic_Interface/Windows/DuettoSoundLabWindow.py" afterPath="$PROJECT_DIR$/Graphic_Interface/Windows/DuettoSoundLabWindow.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/DuettoSystem.iml" afterPath="$PROJECT_DIR$/.idea/DuettoSystem.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/ElementsDetectors/ElementsDetector.py" afterPath="$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/ElementsDetectors/ElementsDetector.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/FeatureExtractionDetectors/FrequencyPeeksDetector.py" afterPath="$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/FeatureExtractionDetectors/FrequencyPeeksDetector.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/FeatureExtractionDetectors/HarmonicDetector.py" afterPath="$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/FeatureExtractionDetectors/HarmonicDetector.py" />
@@ -12,8 +14,11 @@
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/FeatureExtractionDetectors/MaxMinPeakDetector.py" afterPath="$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/FeatureExtractionDetectors/MaxMinPeakDetector.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/FeatureExtractionDetectors/MeanDetector.py" afterPath="$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/FeatureExtractionDetectors/MeanDetector.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/FeatureExtractionDetectors/MinMaxFrequencyDetector.py" afterPath="$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/FeatureExtractionDetectors/MinMaxFrequencyDetector.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Graphic_Interface/Widgets/OscilogramPlotWidget.py" afterPath="$PROJECT_DIR$/Graphic_Interface/Widgets/OscilogramPlotWidget.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/ElementsDetectors/PeakToPeakElemDetector.py" afterPath="$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/ElementsDetectors/PeakToPeakElemDetector.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Graphic_Interface/Widgets/QSignalVisualizerWidget.py" afterPath="$PROJECT_DIR$/Graphic_Interface/Widgets/QSignalVisualizerWidget.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/FeatureExtractionDetectors/RmsDetector.py" afterPath="$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/FeatureExtractionDetectors/RmsDetector.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Graphic_Interface/Windows/SegmentationAndClasificationWindow.py" afterPath="$PROJECT_DIR$/Graphic_Interface/Windows/SegmentationAndClasificationWindow.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/ElementsDetectors/TwoDimensionalElementsDetector.py" afterPath="$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/ElementsDetectors/TwoDimensionalElementsDetector.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
@@ -28,7 +33,7 @@
   <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/DuettoSystem$pygletexample.coverage" NAME="pygletexample Coverage Results" MODIFIED="1400831125332" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/example pyglet" />
-    <SUITE FILE_PATH="coverage/DuettoSystem$Duetto_Sound_Lab_pyw.coverage" NAME="Duetto_Sound_Lab.pyw Coverage Results" MODIFIED="1400831260317" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/DuettoSystem$Duetto_Sound_Lab_pyw.coverage" NAME="Duetto_Sound_Lab.pyw Coverage Results" MODIFIED="1400840588441" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/DuettoSystem$WavFileSignal.coverage" NAME="WavFileSignal Coverage Results" MODIFIED="1400409399936" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Duetto_Core/AudioSignals" />
   </component>
   <component name="CreatePatchCommitExecutor">
@@ -39,24 +44,287 @@
   </component>
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FavoritesManager">
-    <favorites_list name="DuettoSystem" />
+    <favorites_list name="DuettoSystem">
+      <favorite_root url="file://$PROJECT_DIR$" module="DuettoSystem" type="directory" klass="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode">
+        <favorite_root url="file://$PROJECT_DIR$/.idea" module="DuettoSystem" type="directory" klass="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode">
+          <favorite_root url="file://$PROJECT_DIR$/.idea/scopes" module="DuettoSystem" type="directory" klass="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode">
+            <favorite_root url="file://$PROJECT_DIR$/.idea/scopes/scope_settings.xml" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+          </favorite_root>
+          <favorite_root url="file://$PROJECT_DIR$/.idea/vcs.xml" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+          <favorite_root url="file://$PROJECT_DIR$/.idea/misc.xml" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+          <favorite_root url="file://$PROJECT_DIR$/.idea/modules.xml" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+          <favorite_root url="file://$PROJECT_DIR$/.idea/encodings.xml" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+          <favorite_root url="file://$PROJECT_DIR$/.idea/workspace.xml" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+          <favorite_root url="file://$PROJECT_DIR$/.idea/DuettoSystem.iml" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+        </favorite_root>
+        <favorite_root url="file://$PROJECT_DIR$/Utils" module="DuettoSystem" type="directory" klass="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode">
+          <favorite_root url="file://$PROJECT_DIR$/Utils/Themes" module="DuettoSystem" type="directory" klass="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode">
+            <favorite_root url="file://$PROJECT_DIR$/Utils/Themes/NewTheme.dth" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Utils/Themes/PinkBlueTheme.dth" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Utils/Themes/RedBlackTheme.dth" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Utils/Themes/WhiteBlueTheme.dth" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Utils/Themes/WhiteBlackTheme.dth" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Utils/Themes/BatsoundLikeTheme.dth" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+          </favorite_root>
+          <favorite_root url="file://$PROJECT_DIR$/Utils/ColorBars" module="DuettoSystem" type="directory" klass="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode">
+            <favorite_root url="file://$PROJECT_DIR$/Utils/ColorBars/grey.bar" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Utils/ColorBars/green.bar" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+          </favorite_root>
+          <favorite_root url="file://$PROJECT_DIR$/Utils/Didactic Signals" module="DuettoSystem" type="directory" klass="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode">
+            <favorite_root url="file://$PROJECT_DIR$/Utils/Didactic Signals/recognition.wav" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+          </favorite_root>
+          <favorite_root url="file://$PROJECT_DIR$/Utils/PresentationVideo" module="DuettoSystem" type="directory" klass="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode">
+            <favorite_root url="file://$PROJECT_DIR$/Utils/PresentationVideo/Thumbs.db" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Utils/PresentationVideo/duettoinit.mp4" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Utils/PresentationVideo/duettoinit.wmv" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+          </favorite_root>
+        </favorite_root>
+        <favorite_root url="file://$PROJECT_DIR$/.gitignore" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+        <favorite_root url="file://$PROJECT_DIR$/__init__.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+        <favorite_root url="file://$PROJECT_DIR$/Duetto_Core" module="DuettoSystem" type="directory" klass="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode">
+          <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/Cursors" module="DuettoSystem" type="directory" klass="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode">
+            <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/Cursors/Cursor.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/Cursors/__init__.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/Cursors/PointerCursor.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/Cursors/IntervalCursor.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/Cursors/Pointer2DCursor.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/Cursors/RectangularCursor.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+          </favorite_root>
+          <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/__init__.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+          <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/Storable.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+          <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/AudioSignals" module="DuettoSystem" type="directory" klass="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode">
+            <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/AudioSignals/__init__.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/AudioSignals/AudioSignal.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/AudioSignals/WavFileSignal.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/AudioSignals/FileAudioSignal.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+          </favorite_root>
+          <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/Segmentation" module="DuettoSystem" type="directory" klass="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode">
+            <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/Segmentation/Elements" module="DuettoSystem" type="directory" klass="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode">
+              <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/Segmentation/Elements/Element.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+              <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/Segmentation/Elements/__init__.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+              <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/Segmentation/Elements/OneDimensionalElement.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+              <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/Segmentation/Elements/TwoDimensionalElement.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            </favorite_root>
+            <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors" module="DuettoSystem" type="directory" klass="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode">
+              <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/__init__.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+              <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/Detector.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+              <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/ElementsDetectors" module="DuettoSystem" type="directory" klass="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode">
+                <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/ElementsDetectors/__init__.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+                <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/ElementsDetectors/ElementsDetector.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+                <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/ElementsDetectors/IntervalElemDetector.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+                <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/ElementsDetectors/PeakToPeakElemDetector.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+                <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/ElementsDetectors/OneDimensionalElementsDetector.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+                <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/ElementsDetectors/TwoDimensionalElementsDetector.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+              </favorite_root>
+              <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/FeatureExtractionDetectors" module="DuettoSystem" type="directory" klass="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode">
+                <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/FeatureExtractionDetectors/__init__.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+                <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/FeatureExtractionDetectors/RmsDetector.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+                <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/FeatureExtractionDetectors/MeanDetector.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+                <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/FeatureExtractionDetectors/HarmonicDetector.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+                <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/FeatureExtractionDetectors/MaxMinPeakDetector.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+                <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/FeatureExtractionDetectors/FrequencyPeeksDetector.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+                <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/FeatureExtractionDetectors/InflectionPointDetector.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+                <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/FeatureExtractionDetectors/MinMaxFrequencyDetector.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+                <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/Segmentation/Detectors/FeatureExtractionDetectors/MaxInstantFrequencyDetector.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+              </favorite_root>
+            </favorite_root>
+            <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/Segmentation/Segment.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/Segmentation/__init__.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/Segmentation/SegmentationMethods" module="DuettoSystem" type="directory" klass="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode">
+              <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/Segmentation/SegmentationMethods/__init__.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+              <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/Segmentation/SegmentationMethods/segmentationMethods.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            </favorite_root>
+          </favorite_root>
+          <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/Clasification" module="DuettoSystem" type="directory" klass="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode">
+            <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/Clasification/__init__.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+          </favorite_root>
+          <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/SignalProcessors" module="DuettoSystem" type="directory" klass="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode">
+            <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/SignalProcessors/__init__.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/SignalProcessors/SignalProcessor.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/SignalProcessors/CommonSignalProcessor.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/SignalProcessors/FilterSignalProcessor.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/SignalProcessors/EditionSignalProcessor.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/SignalProcessors/CompensationSignalProcessor.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+          </favorite_root>
+          <favorite_root url="file://$PROJECT_DIR$/Duetto_Core/SpecgramSettings.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+        </favorite_root>
+        <favorite_root url="file://$PROJECT_DIR$/example pyglet" module="DuettoSystem" type="directory" klass="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode">
+          <favorite_root url="file://$PROJECT_DIR$/example pyglet/signal.wav" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+          <favorite_root url="file://$PROJECT_DIR$/example pyglet/__init__.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+          <favorite_root url="file://$PROJECT_DIR$/example pyglet/pygletexample.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+        </favorite_root>
+        <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface" module="DuettoSystem" type="directory" klass="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode">
+          <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/Dialogs" module="DuettoSystem" type="directory" klass="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode">
+            <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/Dialogs/__init__.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/Dialogs/NewFileDialog.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/Dialogs/ChangeVolumeDialog.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/Dialogs/elemDetectSettings.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/Dialogs/ui_new_file_dialog.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/Dialogs/FilterOptionsDialog.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/Dialogs/InsertSilenceDialog.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/Dialogs/ui_elemDetectSettings.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+          </favorite_root>
+          <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/Widgets" module="DuettoSystem" type="directory" klass="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode">
+            <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/Widgets/Axis.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/Widgets/Tools.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/Widgets/__init__.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/Widgets/Power_Spectrum.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/Widgets/UndoRedoActions.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/Widgets/PowSpecPlotWidget.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/Widgets/HorizontalHistogram.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/Widgets/OscilogramPlotWidget.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/Widgets/SpectrogramPlotWidget.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/Widgets/QSignalVisualizerWidget.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+          </favorite_root>
+          <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/Windows" module="DuettoSystem" type="directory" klass="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode">
+            <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/Windows/__init__.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/Windows/icons_rc.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/Windows/WorkTheme.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/Windows/MainWindow.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/Windows/PresentationSlogan" module="DuettoSystem" type="directory" klass="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode">
+              <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/Windows/PresentationSlogan/green.bar" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+              <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/Windows/PresentationSlogan/__init__.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+              <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/Windows/PresentationSlogan/presentation.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            </favorite_root>
+            <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/Windows/PowerSpectrumWindow.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/Windows/DuettoSoundLabWindow.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/Windows/SegmentationAndClasificationWindow.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/Windows/SegmentationAndClasificationWindowUI.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+          </favorite_root>
+          <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/UI Files" module="DuettoSystem" type="directory" klass="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode">
+            <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/UI Files/resources" module="DuettoSystem" type="directory" klass="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode">
+              <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/UI Files/resources/81.ico" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+              <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/UI Files/resources/225.ico" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+              <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/UI Files/resources/osc.ico" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+              <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/UI Files/resources/redo.png" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+              <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/UI Files/resources/spec.ico" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+              <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/UI Files/resources/undo.png" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+              <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/UI Files/resources/Excel.png" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+              <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/UI Files/resources/icons.qrc" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+              <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/UI Files/resources/pausa.png" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+              <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/UI Files/resources/pause.png" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+              <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/UI Files/resources/Thumbs.db" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+              <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/UI Files/resources/Camera.ico" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+              <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/UI Files/resources/cerrar.png" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+              <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/UI Files/resources/upfile.png" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+              <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/UI Files/resources/Behavior.png" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+              <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/UI Files/resources/combined.ico" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+              <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/UI Files/resources/downfile.png" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+              <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/UI Files/resources/Position.png" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+              <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/UI Files/resources/cut_26x26.png" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+              <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/UI Files/resources/powerspec.ico" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+              <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/UI Files/resources/copy_26x26.png" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+              <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/UI Files/resources/Macromedia.png" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+              <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/UI Files/resources/zoom_26x26.png" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+              <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/UI Files/resources/02049_26x26.png" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+              <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/UI Files/resources/02051_26x26.png" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+              <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/UI Files/resources/paste_26x26.png" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+              <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/UI Files/resources/Photofiltre.png" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+              <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/UI Files/resources/record_26x26.png" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+              <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/UI Files/resources/zoomin_26x26.png" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+              <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/UI Files/resources/zoomout_26x26.png" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+              <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/UI Files/resources/Process Viewer.png" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+              <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/UI Files/resources/Leopard Icon 60.ico" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+              <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/UI Files/resources/ColorSync Utility.png" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+              <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/UI Files/resources/LeopardVista V4 Icon 09.ico" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+              <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/UI Files/resources/c4d.wav-oscilogram-Duetto-Image copia.png" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            </favorite_root>
+            <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/UI Files/__init__.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/UI Files/MainWindow.ui" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/UI Files/ChangeVolume.ui" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/UI Files/insertSilence.ui" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/UI Files/power_spectrum.ui" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/UI Files/presentationui.ui" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/UI Files/new_file_dialog.ui" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/UI Files/FilterOptionsDialog.ui" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/UI Files/ui_elemDetectSettings.ui" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/UI Files/QSignalVisualizerWidget.ui" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/UI Files/SegmentationAndClasificationWindowUI.ui" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+          </favorite_root>
+          <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/__init__.py" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+          <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/PresentationVideo" module="DuettoSystem" type="directory" klass="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode">
+            <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/PresentationVideo/Thumbs.db" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Graphic_Interface/PresentationVideo/duettoinit.wmv" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+          </favorite_root>
+        </favorite_root>
+        <favorite_root url="file://$PROJECT_DIR$/Duetto_Sound_Lab.pyw" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+        <favorite_root url="file://$PROJECT_DIR$/Sound Lab Programing Guide" module="DuettoSystem" type="directory" klass="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode">
+          <favorite_root url="file://$PROJECT_DIR$/Sound Lab Programing Guide/Manual" module="DuettoSystem" type="directory" klass="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode">
+            <favorite_root url="file://$PROJECT_DIR$/Sound Lab Programing Guide/Manual/DUETTO SOUND-LAB-MANUAL.docx" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Sound Lab Programing Guide/Manual/Funcionalidades Duetto Sound Lab.docx" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+          </favorite_root>
+          <favorite_root url="file://$PROJECT_DIR$/Sound Lab Programing Guide/Modules Documentation" module="DuettoSystem" type="directory" klass="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode">
+            <favorite_root url="file://$PROJECT_DIR$/Sound Lab Programing Guide/Modules Documentation/DUETTO CORE GUIDE.docx" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Sound Lab Programing Guide/Modules Documentation/GRAPHIC INTERFACE GUIDE.docx" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+            <favorite_root url="file://$PROJECT_DIR$/Sound Lab Programing Guide/Modules Documentation/~$APHIC INTERFACE GUIDE.docx" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+          </favorite_root>
+          <favorite_root url="file://$PROJECT_DIR$/Sound Lab Programing Guide/GENERAL STRUCTURE.docx" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+          <favorite_root url="file://$PROJECT_DIR$/Sound Lab Programing Guide/DUETTO SOUND LAB ISSUES .xlsx" type="psiFile" klass="com.intellij.ide.projectView.impl.nodes.PsiFileNode" />
+        </favorite_root>
+      </favorite_root>
+    </favorites_list>
   </component>
   <component name="FileEditorManager">
     <leaf>
       <file leaf-file-name="QSignalVisualizerWidget.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Graphic_Interface/Widgets/QSignalVisualizerWidget.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="393" column="22" selection-start="17794" selection-end="17794" vertical-scroll-proportion="-0.096837945" vertical-offset="7798" max-vertical-offset="19446">
+            <state line="154" column="13" selection-start="7281" selection-end="7281" vertical-scroll-proportion="0.7046512" vertical-offset="2427" max-vertical-offset="18564">
               <folding>
-                <element signature="e#17803#18890#0" expanded="false" />
-                <element signature="e#18920#18947#0" expanded="false" />
-                <element signature="e#18977#19004#0" expanded="false" />
-                <element signature="e#19060#19945#0" expanded="false" />
-                <element signature="e#19978#21094#0" expanded="false" />
-                <element signature="e#23378#23878#0" expanded="false" />
-                <element signature="e#23921#24004#0" expanded="false" />
-                <element signature="e#24067#24145#1" expanded="false" />
+                <element signature="e#18364#18391#0" expanded="false" />
+                <element signature="e#18421#18448#0" expanded="false" />
+                <element signature="e#18504#19389#0" expanded="false" />
+                <element signature="e#22686#23186#0" expanded="false" />
+                <element signature="e#23229#23312#0" expanded="false" />
+                <element signature="e#23375#23453#1" expanded="false" />
+                <element signature="e#24800#26367#0" expanded="false" />
+                <element signature="e#45426#46074#0" expanded="false" />
+                <element signature="e#46122#46945#0" expanded="false" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="OscilogramPlotWidget.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Graphic_Interface/Widgets/OscilogramPlotWidget.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="33" column="0" selection-start="1293" selection-end="1293" vertical-scroll-proportion="-9.153846" vertical-offset="329" max-vertical-offset="2100">
+              <folding>
+                <element signature="e#1954#2194#1" expanded="false" />
+                <element signature="e#2461#2585#0" expanded="false" />
+                <element signature="e#2635#2939#0" expanded="false" />
+                <element signature="e#3192#3348#0" expanded="false" />
+                <element signature="e#3392#3453#0" expanded="false" />
+                <element signature="e#3502#4898#0" expanded="false" />
+                <element signature="e#4957#5176#0" expanded="false" />
+                <element signature="e#5224#10113#0" expanded="false" />
+                <element signature="e#10161#12161#0" expanded="false" />
+                <element signature="e#12215#12975#0" expanded="false" />
+                <element signature="e#13025#13901#0" expanded="false" />
+                <element signature="e#13950#14100#0" expanded="false" />
+                <element signature="e#14153#14277#0" expanded="false" />
+                <element signature="e#14770#15806#0" expanded="false" />
+                <element signature="e#15859#16845#0" expanded="false" />
+                <element signature="e#16895#17087#0" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SpectrogramPlotWidget.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Graphic_Interface/Widgets/SpectrogramPlotWidget.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="62" column="48" selection-start="2553" selection-end="2553" vertical-scroll-proportion="-4.6923075" vertical-offset="970" max-vertical-offset="7266">
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="SegmentationAndClasificationWindow.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/Graphic_Interface/Windows/SegmentationAndClasificationWindow.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state line="241" column="0" selection-start="13036" selection-end="13036" vertical-scroll-proportion="-4.3846154" vertical-offset="4590" max-vertical-offset="15183">
+              <folding />
             </state>
           </provider>
         </entry>
@@ -79,21 +347,21 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/Graphic_Interface/Dialogs/elemDetectSettings.py" />
         <option value="$PROJECT_DIR$/Graphic_Interface/Dialogs/NewFileDialog.py" />
         <option value="$PROJECT_DIR$/Graphic_Interface/Widgets/HorizontalHistogram.py" />
-        <option value="$PROJECT_DIR$/Graphic_Interface/Widgets/OscilogramPlotWidget.py" />
         <option value="$PROJECT_DIR$/Graphic_Interface/Widgets/PowSpecPlotWidget.py" />
         <option value="$PROJECT_DIR$/Graphic_Interface/Widgets/Tools.py" />
         <option value="$PROJECT_DIR$/Graphic_Interface/Widgets/UndoRedoActions.py" />
-        <option value="$PROJECT_DIR$/Graphic_Interface/Windows/DuettoSoundLabWindow.py" />
         <option value="$PROJECT_DIR$/Graphic_Interface/Windows/PowerSpectrumWindow.py" />
-        <option value="$PROJECT_DIR$/Graphic_Interface/Windows/SegmentationAndClasificationWindow.py" />
         <option value="$PROJECT_DIR$/Graphic_Interface/Windows/WorkTheme.py" />
         <option value="$PROJECT_DIR$/Duetto_Sound_Lab.pyw" />
         <option value="$PROJECT_DIR$/example pyglet/pygletexample.py" />
         <option value="$PROJECT_DIR$/Graphic_Interface/Widgets/Axis.py" />
         <option value="$PROJECT_DIR$/Graphic_Interface/Widgets/SpectrogramPlotWidget.py" />
+        <option value="$PROJECT_DIR$/Graphic_Interface/Widgets/OscilogramPlotWidget.py" />
+        <option value="$PROJECT_DIR$/Duetto_Core/Cursors/IntervalCursor.py" />
+        <option value="$PROJECT_DIR$/Graphic_Interface/Windows/DuettoSoundLabWindow.py" />
+        <option value="$PROJECT_DIR$/Graphic_Interface/Windows/SegmentationAndClasificationWindow.py" />
         <option value="$PROJECT_DIR$/Graphic_Interface/Widgets/QSignalVisualizerWidget.py" />
       </list>
     </option>
@@ -101,8 +369,8 @@
   <component name="ProjectFrameBounds">
     <option name="x" value="-8" />
     <option name="y" value="-8" />
-    <option name="width" value="1452" />
-    <option name="height" value="912" />
+    <option name="width" value="1456" />
+    <option name="height" value="876" />
   </component>
   <component name="ProjectLevelVcsManager" settingsEditedManually="false">
     <OptionsSetting value="true" id="Add" />
@@ -118,7 +386,7 @@
     <option name="STATE" value="0" />
   </component>
   <component name="ProjectView">
-    <navigator currentView="ProjectPane" proportions="" version="1" splitterProportion="0.5">
+    <navigator currentView="Scope" currentSubView="Project Files" proportions="" version="1" splitterProportion="0.5">
       <flattenPackages />
       <showMembers />
       <showModules />
@@ -196,7 +464,135 @@
           </PATH>
         </subPane>
       </pane>
-      <pane id="Scope" />
+      <pane id="Scope">
+        <subPane subId="Default">
+          <PATH>
+            <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="DuettoSystem">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="Duetto_Core/Segmentation/Detectors">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+        <subPane subId="Problems" />
+        <subPane subId="Project Files">
+          <PATH>
+            <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="DuettoSystem">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="DuettoSystem">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="Graphic_Interface">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="DuettoSystem">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="Graphic_Interface">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="Windows">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="DuettoSystem">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="Graphic_Interface">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="Widgets">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="DuettoSystem">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="Duetto_Core">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="DuettoSystem">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="Duetto_Core">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="Cursors">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+        <subPane subId="Changed Files">
+          <PATH>
+            <PATH_ELEMENT USER_OBJECT="Root">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="DuettoSystem">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT USER_OBJECT="Duetto_Core/Segmentation/Detectors">
+              <option name="myItemId" value="" />
+              <option name="myItemType" value="" />
+            </PATH_ELEMENT>
+          </PATH>
+        </subPane>
+      </pane>
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -500,17 +896,21 @@
       <created>1400837308362</created>
       <updated>1400837308362</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Move axis to separate file">
+      <created>1400837361140</created>
+      <updated>1400837361140</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1452" height="912" extended-state="0" />
+    <frame x="-8" y="-8" width="1456" height="876" extended-state="6" />
     <editor active="false" />
     <layout>
-      <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.2410596" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2410596" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.54646325" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.397351" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.17198336" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
@@ -520,8 +920,8 @@
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32962447" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.18705036" sideWeight="0.7589404" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.29542303" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.18651363" sideWeight="0.6912378" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.30876216" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -574,21 +974,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/Graphic_Interface/Windows/SegmentationAndClasificationWindowUI.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="8925" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Graphic_Interface/Windows/WorkTheme.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="23" selection-start="23" selection-end="23" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="657" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Duetto_Sound_Lab.pyw">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="23" selection-start="23" selection-end="23" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1449" />
-      </provider>
-    </entry>
     <entry file="file://C:/Python27/Lib/site-packages/pyqtgraph/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="268" column="4" selection-start="10527" selection-end="10527" vertical-scroll-proportion="0.0" vertical-offset="5466" max-vertical-offset="7182">
@@ -615,22 +1000,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Graphic_Interface/Windows/DuettoSoundLabWindow.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="1066" column="36" selection-start="53119" selection-end="53119" vertical-scroll-proportion="0.4117647" vertical-offset="21728" max-vertical-offset="23100">
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Graphic_Interface/Widgets/OscilogramPlotWidget.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="7350">
-          <folding>
-            <element signature="e#318#16595#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Graphic_Interface/Widgets/HorizontalHistogram.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1953">
@@ -641,18 +1010,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Graphic_Interface/Widgets/SpectrogramPlotWidget.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="259" column="59" selection-start="12776" selection-end="12776" vertical-scroll-proportion="0.0" vertical-offset="5040" max-vertical-offset="7266">
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/example pyglet/pygletexample.py">
       <provider selected="true" editor-type-id="text-editor">
         <state line="88" column="1" selection-start="3896" selection-end="4120" vertical-scroll-proportion="-0.94558823" vertical-offset="2491" max-vertical-offset="3171">
           <folding>
-            <element signature="e#69#98#0" expanded="true" />
+            <element signature="e#69#98#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -670,18 +1032,100 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/Graphic_Interface/Widgets/SpectrogramPlotWidget.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="62" column="48" selection-start="2553" selection-end="2553" vertical-scroll-proportion="-4.6923075" vertical-offset="970" max-vertical-offset="7266">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Duetto_Core/Cursors/IntervalCursor.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="25" column="16" selection-start="813" selection-end="813" vertical-scroll-proportion="0.7164179" vertical-offset="84" max-vertical-offset="651">
+          <folding>
+            <element signature="e#0#29#0" expanded="true" />
+            <element signature="e#289#332#0" expanded="false" />
+            <element signature="e#609#768#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Duetto_Core/Cursors/Cursor.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="13" column="22" selection-start="265" selection-end="265" vertical-scroll-proportion="-2.4078948" vertical-offset="1371" max-vertical-offset="1827">
+          <folding>
+            <element signature="e#0#19#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Duetto_Core/Cursors/Pointer2DCursor.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="546">
+          <folding>
+            <element signature="e#0#29#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Graphic_Interface/Windows/DuettoSoundLabWindow.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="542" column="0" selection-start="29088" selection-end="29088" vertical-scroll-proportion="8.230769" vertical-offset="11218" max-vertical-offset="22764">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Graphic_Interface/Windows/PowerSpectrumWindow.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="0" column="0" selection-start="0" selection-end="0" vertical-scroll-proportion="1.0" vertical-offset="26" max-vertical-offset="1071">
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Graphic_Interface/Widgets/OscilogramPlotWidget.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="33" column="0" selection-start="1293" selection-end="1293" vertical-scroll-proportion="-9.153846" vertical-offset="329" max-vertical-offset="2100">
+          <folding>
+            <element signature="e#1954#2194#1" expanded="false" />
+            <element signature="e#2461#2585#0" expanded="false" />
+            <element signature="e#2635#2939#0" expanded="false" />
+            <element signature="e#3192#3348#0" expanded="false" />
+            <element signature="e#3392#3453#0" expanded="false" />
+            <element signature="e#3502#4898#0" expanded="false" />
+            <element signature="e#4957#5176#0" expanded="false" />
+            <element signature="e#5224#10113#0" expanded="false" />
+            <element signature="e#10161#12161#0" expanded="false" />
+            <element signature="e#12215#12975#0" expanded="false" />
+            <element signature="e#13025#13901#0" expanded="false" />
+            <element signature="e#13950#14100#0" expanded="false" />
+            <element signature="e#14153#14277#0" expanded="false" />
+            <element signature="e#14770#15806#0" expanded="false" />
+            <element signature="e#15859#16845#0" expanded="false" />
+            <element signature="e#16895#17087#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Graphic_Interface/Windows/SegmentationAndClasificationWindow.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="241" column="0" selection-start="13036" selection-end="13036" vertical-scroll-proportion="-4.3846154" vertical-offset="4590" max-vertical-offset="15183">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Graphic_Interface/Widgets/QSignalVisualizerWidget.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="393" column="22" selection-start="17794" selection-end="17794" vertical-scroll-proportion="-0.096837945" vertical-offset="7798" max-vertical-offset="19446">
+        <state line="154" column="13" selection-start="7281" selection-end="7281" vertical-scroll-proportion="0.7046512" vertical-offset="2427" max-vertical-offset="18564">
           <folding>
-            <element signature="e#17803#18890#0" expanded="false" />
-            <element signature="e#18920#18947#0" expanded="false" />
-            <element signature="e#18977#19004#0" expanded="false" />
-            <element signature="e#19060#19945#0" expanded="false" />
-            <element signature="e#19978#21094#0" expanded="false" />
-            <element signature="e#23378#23878#0" expanded="false" />
-            <element signature="e#23921#24004#0" expanded="false" />
-            <element signature="e#24067#24145#1" expanded="false" />
+            <element signature="e#18364#18391#0" expanded="false" />
+            <element signature="e#18421#18448#0" expanded="false" />
+            <element signature="e#18504#19389#0" expanded="false" />
+            <element signature="e#22686#23186#0" expanded="false" />
+            <element signature="e#23229#23312#0" expanded="false" />
+            <element signature="e#23375#23453#1" expanded="false" />
+            <element signature="e#24800#26367#0" expanded="false" />
+            <element signature="e#45426#46074#0" expanded="false" />
+            <element signature="e#46122#46945#0" expanded="false" />
           </folding>
         </state>
       </provider>

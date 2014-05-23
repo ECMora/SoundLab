@@ -443,17 +443,14 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
             if childName == 'Spectrogram Settings.FFT size':
                 self.widget.specgramSettings.NFFT = data
-                self.widget.visualChanges = True
                 self.widget.refresh(dataChanged=True, updateOscillogram=False, updateSpectrogram=True)
 
             elif childName == 'Spectrogram Settings.Grid.X':
                 self.widget.spec_gridx = data
-                self.widget.visualChanges = True
                 self.widget.refresh(dataChanged=True, updateOscillogram=False, updateSpectrogram=False)
 
             elif childName == 'Spectrogram Settings.Grid.Y':
                 self.widget.spec_gridy = data
-                self.widget.visualChanges = True
                 self.widget.refresh(dataChanged=True, updateOscillogram=False, updateSpectrogram=False)
 
             elif childName == 'Spectrogram Settings.Threshold(dB).Min':
@@ -478,12 +475,10 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
             elif childName == 'Spectrogram Settings.FFT window':
                 self.widget.specgramSettings.window = data
-                self.widget.visualChanges = True
                 self.widget.refresh(dataChanged=True, updateOscillogram=False, updateSpectrogram=True)
 
             elif childName == 'Spectrogram Settings.Background color':
                 self.widget.spec_background = data
-                self.widget.visualChanges = True
                 self.widget.refresh(dataChanged=False,updateOscillogram=False,updateSpectrogram=True)
 
             elif childName == 'Spectrogram Settings.ColorMap':
@@ -491,17 +486,14 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
             elif childName == 'Spectrogram Settings.Frequency(kHz).Min':
                 self.widget.minYSpc = data
-                self.widget.visualChanges = True
                 self.widget.refresh(dataChanged=True, updateOscillogram=False, updateSpectrogram=True)
 
             elif childName == 'Spectrogram Settings.Frequency(kHz).Max':
                 self.widget.maxYSpc = data
-                self.widget.visualChanges = True
                 self.widget.refresh(dataChanged=True, updateOscillogram=False, updateSpectrogram=True)
 
             elif childName == 'Spectrogram Settings.FFT overlap':
                 self.widget.specgramSettings.overlap = data
-                self.widget.visualChanges = True
                 self.widget.refresh(dataChanged=True, updateOscillogram=False, updateSpectrogram=True)
 
             elif childName == 'Power Spectrum Settings.FFT size':
@@ -526,36 +518,28 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
             elif childName == 'Oscillogram Settings.Background color':
                 self.widget.osc_background = data
-                self.widget.visualChanges = True
                 self.widget.refresh(dataChanged=False, updateOscillogram=True, updateSpectrogram=False)
             elif childName == 'Oscillogram Settings.Grid.X':
                 self.widget.osc_gridx = data
-                self.widget.visualChanges = True
                 self.widget.refresh(dataChanged=True, updateOscillogram=False, updateSpectrogram=False)
             elif childName == 'Oscillogram Settings.Grid.Y':
                 self.widget.osc_gridy = data
-                self.widget.visualChanges = True
                 self.widget.refresh(dataChanged=True, updateOscillogram=False, updateSpectrogram=False)
             elif childName == 'Oscillogram Settings.Plot color':
                 self.widget.osc_color = data
-                self.widget.visualChanges = True
                 self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
             elif childName == 'Oscillogram Settings.Amplitude(%).Min':
                 self.widget.minYOsc = data
-                self.widget.visualChanges = True
                 self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
             elif childName == 'Oscillogram Settings.Amplitude(%).Max':
                 self.widget.maxYOsc = data
-                self.widget.visualChanges = True
                 self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
             elif childName == 'Oscillogram Settings.Connect Lines':
                 self.widget.lines = data
-                self.widget.visualChanges = True
                 self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
             elif childName == 'Oscillogram Settings.Connect Lines':
                 self.pow_spec_lines = data
                 self.widget.lines = data
-                self.widget.visualChanges = True
                 self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
 
             elif childName == 'Themes.Theme Selected':

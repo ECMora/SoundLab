@@ -57,7 +57,6 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.widget.visibleOscilogram = True
         self.widget.visibleSpectrogram = True
 
-        self.widget.visualChanges =True
         self.widget.refresh()
 
         self.rejectSignal = False
@@ -238,12 +237,9 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     def load_Theme(self,theme):
         self.theme = theme
-        self.widget.histogram.region.setRegion(theme.histRange)
-        self.widget.histogram.gradient.restoreState(theme.colorBarState)
         self.widget.load_Theme(theme)
         #self.tableParameterOscilogram.setStyleSheet("background-color: #" +str(self.widget.osc_background) + ";")
-        self.widget.visualChanges = True
-        self.widget.refresh()
+
 
     @pyqtSlot()
     def on_actionView_Parameters_triggered(self):
@@ -600,13 +596,13 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     def elementSelectedInTable(self,row,column):
         self.tableParameterOscilogram.setRangeSelected(QtGui.QTableWidgetSelectionRange(row,0,row,self.tableParameterOscilogram.columnCount()-1),True)
-        self.widget.selectElement(row)#select the correct element in oscilogram
+        self.widget.select_region(row)#select the correct element in oscilogram
 
     @pyqtSlot()
     def on_actionDetection_triggered(self):
         elementsDetectorDialog = ElemDetectSettingsDialog(parent=self)
         self.setSettings(elementsDetectorDialog)
-        self.widget.selectElement(-1)
+        self.widget.select_region(-1)
 
         if elementsDetectorDialog.exec_():
             try:
@@ -685,7 +681,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
     @pyqtSlot()
     def on_actionClear_Meditions_triggered(self):
         self.widget.clearCursors()
-        self.widget.selectElement()
+        self.widget.select_region()
         self.widget.visualChanges = True
         self.widget.refresh()
 
