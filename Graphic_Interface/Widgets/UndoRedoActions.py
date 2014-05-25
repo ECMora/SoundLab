@@ -9,7 +9,7 @@ import numpy as np
 class UndoRedoManager:
     def __init__(self,widget):
         self.widget = widget
-        self.actionsList = [None for _ in range(20)] #initial space for actions
+        self.actionsList = [None] * 20  #initial space for actions
         self.actionIndex = -1
 
     def undo(self):
@@ -36,14 +36,12 @@ class UndoRedoManager:
         if(len(self.actionsList) <= self.actionIndex):
             self.actionsList = [self.actionsList[i] if i < len(self.actionsList) else None for i in range(2*len(self.actionsList))]
         elif self.actionIndex > 0:
-            for i in range(self.actionIndex,len(self.actionsList)):
-                self.actionsList[i] = None
+            self.actionsList[self.actionIndex:] = [None] * (len(self.actionsList) - self.actionIndex)
         self.actionsList[self.actionIndex] = action
 
     def clearActions(self):
         self.actionIndex = 0
-        for i in range(len(self.actionsList)):
-            self.actionsList[i] = None
+        self.actionsList = [None] * 20
 
     def count(self):
         return self.actionIndex+1

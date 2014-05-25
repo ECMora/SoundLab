@@ -1,11 +1,17 @@
 # -*- coding: utf-8 -*-
 class SerializedData:
-    def __init__(self,oscBack,oscPlot,oscGridX,oscGridY,powBack,powPlot,powGridX,powGridY, specBack,specGridX,specGridY, colorbar,region,endColor,centerColor,startColor,quart1Color,quart2Color):
+    """
+        The options to customize the environment of work in the system
+    """
+
+    def __init__(self, oscBack="000", oscPlot="", oscGridX=True, oscGridY=True, powBack="000", powPlot="FFF", powGridX=True,
+                 powGridY=True, specBack="", specGridX=True, specGridY=True, colorbar=None, region=None, endColor="FFF", centerColor="FFF", startColor="FFF",
+                 quart1Color="FFF", quart2Color="FFF"):
         self.osc_background = oscBack
         self.osc_plot = oscPlot
-        self.osc_GridX =oscGridX
+        self.osc_GridX = oscGridX
         self.osc_GridY = oscGridY
-        self.spec_GridX =specGridX
+        self.spec_GridX = specGridX
         self.spec_GridY = specGridY
         self.pow_Back = powBack
         self.pow_Plot = powPlot

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from PyQt4 import QtCore
+from PyQt4 import QtCore, QtGui
 from PyQt4.QtCore import SIGNAL, pyqtSignal, QRect
 from PyQt4.QtGui import QCursor,QColor
 import pyqtgraph as pg
@@ -12,6 +12,11 @@ class OscilogramPlotWidget(pg.PlotWidget):
         pg.PlotWidget.__init__(self, **kargs)
         self.mousePressed = False
         self.emitIntervalOscChanged = True
+        self.osc_background = "000"
+        self.osc_gridx = True
+        self.osc_gridy = True
+        self.getPlotItem().showGrid(x=self.osc_gridx, y=self.osc_gridy)
+
         self.zoomRegion = pg.LinearRegionItem([0, 0])
         self.zoomRegion.sigRegionChanged.connect(self.on_zoomRegionChanged)
         self.makeZoom = None
@@ -22,6 +27,7 @@ class OscilogramPlotWidget(pg.PlotWidget):
         self.setClipToView(True)
         self.setDownsampling(auto=True, mode="peak")
         self.setMouseEnabled(x=False, y=False)
+        self.setMenuEnabled(False)
         self.getPlotItem().hideButtons()
         self.setRange(QRect(0, 0, 1, 1))
 
@@ -44,6 +50,20 @@ class OscilogramPlotWidget(pg.PlotWidget):
         self.last = {}
         self.show()
 
+    def load_Theme(self, theme):
+        update_graph =False
+        if self.osc_background != theme.osc_background:
+            self.osc_background = theme.osc_background
+            self.setBackground(self.osc_background)
+
+        if self.osc_gridx != theme.osc_GridX or self.osc_gridy != theme.osc_GridY:
+            self.osc_gridx = theme.osc_GridX
+            self.osc_gridy = theme.osc_GridY
+            self.getPlotItem().showGrid(x=self.osc_gridx, y=self.osc_gridy)
+
+
+        if update_graph:
+            self.update()
 
 
     def select_region(self,indexFrom,indexTo,brush=None):

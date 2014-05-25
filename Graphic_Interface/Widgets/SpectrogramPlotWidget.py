@@ -31,6 +31,7 @@ class SpectrogramPlotWidget(GraphicsView):
         self.yAxis.setGrid(88)
         l.addItem(self.yAxis, 0, 0)
         self.viewBox.setMouseEnabled(x=False, y=False)
+        self.viewBox.setMenuEnabled(False)
         self.viewBox.setAspectLocked(False)
         self.emitIntervalSpecChanged = True
         #zoomCursor-------------------------------------
@@ -39,6 +40,12 @@ class SpectrogramPlotWidget(GraphicsView):
         self.makeZoomRect = None
         self.mousePressed = False
         self.mouseZoomEnabled = True
+
+        self.spec_gridx = True
+        self.spec_gridy = True
+        self.spec_background = "000"
+
+
         self.viewBox.addItem(self.zoomRegion)
         self.zoomRegion.sigRegionChanged.connect(self.on_zoomRegionChanged)
         #pointerCursor-----------------------------------
@@ -61,6 +68,21 @@ class SpectrogramPlotWidget(GraphicsView):
     PointerCursorPressed = pyqtSignal()
     RectangularCursorPressed = pyqtSignal()
     applyFilter = pyqtSignal(int, int, int, int)
+
+    def load_Theme(self, theme):
+        update_graph =False
+        if self.spec_background != theme.spec_background:
+            self.spec_background = theme.spec_background
+            self.setBackground(self.spec_background)
+
+        if self.spec_gridx != theme.spec_GridX or self.spec_gridy != theme.spec_GridY:
+            self.spec_gridx = theme.spec_GridX
+            self.spec_gridy = theme.spec_GridY
+            self.showGrid(x=self.spec_gridx, y=self.spec_gridy)
+
+        if update_graph:
+            self.update()
+
 
     def clearRectangularCursor(self):
         self.rectRegion['x'] = [0,0]
