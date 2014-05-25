@@ -24,6 +24,7 @@ from OscilogramPlotWidget import OscilogramPlotWidget
 from Graphic_Interface.Widgets.UndoRedoActions import UndoRedoManager, FilterAction
 from Graphic_Interface.Widgets.SpectrogramPlotWidget import SpectrogramPlotWidget
 from Graphic_Interface.Widgets.Tools import Tools
+from Graphic_Interface.Windows.WorkTheme import SerializedData
 
 
 class QSignalVisualizerWidget(QWidget):
@@ -38,10 +39,7 @@ class QSignalVisualizerWidget(QWidget):
         QWidget.__init__(self, parent)
         self.histogram = pg.HistogramLUTWidget()
         self._Z = np.array([[0]])
-        self.osc_gridx = True
-        self.osc_gridy = True
-        self.spec_gridx = True
-        self.spec_gridy = True
+
         self.osc_color = QColor(255, 255, 255)
         self.axisXOsc = OscXAxis(self, orientation='bottom')
         self.axisXOsc.enableAutoSIPrefix(False)
@@ -49,9 +47,6 @@ class QSignalVisualizerWidget(QWidget):
         self.axesOscilogram = OscilogramPlotWidget(parent=self,
                                                    axisItems={'bottom': self.axisXOsc, 'left': self.axisYOsc})
 
-
-        self.osc_background = "000"
-        self.spec_background = "000"
         self.undoRedoManager = UndoRedoManager(self)
         self.minYOsc = -100
         self.maxYOsc = 100
@@ -101,21 +96,17 @@ class QSignalVisualizerWidget(QWidget):
 
         self._visibleOscillogram = False
         self._visibleSpectrogram = False
-        self.axesOscilogram.setMenuEnabled(False)
-        self.axesSpecgram.viewBox.setMenuEnabled(False)
 
-        self.clear()
 
         self.signalProcessor = SignalProcessor()
         self.editionSignalProcessor = EditionSignalProcessor()
         self.specgramSettings = SpecgramSettings()
-        self.cursors = []
+        self.cursors = []     #deprecated
         self.cursorsmarkers = []  # the rectangles for the visualizations of cursors
         self.visibleCursors = True
         self.Elements = []  # list of elements detected in oscilogram each element contains the object it self and the extra data for visualize it
         self.visibleElements = True
 
-        self.colorbar = None
         self.playerSpeed = 100
         self.playerLineOsc = pg.InfiniteLine()
         self.playerLineSpec = pg.InfiniteLine()
@@ -143,22 +134,30 @@ class QSignalVisualizerWidget(QWidget):
         this method implements the  way in wich the controls load the theme
         all changes made by the theme are made in this place
         """
+        assert isinstance(theme,SerializedData)
+
+        self.axesOscilogram.load_Theme(theme)
+        self.axesSpecgram.load_Theme(theme)
+        #the implementation should be just until here
+        updOsc = False
+        updSpec = False
+        dataChange = False
         self.histogram.region.setRegion(theme.histRange)
         self.histogram.gradient.restoreState(theme.colorBarState)
-        self.osc_background = theme.osc_background
+
         self.osc_color = theme.osc_plot
-        self.osc_gridx = theme.osc_GridX
-        self.osc_gridy = theme.osc_GridY
-        self.spec_background = theme.spec_background
+
         self.envelopeCurve.setPen(pg.mkPen(self.osc_color, width=1))
         self.envelopeCurve.setShadowPen(pg.mkPen(QtGui.QColor(255, 0, 0), width=3))
-        self.refresh()
+        if updOsc or updSpec or dataChange:
+            self.refresh(dataChange= dataChange,updateSpectrogram=updSpec,updateOscillogram=updOsc)
 
 
     def createContextCursor(self, actions):
         self.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
         for act in actions:
-            self.addAction(act)
+            if isinstance(act,QtGui.QAction):
+                self.addAction(act)
 
     def applyFilterSpec(self, indexF, indexT, FreqLow, FreqUp):
         filter = FilterSignalProcessor(self.signalProcessor.signal)
@@ -168,24 +167,6 @@ class QSignalVisualizerWidget(QWidget):
             FilterAction(self.signalProcessor.signal, start, end, FILTER_TYPE.BAND_STOP, 0, FreqLow, FreqUp))
         filter.filter(indexFrom=start, indexTo=end, filterType=FILTER_TYPE.BAND_STOP, Fl=FreqLow, Fu=FreqUp)
         self.refresh()
-
-    def updateSpecZoomRegion(self, a, b):
-        min = self._from_osc_to_spec(a)
-        max = self._from_osc_to_spec(b)
-        self.axesSpecgram.emitIntervalSpecChanged = False
-        self.axesSpecgram.zoomRegion.setRegion([min, max])
-        self.axesSpecgram.emitIntervalSpecChanged = True
-        self.stop()
-
-
-    def updateOscZoomRegion(self, a, b):
-        min = self._from_spec_to_osc(a) + self.mainCursor.min
-        max = self._from_spec_to_osc(b) + self.mainCursor.min
-        self.axesOscilogram.setZoomRegionVisible(True)
-        self.axesOscilogram.emitIntervalOscChanged = False
-        self.axesOscilogram.zoomRegion.setRegion([min, max])
-        self.axesOscilogram.emitIntervalOscChanged = True
-        self.stop()
 
     #region Sound
 
@@ -345,6 +326,22 @@ class QSignalVisualizerWidget(QWidget):
         self.zoomCursor.min, self.zoomCursor.max = int(range[0]), int(range[1])
         #self.emit(SIGNAL("IntervalChanged"))
 
+    def updateSpecZoomRegion(self, a, b):
+        min = self._from_osc_to_spec(a)
+        max = self._from_osc_to_spec(b)
+        self.axesSpecgram.emitIntervalSpecChanged = False
+        self.axesSpecgram.zoomRegion.setRegion([min, max])
+        self.axesSpecgram.emitIntervalSpecChanged = True
+        self.stop()
+
+    def updateOscZoomRegion(self, a, b):
+        min = self._from_spec_to_osc(a) + self.mainCursor.min
+        max = self._from_spec_to_osc(b) + self.mainCursor.min
+        self.axesOscilogram.setZoomRegionVisible(True)
+        self.axesOscilogram.emitIntervalOscChanged = False
+        self.axesOscilogram.zoomRegion.setRegion([min, max])
+        self.axesOscilogram.emitIntervalOscChanged = True
+        self.stop()
 
     def dropEvent(self, event):
         data = event.mimeData().data()
@@ -477,7 +474,6 @@ class QSignalVisualizerWidget(QWidget):
         self.axesOscilogram.emitIntervalOscChanged = True
         self.axesSpecgram.emitIntervalSpecChanged = True
 
-
     def changeRange(self, left, right, emit=True, updateOscillogram=True, updateSpectrogram=True):
         self.mainCursor.min, self.mainCursor.max = left, right
         self.refresh(dataChanged=False, updateOscillogram=updateOscillogram, updateSpectrogram=updateSpectrogram)
@@ -590,9 +586,6 @@ class QSignalVisualizerWidget(QWidget):
                                          clipToView=True)
                 self.lastRefreshPoint = True
 
-        self.axesOscilogram.getPlotItem().showGrid(x=self.osc_gridx, y=self.osc_gridy)
-        self.axesOscilogram.setBackground(self.osc_background)
-
         if self.visibleSpectrogram and updateSpectrogram and self.signalProcessor.signal \
             and self.signalProcessor.signal.opened() and self.signalProcessor.signal.playStatus != AudioSignal.RECORDING \
             and self.mainCursor.max > self.mainCursor.min:
@@ -608,8 +601,6 @@ class QSignalVisualizerWidget(QWidget):
             self.updateSpectrogramColors()
             self.updateSpecZoomRegion(self.zoomCursor.min, self.zoomCursor.max)
 
-        self.axesSpecgram.setBackground(self.spec_background)
-        self.axesSpecgram.showGrid(x=self.spec_gridx, y=self.spec_gridy)
 
         self.refreshAxes()
         if self.visibleElements:
@@ -687,9 +678,6 @@ class QSignalVisualizerWidget(QWidget):
 
             self.axesSpecgram.update()
 
-    def clear(self):
-        self.colorbar = None
-
     def clearZoomCursor(self):
         self.zoomCursor.min, self.zoomCursor.max = 0, 0
         self.axesOscilogram.zoomRegion.setRegion([0, 0])
@@ -700,7 +688,10 @@ class QSignalVisualizerWidget(QWidget):
 
     #region SIGNAL PROCESSING
 
-#region Edition CUT,COPY PASTE
+#endregion
+
+    #region Edition CUT,COPY PASTE
+
     def cut(self):
         if (len(self.signalProcessor.signal.data) > 0 and self.signalProcessor.signal.opened()):
             self.editionSignalProcessor.cut(self.zoomCursor.min, self.zoomCursor.max)
@@ -722,8 +713,9 @@ class QSignalVisualizerWidget(QWidget):
             self.refresh()
 
 
+    #endregion
 
-
+    #region Signal Processing Actions
     def reverse(self):
         self.signalProcessingAction(CommonSignalProcessor(self.signalProcessor.signal).reverse)
 
@@ -746,14 +738,6 @@ class QSignalVisualizerWidget(QWidget):
         self.mainCursor.max = len(self.signalProcessor.signal.data)
         self.maxYSpc = self.signalProcessor.signal.samplingRate
         self.refresh()
-
-    def envelope(self):
-        #add cofig dialog and plot the envelope
-        indexFrom, indexTo = self.getIndexFromAndTo()
-        self.envelopeCurve.setData(self.getTransformedEnvelope(
-            envelope(self.signalProcessor.signal.data[indexFrom:indexTo],
-                     decay=self.signalProcessor.signal.samplingRate / 1000)))
-        self.setEnvelopeVisibility(True)
 
     def getTransformedEnvelope(self, array):
         self.envelopeFactor = (2.0 ** (self.signalProcessor.signal.bitDepth) * self.maxYOsc / 100) / array[
@@ -808,6 +792,8 @@ class QSignalVisualizerWidget(QWidget):
 
 
  #endregion
+
+    #endregion
 
     #region DETECTION
 
@@ -872,7 +858,7 @@ class QSignalVisualizerWidget(QWidget):
 
     #endregion
 
-    #region SAVE AND OPEN
+    #SAVE AND OPEN
 
     def openNew(self, samplingRate=1, bitDepth=8, duration=1, whiteNoise=False):
         self.open(None, samplingRate, bitDepth, duration, whiteNoise)
@@ -880,7 +866,6 @@ class QSignalVisualizerWidget(QWidget):
     def open(self, filename, samplingRate=1, bitDepth=8, duration=1, whiteNoise=False):
         #self.axesOscilogram.sigRangeChanged.disconnect()
         #self.axesSpecgram.viewBox.sigRangeChanged.disconnect()
-        self.clear()
         self.undoRedoManager.clearActions()
         if self.signalProcessor.signal:
             self.stop()
@@ -939,7 +924,6 @@ class QSignalVisualizerWidget(QWidget):
         signal.data = self.signalProcessor.signal.data[indexF:indexTo]
         signal.save(fname, chunk)
 
-
     def cursorsData(self):
         cursData = PointerCursor().intToByteArray(len(self.cursors))
         for x in self.cursors:
@@ -987,5 +971,3 @@ class QSignalVisualizerWidget(QWidget):
             fh.close()
 
 
-            #endregion
-            #endregion

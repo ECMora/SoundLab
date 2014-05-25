@@ -41,9 +41,9 @@ class DuettoListParameterItem(WidgetParameterItem):
 
     """
     def __init__(self, param, depth):
-        param.opts['value'] = param.opts['value'][1]
+        param.opts[u'value'] = param.opts[u'value'][1]
         self.targetValue = None
-        self.values = param.opts.get('values',[])
+        self.values = param.opts.get(u'values',[])
         self.valuesDict = {}
         for (a, b) in self.values:
             self.valuesDict[a] = b
@@ -51,7 +51,7 @@ class DuettoListParameterItem(WidgetParameterItem):
 
     def makeWidget(self):
         opts = self.param.opts
-        t = opts['type']
+        t = opts[u'type']
         w = QtGui.QComboBox()
         w.setMaximumHeight(20)  ## set to match height of spin box and line edit
         w.sigChanged = w.currentIndexChanged
@@ -96,8 +96,6 @@ class DuettoListParameterItem(WidgetParameterItem):
         finally:
             self.widget.blockSignals(False)
 
-
-
 class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     dropchanged = QtCore.pyqtSignal(QtCore.QMimeData)
     def __init__(self, parent=None):
@@ -108,16 +106,13 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.hist = HorizontalHistogramWidget()
         self.widget.histogram = self.hist
         self.pow_overlap = 90
-        self.Theme = os.path.join(os.path.join("Utils","Themes"),"RedBlackTheme.dth")
-        self.defaultTheme = self.DeSerializeTheme(self.Theme)
-        self.widget.spec_background = self.defaultTheme.spec_background
-        self.widget.osc_background = self.defaultTheme.osc_background
+        self.defaultTheme = self.DeSerializeTheme(os.path.join(os.path.join("Utils","Themes"),"RedBlackTheme.dth"))
+        self.widget.load_Theme(self.defaultTheme)
+
         self.widget.osc_color = self.defaultTheme.osc_plot
-        self.widget.osc_gridx = self.defaultTheme.osc_GridX
-        self.widget.osc_gridy = self.defaultTheme.osc_GridY
-        self.widget.spec_gridx = self.defaultTheme.spec_GridX
-        self.widget.spec_gridy = self.defaultTheme.spec_GridY
+
         self.pow_spec_backg = self.defaultTheme.pow_Back
+
         self.pow_spec_plotColor = self.defaultTheme.pow_Plot
         self.pow_spec_gridx = self.defaultTheme.pow_GridX
         self.pow_spec_gridy = self.defaultTheme.pow_GridY
@@ -128,83 +123,82 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.widget.lines = True
         self.statusbar = self.statusBar()
         self.statusbar.setSizeGripEnabled(False)
-        self.widget.statusbar = self.statusbar
         self.lastopen = ''
-        self.statusbar.showMessage("Welcome to Duetto Sound Lab", 5000)
+        self.statusbar.showMessage(u"Welcome to Duetto Sound Lab", 5000)
         params = [
-        {'name': 'Oscillogram Settings', 'type': 'group', 'children': [
-            {'name': 'Amplitude(%)', 'type': 'group', 'children': [
-                 {'name': 'Min', 'type': 'float', 'value': -100, 'step': 0.1},
-                 {'name': 'Max', 'type': 'float', 'value': 100, 'step': 0.1},
+        {u'name': u'Oscillogram Settings', u'type': u'group', u'children': [
+            {u'name': u'Amplitude(%)', u'type': u'group', u'children': [
+                 {u'name': u'Min', u'type': u'float', u'value': -100,u'step': 0.1},
+                 {u'name': u'Max', u'type': u'float', u'value': 100, u'step': 0.1},
             ]},
 
-            {'name': 'Grid', 'type': 'group', 'children': [
-                {'name': 'X', 'type': 'bool','default': self.defaultTheme.osc_GridX, 'value': self.defaultTheme.osc_GridX},
-                {'name': 'Y', 'type': 'bool','default':self.defaultTheme.osc_GridY , 'value': self.defaultTheme.osc_GridY},
+            {u'name': u'Grid',u'type': u'group', u'children': [
+                {u'name': u'X', u'type': u'bool',u'default': self.defaultTheme.osc_GridX, u'value': self.defaultTheme.osc_GridX},
+                {u'name': u'Y', u'type': u'bool',u'default':self.defaultTheme.osc_GridY , u'value': self.defaultTheme.osc_GridY},
 
             ]},
-            {'name':'Background color', 'type':'color','value':self.defaultTheme.osc_background, 'default':self.defaultTheme.osc_background},
-            {'name': 'Plot color', 'type': 'color', 'value':self.defaultTheme.osc_plot, 'default': self.defaultTheme.osc_plot},
-            {'name': 'Connect Lines', 'type': 'bool','default': self.widget.lines, 'value': self.widget.lines},
+            {u'name':u'Background color', u'type':u'color',u'value':self.defaultTheme.osc_background, u'default':self.defaultTheme.osc_background},
+            {u'name': u'Plot color', u'type': u'color', u'value':self.defaultTheme.osc_plot,u'default': self.defaultTheme.osc_plot},
+            {u'name': u'Connect Lines', u'type': u'bool',u'default': self.widget.lines, u'value': self.widget.lines},
         ]},
 
-        {'name': 'Spectrogram Settings', 'type': 'group', 'children': [
-            {'name': 'Frequency(kHz)', 'type': 'group', 'children': [
-                {'name': 'Min', 'type': 'float', 'value': 0, 'step': 0.1},
-                {'name': 'Max', 'type': 'float', 'value': 22, 'step': 0.1},
+        {u'name': u'Spectrogram Settings', u'type': u'group', u'children': [
+            {u'name': u'Frequency(kHz)', u'type':u'group', u'children': [
+                {u'name': u'Min', u'type': u'float', u'value': 0, u'step': 0.1},
+                {u'name': u'Max', u'type': u'float', u'value': 22, u'step': 0.1},
             ]},
-           {'name': 'FFT size', 'type': 'list', 'default':512, 'values': [('Automatic', 512),("128", 128), ("256", 256),("512", 512), ("1024", 1024)], 'value': '512'},
-          {'name': 'FFT window', 'type': 'list', 'value':self.widget.specgramSettings.windows[0],'default':self.widget.specgramSettings.windows[0],'values': [('Bartlett',self.widget.specgramSettings.windows[4]),("Blackman", self.widget.specgramSettings.windows[3]),("Hamming", self.widget.specgramSettings.windows[0]), ("Hanning", self.widget.specgramSettings.windows[2]),('Kaiser',self.widget.specgramSettings.windows[5]),('None',self.widget.specgramSettings.windows[6]),("Rectangular", self.widget.specgramSettings.windows[1])]},
-            {'name': 'FFT overlap', 'type': 'int', 'value':-1, 'limits': (-1, 99)},
-            {'name': 'Threshold(dB)', 'type': 'group', 'children': [
-                {'name': 'Min', 'type': 'float','step':0.1,'default': self.defaultTheme.histRange[0], 'value': self.defaultTheme.histRange[0]},
-                {'name': 'Max', 'type': 'float','step':0.1,'default': self.defaultTheme.histRange[1] , 'value': self.defaultTheme.histRange[1]},
+           {u'name':u'FFT size', u'type': u'list', u'default':512, u'values': [(u'Automatic', 512),(u"128", 128), (u"256", 256),(u"512", 512), (u"1024", 1024)], u'value': u'512'},
+          {u'name': u'FFT window', u'type': u'list', u'value':self.widget.specgramSettings.windows[0],u'default':self.widget.specgramSettings.windows[0],u'values': [(u'Bartlett',self.widget.specgramSettings.windows[4]),(u"Blackman", self.widget.specgramSettings.windows[3]),(u"Hamming", self.widget.specgramSettings.windows[0]), (u"Hanning", self.widget.specgramSettings.windows[2]),(u'Kaiser',self.widget.specgramSettings.windows[5]),(u'None',self.widget.specgramSettings.windows[6]),(u"Rectangular", self.widget.specgramSettings.windows[1])]},
+            {u'name': u'FFT overlap', u'type': u'int', u'value':-1, u'limits': (-1, 99)},
+            {u'name': u'Threshold(dB)', u'type': u'group', u'children': [
+                {u'name': u'Min', u'type': u'float',u'step':0.1,u'default': self.defaultTheme.histRange[0],u'value': self.defaultTheme.histRange[0]},
+                {u'name': u'Max', u'type': u'float',u'step':0.1,u'default': self.defaultTheme.histRange[1] , u'value': self.defaultTheme.histRange[1]},
              ]},
-            {'name': 'Grid', 'type': 'group', 'children': [
-                {'name': 'X', 'type': 'bool','default': self.defaultTheme.spec_GridX, 'value': self.defaultTheme.spec_GridX},
-                {'name': 'Y', 'type': 'bool','default':self.defaultTheme.spec_GridY , 'value': self.defaultTheme.spec_GridY},
+            {u'name': u'Grid', u'type': u'group', u'children': [
+                {u'name': u'X', u'type': u'bool',u'default': self.defaultTheme.spec_GridX, u'value': self.defaultTheme.spec_GridX},
+                {u'name': u'Y', u'type': u'bool',u'default':self.defaultTheme.spec_GridY , u'value': self.defaultTheme.spec_GridY},
 
             ]},
-            {'name': 'Background color', 'type': 'color', 'value':self.defaultTheme.spec_background, 'default': self.defaultTheme.spec_background},
+            {u'name': u'Background color', u'type': u'color',u'value':self.defaultTheme.spec_background, u'default': self.defaultTheme.spec_background},
         ]},
 
-        {'name': 'Power Spectrum Settings', 'type': 'group', 'children': [
+        {u'name': u'Power Spectrum Settings', u'type': u'group', u'children': [
 
-            {'name': 'FFT size', 'type': 'list', 'default':512, 'values': [('Automatic', 512),("128", 128),("256", 256), ("512", 512), ("1024", 1024)], 'value': 'Automatic'},
-            {'name': 'FFT window', 'type': 'list', 'value':self.widget.specgramSettings.windows[0],'default':self.widget.specgramSettings.windows[0],'values': [('Bartlett',self.widget.specgramSettings.windows[4]),("Blackman", self.widget.specgramSettings.windows[3]),("Hamming", self.widget.specgramSettings.windows[0]), ("Hanning", self.widget.specgramSettings.windows[2]),('Kaiser',self.widget.specgramSettings.windows[5]),('None',self.widget.specgramSettings.windows[6]),("Rectangular", self.widget.specgramSettings.windows[1])]},
-            {'name': 'FFT overlap', 'type': 'int', 'value':self.pow_overlap, 'limits' : (-1,100)},
-            {'name': 'Grid', 'type': 'group', 'children': [
-                {'name': 'X', 'type': 'bool','default': self.defaultTheme.pow_GridX, 'value': self.defaultTheme.pow_GridX},
-                {'name': 'Y', 'type': 'bool','default':self.defaultTheme.pow_GridY , 'value': self.defaultTheme.pow_GridY},
-
-             ]},
-             {'name': 'Connect Lines', 'type': 'bool','default': self.pow_spec_lines, 'value': self.pow_spec_lines},
-             {'name': 'YBounds', 'type': 'group', 'children': [
-                {'name': 'MinY', 'type': 'int', 'limits' : (-60,5),'default': -50, 'value': -50},
-                {'name': 'MaxY', 'type': 'int', 'limits' : (-60,5),'default': 5 , 'value': 5},
-
+            {u'name': u'FFT size', u'type': u'list', u'default':512, u'values': [(u'Automatic', 512),(u"128", 128),(u"256", 256), (u"512", 512), (u"1024", 1024)], u'value': u'Automatic'},
+            {u'name': u'FFT window',u'type': u'list', u'value':self.widget.specgramSettings.windows[0],u'default':self.widget.specgramSettings.windows[0],u'values': [(u'Bartlett',self.widget.specgramSettings.windows[4]),(u"Blackman", self.widget.specgramSettings.windows[3]),(u"Hamming", self.widget.specgramSettings.windows[0]), (u"Hanning", self.widget.specgramSettings.windows[2]),(u'Kaiser',self.widget.specgramSettings.windows[5]),(u'None',self.widget.specgramSettings.windows[6]),(u"Rectangular", self.widget.specgramSettings.windows[1])]},
+            {u'name': u'FFT overlap', u'type': u'int',u'value':self.pow_overlap, u'limits' : (-1,100)},
+            {u'name': u'Grid', u'type': u'group', u'children': [
+                {u'name': u'X', u'type': u'bool',u'default': self.defaultTheme.pow_GridX, u'value': self.defaultTheme.pow_GridX},
+                {u'name': u'Y', u'type': u'bool',u'default':self.defaultTheme.pow_GridY , u'value': self.defaultTheme.pow_GridY},
 
              ]},
-             {'name':'Background color', 'type':'color','value':self.defaultTheme.pow_Back, 'default':self.defaultTheme.pow_Back},
-             {'name': 'Plot color', 'type': 'color', 'value':self.defaultTheme.pow_Plot, 'default': self.defaultTheme.pow_Plot},
+             {u'name': u'Connect Lines',u'type': u'bool',u'default': self.pow_spec_lines, u'value': self.pow_spec_lines},
+             {u'name': u'YBounds', u'type': u'group', u'children': [
+                {u'name': u'MinY', u'type': u'int', u'limits' : (-60,5),u'default': -50, u'value': -50},
+                {u'name': u'MaxY', u'type': u'int', u'limits' : (-60,5),u'default': 5 ,u'value': 5},
+
+
+             ]},
+             {u'name':u'Background color', u'type':u'color',u'value':self.defaultTheme.pow_Back, 'default':self.defaultTheme.pow_Back},
+             {u'name': u'Plot color',u'type': u'color',u'value':self.defaultTheme.pow_Plot, 'default': self.defaultTheme.pow_Plot},
         ]},
-        {'name': 'Themes', 'type': 'group', 'children': [
-         {'name': 'Theme Selected', 'type': 'list', 'value':"RedBlackTheme.dth",'default':"RedBlackTheme.dth",'values': [("BatsoundLikeTheme","BatsoundLikeTheme.dth"),("PinkBlueTheme","PinkBlueTheme.dth"),("RedBlackTheme","RedBlackTheme.dth"),("WhiteBlueTheme","WhiteBlueTheme.dth")]},
+        {u'name': u'Themes', u'type': u'group', u'children': [
+         {u'name': u'Theme Selected', u'type': u'list', u'value':u"RedBlackTheme.dth",u'default':u"RedBlackTheme.dth",u'values': [(u"BatsoundLikeTheme",u"BatsoundLikeTheme.dth"),(u"PinkBlueTheme",u"PinkBlueTheme.dth"),(u"RedBlackTheme",u"RedBlackTheme.dth"),(u"WhiteBlueTheme",u"WhiteBlueTheme.dth")]},
         ]
         } ,
-        {'name': 'Detection Settings', 'type': 'group', 'children': [
-            {'name': 'Measurement Location', 'type': 'group', 'children': [
-            {'name': 'Start', 'type': 'color', 'value': self.defaultTheme.startColor,'default': self.defaultTheme.startColor},
-            {'name': 'Quartile25', 'type': 'color', 'value': self.defaultTheme.quart1Color,'default': self.defaultTheme.quart1Color},
-            {'name':'Center', 'type':'color','value':self.defaultTheme.centerColor,'default':self.defaultTheme.centerColor},
-            {'name': 'Quartile75', 'type': 'color', 'value':self.defaultTheme.quart2Color,'default':self.defaultTheme.quart2Color},
-            {'name': 'End', 'type': 'color', 'value':self.defaultTheme.endColor,'default':self.defaultTheme.endColor},
+        {u'name': u'Detection Settings', u'type': u'group', u'children': [
+            {u'name': u'Measurement Location', u'type': u'group', u'children': [
+            {u'name': u'Start', u'type': u'color',u'value': self.defaultTheme.startColor,u'default': self.defaultTheme.startColor},
+            {u'name': u'Quartile25', u'type': u'color', u'value': self.defaultTheme.quart1Color,u'default': self.defaultTheme.quart1Color},
+            {u'name':u'Center', u'type':u'color',u'value':self.defaultTheme.centerColor,u'default':self.defaultTheme.centerColor},
+            {u'name': u'Quartile75', u'type': u'color', u'value':self.defaultTheme.quart2Color,u'default':self.defaultTheme.quart2Color},
+            {u'name': u'End', u'type': u'color',u'value':self.defaultTheme.endColor,u'default':self.defaultTheme.endColor},
         ]},]}
 
         ]
 
         ListParameter.itemClass = DuettoListParameterItem
-        self.ParamTree = Parameter.create(name='params', type='group', children=params)
+        self.ParamTree = Parameter.create(name=u'params', type=u'group', children=params)
         self.ParamTree.sigTreeStateChanged.connect(self.change)
         self.parameterTree = ParameterTree()
         self.parameterTree.setAutoScroll(True)
@@ -242,14 +236,14 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.widget.axesOscilogram.PointerOscChanged.connect(self.updateStatusBar)
         self.widget.rangeFrequencyChanged.connect(self.changeFrequency)
         self.widget.rangeAmplitudeChanged.connect(self.changeAmplitude)
-        self.connect(self.widget, SIGNAL("IntervalChanged"), self.updatePowSpecWin)
+        self.connect(self.widget, SIGNAL(u"IntervalChanged"), self.updatePowSpecWin)
         self.NFFT_pow = 512
 
         self.window_pow = self.widget.specgramSettings.windows[0]
         self.window_spec = self.widget.specgramSettings.windows[0]
-        self.colorBarsPath = "ColorBars"
+
         self.pow_spec_windows = []
-        self.loadAllColorBars()
+
         self.setAcceptDrops(True)
         separator = QtGui.QAction(self)
         separator.setSeparator(True)
@@ -281,19 +275,20 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         QTimer.singleShot(0, self.on_load)
 
     def changeFrequency(self, min, max):
-        self.ParamTree.param('Spectrogram Settings').param('Frequency(kHz)').param('Min').setValue(min)
-        self.ParamTree.param('Spectrogram Settings').param('Frequency(kHz)').param('Max').setValue(max)
+        self.ParamTree.param(u'Spectrogram Settings').param(u'Frequency(kHz)').param(u'Min').setValue(min)
+        self.ParamTree.param(u'Spectrogram Settings').param(u'Frequency(kHz)').param(u'Max').setValue(max)
 
     def changeAmplitude(self, min, max):
-        self.ParamTree.param('Oscillogram Settings').param('Amplitude(%)').param('Min').setValue(min)
-        self.ParamTree.param('Oscillogram Settings').param('Amplitude(%)').param('Max').setValue(max)
+        self.ParamTree.param(u'Oscillogram Settings').param(u'Amplitude(%)').param(u'Min').setValue(min)
+        self.ParamTree.param(u'Oscillogram Settings').param(u'Amplitude(%)').param(u'Max').setValue(max)
 
     def folderFiles(self,folder):
         files = []
         for root, dirs, filenames in os.walk(folder):
             for f in filenames:
-                #if f.endswith(".wav"):
-                files.append(root +"/" +f) #os.path.join(
+                if f.endswith(".wav"):
+                    files.append(unicode(root+os.path.sep+f))
+
         return files
 
     def updateStatusBar(self,line):
@@ -320,12 +315,12 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     def updateRegionTheme(self):
         reg = self.hist.item.region.getRegion()
-        valueMin = self.ParamTree.param('Spectrogram Settings').param('Threshold(dB)').param('Min').value()
-        valueMax = self.ParamTree.param('Spectrogram Settings').param('Threshold(dB)').param('Max').value()
+        valueMin = self.ParamTree.param(u'Spectrogram Settings').param(u'Threshold(dB)').param(u'Min').value()
+        valueMax = self.ParamTree.param(u'Spectrogram Settings').param(u'Threshold(dB)').param(u'Max').value()
         if reg[0] != valueMin:
-            self.ParamTree.param('Spectrogram Settings').param('Threshold(dB)').param('Min').setValue(reg[0])
+            self.ParamTree.param(u'Spectrogram Settings').param(u'Threshold(dB)').param(u'Min').setValue(reg[0])
         if reg[1] != valueMax:
-            self.ParamTree.param('Spectrogram Settings').param('Threshold(dB)').param('Max').setValue(reg[1])
+            self.ParamTree.param(u'Spectrogram Settings').param(u'Threshold(dB)').param(u'Max').setValue(reg[1])
 
     def SerializeTheme(self,filename):
         if filename:
@@ -334,12 +329,8 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             quart1 = self.ParamTree.param('Detection Settings').param('Measurement Location').param('Quartile25').value()
             quart2 = self.ParamTree.param('Detection Settings').param('Measurement Location').param('Quartile75').value()
             end = self.ParamTree.param('Detection Settings').param('Measurement Location').param('End').value()
-            data = SerializedData(self.widget.osc_background,self.widget.osc_color,self.widget.osc_gridx,
-                                  self.widget.osc_gridy,self.pow_spec_backg,self.pow_spec_plotColor,self.pow_spec_gridx,
-                                  self.pow_spec_gridy,self.widget.spec_background, self.widget.spec_gridx, self.widget.spec_gridy,
-                                  self.hist.item.gradient.saveState(),self.hist.item.region.getRegion(),end,center,start,quart1,quart2)
             file = open(filename,'wb')
-            pickle.dump(data,file)
+            pickle.dump(self.defaultTheme,file)
             file.close()
 
     def DeSerializeTheme(self,filename):
@@ -348,6 +339,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             data = pickle.load(file)
             file.close()
             return data
+        return SerializedData()
 
 
     @pyqtSlot()
@@ -356,48 +348,47 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     @pyqtSlot()
     def on_actionSave_theme_triggered(self):
-        filename = QFileDialog.getSaveFileName(parent=self,caption="Save Theme",directory = os.path.join("Utils","Themes"),filter="Duetto Theme Files (*.dth);;All Files (*)")
+        filename = QFileDialog.getSaveFileName(parent=self,caption=u"Save Theme",directory = os.path.join(u"Utils",u"Themes"),filter=u"Duetto Theme Files (*.dth);;All Files (*)")
         if filename:
             self.SerializeTheme(filename)
 
-    def updateMyTheme(self,data):
-        self.widget.spec_background = data.spec_background
-        self.widget.osc_background = data.osc_background
-        self.widget.osc_color = data.osc_plot
-        self.widget.osc_gridx = data.osc_GridX
-        self.widget.osc_gridy = data.osc_GridY
-        self.widget.spec_gridx = data.spec_GridX
-        self.widget.spec_gridy = data.spec_GridY
-        self.pow_spec_backg = data.pow_Back
-        self.pow_spec_plotColor = data.pow_Plot
-        self.pow_spec_gridx = data.pow_GridX
-        self.pow_spec_gridy = data.pow_GridY
-        self.hist.item.gradient.restoreState(data.colorBarState)
-        self.hist.item.region.setRegion(data.histRange)
+    def updateMyTheme(self,theme):
+
+        assert isinstance(theme, SerializedData)
+        self.widget.osc_color = theme.osc_plot
+        self.widget.load_Theme(theme)
+
+        self.pow_spec_backg = theme.pow_Back
+        self.pow_spec_plotColor = theme.pow_Plot
+        self.pow_spec_gridx = theme.pow_GridX
+        self.pow_spec_gridy = theme.pow_GridY
+        self.hist.item.gradient.restoreState(theme.colorBarState)
+        self.hist.item.region.setRegion(theme.histRange)
 
         self.hist.item.region.lineMoved()
         self.hist.item.region.lineMoveFinished()
-        self.ParamTree.param('Oscillogram Settings').param('Grid').param('X').setValue(self.widget.osc_gridx)
-        self.ParamTree.param('Oscillogram Settings').param('Grid').param('Y').setValue(self.widget.osc_gridy)
-        self.ParamTree.param('Spectrogram Settings').param('Grid').param('X').setValue(self.widget.spec_gridx)
-        self.ParamTree.param('Spectrogram Settings').param('Grid').param('Y').setValue(self.widget.spec_gridy)
-        self.ParamTree.param('Oscillogram Settings').param('Background color').setValue(self.widget.osc_background)
-        self.ParamTree.param('Oscillogram Settings').param('Plot color').setValue(self.widget.osc_color)
-        self.ParamTree.param('Spectrogram Settings').param('Background color').setValue(self.widget.spec_background)
-        self.ParamTree.param('Spectrogram Settings').param('Threshold(dB)').param('Min').setValue(data.histRange[0])
-        self.ParamTree.param('Spectrogram Settings').param('Threshold(dB)').param('Max').setValue(data.histRange[1])
-        self.ParamTree.param('Power Spectrum Settings').param('Grid').param('X').setValue(self.pow_spec_gridx)
-        self.ParamTree.param('Power Spectrum Settings').param('Grid').param('Y').setValue(self.pow_spec_gridy)
-        self.ParamTree.param('Power Spectrum Settings').param('Background color').setValue(data.pow_Back)
-        self.ParamTree.param('Power Spectrum Settings').param('Plot color').setValue(self.pow_spec_plotColor)
-        self.ParamTree.param('Detection Settings').param('Measurement Location').param('Center').setValue(data.centerColor)
-        self.ParamTree.param('Detection Settings').param('Measurement Location').param('Start').setValue(data.startColor)
-        self.ParamTree.param('Detection Settings').param('Measurement Location').param('Quartile25').setValue(data.quart1Color)
-        self.ParamTree.param('Detection Settings').param('Measurement Location').param('Quartile75').setValue(data.quart2Color)
+        self.ParamTree.param(u'Oscillogram Settings').param(u'Grid').param(u'X').setValue(theme.osc_GridX)
+        self.ParamTree.param(u'Oscillogram Settings').param(u'Grid').param(u'Y').setValue(theme.osc_GridY)
+        self.ParamTree.param(u'Spectrogram Settings').param(u'Grid').param(u'X').setValue(theme.spec_GridX)
+        self.ParamTree.param(u'Spectrogram Settings').param(u'Grid').param(u'Y').setValue(theme.spec_GridY)
+        self.ParamTree.param(u'Oscillogram Settings').param(u'Background color').setValue(theme.osc_background)
+        self.ParamTree.param(u'Oscillogram Settings').param(u'Plot color').setValue(theme.osc_plot)
+        self.ParamTree.param(u'Spectrogram Settings').param(u'Background color').setValue(theme.spec_background)
+        self.ParamTree.param(u'Spectrogram Settings').param(u'Threshold(dB)').param(u'Min').setValue(theme.histRange[0])
+        self.ParamTree.param(u'Spectrogram Settings').param(u'Threshold(dB)').param(u'Max').setValue(theme.histRange[1])
+        self.ParamTree.param(u'Power Spectrum Settings').param(u'Grid').param(u'X').setValue(self.pow_spec_gridx)
+        self.ParamTree.param(u'Power Spectrum Settings').param(u'Grid').param(u'Y').setValue(self.pow_spec_gridy)
+        self.ParamTree.param(u'Power Spectrum Settings').param(u'Background color').setValue(theme.pow_Back)
+        self.ParamTree.param(u'Power Spectrum Settings').param(u'Plot color').setValue(self.pow_spec_plotColor)
+        self.ParamTree.param(u'Detection Settings').param(u'Measurement Location').param(u'Center').setValue(theme.centerColor)
+        self.ParamTree.param(u'Detection Settings').param(u'Measurement Location').param(u'Start').setValue(theme.startColor)
+        self.ParamTree.param(u'Detection Settings').param(u'Measurement Location').param(u'Quartile25').setValue(theme.quart1Color)
+        self.ParamTree.param(u'Detection Settings').param(u'Measurement Location').param(u'Quartile75').setValue(theme.quart2Color)
+        self.defaultTheme = theme
 
     @pyqtSlot()
     def on_actionLoad_Theme_triggered(self):
-        filename = QFileDialog.getOpenFileName(parent=self,directory = os.path.join("Utils","Themes"), caption="Load Theme",filter="Duetto Theme Files (*.dth);;All Files (*)")
+        filename = QFileDialog.getOpenFileName(parent=self,directory = os.path.join(u"Utils",u"Themes"), caption=u"Load Theme",filter=u"Duetto Theme Files (*.dth);;All Files (*)")
         data = self.DeSerializeTheme(filename)
         self.updateMyTheme(data)
 
@@ -420,14 +411,17 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         path = mimeUrl[1:len(mimeUrl)]
         path_base = os.path.split(path)[0]
         self.filesInFolder = self.folderFiles(path_base)
-        self.filesInFolderIndex = self.filesInFolder.index(path)
+
+        try:
+            self.filesInFolderIndex = self.filesInFolder.index(path)
+        except:
+            self.filesInFolderIndex = 0 if len(self.filesInFolder)>0 else -1
+
         self._open(path)
         event.acceptProposedAction()
 
     def dragLeaveEvent(self, event):
         event.accept()
-
-
     #endregion
 
     def change(self, param, changes):
@@ -441,117 +435,114 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             else:
                 childName = param.name()
 
-            if childName == 'Spectrogram Settings.FFT size':
+            if childName ==u'Spectrogram Settings.FFT size':
                 self.widget.specgramSettings.NFFT = data
                 self.widget.refresh(dataChanged=True, updateOscillogram=False, updateSpectrogram=True)
 
-            elif childName == 'Spectrogram Settings.Grid.X':
-                self.widget.spec_gridx = data
-                self.widget.refresh(dataChanged=True, updateOscillogram=False, updateSpectrogram=False)
+            elif childName == u'Spectrogram Settings.Grid.X':
+                self.defaultTheme.spec_GridX = data
 
-            elif childName == 'Spectrogram Settings.Grid.Y':
-                self.widget.spec_gridy = data
-                self.widget.refresh(dataChanged=True, updateOscillogram=False, updateSpectrogram=False)
+            elif childName == u'Spectrogram Settings.Grid.Y':
+                self.defaultTheme.spec_GridY = data
 
-            elif childName == 'Spectrogram Settings.Threshold(dB).Min':
+            elif childName ==u'Spectrogram Settings.Threshold(dB).Min':
                 if self.hist.item.region.getRegion()[0] != data:
-                    if data > self.ParamTree.param('Spectrogram Settings').param('Threshold(dB)').param('Max').value():
-                        self.ParamTree.param('Spectrogram Settings').param('Threshold(dB)').param('Min').setToDefault()
-                        self.ParamTree.param('Spectrogram Settings').param('Threshold(dB)').param('Min').show()
+                    if data > self.ParamTree.param(u'Spectrogram Settings').param(u'Threshold(dB)').param(u'Max').value():
+                        self.ParamTree.param(u'Spectrogram Settings').param(u'Threshold(dB)').param(u'Min').setToDefault()
+                        self.ParamTree.param(u'Spectrogram Settings').param(u'Threshold(dB)').param(u'Min').show()
                         return
                     self.hist.item.region.setRegion([data,self.hist.item.region.getRegion()[1]])
                     self.hist.item.region.lineMoved()
                     self.hist.item.region.lineMoveFinished()
 
-            elif childName == 'Spectrogram Settings.Threshold(db%).Max':
+            elif childName == u'Spectrogram Settings.Threshold(db%).Max':
                 if self.hist.item.region.getRegion()[1] != data:
-                    if data < self.ParamTree.param('Spectrogram Settings').param('Threshold(dB)').param('Min').value():
-                        self.ParamTree.param('Spectrogram Settings').param('Threshold(dB)').param('Max').setToDefault()
-                        self.ParamTree.param('Spectrogram Settings').param('Threshold(dB)').param('Max').setValue()
+                    if data < self.ParamTree.param(u'Spectrogram Settings').param(u'Threshold(dB)').param(u'Min').value():
+                        self.ParamTree.param(u'Spectrogram Settings').param(u'Threshold(dB)').param(u'Max').setToDefault()
+                        self.ParamTree.param(u'Spectrogram Settings').param(u'Threshold(dB)').param(u'Max').setValue()
                         return
                     self.hist.item.region.setRegion([self.hist.item.region.getRegion()[0],data])
                     self.hist.item.region.lineMoved()
                     self.hist.item.region.lineMoveFinished()
 
-            elif childName == 'Spectrogram Settings.FFT window':
+            elif childName == u'Spectrogram Settings.FFT window':
                 self.widget.specgramSettings.window = data
                 self.widget.refresh(dataChanged=True, updateOscillogram=False, updateSpectrogram=True)
 
-            elif childName == 'Spectrogram Settings.Background color':
-                self.widget.spec_background = data
-                self.widget.refresh(dataChanged=False,updateOscillogram=False,updateSpectrogram=True)
+            elif childName == u'Spectrogram Settings.Background color':
+                self.defaultTheme.spec_background = data
 
-            elif childName == 'Spectrogram Settings.ColorMap':
+            elif childName == u'Spectrogram Settings.ColorMap':
                 self.widget.axesSpecgram.getHistogramWidget().item._pixelVectorCache.append(data)
 
-            elif childName == 'Spectrogram Settings.Frequency(kHz).Min':
+            elif childName ==u'Spectrogram Settings.Frequency(kHz).Min':
                 self.widget.minYSpc = data
                 self.widget.refresh(dataChanged=True, updateOscillogram=False, updateSpectrogram=True)
 
-            elif childName == 'Spectrogram Settings.Frequency(kHz).Max':
+            elif childName == u'Spectrogram Settings.Frequency(kHz).Max':
                 self.widget.maxYSpc = data
                 self.widget.refresh(dataChanged=True, updateOscillogram=False, updateSpectrogram=True)
 
-            elif childName == 'Spectrogram Settings.FFT overlap':
+            elif childName == u'Spectrogram Settings.FFT overlap':
                 self.widget.specgramSettings.overlap = data
                 self.widget.refresh(dataChanged=True, updateOscillogram=False, updateSpectrogram=True)
 
-            elif childName == 'Power Spectrum Settings.FFT size':
+            elif childName == u'Power Spectrum Settings.FFT size':
                 self.NFFT_pow = data
 
-            elif childName == 'Power Spectrum Settings.FFT window':
+            elif childName == u'Power Spectrum Settings.FFT window':
                 self.window_pow = data
-            elif childName == 'Power Spectrum Settings.FFT overlap':
+            elif childName == u'Power Spectrum Settings.FFT overlap':
                 self.pow_overlap = data
 
-            elif childName == 'Power Spectrum Settings.Background color':
+            elif childName == u'Power Spectrum Settings.Background color':
                 self.pow_spec_backg = data
 
-            elif childName == 'Power Spectrum Settings.Plot color':
+            elif childName == u'Power Spectrum Settings.Plot color':
                 self.pow_spec_plotColor = data
 
-            elif childName == 'Power Spectrum Settings.Grid.X':
+            elif childName == u'Power Spectrum Settings.Grid.X':
                 self.pow_spec_gridx = data
 
-            elif childName == 'Power Spectrum Settings.Grid.Y':
+            elif childName == u'Power Spectrum Settings.Grid.Y':
                 self.pow_spec_gridy = data
 
-            elif childName == 'Oscillogram Settings.Background color':
-                self.widget.osc_background = data
-                self.widget.refresh(dataChanged=False, updateOscillogram=True, updateSpectrogram=False)
-            elif childName == 'Oscillogram Settings.Grid.X':
-                self.widget.osc_gridx = data
-                self.widget.refresh(dataChanged=True, updateOscillogram=False, updateSpectrogram=False)
-            elif childName == 'Oscillogram Settings.Grid.Y':
-                self.widget.osc_gridy = data
-                self.widget.refresh(dataChanged=True, updateOscillogram=False, updateSpectrogram=False)
-            elif childName == 'Oscillogram Settings.Plot color':
+            elif childName == u'Oscillogram Settings.Background color':
+                self.defaultTheme.osc_background = data
+
+            elif childName == u'Oscillogram Settings.Grid.X':
+                self.defaultTheme.osc_GridX = data
+
+            elif childName == u'Oscillogram Settings.Grid.Y':
+                self.defaultTheme.osc_GridY = data
+
+            elif childName == u'Oscillogram Settings.Plot color':
+                self.defaultTheme.osc_plot = data
                 self.widget.osc_color = data
                 self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
-            elif childName == 'Oscillogram Settings.Amplitude(%).Min':
+
+            elif childName == u'Oscillogram Settings.Amplitude(%).Min':
                 self.widget.minYOsc = data
                 self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
-            elif childName == 'Oscillogram Settings.Amplitude(%).Max':
+            elif childName == u'Oscillogram Settings.Amplitude(%).Max':
                 self.widget.maxYOsc = data
                 self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
-            elif childName == 'Oscillogram Settings.Connect Lines':
-                self.widget.lines = data
-                self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
-            elif childName == 'Oscillogram Settings.Connect Lines':
-                self.pow_spec_lines = data
+            elif childName == u'Oscillogram Settings.Connect Lines':
                 self.widget.lines = data
                 self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
 
-            elif childName == 'Themes.Theme Selected':
-                p = os.path.join(os.path.join("Utils","Themes"),data)
-                theme = self.DeSerializeTheme(p)
-                self.updateMyTheme(theme)
-            elif childName == 'Power Spectrum Settings.YBounds.MaxY':
+            elif childName ==u'Themes.Theme Selected':
+                p = os.path.join(os.path.join(u"Utils",u"Themes"),data)
+                self.updateMyTheme(self.DeSerializeTheme(p))
+
+            elif childName == u'Power Spectrum Settings.YBounds.MaxY':
                 self.pow_spec_maxY = data
-            elif childName == 'Power Spectrum Settings.YBounds.MinY':
+            elif childName == u'Power Spectrum Settings.YBounds.MinY':
                 self.pow_spec_minY = data
-            elif childName == 'Power Spectrum Settings.Connect Lines':
+            elif childName == u'Power Spectrum Settings.Connect Lines':
                 self.pow_spec_lines = data
+
+            self.widget.load_Theme(self.defaultTheme)
             #print('  parameter: %s' % childName)
             #print('  change:    %s' % change)
             #print('  data:      %s' % str(data))
@@ -559,11 +550,11 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     @pyqtSlot()
     def on_actionSegmentation_And_Clasification_triggered(self):
-        center = self.ParamTree.param('Detection Settings').param('Measurement Location').param('Center').value()
-        start = self.ParamTree.param('Detection Settings').param('Measurement Location').param('Start').value()
-        quart1 = self.ParamTree.param('Detection Settings').param('Measurement Location').param('Quartile25').value()
-        quart2 = self.ParamTree.param('Detection Settings').param('Measurement Location').param('Quartile75').value()
-        end = self.ParamTree.param('Detection Settings').param('Measurement Location').param('End').value()
+        center = self.ParamTree.param(u'Detection Settings').param(u'Measurement Location').param(u'Center').value()
+        start = self.ParamTree.param(u'Detection Settings').param(u'Measurement Location').param(u'Start').value()
+        quart1 = self.ParamTree.param(u'Detection Settings').param(u'Measurement Location').param(u'Quartile25').value()
+        quart2 = self.ParamTree.param(u'Detection Settings').param(u'Measurement Location').param(u'Quartile75').value()
+        end = self.ParamTree.param(u'Detection Settings').param(u'Measurement Location').param(u'End').value()
         f,t = self.widget.getIndexFromAndTo()
         signal = WavFileSignal(samplingRate=self.widget.signalProcessor.signal.samplingRate,bitDepth=self.widget.signalProcessor.signal.bitDepth,whiteNoise=False)
         signal.name = self.widget.signalProcessor.signal.name
@@ -572,10 +563,10 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         segWindow = SegmentationAndClasificationWindow(parent=self, signal=signal)
         if not segWindow.rejectSignal:
-            segWindow.widget.maxYOsc =  self.ParamTree.param('Oscillogram Settings').param('Amplitude(%)').param('Max').value()
-            segWindow.widget.minYOsc = self.ParamTree.param('Oscillogram Settings').param('Amplitude(%)').param('Min').value()
-            segWindow.widget.minYSpc = self.ParamTree.param('Spectrogram Settings').param('Frequency(kHz)').param('Min').value()
-            segWindow.widget.maxYSpc = self.ParamTree.param('Spectrogram Settings').param('Frequency(kHz)').param('Max').value()
+            segWindow.widget.maxYOsc =  self.ParamTree.param(u'Oscillogram Settings').param(u'Amplitude(%)').param(u'Max').value()
+            segWindow.widget.minYOsc = self.ParamTree.param(u'Oscillogram Settings').param(u'Amplitude(%)').param(u'Min').value()
+            segWindow.widget.minYSpc = self.ParamTree.param(u'Spectrogram Settings').param(u'Frequency(kHz)').param(u'Min').value()
+            segWindow.widget.maxYSpc = self.ParamTree.param(u'Spectrogram Settings').param(u'Frequency(kHz)').param(u'Max').value()
 
             segWindow.load_Theme(SerializedData(self.widget.osc_background,self.widget.osc_color,self.widget.osc_gridx,
                                   self.widget.osc_gridy, self.pow_spec_backg,self.pow_spec_plotColor,self.pow_spec_gridx,
@@ -630,7 +621,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         resamplingDialog = sdialog.Ui_Dialog()
         resamplingDialogWindow = InsertSilenceDialog(self)
         resamplingDialog.setupUi(resamplingDialogWindow)
-        resamplingDialog.label.setText("Select the new Sampling Rate.")
+        resamplingDialog.label.setText(u"Select the new Sampling Rate.")
         resamplingDialog.insertSpinBox.setValue(self.widget.signalProcessor.signal.samplingRate)
         if resamplingDialogWindow.exec_():
             val = resamplingDialog.insertSpinBox.value()
@@ -639,11 +630,11 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 self.widget.resampling(val)
             else:
                 if val < MIN_SAMPLING_RATE:
-                    QMessageBox.warning(QMessageBox(), "Error",
-                                        "Sampling rate should be greater than " + str(MIN_SAMPLING_RATE))
+                    QMessageBox.warning(QMessageBox(), u"Error",
+                                       u"Sampling rate should be greater than " + str(MIN_SAMPLING_RATE))
                 elif val > MAX_SAMPLING_RATE:
-                    QMessageBox.warning(QMessageBox(), "Error",
-                                        "Sampling rate should be less than " + str(MAX_SAMPLING_RATE))
+                    QMessageBox.warning(QMessageBox(), u"Error",
+                                        u"Sampling rate should be less than " + str(MAX_SAMPLING_RATE))
 
     @pyqtSlot()
     def on_actionCut_triggered(self):
@@ -699,16 +690,16 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         scaleDialogWindow = ChangeVolumeDialog(self)
         scaleDialog.setupUi(scaleDialogWindow)
         if scaleDialogWindow.exec_():
-            fade = ""
+            fade = u""
             factor = scaleDialog.spinboxConstValue.value()
             if scaleDialog.rbuttonConst.isChecked():
-                function = "const"
+                function = u"const"
             elif scaleDialog.rbuttonNormalize.isChecked():
-                function = "normalize"
+                function = u"normalize"
                 factor = scaleDialog.spinboxNormalizePercent.value()
             else:
                 function = scaleDialog.cboxModulationType.currentText()
-                fade = "IN" if scaleDialog.rbuttonFadeIn.isChecked() else ("OUT" if scaleDialog.rbuttonFadeOut.isChecked() else "")
+                fade = u"IN" if scaleDialog.rbuttonFadeIn.isChecked() else (u"OUT" if scaleDialog.rbuttonFadeOut.isChecked() else "")
                 if fade == "":
                     return
             start,end = self.widget.getIndexFromAndTo()
@@ -731,7 +722,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         whiteNoiseDialog = sdialog.Ui_Dialog()
         whiteNoiseDialogWindow = InsertSilenceDialog(self)
         whiteNoiseDialog.setupUi(whiteNoiseDialogWindow)
-        whiteNoiseDialog.label.setText("Select the duration in ms \n of the Pink Noise.")
+        whiteNoiseDialog.label.setText(u"Select the duration in ms \n of the Pink Noise.")
         whiteNoiseDialog.insertSpinBox.setValue(1000)
         if whiteNoiseDialogWindow.exec_():
             type_, Fc, Fl, Fu = self.filter_helper()
@@ -746,7 +737,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         whiteNoiseDialog = sdialog.Ui_Dialog()
         whiteNoiseDialogWindow = InsertSilenceDialog(self)
         whiteNoiseDialog.setupUi(whiteNoiseDialogWindow)
-        whiteNoiseDialog.label.setText("Select the duration in ms \n of the white noise.")
+        whiteNoiseDialog.label.setText(u"Select the duration in ms \n of the white noise.")
         whiteNoiseDialog.insertSpinBox.setValue(1000)
         if whiteNoiseDialogWindow.exec_():
             ms = whiteNoiseDialog.insertSpinBox.value()
@@ -867,24 +858,21 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.close()
 
     def _save(self,event = None):
-        mbox = QtGui.QMessageBox(QtGui.QMessageBox.Question,"Save","Do you want to save the signal?",QtGui.QMessageBox.Yes | QtGui.QMessageBox.No|QtGui.QMessageBox.Cancel,self)
+        mbox = QtGui.QMessageBox(QtGui.QMessageBox.Question,u"Save",u"Do you want to save the signal?",QtGui.QMessageBox.Yes | QtGui.QMessageBox.No|QtGui.QMessageBox.Cancel,self)
         result = mbox.exec_()
         if self.widget.undoRedoManager.count() > 0 and  result == QtGui.QMessageBox.Yes:
             self.on_actionSave_triggered()
         elif result == QtGui.QMessageBox.Cancel and event is not None:
             event.ignore()
 
-
-
-
     @pyqtSlot()
     def on_actionNew_triggered(self):
         nfd = NewFileDialog(parent=self)
         if nfd.exec_():
-            self.widget.specgramSettings.NFFT = self.ParamTree.param('Spectrogram Settings').param('FFT size').value()
-            self.widget.specgramSettings.overlap = self.ParamTree.param('Spectrogram Settings').param('FFT overlap').value()
+            self.widget.specgramSettings.NFFT = self.ParamTree.param(u'Spectrogram Settings').param(u'FFT size').value()
+            self.widget.specgramSettings.overlap = self.ParamTree.param(u'Spectrogram Settings').param(u'FFT overlap').value()
             self.widget.openNew(nfd.SamplingRate, nfd.BitDepth, nfd.Duration, nfd.WhiteNoise)
-            self.setWindowTitle("Duetto Sound Lab - " + self.widget.signalProcessor.signal.name)
+            self.setWindowTitle(u"Duetto Sound Lab - " + self.widget.signalProcessor.signal.name)
             self.actionSignalName.setText(u"File Name: "+self.widget.signalProcessor.signal.name)
 
             self.actionCombined.setEnabled(True)
@@ -892,9 +880,9 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     @pyqtSlot()
     def on_actionOpen_triggered(self):
-        f = QFileDialog.getOpenFileName(self, "Select a file to open",directory = self.lastopen,
-                                              filter="Wave Files (*.wav);;All Files (*)")
-        self._open(f)
+        f = QFileDialog.getOpenFileName(self, u"Select a file to open",directory = self.lastopen,
+                                              filter=u"Wave Files (*.wav);;All Files (*)")
+        self._open(unicode(f))
 
     @pyqtSlot()
     def on_actionClose_triggered(self):
@@ -905,32 +893,34 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         self.actionCombined.setEnabled(True)
         self.actionSpectogram.setEnabled(True)
-        if f != '':
+        if f != u'':
             try:
                 self.lastopen = f
-                self.widget.specgramSettings.NFFT = self.ParamTree.param('Spectrogram Settings').param('FFT size').value()
-                self.widget.specgramSettings.overlap = self.ParamTree.param('Spectrogram Settings').param('FFT overlap').value()
-                path_base = os.path.split(unicode(f))[0]
+                self.widget.specgramSettings.NFFT = self.ParamTree.param(u'Spectrogram Settings').param(u'FFT size').value()
+                self.widget.specgramSettings.overlap = self.ParamTree.param(u'Spectrogram Settings').param(u'FFT overlap').value()
+                path_base = os.path.split(f)[0]
                 self.filesInFolder = self.folderFiles(path_base)
-                self.filesInFolderIndex = self.filesInFolder.index(unicode(f))
-                self.widget.visibleSpectrogram = True # for restore the state lose in load
 
+                try:
+                    self.filesInFolderIndex = self.filesInFolder.index(f)
+                except:
+                    self.filesInFolderIndex = 0 if len(self.filesInFolder) > 0 else -1
+
+                self.widget.visibleSpectrogram = True # for restore the state lose in load
                 self.widget.open(f)
-                self.setWindowTitle("Duetto Sound Lab - " + self.widget.signalProcessor.signal.name)
+                self.setWindowTitle(u"Duetto Sound Lab - " + self.widget.signalProcessor.signal.name)
                 self.actionSignalName.setText(u"File Name: "+self.widget.signalProcessor.signal.name)
             except:
-                QMessageBox.warning(QMessageBox(), "Error", "Could not load the file.\n"+f)
+                QMessageBox.warning(QMessageBox(),u"Error", u"Could not load the file.\n"+f)
                 self.widget.openNew(44100,16,1)
 
 
 
             valuemin = self.widget.minYSpc
             valuemax = self.widget.maxYSpc
-            #print((valuemax,valuemin))
-            self.ParamTree.param('Spectrogram Settings').param('Frequency(kHz)').param('Min').setValue(valuemin)
-            self.ParamTree.param('Spectrogram Settings').param('Frequency(kHz)').param('Min').setDefault(valuemin)
-            self.ParamTree.param('Spectrogram Settings').param('Frequency(kHz)').param('Max').setValue(valuemax)
-            self.ParamTree.param('Spectrogram Settings').param('Frequency(kHz)').param('Max').setDefault(valuemax)
+
+            self.ParamTree.param(u'Spectrogram Settings').param(u'Frequency(kHz)').param(u'Min').setValue(valuemin)
+            self.ParamTree.param(u'Spectrogram Settings').param(u'Frequency(kHz)').param(u'Max').setDefault(valuemax)
             self.actionPointer_Cursor.setChecked(False)
             self.actionRectangular_Cursor.setChecked(False)
             self.actionZoom_Cursor.setChecked(True)
@@ -954,13 +944,13 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     @pyqtSlot()
     def on_actionSave_triggered(self):
-        fname = unicode(QFileDialog.getSaveFileName(self,"Save signal",self.widget.signalProcessor.signal.name,"*.wav"))
+        fname = unicode(QFileDialog.getSaveFileName(self,u"Save signal",self.widget.signalProcessor.signal.name,u"*.wav"))
         if fname:
             self.widget.save(fname)
 
     @pyqtSlot()
     def on_actionSave_selected_interval_as_triggered(self):
-        fname = unicode(QFileDialog.getSaveFileName(self,"Save signal","Selection-"+self.widget.signalProcessor.signal.name,"*.wav"))
+        fname = unicode(QFileDialog.getSaveFileName(self,u"Save signal",u"Selection-"+self.widget.signalProcessor.signal.name,u"*.wav"))
         if fname:
             self.widget.saveSelected(fname)
 
@@ -1018,16 +1008,16 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     @pyqtSlot()
     def on_actionOsc_Image_triggered(self):
         if self.widget.visibleOscilogram:
-            self.saveImage(self.widget.axesOscilogram,"oscilogram")
+            self.saveImage(self.widget.axesOscilogram,u"oscilogram")
         else:
-            QtGui.QMessageBox.warning(QtGui.QMessageBox(), "Error", "The Oscilogram plot widget is not visible.\n You should see the data that you are going to save.")
+            QtGui.QMessageBox.warning(QtGui.QMessageBox(), u"Error", u"The Oscilogram plot widget is not visible.\n You should see the data that you are going to save.")
 
     @pyqtSlot()
     def on_actionCombined_Image_triggered(self):
         if self.widget.visibleOscilogram and self.widget.visibleSpectrogram:
             self.saveImage(self.widget,"graph")
         else:
-            QtGui.QMessageBox.warning(QtGui.QMessageBox(), "Error", "One of the plot widgets is not visible.\n You should see the data that you are going to save.")
+            QtGui.QMessageBox.warning(QtGui.QMessageBox(), u"Error", u"One of the plot widgets is not visible.\n You should see the data that you are going to save.")
 
     @pyqtSlot()
     def on_actionFull_Screen_triggered(self):
@@ -1039,31 +1029,31 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     @pyqtSlot()
     def on_actionSpecgram_Image_triggered(self):
         if self.widget.visibleSpectrogram:
-            self.saveImage(self.widget.axesSpecgram,"specgram")
+            self.saveImage(self.widget.axesSpecgram,u"specgram")
         else:
-            QtGui.QMessageBox.warning(QtGui.QMessageBox(), "Error", "The Espectrogram plot widget is not visible.\n You should see the data that you are going to save.")
+            QtGui.QMessageBox.warning(QtGui.QMessageBox(), u"Error",u"The Espectrogram plot widget is not visible.\n You should see the data that you are going to save.")
 
     def saveImage(self,widget,text=""):
-        fname = unicode(QFileDialog.getSaveFileName(self,"Save "+ text +" as an Image ",str(self.widget.signalProcessor.signal.name)+"-"+text+"-Duetto-Image","*.jpg"))
+        fname = unicode(QFileDialog.getSaveFileName(self,u"Save "+ text +u" as an Image ",str(self.widget.signalProcessor.signal.name)+u"-"+text+u"-Duetto-Image",u"*.jpg"))
         if fname:
             #save as image
             image = QtGui.QPixmap.grabWindow(widget.winId())
-            image.save(fname, 'jpg')
+            image.save(fname,u'jpg')
 
     @pyqtSlot()
     def on_actionSaveColorBar_triggered(self):
         state = self.widget.axesSpecgram.getHistogramWidget().item.gradient.saveState()
-        path = QtGui.QFileDialog.getSaveFileName(self, "Save Color Bar", filter="Bar Files (*.bar);;All Files (*)")
-        if path != "":
+        path = QtGui.QFileDialog.getSaveFileName(self, u"Save Color Bar", filter=u"Bar Files (*.bar);;All Files (*)")
+        if path != u"":
             fh = open(path, 'w')
             fh.write(state.__repr__())
             fh.close()
 
     @pyqtSlot()
     def on_actionLoadColorBar_triggered(self):
-        path = QtGui.QFileDialog.getOpenFileName(self, "Load Color Bar", filter="Bar Files (*.bar);;All Files (*)")
+        path = QtGui.QFileDialog.getOpenFileName(self, u"Load Color Bar", filter=u"Bar Files (*.bar);;All Files (*)")
         if path != "":
-            fh = open(path, 'r')
+            fh = open(path, u'r')
             state = eval(fh.readline())
             self.widget.axesSpecgram.getHistogramWidget().item.gradient.restoreState(state)
 
@@ -1086,11 +1076,5 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     @pyqtSlot(QAction)
     def on_g_triggered(self, action):
         self.widget.stop()
-        self.widget.playerSpeed = {'1/8x': 12.5, '1/4x': 25, '1/2x': 50,
-                                   '1x': 100, '2x': 200, '4x': 400, '8x': 800}[str(action.text())]
-
-    def loadAllColorBars(self):
-        if os.path.exists(self.colorBarsPath):
-            for i in os.listdir(self.colorBarsPath):
-                if os.path.isfile(self.colorBarsPath+'\\'+ i):
-                    print(i)
+        self.widget.playerSpeed = {u'1/8x': 12.5, u'1/4x': 25, u'1/2x': 50,
+                                   u'1x': 100, u'2x': 200, u'4x': 400, u'8x': 800}[str(action.text())]
