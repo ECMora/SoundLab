@@ -52,8 +52,6 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         self.widget.computeSpecgramSettings()
 
-
-
         self.widget.visibleOscilogram = True
         self.widget.visibleSpectrogram = True
 
@@ -117,8 +115,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                                          self.actionZoom_Cursor,self.actionPointer_Cursor,self.actionRectangular_Cursor,self.actionRectangular_Eraser,
                                          separator3,self.actionOsgram_Image,self.actionSpecgram_Image,self.actionCombined_Image])
         self.windowProgressDetection = QtGui.QProgressBar(self.widget)
-        self.actionSignalName.setText(self.widget.signalProcessor.signal.name)
-
+        self.actionSignalName.setText(self.widget.signalName())
         self.widget.histogram.setImageItem(self.widget.axesSpecgram.imageItem)
 
 
@@ -317,7 +314,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
             QtGui.QMessageBox.warning(QtGui.QMessageBox(), "Error", "The Espectrogram plot widget is not visible.\n You should see the data that you are going to save.")
 
     def saveImage(self,widget,text=""):
-        fname = unicode(QFileDialog.getSaveFileName(self,"Save "+ text +" as an Image ",str(self.widget.signalProcessor.signal.name)+"-"+text+"-Duetto-Image","*.jpg"))
+        fname = unicode(QFileDialog.getSaveFileName(self,"Save "+ text +" as an Image ",str(self.widget.signalName())+"-"+text+"-Duetto-Image","*.jpg"))
         if fname:
             #save as image
             image = QtGui.QPixmap.grabWindow(widget.winId())
@@ -330,7 +327,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         else:
             if not self.widget.signalProcessor.signal.opened():
                 return
-            fname = unicode(QFileDialog.getSaveFileName(self,"Save meditions as excel file",self.widget.signalProcessor.signal.name+".xls","*.xls"))
+            fname = unicode(QFileDialog.getSaveFileName(self,"Save meditions as excel file",self.widget.signalName()+".xls","*.xls"))
         if fname:
             wb = xlwt.Workbook()
             a =  "Elements Meditions"
@@ -670,9 +667,9 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
             result = mbox.exec_()
             if result == QtGui.QMessageBox.Yes:
                 wb = xlwt.Workbook()
-                ws = wb.add_sheet(self.widget.signalProcessor.signal.name)
+                ws = wb.add_sheet(self.widget.signalName())
                 self.writedata(ws, self.tableParameterOscilogram)
-                fname = unicode(QFileDialog.getSaveFileName(self,"Save meditions as excel file",self.widget.signalProcessor.signal.name+".xls","*.xls"))
+                fname = unicode(QFileDialog.getSaveFileName(self,"Save meditions as excel file",self.widget.signalName()+".xls","*.xls"))
                 if fname:
                     wb.save(fname)
             elif result == QtGui.QMessageBox.Cancel:

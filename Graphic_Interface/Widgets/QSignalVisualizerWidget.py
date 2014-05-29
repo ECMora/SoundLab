@@ -134,7 +134,8 @@ class QSignalVisualizerWidget(QWidget):
         this method implements the  way in wich the controls load the theme
         all changes made by the theme are made in this place
         """
-        assert isinstance(theme,SerializedData)
+
+        #assert isinstance(theme,SerializedData)
 
         self.axesOscilogram.load_Theme(theme)
         self.axesSpecgram.load_Theme(theme)
@@ -152,6 +153,8 @@ class QSignalVisualizerWidget(QWidget):
         if updOsc or updSpec or dataChange:
             self.refresh(dataChange= dataChange,updateSpectrogram=updSpec,updateOscillogram=updOsc)
 
+    def signalName(self):
+        return "" if self.signalProcessor.signal is None else self.signalProcessor.signal.name
 
     def createContextCursor(self, actions):
         self.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)

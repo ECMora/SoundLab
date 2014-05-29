@@ -111,11 +111,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         self.widget.osc_color = self.defaultTheme.osc_plot
 
-        self.pow_spec_backg = self.defaultTheme.pow_Back
-
-        self.pow_spec_plotColor = self.defaultTheme.pow_Plot
-        self.pow_spec_gridx = self.defaultTheme.pow_GridX
-        self.pow_spec_gridy = self.defaultTheme.pow_GridY
         self.pow_spec_lines = True
 
         self.pow_spec_maxY = 5
@@ -305,7 +300,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.actionSpectogram.setEnabled(False)
         if os.path.exists(p):
             self.widget.open(p)
-            self.actionSignalName.setText(u"File Name: "+ self.widget.signalProcessor.signal.name)
+            self.actionSignalName.setText(u"File Name: "+ self.widget.signalName())
         else:
             self.widget.openNew(44100, 16, 5., whiteNoise=False)
             self.actionSignalName.setText(u"File Name: Welcome to duetto")
@@ -334,7 +329,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             file.close()
 
     def DeSerializeTheme(self,filename):
-        if filename:
+        if filename and os.path.exists(filename):
             file = open(filename,'rb')
             data = pickle.load(file)
             file.close()
@@ -356,17 +351,14 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         assert isinstance(theme, SerializedData)
         self.widget.osc_color = theme.osc_plot
+        self.defaultTheme = theme
         self.widget.load_Theme(theme)
-
-        self.pow_spec_backg = theme.pow_Back
-        self.pow_spec_plotColor = theme.pow_Plot
-        self.pow_spec_gridx = theme.pow_GridX
-        self.pow_spec_gridy = theme.pow_GridY
         self.hist.item.gradient.restoreState(theme.colorBarState)
         self.hist.item.region.setRegion(theme.histRange)
 
         self.hist.item.region.lineMoved()
         self.hist.item.region.lineMoveFinished()
+
         self.ParamTree.param(u'Oscillogram Settings').param(u'Grid').param(u'X').setValue(theme.osc_GridX)
         self.ParamTree.param(u'Oscillogram Settings').param(u'Grid').param(u'Y').setValue(theme.osc_GridY)
         self.ParamTree.param(u'Spectrogram Settings').param(u'Grid').param(u'X').setValue(theme.spec_GridX)
@@ -376,15 +368,14 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.ParamTree.param(u'Spectrogram Settings').param(u'Background color').setValue(theme.spec_background)
         self.ParamTree.param(u'Spectrogram Settings').param(u'Threshold(dB)').param(u'Min').setValue(theme.histRange[0])
         self.ParamTree.param(u'Spectrogram Settings').param(u'Threshold(dB)').param(u'Max').setValue(theme.histRange[1])
-        self.ParamTree.param(u'Power Spectrum Settings').param(u'Grid').param(u'X').setValue(self.pow_spec_gridx)
-        self.ParamTree.param(u'Power Spectrum Settings').param(u'Grid').param(u'Y').setValue(self.pow_spec_gridy)
+        self.ParamTree.param(u'Power Spectrum Settings').param(u'Grid').param(u'X').setValue(self.defaultTheme.pow_GridX)
+        self.ParamTree.param(u'Power Spectrum Settings').param(u'Grid').param(u'Y').setValue(self.defaultTheme.pow_GridY)
         self.ParamTree.param(u'Power Spectrum Settings').param(u'Background color').setValue(theme.pow_Back)
-        self.ParamTree.param(u'Power Spectrum Settings').param(u'Plot color').setValue(self.pow_spec_plotColor)
+        self.ParamTree.param(u'Power Spectrum Settings').param(u'Plot color').setValue(self.defaultTheme.pow_Plot)
         self.ParamTree.param(u'Detection Settings').param(u'Measurement Location').param(u'Center').setValue(theme.centerColor)
         self.ParamTree.param(u'Detection Settings').param(u'Measurement Location').param(u'Start').setValue(theme.startColor)
         self.ParamTree.param(u'Detection Settings').param(u'Measurement Location').param(u'Quartile25').setValue(theme.quart1Color)
         self.ParamTree.param(u'Detection Settings').param(u'Measurement Location').param(u'Quartile75').setValue(theme.quart2Color)
-        self.defaultTheme = theme
 
     @pyqtSlot()
     def on_actionLoad_Theme_triggered(self):
@@ -496,16 +487,16 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 self.pow_overlap = data
 
             elif childName == u'Power Spectrum Settings.Background color':
-                self.pow_spec_backg = data
+                self.defaultTheme.pow_Back = data
 
             elif childName == u'Power Spectrum Settings.Plot color':
-                self.pow_spec_plotColor = data
+                self.defaultTheme.pow_Plot = data
 
             elif childName == u'Power Spectrum Settings.Grid.X':
-                self.pow_spec_gridx = data
+                self.defaultTheme.pow_GridX = data
 
             elif childName == u'Power Spectrum Settings.Grid.Y':
-                self.pow_spec_gridy = data
+                self.defaultTheme.pow_GridY = data
 
             elif childName == u'Oscillogram Settings.Background color':
                 self.defaultTheme.osc_background = data
@@ -557,7 +548,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         end = self.ParamTree.param(u'Detection Settings').param(u'Measurement Location').param(u'End').value()
         f,t = self.widget.getIndexFromAndTo()
         signal = WavFileSignal(samplingRate=self.widget.signalProcessor.signal.samplingRate,bitDepth=self.widget.signalProcessor.signal.bitDepth,whiteNoise=False)
-        signal.name = self.widget.signalProcessor.signal.name
+        signal.name = self.widget.signalName()
         if t > f:
             signal.data = self.widget.signalProcessor.signal.data[f:t]
 
@@ -568,10 +559,8 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             segWindow.widget.minYSpc = self.ParamTree.param(u'Spectrogram Settings').param(u'Frequency(kHz)').param(u'Min').value()
             segWindow.widget.maxYSpc = self.ParamTree.param(u'Spectrogram Settings').param(u'Frequency(kHz)').param(u'Max').value()
 
-            segWindow.load_Theme(SerializedData(self.widget.osc_background,self.widget.osc_color,self.widget.osc_gridx,
-                                  self.widget.osc_gridy, self.pow_spec_backg,self.pow_spec_plotColor,self.pow_spec_gridx,
-                                  self.pow_spec_gridy, self.widget.spec_background, self.widget.spec_gridx, self.widget.spec_gridy,
-                                  self.hist.item.gradient.saveState(),self.hist.item.region.getRegion(),end,center,start,quart1,quart2))
+            segWindow.load_Theme(self.defaultTheme)
+            segWindow.widget.refresh()
 
         self.widget.undoRedoManager.clearActions()
 
@@ -830,8 +819,8 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     @pyqtSlot()
     def on_actionPower_Spectrum_triggered(self):
-        dg_pow_spec = PowerSpectrumWindow(self,self.pow_spec_plotColor, self.pow_spec_backg, self.pow_spec_gridx, self.pow_spec_gridy,self.pow_spec_minY,self.pow_spec_maxY,self.pow_spec_lines)
-
+        dg_pow_spec = PowerSpectrumWindow(self,self.pow_spec_minY,self.pow_spec_maxY,self.pow_spec_lines)
+        dg_pow_spec.load_Theme(self.defaultTheme)
         minx = self.widget.zoomCursor.min
         maxx = max(self.widget.zoomCursor.max, min(minx + self.NFFT_pow, len(self.widget.signalProcessor.signal.data)))
         dg_pow_spec.plot(self.widget.signalProcessor.signal.data[minx:maxx],
@@ -872,8 +861,8 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             self.widget.specgramSettings.NFFT = self.ParamTree.param(u'Spectrogram Settings').param(u'FFT size').value()
             self.widget.specgramSettings.overlap = self.ParamTree.param(u'Spectrogram Settings').param(u'FFT overlap').value()
             self.widget.openNew(nfd.SamplingRate, nfd.BitDepth, nfd.Duration, nfd.WhiteNoise)
-            self.setWindowTitle(u"Duetto Sound Lab - " + self.widget.signalProcessor.signal.name)
-            self.actionSignalName.setText(u"File Name: "+self.widget.signalProcessor.signal.name)
+            self.setWindowTitle(u"Duetto Sound Lab - " + self.widget.signalName())
+            self.actionSignalName.setText(u"File Name: "+self.widget.signalName())
 
             self.actionCombined.setEnabled(True)
             self.actionSpectogram.setEnabled(True)
@@ -908,8 +897,8 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
                 self.widget.visibleSpectrogram = True # for restore the state lose in load
                 self.widget.open(f)
-                self.setWindowTitle(u"Duetto Sound Lab - " + self.widget.signalProcessor.signal.name)
-                self.actionSignalName.setText(u"File Name: "+self.widget.signalProcessor.signal.name)
+                self.setWindowTitle(u"Duetto Sound Lab - " + self.widget.signalName())
+                self.actionSignalName.setText(u"File Name: "+self.widget.signalName())
             except:
                 QMessageBox.warning(QMessageBox(),u"Error", u"Could not load the file.\n"+f)
                 self.widget.openNew(44100,16,1)
@@ -944,13 +933,13 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     @pyqtSlot()
     def on_actionSave_triggered(self):
-        fname = unicode(QFileDialog.getSaveFileName(self,u"Save signal",self.widget.signalProcessor.signal.name,u"*.wav"))
+        fname = unicode(QFileDialog.getSaveFileName(self,u"Save signal",self.widget.signalName(),u"*.wav"))
         if fname:
             self.widget.save(fname)
 
     @pyqtSlot()
     def on_actionSave_selected_interval_as_triggered(self):
-        fname = unicode(QFileDialog.getSaveFileName(self,u"Save signal",u"Selection-"+self.widget.signalProcessor.signal.name,u"*.wav"))
+        fname = unicode(QFileDialog.getSaveFileName(self,u"Save signal",u"Selection-"+self.widget.signalName(),u"*.wav"))
         if fname:
             self.widget.saveSelected(fname)
 
@@ -1034,7 +1023,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             QtGui.QMessageBox.warning(QtGui.QMessageBox(), u"Error",u"The Espectrogram plot widget is not visible.\n You should see the data that you are going to save.")
 
     def saveImage(self,widget,text=""):
-        fname = unicode(QFileDialog.getSaveFileName(self,u"Save "+ text +u" as an Image ",str(self.widget.signalProcessor.signal.name)+u"-"+text+u"-Duetto-Image",u"*.jpg"))
+        fname = unicode(QFileDialog.getSaveFileName(self,u"Save "+ text +u" as an Image ",str(self.widget.signalName())+u"-"+text+u"-Duetto-Image",u"*.jpg"))
         if fname:
             #save as image
             image = QtGui.QPixmap.grabWindow(widget.winId())
