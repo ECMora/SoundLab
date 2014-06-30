@@ -1,5 +1,4 @@
-
-
+# -*- coding: utf-8 -*-
 class Element:
     """
     Represents the minimal piece of information to clasify
@@ -19,8 +18,6 @@ class Element:
         self.visual_figures = []
         self.visual_peaksfreqs = []
         self.actionVisibility = None #accion que cambia la visibilidad de este elemento en el grafico para ponerla en un context menu
-
-
 
     def visualwidgets(self):
         for f in self.visual_figures:

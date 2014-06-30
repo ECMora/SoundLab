@@ -12,6 +12,14 @@ class FFTWindows:
     def Rectangular(self,M):
         "La doc de kaiser indica que con beta=0 es similar a una ventana rectangular"
         return numpy.kaiser(len(M),0)
+        i = numpy.argmax(M)
+        r = len(M) - i - 1
+
+        return numpy.arange(1,0,-1.0/len(M)) if i ==0 else \
+        (numpy.arange(0,1,1.0/len(M)) if i==len(M)-1 else \
+         numpy.concatenate((numpy.arange(0,1,1.0/(i+1)),\
+                                              numpy.arange(1,0,-1.0/(len(M)-i-1)))))
+
     def Kaiser(self,M):
         return numpy.kaiser(len(M),14)
     def Blackman(self,M):
@@ -49,4 +57,5 @@ class SpecgramSettings:
         self.grid=False
 
 
-
+M = numpy.arange(10)
+print(numpy.arange(1,0,-1.0/len(M)))

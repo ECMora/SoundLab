@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'E:\Biologia\SISTEMA\DuettoSystem\Graphic_Interface\UI Files\MainWindow.ui'
+# Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Sound Lab\DuettoSystem\Graphic_Interface\UI Files\MainWindow.ui'
 #
-# Created: Thu May 08 11:08:08 2014
+# Created: Mon Jun 30 22:04:24 2014
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -377,6 +377,7 @@ class Ui_DuettoMainWindow(object):
         self.menuView.addAction(self.actionPower_Spectrum)
         self.menuView.addSeparator()
         self.menuView.addAction(self.actionSettings)
+        self.menuView.addAction(self.actionSegmentation_And_Clasification)
         self.menuPlay_Speed.addAction(self.action1_8x)
         self.menuPlay_Speed.addAction(self.action1_4x)
         self.menuPlay_Speed.addAction(self.action1_2x)

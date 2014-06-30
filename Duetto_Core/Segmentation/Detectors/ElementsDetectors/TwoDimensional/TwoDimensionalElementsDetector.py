@@ -1,12 +1,13 @@
+# -*- coding: utf-8 -*-
 from collections import deque
 import numpy as np
-from Duetto_Core.Segmentation.Detectors.Detector import Detector
+from Duetto_Core.Segmentation.Detectors.ElementsDetectors.ElementsDetector import ElementsDetector
 from Duetto_Core.Segmentation.Elements.TwoDimensionalElement import SpecgramElement
 
 
-class TwoDimensionalElementsDetector(Detector):
+class TwoDimensionalElementsDetector(ElementsDetector):
     def __init__(self):
-        Detector.__init__(self)
+        ElementsDetector.__init__(self)
         self.regionsOverUmbral = []
         self._nr, self._nc = 0, 0
         self._dr, self._dc = [-1,0,1,0], [0,1,0,-1]
@@ -36,7 +37,7 @@ class TwoDimensionalElementsDetector(Detector):
                 else:
                     rc = SpecgramElement(signal,pxx[regionBounds[0]: regionBounds[1],regionBounds[2]:regionBounds[3]],freqs,regionBounds[0],regionBounds[1],bins,regionBounds[2],regionBounds[3],number=elemIndex,one_dimensional_parent=one_dimensional_parent,location=location, multipleSubelements=True)
                     elemIndex+=1
-                    self.twodimensionalElements.append(rc)
+                    self.elements.append(rc)
 
     def _islandDelete(self, r, c, element_number):
         #deletes a boolean island in map with earth in the i, j position

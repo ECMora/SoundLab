@@ -184,6 +184,7 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
     <addaction name="actionPower_Spectrum"/>
     <addaction name="separator"/>
     <addaction name="actionSettings"/>
+    <addaction name="actionSegmentation_And_Clasification"/>
    </widget>
    <widget class="QMenu" name="menuSound">
     <property name="styleSheet">

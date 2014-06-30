@@ -1,11 +1,13 @@
+# -*- coding: utf-8 -*-
 from math import  log10
+from PyQt4.QtGui import QFont
 from matplotlib import mlab
-from Duetto_Core.Segmentation.Detectors.ElementsDetectors.TwoDimensionalElementsDetector import TwoDimensionalElementsDetector
-from Duetto_Core.Segmentation.Elements.TwoDimensionalElement import SpecgramElement
 import numpy as np
 import pyqtgraph as pg
-from Duetto_Core.Segmentation.Elements.Element import Element
 from PyQt4 import QtGui, QtCore
+from Duetto_Core.Segmentation.Detectors.ElementsDetectors.TwoDimensional import TwoDimensionalElementsDetector
+from Duetto_Core.Segmentation.Elements.TwoDimensionalElement import SpecgramElement
+from Duetto_Core.Segmentation.Elements.Element import Element
 
 
 class SpectralMeasurementLocation:
@@ -31,19 +33,6 @@ class OneDimensionalElement(Element):
         self.indexTo = indexTo
         self.parameterDecimalPlaces = 4
 
-    def startTime(self):
-        #the start time in s
-        return round(self.indexFrom*1.0/self.signal.samplingRate,self.parameterDecimalPlaces)
-
-    def endTime(self):
-        return round(self.indexTo*1.0/self.signal.samplingRate,self.parameterDecimalPlaces)
-
-    def duration(self):
-        """
-        returns the len in s of an element (float)
-        """
-        return round((self.indexTo-self.indexFrom)*1.0/self.signal.samplingRate,self.parameterDecimalPlaces)
-
 
 class OscilogramElement(OneDimensionalElement):
 
@@ -51,6 +40,9 @@ class OscilogramElement(OneDimensionalElement):
         OneDimensionalElement.__init__(self,signal,indexFrom,indexTo)
         text = pg.TextItem(str(number),color=(255,255,255),anchor=(0.5,0.5))
         text.setPos(self.indexFrom/2.0+self.indexTo/2.0, 0.75*2**(signal.bitDepth-1))
+        font = QFont()
+        font.setPointSize(13)
+        text.setFont(font)
         self.number = number
         self.color =QtGui.QColor(0, 255, 0, 100) if self.number%2==0 else QtGui.QColor(0, 0, 255,100)
         lr = pg.LinearRegionItem([self.indexFrom,self.indexTo], movable=False,brush=(pg.mkBrush(self.color)))
@@ -64,6 +56,7 @@ class OscilogramElement(OneDimensionalElement):
                   + "RMS: "+ str(self.rms()) + "\n"\
                   + "PeekToPeek: "+ str(self.peekToPeek())
         lr.setToolTip(tooltip)
+
         self.visual_figures.append([lr,True])#item visibility
         self.visual_text.append([text,True])
         if(location is not None):
@@ -135,10 +128,23 @@ class OscilogramElement(OneDimensionalElement):
 
         return aux, aux2
 
+    def startTime(self):
+        #the start time in s
+        return round(self.indexFrom*1.0/self.signal.samplingRate,self.parameterDecimalPlaces)
+
+    def endTime(self):
+        return round(self.indexTo*1.0/self.signal.samplingRate,self.parameterDecimalPlaces)
+
+    def duration(self):
+        """
+        returns the len in s of an element (float)
+        """
+        return round((self.indexTo-self.indexFrom)*1.0/self.signal.samplingRate,self.parameterDecimalPlaces)
+
     def computeTwoDimensionalElements(self,threshold_spectral, pxx, freqs, bins, minsize_spectral):
         detector = TwoDimensionalElementsDetector()
         detector.detect(self.signal,threshold_spectral, pxx,freqs,bins, minsize_spectral,one_dimensional_parent=self,location= self.measurementLocation)
-        for elem in detector.elements():
+        for elem in detector.elements:
             self.twoDimensionalElements.append(elem)
 
     def distanceFromStartToMax(self):
@@ -246,6 +252,10 @@ class OscilogramElement(OneDimensionalElement):
 
     #espectral parameters
     def getMatrixIndexFromLocation(self,location):
+        """
+        @param location: the measurement location
+        @return: the index of the column in the matrix that corresponds to the location
+        """
         size = len(self.matrix[0])
         if location == self.measurementLocation.START:
             return 0
@@ -257,6 +267,7 @@ class OscilogramElement(OneDimensionalElement):
             return size/4
         if location == self.measurementLocation.QUARTILE75:
             return 3*size/4
+
 
     #The following methods measure properties that needs aditional parameters for its calculation
     #dict are a dictionary with the aditional data

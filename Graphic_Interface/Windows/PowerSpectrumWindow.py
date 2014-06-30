@@ -51,7 +51,7 @@ class PowerSpectrumWindow(QtGui.QMainWindow,Ui_PowSpecWindow):
         self.window = window
         self.rate = rate
         self.overlap = overlap
-        self.ui.widget.getPlotItem().setTitle(title='NFFT '+str(NFFT) + ' ' + window.__name__)
+        #self.ui.widget.getPlotItem().setTitle(title='NFFT '+str(NFFT) + ' ' + window.__name__)
         (self.Pxx , self.freqs) = mlab.psd(data,Fs= self.rate,NFFT=NFFT, window=window,noverlap=overlap,scale_by_freq=False)
         self.Pxx.shape = len(self.freqs)
         self.ui.widget.setInfo(self.Pxx,self.freqs)

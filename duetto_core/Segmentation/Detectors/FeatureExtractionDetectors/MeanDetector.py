@@ -2,13 +2,13 @@
 from numpy import mean
 
 from Duetto_Core.Cursors.PointerCursor import PointerCursor
-from Duetto_Core.Segmentation.Detectors import Detector
+from Duetto_Core.Segmentation.Detectors.ElementsDetectors import ElementsDetector
 
 
-class MeanDetector(Detector):
+class MeanDetector(ElementsDetector):
 
     def __init__(self):
-        Detector.__init__(self)
+        ElementsDetector.__init__(self)
 
     def detect(self,signal,indexFrom=0,indexTo=-1):
         self.pointer2D=[PointerCursor()]

@@ -116,14 +116,15 @@ class OneDimensionalElementsDetector(ElementsDetector):
         l = len(elems)
         progress_size = l/10 if l > 10 else 3
         stepsize = 50/(10 if l > 10 else 3)
-        self.oneDimensionalElements = [None for _ in elems]
+        self.elements = [None for _ in elems]
         for i,c in enumerate(elems):
-            self.oneDimensionalElements[i] = OscilogramElement(signal,c[0], c[1],number=i+1,threshold_spectral= threshold_spectral,
+            self.elements[i] = OscilogramElement(signal,c[0], c[1],number=i+1,threshold_spectral= threshold_spectral,
                                                                minsize_spectral=minsize_spectral,location=location,findSpectralSublements = findSpectralSublements,
                                                                specgramSettings=specgramSettings,trim_threshold=trim_threshold)
             #descartar elemento si no posee informacion espectral suficiente
             if progress is not None and i % progress_size == 0:
                 self.progress(40 + (i/progress_size)*stepsize)
+        return self.elements
 
     def localMax(self,data,threshold=0,positives = None):
         """

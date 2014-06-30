@@ -1,5 +1,6 @@
+# -*- coding: utf-8 -*-
 import numpy as np
-from Duetto_Core.Segmentation.Detectors.ElementsDetectors.OneDimensionalElementsDetector import OneDimensionalElementsDetector
+from Duetto_Core.Segmentation.Detectors.ElementsDetectors.OneDimensional import OneDimensionalElementsDetector
 from Duetto_Core.Segmentation.Elements.OneDimensionalElement import OscilogramElement
 
 
@@ -73,9 +74,9 @@ class PeakToPeakElemDetector(OneDimensionalElementsDetector):
         if self.progress:
             self.progress(96)
 
-        self.oneDimensionalElements = []
+        self.elements = []
         for i in np.arange(len(starts)):
-            self.oneDimensionalElements.append(OscilogramElement(signal, starts[i], ends[i], i + 1,
+            self.elements.append(OscilogramElement(signal, starts[i], ends[i], i + 1,
                                                                  specgramSettings=specgramSettings))
         if self.progress:
             self.progress(100)

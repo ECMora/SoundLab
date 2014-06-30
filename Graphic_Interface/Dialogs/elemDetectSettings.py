@@ -2,8 +2,7 @@
 from math import log10
 from PyQt4.QtCore import pyqtSlot
 from PyQt4.QtGui import QDialog
-import pyqtgraph as pg
-from Duetto_Core.Segmentation.Detectors.ElementsDetectors.OneDimensionalElementsDetector import DetectionSettings, DetectionType,AutomaticThresholdType
+from Duetto_Core.Segmentation.Detectors.ElementsDetectors.OneDimensional.OneDimensionalElementsDetector import DetectionSettings, DetectionType,AutomaticThresholdType
 from Graphic_Interface.Dialogs.ui_elemDetectSettings import Ui_Dialog
 
 
@@ -137,4 +136,3 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
 
 
 
-import re, sre_compile, sre_constants, sre_parse
