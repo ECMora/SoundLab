@@ -5,25 +5,29 @@ from PyQt4.QtGui import QCursor,QColor
 import pyqtgraph as pg
 import numpy
 from Graphic_Interface.Widgets.Tools import Tools
+from Axis import *
 from Graphic_Interface.Widgets.Tools import RectROI
 
 class PowSpecPlotWidget(pg.PlotWidget):
     def __init__(self,  parent=None,**kargs):
+        #self.axisXOsc = OscXAxis(self, orientation='bottom')
+        #self.axisYOsc = OscYAxis(self, orientation='left')
+        #kargs["axisItems"]={'bottom': self.axisXOsc, 'left': self.axisYOsc}
         pg.PlotWidget.__init__(self, **kargs)
         self.mousePressed = False
         pg.LegendItem()
         self.getPlotItem().setMouseEnabled(x=False, y=False)
-        self.xLine = pg.InfiniteLine(angle = 90,pen=(0,9))
-        self.yLine = pg.InfiniteLine(angle = 0,pen=(0,9))
+        #self.xLine = pg.InfiniteLine(angle = 90,pen=(0,9))
+        #self.yLine = pg.InfiniteLine(angle = 0,pen=(0,9))
         #pointerCursor-----------------------------------
         self.pointerCursor = pg.ScatterPlotItem()
         self.selectedTool = Tools.PointerCursor
         self.getPlotItem().getViewBox().addItem(self.pointerCursor)
-        self.getPlotItem().getViewBox().addItem(self.xLine)
-        self.getPlotItem().getViewBox().addItem(self.yLine)
+        #self.getPlotItem().getViewBox().addItem(self.xLine)
+        #self.getPlotItem().getViewBox().addItem(self.yLine)
         self.getPlotItem().setMouseEnabled(False,False)
-        self.getPlotItem().setLabel(axis='bottom',text='Frequency',units='Hz')
-        self.getPlotItem().setLabel(axis='left', text='Intensity', units='db')
+        self.getPlotItem().setLabel(axis='bottom',text='<font size=6>Frequency<\\font>',units='<font size=6>Hz<\\font>')
+        self.getPlotItem().setLabel(axis='left', text='<font size=6>Intensity<\\font>', units='<font size=6>dB<\\font>')
         self.mouseReleased = False
         self.last = {}
         self.freqs =[]
@@ -50,8 +54,8 @@ class PowSpecPlotWidget(pg.PlotWidget):
             (y,insidey) = self.fromCanvasToClientY(event.y())
             info = self.getFrequencyAmplitudeInfo(x)
 
-            self.xLine.setValue(info[0])
-            self.yLine.setValue(info[1])
+            #self.xLine.setValue(info[0])
+            #self.yLine.setValue(info[1])
 
             if self.mouseReleased:
                  info0 = self.getFrequencyAmplitudeInfo(self.last['pos'][0])
@@ -61,7 +65,7 @@ class PowSpecPlotWidget(pg.PlotWidget):
                  a1 = numpy.round(info[1],1)
                  self.PointerChanged.emit(str.format('f0: {0}kHz  Amplitude0: {1}dB f1: {2}kHz Amplitude1: {3}dB df: {4}kHz dAmplitude: {5}dB',f0,a0 ,f1, a1,numpy.abs(f1-f0),numpy.abs(a1-a0)))
             else:
-                self.PointerChanged.emit(str.format('Frequency: {0}kHz  Amplitude: {1}dB',numpy.round(info[0]/1000,1),numpy.round(info[1],1)))
+                self.PointerChanged.emit(str.format('Frecuencia: {0}kHz  Amplitud: {1}dB',numpy.round(info[0]/1000,1),numpy.round(info[1],1)))
             if not insidex or not insidey:
                 self.setCursor(QCursor(QtCore.Qt.ArrowCursor))
             else:

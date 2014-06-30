@@ -903,13 +903,13 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 QMessageBox.warning(QMessageBox(),u"Error", u"Could not load the file.\n"+f)
                 self.widget.openNew(44100,16,1)
 
-
-
-            valuemin = self.widget.minYSpc
-            valuemax = self.widget.maxYSpc
+            valuemin = 0
+            valuemax = self.widget.signalProcessor.signal.samplingRate/2000
 
             self.ParamTree.param(u'Spectrogram Settings').param(u'Frequency(kHz)').param(u'Min').setValue(valuemin)
             self.ParamTree.param(u'Spectrogram Settings').param(u'Frequency(kHz)').param(u'Max').setDefault(valuemax)
+            self.ParamTree.param(u'Spectrogram Settings').param(u'Frequency(kHz)').param(u'Max').setValue(valuemax)
+
             self.actionPointer_Cursor.setChecked(False)
             self.actionRectangular_Cursor.setChecked(False)
             self.actionZoom_Cursor.setChecked(True)

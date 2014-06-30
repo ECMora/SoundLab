@@ -26,9 +26,11 @@ class AudioSignal(object):
 
     def _get_data(self):
         return self._data if not self._padded else self._data[4096:-4096]
+
     def _set_data(self, data):
         self._data = data
         self._padded = False
+
     data = property(_get_data, _set_data)
 
     def pad(self):
@@ -53,8 +55,6 @@ class AudioSignal(object):
             dt = np.dtype(s)
             self.data = np.zeros(samplingRate * duration, dt)
         self.name = "(new)"
-        #self.pad()
-
 
     def set_currentChannel(self, channel):
         if not 0 <= channel <= self.channels:

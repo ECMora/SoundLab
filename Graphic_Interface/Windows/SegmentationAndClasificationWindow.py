@@ -9,7 +9,8 @@ import xlwt
 from PyQt4.QtGui import QFileDialog
 from Duetto_Core.AudioSignals.AudioSignal import AudioSignal
 from Duetto_Core.AudioSignals.WavFileSignal import WavFileSignal
-from Duetto_Core.Segmentation.Detectors.ElementsDetectors.OneDimensionalElementsDetector import OneDimensionalElementsDetector, DetectionType, AutomaticThresholdType, DetectionSettings
+from Duetto_Core.Segmentation.Detectors.ElementsDetectors.OneDimensional.OneDimensionalElementsDetector import DetectionType, AutomaticThresholdType, DetectionSettings
+from Duetto_Core.Segmentation.Detectors.ElementsDetectors.OneDimensional import OneDimensionalElementsDetector
 from Duetto_Core.Segmentation.Elements.Element import Element
 from Duetto_Core.SignalProcessors.SignalProcessor import SignalProcessor
 from Duetto_Core.SpecgramSettings import SpecgramSettings
@@ -36,7 +37,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         assert isinstance(signal, AudioSignal)
         self.widget.signalProcessor.signal = signal
         if parent is not None:
-            self.widget.minYSpc, self.widget.maxYSpc = parent.widget.minYSpc, parent.widget.maxYSpc
+            self.widget.minYSpc, self.widget.maxYSpc = 0,parent.widget.signalProcessor.signal.samplingRate/2000 #parent.widget.minYSpc, parent.widget.maxYSpc
             self.widget.specgramSettings.NFFT = parent.widget.specgramSettings.NFFT
             self.widget.specgramSettings.overlap = parent.widget.specgramSettings.overlap
             self.widget.specgramSettings.window = parent.widget.specgramSettings.window

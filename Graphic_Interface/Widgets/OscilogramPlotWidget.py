@@ -4,19 +4,23 @@ from PyQt4.QtCore import SIGNAL, pyqtSignal, QRect
 from PyQt4.QtGui import QCursor,QColor
 import pyqtgraph as pg
 import numpy
+from Graphic_Interface.Widgets.Axis import OscXAxis, OscYAxis
 from Graphic_Interface.Widgets.Tools import Tools
 from Graphic_Interface.Widgets.Tools import RectROI
 
 class OscilogramPlotWidget(pg.PlotWidget):
     def __init__(self,  parent=None,**kargs):
-        pg.PlotWidget.__init__(self, **kargs)
+        # the axes asumes that its parent is a Qsignalvisualizer  no t a PLot widget
+        self.axisXOsc = OscXAxis(parent, orientation='bottom')
+        self.axisXOsc.enableAutoSIPrefix(False)
+        self.axisYOsc = OscYAxis(parent, orientation='left')
+        pg.PlotWidget.__init__(self, axisItems={'bottom': self.axisXOsc, 'left': self.axisYOsc})
         self.mousePressed = False
         self.emitIntervalOscChanged = True
         self.osc_background = "000"
         self.osc_gridx = True
         self.osc_gridy = True
         self.getPlotItem().showGrid(x=self.osc_gridx, y=self.osc_gridy)
-
         self.zoomRegion = pg.LinearRegionItem([0, 0])
         self.zoomRegion.sigRegionChanged.connect(self.on_zoomRegionChanged)
         self.makeZoom = None

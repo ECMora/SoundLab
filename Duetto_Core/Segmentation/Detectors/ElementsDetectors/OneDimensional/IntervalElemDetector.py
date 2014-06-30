@@ -1,8 +1,7 @@
+# -*- coding: utf-8 -*-
 import numpy as np
-from Duetto_Core.Segmentation.Detectors.ElementsDetectors.OneDimensionalElementsDetector import OneDimensionalElementsDetector
+from Duetto_Core.Segmentation.Detectors.ElementsDetectors.OneDimensional import OneDimensionalElementsDetector
 from Duetto_Core.Segmentation.Elements.OneDimensionalElement import OscilogramElement
-
-
 class IntervalElemDetector(OneDimensionalElementsDetector):
     #progress = pyqtSignal(int)
 
@@ -60,7 +59,7 @@ class IntervalElemDetector(OneDimensionalElementsDetector):
         if self.progress:
             self.progress(5)
 
-        self.oneDimensionalElements = []
+        self.elements = []
 
         data = signal.data[indexFrom: indexTo]
         data = np.concatenate((np.zeros(minDist), data, np.zeros(minDist)))
@@ -78,8 +77,8 @@ class IntervalElemDetector(OneDimensionalElementsDetector):
             end = np.argmax([function(start, e + 1) - function(e, e + minDist)
                              for e in np.arange(center, len(data) - minDist)]) + center
             if end - start >= minSize:
-                self.oneDimensionalElements.append(OscilogramElement(signal, start - minDist, end - minDist,
-                                                                     len(self.oneDimensionalElements) + 1,
+                self.elements.append(OscilogramElement(signal, start - minDist, end - minDist,
+                                                                     len(self.elements) + 1,
                                                                      specgramSettings=specgramSettings))
             already = end + 1
             if self.progress:

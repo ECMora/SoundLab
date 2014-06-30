@@ -2,12 +2,12 @@
 from numpy import inf
 from numpy.ma import arctan
 from Duetto_Core.Cursors.PointerCursor import PointerCursor
-from Duetto_Core.Segmentation.Detectors import Detector
+from Duetto_Core.Segmentation.Detectors.ElementsDetectors import ElementsDetector
 
 
-class InflectionPointDetector(Detector):
+class InflectionPointDetector(ElementsDetector):
     def __init__(self):
-        Detector.__init__(self)
+        ElementsDetector.__init__(self)
 
     def detect(self, signal, indexFrom, indexTo):
         self.pointer2D = [PointerCursor()]

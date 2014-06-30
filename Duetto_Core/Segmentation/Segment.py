@@ -1,16 +1,24 @@
-from Duetto_Core.Segmentation.Elements import Element
+# -*- coding: utf-8 -*-
+from Duetto_Core.Segmentation.Elements.Element import Element
+
 
 class Segment:
     """
-    Defines a group of elements for their classification
-    The Segment is a group of elements or/and a list of segments
+    The Segment is a  non empty set of elements.
+     Is the smallest piece of classification
     """
-    def __init__(self, elements=[], segments=[]):
+    def __init__(self, elements=[]):
+
+        """
+        @param elements: the elements that  belong to the  segment
+        @raise TypeError:
+        """
         for el in elements:
-            if type(el) is not Element:
-                raise TypeError()
-        for s in segments:
-            if type(s) is not Segment:
-                raise TypeError()
+            if not isinstance(el,Element):
+                raise TypeError(u"The object has unfamiliar "+unicode(type(el))+u" were Element are expected")
         self.elements = elements
-        self.segments = segments
+
+    @staticmethod
+    def groupByTrainAnalysis(elements):
+        return Segment(elements=elements)
+

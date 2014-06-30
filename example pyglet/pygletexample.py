@@ -91,7 +91,7 @@ if __name__ == '__main__':
     #    a.append(intervals_analysis_birds_match[x-1])
     #    a.append((intervals_analysis_birds_match[x-1]+intervals_analysis_birds_match[x])/2.0)
 
-    print(len(a))
+    #print(len(a))
     rang = np.arange(1,31)
 
     plt.setRange(xRange=(0,30),
@@ -113,10 +113,10 @@ if __name__ == '__main__':
     #l.addItem(IntervalMatch,u"<h1> Interval RMS Method Match %</h1>")
     #l.addItem(IntervalError,u"<h1> Interval RMS Method Difference %</h1>")
 
-    #EnvelopeMatch = plt.plot(rang,envelope_match, pen='g', name='Match %',symbol='o',symbolPen='0F0',symbolBrush='AAA')
-    #EnvelopeError= plt.plot(rang,envelope_error, pen='r', name='Difference %',symbol='o',symbolPen='F00',symbolBrush='AAA')
-    #l.addItem(EnvelopeMatch,u"<h1> Envelope Method Match %</h1>")
-    #l.addItem(EnvelopeError,u"<h1>Envelope Method Difference %</h1>")
+    EnvelopeMatch = plt.plot(rang,envelope_match, pen='g', name='Match %',symbol='o',symbolPen='0F0',symbolBrush='AAA')
+    EnvelopeError= plt.plot(rang,envelope_error, pen='r', name='Difference %',symbol='o',symbolPen='F00',symbolBrush='AAA')
+    l.addItem(EnvelopeMatch,u"<h1> Envelope Method Match %</h1>")
+    l.addItem(EnvelopeError,u"<h1>Envelope Method Difference %</h1>")
 
     #
     #rang = np.arange(1,len(intervals_analysis_bats_match)+1)
@@ -126,14 +126,14 @@ if __name__ == '__main__':
     #Intervals_Analysis_Bats_Error= plt.plot(rang,intervals_analysis_bats_error, pen='r', name='Difference %',symbol='o',symbolPen='F00',symbolBrush='AAA')
     #l.addItem(Intervals_Analysis_Bats_Match,u"<h1> Interval RMS (Bats) Match%</h1>")
     #l.addItem(Intervals_Analysis_Bats_Error,u"<h1>Interval RMS (Bats) Difference %</h1>")
-
-    rang = np.arange(1,len(intervals_analysis_birds_match)+1)
-    plt.setRange(xRange=(0,rang.size),yRange=(0,120))
-    Intervals_Analysis_Birds_Match = plt.plot(rang,intervals_analysis_birds_match, pen='g', name='Match %',symbol='o',symbolPen='0F0',symbolBrush='AAA')
-    Intervals_Analysis_Birds_Error= plt.plot(rang,intervals_analysis_birds_error, pen='r', name='Difference %',symbol='o',symbolPen='F00',symbolBrush='AAA')
-    l.addItem(Intervals_Analysis_Birds_Match,u"<h1> Interval RMS (Birds) Match%</h1>")
-    l.addItem(Intervals_Analysis_Birds_Error,u"<h1>Interval RMS (Birds) Difference %</h1>")
-
+    #
+    #rang = np.arange(1,len(intervals_analysis_birds_match)+1)
+    #plt.setRange(xRange=(0,rang.size),yRange=(0,120))
+    #Intervals_Analysis_Birds_Match = plt.plot(rang,intervals_analysis_birds_match, pen='g', name='Match %',symbol='o',symbolPen='0F0',symbolBrush='AAA')
+    #Intervals_Analysis_Birds_Error= plt.plot(rang,intervals_analysis_birds_error, pen='r', name='Difference %',symbol='o',symbolPen='F00',symbolBrush='AAA')
+    #l.addItem(Intervals_Analysis_Birds_Match,u"<h1> Interval RMS (Birds) Match%</h1>")
+    #l.addItem(Intervals_Analysis_Birds_Error,u"<h1>Interval RMS (Birds) Difference %</h1>")
+    #
 
 
     ## Start Qt event loop unless running in interactive mode or using pyside.
