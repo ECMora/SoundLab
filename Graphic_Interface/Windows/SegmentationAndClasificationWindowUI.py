@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'E:\Biologia\SISTEMA\DuettoSystem\Graphic_Interface\UI Files\SegmentationAndClasificationWindowUI.ui'
+# Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Sound Lab\DuettoSystem\Graphic_Interface\UI Files\SegmentationAndClasificationWindowUI.ui'
 #
-# Created: Thu Apr 24 16:00:06 2014
+# Created: Wed Jul 02 11:34:13 2014
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -48,7 +48,7 @@ class Ui_MainWindow(object):
         self.tab.setObjectName(_fromUtf8("tab"))
         self.gridLayout = QtGui.QGridLayout(self.tab)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
-        self.widget = QSignalVisualizerWidget(self.tab)
+        self.widget = QSignalDetectorWidget(self.tab)
         self.widget.setObjectName(_fromUtf8("widget"))
         self.gridLayout.addWidget(self.widget, 0, 0, 1, 1)
         self.tabwidget.addTab(self.tab, _fromUtf8(""))
@@ -57,6 +57,7 @@ class Ui_MainWindow(object):
         self.gridLayout_4 = QtGui.QGridLayout(self.tab_2)
         self.gridLayout_4.setObjectName(_fromUtf8("gridLayout_4"))
         self.pushButtonInputFolder = QtGui.QPushButton(self.tab_2)
+        self.pushButtonInputFolder.setStyleSheet(_fromUtf8("background-color: rgba(94, 116, 236, 207);"))
         self.pushButtonInputFolder.setFlat(False)
         self.pushButtonInputFolder.setObjectName(_fromUtf8("pushButtonInputFolder"))
         self.gridLayout_4.addWidget(self.pushButtonInputFolder, 0, 1, 1, 1)
@@ -69,28 +70,35 @@ class Ui_MainWindow(object):
         self.progressBarProcesed.setObjectName(_fromUtf8("progressBarProcesed"))
         self.gridLayout_4.addWidget(self.progressBarProcesed, 6, 0, 1, 1)
         self.lineEditOutputFolder = QtGui.QLineEdit(self.tab_2)
+        self.lineEditOutputFolder.setStyleSheet(_fromUtf8("background-color: rgba(94, 116, 236, 207);"))
         self.lineEditOutputFolder.setObjectName(_fromUtf8("lineEditOutputFolder"))
         self.gridLayout_4.addWidget(self.lineEditOutputFolder, 1, 0, 1, 1)
         self.lineeditFilePath = QtGui.QLineEdit(self.tab_2)
+        self.lineeditFilePath.setStyleSheet(_fromUtf8("background-color: rgba(94, 116, 236, 207);"))
         self.lineeditFilePath.setObjectName(_fromUtf8("lineeditFilePath"))
         self.gridLayout_4.addWidget(self.lineeditFilePath, 0, 0, 1, 1)
         self.pushButtonOutputFolder = QtGui.QPushButton(self.tab_2)
+        self.pushButtonOutputFolder.setStyleSheet(_fromUtf8("background-color: rgba(94, 116, 236, 207);"))
         self.pushButtonOutputFolder.setObjectName(_fromUtf8("pushButtonOutputFolder"))
         self.gridLayout_4.addWidget(self.pushButtonOutputFolder, 1, 1, 1, 1)
         self.groupBox = QtGui.QGroupBox(self.tab_2)
+        self.groupBox.setStyleSheet(_fromUtf8("background-color: rgba(94, 116, 236, 207);"))
         self.groupBox.setObjectName(_fromUtf8("groupBox"))
         self.formLayout = QtGui.QFormLayout(self.groupBox)
         self.formLayout.setFieldGrowthPolicy(QtGui.QFormLayout.AllNonFixedFieldsGrow)
         self.formLayout.setObjectName(_fromUtf8("formLayout"))
         self.rbttnDetection = QtGui.QRadioButton(self.groupBox)
+        self.rbttnDetection.setStyleSheet(_fromUtf8("background-color: rgba(94, 116, 236, 207);"))
         self.rbttnDetection.setCheckable(True)
         self.rbttnDetection.setChecked(True)
         self.rbttnDetection.setObjectName(_fromUtf8("rbttnDetection"))
         self.formLayout.setWidget(0, QtGui.QFormLayout.LabelRole, self.rbttnDetection)
         self.rbttnSplitFile = QtGui.QRadioButton(self.groupBox)
+        self.rbttnSplitFile.setStyleSheet(_fromUtf8("background-color: rgba(94, 116, 236, 207);"))
         self.rbttnSplitFile.setObjectName(_fromUtf8("rbttnSplitFile"))
         self.formLayout.setWidget(2, QtGui.QFormLayout.LabelRole, self.rbttnSplitFile)
         self.spboxSplitTime = QtGui.QSpinBox(self.groupBox)
+        self.spboxSplitTime.setStyleSheet(_fromUtf8("background-color: rgba(94, 116, 236, 207);"))
         self.spboxSplitTime.setMinimum(30)
         self.spboxSplitTime.setMaximum(120)
         self.spboxSplitTime.setProperty("value", 60)
@@ -101,12 +109,14 @@ class Ui_MainWindow(object):
         self.formLayout.setWidget(3, QtGui.QFormLayout.SpanningRole, self.pushButtonStart)
         self.gridLayout_4.addWidget(self.groupBox, 4, 1, 1, 2)
         self.cbxSingleFile = QtGui.QCheckBox(self.tab_2)
+        self.cbxSingleFile.setStyleSheet(_fromUtf8("background-color: rgba(94, 116, 236, 207);"))
         self.cbxSingleFile.setObjectName(_fromUtf8("cbxSingleFile"))
         self.gridLayout_4.addWidget(self.cbxSingleFile, 0, 2, 1, 1)
         self.tabwidget.addTab(self.tab_2, _fromUtf8(""))
         self.verticalLayout_2.addWidget(self.tabwidget)
         self.horizontalScrollBar = QtGui.QScrollBar(self.centralwidget)
-        self.horizontalScrollBar.setStyleSheet(_fromUtf8("border-color: rgb(26, 255, 10);"))
+        self.horizontalScrollBar.setStyleSheet(_fromUtf8("border-color: rgb(26, 255, 10);\n"
+"background-color: rgb(99, 128, 255);"))
         self.horizontalScrollBar.setOrientation(QtCore.Qt.Horizontal)
         self.horizontalScrollBar.setObjectName(_fromUtf8("horizontalScrollBar"))
         self.verticalLayout_2.addWidget(self.horizontalScrollBar)
@@ -415,5 +425,5 @@ class Ui_MainWindow(object):
         self.actionPointer_Cursor.setText(QtGui.QApplication.translate("MainWindow", "Pointer Cursor", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSignalName.setText(QtGui.QApplication.translate("MainWindow", "SignalName", None, QtGui.QApplication.UnicodeUTF8))
 
-from Graphic_Interface.Widgets.QSignalVisualizerWidget import QSignalVisualizerWidget
+from Graphic_Interface.Widgets.QSignalDetectorWidget import QSignalDetectorWidget
 import icons_rc

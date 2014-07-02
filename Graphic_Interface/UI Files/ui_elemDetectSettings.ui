@@ -43,7 +43,7 @@ font: 75 10pt &quot;MS Shell Dlg 2&quot;;</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
-    <widget class="QSignalVisualizerWidget" name="widget" native="true">
+    <widget class="QSignalDetectorWidget" name="widget" native="true">
      <property name="enabled">
       <bool>false</bool>
      </property>
@@ -988,9 +988,9 @@ color: rgb(255, 255, 255);</string>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>QSignalVisualizerWidget</class>
+   <class>QSignalDetectorWidget</class>
    <extends>QWidget</extends>
-   <header>Graphic_Interface.Widgets.QSignalVisualizerWidget</header>
+   <header>Graphic_Interface.Widgets.QSignalDetectorWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

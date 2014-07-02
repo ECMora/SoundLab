@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Sound Lab\DuettoSystem\Graphic_Interface\UI Files\ui_elemDetectSettings.ui'
 #
-# Created: Sun May 18 14:17:05 2014
+# Created: Wed Jul 02 11:41:04 2014
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -31,7 +31,7 @@ class Ui_Dialog(object):
         Dialog.setModal(False)
         self.horizontalLayout = QtGui.QHBoxLayout(Dialog)
         self.horizontalLayout.setObjectName(_fromUtf8("horizontalLayout"))
-        self.widget = QSignalVisualizerWidget(Dialog)
+        self.widget = QSignalDetectorWidget(Dialog)
         self.widget.setEnabled(False)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
@@ -466,4 +466,4 @@ class Ui_Dialog(object):
         self.cbxStartToMax.setToolTip(QtGui.QApplication.translate("Dialog", "<html><head/><body><p>Distance from the element start to its max value</p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
         self.cbxStartToMax.setText(QtGui.QApplication.translate("Dialog", "Start To Max", None, QtGui.QApplication.UnicodeUTF8))
 
-from Graphic_Interface.Widgets.QSignalVisualizerWidget import QSignalVisualizerWidget
+from Graphic_Interface.Widgets.QSignalDetectorWidget import QSignalDetectorWidget

@@ -36,6 +36,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         assert isinstance(signal, AudioSignal)
         self.widget.signalProcessor.signal = signal
+        print(self.widget.setEnvelopeVisibility)
         if parent is not None:
             self.widget.minYSpc, self.widget.maxYSpc = 0,parent.widget.signalProcessor.signal.samplingRate/2000 #parent.widget.minYSpc, parent.widget.maxYSpc
             self.widget.specgramSettings.NFFT = parent.widget.specgramSettings.NFFT
