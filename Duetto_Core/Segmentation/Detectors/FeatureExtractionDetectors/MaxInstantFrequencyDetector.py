@@ -1,11 +1,12 @@
+# -*- coding: utf-8 -*-
 from matplotlib import mlab
 import numpy
-from Duetto_Core.Segmentation.Detectors import Detector
+from Duetto_Core.Segmentation.Detectors.ElementsDetectors import ElementsDetector
 
 
-class MaxInstantFrequencyDetector(Detector):
+class MaxInstantFrequencyDetector(ElementsDetector):
     def __init__(self):
-        Detector.__init__(self)
+        ElementsDetector.__init__(self)
 
     def detect(self,signal,indexFrom=0,indexTo=-1,noverlap = 0,NFFT = 512):
         self.Pxx, self.freqs, self.bins = mlab.specgram(signal.data[indexFrom:indexTo],NFFT,Fs=signal.samplingRate,noverlap=0)

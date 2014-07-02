@@ -1,14 +1,15 @@
+# -*- coding: utf-8 -*-
 from matplotlib import mlab
 
 from Duetto_Core.Segmentation.Detectors.MinMaxFrequencyDetector import MinMaxFrequencyDetector
-from Duetto_Core.Segmentation.Detectors import Detector
+from Duetto_Core.Segmentation.Detectors.ElementsDetectors import ElementsDetector
 from Duetto_Core.Segmentation.Detectors.FeatureExtractionDetectors import FrequencyPeeksDetector
 from Duetto_Core.Segmentation.Elements.OneDimensionalElement import OneDimensionalElement
 
 
-class HarmonicDetector(Detector):
+class HarmonicDetector(ElementsDetector):
     def __init__(self):
-        Detector.__init__(self)
+        ElementsDetector.__init__(self)
 
     def detect(self,signal,indexFrom=0,indexTo=-1,thresholdAbs = 0,thresholdRel = 0,hysteresis = 0):
         fpeeksd = FrequencyPeeksDetector()

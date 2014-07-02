@@ -181,7 +181,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
          {u'name': u'Theme Selected', u'type': u'list', u'value':u"RedBlackTheme.dth",u'default':u"RedBlackTheme.dth",u'values': [(u"BatsoundLikeTheme",u"BatsoundLikeTheme.dth"),(u"PinkBlueTheme",u"PinkBlueTheme.dth"),(u"RedBlackTheme",u"RedBlackTheme.dth"),(u"WhiteBlueTheme",u"WhiteBlueTheme.dth")]},
         ]
         } ,
-        {u'name': u'Detection Settings', u'type': u'group', u'children': [
+        {u'name': u'Detection Visual Settings', u'type': u'group', u'children': [
             {u'name': u'Measurement Location', u'type': u'group', u'children': [
             {u'name': u'Start', u'type': u'color',u'value': self.defaultTheme.startColor,u'default': self.defaultTheme.startColor},
             {u'name': u'Quartile25', u'type': u'color', u'value': self.defaultTheme.quart1Color,u'default': self.defaultTheme.quart1Color},
@@ -282,7 +282,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         for root, dirs, filenames in os.walk(folder):
             for f in filenames:
                 if f.endswith(".wav"):
-                    files.append(unicode(root+os.path.sep+f))
+                    files.append(unicode(root+'/'+f))
 
         return files
 
@@ -319,11 +319,11 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     def SerializeTheme(self,filename):
         if filename:
-            center = self.ParamTree.param('Detection Settings').param('Measurement Location').param('Center').value()
-            start = self.ParamTree.param('Detection Settings').param('Measurement Location').param('Start').value()
-            quart1 = self.ParamTree.param('Detection Settings').param('Measurement Location').param('Quartile25').value()
-            quart2 = self.ParamTree.param('Detection Settings').param('Measurement Location').param('Quartile75').value()
-            end = self.ParamTree.param('Detection Settings').param('Measurement Location').param('End').value()
+            center = self.ParamTree.param('Detection Visual Settings').param('Measurement Location').param('Center').value()
+            start = self.ParamTree.param('Detection Visual Settings').param('Measurement Location').param('Start').value()
+            quart1 = self.ParamTree.param('Detection Visual Settings').param('Measurement Location').param('Quartile25').value()
+            quart2 = self.ParamTree.param('Detection Visual Settings').param('Measurement Location').param('Quartile75').value()
+            end = self.ParamTree.param('Detection Visual Settings').param('Measurement Location').param('End').value()
             file = open(filename,'wb')
             pickle.dump(self.defaultTheme,file)
             file.close()
@@ -372,10 +372,10 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.ParamTree.param(u'Power Spectrum Settings').param(u'Grid').param(u'Y').setValue(self.defaultTheme.pow_GridY)
         self.ParamTree.param(u'Power Spectrum Settings').param(u'Background color').setValue(theme.pow_Back)
         self.ParamTree.param(u'Power Spectrum Settings').param(u'Plot color').setValue(self.defaultTheme.pow_Plot)
-        self.ParamTree.param(u'Detection Settings').param(u'Measurement Location').param(u'Center').setValue(theme.centerColor)
-        self.ParamTree.param(u'Detection Settings').param(u'Measurement Location').param(u'Start').setValue(theme.startColor)
-        self.ParamTree.param(u'Detection Settings').param(u'Measurement Location').param(u'Quartile25').setValue(theme.quart1Color)
-        self.ParamTree.param(u'Detection Settings').param(u'Measurement Location').param(u'Quartile75').setValue(theme.quart2Color)
+        self.ParamTree.param(u'Detection Visual Settings').param(u'Measurement Location').param(u'Center').setValue(theme.centerColor)
+        self.ParamTree.param(u'Detection Visual Settings').param(u'Measurement Location').param(u'Start').setValue(theme.startColor)
+        self.ParamTree.param(u'Detection Visual Settings').param(u'Measurement Location').param(u'Quartile25').setValue(theme.quart1Color)
+        self.ParamTree.param(u'Detection Visual Settings').param(u'Measurement Location').param(u'Quartile75').setValue(theme.quart2Color)
 
     @pyqtSlot()
     def on_actionLoad_Theme_triggered(self):
@@ -541,11 +541,11 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     @pyqtSlot()
     def on_actionSegmentation_And_Clasification_triggered(self):
-        center = self.ParamTree.param(u'Detection Settings').param(u'Measurement Location').param(u'Center').value()
-        start = self.ParamTree.param(u'Detection Settings').param(u'Measurement Location').param(u'Start').value()
-        quart1 = self.ParamTree.param(u'Detection Settings').param(u'Measurement Location').param(u'Quartile25').value()
-        quart2 = self.ParamTree.param(u'Detection Settings').param(u'Measurement Location').param(u'Quartile75').value()
-        end = self.ParamTree.param(u'Detection Settings').param(u'Measurement Location').param(u'End').value()
+        self.defaultTheme.centerColor = self.ParamTree.param(u'Detection Visual Settings').param(u'Measurement Location').param(u'Center').value()
+        self.defaultTheme.startColor = self.ParamTree.param(u'Detection Visual Settings').param(u'Measurement Location').param(u'Start').value()
+        self.defaultTheme.quart1Color = self.ParamTree.param(u'Detection Visual Settings').param(u'Measurement Location').param(u'Quartile25').value()
+        self.defaultTheme.quart2Color = self.ParamTree.param(u'Detection Visual Settings').param(u'Measurement Location').param(u'Quartile75').value()
+        self.defaultTheme.endColor = self.ParamTree.param(u'Detection Visual Settings').param(u'Measurement Location').param(u'End').value()
         f,t = self.widget.getIndexFromAndTo()
         signal = WavFileSignal(samplingRate=self.widget.signalProcessor.signal.samplingRate,bitDepth=self.widget.signalProcessor.signal.bitDepth,whiteNoise=False)
         signal.name = self.widget.signalName()
@@ -956,8 +956,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.actionZoom_out.setEnabled(True)
         self.actionZoomIn.setEnabled(True)
         self.actionZoom_out_entire_file.setEnabled(True)
-        #self.hist.item.region.lineMoved()
-        #self.hist.item.region.lineMoveFinished()
 
     @pyqtSlot()
     def on_actionRecord_triggered(self):
