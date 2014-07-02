@@ -1,19 +1,16 @@
-from Duetto_Core.Cursors.PointerCursor import PointerCursor
-from Duetto_Core.Segmentation.Detectors.Detector import Detector
+# -*- coding: utf-8 -*-
+from Duetto_Core.Segmentation.Detectors.ElementsDetectors.ElementsDetector import ElementsDetector
 
 
-class MaxMinPeakDetector(Detector):
+class MaxMinPeakDetector(ElementsDetector):
 
     def __init__(self):
-        Detector.__init__(self)
+        ElementsDetector.__init__(self)
 
     def detect(self,signal,indexFrom=0,indexTo=-1):
         #region MAX MIN PEAKS
-        self.pointer2D=[]
-        self.pointer2D.extend([PointerCursor(),PointerCursor()])
         if(indexTo==-1):
             indexTo==len(signal.data)
-        _,self.pointer2D[0].index,_,self.pointer2D[1].index=self.maxMinPeaks(signal,indexFrom,indexTo)
 
 
 
