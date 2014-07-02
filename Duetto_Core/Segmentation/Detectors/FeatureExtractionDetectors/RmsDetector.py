@@ -1,11 +1,12 @@
+# -*- coding: utf-8 -*-
 from Duetto_Core.Cursors.PointerCursor import PointerCursor
-from Duetto_Core.Segmentation.Detectors import Detector
+from Duetto_Core.Segmentation.Detectors.ElementsDetectors import ElementsDetector
 from Duetto_Core.SignalProcessors.SignalProcessor import SignalProcessor
 
-class RmsDetector(Detector):
+class RmsDetector(ElementsDetector):
 
     def __init__(self):
-        Detector.__init__(self)
+        ElementsDetector.__init__(self)
 
     def detect(self,signal,indexFrom=0,indexTo=-1):
         p = PointerCursor()

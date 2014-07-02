@@ -1,12 +1,13 @@
+# -*- coding: utf-8 -*-
 from matplotlib import mlab
 
 from Duetto_Core.Cursors.PointerCursor import PointerCursor
-from Duetto_Core.Segmentation.Detectors import Detector
+from Duetto_Core.Segmentation.Detectors.ElementsDetectors import ElementsDetector
 
 
-class FrequencyPeeksDetector(Detector):
+class FrequencyPeeksDetector(ElementsDetector):
     def __init__(self):
-        Detector.__init__(self)
+        ElementsDetector.__init__(self)
 
     def detect(self,signal,indexFrom=0,indexTo=-1,threshold = 0,hysteresis = 0):
         if indexTo == -1:
