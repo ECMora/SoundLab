@@ -71,7 +71,7 @@ padding:1%;</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout">
         <item row="0" column="0">
-         <widget class="QSignalVisualizerWidget" name="widget" native="true"/>
+         <widget class="QSignalDetectorWidget" name="widget" native="true"/>
         </item>
        </layout>
       </widget>
@@ -711,9 +711,9 @@ background-color: rgb(99, 128, 255);</string>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>QSignalVisualizerWidget</class>
+   <class>QSignalDetectorWidget</class>
    <extends>QWidget</extends>
-   <header>Graphic_Interface.Widgets.QSignalVisualizerWidget</header>
+   <header>Graphic_Interface.Widgets.QSignalDetectorWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
