@@ -6,7 +6,7 @@ import PyQt4.QtCore as QtCore
 from PyQt4 import QtGui
 from matplotlib import mlab
 import xlwt
-from PyQt4.QtGui import QFileDialog
+from PyQt4.QtGui import QFileDialog, QStandardItemModel, QAbstractItemView
 from Duetto_Core.AudioSignals.AudioSignal import AudioSignal
 from Duetto_Core.AudioSignals.WavFileSignal import WavFileSignal
 from Duetto_Core.Segmentation.Detectors.ElementsDetectors.OneDimensional.OneDimensionalElementsDetector import DetectionType, AutomaticThresholdType, DetectionSettings
@@ -36,9 +36,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         assert isinstance(signal, AudioSignal)
         self.widget.signalProcessor.signal = signal
-        print(self.widget.setEnvelopeVisibility)
         if parent is not None:
-            self.widget.minYSpc, self.widget.maxYSpc = 0,parent.widget.signalProcessor.signal.samplingRate/2000 #parent.widget.minYSpc, parent.widget.maxYSpc
             self.widget.specgramSettings.NFFT = parent.widget.specgramSettings.NFFT
             self.widget.specgramSettings.overlap = parent.widget.specgramSettings.overlap
             self.widget.specgramSettings.window = parent.widget.specgramSettings.window
@@ -62,6 +60,8 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.rejectSignal = False
         self.widget.mainCursor.min, self.widget.mainCursor.max = 0, len(self.widget.signalProcessor.signal.data)
         self.dockWidgetParameterTableOscilogram.setVisible(False)
+        self.tableParameterOscilogram.resizeColumnsToContents()
+        self.tableParameterOscilogram.setSelectionBehavior(QAbstractItemView.SelectRows)
 
         self.show()
 
@@ -415,6 +415,8 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                     columnNames = [label[0] for label in paramsTomeasure]
                     columnNames.extend([label[0] for label in spectralparamsTomeasure])
                     table.setHorizontalHeaderLabels(columnNames)
+                    self.tableParameterOscilogram.resizeColumnsToContents()
+
                     self.listwidgetProgress.addItem("Save data of " +signalProcessor.signal.name)
 
                     for i,element in enumerate(detector.elements()):
@@ -594,14 +596,14 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.windowProgressDetection.setValue(x)
 
     def elementSelectedInTable(self,row,column):
-        self.tableParameterOscilogram.setRangeSelected(QtGui.QTableWidgetSelectionRange(row,0,row,self.tableParameterOscilogram.columnCount()-1),True)
-        self.widget.select_region(row)#select the correct element in oscilogram
+        self.tableParameterOscilogram.selectRow(row)
+        self.widget.selectElement(row)#select the correct element in oscilogram
 
     @pyqtSlot()
     def on_actionDetection_triggered(self):
         elementsDetectorDialog = ElemDetectSettingsDialog(parent=self)
         self.setSettings(elementsDetectorDialog)
-        self.widget.select_region(-1)
+        self.widget.selectElement(-1)
 
         if elementsDetectorDialog.exec_():
             try:
@@ -631,6 +633,8 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                 columnNames.extend([label[0] for label in spectralparamsTomeasure])
                 self.tableParameterOscilogram.setHorizontalHeaderLabels(columnNames)
                 self.updateDetectionProgressBar(95)
+                for index in range(len(self.widget.Elements)):
+                   self.widget.Elements[index].clicked = lambda ind,buttn: self.elementSelectedInTable(ind,0)
 
                 for i in range(self.tableParameterOscilogram.rowCount()):
                     for j,prop in enumerate(paramsTomeasure):
@@ -680,7 +684,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
     @pyqtSlot()
     def on_actionClear_Meditions_triggered(self):
         self.widget.clearCursors()
-        self.widget.select_region()
+        self.widget.selectElement()
         self.widget.visualChanges = True
         self.widget.refresh()
 

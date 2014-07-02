@@ -107,6 +107,9 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.widget.histogram = self.hist
         self.pow_overlap = 90
         self.defaultTheme = self.DeSerializeTheme(os.path.join(os.path.join("Utils","Themes"),"RedBlackTheme.dth"))
+
+        themesInFolder = self.folderFiles(os.path.join("Utils","Themes"),extensions=[".dth"])
+
         self.widget.load_Theme(self.defaultTheme)
 
         self.widget.osc_color = self.defaultTheme.osc_plot
@@ -178,7 +181,8 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
              {u'name': u'Plot color',u'type': u'color',u'value':self.defaultTheme.pow_Plot, 'default': self.defaultTheme.pow_Plot},
         ]},
         {u'name': u'Themes', u'type': u'group', u'children': [
-         {u'name': u'Theme Selected', u'type': u'list', u'value':u"RedBlackTheme.dth",u'default':u"RedBlackTheme.dth",u'values': [(u"BatsoundLikeTheme",u"BatsoundLikeTheme.dth"),(u"PinkBlueTheme",u"PinkBlueTheme.dth"),(u"RedBlackTheme",u"RedBlackTheme.dth"),(u"WhiteBlueTheme",u"WhiteBlueTheme.dth")]},
+         {u'name': u'Theme Selected', u'type': u'list', u'value':u"" if len(themesInFolder) == 0 else themesInFolder[0][themesInFolder[0].rfind(os.path.sep)+1:themesInFolder[0].rfind(".dth")],\
+          u'default':u"" if len(themesInFolder) == 0 else themesInFolder[0],u'values': [(x[x.rfind(os.path.sep)+1:x.rfind(".dth")], x) for x in themesInFolder]},
         ]
         } ,
         {u'name': u'Detection Settings', u'type': u'group', u'children': [
@@ -277,11 +281,12 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.ParamTree.param(u'Oscillogram Settings').param(u'Amplitude(%)').param(u'Min').setValue(min)
         self.ParamTree.param(u'Oscillogram Settings').param(u'Amplitude(%)').param(u'Max').setValue(max)
 
-    def folderFiles(self,folder):
+    def folderFiles(self,folder,extensions=None):
         files = []
+        extensions = [".wav"] if extensions is None else extensions
         for root, dirs, filenames in os.walk(folder):
             for f in filenames:
-                if f.endswith(".wav"):
+                if extensions is None or any([f.endswith(x) for x in extensions]):
                     files.append(unicode(root+os.path.sep+f))
 
         return files
@@ -523,8 +528,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
 
             elif childName ==u'Themes.Theme Selected':
-                p = os.path.join(os.path.join(u"Utils",u"Themes"),data)
-                self.updateMyTheme(self.DeSerializeTheme(p))
+                self.updateMyTheme(self.DeSerializeTheme(data))
 
             elif childName == u'Power Spectrum Settings.YBounds.MaxY':
                 self.pow_spec_maxY = data

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from math import  log10
+from PyQt4.QtCore import pyqtSignal
 from PyQt4.QtGui import QFont
 from matplotlib import mlab
 import numpy as np
@@ -27,6 +28,8 @@ class OneDimensionalElement(Element):
     An element is a time and spectral region of the signal that contains a superior energy that the fragment of signal
     near to it
     """
+    clicked = lambda index,buttonPressed: None #called when the element is clicked and send the index of the element  and the button press
+
     def __init__(self, signal, indexFrom, indexTo):
         Element.__init__(self, signal)
         self.indexFrom =  indexFrom#index of start of the element
@@ -56,6 +59,8 @@ class OscilogramElement(OneDimensionalElement):
                   + "RMS: "+ str(self.rms()) + "\n"\
                   + "PeekToPeek: "+ str(self.peekToPeek())
         lr.setToolTip(tooltip)
+
+        lr.mouseClickEvent = self.mouseClickEvent
 
         self.visual_figures.append([lr,True])#item visibility
         self.visual_text.append([text,True])
@@ -421,3 +426,5 @@ class OscilogramElement(OneDimensionalElement):
             return self.parameters["peaksAbove"][(index,peakthreshold)]
         return "Invalid Params"
 
+    def mouseClickEvent(self, event):
+        self.clicked(self.number-1,event.button())
