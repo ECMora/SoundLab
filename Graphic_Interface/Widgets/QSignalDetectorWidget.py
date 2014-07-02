@@ -154,7 +154,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         self.cleanVisibleCursors(oscilogram=True, specgram=True)
         self.Elements = [] if oscilogram and specgram else self.Elements
 
-    def select_region(self, number=-1):
+    def selectElement(self, number=-1):
         if len(self.Elements) > number and number >= 0:
             f, t = self.Elements[number].indexFrom, self.Elements[number].indexTo
             self.axesOscilogram.select_region(f, t, pg.mkBrush(QtGui.QColor(255, 255, 255, 150)))
@@ -165,6 +165,12 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
                 self.refresh()
         else:
             self.axesOscilogram.select_region(0, 0)
+
+    def deleteElements(self):
+        pass
+
+    def deleteSelectedElement(self):
+        pass
 
     def refresh(self, dataChanged=True, updateOscillogram=True, updateSpectrogram=True, partial=True):
         QSignalVisualizerWidget.refresh(self,dataChanged, updateOscillogram, updateSpectrogram, partial)

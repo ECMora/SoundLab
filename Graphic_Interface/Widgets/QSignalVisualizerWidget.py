@@ -571,7 +571,6 @@ class QSignalVisualizerWidget(QWidget):
             self.axesSpecgram.viewBox.setRange(xRange=(self._from_osc_to_spec(self.mainCursor.min),
                                                        self._from_osc_to_spec(self.mainCursor.max)),
                                                yRange=(YSpec[0], YSpec[1]), padding=0)
-            self.updateSpecZoomRegion(self.zoomCursor.min, self.zoomCursor.max)
 
             self.updateSpectrogramColors()
             self.updateSpecZoomRegion(self.zoomCursor.min, self.zoomCursor.max)
@@ -731,7 +730,6 @@ class QSignalVisualizerWidget(QWidget):
             self.axesOscilogram.setRange(QRect(0, -2 ** (self.signalProcessor.signal.bitDepth - 1),
                                                self.mainCursor.max - self.mainCursor.min,
                                                2 ** self.signalProcessor.signal.bitDepth), padding=0)
-            self.axesOscilogram.zoomRegion.sigRegionChanged.connect(self.updatezoomcursor)
             self.signalProcessor.signal.play_finished = self.removePlayerLine
         self.maxYSpc = self.signalProcessor.signal.samplingRate / 2000
         self.minYSpc = 0
