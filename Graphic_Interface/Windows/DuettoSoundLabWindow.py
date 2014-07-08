@@ -757,7 +757,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     @pyqtSlot()
     def on_actionPower_Spectrum_triggered(self):
-
         minx = self.widget.zoomCursor.min
         maxx = max(self.widget.zoomCursor.max, min(minx + self.NFFT_pow, len(self.widget.signalProcessor.signal.data)))
         dg_pow_spec = PowerSpectrumWindow(self, self.pow_spec_minY,self.pow_spec_maxY,self.pow_spec_lines,self.widget.signalProcessor.signal.data[minx:maxx],self.widget.signalProcessor.signal.samplingRate,)
@@ -808,6 +807,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         f = QFileDialog.getOpenFileName(self, u"Select a file to open",directory = self.lastopen,
                                               filter=u"Wave Files (*.wav);;All Files (*)")
         self._open(unicode(f))
+        self.pow_spec_windows = []
 
     @pyqtSlot()
     def on_actionClose_triggered(self):
