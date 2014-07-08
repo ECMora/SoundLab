@@ -145,27 +145,25 @@ class PowSpecPlotWidget(pg.PlotWidget):
         amplt = 10*numpy.log10(self.Pxx[index]/numpy.amax(self.Pxx))
         return [freq, amplt]
 
-
+    #region One Dimensional Functions
     def averageProcessing(self, data, Fs, NFFT, window, noverlap, maxY, minY, plotColor, lines):
         (Pxx , freqs) = mlab.psd(data, Fs= Fs, NFFT=NFFT, window=window, noverlap=noverlap, scale_by_freq=False)
         Pxx.shape = len(freqs)
-        self.setInfo(Pxx,freqs)
+        self.Pxx = Px
+        self.freqs = freqs
         self.plot(freqs,10*numpy.log10(Pxx/numpy.amax(Pxx)),clear=True, pen = plotColor if lines else None, symbol = 's', symbolSize = 1,symbolPen = plotColor)
         self.setRange(xRange = (0,freqs[len(freqs) - 1]),yRange=(maxY, minY),padding=0,update=True)
         self.show()
-
-        return Pxx, freqs
 
     def logarithmicProcessing(self, x, Fs, window, plotColor, lines, maxY, minY):
 
         Px = abs(np.fft.fft(x))[0:len(x)//2+1]
         freqs = float(Fs) / len(x) * np.arange(len(x)//2+1)
-        self.setInfo(Px,freqs)
+        self.Pxx = Px
+        self.freqs = freqs
         self.plot(freqs, 10*numpy.log10(Px/numpy.amax(Px)), clear=True, pen = plotColor if lines else None, symbol = 's', symbolSize = 1,symbolPen = plotColor)
         self.setRange(xRange = (0,freqs[len(freqs) - 1]),yRange=(maxY, minY),padding=0,update=True)
         self.show()
-
-        return Px, freqs
 
     def cepstrumProcessing(self, x, Fs, window, plotColor, lines, maxY, minY):
 
@@ -179,3 +177,4 @@ class PowSpecPlotWidget(pg.PlotWidget):
         self.plot(time, out.real, clear=True, pen = plotColor if lines else None, symbol = 's', symbolSize = 1,symbolPen = plotColor)
         self.show()
         return out, time
+    #endregion
