@@ -7,11 +7,89 @@ import pyqtgraph as pg
 import numpy
 from Graphic_Interface.Widgets.Tools import Tools
 from Axis import *
+from Duetto_Core.SpecgramSettings import FFTWindows
 import numpy as np
 from Graphic_Interface.Widgets.Tools import RectROI
 
+class OneDimensionalFunction:
+    def __init__(self,widget):
+        self.windows = FFTWindows()
+        self.myOptions = {}
+        self.widget = widget
+
+    def connectMySignal(self,pTree):
+        pass
+
+    def setData(self,data):
+        self.data = data
+
+    def processing(self):
+        self.widget.lastProc = self.processing
+
+class LogarithmicPowSpec(OneDimensionalFunction):
+    def __init__(self,widget):
+        OneDimensionalFunction.__init__(self,widget)
+        self.myOptions = {u'name': u'Power spectrum(Logarithmic)', u'type': u'group', u'children': [
+            {u'name': u'FFT window', u'type': u'list', u'value':self.windows.Hanning,u'default':self.windows.Hanning,
+             u'values': [(u'Bartlett',self.windows.Bartlett),(u"Blackman", self.windows.Blackman),(u"Hamming", self.windows.Hamming), (u"Hanning", self.windows.Hanning),(u'Kaiser',self.windows.Kaiser),(u'None',self.windows.WindowNone),(u"Rectangular", self.windows.Rectangular)]},
+            {u'name': u'Apply Function', u'type': u'action'},
+        ]}
+
+    def connectMySignal(self,pTree):
+        self.pTree = pTree
+        self.pTree.param('Power spectrum(Logarithmic)', 'Apply Function').sigActivated.connect(self.processing)
+
+    def processing(self):
+        OneDimensionalFunction.processing(self)
+        window = self.pTree.param('Power spectrum(Logarithmic)', 'FFT window').value()
+        #apply the window function to the result
+
+        Px = abs(np.fft.fft(self.data))[0:len(self.data)//2+1]
+        freqs = float(self.widget.Fs) / len(self.data) * np.arange(len(self.data)//2+1)
+        self.Pxx = Px
+        self.freqs = freqs
+        self.widget.plot(freqs, 10*numpy.log10(Px/numpy.amax(Px)), clear=True, pen = self.widget.plotColor if self.widget.lines else None, symbol = 's', symbolSize = 1,symbolPen = self.widget.plotColor)
+        self.widget.setRange(xRange = (0,freqs[len(freqs) - 1]),yRange=(self.widget.maxY, self.widget.minY),padding=0,update=True)
+        self.widget.getPlotItem().showGrid(x=self.widget.gridX, y=self.widget.gridY)
+        self.widget.setBackground(self.widget.backColor)
+        self.widget.show()
+
+class AveragePowSpec(OneDimensionalFunction):
+        def __init__(self,widget):
+            OneDimensionalFunction.__init__(self,widget)
+            self.myOptions = {u'name': u'Power spectrum(Average)', u'type': u'group', u'children': [
+            {u'name':u'FFT size', u'type': u'list', u'default':512, u'values': [(u'Automatic', 512),(u"128", 128), (u"256", 256),(u"512", 512), (u"1024", 1024)], u'value': u'512'},
+            {u'name': u'FFT window', u'type': u'list', u'value':self.windows.Hanning,u'default':self.windows.Hanning,
+             u'values': [(u'Bartlett',self.windows.Bartlett),(u"Blackman", self.windows.Blackman),(u"Hamming", self.windows.Hamming), (u"Hanning", self.windows.Hanning),(u'Kaiser',self.windows.Kaiser),(u'None',self.windows.WindowNone),(u"Rectangular", self.windows.Rectangular)]},
+            {u'name': u'FFT overlap', u'type': u'int', u'value':-1, u'limits': (-1, 99)},
+            {u'name': u'Apply Function', u'type': u'action'},
+        ]}
+
+        def connectMySignal(self,pTree):
+            self.pTree = pTree
+            self.pTree.param('Power spectrum(Average)', 'Apply Function').sigActivated.connect(self.processing)
+
+        def processing(self):
+            OneDimensionalFunction.processing(self)
+            window = self.pTree.param('Power spectrum(Average)', 'FFT window').value()
+            NFFT = self.pTree.param('Power spectrum(Average)', 'FFT size').value()
+            overlap = self.pTree.param('Power spectrum(Average)', 'FFT overlap').value()
+            #apply the window function to the result
+
+            (Pxx , freqs) = mlab.psd(self.data, Fs= self.widget.Fs, NFFT=NFFT, window=window, noverlap=overlap, scale_by_freq=False)
+            Pxx.shape = len(freqs)
+            self.widget.Pxx = Pxx
+            self.widget.freqs = freqs
+            self.widget.plot(freqs,10*numpy.log10(Pxx/numpy.amax(Pxx)),clear=True, pen = self.widget.plotColor if self.widget.lines else None, symbol = 's', symbolSize = 1,symbolPen = self.widget.plotColor)
+            self.widget.setRange(xRange = (0,freqs[len(freqs) - 1]),yRange=(self.widget.maxY, self.widget.minY),padding=0,update=True)
+            self.widget.setBackground(self.widget.backColor)
+            self.widget.getPlotItem().showGrid(x=self.widget.gridX, y=self.widget.gridY)
+            self.widget.show()
+
 class PowSpecPlotWidget(pg.PlotWidget):
-    def __init__(self,  parent=None,**kargs):
+    def __init__(self, parent=None,**kargs):
+        self.proc = [LogarithmicPowSpec(self),AveragePowSpec(self)]
+        self.lastProc = None
         #self.axisXOsc = OscXAxis(self, orientation='bottom')
         #self.axisYOsc = OscYAxis(self, orientation='left')
         #kargs["axisItems"]={'bottom': self.axisXOsc, 'left': self.axisYOsc}
@@ -23,7 +101,8 @@ class PowSpecPlotWidget(pg.PlotWidget):
         #self.yLine = pg.InfiniteLine(angle = 0,pen=(0,9))
         #pointerCursor-----------------------------------
         self.pointerCursor = pg.ScatterPlotItem()
-        self.selectedTool = Tools.PointerCursor
+        self.selectedTool = None
+
         self.getPlotItem().getViewBox().addItem(self.pointerCursor)
         #self.getPlotItem().getViewBox().addItem(self.xLine)
         #self.getPlotItem().getViewBox().addItem(self.yLine)
@@ -35,13 +114,24 @@ class PowSpecPlotWidget(pg.PlotWidget):
         self.freqs =[]
         self.Pxx =[]
 
-    def setInfo(self, Pxx, freqs):
-        self.Pxx = Pxx
-        self.freqs = freqs
-
     PointerChanged = pyqtSignal(str)
     PointerCursorPressed = pyqtSignal()
     PIXELS_OF_CURSORS_CHANGES = 5
+
+    def updateLast(self,data):
+        self.setData(data)
+        self.lastProc()
+
+    def setData(self,data):
+        for proc in self.proc: proc.setData(data)
+
+    def connectSignals(self,pTree):
+        for proc in self.proc: proc.connectMySignal(pTree)
+
+    def getParamsList(self):
+        params = []
+        for proc in self.proc: params.append(proc.myOptions)
+        return params
 
     def clearPointerCursor(self):
         self.pointerCursor.clear()
@@ -145,36 +235,45 @@ class PowSpecPlotWidget(pg.PlotWidget):
         amplt = 10*numpy.log10(self.Pxx[index]/numpy.amax(self.Pxx))
         return [freq, amplt]
 
-    #region One Dimensional Functions
-    def averageProcessing(self, data, Fs, NFFT, window, noverlap, maxY, minY, plotColor, lines):
-        (Pxx , freqs) = mlab.psd(data, Fs= Fs, NFFT=NFFT, window=window, noverlap=noverlap, scale_by_freq=False)
-        Pxx.shape = len(freqs)
-        self.Pxx = Px
-        self.freqs = freqs
-        self.plot(freqs,10*numpy.log10(Pxx/numpy.amax(Pxx)),clear=True, pen = plotColor if lines else None, symbol = 's', symbolSize = 1,symbolPen = plotColor)
-        self.setRange(xRange = (0,freqs[len(freqs) - 1]),yRange=(maxY, minY),padding=0,update=True)
-        self.show()
+    def loadTheme(self,Fs, window, plotColor,backColor, lines, maxY, minY, gridX, gridY):
+        self.Fs = Fs
+        self.window = window
+        self.plotColor = plotColor
+        self.lines = lines
+        self.maxY = maxY
+        self.minY = minY
+        self.backColor = backColor
+        self.gridX = gridX
+        self.gridY = gridY
 
-    def logarithmicProcessing(self, x, Fs, window, plotColor, lines, maxY, minY):
-
-        Px = abs(np.fft.fft(x))[0:len(x)//2+1]
-        freqs = float(Fs) / len(x) * np.arange(len(x)//2+1)
-        self.Pxx = Px
-        self.freqs = freqs
-        self.plot(freqs, 10*numpy.log10(Px/numpy.amax(Px)), clear=True, pen = plotColor if lines else None, symbol = 's', symbolSize = 1,symbolPen = plotColor)
-        self.setRange(xRange = (0,freqs[len(freqs) - 1]),yRange=(maxY, minY),padding=0,update=True)
-        self.show()
-
-    def cepstrumProcessing(self, x, Fs, window, plotColor, lines, maxY, minY):
-
-        Px = np.fft.fft(x)
-
-        out  = np.fft.ifft(10*numpy.log10(Px/numpy.amax(Px)),n=None, axis=-1)
-        time = []
-        for t in np.arange(0,len(out)):
-            time.append(t * 1.0 / Fs)
-
-        self.plot(time, out.real, clear=True, pen = plotColor if lines else None, symbol = 's', symbolSize = 1,symbolPen = plotColor)
-        self.show()
-        return out, time
-    #endregion
+    #def averageProcessing(self, data, Fs, NFFT, window, noverlap, maxY, minY, plotColor, lines):
+    #    (Pxx , freqs) = mlab.psd(data, Fs= Fs, NFFT=NFFT, window=window, noverlap=noverlap, scale_by_freq=False)
+    #    Pxx.shape = len(freqs)
+    #    self.Pxx = Pxx
+    #    self.freqs = freqs
+    #    self.plot(freqs,10*numpy.log10(Pxx/numpy.amax(Pxx)),clear=True, pen = plotColor if lines else None, symbol = 's', symbolSize = 1,symbolPen = plotColor)
+    #    self.setRange(xRange = (0,freqs[len(freqs) - 1]),yRange=(maxY, minY),padding=0,update=True)
+    #    self.show()
+    #
+    #def logarithmicProcessing(self, x, Fs, window, plotColor, lines, maxY, minY):
+    #
+    #    Px = abs(np.fft.fft(x))[0:len(x)//2+1]
+    #    freqs = float(Fs) / len(x) * np.arange(len(x)//2+1)
+    #    self.Pxx = Px
+    #    self.freqs = freqs
+    #    self.plot(freqs, 10*numpy.log10(Px/numpy.amax(Px)), clear=True, pen = plotColor if lines else None, symbol = 's', symbolSize = 1,symbolPen = plotColor)
+    #    self.setRange(xRange = (0,freqs[len(freqs) - 1]),yRange=(maxY, minY),padding=0,update=True)
+    #    self.show()
+    #
+    ##def cepstrumProcessing(self, x, Fs, window, plotColor, lines, maxY, minY):
+    ##
+    ##    Px = np.fft.fft(x)
+    ##
+    ##    out  = np.fft.ifft(10*numpy.log10(Px/numpy.amax(Px)),n=None, axis=-1)
+    ##    time = []
+    ##    for t in np.arange(0,len(out)):
+    ##        time.append(t * 1.0 / Fs)
+    ##
+    ##    self.plot(time, out.real, clear=True, pen = plotColor if lines else None, symbol = 's', symbolSize = 1,symbolPen = plotColor)
+    ##    self.show()
+    ##    return out, time

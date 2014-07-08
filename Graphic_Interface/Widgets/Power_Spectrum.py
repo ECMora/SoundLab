@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'power_spectrum.ui'
 #
-# Created: Tue Jul 08 13:42:36 2014
+# Created: Tue Jul 08 14:50:37 2014
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
