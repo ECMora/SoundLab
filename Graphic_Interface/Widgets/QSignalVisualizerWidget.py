@@ -249,7 +249,6 @@ class QSignalVisualizerWidget(QWidget):
         self._playDelta = self.signalProcessor.signal.samplingRate * self.playerSpeed / 100 * updateTime / 1000
         self._playerLineTimer.start(updateTime)
 
-
     def removePlayerLine(self):
         self._playerLineTimer.stop()
         if self.playerLineOsc in self.axesOscilogram.getPlotItem().getViewBox().addedItems:
@@ -257,11 +256,9 @@ class QSignalVisualizerWidget(QWidget):
         if self.playerLineSpec in self.axesSpecgram.viewBox.addedItems:
             self.axesSpecgram.viewBox.removeItem(self.playerLineSpec)
 
-
     def pause(self):
         self._playerLineTimer.stop()
         self.signalProcessor.signal.pause()
-
 
     def notifyPlayingCursor(self, frame):
     #if self.signalProcessor.signal.playStatus == self.signalProcessor.signal.PLAYING:
@@ -271,6 +268,12 @@ class QSignalVisualizerWidget(QWidget):
         if self.signalProcessor.signal.playStatus == self.signalProcessor.signal.STOPPED:
             self.removePlayerLine()
 
+    def on_newDataRecorded(self, frame_count):
+            self.mainCursor.max = len(self.signalProcessor.signal.data)
+            self.mainCursor.min = max(0,
+                                      len(self.signalProcessor.signal.data) - 3 * self.signalProcessor.signal.samplingRate)
+            self.refresh(updateSpectrogram=False)
+            self.rangeChanged.emit(self.mainCursor.min, self.mainCursor.max, len(self.signalProcessor.signal.data))
 
     #endregion
 
@@ -285,6 +288,8 @@ class QSignalVisualizerWidget(QWidget):
 
     visibleOscilogram = property(_getVisibleOscilogram, _setVisibleOscilogram)
 
+
+
     def _getVisibleSpectrogram(self):
         return self._visibleSpectrogram
 
@@ -293,9 +298,11 @@ class QSignalVisualizerWidget(QWidget):
         self.axesSpecgram.setVisible(value)
 
     visibleSpectrogram = property(_getVisibleSpectrogram, _setVisibleSpectrogram)
+
     #endregion
 
     #region VISUAL EVENTS AND ACTIONS
+
     def updatezoomcursor(self):
         #actualiza los cursores de zoom segun el area seleccionada por el usuario
         range = self.axesOscilogram.zoomRegion.getRegion()
@@ -456,12 +463,6 @@ class QSignalVisualizerWidget(QWidget):
         if emit:
             self.rangeChanged.emit(self.mainCursor.min, self.mainCursor.max, len(self.signalProcessor.signal.data))
 
-    def on_newDataRecorded(self, frame_count):
-        self.mainCursor.max = len(self.signalProcessor.signal.data)
-        self.mainCursor.min = max(0,
-                                  len(self.signalProcessor.signal.data) - 3 * self.signalProcessor.signal.samplingRate)
-        self.refresh(updateSpectrogram=False)
-        self.rangeChanged.emit(self.mainCursor.min, self.mainCursor.max, len(self.signalProcessor.signal.data))
 
     SPECGRAM_COMPLEX_SIDE = "onesided"
 
@@ -597,9 +598,7 @@ class QSignalVisualizerWidget(QWidget):
         self.axesOscilogram.zoomRegion.setRegion([0, 0])
         self.axesSpecgram.zoomRegion.setRegion([0, 0])
 
-
-
-
+    #endregion
 
     #region Edition CUT,COPY PASTE
 
@@ -622,7 +621,6 @@ class QSignalVisualizerWidget(QWidget):
             self.mainCursor.max += len(self.editionSignalProcessor.clipboard)
             self.rangeChanged.emit(self.mainCursor.min, self.mainCursor.max, len(self.signalProcessor.signal.data))
             self.refresh()
-
 
     #endregion
 
@@ -689,12 +687,7 @@ class QSignalVisualizerWidget(QWidget):
     def changeSign(self):
         self.signalProcessingAction(CommonSignalProcessor(self.signalProcessor.signal).changeSign)
 
-
- #endregion
-
-    #endregion
-
-    #SAVE AND OPEN
+#endregion
 
     def openNew(self, samplingRate=1, bitDepth=8, duration=1, whiteNoise=False):
         self.open(None, samplingRate, bitDepth, duration, whiteNoise)
@@ -801,5 +794,4 @@ class QSignalVisualizerWidget(QWidget):
             fh = open(path, 'w')
             fh.write(state.__repr__())
             fh.close()
-
 

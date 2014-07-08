@@ -7,9 +7,9 @@ import numpy as np
 
 
 class QSignalDetectorWidget(QSignalVisualizerWidget):
-    """This widget performs several detections operations in a signal.
-
+    """This widget performs the detections operations on a signal.
     """
+
     def __init__(self,parent):
         QSignalVisualizerWidget.__init__(self, parent)
         self.envelopeCurve = pg.PlotCurveItem(np.array([0]), pen=pg.mkPen(self.osc_color, width=1),
@@ -19,8 +19,6 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         self.visibleElements = True
         self.Elements = []  # list of elements detected in oscilogram each element contains the object it self and the extra data for visualize it
         self.elements_detector = OneDimensionalElementsDetector()
-
-
 
     def load_Theme(self, theme):
         """
@@ -45,7 +43,6 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         self.envelopeFactor = (2.0 ** (self.signalProcessor.signal.bitDepth) * self.maxYOsc / 100) / array[
             np.argmax(array)]
         return (self.envelopeFactor * array - 2 ** (self.signalProcessor.signal.bitDepth - 1) * self.maxYOsc / 100)
-
 
     def detectElements(self, threshold=20, decay=1, minSize=0, detectionsettings=None, softfactor=5, merge_factor=50,
                        threshold2=0, threshold_spectral=95, pxx=[], freqs=[], bins=[], minsize_spectral=(0, 0),
@@ -76,7 +73,6 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         else:
             self.drawElements(oscilogramItems=True)
 
-
     def changeElementsVisibility(self, visible, element_type=Element.Figures, oscilogramItems=True):
         #change the visibility of the visual items in items
         #that objects must be previously added into oscilogram or specgram widgets
@@ -101,20 +97,35 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
                     x[1] = visible
         self.drawElements()
 
+    def shiftElementsVisualObjects(self):
+        """
+        Shifts left or right (if n is negative or positive respectively) all the detected elements's
+        visual objects. That means all the visual representation in specgram widget visualization.
+        This is necessary because the specgram is recomputed in every new piece(window) of analysis\
+        for efficiency.
+        @param n: the index coordinates to shift all the elements in the specgram widget
+        """
+        for x in self.Elements:
+            for elem in x.twoDimensionalElements:
+                elem.shift(lambda x: self._from_osc_to_spec(self._from_spec_to_osc(x)))
+
+    def computeSpecgramSettings(self, overlap=None):
+        QSignalVisualizerWidget.computeSpecgramSettings(self,overlap)
+        self.shiftElementsVisualObjects()
 
     def drawElements(self, oscilogramItems=None):
         # if oscilogramItems = None its updated the oscilogram and spectrogram widgets
         osc = oscilogramItems is None or oscilogramItems
         spec = oscilogramItems is None or not oscilogramItems
 
-        if (self.visibleOscilogram and osc):
+        if self.visibleOscilogram and osc:
             for i in range(len(self.Elements)):
                 if self.Elements[i].visible:
                     for item, visible in self.Elements[i].visualwidgets():
                         if not visible:
                             self.axesOscilogram.removeItem(item)
                         else:
-                            if (not item in self.axesOscilogram.items() and visible):
+                            if not item in self.axesOscilogram.items() and visible:
                                 self.axesOscilogram.addItem(item)
                 else:
                     for item, visible in self.Elements[i].visualwidgets():
@@ -166,11 +177,16 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         else:
             self.axesOscilogram.select_region(0, 0)
 
-    def deleteElements(self):
-        pass
-
-    def deleteSelectedElement(self):
-        pass
+    def deleteSelectedElements(self):
+        """
+        Deletes the elements between the zoom cursor if any
+        returns the tuple (x,y) of init and end of the interval deleted.
+        If no element is deleted returns None
+        """
+        start,end = self.zoomCursor.min,self.zoomCursor.max
+        if end == start:
+            return None
+        elems = np.array([x.indexFrom for x in self.Elements])
 
     def refresh(self, dataChanged=True, updateOscillogram=True, updateSpectrogram=True, partial=True):
         QSignalVisualizerWidget.refresh(self,dataChanged, updateOscillogram, updateSpectrogram, partial)

@@ -115,11 +115,22 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.widget.createContextCursor([self.actionZoomIn,self.actionZoom_out,self.actionZoom_out_entire_file,separator1,self.actionCombined,self.actionOscilogram,self.actionSpectogram,
                                          separator,self.actionClear_Meditions,self.actionMeditions,self.actionView_Parameters,separator2,
                                          self.actionZoom_Cursor,self.actionPointer_Cursor,self.actionRectangular_Cursor,self.actionRectangular_Eraser,
-                                         separator3,self.actionOsgram_Image,self.actionSpecgram_Image,self.actionCombined_Image])
+                                         separator3,self.actionDelete_Selected_Elements,self.actionOsgram_Image,self.actionSpecgram_Image,self.actionCombined_Image])
         self.windowProgressDetection = QtGui.QProgressBar(self.widget)
         self.actionSignalName.setText(self.widget.signalName())
         self.widget.histogram.setImageItem(self.widget.axesSpecgram.imageItem)
 
+
+    @pyqtSlot()
+    def on_actionDelete_Selected_Elements_triggered(self):
+        indx = self.widget.deleteSelectedElements()
+        if indx is not None:
+            pass        #delete from table
+
+    @pyqtSlot()
+    def on_actionDeselect_Elements_triggered(self):
+        self.widget.selectElement()
+        self.widget.clearZoomCursor()
 
     @QtCore.pyqtSlot(int, int, int)
     def on_widget_rangeChanged(self, left, right, total):
@@ -148,6 +159,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         else:
             self.showNormal()
 
+    #region Tools
     @pyqtSlot()
     def on_actionZoom_Cursor_triggered(self):
         if self.actionZoom_Cursor.isChecked():
@@ -187,6 +199,10 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
             self.widget.setSelectedTool(Tools.RectangularEraser)
         else:
             self.actionRectangular_Eraser.setChecked(True)
+
+    #endregion
+
+    #region Threshold
 
     def getspectralParameters(self, spectralMeasurementLocation):
         """
@@ -234,12 +250,18 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.widget.axesOscilogram.setVisibleThreshold(bool)
         self.widget.setEnvelopeVisibility(bool)
 
+    #endregion
+
+    #region Theme
+
     def load_Theme(self,theme):
         self.theme = theme
         self.widget.load_Theme(theme)
         #self.tableParameterOscilogram.setStyleSheet("background-color: #" +str(self.widget.osc_background) + ";")
 
+    #endregion
 
+    #region Visual Elements
     @pyqtSlot()
     def on_actionView_Parameters_triggered(self):
         self.dockWidgetParameterTableOscilogram.setVisible(self.actionView_Parameters.isChecked())
@@ -258,7 +280,6 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         self.actionTemporal_Figures.setEnabled(visibility)
         self.actionTemporal_Numbers.setEnabled(visibility)
-
 
     @pyqtSlot()
     def on_actionTemporal_Numbers_triggered(self):
@@ -292,7 +313,9 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.actionSub_Elements_Peaks.setEnabled(visibility)
 
 
+    #endregion
 
+    #region Graphs Images
     @pyqtSlot()
     def on_actionOsgram_Image_triggered(self):
         if self.widget.visibleOscilogram:
@@ -315,6 +338,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         else:
             QtGui.QMessageBox.warning(QtGui.QMessageBox(), "Error", "The Espectrogram plot widget is not visible.\n You should see the data that you are going to save.")
 
+
     def saveImage(self,widget,text=""):
         fname = unicode(QFileDialog.getSaveFileName(self,"Save "+ text +" as an Image ",str(self.widget.signalName())+"-"+text+"-Duetto-Image","*.jpg"))
         if fname:
@@ -322,6 +346,9 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
             image = QtGui.QPixmap.grabWindow(widget.winId())
             image.save(fname, 'jpg')
 
+    #endregion
+
+    #region Save Meditions, Excell and Batch Process
     @pyqtSlot()
     def on_actionMeditions_triggered(self, name="",table = None):
         if name != "":
@@ -350,6 +377,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         thread.started.connect(processworker.work)
         processworker.moveToThread(thread)
         thread.start()
+
 
     def getSpectralData(self,signal,specgramSettings):
         """
@@ -498,6 +526,9 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                 ws.write(i, j, str(tableParameter.item(i-1, j).data(Qt.DisplayRole).toString()),stylebody)
         ws.write(tableParameter.model().rowCount()+3,0,"Duetto Sound Lab Oscilogram Meditions",stylecopyrigth)
 
+    #endregion
+
+    #region Detection
     def setSettings(self,elementsDetectorDialog):
         elementsDetectorDialog.load_Theme(self.theme)
         elementsDetectorDialog.dsbxThreshold.setValue(self.detectionSettings["Threshold"])
@@ -634,7 +665,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                 self.tableParameterOscilogram.setHorizontalHeaderLabels(columnNames)
                 self.updateDetectionProgressBar(95)
                 for index in range(len(self.widget.Elements)):
-                   self.widget.Elements[index].clicked = lambda ind,buttn: self.elementSelectedInTable(ind,0)
+                    self.widget.Elements[index].clicked = lambda ind,buttn: self.elementSelectedInTable(ind,0)
 
                 for i in range(self.tableParameterOscilogram.rowCount()):
                     for j,prop in enumerate(paramsTomeasure):
@@ -660,9 +691,14 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
 
             self.windowProgressDetection.hide()
 
+    #endregion
+
+    #region Close and Exit
     @pyqtSlot()
     def on_actionExit_triggered(self):
         self.close()
+
+
 
     def closeEvent(self,event):
         if self.widget.signalProcessor.signal.playStatus == AudioSignal.PLAYING or\
@@ -681,14 +717,15 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
             elif result == QtGui.QMessageBox.Cancel:
                 event.ignore()
 
+    #endregion
+
+    #region Time and Frecuency Domain Visualization
     @pyqtSlot()
     def on_actionClear_Meditions_triggered(self):
         self.widget.clearCursors()
         self.widget.selectElement()
         self.widget.visualChanges = True
         self.widget.refresh()
-
-
 
     @QtCore.pyqtSlot()
     def on_actionCombined_triggered(self):
@@ -710,7 +747,9 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.widget.visibleSpectrogram=False
         self.widget.refresh(dataChanged=False)
 
+    #endregion
 
+    #region Sound
     @QtCore.pyqtSlot()
     def on_actionPlay_Sound_triggered(self):
         self.widget.play()
@@ -723,6 +762,10 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
     def on_actionPause_Sound_triggered(self):
         self.widget.pause()
 
+    #endregion
+
+    #Zoom
+
     @QtCore.pyqtSlot()
     def on_actionZoomIn_triggered(self):
         self.widget.zoomIn()
@@ -734,4 +777,5 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
     @QtCore.pyqtSlot()
     def on_actionZoom_out_entire_file_triggered(self):
         self.widget.zoomNone()
+
 
