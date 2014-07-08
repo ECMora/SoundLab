@@ -757,13 +757,11 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     @pyqtSlot()
     def on_actionPower_Spectrum_triggered(self):
-        dg_pow_spec = PowerSpectrumWindow(self,self.pow_spec_minY,self.pow_spec_maxY,self.pow_spec_lines)
-        dg_pow_spec.load_Theme(self.defaultTheme)
+
         minx = self.widget.zoomCursor.min
         maxx = max(self.widget.zoomCursor.max, min(minx + self.NFFT_pow, len(self.widget.signalProcessor.signal.data)))
-        dg_pow_spec.plot(self.widget.signalProcessor.signal.data[minx:maxx],
-                         self.widget.signalProcessor.signal.samplingRate, self.NFFT_pow, self.window_pow, self.pow_overlap)
-
+        dg_pow_spec = PowerSpectrumWindow(self, self.pow_spec_minY,self.pow_spec_maxY,self.pow_spec_lines,self.widget.signalProcessor.signal.data[minx:maxx],self.widget.signalProcessor.signal.samplingRate,)
+        dg_pow_spec.load_Theme(self.defaultTheme)
         self.pow_spec_windows.append(dg_pow_spec)
 
     @pyqtSlot()
