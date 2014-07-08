@@ -32,7 +32,7 @@ class OneDimensionalElement(Element):
 
     def __init__(self, signal, indexFrom, indexTo):
         Element.__init__(self, signal)
-        self.indexFrom =  indexFrom#index of start of the element
+        self.indexFrom =  indexFrom #index of start of the element
         self.indexTo = indexTo
         self.parameterDecimalPlaces = 4
 
@@ -424,3 +424,9 @@ class OscilogramElement(OneDimensionalElement):
 
     def mouseClickEvent(self, event):
         self.clicked(self.number-1,event.button())
+
+    def setNumber(self,n):
+        self.number = n
+        self.visual_text[0][0].setText(str(n))
+        for e in self.twoDimensionalElements:
+            e.setNumber(n)

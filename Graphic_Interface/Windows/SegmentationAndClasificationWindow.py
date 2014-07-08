@@ -104,32 +104,42 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         #binding to the checkboxes in the dialog of parameter measurement
         self.widget.axesSpecgram.PointerSpecChanged.connect(self.updateStatusBar)
         self.widget.axesOscilogram.PointerOscChanged.connect(self.updateStatusBar)
-        separator = QtGui.QAction(self)
+        separator,separator1,separator2,separator3,separator4 = QtGui.QAction(self),QtGui.QAction(self),\
+                                                                QtGui.QAction(self),QtGui.QAction(self),\
+                                                                QtGui.QAction(self)
+
         separator.setSeparator(True)
-        separator1 = QtGui.QAction(self)
         separator1.setSeparator(True)
-        separator2 = QtGui.QAction(self)
         separator2.setSeparator(True)
-        separator3 = QtGui.QAction(self)
         separator3.setSeparator(True)
+        separator4.setSeparator(True)
+
+
         self.widget.createContextCursor([self.actionZoomIn,self.actionZoom_out,self.actionZoom_out_entire_file,separator1,self.actionCombined,self.actionOscilogram,self.actionSpectogram,
                                          separator,self.actionClear_Meditions,self.actionMeditions,self.actionView_Parameters,separator2,
                                          self.actionZoom_Cursor,self.actionPointer_Cursor,self.actionRectangular_Cursor,self.actionRectangular_Eraser,
-                                         separator3,self.actionDelete_Selected_Elements,self.actionOsgram_Image,self.actionSpecgram_Image,self.actionCombined_Image])
+                                         separator3,self.actionDeselect_Elements,self.actionDelete_Selected_Elements,separator4,self.actionOsgram_Image,self.actionSpecgram_Image,self.actionCombined_Image])
         self.windowProgressDetection = QtGui.QProgressBar(self.widget)
         self.actionSignalName.setText(self.widget.signalName())
         self.widget.histogram.setImageItem(self.widget.axesSpecgram.imageItem)
 
 
     @pyqtSlot()
+    def on_actionTwo_Dimensional_Graphs_triggered(self):
+        print("Graphs 2D")
+
+    @pyqtSlot()
     def on_actionDelete_Selected_Elements_triggered(self):
         indx = self.widget.deleteSelectedElements()
-        if indx is not None:
-            pass        #delete from table
+
+        if indx is not None and indx[0] >=0 and indx[1] < self.tableParameterOscilogram.rowCount():
+            for i in range(indx[1],indx[0]-1,-1):
+                self.tableParameterOscilogram.removeRow(i)        #delete from table
+        self.tableParameterOscilogram.update()
 
     @pyqtSlot()
     def on_actionDeselect_Elements_triggered(self):
-        self.widget.selectElement()
+        self.widget.selectElement() # select the element
         self.widget.clearZoomCursor()
 
     @QtCore.pyqtSlot(int, int, int)
@@ -158,6 +168,12 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
             self.showFullScreen()
         else:
             self.showNormal()
+
+    #region Two Dimensional Graphs
+
+
+
+    #endregion
 
     #region Tools
     @pyqtSlot()
@@ -722,7 +738,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
     #region Time and Frecuency Domain Visualization
     @pyqtSlot()
     def on_actionClear_Meditions_triggered(self):
-        self.widget.clearCursors()
+        self.widget.clearDetection()
         self.widget.selectElement()
         self.widget.visualChanges = True
         self.widget.refresh()
