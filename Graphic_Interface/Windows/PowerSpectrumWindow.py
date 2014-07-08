@@ -19,8 +19,6 @@ class PowerSpectrumWindow(QtGui.QMainWindow,Ui_PowSpecWindow):
         self.ui.widget.setData(data)
         self.ui.widget.Fs = rate
         self.show()
-        self.plotColor = "FFF"
-        self.backColor = "000"
         self.ui.widget.maxY = maxY
         self.ui.widget.minY = minY
         self.ui.widget.lines =lines

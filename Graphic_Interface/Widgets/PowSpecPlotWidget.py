@@ -61,7 +61,7 @@ class AveragePowSpec(OneDimensionalFunction):
             {u'name':u'FFT size', u'type': u'list', u'default':512, u'values': [(u'Automatic', 512),(u"128", 128), (u"256", 256),(u"512", 512), (u"1024", 1024)], u'value': u'512'},
             {u'name': u'FFT window', u'type': u'list', u'value':self.windows.Hanning,u'default':self.windows.Hanning,
              u'values': [(u'Bartlett',self.windows.Bartlett),(u"Blackman", self.windows.Blackman),(u"Hamming", self.windows.Hamming), (u"Hanning", self.windows.Hanning),(u'Kaiser',self.windows.Kaiser),(u'None',self.windows.WindowNone),(u"Rectangular", self.windows.Rectangular)]},
-            {u'name': u'FFT overlap', u'type': u'int', u'value':-1, u'limits': (-1, 99)},
+            {u'name': u'FFT overlap', u'type': u'int', u'value':90, u'limits': (-1, 99)},
             {u'name': u'Apply Function', u'type': u'action'},
         ]}
 
