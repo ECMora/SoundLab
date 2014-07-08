@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'power_spectrum.ui'
 #
-# Created: Tue Jul 08 12:35:54 2014
+# Created: Tue Jul 08 13:42:36 2014
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -43,9 +43,9 @@ class Ui_PowSpecWindow(object):
         self.dockSettings.setFeatures(QtGui.QDockWidget.DockWidgetFloatable|QtGui.QDockWidget.DockWidgetMovable)
         self.dockSettings.setAllowedAreas(QtCore.Qt.AllDockWidgetAreas)
         self.dockSettings.setObjectName(_fromUtf8("dockSettings"))
-        self.dockWidgetContents = QtGui.QWidget()
-        self.dockWidgetContents.setObjectName(_fromUtf8("dockWidgetContents"))
-        self.dockSettings.setWidget(self.dockWidgetContents)
+        self.dock_settings_contents = QtGui.QWidget()
+        self.dock_settings_contents.setObjectName(_fromUtf8("dock_settings_contents"))
+        self.dockSettings.setWidget(self.dock_settings_contents)
         PowSpecWindow.addDockWidget(QtCore.Qt.DockWidgetArea(2), self.dockSettings)
         self.actionOneDimFunctSettings = QtGui.QAction(PowSpecWindow)
         self.actionOneDimFunctSettings.setObjectName(_fromUtf8("actionOneDimFunctSettings"))

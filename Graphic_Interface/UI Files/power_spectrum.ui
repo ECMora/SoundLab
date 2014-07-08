@@ -64,7 +64,7 @@
    <attribute name="dockWidgetArea">
     <number>2</number>
    </attribute>
-   <widget class="QWidget" name="dockWidgetContents"/>
+   <widget class="QWidget" name="dock_settings_contents"/>
   </widget>
   <action name="actionOneDimFunctSettings">
    <property name="text">
