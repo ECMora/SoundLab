@@ -51,13 +51,10 @@ class PowerSpectrumWindow(QtGui.QMainWindow,Ui_PowSpecWindow):
         self.window = window
         self.rate = rate
         self.overlap = overlap
-        #self.ui.widget.getPlotItem().setTitle(title='NFFT '+str(NFFT) + ' ' + window.__name__)
-        (self.Pxx , self.freqs) = mlab.psd(data,Fs= self.rate,NFFT=NFFT, window=window,noverlap=overlap,scale_by_freq=False)
-        self.Pxx.shape = len(self.freqs)
-        self.ui.widget.setInfo(self.Pxx,self.freqs)
-        self.ui.widget.plot(self.freqs,10*numpy.log10(self.Pxx/numpy.amax(self.Pxx)),clear=True, pen = self.plotColor if self.lines else None, symbol = 's', symbolSize = 1,symbolPen = self.plotColor)
-        self.ui.widget.setRange(xRange = (0,self.freqs[len(self.freqs) - 1]),yRange=(self.maxY,self.minY),padding=0,update=True)
-        #self.ui.widget.show()
+
+        #self.Pxx , self.freqs = self.ui.widget.logarithmicProcessing(data, rate, window, self.plotColor, self.lines, self.maxY, self.minY)#rate,NFFT,window,overlap,self.maxY, self.minY, self.plotColor, self.lines)
+        self.ui.widget.cepstrumProcessing(data, rate, window, self.plotColor, self.lines, self.maxY, self.minY)#rate,NFFT,window,overlap,self.maxY, self.minY, self.plotColor, self.lines)
+        #self.Pxx , self.freqs = self.ui.widget.averageProcessing(data, rate,NFFT,window,overlap,self.maxY, self.minY, self.plotColor, self.lines)
 
     def updatePowSpectrumInterval(self,data):
         self.plot(data,self.rate,self.NFFT,self.window,self.overlap)

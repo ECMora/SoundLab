@@ -2,10 +2,12 @@
 from PyQt4 import QtCore
 from PyQt4.QtCore import SIGNAL, pyqtSignal
 from PyQt4.QtGui import QCursor,QColor
+from matplotlib import mlab
 import pyqtgraph as pg
 import numpy
 from Graphic_Interface.Widgets.Tools import Tools
 from Axis import *
+import numpy as np
 from Graphic_Interface.Widgets.Tools import RectROI
 
 class PowSpecPlotWidget(pg.PlotWidget):
@@ -69,7 +71,7 @@ class PowSpecPlotWidget(pg.PlotWidget):
             if not insidex or not insidey:
                 self.setCursor(QCursor(QtCore.Qt.ArrowCursor))
             else:
-                self.setCursor(QCursor(QtCore.Qt.BlankCursor))
+                self.setCursor(QCursor(QtCore.Qt.CrossCursor))
             self.update()
 
     def mousePressEvent(self, event):
@@ -143,3 +145,37 @@ class PowSpecPlotWidget(pg.PlotWidget):
         amplt = 10*numpy.log10(self.Pxx[index]/numpy.amax(self.Pxx))
         return [freq, amplt]
 
+
+    def averageProcessing(self, data, Fs, NFFT, window, noverlap, maxY, minY, plotColor, lines):
+        (Pxx , freqs) = mlab.psd(data, Fs= Fs, NFFT=NFFT, window=window, noverlap=noverlap, scale_by_freq=False)
+        Pxx.shape = len(freqs)
+        self.setInfo(Pxx,freqs)
+        self.plot(freqs,10*numpy.log10(Pxx/numpy.amax(Pxx)),clear=True, pen = plotColor if lines else None, symbol = 's', symbolSize = 1,symbolPen = plotColor)
+        self.setRange(xRange = (0,freqs[len(freqs) - 1]),yRange=(maxY, minY),padding=0,update=True)
+        self.show()
+
+        return Pxx, freqs
+
+    def logarithmicProcessing(self, x, Fs, window, plotColor, lines, maxY, minY):
+
+        Px = abs(np.fft.fft(x))[0:len(x)//2+1]
+        freqs = float(Fs) / len(x) * np.arange(len(x)//2+1)
+        self.setInfo(Px,freqs)
+        self.plot(freqs, 10*numpy.log10(Px/numpy.amax(Px)), clear=True, pen = plotColor if lines else None, symbol = 's', symbolSize = 1,symbolPen = plotColor)
+        self.setRange(xRange = (0,freqs[len(freqs) - 1]),yRange=(maxY, minY),padding=0,update=True)
+        self.show()
+
+        return Px, freqs
+
+    def cepstrumProcessing(self, x, Fs, window, plotColor, lines, maxY, minY):
+
+        Px = np.fft.fft(x)
+
+        out  = np.fft.ifft(10*numpy.log10(Px/numpy.amax(Px)),n=None, axis=-1)
+        time = []
+        for t in np.arange(0,len(out)):
+            time.append(t * 1.0 / Fs)
+
+        self.plot(time, out.real, clear=True, pen = plotColor if lines else None, symbol = 's', symbolSize = 1,symbolPen = plotColor)
+        self.show()
+        return out, time

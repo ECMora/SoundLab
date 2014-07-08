@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'C:\Users\Gaby\Desktop\DuettoSystem\Graphic_Interface\UI Files\power_spectrum.ui'
+# Form implementation generated from reading ui file 'power_spectrum.ui'
 #
-# Created: Thu May 08 11:36:09 2014
+# Created: Tue Jul 08 12:35:54 2014
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -36,14 +36,28 @@ class Ui_PowSpecWindow(object):
         self.statusbar = QtGui.QStatusBar(PowSpecWindow)
         self.statusbar.setObjectName(_fromUtf8("statusbar"))
         PowSpecWindow.setStatusBar(self.statusbar)
-        self.actionHighest_frequency = QtGui.QAction(PowSpecWindow)
-        self.actionHighest_frequency.setObjectName(_fromUtf8("actionHighest_frequency"))
+        self.toolBar = QtGui.QToolBar(PowSpecWindow)
+        self.toolBar.setObjectName(_fromUtf8("toolBar"))
+        PowSpecWindow.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
+        self.dockSettings = QtGui.QDockWidget(PowSpecWindow)
+        self.dockSettings.setFeatures(QtGui.QDockWidget.DockWidgetFloatable|QtGui.QDockWidget.DockWidgetMovable)
+        self.dockSettings.setAllowedAreas(QtCore.Qt.AllDockWidgetAreas)
+        self.dockSettings.setObjectName(_fromUtf8("dockSettings"))
+        self.dockWidgetContents = QtGui.QWidget()
+        self.dockWidgetContents.setObjectName(_fromUtf8("dockWidgetContents"))
+        self.dockSettings.setWidget(self.dockWidgetContents)
+        PowSpecWindow.addDockWidget(QtCore.Qt.DockWidgetArea(2), self.dockSettings)
+        self.actionOneDimFunctSettings = QtGui.QAction(PowSpecWindow)
+        self.actionOneDimFunctSettings.setObjectName(_fromUtf8("actionOneDimFunctSettings"))
+        self.toolBar.addAction(self.actionOneDimFunctSettings)
 
         self.retranslateUi(PowSpecWindow)
         QtCore.QMetaObject.connectSlotsByName(PowSpecWindow)
 
     def retranslateUi(self, PowSpecWindow):
-        PowSpecWindow.setWindowTitle(QtGui.QApplication.translate("PowSpecWindow", "Power Spectrum", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionHighest_frequency.setText(QtGui.QApplication.translate("PowSpecWindow", "Highest frequency", None, QtGui.QApplication.UnicodeUTF8))
+        PowSpecWindow.setWindowTitle(QtGui.QApplication.translate("PowSpecWindow", "One Dimensional Functions", None, QtGui.QApplication.UnicodeUTF8))
+        self.toolBar.setWindowTitle(QtGui.QApplication.translate("PowSpecWindow", "toolBar", None, QtGui.QApplication.UnicodeUTF8))
+        self.dockSettings.setWindowTitle(QtGui.QApplication.translate("PowSpecWindow", "Settings", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionOneDimFunctSettings.setText(QtGui.QApplication.translate("PowSpecWindow", "OneDimFunctSettings", None, QtGui.QApplication.UnicodeUTF8))
 
 from PowSpecPlotWidget import PowSpecPlotWidget
