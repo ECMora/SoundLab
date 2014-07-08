@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Sound Lab\DuettoSystem\Graphic_Interface\UI Files\SegmentationAndClasificationWindowUI.ui'
 #
-# Created: Wed Jul 02 11:34:13 2014
+# Created: Wed Jul 02 16:55:29 2014
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -305,6 +305,10 @@ class Ui_MainWindow(object):
         self.actionPointer_Cursor.setObjectName(_fromUtf8("actionPointer_Cursor"))
         self.actionSignalName = QtGui.QAction(MainWindow)
         self.actionSignalName.setObjectName(_fromUtf8("actionSignalName"))
+        self.actionDelete_Selected_Elements = QtGui.QAction(MainWindow)
+        self.actionDelete_Selected_Elements.setObjectName(_fromUtf8("actionDelete_Selected_Elements"))
+        self.actionDeselect_Elements = QtGui.QAction(MainWindow)
+        self.actionDeselect_Elements.setObjectName(_fromUtf8("actionDeselect_Elements"))
         self.toolBar.addAction(self.actionZoomIn)
         self.toolBar.addAction(self.actionZoom_out)
         self.toolBar.addAction(self.actionZoom_out_entire_file)
@@ -319,6 +323,7 @@ class Ui_MainWindow(object):
         self.toolBar.addAction(self.actionSpectogram)
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionSignalName)
+        self.toolBar.addAction(self.actionDeselect_Elements)
         self.menuPeak_Frecuencies.addAction(self.actionElements_Peaks)
         self.menuPeak_Frecuencies.addAction(self.actionSub_Elements_Peaks)
         self.menuParameters.addAction(self.actionView_Parameters)
@@ -424,6 +429,8 @@ class Ui_MainWindow(object):
         self.actionZoom_Cursor.setText(QtGui.QApplication.translate("MainWindow", "Zoom_Cursor", None, QtGui.QApplication.UnicodeUTF8))
         self.actionPointer_Cursor.setText(QtGui.QApplication.translate("MainWindow", "Pointer Cursor", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSignalName.setText(QtGui.QApplication.translate("MainWindow", "SignalName", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionDelete_Selected_Elements.setText(QtGui.QApplication.translate("MainWindow", "Delete Selected Elements", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionDeselect_Elements.setText(QtGui.QApplication.translate("MainWindow", "Deselect Elements", None, QtGui.QApplication.UnicodeUTF8))
 
 from Graphic_Interface.Widgets.QSignalDetectorWidget import QSignalDetectorWidget
 import icons_rc

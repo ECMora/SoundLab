@@ -271,6 +271,7 @@ background-color: rgb(99, 128, 255);</string>
    <addaction name="actionSpectogram"/>
    <addaction name="separator"/>
    <addaction name="actionSignalName"/>
+   <addaction name="actionDeselect_Elements"/>
   </widget>
   <widget class="QDockWidget" name="dockWidgetParameterTableOscilogram">
    <property name="styleSheet">
@@ -705,6 +706,16 @@ background-color: rgb(99, 128, 255);</string>
   <action name="actionSignalName">
    <property name="text">
     <string>SignalName</string>
+   </property>
+  </action>
+  <action name="actionDelete_Selected_Elements">
+   <property name="text">
+    <string>Delete Selected Elements</string>
+   </property>
+  </action>
+  <action name="actionDeselect_Elements">
+   <property name="text">
+    <string>Deselect Elements</string>
    </property>
   </action>
   <zorder>dockWidgetParameterTableOscilogram</zorder>

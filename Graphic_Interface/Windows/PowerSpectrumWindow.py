@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+PowerSpectrumWindow.py# -*- coding: utf-8 -*-
 from matplotlib import mlab
 import numpy
 from Graphic_Interface.Widgets.Power_Spectrum  import Ui_PowSpecWindow

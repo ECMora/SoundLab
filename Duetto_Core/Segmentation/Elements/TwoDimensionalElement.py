@@ -14,6 +14,15 @@ class TwoDimensionalElement(Element):
         Element.__init__(self,signal)
         self.matrix = matrix
 
+    def shift(self,function):
+        """
+        Shifts the elements in the coordinate system of the especgram.
+        Its an abstract method
+        @param function: The function to translate the coordinate.
+        Negative to the left positive to the right.
+        @return: None
+        """
+        pass
 
 
 class SpecgramElement(TwoDimensionalElement):
@@ -25,6 +34,7 @@ class SpecgramElement(TwoDimensionalElement):
             starttime+=one_dimensional_parent.indexFromInPxx
             endtime+=one_dimensional_parent.indexFromInPxx
             self.parentnumber = one_dimensional_parent.number
+
         self.bins = bins
         self.number = number
         self.color = QtGui.QColor(0, 255, 0, 100) if number%2==0 else QtGui.QColor(0, 0, 255,100)
@@ -35,6 +45,8 @@ class SpecgramElement(TwoDimensionalElement):
         self.freqEndIndex = endfreq
 
         self.parameters = dict(minFreq=None, maxFreq=None, peakFreq=None,peaksAbove=(None,0))
+
+        #region Locations
         if(location is not None):
             self.measurementLocation = location
             #width = (self.timeEndIndex-self.timeStartIndex)/5
@@ -69,20 +81,31 @@ class SpecgramElement(TwoDimensionalElement):
             #    quartile3.setBrush(QtGui.QBrush(self.measurementLocation.MEDITIONS[self.measurementLocation.QUARTILE75][1]))
             #    quartile3.setToolTip("Element:"+  str(self.parentnumber) +  "\n SubElement: "+str(self.number) +"\nQuartile 75% Mesurement Location")
             #    self.visual_locations.append([quartile3,True])
+        #endregion
+
+        #positions of visual elements management
+        self.textPosition = []
+        self.figurePosition = []
+
+
         try:
             self.addPeaksVisualObjects()
         except:
             print("Could not visualize the peaks")
+
         if multipleSubelements:
             text = pg.TextItem(str(self.parentnumber),color=(255,255,255),anchor=(0.5,0.8))
-            text.setPos(self.timeStartIndex+(self.timeEndIndex-self.timeStartIndex)/2,
-                                    self.freqEndIndex)
+            self.textPosition.append((self.timeStartIndex+(self.timeEndIndex-self.timeStartIndex)/2,
+                                    self.freqEndIndex))
+            text.setPos(self.textPosition[0][0],self.textPosition[0][1])
             text.setFont(QtGui.QFont("Arial",pointSize=10))
+
             self.visual_text.append([text,True])
-            rect = QtGui.QGraphicsRectItem(QtCore.QRectF(self.timeStartIndex,self.freqStartIndex,
-                                                                     self.timeEndIndex-self.timeStartIndex,
-                                                                     self.freqEndIndex-self.freqStartIndex))
+            t = (self.timeStartIndex,self.freqStartIndex,self.timeEndIndex-self.timeStartIndex,self.freqEndIndex-self.freqStartIndex)
+            rect = QtGui.QGraphicsRectItem(QtCore.QRectF(t[0],t[1],t[2],t[3]))
+
             rect.setPen(QtGui.QPen(QtGui.QColor(255, 255, 255)))
+            self.figurePosition.append(t)
             self.visual_figures.append([rect,True])
         else:
 
@@ -101,10 +124,20 @@ class SpecgramElement(TwoDimensionalElement):
                 [1,2],
                 [2,3]
                 ])
-            g.setData(pos=pos, size=1, symbol='d', pxMode=False,adj=adj,pen=(pg.mkPen(self.color,width=3)))
+
+            _f = (pos,adj,dict(size=1, symbol='d', pxMode=False,pen=(pg.mkPen(self.color,width=3))))
+            self.figurePosition.append(_f)
+            g.setData(pos=_f[0],adj=_f[1],**_f[2])
+
+
+
             self.visual_figures.append([g,True])
+
             text = pg.TextItem(str(one_dimensional_parent.number),color=(255,255,255),anchor=(0.5,0))
-            text.setPos(self.timeStartIndex/2.0+self.timeEndIndex/2.0, self.freqStartIndex+f*95/100)
+
+            _t = (self.timeStartIndex/2.0+self.timeEndIndex/2.0, self.freqStartIndex+f*95/100)
+            self.textPosition.append(_t)
+            text.setPos(_t[0],_t[1])
             self.visual_text.append([text,True])
 
     def addPeaksVisualObjects(self):
@@ -143,5 +176,29 @@ class SpecgramElement(TwoDimensionalElement):
             self.parameters["peekToPeek"] = (0,threshold)
         return self.parameters["peekToPeek"][0]
 
+    def addVisualGraph(self,nodes,adj,dictionary=None):
+        d = dictionary if dictionary is not None else dict(size=1, symbol='d', pxMode=False,pen=(pg.mkPen(self.color,width=3)))
+        f = (nodes,adj,d)
+        self.figurePosition.append(f)
+        g = pg.GraphItem()
+        g.setData(pos=f[0],adj=f[1],**f[2])
+        self.visual_figures.append([g,True])
+
+    def shift(self,function):
+        for i,x in enumerate(self.visual_text):
+            x[0].setPos(function(self.textPosition[i][0]),self.textPosition[i][1])
+
+        for i,x in enumerate(self.visual_figures):
+            if isinstance(x[0],QtGui.QGraphicsRectItem):
+                t = self.figurePosition[i]
+                x[0].setRect(function(t[0]),t[1],t[2],t[3])
+            elif isinstance(x[0],pg.GraphItem):
+                _f = self.figurePosition[i]
+                arr = np.copy(_f[0])
+                for j in range(len(arr)):
+                    arr[j,0] = function(arr[j,0])
+                x[0].setData(pos=arr,adj=_f[1],**_f[2])
+            else:
+                print("The shift of "+str(type(x)+" is not implemented for spectrogram"))
 
 
