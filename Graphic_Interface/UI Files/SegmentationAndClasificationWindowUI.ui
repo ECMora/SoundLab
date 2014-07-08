@@ -270,8 +270,9 @@ background-color: rgb(99, 128, 255);</string>
    <addaction name="actionOscilogram"/>
    <addaction name="actionSpectogram"/>
    <addaction name="separator"/>
-   <addaction name="actionSignalName"/>
+   <addaction name="actionDelete_Selected_Elements"/>
    <addaction name="actionDeselect_Elements"/>
+   <addaction name="actionSignalName"/>
   </widget>
   <widget class="QDockWidget" name="dockWidgetParameterTableOscilogram">
    <property name="styleSheet">
@@ -350,6 +351,8 @@ background-color: rgb(99, 128, 255);</string>
     <addaction name="actionPointer_Cursor"/>
     <addaction name="actionRectangular_Cursor"/>
     <addaction name="actionRectangular_Eraser"/>
+    <addaction name="separator"/>
+    <addaction name="actionTwo_Dimensional_Graphs"/>
    </widget>
    <addaction name="menuDetection"/>
    <addaction name="menuTools"/>
@@ -716,6 +719,11 @@ background-color: rgb(99, 128, 255);</string>
   <action name="actionDeselect_Elements">
    <property name="text">
     <string>Deselect Elements</string>
+   </property>
+  </action>
+  <action name="actionTwo_Dimensional_Graphs">
+   <property name="text">
+    <string>Two Dimensional Graphs</string>
    </property>
   </action>
   <zorder>dockWidgetParameterTableOscilogram</zorder>

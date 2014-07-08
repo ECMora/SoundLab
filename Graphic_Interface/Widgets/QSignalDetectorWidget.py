@@ -47,7 +47,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
     def detectElements(self, threshold=20, decay=1, minSize=0, detectionsettings=None, softfactor=5, merge_factor=50,
                        threshold2=0, threshold_spectral=95, pxx=[], freqs=[], bins=[], minsize_spectral=(0, 0),
                        location=None, progress=None, findSpectralSublements=True):
-        self.clearCursors()
+        self.clearDetection()
         self.elements_detector.detect(self.signalProcessor.signal, 0, len(self.signalProcessor.signal.data),
                                       threshold=threshold, detectionsettings=detectionsettings, decay=decay,
                                       minSize=minSize, softfactor=softfactor, merge_factor=merge_factor,
@@ -148,21 +148,20 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
             self.axesSpecgram.update()
 
-    def cleanVisibleCursors(self, oscilogram=True, specgram=True):
+    def removeVisualElements(self, oscilogram=True, specgram=True,elements=None):
+        elements = elements if elements is not None else self.Elements
         if (oscilogram):
-            for elem in self.Elements:
+            for elem in elements:
                 for item, visible in elem.visualwidgets():
-                    if (visible):
-                        self.axesOscilogram.removeItem(item)
+                    self.axesOscilogram.removeItem(item)
         if (specgram):
-            for elem in self.Elements:
+            for elem in elements:
                 for elem2 in elem.twoDimensionalElements:
                     for item, visible in elem2.visualwidgets():
-                        if (visible):
-                            self.axesSpecgram.viewBox.removeItem(item)
+                        self.axesSpecgram.viewBox.removeItem(item)
 
-    def clearCursors(self, oscilogram=True, specgram=True):
-        self.cleanVisibleCursors(oscilogram=True, specgram=True)
+    def clearDetection(self, oscilogram=True, specgram=True):
+        self.removeVisualElements(oscilogram=True, specgram=True)
         self.Elements = [] if oscilogram and specgram else self.Elements
 
     def selectElement(self, number=-1):
@@ -184,9 +183,30 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         If no element is deleted returns None
         """
         start,end = self.zoomCursor.min,self.zoomCursor.max
-        if end == start:
+        if end == start or len(self.Elements) == 0:
             return None
-        elems = np.array([x.indexFrom for x in self.Elements])
+
+        sorted_arr = np.array([x.indexFrom for x in self.Elements])
+
+        indexFrom,indexTo = np.searchsorted(sorted_arr,start),np.searchsorted(sorted_arr,end) - 1
+        indexFrom += 1 if self.Elements[indexFrom].indexTo <= start else 0
+
+        if indexFrom < 0 or indexTo < indexFrom or indexTo >= len(self.Elements):
+            return None
+
+        self.removeVisualElements(elements=self.Elements[indexFrom:indexTo+1])
+
+        self.Elements = self.Elements[0:indexFrom]+self.Elements[indexTo+1:]
+
+        for i,x in enumerate(self.Elements):
+            x.setNumber(i+1)
+
+        self.axesOscilogram.update()
+        self.axesSpecgram.update()
+
+        return indexFrom,indexTo
+
+
 
     def refresh(self, dataChanged=True, updateOscillogram=True, updateSpectrogram=True, partial=True):
         QSignalVisualizerWidget.refresh(self,dataChanged, updateOscillogram, updateSpectrogram, partial)

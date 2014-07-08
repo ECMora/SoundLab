@@ -202,3 +202,6 @@ class SpecgramElement(TwoDimensionalElement):
                 print("The shift of "+str(type(x)+" is not implemented for spectrogram"))
 
 
+    def setNumber(self,n):
+        self.number = n
+        self.visual_text[0][0].setText(str(n))

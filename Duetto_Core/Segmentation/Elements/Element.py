@@ -19,7 +19,7 @@ class Element:
         self.visual_peaksfreqs = []
         self.actionVisibility = None #accion que cambia la visibilidad de este elemento en el grafico para ponerla en un context menu
 
-
+        self.number = 0 # the number of this element
 
     def visualwidgets(self):
         """
@@ -36,4 +36,5 @@ class Element:
             yield p
         #the objects to represent visually this object
 
-
+    def setNumber(self,n):
+        pass
