@@ -20,9 +20,6 @@ class OneDimensionalFunction:
     def connectMySignal(self,pTree):
         pass
 
-    def setData(self,data):
-        self.data = data
-
     def processing(self):
         self.widget.lastProc = self.processing
 
@@ -44,8 +41,8 @@ class LogarithmicPowSpec(OneDimensionalFunction):
         window = self.pTree.param('Power spectrum(Logarithmic)', 'FFT window').value()
         #apply the window function to the result
 
-        Px = abs(np.fft.fft(self.data))[0:len(self.data)//2+1]
-        freqs = float(self.widget.Fs) / len(self.data) * np.arange(len(self.data)//2+1)
+        Px = abs(np.fft.fft(self.widget.data))[0:len(self.widget.data)//2+1]
+        freqs = float(self.widget.Fs) / len(self.widget.data) * np.arange(len(self.widget.data)//2+1)
         self.Pxx = Px
         self.freqs = freqs
         self.widget.plot(freqs, 10*numpy.log10(Px/numpy.amax(Px)), clear=True, pen = self.widget.plotColor if self.widget.lines else None, symbol = 's', symbolSize = 1,symbolPen = self.widget.plotColor)
@@ -76,7 +73,7 @@ class AveragePowSpec(OneDimensionalFunction):
             overlap = self.pTree.param('Power spectrum(Average)', 'FFT overlap').value()
             #apply the window function to the result
 
-            (Pxx , freqs) = mlab.psd(self.data, Fs= self.widget.Fs, NFFT=NFFT, window=window, noverlap=overlap, scale_by_freq=False)
+            (Pxx , freqs) = mlab.psd(self.widget.data, Fs= self.widget.Fs, NFFT=NFFT, window=window, noverlap=overlap, scale_by_freq=False)
             Pxx.shape = len(freqs)
             self.widget.Pxx = Pxx
             self.widget.freqs = freqs
@@ -123,7 +120,7 @@ class PowSpecPlotWidget(pg.PlotWidget):
         self.lastProc()
 
     def setData(self,data):
-        for proc in self.proc: proc.setData(data)
+        self.data = data
 
     def connectSignals(self,pTree):
         for proc in self.proc: proc.connectMySignal(pTree)

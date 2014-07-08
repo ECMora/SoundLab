@@ -807,6 +807,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         f = QFileDialog.getOpenFileName(self, u"Select a file to open",directory = self.lastopen,
                                               filter=u"Wave Files (*.wav);;All Files (*)")
         self._open(unicode(f))
+        for win in self.pow_spec_windows: win.close()
         self.pow_spec_windows = []
 
     @pyqtSlot()
