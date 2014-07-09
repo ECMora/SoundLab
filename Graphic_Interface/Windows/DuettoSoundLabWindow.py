@@ -294,14 +294,15 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.widget.specgramSettings.NFFT = self.ParamTree.param(u'Spectrogram Settings').param(u'FFT size').value()
         self.widget.specgramSettings.overlap = self.ParamTree.param(u'Spectrogram Settings').param(u'FFT overlap').value()
         p = os.path.join(os.path.join(u"Utils",u"Didactic Signals"),u"duetto.wav")
-        self.widget.visibleSpectrogram = False
-        self.actionCombined.setEnabled(False)
-        self.actionSpectogram.setEnabled(False)
+        #self.widget.visibleSpectrogram = False
+        #self.actionCombined.setEnabled(False)
+        #self.actionSpectogram.setEnabled(False)
         if os.path.exists(p):
             self.widget.open(p)
             self.actionSignalName.setText(u"File Name: "+ self.widget.signalName())
         else:
             self.widget.openNew(44100, 16, 5., whiteNoise=False)
+            #self.widget.openNew(44100, 16, 5., whiteNoise=False)
             self.actionSignalName.setText(u"File Name: Welcome to duetto")
 
         self.setWindowTitle(u"Duetto Sound Lab - Welcome to Duetto")

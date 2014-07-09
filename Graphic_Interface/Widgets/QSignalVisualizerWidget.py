@@ -7,6 +7,7 @@ import pyqtgraph as pg
 import numpy as np
 import matplotlib.mlab as mlab
 from pyqtgraph.Point import Point
+from scipy.stats.distributions import truncexpon_gen
 from Duetto_Core.AudioSignals.WavFileSignal import WavFileSignal
 from Duetto_Core.AudioSignals.AudioSignal import AudioSignal
 from Duetto_Core.Cursors.IntervalCursor import IntervalCursor
@@ -880,7 +881,7 @@ class QSignalVisualizerWidget(QWidget):
                                                2 ** self.signalProcessor.signal.bitDepth), padding=0)
             self.axesOscilogram.zoomRegion.sigRegionChanged.connect(self.updatezoomcursor)
             self.signalProcessor.signal.play_finished = self.removePlayerLine
-        self.maxYSpc = self.signalProcessor.signal.samplingRate / 2000
+        self.maxYSpc = -1
         self.minYSpc = 0
         self.refresh()
 
@@ -894,7 +895,7 @@ class QSignalVisualizerWidget(QWidget):
         self.axesSpecgram.changeSelectedTool(Tools.Zoom)
         self.axesOscilogram.zoomRegion.setRegion([0, 0])
         self.axesSpecgram.zoomRegion.setRegion([0, 0])
-
+        self.refresh()
 
     def save(self, fname):
         self.signalProcessor.signal.save(fname)
