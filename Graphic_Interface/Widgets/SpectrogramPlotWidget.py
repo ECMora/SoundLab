@@ -71,15 +71,16 @@ class SpectrogramPlotWidget(GraphicsView):
 
     def load_Theme(self, theme):
         update_graph =False
-        if self.spec_background != theme.spec_background:
-            self.spec_background = theme.spec_background
-            self.setBackground(self.spec_background)
+        self.setBackground(theme.spec_background)
+        self.showGrid(theme.spec_GridX,theme.spec_GridY)
 
-        if self.spec_gridx != theme.spec_GridX or self.spec_gridy != theme.spec_GridY:
-            self.spec_gridx = theme.spec_GridX
-            self.spec_gridy = theme.spec_GridY
-            self.showGrid(x=self.spec_gridx, y=self.spec_gridy)
-
+        if self.parent() and 'freqs' in self.parent().specgramSettings.__dict__:
+            if theme.maxYSpec == -1:
+                theme.maxYSpec = self.parent().specgramSettings.freqs[-1]
+            YSpec = numpy.searchsorted(self.parent().specgramSettings.freqs, [theme.minYSpec * 1000, theme.maxYSpec * 1000])
+            self.viewBox.setRange(yRange=(YSpec[0], YSpec[1]),
+                              padding=0, update=True)
+            self.parent().refresh(False,True,False)
         if update_graph:
             self.update()
 

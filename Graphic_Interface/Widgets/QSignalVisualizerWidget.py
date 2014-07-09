@@ -550,8 +550,6 @@ class QSignalVisualizerWidget(QWidget):
     def _refresh(self, dataChanged, updateOscillogram, updateSpectrogram, partial):
 
         self.axesOscilogram.setRange(xRange=(self.mainCursor.min, self.mainCursor.max),
-                                     yRange=(self.minYOsc * 0.01 * self.signalProcessor.signal.getMaximumValueAllowed(),
-                                             self.maxYOsc * 0.01 * self.signalProcessor.signal.getMaximumValueAllowed()),
                                      padding=0, update=True)
 
         if (self.visibleOscilogram or self.signalProcessor.signal.playStatus == AudioSignal.RECORDING) \
@@ -578,13 +576,10 @@ class QSignalVisualizerWidget(QWidget):
         if self.visibleSpectrogram and updateSpectrogram and self.signalProcessor.signal \
             and self.signalProcessor.signal.opened() and self.signalProcessor.signal.playStatus != AudioSignal.RECORDING \
             and self.mainCursor.max > self.mainCursor.min:
-            YSpec = np.searchsorted(self.specgramSettings.freqs, [self.minYSpc * 1000, self.maxYSpc * 1000])
-
             self.axesSpecgram.imageItem.setImage(np.transpose(self._Z))
 
             self.axesSpecgram.viewBox.setRange(xRange=(self._from_osc_to_spec(self.mainCursor.min),
-                                                       self._from_osc_to_spec(self.mainCursor.max)),
-                                               yRange=(YSpec[0], YSpec[1]), padding=0)
+                                                       self._from_osc_to_spec(self.mainCursor.max)), padding=0)
             self.updateSpecZoomRegion(self.zoomCursor.min, self.zoomCursor.max)
 
             self.updateSpectrogramColors()
