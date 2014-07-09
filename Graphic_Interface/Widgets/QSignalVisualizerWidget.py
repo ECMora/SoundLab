@@ -683,6 +683,7 @@ class QSignalVisualizerWidget(QWidget):
             self.mainCursor.max -= self.zoomCursor.max - self.zoomCursor.min
             if (self.mainCursor.max < 1):
                 self.zoomOut()
+            self.axesSpecgram.zoomRegion.setRegion([0, 0])
             self.rangeChanged.emit(self.mainCursor.min, self.mainCursor.max, len(self.signalProcessor.signal.data))
             self.refresh()
 
@@ -694,6 +695,7 @@ class QSignalVisualizerWidget(QWidget):
         if (self.signalProcessor.signal.opened):
             self.editionSignalProcessor.paste(self.editionSignalProcessor.clipboard, self.zoomCursor.min)
             self.mainCursor.max += len(self.editionSignalProcessor.clipboard)
+            self.axesSpecgram.zoomRegion.setRegion([0, 0])
             self.rangeChanged.emit(self.mainCursor.min, self.mainCursor.max, len(self.signalProcessor.signal.data))
             self.refresh()
 
@@ -707,6 +709,7 @@ class QSignalVisualizerWidget(QWidget):
     def insertWhiteNoise(self, ms=1):
         if (self.signalProcessor.signal is not None):
             self.signalProcessor.signal.generateWhiteNoise(ms, self.zoomCursor.min)
+            self.axesSpecgram.zoomRegion.setRegion([0, 0])
             self.refresh()
 
     def insertPinkNoise(self, ms, type, Fc, Fl, Fu):
@@ -715,6 +718,7 @@ class QSignalVisualizerWidget(QWidget):
             f = FilterSignalProcessor(self.signalProcessor.signal)
             f.filter(self.zoomCursor.min, self.zoomCursor.min + ms * self.signalProcessor.signal.samplingRate / 1000.0,
                      type, Fc, Fl, Fu)
+            self.axesSpecgram.zoomRegion.setRegion([0, 0])
             self.refresh()
 
     def resampling(self, samplingRate):
@@ -883,7 +887,7 @@ class QSignalVisualizerWidget(QWidget):
             self.signalProcessor.signal.play_finished = self.removePlayerLine
         self.maxYSpc = -1
         self.minYSpc = 0
-        self.refresh()
+        self.refresh(False,False)
 
         self.axesSpecgram.zoomRegion.setBounds([0, self._from_osc_to_spec(self.mainCursor.max)])
         self.axesOscilogram.getPlotItem().getViewBox().sigRangeChangedManually.connect(self._oscRangeChanged)
