@@ -52,6 +52,9 @@
    <addaction name="actionOneDimFunctSettings"/>
   </widget>
   <widget class="QDockWidget" name="dockSettings">
+   <property name="styleSheet">
+    <string notr="true">&quot;&quot;</string>
+   </property>
    <property name="features">
     <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
    </property>
