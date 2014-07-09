@@ -45,12 +45,8 @@ class LogarithmicPowSpec(OneDimensionalFunction):
         freqs = float(self.widget.Fs) / len(self.widget.data) * np.arange(len(self.widget.data)//2+1)
         self.Pxx = Px
         self.freqs = freqs
-        self.widget.plot(freqs, 10*numpy.log10(Px/numpy.amax(Px)), clear=True, pen = self.widget.plotColor if self.widget.lines else None, symbol = 's', symbolSize = 1,symbolPen = self.widget.plotColor)
-        self.widget.setRange(xRange = (0,freqs[len(freqs) - 1]),yRange=(self.widget.maxY, self.widget.minY),padding=0,update=True)
-        self.widget.getPlotItem().showGrid(x=self.widget.gridX, y=self.widget.gridY)
-        self.widget.setBackground(self.widget.backColor)
-        self.widget.show()
-
+        self.widget.refresh(freqs, 10*numpy.log10(Px/numpy.amax(Px)))
+        
 class AveragePowSpec(OneDimensionalFunction):
         def __init__(self,widget):
             OneDimensionalFunction.__init__(self,widget)
@@ -77,11 +73,7 @@ class AveragePowSpec(OneDimensionalFunction):
             Pxx.shape = len(freqs)
             self.widget.Pxx = Pxx
             self.widget.freqs = freqs
-            self.widget.plot(freqs,10*numpy.log10(Pxx/numpy.amax(Pxx)),clear=True, pen = self.widget.plotColor if self.widget.lines else None, symbol = 's', symbolSize = 1,symbolPen = self.widget.plotColor)
-            self.widget.setRange(xRange = (0,freqs[len(freqs) - 1]),yRange=(self.widget.maxY, self.widget.minY),padding=0,update=True)
-            self.widget.setBackground(self.widget.backColor)
-            self.widget.getPlotItem().showGrid(x=self.widget.gridX, y=self.widget.gridY)
-            self.widget.show()
+            self.widget.refresh(freqs,10*numpy.log10(Pxx/numpy.amax(Pxx)))
 
 class PowSpecPlotWidget(pg.PlotWidget):
     def __init__(self, parent=None,**kargs):
@@ -114,6 +106,14 @@ class PowSpecPlotWidget(pg.PlotWidget):
     PointerChanged = pyqtSignal(str)
     PointerCursorPressed = pyqtSignal()
     PIXELS_OF_CURSORS_CHANGES = 5
+
+    def refresh(self,x,y):
+        self.plot(x,y,clear=True, pen = self.plotColor if self.lines else None, symbol = 's', symbolSize = 1,symbolPen = self.plotColor)
+        self.setRange(xRange = (0,x[len(x) - 1]),yRange=(self.maxY, self.minY),padding=0,update=True)
+        self.setBackground(self.backColor)
+        self.getPlotItem().showGrid(x=self.gridX, y=self.gridY)
+        self.show()
+
 
     def updateLast(self,data):
         self.setData(data)
