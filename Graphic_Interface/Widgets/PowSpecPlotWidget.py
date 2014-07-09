@@ -13,7 +13,6 @@ from Graphic_Interface.Widgets.Tools import RectROI
 
 class OneDimensionalFunction:
     def __init__(self,widget):
-        self.windows = FFTWindows()
         self.myOptions = {}
         self.widget = widget
 
@@ -27,8 +26,8 @@ class LogarithmicPowSpec(OneDimensionalFunction):
     def __init__(self,widget):
         OneDimensionalFunction.__init__(self,widget)
         self.myOptions = {u'name': u'Power spectrum(Logarithmic)', u'type': u'group', u'children': [
-            {u'name': u'FFT window', u'type': u'list', u'value':self.windows.Hanning,u'default':self.windows.Hanning,
-             u'values': [(u'Bartlett',self.windows.Bartlett),(u"Blackman", self.windows.Blackman),(u"Hamming", self.windows.Hamming), (u"Hanning", self.windows.Hanning),(u'Kaiser',self.windows.Kaiser),(u'None',self.windows.WindowNone),(u"Rectangular", self.windows.Rectangular)]},
+            {u'name': u'FFT window', u'type': u'list', u'value':self.widget.windows.Hanning,u'default':self.widget.windows.Hanning,
+             u'values': [(u'Bartlett',self.widget.windows.Bartlett),(u"Blackman", self.widget.windows.Blackman),(u"Hamming", self.widget.windows.Hamming), (u"Hanning", self.widget.windows.Hanning),(u'Kaiser',self.widget.windows.Kaiser),(u'None',self.widget.windows.WindowNone),(u"Rectangular", self.widget.windows.Rectangular)]},
             {u'name': u'Apply Function', u'type': u'action'},
         ]}
 
@@ -46,14 +45,14 @@ class LogarithmicPowSpec(OneDimensionalFunction):
         self.Pxx = Px
         self.freqs = freqs
         self.widget.refresh(freqs, 10*numpy.log10(Px/numpy.amax(Px)))
-        
+
 class AveragePowSpec(OneDimensionalFunction):
         def __init__(self,widget):
             OneDimensionalFunction.__init__(self,widget)
             self.myOptions = {u'name': u'Power spectrum(Average)', u'type': u'group', u'children': [
             {u'name':u'FFT size', u'type': u'list', u'default':512, u'values': [(u'Automatic', 512),(u"128", 128), (u"256", 256),(u"512", 512), (u"1024", 1024)], u'value': u'512'},
-            {u'name': u'FFT window', u'type': u'list', u'value':self.windows.Hanning,u'default':self.windows.Hanning,
-             u'values': [(u'Bartlett',self.windows.Bartlett),(u"Blackman", self.windows.Blackman),(u"Hamming", self.windows.Hamming), (u"Hanning", self.windows.Hanning),(u'Kaiser',self.windows.Kaiser),(u'None',self.windows.WindowNone),(u"Rectangular", self.windows.Rectangular)]},
+            {u'name': u'FFT window', u'type': u'list', u'value':self.widget.windows.Hanning,u'default':self.widget.windows.Hanning,
+             u'values': [(u'Bartlett',self.widget.windows.Bartlett),(u"Blackman", self.widget.windows.Blackman),(u"Hamming", self.widget.windows.Hamming), (u"Hanning", self.widget.windows.Hanning),(u'Kaiser',self.widget.windows.Kaiser),(u'None',self.widget.windows.WindowNone),(u"Rectangular", self.widget.windows.Rectangular)]},
             {u'name': u'FFT overlap', u'type': u'int', u'value':90, u'limits': (-1, 99)},
             {u'name': u'Apply Function', u'type': u'action'},
         ]}
@@ -79,6 +78,7 @@ class PowSpecPlotWidget(pg.PlotWidget):
     def __init__(self, parent=None,**kargs):
         self.proc = [LogarithmicPowSpec(self),AveragePowSpec(self)]
         self.lastProc = None
+        self.windows = FFTWindows()
         #self.axisXOsc = OscXAxis(self, orientation='bottom')
         #self.axisYOsc = OscYAxis(self, orientation='left')
         #kargs["axisItems"]={'bottom': self.axisXOsc, 'left': self.axisYOsc}

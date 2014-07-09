@@ -3,8 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="48337854-64fc-444d-bf1c-d8a83511c4ea" name="Default" comment="Errores minimos arreglados. Actualizacion de las frecuencias minimas al abrir nuevo fichero, movimiento de los axis desde el control signal visualizer hacia el plot widget,&#10;error de calculo en getindexfrom and to del control principal.">
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Graphic_Interface/Widgets/PowSpecPlotWidget.py" afterPath="$PROJECT_DIR$/Graphic_Interface/Widgets/PowSpecPlotWidget.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Graphic_Interface/Windows/PowerSpectrumWindow.py" afterPath="$PROJECT_DIR$/Graphic_Interface/Windows/PowerSpectrumWindow.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="DuettoSystem.iws" />
     <ignored path=".idea/workspace.xml" />
@@ -266,7 +264,7 @@
       <file leaf-file-name="PowSpecPlotWidget.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Graphic_Interface/Widgets/PowSpecPlotWidget.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="48" column="8" selection-start="2071" selection-end="2071" vertical-scroll-proportion="0.27493262" vertical-offset="544" max-vertical-offset="4624">
+            <state line="54" column="306" selection-start="2949" selection-end="2949" vertical-scroll-proportion="0.72131145" vertical-offset="484" max-vertical-offset="4624">
               <folding />
             </state>
           </provider>
@@ -857,7 +855,7 @@
     <servers />
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1378" height="744" extended-state="1" />
+    <frame x="-8" y="-8" width="1378" height="744" extended-state="0" />
     <editor active="true" />
     <layout>
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
@@ -866,11 +864,11 @@
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.20778267" sideWeight="0.6710311" order="4" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.20778267" sideWeight="0.6628478" order="4" side_tool="false" content_ui="combo" />
       <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.38134205" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3289689" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3371522" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24061196" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -1020,7 +1018,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/Graphic_Interface/Widgets/PowSpecPlotWidget.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="48" column="8" selection-start="2071" selection-end="2071" vertical-scroll-proportion="0.27493262" vertical-offset="544" max-vertical-offset="4624">
+        <state line="54" column="306" selection-start="2949" selection-end="2949" vertical-scroll-proportion="0.72131145" vertical-offset="484" max-vertical-offset="4624">
           <folding />
         </state>
       </provider>
