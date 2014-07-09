@@ -10,17 +10,15 @@ from Graphic_Interface.Widgets.Tools import RectROI
 
 class OscilogramPlotWidget(pg.PlotWidget):
     def __init__(self,  parent=None,**kargs):
-        # the axes asumes that its parent is a Qsignalvisualizer  no t a PLot widget
-        self.axisXOsc = OscXAxis(parent, orientation='bottom')
+        self.parentQsignal = parent
+        # the axes asumes that its parent is a Qsignalvisualizer  not a PLot widget
+        self.axisXOsc = OscXAxis(self.parentQsignal, orientation='bottom')
         self.axisXOsc.enableAutoSIPrefix(False)
-        self.axisYOsc = OscYAxis(parent, orientation='left')
+        self.axisYOsc = OscYAxis(self.parentQsignal, orientation='left')
         pg.PlotWidget.__init__(self, axisItems={'bottom': self.axisXOsc, 'left': self.axisYOsc})
         self.mousePressed = False
         self.emitIntervalOscChanged = True
-        self.osc_background = "000"
-        self.osc_gridx = True
-        self.osc_gridy = True
-        self.getPlotItem().showGrid(x=self.osc_gridx, y=self.osc_gridy)
+        self.getPlotItem().showGrid(True, True)
         self.zoomRegion = pg.LinearRegionItem([0, 0])
         self.zoomRegion.sigRegionChanged.connect(self.on_zoomRegionChanged)
         self.makeZoom = None
@@ -56,16 +54,13 @@ class OscilogramPlotWidget(pg.PlotWidget):
 
     def load_Theme(self, theme):
         update_graph =False
-        if self.osc_background != theme.osc_background:
-            self.osc_background = theme.osc_background
-            self.setBackground(self.osc_background)
-
-        if self.osc_gridx != theme.osc_GridX or self.osc_gridy != theme.osc_GridY:
-            self.osc_gridx = theme.osc_GridX
-            self.osc_gridy = theme.osc_GridY
-            self.getPlotItem().showGrid(x=self.osc_gridx, y=self.osc_gridy)
-
-
+        self.setBackground(theme.osc_background)
+        self.getPlotItem().showGrid(theme.osc_GridX, theme.osc_GridY)
+        if self.parent:
+            self.setRange(yRange=(theme.minYOsc * 0.01 * self.parentQsignal.signalProcessor.signal.getMaximumValueAllowed(),
+                              theme.maxYOsc * 0.01 * self.parentQsignal.signalProcessor.signal.getMaximumValueAllowed()),
+                              padding=0, update=True)
+            self.parentQsignal.refresh(False,True,False)
         if update_graph:
             self.update()
 
