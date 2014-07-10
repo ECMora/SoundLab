@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Sound Lab\DuettoSystem\Graphic_Interface\UI Files\SegmentationAndClasificationWindowUI.ui'
 #
-# Created: Wed Jul 02 16:55:29 2014
+# Created: Tue Jul 08 22:31:28 2014
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -309,6 +309,8 @@ class Ui_MainWindow(object):
         self.actionDelete_Selected_Elements.setObjectName(_fromUtf8("actionDelete_Selected_Elements"))
         self.actionDeselect_Elements = QtGui.QAction(MainWindow)
         self.actionDeselect_Elements.setObjectName(_fromUtf8("actionDeselect_Elements"))
+        self.actionTwo_Dimensional_Graphs = QtGui.QAction(MainWindow)
+        self.actionTwo_Dimensional_Graphs.setObjectName(_fromUtf8("actionTwo_Dimensional_Graphs"))
         self.toolBar.addAction(self.actionZoomIn)
         self.toolBar.addAction(self.actionZoom_out)
         self.toolBar.addAction(self.actionZoom_out_entire_file)
@@ -322,8 +324,9 @@ class Ui_MainWindow(object):
         self.toolBar.addAction(self.actionOscilogram)
         self.toolBar.addAction(self.actionSpectogram)
         self.toolBar.addSeparator()
-        self.toolBar.addAction(self.actionSignalName)
+        self.toolBar.addAction(self.actionDelete_Selected_Elements)
         self.toolBar.addAction(self.actionDeselect_Elements)
+        self.toolBar.addAction(self.actionSignalName)
         self.menuPeak_Frecuencies.addAction(self.actionElements_Peaks)
         self.menuPeak_Frecuencies.addAction(self.actionSub_Elements_Peaks)
         self.menuParameters.addAction(self.actionView_Parameters)
@@ -351,6 +354,8 @@ class Ui_MainWindow(object):
         self.menuTools.addAction(self.actionPointer_Cursor)
         self.menuTools.addAction(self.actionRectangular_Cursor)
         self.menuTools.addAction(self.actionRectangular_Eraser)
+        self.menuTools.addSeparator()
+        self.menuTools.addAction(self.actionTwo_Dimensional_Graphs)
         self.menuBar.addAction(self.menuDetection.menuAction())
         self.menuBar.addAction(self.menuTools.menuAction())
         self.menuBar.addAction(self.menuParameters.menuAction())
@@ -431,6 +436,7 @@ class Ui_MainWindow(object):
         self.actionSignalName.setText(QtGui.QApplication.translate("MainWindow", "SignalName", None, QtGui.QApplication.UnicodeUTF8))
         self.actionDelete_Selected_Elements.setText(QtGui.QApplication.translate("MainWindow", "Delete Selected Elements", None, QtGui.QApplication.UnicodeUTF8))
         self.actionDeselect_Elements.setText(QtGui.QApplication.translate("MainWindow", "Deselect Elements", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionTwo_Dimensional_Graphs.setText(QtGui.QApplication.translate("MainWindow", "Two Dimensional Graphs", None, QtGui.QApplication.UnicodeUTF8))
 
 from Graphic_Interface.Widgets.QSignalDetectorWidget import QSignalDetectorWidget
 import icons_rc
