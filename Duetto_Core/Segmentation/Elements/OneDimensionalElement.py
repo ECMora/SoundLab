@@ -47,8 +47,8 @@ class OscilogramElement(OneDimensionalElement):
         font.setPointSize(13)
         text.setFont(font)
         self.number = number
-        self.color =QtGui.QColor(0, 255, 0, 100) if self.number%2==0 else QtGui.QColor(0, 0, 255,100)
-        lr = pg.LinearRegionItem([self.indexFrom,self.indexTo], movable=False,brush=(pg.mkBrush(self.color)))
+        self.color = QtGui.QColor(0, 255, 0, 100) if self.number%2==0 else QtGui.QColor(0, 0, 255,100)
+        self.lr = pg.LinearRegionItem([self.indexFrom,self.indexTo], movable=False,brush=(pg.mkBrush(self.color)))
         self.twoDimensionalElements = []
         #the memoize pattern implemented to compute parameters functions
         self.parameters = dict(StartToMax=None, peekToPeek=None, rms=None, minFreq=dict(), maxFreq=dict(),
@@ -58,11 +58,11 @@ class OscilogramElement(OneDimensionalElement):
                   + "End Time:"+ str(self.endTime()) + "s\n"\
                   + "RMS: "+ str(self.rms()) + "\n"\
                   + "PeekToPeek: "+ str(self.peekToPeek())
-        lr.setToolTip(tooltip)
+        self.lr.setToolTip(tooltip)
 
-        lr.mouseClickEvent = self.mouseClickEvent
+        self.lr.mouseClickEvent = self.mouseClickEvent
 
-        self.visual_figures.append([lr,True])#item visibility
+        self.visual_figures.append([self.lr,True])#item visibility
         self.visual_text.append([text,True])
         if(location is not None):
             self.measurementLocation = location
@@ -430,3 +430,5 @@ class OscilogramElement(OneDimensionalElement):
         self.visual_text[0][0].setText(str(n))
         for e in self.twoDimensionalElements:
             e.setNumber(n)
+        self.color = QtGui.QColor(0, 255, 0, 100) if self.number%2 == 0 else QtGui.QColor(0, 0, 255,100)
+        self.lr.setBrush(pg.mkBrush(self.color))

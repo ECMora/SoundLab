@@ -93,6 +93,7 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow,Ui_TwoDimensionalWindow):
 
         self.widget.getPlotItem().getAxis("bottom").setLabel(text=str(self.columns[i]))
         self.widget.getPlotItem().getAxis("left").setLabel(text=str(self.columns[j]))
+        self.widget.addItem(self.scatter_plot)
 
 
         #if self.ParamTree.param(u'Include Legend').value() and self.legend is None:
@@ -101,9 +102,6 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow,Ui_TwoDimensionalWindow):
         #    self.legend.addItem(self.scatter_plot,"<h3><br>X Axis: "+str(self.columns[i])+"<br>"
         #                                +"Y Axis: "+str(self.columns[j])+"</h3>")
         #
-
-
-        self.widget.addItem(self.scatter_plot)
 
 
 
