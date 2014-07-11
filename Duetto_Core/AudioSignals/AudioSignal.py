@@ -3,6 +3,7 @@ from PyQt4.QtGui import QMessageBox
 import pyaudio
 import numpy as np
 from math import *
+from Duetto_Core.AudioSignals.SplitArray import SplitArray
 
 
 class AudioSignal(object):
@@ -129,16 +130,25 @@ class AudioSignal(object):
             self.playNotifier(self.currentPlayingFrame())
         return data, pyaudio.paContinue
 
-    def _recordCallback(self, in_data, frame_count, time_info, status):
-        if self.playStatus != self.RECORDING:
-            return None, pyaudio.paAbort
-        self.data = np.concatenate((self.data, np.fromstring(in_data, dtype=self.data.dtype)))
+    #def _recordCallback(self, in_data, frame_count, time_info, status):
+    #    if self.playStatus != self.RECORDING:
+    #        return None, pyaudio.paAbort
+    #    self._concatToData(np.fromstring(in_data, dtype=self.data.dtype))
+    #    self.playSection = (0, len(self.data), len(self.data))
+    #    if self.recordNotifier:
+    #        self.recordNotifier(frame_count)
+    #
+    #    return None, pyaudio.paContinue
+
+    def readFromStream(self):
+        self._concatToData(np.fromstring(self.stream.read(self.stream.get_read_available()), dtype=self.data.dtype))
         self.playSection = (0, len(self.data), len(self.data))
-        if self.recordNotifier:
-            self.recordNotifier(frame_count)
 
-
-        return None, pyaudio.paContinue
+    def _concatToData(self, x):
+        if isinstance(self.data, SplitArray):
+            self.data.extend(x)
+        else:
+            self.data = np.concatenate((self.data, x))
 
     def opened(self):
         return len(self.data) > 0
@@ -170,11 +180,15 @@ class AudioSignal(object):
     def stop(self):
         self.playStatus = self.STOPPED
         if self.stream is not None:
+            self.readFromStream()
             self.stream.stop_stream()
             self.stream.close()
         self.playAudio.terminate()
         self.playAudio = pyaudio.PyAudio()
         self.stream = None
+
+        if isinstance(self.data, SplitArray):
+            self.data = self.data.to_ndarray()
 
     def pause(self):
         self.playStatus = self.PAUSED
@@ -188,7 +202,10 @@ class AudioSignal(object):
         if self.playStatus == self.PLAYING or self.playAudio == self.PAUSED:
             self.stop()
             #ask for concatenate to the current file or make a new one
-        self.data = np.array([], dtype=self.data.dtype)
+
+        #self.data = np.array([], dtype=self.data.dtype)
+        self.data = SplitArray(dtype=self.data.dtype)
+
         #self.samplingRate = 44100
         #self.bitDepth = 16
         self.playSection = 0, 0, 0
@@ -199,8 +216,8 @@ class AudioSignal(object):
         self.stream = self.playAudio.open(format=formatt,
                                           channels=self.channels,
                                           rate=int(self.samplingRate * speed / 100.0),
-                                          input=True,
-                                          stream_callback=self._recordCallback)
+                                          frames_per_buffer=1024,
+                                          input=True)
 
     def toWav(self):
         raise NotImplemented
