@@ -123,8 +123,7 @@ class QSignalVisualizerWidget(QWidget):
         updOsc = False
         updSpec = False
         dataChange = False
-        self.histogram.region.setRegion(theme.histRange)
-        self.histogram.gradient.restoreState(theme.colorBarState)
+
 
         self.osc_color = theme.osc_plot
 
