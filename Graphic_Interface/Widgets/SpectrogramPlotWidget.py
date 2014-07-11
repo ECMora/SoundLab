@@ -30,6 +30,8 @@ class SpectrogramPlotWidget(GraphicsView):
         self.yAxis = SpecYAxis(self,orientation='left', linkView=self.viewBox)
         self.yAxis.setGrid(88)
         l.addItem(self.yAxis, 0, 0)
+        self.xAxis.mouseDragEvent = lambda a : False
+        self.yAxis.mouseDragEvent = lambda a : False
         self.viewBox.setMouseEnabled(x=False, y=False)
         self.viewBox.setMenuEnabled(False)
         self.viewBox.setAspectLocked(False)
@@ -71,15 +73,16 @@ class SpectrogramPlotWidget(GraphicsView):
 
     def load_Theme(self, theme):
         update_graph =False
-        if self.spec_background != theme.spec_background:
-            self.spec_background = theme.spec_background
-            self.setBackground(self.spec_background)
+        self.setBackground(theme.spec_background)
+        self.showGrid(theme.spec_GridX,theme.spec_GridY)
 
-        if self.spec_gridx != theme.spec_GridX or self.spec_gridy != theme.spec_GridY:
-            self.spec_gridx = theme.spec_GridX
-            self.spec_gridy = theme.spec_GridY
-            self.showGrid(x=self.spec_gridx, y=self.spec_gridy)
-
+        if self.parent() and 'freqs' in self.parent().specgramSettings.__dict__:
+            if theme.maxYSpec == -1:
+                theme.maxYSpec = self.parent().specgramSettings.freqs[-1]
+            YSpec = numpy.searchsorted(self.parent().specgramSettings.freqs, [theme.minYSpec * 1000, theme.maxYSpec * 1000])
+            self.viewBox.setRange(yRange=(YSpec[0], YSpec[1]),
+                              padding=0, update=True)
+            self.parent().refresh(False,True,False)
         if update_graph:
             self.update()
 
@@ -144,7 +147,7 @@ class SpectrogramPlotWidget(GraphicsView):
             self.IntervalSpecChanged.emit(*rgn)
 
     def mouseMoveEvent(self, event):
-        pg.GraphicsView.mouseMoveEvent(self, event)
+
         if self.selectedTool == Tools.PointerCursor:
             x = self.fromCanvasToClient(event.x())
             y = self.fromCanvasToClientY(event.y())
@@ -161,6 +164,8 @@ class SpectrogramPlotWidget(GraphicsView):
             self.viewBox.update()
             self.setCursor(QCursor(QtCore.Qt.CrossCursor))
         elif self.selectedTool == Tools.Zoom:
+            #pg.GraphicsView.mouseMoveEvent(self, event)
+            if not self.mousePressed: return
             pg.GraphicsView.mouseMoveEvent(self, event)
             if self.parent().visibleSpectrogram:
                 rgn = self.zoomRegion.getRegion()
@@ -235,7 +240,7 @@ class SpectrogramPlotWidget(GraphicsView):
         elif self.selectedTool == Tools.Zoom:
             if not self.zoomRegion in self.items():
                 self.zoomRegion.setRegion([self.fromCanvasToClient(event.x()),self.fromCanvasToClient(event.x())])
-                #self.setZoomRegionVisible(True)
+                self.setZoomRegionVisible(True)
                 #self.update()
             else:
                 rgn = self.zoomRegion.getRegion()
