@@ -7,14 +7,12 @@ from Graphic_Interface.Windows.Two_Dimensional_AnalisysWindowUI import Ui_TwoDim
 from PyQt4 import QtGui
 
 class TwoDimensionalAnalisysWindow(QtGui.QMainWindow,Ui_TwoDimensionalWindow):
-    def __init__(self,parent=None,columns=None, data=None):
+    def __init__(self,parent=None,columns=None, data=None,element_selector_funtion=None):
         super(TwoDimensionalAnalisysWindow, self).__init__(parent)
         self.setupUi(self)
 
-        #self.axisX = pg.AxisItem(orientation='bottom')
-        #self.axisY = pg.AxisItem(orientation='left')
-
         self.show()
+
         self.widget.getPlotItem().showGrid(x=True, y=True)
         self.widget.getPlotItem().hideButtons()
         self.widget.setMouseEnabled(x=False, y=False)
@@ -22,6 +20,8 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow,Ui_TwoDimensionalWindow):
         self.widget.enableAutoRange()
         self.legend = None
         self.scatter_plot = None
+        self.element_selector_funtion = element_selector_funtion if element_selector_funtion is not None and callable(element_selector_funtion) else lambda : 0
+
 
 
         self.columns = columns if columns is not None else []

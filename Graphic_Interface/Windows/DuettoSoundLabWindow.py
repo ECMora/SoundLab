@@ -102,7 +102,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         super(DuettoSoundLabWindow, self).__init__(parent)
         self.setupUi(self)
 
-
         self.hist = HorizontalHistogramWidget()
         self.widget.histogram = self.hist
         self.pow_overlap = 90
@@ -110,7 +109,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         themesInFolder = self.folderFiles(os.path.join("Utils","Themes"),extensions=[".dth"])
 
-        self.widget.load_Theme(self.defaultTheme)
 
         self.widget.osc_color = self.defaultTheme.osc_plot
 
