@@ -29,7 +29,7 @@ def gate(data, threshold):
 
 
 from pylab import plot,show
-plot(envelope(abs((WavFileSignal("c1.wav").data))))
+plot((((WavFileSignal("c1.wav").data))))
 show()
 
 #data = [x*random.randint(-6, 6)*0.3 for x in range(1, 6)]

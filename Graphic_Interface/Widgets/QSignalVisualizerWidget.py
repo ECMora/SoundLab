@@ -123,8 +123,8 @@ class QSignalVisualizerWidget(QWidget):
         updOsc = False
         updSpec = False
         dataChange = False
-        #self.histogram.region.setRegion(theme.histRange)
-        #self.histogram.gradient.restoreState(theme.colorBarState)
+        self.histogram.region.setRegion(theme.histRange)
+        self.histogram.gradient.restoreState(theme.colorBarState)
 
         self.osc_color = theme.osc_plot
 
@@ -725,7 +725,7 @@ class QSignalVisualizerWidget(QWidget):
                                                2 ** self.signalProcessor.signal.bitDepth), padding=0)
             self.axesOscilogram.zoomRegion.sigRegionChanged.connect(self.updatezoomcursor)
             self.signalProcessor.signal.play_finished = self.removePlayerLine
-        self.maxYSpc = -1
+        self.maxYSpc = self.signalProcessor.signal.samplingRate/2000
         self.minYSpc = 0
         self.refresh(False,False)
 
