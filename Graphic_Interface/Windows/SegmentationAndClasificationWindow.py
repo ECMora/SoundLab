@@ -123,7 +123,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                                          separator3,self.actionDeselect_Elements,self.actionDelete_Selected_Elements,separator4,self.actionOsgram_Image,self.actionSpecgram_Image,self.actionCombined_Image])
         self.windowProgressDetection = QtGui.QProgressBar(self.widget)
         self.actionSignalName.setText(self.widget.signalName())
-        self.widget.histogram.setImageItem(self.widget.axesSpecgram.imageItem)
+        #self.widget.histogram.setImageItem(self.widget.axesSpecgram.imageItem)
 
         #array of windows with two dimensional graphs. Are stored for a similar behavior to the one dimensional
         #in the main window. Updates the graphs
