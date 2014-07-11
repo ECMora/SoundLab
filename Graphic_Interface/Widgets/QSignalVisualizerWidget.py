@@ -512,7 +512,7 @@ class QSignalVisualizerWidget(QWidget):
             data = np.concatenate((
                 pre, self.signalProcessor.signal.data[max(smin, 0): min(smax, len(self.signalProcessor.signal.data))],
                 post))
-
+        #
         self.specgramSettings.Pxx, self.specgramSettings.freqs, self.specgramSettings.bins = mlab.specgram(
             data, self.specgramSettings.NFFT, Fs=self.signalProcessor.signal.samplingRate,
             detrend=mlab.detrend_none, window=self.specgramSettings.window, noverlap=overlap,

@@ -73,9 +73,11 @@ class InstantaneousFrequencies(OneDimensionalFunction):
     def processing(self):
 
         Pxx, freqs, bins = mlab.specgram(self.widget.data, Fs=self.widget.rate)
-        data = freqs[np.argmax(Pxx[1:len(Pxx)], axis=0)]
+        dtemp =  freqs[np.argmax(Pxx[1:len(Pxx)], axis=0)]
+        data = dtemp[dtemp>0]
         #self.widget.refresh(bins,data)
-        self.widget.plot(bins,data, clear=True, symbol = 's', symbolSize = 1,symbolPen = self.widget.plotColor)
+        self.widget.plot(bins[dtemp>0],data, clear=True, pen=None, symbol = 's', symbolSize = 1,symbolPen = self.widget.plotColor)
+        self.widget.setRange(xRange = (0,bins[len(bins) - 1]),yRange=(data[len(data)-1], 0),padding=0,update=True)
         self.widget.show()
 
 class AveragePowSpec(OneDimensionalFunction):
@@ -140,18 +142,19 @@ class PowSpecPlotWidget(pg.PlotWidget):
     PIXELS_OF_CURSORS_CHANGES = 5
 
     def refresh(self,x,y):
+
         self.plot(x,y,clear=True, pen = self.plotColor if self.lines else None, symbol = 's', symbolSize = 1,symbolPen = self.plotColor)
-        #self.setRange(xRange = (0,x[len(x) - 1]),yRange=(self.maxY, self.minY),padding=0,update=True)
+        self.setRange(xRange = (0,x[len(x) - 1]),yRange=(self.maxY, self.minY),padding=0,update=True)
         self.setBackground(self.backColor)
         self.getPlotItem().showGrid(x=self.gridX, y=self.gridY)
         self.show()
 
 
     def updateLast(self,data):
-        self.setData(data)
+        self.data = data
         self.lastProc()
 
-    def setData(self,data,bitdepth, maxYOsc,rate):
+    def setData(self,data, bitdepth, maxYOsc,rate):
         self.data = data
         self.bitdepth = bitdepth
         self.maxYOsc = maxYOsc

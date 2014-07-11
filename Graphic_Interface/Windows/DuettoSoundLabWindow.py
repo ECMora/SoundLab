@@ -80,7 +80,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 {u'name': u'Min', u'type': u'float', u'value': 0, u'step': 0.1},
                 {u'name': u'Max', u'type': u'float', u'value': 22, u'step': 0.1},
             ]},
-           {u'name':u'FFT size', u'type': u'list', u'default':512, u'values': [(u'Automatic', 512),(u"128", 128), (u"256", 256),(u"512", 512), (u"1024", 1024)], u'value': u'512'},
+           {u'name':u'FFT size', u'type': u'list', u'default':512, u'values': [(u'Automatic', 512),(u"8192",8192),(u"128", 128), (u"256", 256),(u"512", 512), (u"1024", 1024)], u'value': u'512'},
           {u'name': u'FFT window', u'type': u'list', u'value':self.widget.specgramSettings.windows[0],u'default':self.widget.specgramSettings.windows[0],u'values': [(u'Bartlett',self.widget.specgramSettings.windows[4]),(u"Blackman", self.widget.specgramSettings.windows[3]),(u"Hamming", self.widget.specgramSettings.windows[0]), (u"Hanning", self.widget.specgramSettings.windows[2]),(u'Kaiser',self.widget.specgramSettings.windows[5]),(u'None',self.widget.specgramSettings.windows[6]),(u"Rectangular", self.widget.specgramSettings.windows[1])]},
             {u'name': u'FFT overlap', u'type': u'int', u'value':-1, u'limits': (-1, 99)},
             {u'name': u'Threshold(dB)', u'type': u'group', u'children': [
