@@ -12,11 +12,11 @@ from pyqtgraph.parametertree import Parameter, ParameterTree
 
 
 class PowerSpectrumWindow(QtGui.QMainWindow,Ui_PowSpecWindow):
-    def __init__(self,parent=None,minY=-50,maxY=5,lines=True,data=[],rate=2):
+    def __init__(self,parent=None,minY=-50,maxY=5,lines=True,data=[],rate=2, bitdepth=0,maxYOsc=0):
         super(PowerSpectrumWindow, self).__init__(parent)
         self.ui = Ui_PowSpecWindow()
         self.ui.setupUi(self)
-        self.ui.widget.setData(data)
+        self.ui.widget.setData(data,bitdepth,maxYOsc,rate)
         self.ui.widget.Fs = rate
         self.show()
         self.ui.widget.maxY = maxY

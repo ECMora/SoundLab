@@ -4,7 +4,6 @@ from PyQt4.QtCore import SIGNAL, pyqtSignal
 from PyQt4.QtGui import QCursor,QColor
 from matplotlib import mlab
 import pyqtgraph as pg
-import numpy
 from Graphic_Interface.Widgets.Tools import Tools
 from Axis import *
 from Duetto_Core.SpecgramSettings import FFTWindows
@@ -18,7 +17,7 @@ class OneDimensionalFunction:
         self.windows = FFTWindows()
 
     def connectMySignal(self,pTree):
-        pass
+        self.pTree = pTree
 
     def processing(self):
         self.widget.lastProc = self.processing
@@ -33,7 +32,7 @@ class LogarithmicPowSpec(OneDimensionalFunction):
         ]}
 
     def connectMySignal(self,pTree):
-        self.pTree = pTree
+        OneDimensionalFunction.connectMySignal(self,pTree)
         self.pTree.param('Power spectrum(Logarithmic)', 'Apply Function').sigActivated.connect(self.processing)
 
     def processing(self):
@@ -45,7 +44,39 @@ class LogarithmicPowSpec(OneDimensionalFunction):
         freqs = float(self.widget.Fs) / len(self.widget.data) * np.arange(len(self.widget.data)//2+1)
         self.Pxx = Px
         self.freqs = freqs
-        self.widget.refresh(freqs, 10*numpy.log10(Px/numpy.amax(Px)))
+        self.widget.refresh(freqs, 10*np.log10(Px/np.amax(Px)))
+
+class EnvelopeTransf(OneDimensionalFunction):
+    def __init__(self,widget):
+        OneDimensionalFunction.__init__(self,widget)
+        self.myOptions = {u'name': u'Envelope', u'type': u'group', u'children':[{u'name':'Apply Function', u'type':'action'}]}
+
+    def connectMySignal(self,pTree):
+        OneDimensionalFunction.connectMySignal(self,pTree)
+        self.pTree.param('Envelope', 'Apply Function').sigActivated.connect(self.processing)
+
+    def processing(self):
+
+        self.envelopeFactor = (2.0 ** (self.widget.bitDepth) * self.widget.maxYOsc / 100) / self.widget.data[
+            np.argmax(self.widget.data)]
+        #self.widget.refresh (self.envelopeFactor * self.widget.data - 2 ** (self.widget.bitDepth - 1) * self.widget.maxYOsc / 100)
+
+class InstantaneousFrequencies(OneDimensionalFunction):
+    def __init__(self,widget):
+        OneDimensionalFunction.__init__(self,widget)
+        self.myOptions = {u'name': u'Instantaneous Frequency', u'type': u'group', u'children':[{u'name':'Apply Function', u'type':'action'}]}
+
+    def connectMySignal(self,pTree):
+        OneDimensionalFunction.connectMySignal(self,pTree)
+        self.pTree.param('Instantaneous Frequency', 'Apply Function').sigActivated.connect(self.processing)
+
+    def processing(self):
+
+        Pxx, freqs, bins = mlab.specgram(self.widget.data, Fs=self.widget.rate)
+        data = freqs[np.argmax(Pxx[1:len(Pxx)], axis=0)]
+        #self.widget.refresh(bins,data)
+        self.widget.plot(bins,data, clear=True, symbol = 's', symbolSize = 1,symbolPen = self.widget.plotColor)
+        self.widget.show()
 
 class AveragePowSpec(OneDimensionalFunction):
         def __init__(self,widget):
@@ -73,11 +104,11 @@ class AveragePowSpec(OneDimensionalFunction):
             Pxx.shape = len(freqs)
             self.widget.Pxx = Pxx
             self.widget.freqs = freqs
-            self.widget.refresh(freqs,10*numpy.log10(Pxx/numpy.amax(Pxx)))
+            self.widget.refresh(freqs,10*np.log10(Pxx/np.amax(Pxx)))
 
 class PowSpecPlotWidget(pg.PlotWidget):
     def __init__(self, parent=None,**kargs):
-        self.proc = [LogarithmicPowSpec(self),AveragePowSpec(self)]
+        self.proc = [LogarithmicPowSpec(self),AveragePowSpec(self),InstantaneousFrequencies(self)]
         self.lastProc = None
         self.windows = FFTWindows()
         #self.axisXOsc = OscXAxis(self, orientation='bottom')
@@ -110,7 +141,7 @@ class PowSpecPlotWidget(pg.PlotWidget):
 
     def refresh(self,x,y):
         self.plot(x,y,clear=True, pen = self.plotColor if self.lines else None, symbol = 's', symbolSize = 1,symbolPen = self.plotColor)
-        self.setRange(xRange = (0,x[len(x) - 1]),yRange=(self.maxY, self.minY),padding=0,update=True)
+        #self.setRange(xRange = (0,x[len(x) - 1]),yRange=(self.maxY, self.minY),padding=0,update=True)
         self.setBackground(self.backColor)
         self.getPlotItem().showGrid(x=self.gridX, y=self.gridY)
         self.show()
@@ -120,8 +151,11 @@ class PowSpecPlotWidget(pg.PlotWidget):
         self.setData(data)
         self.lastProc()
 
-    def setData(self,data):
+    def setData(self,data,bitdepth, maxYOsc,rate):
         self.data = data
+        self.bitdepth = bitdepth
+        self.maxYOsc = maxYOsc
+        self.rate = rate
 
     def connectSignals(self,pTree):
         for proc in self.proc: proc.connectMySignal(pTree)
