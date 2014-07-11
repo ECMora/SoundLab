@@ -41,7 +41,7 @@ class DuettoListParameterItem(WidgetParameterItem):
 
     """
     def __init__(self, param, depth):
-        param.opts[u'value'] = param.opts[u'value'][1]
+        param.opts[u'value'] = param.opts[u'default']
         self.targetValue = None
         self.values = param.opts.get(u'values',[])
         self.valuesDict = {}
@@ -300,9 +300,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.widget.specgramSettings.NFFT = self.ParamTree.param(u'Spectrogram Settings').param(u'FFT size').value()
         self.widget.specgramSettings.overlap = self.ParamTree.param(u'Spectrogram Settings').param(u'FFT overlap').value()
         p = os.path.join(os.path.join(u"Utils",u"Didactic Signals"),u"duetto.wav")
-        self.widget.visibleSpectrogram = False
-        self.actionCombined.setEnabled(False)
-        self.actionSpectogram.setEnabled(False)
+       
         if os.path.exists(p):
             self.widget.open(p)
             self.actionSignalName.setText(u"File Name: "+ self.widget.signalName())
@@ -312,6 +310,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         self.setWindowTitle(u"Duetto Sound Lab - Welcome to Duetto")
         self.statusbar.showMessage(u"Welcome to Duetto Sound Lab.")
+        self.widget.load_Theme(self.defaultTheme)
 
     def updateRegionTheme(self):
         reg = self.hist.item.region.getRegion()
@@ -324,11 +323,13 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     def SerializeTheme(self,filename):
         if filename:
-            center = self.ParamTree.param('Detection Settings').param('Measurement Location').param('Center').value()
-            start = self.ParamTree.param('Detection Settings').param('Measurement Location').param('Start').value()
-            quart1 = self.ParamTree.param('Detection Settings').param('Measurement Location').param('Quartile25').value()
-            quart2 = self.ParamTree.param('Detection Settings').param('Measurement Location').param('Quartile75').value()
-            end = self.ParamTree.param('Detection Settings').param('Measurement Location').param('End').value()
+            self.defaultTheme.centerColor = self.ParamTree.param('Detection Settings').param('Measurement Location').param('Center').value()
+            self.defaultTheme.startColor = self.ParamTree.param('Detection Settings').param('Measurement Location').param('Start').value()
+            self.defaultTheme.quart1Color = self.ParamTree.param('Detection Settings').param('Measurement Location').param('Quartile25').value()
+            self.defaultTheme.quart2Color = self.ParamTree.param('Detection Settings').param('Measurement Location').param('Quartile75').value()
+            self.defaultTheme.endColor = self.ParamTree.param('Detection Settings').param('Measurement Location').param('End').value()
+            self.defaultTheme.histRange = self.hist.item.region.getRegion()
+            self.defaultTheme.colorBarState = self.hist.item.gradient.saveState()
             file = open(filename,'wb')
             pickle.dump(self.defaultTheme,file)
             file.close()
@@ -472,12 +473,10 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 self.widget.axesSpecgram.getHistogramWidget().item._pixelVectorCache.append(data)
 
             elif childName ==u'Spectrogram Settings.Frequency(kHz).Min':
-                self.widget.minYSpc = data
-                self.widget.refresh(dataChanged=True, updateOscillogram=False, updateSpectrogram=True)
+                self.defaultTheme.minYSpec = data
 
             elif childName == u'Spectrogram Settings.Frequency(kHz).Max':
-                self.widget.maxYSpc = data
-                self.widget.refresh(dataChanged=True, updateOscillogram=False, updateSpectrogram=True)
+                self.defaultTheme.maxYSpec = data
 
             elif childName == u'Spectrogram Settings.FFT overlap':
                 self.widget.specgramSettings.overlap = data
@@ -516,16 +515,16 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 self.defaultTheme.osc_plot = data
                 self.widget.osc_color = data
                 self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
+                return
 
             elif childName == u'Oscillogram Settings.Amplitude(%).Min':
-                self.widget.minYOsc = data
-                self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
+                self.defaultTheme.minYOsc = data
             elif childName == u'Oscillogram Settings.Amplitude(%).Max':
-                self.widget.maxYOsc = data
-                self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
+                self.defaultTheme.maxYOsc = data
             elif childName == u'Oscillogram Settings.Connect Lines':
                 self.widget.lines = data
                 self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
+                return
 
             elif childName ==u'Themes.Theme Selected':
                 self.updateMyTheme(self.DeSerializeTheme(data))
