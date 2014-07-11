@@ -2,14 +2,117 @@
 from PyQt4 import QtCore
 from PyQt4.QtCore import SIGNAL, pyqtSignal
 from PyQt4.QtGui import QCursor,QColor
+from matplotlib import mlab
 import pyqtgraph as pg
-import numpy
 from Graphic_Interface.Widgets.Tools import Tools
 from Axis import *
+from Duetto_Core.SpecgramSettings import FFTWindows
+import numpy as np
 from Graphic_Interface.Widgets.Tools import RectROI
 
+class OneDimensionalFunction:
+    def __init__(self,widget):
+        self.myOptions = {}
+        self.widget = widget
+        self.windows = FFTWindows()
+
+    def connectMySignal(self,pTree):
+        self.pTree = pTree
+
+    def processing(self):
+        self.widget.lastProc = self.processing
+
+class LogarithmicPowSpec(OneDimensionalFunction):
+    def __init__(self,widget):
+        OneDimensionalFunction.__init__(self,widget)
+        self.myOptions = {u'name': u'Power spectrum(Logarithmic)', u'type': u'group', u'children': [
+            {u'name': u'FFT window', u'type': u'list', u'value':self.windows.Hanning,u'default':self.windows.Hanning,
+             u'values': [(u'Bartlett',self.windows.Bartlett),(u"Blackman", self.windows.Blackman),(u"Hamming", self.windows.Hamming), (u"Hanning", self.windows.Hanning),(u'Kaiser',self.windows.Kaiser),(u'None',self.windows.WindowNone),(u"Rectangular", self.windows.Rectangular)]},
+            {u'name': u'Apply Function', u'type': u'action'},
+        ]}
+
+    def connectMySignal(self,pTree):
+        OneDimensionalFunction.connectMySignal(self,pTree)
+        self.pTree.param('Power spectrum(Logarithmic)', 'Apply Function').sigActivated.connect(self.processing)
+
+    def processing(self):
+        OneDimensionalFunction.processing(self)
+        window = self.pTree.param('Power spectrum(Logarithmic)', 'FFT window').value()
+        #apply the window function to the result
+
+        Px = abs(np.fft.fft(self.widget.data))[0:len(self.widget.data)//2+1]
+        freqs = float(self.widget.Fs) / len(self.widget.data) * np.arange(len(self.widget.data)//2+1)
+        self.Pxx = Px
+        self.freqs = freqs
+        self.widget.refresh(freqs, 10*np.log10(Px/np.amax(Px)))
+
+class EnvelopeTransf(OneDimensionalFunction):
+    def __init__(self,widget):
+        OneDimensionalFunction.__init__(self,widget)
+        self.myOptions = {u'name': u'Envelope', u'type': u'group', u'children':[{u'name':'Apply Function', u'type':'action'}]}
+
+    def connectMySignal(self,pTree):
+        OneDimensionalFunction.connectMySignal(self,pTree)
+        self.pTree.param('Envelope', 'Apply Function').sigActivated.connect(self.processing)
+
+    def processing(self):
+
+        self.envelopeFactor = (2.0 ** (self.widget.bitDepth) * self.widget.maxYOsc / 100) / self.widget.data[
+            np.argmax(self.widget.data)]
+        #self.widget.refresh (self.envelopeFactor * self.widget.data - 2 ** (self.widget.bitDepth - 1) * self.widget.maxYOsc / 100)
+
+class InstantaneousFrequencies(OneDimensionalFunction):
+    def __init__(self,widget):
+        OneDimensionalFunction.__init__(self,widget)
+        self.myOptions = {u'name': u'Instantaneous Frequency', u'type': u'group', u'children':[{u'name':'Apply Function', u'type':'action'}]}
+
+    def connectMySignal(self,pTree):
+        OneDimensionalFunction.connectMySignal(self,pTree)
+        self.pTree.param('Instantaneous Frequency', 'Apply Function').sigActivated.connect(self.processing)
+
+    def processing(self):
+
+        Pxx, freqs, bins = mlab.specgram(self.widget.data, Fs=self.widget.rate)
+        dtemp =  freqs[np.argmax(Pxx[1:len(Pxx)], axis=0)]
+        data = dtemp[dtemp>0]
+        #self.widget.refresh(bins,data)
+        self.widget.plot(bins[dtemp>0],data, clear=True, pen=None, symbol = 's', symbolSize = 1,symbolPen = self.widget.plotColor)
+        self.widget.setRange(xRange = (0,bins[len(bins) - 1]),yRange=(data[len(data)-1], 0),padding=0,update=True)
+        self.widget.show()
+
+class AveragePowSpec(OneDimensionalFunction):
+        def __init__(self,widget):
+            OneDimensionalFunction.__init__(self,widget)
+            self.myOptions = {u'name': u'Power spectrum(Average)', u'type': u'group', u'children': [
+            {u'name':u'FFT size', u'type': u'list', u'default':512, u'values': [(u'Automatic', 512),(u"128", 128), (u"256", 256),(u"512", 512), (u"1024", 1024)], u'value': u'512'},
+            {u'name': u'FFT window', u'type': u'list', u'value':self.windows.Hanning,u'default':self.windows.Hanning,
+             u'values': [(u'Bartlett',self.windows.Bartlett),(u"Blackman", self.windows.Blackman),(u"Hamming", self.windows.Hamming), (u"Hanning", self.windows.Hanning),(u'Kaiser',self.windows.Kaiser),(u'None',self.windows.WindowNone),(u"Rectangular", self.windows.Rectangular)]},
+            {u'name': u'FFT overlap', u'type': u'int', u'value':90, u'limits': (-1, 99)},
+            {u'name': u'Apply Function', u'type': u'action'},
+        ]}
+
+        def connectMySignal(self,pTree):
+            self.pTree = pTree
+            self.pTree.param('Power spectrum(Average)', 'Apply Function').sigActivated.connect(self.processing)
+
+        def processing(self):
+            OneDimensionalFunction.processing(self)
+            window = self.pTree.param('Power spectrum(Average)', 'FFT window').value()
+            NFFT = self.pTree.param('Power spectrum(Average)', 'FFT size').value()
+            overlap = self.pTree.param('Power spectrum(Average)', 'FFT overlap').value()
+            #apply the window function to the result
+
+            (Pxx , freqs) = mlab.psd(self.widget.data, Fs= self.widget.Fs, NFFT=NFFT, window=window, noverlap=overlap, scale_by_freq=False)
+            Pxx.shape = len(freqs)
+            self.widget.Pxx = Pxx
+            self.widget.freqs = freqs
+            self.widget.refresh(freqs,10*np.log10(Pxx/np.amax(Pxx)))
+
 class PowSpecPlotWidget(pg.PlotWidget):
-    def __init__(self,  parent=None,**kargs):
+    def __init__(self, parent=None,**kargs):
+        self.proc = [LogarithmicPowSpec(self),AveragePowSpec(self),InstantaneousFrequencies(self)]
+        self.lastProc = None
+        self.windows = FFTWindows()
         #self.axisXOsc = OscXAxis(self, orientation='bottom')
         #self.axisYOsc = OscYAxis(self, orientation='left')
         #kargs["axisItems"]={'bottom': self.axisXOsc, 'left': self.axisYOsc}
@@ -21,7 +124,8 @@ class PowSpecPlotWidget(pg.PlotWidget):
         #self.yLine = pg.InfiniteLine(angle = 0,pen=(0,9))
         #pointerCursor-----------------------------------
         self.pointerCursor = pg.ScatterPlotItem()
-        self.selectedTool = Tools.PointerCursor
+        self.selectedTool = None
+
         self.getPlotItem().getViewBox().addItem(self.pointerCursor)
         #self.getPlotItem().getViewBox().addItem(self.xLine)
         #self.getPlotItem().getViewBox().addItem(self.yLine)
@@ -33,13 +137,36 @@ class PowSpecPlotWidget(pg.PlotWidget):
         self.freqs =[]
         self.Pxx =[]
 
-    def setInfo(self, Pxx, freqs):
-        self.Pxx = Pxx
-        self.freqs = freqs
-
     PointerChanged = pyqtSignal(str)
     PointerCursorPressed = pyqtSignal()
     PIXELS_OF_CURSORS_CHANGES = 5
+
+    def refresh(self,x,y):
+
+        self.plot(x,y,clear=True, pen = self.plotColor if self.lines else None, symbol = 's', symbolSize = 1,symbolPen = self.plotColor)
+        self.setRange(xRange = (0,x[len(x) - 1]),yRange=(self.maxY, self.minY),padding=0,update=True)
+        self.setBackground(self.backColor)
+        self.getPlotItem().showGrid(x=self.gridX, y=self.gridY)
+        self.show()
+
+
+    def updateLast(self,data):
+        self.data = data
+        self.lastProc()
+
+    def setData(self,data, bitdepth, maxYOsc,rate):
+        self.data = data
+        self.bitdepth = bitdepth
+        self.maxYOsc = maxYOsc
+        self.rate = rate
+
+    def connectSignals(self,pTree):
+        for proc in self.proc: proc.connectMySignal(pTree)
+
+    def getParamsList(self):
+        params = []
+        for proc in self.proc: params.append(proc.myOptions)
+        return params
 
     def clearPointerCursor(self):
         self.pointerCursor.clear()
@@ -69,7 +196,7 @@ class PowSpecPlotWidget(pg.PlotWidget):
             if not insidex or not insidey:
                 self.setCursor(QCursor(QtCore.Qt.ArrowCursor))
             else:
-                self.setCursor(QCursor(QtCore.Qt.BlankCursor))
+                self.setCursor(QCursor(QtCore.Qt.CrossCursor))
             self.update()
 
     def mousePressEvent(self, event):
@@ -143,3 +270,45 @@ class PowSpecPlotWidget(pg.PlotWidget):
         amplt = 10*numpy.log10(self.Pxx[index]/numpy.amax(self.Pxx))
         return [freq, amplt]
 
+    def loadTheme(self,Fs, window, plotColor,backColor, lines, maxY, minY, gridX, gridY):
+        self.Fs = Fs
+        self.window = window
+        self.plotColor = plotColor
+        self.lines = lines
+        self.maxY = maxY
+        self.minY = minY
+        self.backColor = backColor
+        self.gridX = gridX
+        self.gridY = gridY
+
+    #def averageProcessing(self, data, Fs, NFFT, window, noverlap, maxY, minY, plotColor, lines):
+    #    (Pxx , freqs) = mlab.psd(data, Fs= Fs, NFFT=NFFT, window=window, noverlap=noverlap, scale_by_freq=False)
+    #    Pxx.shape = len(freqs)
+    #    self.Pxx = Pxx
+    #    self.freqs = freqs
+    #    self.plot(freqs,10*numpy.log10(Pxx/numpy.amax(Pxx)),clear=True, pen = plotColor if lines else None, symbol = 's', symbolSize = 1,symbolPen = plotColor)
+    #    self.setRange(xRange = (0,freqs[len(freqs) - 1]),yRange=(maxY, minY),padding=0,update=True)
+    #    self.show()
+    #
+    #def logarithmicProcessing(self, x, Fs, window, plotColor, lines, maxY, minY):
+    #
+    #    Px = abs(np.fft.fft(x))[0:len(x)//2+1]
+    #    freqs = float(Fs) / len(x) * np.arange(len(x)//2+1)
+    #    self.Pxx = Px
+    #    self.freqs = freqs
+    #    self.plot(freqs, 10*numpy.log10(Px/numpy.amax(Px)), clear=True, pen = plotColor if lines else None, symbol = 's', symbolSize = 1,symbolPen = plotColor)
+    #    self.setRange(xRange = (0,freqs[len(freqs) - 1]),yRange=(maxY, minY),padding=0,update=True)
+    #    self.show()
+    #
+    ##def cepstrumProcessing(self, x, Fs, window, plotColor, lines, maxY, minY):
+    ##
+    ##    Px = np.fft.fft(x)
+    ##
+    ##    out  = np.fft.ifft(10*numpy.log10(Px/numpy.amax(Px)),n=None, axis=-1)
+    ##    time = []
+    ##    for t in np.arange(0,len(out)):
+    ##        time.append(t * 1.0 / Fs)
+    ##
+    ##    self.plot(time, out.real, clear=True, pen = plotColor if lines else None, symbol = 's', symbolSize = 1,symbolPen = plotColor)
+    ##    self.show()
+    ##    return out, time
