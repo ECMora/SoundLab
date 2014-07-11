@@ -7,7 +7,7 @@ from Graphic_Interface.Windows.Two_Dimensional_AnalisysWindowUI import Ui_TwoDim
 from PyQt4 import QtGui
 
 class TwoDimensionalAnalisysWindow(QtGui.QMainWindow,Ui_TwoDimensionalWindow):
-    def __init__(self,parent=None,columns=None, data=None,element_selector_funtion=None):
+    def __init__(self,parent=None,columns=None, data=None,element_selector_function=None):
         super(TwoDimensionalAnalisysWindow, self).__init__(parent)
         self.setupUi(self)
 
@@ -18,12 +18,8 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow,Ui_TwoDimensionalWindow):
         self.widget.setMouseEnabled(x=False, y=False)
         self.widget.setMenuEnabled(False)
         self.widget.enableAutoRange()
-        self.legend = None
         self.scatter_plot = None
-        self.element_selector_funtion = element_selector_funtion if element_selector_funtion is not None and callable(element_selector_funtion) else lambda : 0
-
-
-
+        self.element_selector_function = element_selector_function if element_selector_function is not None and callable(element_selector_function) else (lambda _: 0)
         self.columns = columns if columns is not None else []
         self.visual_elements = []
         #the numpy [,] array with the parameter measurement
@@ -37,17 +33,17 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow,Ui_TwoDimensionalWindow):
             return
         params = [
             {u'name': u'X Axis Parameter Settings', u'type': u'group', u'children':
-                [{u'name': u'X Axis', u'type': u'list',u'value': xaxis[0],
-                  u'default': xaxis[0], u'values': [(name, i) for i,name in enumerate(xaxis)]}]},
+                [{u'name': u'X Axis', u'type': u'list',u'value': 0,
+                  u'default': 0, u'values': [(name, i) for i,name in enumerate(xaxis)]}]},
             {u'name': u'Y Axis Parameter Settings', u'type': u'group', u'children':
-                [{u'name': u'Y Axis', u'type': u'list', u'value':xaxis[0],
-             u'default': xaxis[0], u'values': [(name, i) for i,name in enumerate(xaxis)]}]},
+                [{u'name': u'Y Axis', u'type': u'list', u'value':0,
+             u'default': 0, u'values': [(name, i) for i,name in enumerate(xaxis)]}]},
 
             {u'name': u'Color', u'type': u'color', u'value': "00F"},
             {u'name': u'Figures Size', u'type': u'int', u'value': 8},
             {u'name': u'Figures Shape', u'type': u'list', u'value': "o",
              u'default': "o", u'values': [("Circle","o"),("Square","s"),("Triangle","t"),("Diamond","d"),("Plus","+")]},
-            #{u'name': u'Include Legend', u'type': u'bool', u'value': True},
+
             {u'name': u'Save Graph as Image', u'type': u'action'},
             {u'name': u'Compute Two Dimensional Graph', u'type': u'action'}]
 
@@ -89,27 +85,20 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow,Ui_TwoDimensionalWindow):
 
         x_coords = [e[i] for e in self.data]
         y_coords = [e[j] for e in self.data]
-        self.scatter_plot = pg.ScatterPlotItem(x=x_coords,y=y_coords,size=fig_size,symbol=shape,brush=(pg.mkBrush(color)))
+        data = [ScatterPlotVisualItem(number,self.element_selector_function) for number in range(len(x_coords))]
+        self.scatter_plot = pg.ScatterPlotItem(x=x_coords,y=y_coords,size=fig_size, data=data,symbol=shape,brush=(pg.mkBrush(color)))
 
         self.widget.getPlotItem().getAxis("bottom").setLabel(text=str(self.columns[i]))
         self.widget.getPlotItem().getAxis("left").setLabel(text=str(self.columns[j]))
         self.widget.addItem(self.scatter_plot)
 
 
-        #if self.ParamTree.param(u'Include Legend').value() and self.legend is None:
-        #    self.legend = self.widget.getPlotItem().addLegend()
-        #    #legend.setParentItem(self.widget.getPlotItem())
-        #    self.legend.addItem(self.scatter_plot,"<h3><br>X Axis: "+str(self.columns[i])+"<br>"
-        #                                +"Y Axis: "+str(self.columns[j])+"</h3>")
-        #
+class ScatterPlotVisualItem:
+    def __init__(self,number,selector_funtion):
+        self.number = number
+        self.selector_funtion = selector_funtion
 
-
-
-
-
-
-
-
-
-
-
+    def mouseClickEvent(self, event):
+        print("Hola")
+        if self.selector_funtion is not None and callable(self.selector_funtion):
+            self.selector_funtion(self.number)

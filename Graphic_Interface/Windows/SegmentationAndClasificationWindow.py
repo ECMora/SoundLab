@@ -142,7 +142,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
             QtGui.QMessageBox.warning(QtGui.QMessageBox(), "Error", "There is not detected elements.\n The two dimensional analisys requires at least one detected element.")
             return
 
-        wnd = TwoDimensionalAnalisysWindow(self, columns=self.columnNames,data=self.measuredParameters)
+        wnd = TwoDimensionalAnalisysWindow(self, columns=self.columnNames,data=self.measuredParameters,element_selector_function=self.elementSelectedInTable)
         if self.theme:
             wnd.load_Theme(self.theme)
 
@@ -644,7 +644,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
     def updateDetectionProgressBar(self, x):
         self.windowProgressDetection.setValue(x)
 
-    def elementSelectedInTable(self,row,column):
+    def elementSelectedInTable(self,row,column=0):
         self.tableParameterOscilogram.selectRow(row)
         self.widget.selectElement(row)#select the correct element in oscilogram
 
