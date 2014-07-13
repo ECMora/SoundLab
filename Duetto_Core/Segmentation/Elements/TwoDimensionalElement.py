@@ -177,11 +177,10 @@ class SpecgramElement(TwoDimensionalElement):
         return self.parameters["peekToPeek"][0]
 
     def addVisualGraph(self,nodes,adj,dictionary=None):
-        d = dictionary if dictionary is not None else dict(size=1, symbol='d', pxMode=False,pen=(pg.mkPen(self.color,width=3)))
-        f = (nodes,adj,d)
-        self.figurePosition.append(f)
+        d = dictionary if dictionary is not None else dict(nodes=nodes,adj=adj,size=1, symbol='d', pxMode=False,pen=(pg.mkPen(self.color,width=3)))
+        self.figurePosition.append(nodes)
         g = pg.GraphItem()
-        g.setData(pos=f[0],adj=f[1],**f[2])
+        g.setData(**d)
         self.visual_figures.append([g,True])
 
     def shift(self,function):
@@ -200,7 +199,6 @@ class SpecgramElement(TwoDimensionalElement):
                 x[0].setData(pos=arr,adj=_f[1],**_f[2])
             else:
                 print("The shift of "+str(type(x)+" is not implemented for spectrogram"))
-
 
     def setNumber(self,n):
         self.number = n

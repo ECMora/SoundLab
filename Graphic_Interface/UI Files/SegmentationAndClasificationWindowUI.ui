@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>769</width>
+    <width>906</width>
     <height>569</height>
    </rect>
   </property>
@@ -76,6 +76,9 @@ padding:1%;</string>
        </layout>
       </widget>
       <widget class="QWidget" name="tab_2">
+       <property name="styleSheet">
+        <string notr="true"/>
+       </property>
        <attribute name="title">
         <string>Batch Process</string>
        </attribute>
@@ -83,7 +86,7 @@ padding:1%;</string>
         <item row="0" column="1">
          <widget class="QPushButton" name="pushButtonInputFolder">
           <property name="styleSheet">
-           <string notr="true">background-color: rgba(94, 116, 236, 207);</string>
+           <string notr="true">background-color: rgb(200, 200, 255);</string>
           </property>
           <property name="text">
            <string>Explore</string>
@@ -96,12 +99,15 @@ padding:1%;</string>
         <item row="4" column="0">
          <widget class="QListWidget" name="listwidgetProgress">
           <property name="styleSheet">
-           <string notr="true">background-color: rgb(217, 217, 217);</string>
+           <string notr="true">background-color: rgb(200, 200, 255);</string>
           </property>
          </widget>
         </item>
         <item row="6" column="0">
          <widget class="QProgressBar" name="progressBarProcesed">
+          <property name="styleSheet">
+           <string>background-color: rgb(200, 200, 255);</string>
+          </property>
           <property name="value">
            <number>0</number>
           </property>
@@ -110,7 +116,7 @@ padding:1%;</string>
         <item row="1" column="0">
          <widget class="QLineEdit" name="lineEditOutputFolder">
           <property name="styleSheet">
-           <string notr="true">background-color: rgba(94, 116, 236, 207);</string>
+           <string notr="true">background-color: rgb(200, 200, 255);</string>
           </property>
           <property name="text">
            <string>Select the folder of output procesed files</string>
@@ -120,7 +126,7 @@ padding:1%;</string>
         <item row="0" column="0">
          <widget class="QLineEdit" name="lineeditFilePath">
           <property name="styleSheet">
-           <string notr="true">background-color: rgba(94, 116, 236, 207);</string>
+           <string notr="true">background-color: rgb(200, 200, 255);</string>
           </property>
           <property name="text">
            <string>Select the folder of input audio files</string>
@@ -130,7 +136,7 @@ padding:1%;</string>
         <item row="1" column="1">
          <widget class="QPushButton" name="pushButtonOutputFolder">
           <property name="styleSheet">
-           <string notr="true">background-color: rgba(94, 116, 236, 207);</string>
+           <string notr="true">background-color: rgb(200, 200, 255);</string>
           </property>
           <property name="text">
            <string>Explore</string>
@@ -140,7 +146,7 @@ padding:1%;</string>
         <item row="4" column="1" colspan="2">
          <widget class="QGroupBox" name="groupBox">
           <property name="styleSheet">
-           <string notr="true">background-color: rgba(94, 116, 236, 207);</string>
+           <string notr="true">background-color: rgb(200, 200, 255);</string>
           </property>
           <property name="title">
            <string>Action</string>
@@ -207,7 +213,7 @@ padding:1%;</string>
         <item row="0" column="2">
          <widget class="QCheckBox" name="cbxSingleFile">
           <property name="styleSheet">
-           <string notr="true">background-color: rgba(94, 116, 236, 207);</string>
+           <string notr="true">background-color: rgb(200, 200, 255);</string>
           </property>
           <property name="text">
            <string>Single Excell</string>
@@ -221,8 +227,7 @@ padding:1%;</string>
     <item>
      <widget class="QScrollBar" name="horizontalScrollBar">
       <property name="styleSheet">
-       <string notr="true">border-color: rgb(26, 255, 10);
-background-color: rgb(99, 128, 255);</string>
+       <string notr="true">background-color: rgb(200, 200, 255);</string>
       </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
@@ -270,6 +275,7 @@ background-color: rgb(99, 128, 255);</string>
    <addaction name="actionOscilogram"/>
    <addaction name="actionSpectogram"/>
    <addaction name="separator"/>
+   <addaction name="actionTwo_Dimensional_Graphs"/>
    <addaction name="actionDelete_Selected_Elements"/>
    <addaction name="actionDeselect_Elements"/>
    <addaction name="actionSignalName"/>
@@ -301,7 +307,7 @@ background-color: rgb(99, 128, 255);</string>
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>769</width>
+     <width>906</width>
      <height>24</height>
     </rect>
    </property>
@@ -332,6 +338,8 @@ background-color: rgb(99, 128, 255);</string>
      <string>Detection</string>
     </property>
     <addaction name="actionDetection"/>
+    <addaction name="actionDelete_Selected_Elements"/>
+    <addaction name="actionDeselect_Elements"/>
     <addaction name="actionMeditions"/>
    </widget>
    <widget class="QMenu" name="menuTools">
@@ -354,9 +362,17 @@ background-color: rgb(99, 128, 255);</string>
     <addaction name="separator"/>
     <addaction name="actionTwo_Dimensional_Graphs"/>
    </widget>
-   <addaction name="menuDetection"/>
+   <widget class="QMenu" name="menuClasification">
+    <property name="title">
+     <string>Classification</string>
+    </property>
+    <addaction name="actionTraining_Mode"/>
+    <addaction name="actionClassification_Settings"/>
+   </widget>
    <addaction name="menuTools"/>
    <addaction name="menuParameters"/>
+   <addaction name="menuDetection"/>
+   <addaction name="menuClasification"/>
   </widget>
   <action name="actionZoomIn">
    <property name="icon">
@@ -712,18 +728,51 @@ background-color: rgb(99, 128, 255);</string>
    </property>
   </action>
   <action name="actionDelete_Selected_Elements">
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/deleteElements.png</normaloff>:/myappicons/deleteElements.png</iconset>
+   </property>
    <property name="text">
     <string>Delete Selected Elements</string>
    </property>
   </action>
   <action name="actionDeselect_Elements">
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/deselectElements.png</normaloff>:/myappicons/deselectElements.png</iconset>
+   </property>
    <property name="text">
     <string>Deselect Elements</string>
    </property>
   </action>
   <action name="actionTwo_Dimensional_Graphs">
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/2dgraphs.png</normaloff>:/myappicons/2dgraphs.png</iconset>
+   </property>
    <property name="text">
     <string>Two Dimensional Graphs</string>
+   </property>
+  </action>
+  <action name="actionTraining_Mode">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Training Mode</string>
+   </property>
+  </action>
+  <action name="actionClassification_Settings">
+   <property name="text">
+    <string>Settings</string>
+   </property>
+  </action>
+  <action name="actionMethod">
+   <property name="text">
+    <string>Method</string>
    </property>
   </action>
   <zorder>dockWidgetParameterTableOscilogram</zorder>

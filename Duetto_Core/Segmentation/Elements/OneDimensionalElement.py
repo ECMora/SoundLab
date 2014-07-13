@@ -198,8 +198,8 @@ class OscilogramElement(OneDimensionalElement):
                 [self.indexToInPxx, index]
             ])
             adj = np.array([[0,1]])
-            #self.parameters["average"][("peak","visual")] = g
-            self.twoDimensionalElements.addVisualGraph(pos,adj,dict(size=2, symbol=['o','o'], pxMode=False))
+            self.parameters["average"][("peak","visual")] = True
+            #self.twoDimensionalElements[0].addVisualGraph(pos,adj,dict(size=2, symbol='o', pxMode=False))
 
 
         return self.parameters["average"]["peak"]
@@ -223,8 +223,8 @@ class OscilogramElement(OneDimensionalElement):
                     [self.indexToInPxx, self.parameters["average"]["max"][1]]
                 ])
                 adj = np.array([[0,1]])
-                #self.parameters["average"][("max","visual")] = g
-                self.twoDimensionalElements.addVisualGraph(pos,adj,dict(size=2, symbol=['o','o'], pxMode=False))
+                self.parameters["average"][("max","visual")] = True
+                #self.twoDimensionalElements[0].addVisualGraph(pos,adj,dict(size=2, symbol=['o','o'], pxMode=False))
 
             return self.parameters["average"]["max"][0]
 
@@ -246,8 +246,8 @@ class OscilogramElement(OneDimensionalElement):
                     [self.indexToInPxx, self.parameters["average"]["min"][1]]
                 ])
                 adj = np.array([[0,1]])
-                #self.parameters["average"][("min","visual")]
-                self.twoDimensionalElements.addVisualGraph(pos,adj,dict(size=2, symbol=['o','o'], pxMode=False))
+                self.parameters["average"][("min","visual")] = True
+                #self.twoDimensionalElements[0].addVisualGraph(pos,adj,dict(size=2, symbol=['o','o'], pxMode=False))
 
 
             return self.parameters["average"]["min"][0]
@@ -294,7 +294,7 @@ class OscilogramElement(OneDimensionalElement):
                     rect.setPen(QtGui.QPen(QtGui.QColor(255, 0, 0)))
                     rect.setBrush(QtGui.QBrush(self.color))
                     t = (self.indexFromInPxx + index,freq_index,1,1)
-                    self.twoDimensionalElements.figurePosition.append(t)
+                    self.twoDimensionalElements[0].figurePosition.append(t)
                     self.twoDimensionalElements[0].visual_figures.append([rect, True])
 
                 self.parameters["peakFreq"][index],self.parameters["peakAmplitude"][index] = peak,peakamplitude
@@ -351,9 +351,8 @@ class OscilogramElement(OneDimensionalElement):
             if len(self.twoDimensionalElements) > 0 and not (index,"visual") in self.parameters["minFreq"]:
                 ## Define positions of nodes
                 pos = np.array([[self.indexFromInPxx + index,self.parameters["minFreq"][(index,threshold)][1]]])
-
-                self.parameters["minFreq"][ (index,"visual")] = g
-                self.twoDimensionalElements.addVisualGraph(pos,np.array([[]]),dict(size=min(self.parameters["maxFreq"][(index,threshold)][1]-self.parameters["minFreq"][(index,threshold)][1],2), symbol='+', pxMode=False))
+                self.parameters["minFreq"][(index,"visual")] = True
+                #self.twoDimensionalElements[0].addVisualGraph(pos,np.array([[]]),dict(size=min(self.parameters["maxFreq"][(index,threshold)][1]-self.parameters["minFreq"][(index,threshold)][1],2), symbol='+', pxMode=False))
 
 
             return self.parameters["minFreq"][(index,threshold)][0]
@@ -378,8 +377,8 @@ class OscilogramElement(OneDimensionalElement):
                 pos = np.array([
                     [self.indexFromInPxx + index, self.parameters["maxFreq"][(index,threshold)][1]]
                 ])
-                #self.parameters["maxFreq"][ (index,"visual")] = g
-                self.twoDimensionalElements[0].addVisualGraph(pos,np.array([[]]),dict(size=min(self.parameters["maxFreq"][(index,threshold)][1]-self.parameters["minFreq"][(index,threshold)][1],2), symbol='+', pxMode=False))
+                self.parameters["maxFreq"][ (index,"visual")] = True
+                #self.twoDimensionalElements[0].addVisualGraph(pos,np.array([[]]),dict(size=min(self.parameters["maxFreq"][(index,threshold)][1]-self.parameters["minFreq"][(index,threshold)][1],2), symbol='+', pxMode=False))
             return self.parameters["maxFreq"][(index,threshold)][0]
         return "Invalid Params"
 
@@ -404,9 +403,9 @@ class OscilogramElement(OneDimensionalElement):
                 ])
                 adj = np.array([[0,1]])
 
-                #self.parameters["bandwidth"][(index,"visual")] = g
-                self.twoDimensionalElements[0].addVisualGraph(pos,adj,dict(size=min(self.parameters["bandwidth"][(index,threshold)][2]-self.parameters["bandwidth"][(index,threshold)][1],2),
-                          symbol=['+','+'], pxMode=False))
+                self.parameters["bandwidth"][(index,"visual")] = True
+                #self.twoDimensionalElements[0].addVisualGraph(pos,adj,dict(size=min(self.parameters["bandwidth"][(index,threshold)][2]-self.parameters["bandwidth"][(index,threshold)][1],2),
+                #          symbol=['+','+'], pxMode=False))
             return self.parameters["bandwidth"][(index,threshold)][0]
         return "Invalid Params"
 

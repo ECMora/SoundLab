@@ -1,5 +1,8 @@
 <RCC>
   <qresource prefix="myappicons">
+    <file>deselectElements.png</file>
+    <file>deleteElements.png</file>
+    <file>2dgraphs.png</file>
     <file>Process Viewer.png</file>
     <file>ColorSync Utility.png</file>
     <file>Macromedia.png</file>

@@ -36,6 +36,7 @@ class QSignalVisualizerWidget(QWidget):
         self.histogram = pg.HistogramLUTWidget()
         self._Z = np.array([[0]])
 
+
         self.osc_color = QColor(255, 255, 255)
 
         self.axesOscilogram = OscilogramPlotWidget(parent=self)
@@ -116,10 +117,11 @@ class QSignalVisualizerWidget(QWidget):
         """
 
         #assert isinstance(theme,SerializedData)
-
+        self.histogram
         self.axesOscilogram.load_Theme(theme)
         self.axesSpecgram.load_Theme(theme)
         #the implementation should be just until here
+
         updOsc = False
         updSpec = False
         dataChange = False

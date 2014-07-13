@@ -561,6 +561,9 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             segWindow.widget.minYSpc = self.ParamTree.param(u'Spectrogram Settings').param(u'Frequency(kHz)').param(u'Min').value()
             segWindow.widget.maxYSpc = self.ParamTree.param(u'Spectrogram Settings').param(u'Frequency(kHz)').param(u'Max').value()
 
+            self.defaultTheme.histRange = self.hist.item.region.getRegion()
+            self.defaultTheme.colorBarState = self.hist.item.gradient.saveState()
+
             segWindow.load_Theme(self.defaultTheme)
             segWindow.widget.refresh()
 

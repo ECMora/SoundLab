@@ -123,7 +123,6 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                                          separator3,self.actionDeselect_Elements,self.actionDelete_Selected_Elements,separator4,self.actionOsgram_Image,self.actionSpecgram_Image,self.actionCombined_Image])
         self.windowProgressDetection = QtGui.QProgressBar(self.widget)
         self.actionSignalName.setText(self.widget.signalName())
-        #self.widget.histogram.setImageItem(self.widget.axesSpecgram.imageItem)
 
         #array of windows with two dimensional graphs. Are stored for a similar behavior to the one dimensional
         #in the main window. Updates the graphs
@@ -133,6 +132,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.measuredParameters = np.array([[], []]) # stores the measured parameters of the sdetected elements
         #the names of the columns in the table of parameters measured
         self.columnNames = []
+        self.widget.histogram.setImageItem(self.widget.axesSpecgram.imageItem)
 
     #region Two Dimensional Graphs
 
@@ -141,8 +141,12 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         if self.tableParameterOscilogram.rowCount() == 0:
             QtGui.QMessageBox.warning(QtGui.QMessageBox(), "Error", "There is not detected elements.\n The two dimensional analisys requires at least one detected element.")
             return
+        if self.tableParameterOscilogram.columnCount() == 0:
+            QtGui.QMessageBox.warning(QtGui.QMessageBox(), "Error", "There is not parameters measurement.\n The two dimensional analisys requires at least one parameter measured.")
+            return
 
-        wnd = TwoDimensionalAnalisysWindow(self, columns=self.columnNames,data=self.measuredParameters,element_selector_function=self.elementSelectedInTable)
+        wnd = TwoDimensionalAnalisysWindow(self, columns=self.columnNames,data=self.measuredParameters)
+        wnd.elementSelected.connect(self.elementSelectedInTable)
         if self.theme:
             wnd.load_Theme(self.theme)
 
@@ -275,6 +279,10 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
     def load_Theme(self,theme):
         self.theme = theme
         self.widget.load_Theme(theme)
+
+        self.widget.histogram.item.region.lineMoved()
+        self.widget.histogram.item.region.lineMoveFinished()
+
         #self.tableParameterOscilogram.setStyleSheet("background-color: #" +str(self.widget.osc_background) + ";")
 
     #endregion
@@ -596,7 +604,6 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         elementsDetectorDialog.cbxmeasurementLocationQuartile75.setChecked(self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.QUARTILE75][0])#75 % medition
         elementsDetectorDialog.cbxmeasurementLocationAverage.setChecked(averageComputation)#75 % medition
 
-
     def getSettings(self,elementsDetectorDialog):
         self.detectionSettings["Threshold"] = elementsDetectorDialog.dsbxThreshold.value()
         self.detectionSettings["Threshold2"] = elementsDetectorDialog.dsbxThreshold2.value()
@@ -696,19 +703,22 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                             self.measuredParameters[i,j] = prop[2](self.widget.Elements[i],{"threshold": self.detectionSettings["SpectralLocMeasureThreshold"]})
                             item = QtGui.QTableWidgetItem(unicode(self.measuredParameters[i,j]))
                             item.setBackgroundColor(self.parameterTable_rowcolor_odd if i%2==0 else self.parameterTable_rowcolor_even)
-                        except:
-                            item = QtGui.QTableWidgetItem("Error")
+                        except Exception as e:
+                            item = QtGui.QTableWidgetItem("Error"+e.message)
                         self.tableParameterOscilogram.setItem(i, j, item)
                     for x,prop in enumerate(spectralparamsTomeasure):
                         try:
                             self.measuredParameters[i,len(paramsTomeasure)+x] = prop[1](self.widget.Elements[i],prop[2])
                             item = QtGui.QTableWidgetItem(unicode(self.measuredParameters[i,len(paramsTomeasure)+x]))
                             item.setBackgroundColor(self.parameterTable_rowcolor_odd if i%2==0 else self.parameterTable_rowcolor_even)
-                        except:
-                            item = QtGui.QTableWidgetItem("Error")
+                        except Exception as e:
+                            item = QtGui.QTableWidgetItem("Error"+e.message)
                         self.tableParameterOscilogram.setItem(i, len(paramsTomeasure) + x, item)
 
                 self.updateDetectionProgressBar(100)
+
+                for wnd in self.twodimensionalGraphs:
+                    wnd.loadData(self.columnNames,self.measuredParameters)
 
             except Exception:
                 print("some detection errors")
@@ -815,13 +825,21 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         if indx is not None and indx[0] >=0 and indx[1] < self.tableParameterOscilogram.rowCount():
             for i in range(indx[1],indx[0]-1,-1):
-                self.tableParameterOscilogram.removeRow(i)
                 #delete from table
+                self.tableParameterOscilogram.removeRow(i)
 
-        self.measuredParameters = np.concatenate((self.measuredParameters[:indx[0]],self.measuredParameters[indx[1]+1:]))
-        self.tableParameterOscilogram.update()
+            for i in range(self.tableParameterOscilogram.rowCount()):
+                #update table bacground color
+                for j in range(self.tableParameterOscilogram.columnCount()):
+                    self.tableParameterOscilogram.item(i,j).setBackgroundColor(self.parameterTable_rowcolor_odd if i%2 == 0 else self.parameterTable_rowcolor_even)
 
-        self.on_actionDeselect_Elements_triggered()
+            #updates the numpy array  with the detected parameters
+            self.measuredParameters = np.concatenate((self.measuredParameters[:indx[0]],self.measuredParameters[indx[1]+1:]))
+            self.tableParameterOscilogram.update()
+            for wnd in self.twodimensionalGraphs:
+                wnd.loadData(self.columnNames,self.measuredParameters)
+
+            self.on_actionDeselect_Elements_triggered()
 
     @pyqtSlot()
     def on_actionDeselect_Elements_triggered(self):
