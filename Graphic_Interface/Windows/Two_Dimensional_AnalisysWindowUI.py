@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Sound Lab\DuettoSystem\Graphic_Interface\UI Files\Two_Dimensional_AnalisysWindowUI.ui'
 #
-# Created: Wed Jul 09 12:32:40 2014
+# Created: Sun Jul 13 21:21:17 2014
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -52,14 +52,19 @@ class Ui_TwoDimensionalWindow(object):
         self.dockWidgetContents.setObjectName(_fromUtf8("dockWidgetContents"))
         self.dockGraphsOptions.setWidget(self.dockWidgetContents)
         TwoDimensionalWindow.addDockWidget(QtCore.Qt.DockWidgetArea(2), self.dockGraphsOptions)
-        self.actionHighest_frequency = QtGui.QAction(TwoDimensionalWindow)
-        self.actionHighest_frequency.setObjectName(_fromUtf8("actionHighest_frequency"))
+        self.actionHide_Show_Settings = QtGui.QAction(TwoDimensionalWindow)
+        self.actionHide_Show_Settings.setObjectName(_fromUtf8("actionHide_Show_Settings"))
+        self.actionSaveGraphImage = QtGui.QAction(TwoDimensionalWindow)
+        self.actionSaveGraphImage.setObjectName(_fromUtf8("actionSaveGraphImage"))
 
         self.retranslateUi(TwoDimensionalWindow)
         QtCore.QMetaObject.connectSlotsByName(TwoDimensionalWindow)
 
     def retranslateUi(self, TwoDimensionalWindow):
         TwoDimensionalWindow.setWindowTitle(QtGui.QApplication.translate("TwoDimensionalWindow", "Two Dimensional Analisys", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionHighest_frequency.setText(QtGui.QApplication.translate("TwoDimensionalWindow", "Highest frequency", None, QtGui.QApplication.UnicodeUTF8))
+        self.dockGraphsOptions.setWindowTitle(QtGui.QApplication.translate("TwoDimensionalWindow", "Axis Settings", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionHide_Show_Settings.setText(QtGui.QApplication.translate("TwoDimensionalWindow", "Hide-Show Settings", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionHide_Show_Settings.setShortcut(QtGui.QApplication.translate("TwoDimensionalWindow", "Ctrl+Space", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSaveGraphImage.setText(QtGui.QApplication.translate("TwoDimensionalWindow", "Save Graph Image", None, QtGui.QApplication.UnicodeUTF8))
 
 from pyqtgraph import PlotWidget

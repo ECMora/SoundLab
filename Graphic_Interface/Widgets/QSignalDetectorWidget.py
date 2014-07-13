@@ -25,9 +25,13 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         this method implements the  way in wich the controls load the theme
         all changes made by the theme are made in this place
         """
-
         #assert isinstance(theme,SerializedData)
         QSignalVisualizerWidget.load_Theme(self,theme)
+
+        self.histogram.item.region.setRegion(theme.histRange)
+        self.histogram.item.gradient.restoreState(theme.colorBarState)
+
+
         self.envelopeCurve.setPen(pg.mkPen(self.osc_color, width=1))
         self.envelopeCurve.setShadowPen(pg.mkPen(QtGui.QColor(255, 0, 0), width=3))
 
@@ -189,7 +193,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         sorted_arr = np.array([x.indexFrom for x in self.Elements])
 
         indexFrom,indexTo = np.searchsorted(sorted_arr,start),np.searchsorted(sorted_arr,end) - 1
-        indexFrom += 1 if self.Elements[indexFrom].indexTo <= start else 0
+        indexFrom -= 1 if end <= self.Elements[indexFrom].indexTo else 0
 
         if indexFrom < 0 or indexTo < indexFrom or indexTo >= len(self.Elements):
             return None
