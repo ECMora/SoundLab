@@ -40,7 +40,7 @@ class LogarithmicPowSpec(OneDimensionalFunction):
         window = self.pTree.param('Power spectrum(Logarithmic)', 'FFT window').value()
         #apply the window function to the result
 
-        Px = abs(np.fft.fft(self.widget.data))[0:len(self.widget.data)//2+1]
+        Px = abs(np.fft.fft(self.widget.data, 2**int(np.ceil(np.log2(len(self.widget.data))))))[0:len(self.widget.data)//2+1]
         freqs = float(self.widget.Fs) / len(self.widget.data) * np.arange(len(self.widget.data)//2+1)
         self.Pxx = Px
         self.freqs = freqs
@@ -74,10 +74,9 @@ class InstantaneousFrequencies(OneDimensionalFunction):
 
         Pxx, freqs, bins = mlab.specgram(self.widget.data, Fs=self.widget.rate)
         dtemp =  freqs[np.argmax(Pxx[1:len(Pxx)], axis=0)]
-        data = dtemp[dtemp>0]
-        #self.widget.refresh(bins,data)
-        self.widget.plot(bins[dtemp>0],data, clear=True, pen=None, symbol = 's', symbolSize = 1,symbolPen = self.widget.plotColor)
-        self.widget.setRange(xRange = (0,bins[len(bins) - 1]),yRange=(data[len(data)-1], 0),padding=0,update=True)
+        self.widget.lastProc = self.processing
+        self.widget.plot(bins[dtemp>0],dtemp[dtemp>0], clear=True, pen=None, symbol = 's', symbolSize = 1,symbolPen = self.widget.plotColor)
+        self.widget.setRange(xRange = (0,bins[len(bins) - 1]),yRange=(0, self.widget.Fs/2),padding=0,update=True)
         self.widget.show()
 
 class AveragePowSpec(OneDimensionalFunction):
