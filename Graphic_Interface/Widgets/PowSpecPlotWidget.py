@@ -37,6 +37,7 @@ class LogarithmicPowSpec(OneDimensionalFunction):
 
     def processing(self):
         OneDimensionalFunction.processing(self)
+
         window = self.pTree.param('Power spectrum(Logarithmic)', 'FFT window').value()
         #apply the window function to the result
 
@@ -44,7 +45,12 @@ class LogarithmicPowSpec(OneDimensionalFunction):
         freqs = float(self.widget.Fs) / len(self.widget.data) * np.arange(len(self.widget.data)//2+1)
         self.Pxx = Px
         self.freqs = freqs
-        self.widget.refresh(freqs, 10*np.log10(Px/np.amax(Px)))
+        db = 10*np.log10(Px/np.amax(Px))
+        self.widget.plot(freqs, db ,clear=True, pen = self.widget.plotColor, symbol = 's', symbolSize = 1,symbolPen = self.widget.plotColor)
+        self.widget.setRange(xRange = (0,freqs[len(freqs) - 1]),yRange = (np.amin(db),0), padding=0,update=True)
+        self.widget.setBackground(self.widget.backColor)
+        self.widget.getPlotItem().showGrid(x=self.widget.gridX, y=self.widget.gridY)
+        self.widget.show()
 
 class EnvelopeTransf(OneDimensionalFunction):
     def __init__(self,widget):
@@ -105,10 +111,20 @@ class AveragePowSpec(OneDimensionalFunction):
             Pxx.shape = len(freqs)
             self.widget.Pxx = Pxx
             self.widget.freqs = freqs
-            self.widget.refresh(freqs,10*np.log10(Pxx/np.amax(Pxx)))
+            db = 10*np.log10(Pxx/np.amax(Pxx))
+            self.widget.plot(freqs, db,clear=True, pen = self.widget.plotColor, symbol = 's', symbolSize = 1,symbolPen = self.widget.plotColor)
+            self.widget.setRange(xRange = (0,freqs[len(freqs) - 1]),yRange = (np.amin(db),0) ,padding=0,update=True)
+            self.widget.setBackground(self.widget.backColor)
+            self.widget.getPlotItem().showGrid(x=self.widget.gridX, y=self.widget.gridY)
+            self.widget.show()
+
 
 class PowSpecPlotWidget(pg.PlotWidget):
     def __init__(self, parent=None,**kargs):
+        self.gridX = True
+        self.gridY = True
+        self.wSettings = []
+
         self.proc = [LogarithmicPowSpec(self),AveragePowSpec(self),InstantaneousFrequencies(self)]
         self.lastProc = None
         self.windows = FFTWindows()
@@ -139,15 +155,6 @@ class PowSpecPlotWidget(pg.PlotWidget):
     PointerChanged = pyqtSignal(str)
     PointerCursorPressed = pyqtSignal()
     PIXELS_OF_CURSORS_CHANGES = 5
-
-    def refresh(self,x,y):
-
-        self.plot(x,y,clear=True, pen = self.plotColor if self.lines else None, symbol = 's', symbolSize = 1,symbolPen = self.plotColor)
-        self.setRange(xRange = (0,x[len(x) - 1]),yRange=(self.maxY, self.minY),padding=0,update=True)
-        self.setBackground(self.backColor)
-        self.getPlotItem().showGrid(x=self.gridX, y=self.gridY)
-        self.show()
-
 
     def updateLast(self,data):
         self.data = data
@@ -277,8 +284,13 @@ class PowSpecPlotWidget(pg.PlotWidget):
         self.maxY = maxY
         self.minY = minY
         self.backColor = backColor
-        self.gridX = gridX
-        self.gridY = gridY
+        self.wSettings = {u'name': u'Window Settings', u'type': u'group', u'children': [
+            {u'name':u'Plot color', u'type': u'color', u'value':self.plotColor},
+            {u'name': u'Background color', u'type': u'color', u'value':self.backColor},
+            {u'name': u'Grid', u'type': u'group', u'children':[
+                {u'name': u'X', u'type': u'bool', u'value': self.gridX},
+                {u'name': u'Y', u'type': u'bool', u'value':self.gridY}]},
+        ]}
 
     #def averageProcessing(self, data, Fs, NFFT, window, noverlap, maxY, minY, plotColor, lines):
     #    (Pxx , freqs) = mlab.psd(data, Fs= Fs, NFFT=NFFT, window=window, noverlap=noverlap, scale_by_freq=False)
