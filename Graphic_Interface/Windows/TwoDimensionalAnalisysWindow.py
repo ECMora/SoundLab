@@ -23,6 +23,7 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow,Ui_TwoDimensionalWindow):
         self.widget.enableAutoRange()
         self.scatter_plot = None
         self.font = QtGui.QFont()
+        self.previousSelectedElement = -1
         self.columns = columns if columns is not None else []
         self.visual_elements = []
         #the numpy [,] array with the parameter measurement
@@ -99,6 +100,20 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow,Ui_TwoDimensionalWindow):
         self.widget.setBackground(theme.osc_background)
         self.widget.getPlotItem().showGrid(x=theme.osc_GridX, y=theme.osc_GridY)
 
+    def selectElement(self,index):
+        if self.scatter_plot is None or self.previousSelectedElement == index:
+            return
+        elems = self.scatter_plot.points()
+        if len(elems) <= index:
+            return
+
+        color = self.ParamTree.param(u'Color').value()
+        elem = elems[index]
+        elem.setBrush(brush=(pg.mkBrush(color="FFF")))
+        if self.previousSelectedElement != -1:
+            elems[self.previousSelectedElement].setBrush(brush=(pg.mkBrush(color)))
+
+
     @pyqtSlot()
     def on_actionSaveGraphImage_triggered(self):
         fname = unicode(QFileDialog.getSaveFileName(self,"Save two dimensional graphics as an Image ","-Duetto-Image","*.jpg"))
@@ -121,10 +136,14 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow,Ui_TwoDimensionalWindow):
         x_coords = [e[i] for e in self.data]
         y_coords = [e[j] for e in self.data]
         self.scatter_plot = pg.ScatterPlotItem(x=x_coords,y=y_coords,data=numpy.arange(len(x_coords)),size=fig_size,symbol=shape,brush=(pg.mkBrush(color)))
-        self.scatter_plot.sigClicked.connect(lambda x, y: self.elementSelected.emit(y[0].data()))
+        self.scatter_plot.sigClicked.connect(self.elementFigureClicked)
 
         text_size = {'color':'#FFF', 'font-size': str(self.font.pointSize())+'pt'}
 
         self.widget.getPlotItem().getAxis("bottom").setLabel(text=str(self.columns[i]),**text_size)
         self.widget.getPlotItem().getAxis("left").setLabel(text=str(self.columns[j]),**text_size)
         self.widget.addItem(self.scatter_plot)
+
+    def elementFigureClicked(self,x,y):
+        self.selectElement(y[0].data())
+        self.elementSelected.emit(y[0].data())

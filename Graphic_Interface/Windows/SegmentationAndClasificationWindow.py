@@ -99,7 +99,6 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
             ["Band Width(Hz)",False,lambda x,d :x.bandwidth(d)],
             ["Peaks Above",False,lambda x,d :x.peaksAbove(d)],
 
-
         ] #the spectral parameters that changes in function of the location measurements
          #funciones que reciben un elemento spectral 2 dimensiones y devuelven el valor del parametro medido
         #the order of the elements in the array of self.parameterMeasurement["Temporal"] is relevant for the visualization in the table and the

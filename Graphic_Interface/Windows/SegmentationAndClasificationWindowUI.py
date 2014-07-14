@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Sound Lab\DuettoSystem\Graphic_Interface\UI Files\SegmentationAndClasificationWindowUI.ui'
 #
-# Created: Sun Jul 13 22:34:14 2014
+# Created: Mon Jul 14 15:36:28 2014
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -386,7 +386,7 @@ class Ui_MainWindow(object):
         self.menuBar.addAction(self.menuClasification.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.tabwidget.setCurrentIndex(1)
+        self.tabwidget.setCurrentIndex(0)
         QtCore.QObject.connect(self.pushButtonInputFolder, QtCore.SIGNAL(_fromUtf8("clicked()")), MainWindow.selectInputFolder)
         QtCore.QObject.connect(self.pushButtonOutputFolder, QtCore.SIGNAL(_fromUtf8("clicked()")), MainWindow.selectOutputFolder)
         QtCore.QObject.connect(self.pushButtonStart, QtCore.SIGNAL(_fromUtf8("clicked()")), MainWindow.startBatchProcess)
