@@ -58,4 +58,3 @@ class SpecgramSettings:
 
 
 M = numpy.arange(10)
-print(numpy.arange(1,0,-1.0/len(M)))

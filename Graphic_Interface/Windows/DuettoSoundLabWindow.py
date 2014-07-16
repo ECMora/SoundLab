@@ -49,7 +49,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         themesInFolder = self.folderFiles(os.path.join("Utils","Themes"),extensions=[".dth"])
 
-
         self.widget.osc_color = self.defaultTheme.osc_plot
 
         self.pow_spec_lines = True
@@ -768,12 +767,9 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     @pyqtSlot()
     def on_actionPower_Spectrum_triggered(self):
-        dg_pow_spec = PowerSpectrumWindow(self,self.pow_spec_minY,self.pow_spec_maxY,self.pow_spec_lines)
-        dg_pow_spec.load_Theme(self.defaultTheme)
         minx = self.widget.zoomCursor.min
         maxx = max(self.widget.zoomCursor.max, min(minx + self.NFFT_pow, len(self.widget.signalProcessor.signal.data)))
-        dg_pow_spec = PowerSpectrumWindow(self, self.pow_spec_minY,self.pow_spec_maxY,self.pow_spec_lines,self.widget.signalProcessor.signal.data[minx:maxx],self.widget.signalProcessor.signal.samplingRate,self.widget.signalProcessor.signal.bitDepth,self.widget.maxYOsc)
-        dg_pow_spec.load_Theme(self.defaultTheme)
+        dg_pow_spec = PowerSpectrumWindow(self, self.pow_spec_minY,self.pow_spec_maxY,self.pow_spec_lines,self.widget.signalProcessor.signal.data[minx:maxx],self.defaultTheme,self.widget.signalProcessor.signal.samplingRate,self.widget.signalProcessor.signal.bitDepth,self.widget.maxYOsc)
         self.pow_spec_windows.append(dg_pow_spec)
 
     @pyqtSlot()

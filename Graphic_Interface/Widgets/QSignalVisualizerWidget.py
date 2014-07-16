@@ -10,6 +10,7 @@ from pyqtgraph.Point import Point
 from Duetto_Core.AudioSignals.WavFileSignal import WavFileSignal
 from Duetto_Core.AudioSignals.AudioSignal import AudioSignal
 from Duetto_Core.Cursors.IntervalCursor import IntervalCursor
+from Graphic_Interface.Widgets.Axis import *
 from Duetto_Core.Cursors.PointerCursor import PointerCursor
 from Duetto_Core.Cursors.RectangularCursor import RectangularCursor
 from Duetto_Core.SignalProcessors.CommonSignalProcessor import CommonSignalProcessor
@@ -98,8 +99,10 @@ class QSignalVisualizerWidget(QWidget):
         self._playerLineTimer.timeout.connect(
             lambda: self.notifyPlayingCursor(int(self.playerLineOsc.value() + self._playDelta)))
 
-        self._lastRecordRefresh = datetime.now()
-        self._recordRefreshRate = 5
+        self._recordTimer = QTimer(self)
+        self._recordTimer.timeout.connect(self.on_newDataRecorded)
+
+
 
         self._doRefresh.connect(self._refresh)
         self.playing.connect(self.notifyPlayingCursor)
@@ -117,7 +120,7 @@ class QSignalVisualizerWidget(QWidget):
         """
 
         #assert isinstance(theme,SerializedData)
-        self.histogram
+
         self.axesOscilogram.load_Theme(theme)
         self.axesSpecgram.load_Theme(theme)
         #the implementation should be just until here
@@ -125,7 +128,8 @@ class QSignalVisualizerWidget(QWidget):
         updOsc = False
         updSpec = False
         dataChange = False
-
+        self.histogram.region.setRegion(theme.histRange)
+        self.histogram.gradient.restoreState(theme.colorBarState)
 
         self.osc_color = theme.osc_plot
 
@@ -216,6 +220,7 @@ class QSignalVisualizerWidget(QWidget):
         self.signalProcessor.signal.stop()
         self.removePlayerLine()
         if prevStatus == AudioSignal.RECORDING:
+            self._recordTimer.stop()
             self.axesOscilogram.mouseZoomEnabled = True
             self.axesSpecgram.mouseZoomEnabled = True
             self.visibleSpectrogram = True
@@ -232,6 +237,8 @@ class QSignalVisualizerWidget(QWidget):
         self.axesOscilogram.setVisible(True)
         self.axesSpecgram.setVisible(False)
         self.signalProcessor.signal.record()
+        updateTime = 15
+        self._recordTimer.start(updateTime)
         #self.createPlayerLine(self.mainCursor.min)
 
     def createPlayerLine(self, value):
@@ -246,7 +253,7 @@ class QSignalVisualizerWidget(QWidget):
         if self.playerLineSpec not in self.axesSpecgram.viewBox.addedItems:
             self.axesSpecgram.viewBox.addItem(self.playerLineSpec)
 
-        updateTime = 41 #41ms=1/24s
+        updateTime = 41 # 41ms = 1/24s
         self._playDelta = self.signalProcessor.signal.samplingRate * self.playerSpeed / 100 * updateTime / 1000
         self._playerLineTimer.start(updateTime)
 
@@ -268,13 +275,6 @@ class QSignalVisualizerWidget(QWidget):
         self.playerLineSpec.setValue(self._from_osc_to_spec(frame))
         if self.signalProcessor.signal.playStatus == self.signalProcessor.signal.STOPPED:
             self.removePlayerLine()
-
-    def on_newDataRecorded(self, frame_count):
-            self.mainCursor.max = len(self.signalProcessor.signal.data)
-            self.mainCursor.min = max(0,
-                                      len(self.signalProcessor.signal.data) - 3 * self.signalProcessor.signal.samplingRate)
-            self.refresh(updateSpectrogram=False)
-            self.rangeChanged.emit(self.mainCursor.min, self.mainCursor.max, len(self.signalProcessor.signal.data))
 
     #endregion
 
@@ -316,7 +316,6 @@ class QSignalVisualizerWidget(QWidget):
         self.axesSpecgram.emitIntervalSpecChanged = False
         self.axesSpecgram.zoomRegion.setRegion([min, max])
         self.axesSpecgram.emitIntervalSpecChanged = True
-        self.stop()
 
     def updateOscZoomRegion(self, a, b):
         min = self._from_spec_to_osc(a) + self.mainCursor.min
@@ -463,6 +462,15 @@ class QSignalVisualizerWidget(QWidget):
         self.refresh(dataChanged=False, updateOscillogram=updateOscillogram, updateSpectrogram=updateSpectrogram)
         if emit:
             self.rangeChanged.emit(self.mainCursor.min, self.mainCursor.max, len(self.signalProcessor.signal.data))
+
+    def on_newDataRecorded(self):
+        self.signalProcessor.signal.readFromStream()
+
+        self.mainCursor.max = len(self.signalProcessor.signal.data)
+        self.mainCursor.min = max(0,
+                                  len(self.signalProcessor.signal.data) - 3 * self.signalProcessor.signal.samplingRate)
+        self.refresh(updateSpectrogram=False)
+        self.rangeChanged.emit(self.mainCursor.min, self.mainCursor.max, len(self.signalProcessor.signal.data))
 
 
     SPECGRAM_COMPLEX_SIDE = "onesided"
