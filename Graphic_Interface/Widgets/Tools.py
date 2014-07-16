@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import pyqtgraph as pg
+
 class Tools:
     """
     the tools for interaction with the signal in the QSignalVisualizerWidget.

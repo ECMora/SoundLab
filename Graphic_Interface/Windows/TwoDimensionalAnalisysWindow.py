@@ -4,6 +4,7 @@ from PyQt4.QtCore import pyqtSlot
 import numpy
 from pyqtgraph.parametertree import Parameter, ParameterTree
 import pyqtgraph as pg
+from Graphic_Interface.Widgets.Tools import Tools
 from Graphic_Interface.Windows.Two_Dimensional_AnalisysWindowUI import Ui_TwoDimensionalWindow
 from PyQt4 import QtGui, QtCore
 
@@ -22,10 +23,12 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow,Ui_TwoDimensionalWindow):
         self.widget.setMenuEnabled(False)
         self.widget.enableAutoRange()
         self.scatter_plot = None
+        #if there is a selection of several elements.
+        #draw a rectangle with cursor and later mapRectFromDevice to get the element that are selected
+
         self.font = QtGui.QFont()
         self.previousSelectedElement = -1
         self.columns = columns if columns is not None else []
-        self.visual_elements = []
         #the numpy [,] array with the parameter measurement
         self.data = data if data is not None else numpy.zeros(4).reshape((2,2))
         self.widget.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
@@ -109,10 +112,11 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow,Ui_TwoDimensionalWindow):
 
         color = self.ParamTree.param(u'Color').value()
         elem = elems[index]
-        elem.setBrush(brush=(pg.mkBrush(color="FFF")))
+        elem.setBrush(pg.mkBrush("FFF"))
         if self.previousSelectedElement != -1:
-            elems[self.previousSelectedElement].setBrush(brush=(pg.mkBrush(color)))
+            elems[self.previousSelectedElement].setBrush(pg.mkBrush(color))
 
+        self.previousSelectedElement = index
 
     @pyqtSlot()
     def on_actionSaveGraphImage_triggered(self):
@@ -138,12 +142,30 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow,Ui_TwoDimensionalWindow):
         self.scatter_plot = pg.ScatterPlotItem(x=x_coords,y=y_coords,data=numpy.arange(len(x_coords)),size=fig_size,symbol=shape,brush=(pg.mkBrush(color)))
         self.scatter_plot.sigClicked.connect(self.elementFigureClicked)
 
+        elems = self.scatter_plot.points()
+        if self.previousSelectedElement > 0 and self.previousSelectedElement < len(elems):
+            elems[self.previousSelectedElement].setBrush(pg.mkBrush("FFF"))
+
+
         text_size = {'color':'#FFF', 'font-size': str(self.font.pointSize())+'pt'}
 
         self.widget.getPlotItem().getAxis("bottom").setLabel(text=str(self.columns[i]),**text_size)
         self.widget.getPlotItem().getAxis("left").setLabel(text=str(self.columns[j]),**text_size)
+
         self.widget.addItem(self.scatter_plot)
+        self.widget.removeSelectionRect()
+        self.widget.addSelectionRect()
+
+    def getSelectedElements(self):
+        """
+
+        @return: the indexes of the selected elements in the graph
+        """
+        rect = self.widget.ElementSelectionRect
+        selected = [e for e in self.data]
 
     def elementFigureClicked(self,x,y):
         self.selectElement(y[0].data())
         self.elementSelected.emit(y[0].data())
+
+

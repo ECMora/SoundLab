@@ -605,7 +605,10 @@ class QSignalVisualizerWidget(QWidget):
             self.mainCursor.max -= self.zoomCursor.max - self.zoomCursor.min
             if (self.mainCursor.max < 1):
                 self.zoomOut()
-            self.axesSpecgram.zoomRegion.setRegion([0, 0])
+            self.zoomCursor.max = self.zoomCursor.min
+            self.axesOscilogram.zoomRegion.setBounds([0, len(self.signalProcessor.signal.data)])
+            self.axesSpecgram.zoomRegion.setBounds([0, self._from_osc_to_spec(len(self.signalProcessor.signal.data))])
+            self.axesSpecgram.zoomRegion.setRegion([0,0])
             self.rangeChanged.emit(self.mainCursor.min, self.mainCursor.max, len(self.signalProcessor.signal.data))
             self.refresh()
 
@@ -617,7 +620,10 @@ class QSignalVisualizerWidget(QWidget):
         if (self.signalProcessor.signal.opened):
             self.editionSignalProcessor.paste(self.editionSignalProcessor.clipboard, self.zoomCursor.min)
             self.mainCursor.max += len(self.editionSignalProcessor.clipboard)
-            self.axesSpecgram.zoomRegion.setRegion([0, 0])
+            self.axesOscilogram.zoomRegion.setBounds([0, len(self.signalProcessor.signal.data)])
+            self.axesSpecgram.zoomRegion.setBounds([0, self._from_osc_to_spec(len(self.signalProcessor.signal.data))])
+            self.axesSpecgram.zoomRegion.setRegion([0,0])
+
             self.rangeChanged.emit(self.mainCursor.min, self.mainCursor.max, len(self.signalProcessor.signal.data))
             self.refresh()
 
@@ -630,8 +636,15 @@ class QSignalVisualizerWidget(QWidget):
     def insertWhiteNoise(self, ms=1):
         if (self.signalProcessor.signal is not None):
             self.signalProcessor.signal.generateWhiteNoise(ms, self.zoomCursor.min)
-            self.axesSpecgram.zoomRegion.setRegion([0, 0])
-            self.refresh()
+            self.updateZoomAndMainCursorFromSignalChangingSizeProcessingAction(ms)
+
+    def updateZoomAndMainCursorFromSignalChangingSizeProcessingAction(self,ms_added):
+        self.mainCursor.max += ms_added*self.signalProcessor.signal.samplingRate/1000
+        self.axesOscilogram.zoomRegion.setBounds([0, len(self.signalProcessor.signal.data)])
+        self.axesSpecgram.zoomRegion.setBounds([0, self._from_osc_to_spec(len(self.signalProcessor.signal.data))])
+        self.clearZoomCursor()
+        self.refresh()
+
 
     def insertPinkNoise(self, ms, type, Fc, Fl, Fu):
         if (self.signalProcessor.signal is not None):
@@ -639,8 +652,7 @@ class QSignalVisualizerWidget(QWidget):
             f = FilterSignalProcessor(self.signalProcessor.signal)
             f.filter(self.zoomCursor.min, self.zoomCursor.min + ms * self.signalProcessor.signal.samplingRate / 1000.0,
                      type, Fc, Fl, Fu)
-            self.axesSpecgram.zoomRegion.setRegion([0, 0])
-            self.refresh()
+            self.updateZoomAndMainCursorFromSignalChangingSizeProcessingAction(ms)
 
     def resampling(self, samplingRate):
         self.signalProcessor.signal.resampling(samplingRate)
@@ -648,8 +660,6 @@ class QSignalVisualizerWidget(QWidget):
         self.mainCursor.max = len(self.signalProcessor.signal.data)
         self.maxYSpc = self.signalProcessor.signal.samplingRate
         self.refresh()
-
-
 
     def getIndexFromAndTo(self):
         indexFrom, indexTo = self.mainCursor.min, self.mainCursor.max
@@ -666,7 +676,9 @@ class QSignalVisualizerWidget(QWidget):
         self.refresh()
 
     def insertSilence(self, ms=0):
-        self.signalProcessingAction(CommonSignalProcessor(self.signalProcessor.signal).insertSilence, ms)
+        indexFrom, indexTo = self.getIndexFromAndTo()
+        CommonSignalProcessor(self.signalProcessor.signal).insertSilence(indexFrom, indexTo,ms)
+        self.updateZoomAndMainCursorFromSignalChangingSizeProcessingAction(ms)
 
     def scale(self, factor, function="normalize", fade="IN"):
         self.signalProcessingAction(CommonSignalProcessor(self.signalProcessor.signal).scale, factor, function, fade)

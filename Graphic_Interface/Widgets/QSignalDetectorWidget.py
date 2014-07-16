@@ -51,7 +51,34 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
     def detectElements(self, threshold=20, decay=1, minSize=0, detectionsettings=None, softfactor=5, merge_factor=50,
                        threshold2=0, threshold_spectral=95, pxx=[], freqs=[], bins=[], minsize_spectral=(0, 0),
                        location=None, progress=None, findSpectralSublements=True):
+        """
+        Detect elements in the signal using the parameters.
+        Just performs the detection.
+        To visualize all the elements has to call drawElements after detection
+        @param threshold:
+        @param decay:
+        @param minSize:
+        @param detectionsettings:
+        @param softfactor:
+        @param merge_factor:
+        @param threshold2:
+        @param threshold_spectral:
+        @param pxx:
+        @param freqs:
+        @param bins:
+        @param minsize_spectral:
+        @param location:
+        @param progress:
+        @param findSpectralSublements:
+        """
         self.clearDetection()
+
+        a,b = self.mainCursor.min,self.mainCursor.max
+
+        self.mainCursor.min,self.mainCursor.max = 0,len(self.signalProcessor.signal.data)
+
+        self.computeSpecgramSettings()
+
         self.elements_detector.detect(self.signalProcessor.signal, 0, len(self.signalProcessor.signal.data),
                                       threshold=threshold, detectionsettings=detectionsettings, decay=decay,
                                       minSize=minSize, softfactor=softfactor, merge_factor=merge_factor,
@@ -72,10 +99,10 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         for c in self.elements_detector.elements:
             self.Elements.append(c)# the elment the space for the span selector and the text
             #incorporar deteccion en espectrograma
-        if findSpectralSublements:
-            self.drawElements()
-        else:
-            self.drawElements(oscilogramItems=True)
+
+        if a != self.mainCursor.min or b != self.mainCursor.max:
+            self.zoomCursor.min,self.zoomCursor.max = a,b
+            self.zoomIn()
 
     def changeElementsVisibility(self, visible, element_type=Element.Figures, oscilogramItems=True):
         #change the visibility of the visual items in items
@@ -144,7 +171,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
                             if not visible:
                                 self.axesSpecgram.viewBox.removeItem(item)
                             else:
-                                if (not item in self.axesSpecgram.items() and visible):
+                                if not item in self.axesSpecgram.items() and visible:
                                     self.axesSpecgram.viewBox.addItem(item)
                     else:
                         for item, visible in self.Elements[i].twoDimensionalElements[j].visualwidgets():

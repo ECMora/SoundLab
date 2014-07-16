@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Sound Lab\DuettoSystem\Graphic_Interface\UI Files\Two_Dimensional_AnalisysWindowUI.ui'
 #
-# Created: Sun Jul 13 21:21:17 2014
+# Created: Wed Jul 16 00:05:28 2014
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -29,7 +29,7 @@ class Ui_TwoDimensionalWindow(object):
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.verticalLayout = QtGui.QVBoxLayout(self.centralwidget)
         self.verticalLayout.setObjectName(_fromUtf8("verticalLayout"))
-        self.widget = PlotWidget(self.centralwidget)
+        self.widget = TwoDPlotWidget(self.centralwidget)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -67,4 +67,4 @@ class Ui_TwoDimensionalWindow(object):
         self.actionHide_Show_Settings.setShortcut(QtGui.QApplication.translate("TwoDimensionalWindow", "Ctrl+Space", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSaveGraphImage.setText(QtGui.QApplication.translate("TwoDimensionalWindow", "Save Graph Image", None, QtGui.QApplication.UnicodeUTF8))
 
-from pyqtgraph import PlotWidget
+from Graphic_Interface.Widgets.TwoDPlotWidget import TwoDPlotWidget
