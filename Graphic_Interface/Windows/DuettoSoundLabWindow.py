@@ -36,67 +36,6 @@ class ChangeVolumeDialog(cvdialog.Ui_Dialog, QDialog):
 class FilterDialog(filterdg.Ui_Dialog, QDialog):
     pass
 
-class DuettoListParameterItem(WidgetParameterItem):
-    """
-    WidgetParameterItem subclass providing comboBox that lets the user select from a list of options.
-
-    """
-    def __init__(self, param, depth):
-        param.opts[u'value'] = param.opts[u'default']
-        self.targetValue = None
-        self.values = param.opts.get(u'values',[])
-        self.valuesDict = {}
-        for (a, b) in self.values:
-            self.valuesDict[a] = b
-        WidgetParameterItem.__init__(self, param, depth)
-
-    def makeWidget(self):
-        opts = self.param.opts
-        t = opts[u'type']
-        w = QtGui.QComboBox()
-        w.setMaximumHeight(20)  ## set to match height of spin box and line edit
-        w.sigChanged = w.currentIndexChanged
-        w.value = self.value
-        w.setValue = self.setValue
-        self.widget = w  ## needs to be set before limits are changed
-        self.limitsChanged(self.param, self.param.opts['limits'])
-        if len(self.values) > 0:
-            self.setValue(self.param.value())
-        return w
-
-    def value(self):
-        key = asUnicode(self.widget.currentText())
-        return self.valuesDict.get(key, None)
-
-    def setValue(self, val):
-        self.targetValue = val
-        if val not in self.valuesDict.values():
-            self.widget.setCurrentIndex(0)
-        else:
-            for i in range(len(self.values)):
-                if self.values[i][1] == val:
-                    self.widget.setCurrentIndex(i)
-                    break
-
-    def limitsChanged(self, param, limits):
-        # set up forward / reverse mappings for name:value
-
-        if len(limits) == 0:
-            limits = ['']  ## Can never have an empty list--there is always at least a singhe blank item.
-
-        try:
-            self.widget.blockSignals(True)
-            val = self.targetValue  #asUnicode(self.widget.currentText())
-
-            self.widget.clear()
-            for (k,v) in self.values:
-                self.widget.addItem(k)
-                if v == val:
-                    self.widget.setCurrentIndex(self.widget.count()-1)
-                    self.updateDisplayLabel()
-        finally:
-            self.widget.blockSignals(False)
-
 class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     dropchanged = QtCore.pyqtSignal(QtCore.QMimeData)
     def __init__(self, parent=None):
@@ -472,10 +411,12 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 self.widget.axesSpecgram.getHistogramWidget().item._pixelVectorCache.append(data)
 
             elif childName ==u'Spectrogram Settings.Frequency(kHz).Min':
-                self.defaultTheme.minYSpec = data
+                self.widget.minYSpc = data
+                self.widget.refresh(dataChanged=True, updateOscillogram=False, updateSpectrogram=True)
 
             elif childName == u'Spectrogram Settings.Frequency(kHz).Max':
-                self.defaultTheme.maxYSpec = data
+                self.widget.maxYSpc = data
+                self.widget.refresh(dataChanged=True, updateOscillogram=False, updateSpectrogram=True)
 
             elif childName == u'Spectrogram Settings.FFT overlap':
                 self.widget.specgramSettings.overlap = data
@@ -517,16 +458,19 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 return
 
             elif childName == u'Oscillogram Settings.Amplitude(%).Min':
-                self.defaultTheme.minYOsc = data
+                self.widget.minYOsc = data
+                self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
             elif childName == u'Oscillogram Settings.Amplitude(%).Max':
-                self.defaultTheme.maxYOsc = data
+                self.widget.maxYOsc = data
+                self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
             elif childName == u'Oscillogram Settings.Connect Lines':
                 self.widget.lines = data
                 self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
                 return
 
             elif childName ==u'Themes.Theme Selected':
-                self.updateMyTheme(self.DeSerializeTheme(data))
+                p = os.path.join(os.path.join(u"Utils",u"Themes"),data)
+                self.updateMyTheme(self.DeSerializeTheme(p))
 
             elif childName == u'Power Spectrum Settings.YBounds.MaxY':
                 self.pow_spec_maxY = data
@@ -828,9 +772,8 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         dg_pow_spec.load_Theme(self.defaultTheme)
         minx = self.widget.zoomCursor.min
         maxx = max(self.widget.zoomCursor.max, min(minx + self.NFFT_pow, len(self.widget.signalProcessor.signal.data)))
-        dg_pow_spec.plot(self.widget.signalProcessor.signal.data[minx:maxx],
-                         self.widget.signalProcessor.signal.samplingRate, self.NFFT_pow, self.window_pow, self.pow_overlap)
-
+        dg_pow_spec = PowerSpectrumWindow(self, self.pow_spec_minY,self.pow_spec_maxY,self.pow_spec_lines,self.widget.signalProcessor.signal.data[minx:maxx],self.widget.signalProcessor.signal.samplingRate,self.widget.signalProcessor.signal.bitDepth,self.widget.maxYOsc)
+        dg_pow_spec.load_Theme(self.defaultTheme)
         self.pow_spec_windows.append(dg_pow_spec)
 
     @pyqtSlot()

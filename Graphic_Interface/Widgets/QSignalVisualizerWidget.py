@@ -510,6 +510,8 @@ class QSignalVisualizerWidget(QWidget):
         # perform some heavy calculations
         self.mainCursor.max = min(self.mainCursor.max, len(self.signalProcessor.signal.data))
         width = False if not self.visibleSpectrogram else self.axesSpecgram.viewBox.width()
+        if not isinstance(width,bool) and width == 0:
+            width = 1
         if self.visibleSpectrogram and updateSpectrogram and self.signalProcessor.signal \
             and self.signalProcessor.signal.opened() and self.signalProcessor.signal.playStatus != AudioSignal.RECORDING \
             and self.mainCursor.max > self.mainCursor.min and width:
