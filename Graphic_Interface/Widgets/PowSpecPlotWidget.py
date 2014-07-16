@@ -7,7 +7,7 @@ import pyqtgraph as pg
 from Graphic_Interface.Widgets.Tools import Tools
 from Axis import *
 from Duetto_Core.SpecgramSettings import FFTWindows
-import numpy as np
+import numpy
 from Graphic_Interface.Widgets.Tools import RectROI
 
 class OneDimensionalFunction:
@@ -41,13 +41,13 @@ class LogarithmicPowSpec(OneDimensionalFunction):
         window = self.pTree.param('Power spectrum(Logarithmic)', 'FFT window').value()
         #apply the window function to the result
 
-        Px = abs(np.fft.fft(self.widget.data, 2**int(np.ceil(np.log2(len(self.widget.data))))))[0:len(self.widget.data)//2+1]
-        freqs = float(self.widget.Fs) / len(self.widget.data) * np.arange(len(self.widget.data)//2+1)
+        Px = abs(numpy.fft.fft(self.widget.data, 2**int(numpy.ceil(numpy.log2(len(self.widget.data))))))[0:len(self.widget.data)//2+1]
+        freqs = float(self.widget.Fs) / len(self.widget.data) * numpy.arange(len(self.widget.data)//2+1)
         self.Pxx = Px
         self.freqs = freqs
-        db = 10*np.log10(Px/np.amax(Px))
+        db = 10*numpy.log10(Px/numpy.amax(Px))
         self.widget.plot(freqs, db ,clear=True, pen = self.widget.plotColor, symbol = 's', symbolSize = 1,symbolPen = self.widget.plotColor)
-        self.widget.setRange(xRange = (0,freqs[len(freqs) - 1]),yRange = (np.amin(db),0), padding=0,update=True)
+        self.widget.setRange(xRange = (0,freqs[len(freqs) - 1]),yRange = (numpy.amin(db),0), padding=0,update=True)
         self.widget.setBackground(self.widget.backColor)
         self.widget.getPlotItem().showGrid(x=self.widget.gridX, y=self.widget.gridY)
         self.widget.show()
@@ -64,7 +64,7 @@ class EnvelopeTransf(OneDimensionalFunction):
     def processing(self):
 
         self.envelopeFactor = (2.0 ** (self.widget.bitDepth) * self.widget.maxYOsc / 100) / self.widget.data[
-            np.argmax(self.widget.data)]
+            numpy.argmax(self.widget.data)]
         #self.widget.refresh (self.envelopeFactor * self.widget.data - 2 ** (self.widget.bitDepth - 1) * self.widget.maxYOsc / 100)
 
 class InstantaneousFrequencies(OneDimensionalFunction):
@@ -77,9 +77,8 @@ class InstantaneousFrequencies(OneDimensionalFunction):
         self.pTree.param('Instantaneous Frequency', 'Apply Function').sigActivated.connect(self.processing)
 
     def processing(self):
-
         Pxx, freqs, bins = mlab.specgram(self.widget.data, Fs=self.widget.rate)
-        dtemp =  freqs[np.argmax(Pxx[1:len(Pxx)], axis=0)]
+        dtemp =  freqs[numpy.argmax(Pxx[1:len(Pxx)], axis=0)]
         self.widget.lastProc = self.processing
         self.widget.plot(bins[dtemp>0],dtemp[dtemp>0], clear=True, pen=None, symbol = 's', symbolSize = 1,symbolPen = self.widget.plotColor)
         self.widget.setRange(xRange = (0,bins[len(bins) - 1]),yRange=(0, self.widget.Fs/2),padding=0,update=True)
@@ -111,9 +110,9 @@ class AveragePowSpec(OneDimensionalFunction):
             Pxx.shape = len(freqs)
             self.widget.Pxx = Pxx
             self.widget.freqs = freqs
-            db = 10*np.log10(Pxx/np.amax(Pxx))
+            db = 10*numpy.log10(Pxx/numpy.amax(Pxx))
             self.widget.plot(freqs, db,clear=True, pen = self.widget.plotColor, symbol = 's', symbolSize = 1,symbolPen = self.widget.plotColor)
-            self.widget.setRange(xRange = (0,freqs[len(freqs) - 1]),yRange = (np.amin(db),0) ,padding=0,update=True)
+            self.widget.setRange(xRange = (0,freqs[len(freqs) - 1]),yRange = (numpy.amin(db),0) ,padding=0,update=True)
             self.widget.setBackground(self.widget.backColor)
             self.widget.getPlotItem().showGrid(x=self.widget.gridX, y=self.widget.gridY)
             self.widget.show()
@@ -126,7 +125,7 @@ class PowSpecPlotWidget(pg.PlotWidget):
         self.wSettings = []
 
         self.proc = [LogarithmicPowSpec(self),AveragePowSpec(self),InstantaneousFrequencies(self)]
-        self.lastProc = None
+        self.lastProc = lambda:None
         self.windows = FFTWindows()
         #self.axisXOsc = OscXAxis(self, orientation='bottom')
         #self.axisYOsc = OscYAxis(self, orientation='left')

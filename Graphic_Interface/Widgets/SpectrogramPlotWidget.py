@@ -165,7 +165,6 @@ class SpectrogramPlotWidget(GraphicsView):
             self.setCursor(QCursor(QtCore.Qt.CrossCursor))
         elif self.selectedTool == Tools.Zoom:
             #pg.GraphicsView.mouseMoveEvent(self, event)
-            if not self.mousePressed: return
             pg.GraphicsView.mouseMoveEvent(self, event)
             if self.parent().visibleSpectrogram:
                 rgn = self.zoomRegion.getRegion()
@@ -315,8 +314,6 @@ class SpectrogramPlotWidget(GraphicsView):
         maxx = self.viewBox.width()
         a, b = self.viewBox.viewRange()[0]
         return int(self.viewBox.x() + round((maxx) * (indexX - a) * 1. / (b - a), 0))
-
-    #PIXELS_BETWEEN_AXES_AND_DATA = 9 #the pixels for the numbers in the left side
 
     def fromCanvasToClient(self, xPixel):
         """
