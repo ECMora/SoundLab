@@ -28,12 +28,15 @@ def gate(data, threshold):
     return data.tolist()
 
 
-from pylab import plot,show
-plot((((WavFileSignal("c1.wav").data))))
-show()
+#from pylab import plot,show
+#plot((((WavFileSignal("c1.wav").data))))
+#show()
 
 #data = [x*random.randint(-6, 6)*0.3 for x in range(1, 6)]
 #print data
 #threshold = random.randint(4, 7)*0.6
 #print threshold
 #print gate(data, threshold)
+from math import log10
+
+print(10*log10(10**3+10**5+10**4))

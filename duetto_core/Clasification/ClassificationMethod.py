@@ -17,3 +17,6 @@ class ClassificationMethod:
     def classify(self,newData):
         pass
 
+    def addTrainingVector(self,vector):
+        pass
+

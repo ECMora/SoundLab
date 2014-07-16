@@ -149,6 +149,9 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         if self.theme:
             wnd.load_Theme(self.theme)
 
+        if len(self.twodimensionalGraphs) > 0:
+            wnd.selectElement(self.twodimensionalGraphs[0].previousSelectedElement)
+
         self.twodimensionalGraphs.append(wnd)
 
 
@@ -653,6 +656,8 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
     def elementSelectedInTable(self,row,column=0):
         self.tableParameterOscilogram.selectRow(row)
         self.widget.selectElement(row)#select the correct element in oscilogram
+        for wnd in self.twodimensionalGraphs:
+            wnd.selectElement(row)
 
     @pyqtSlot()
     def on_actionDetection_triggered(self):
@@ -691,7 +696,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
 
                 #for select the element in the table. Binding for the element click to the table
                 for index in range(len(self.widget.Elements)):
-                    self.widget.Elements[index].clicked = lambda ind,buttn: self.elementSelectedInTable(ind,0)
+                    self.widget.Elements[index].elementClicked.connect(self.elementSelectedInTable)
 
                 #the table of parameters stored as a numpy array
                 self.measuredParameters = np.zeros(len(self.widget.Elements)*len(self.columnNames)).reshape((len(self.widget.Elements),len(self.columnNames)))
@@ -721,7 +726,8 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
 
             except Exception:
                 print("some detection errors")
-                self.windowProgressDetection.hide()
+
+            self.widget.refresh()
 
             self.windowProgressDetection.hide()
 

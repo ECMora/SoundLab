@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
-class Element:
+from PyQt4.QtCore import QObject
+
+
+class Element(QObject):
     """
     Represents the minimal piece of information to clasify
     An element in an N dimensional transform of the signal. Is an N dimensional region
@@ -9,6 +12,7 @@ class Element:
     """
     Locations,Figures,Text,PeakFreqs=range(4)
     def __init__(self, signal):
+        QObject.__init__(self)
         #the signal in wich this elements is defined
         self.signal = signal
         #the optional data interesting for the transform ej name, parameters, etc

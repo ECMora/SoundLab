@@ -34,7 +34,7 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="PlotWidget" name="widget" native="true">
+     <widget class="TwoDPlotWidget" name="widget" native="true">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
         <horstretch>0</horstretch>
@@ -77,9 +77,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>PlotWidget</class>
+   <class>TwoDPlotWidget</class>
    <extends>QWidget</extends>
-   <header>pyqtgraph</header>
+   <header>Graphic_Interface.Widgets.TwoDPlotWidget</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

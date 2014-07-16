@@ -24,22 +24,40 @@ class SpectralMeasurementLocation:
 
 class OneDimensionalElement(Element):
     """
-    Represents the minimal piece of information to clasify
+    Represents the minimal piece of information to classify
     An element is a time and spectral region of the signal that contains a superior energy that the fragment of signal
     near to it
     """
-    clicked = lambda index,buttonPressed: None #called when the element is clicked and send the index of the element  and the button press
+    elementClicked = QtCore.Signal(int) #called when the element is clicked and send the index of the element  and the button press
 
     def __init__(self, signal, indexFrom, indexTo):
         Element.__init__(self, signal)
         self.indexFrom =  indexFrom #index of start of the element
         self.indexTo = indexTo
+        # decimal places to round the measurements
         self.parameterDecimalPlaces = 4
 
 
 class OscilogramElement(OneDimensionalElement):
 
     def __init__(self, signal, indexFrom, indexTo,number=0,threshold_spectral=0, minsize_spectral=(0,0), location = None,findSpectralSublements = True,specgramSettings = None,trim_threshold=0):
+        """
+
+        @param signal: The signal in wich is defined this element
+        @param indexFrom: Start time of the element in the signal
+        @param indexTo: End time of the element in the signal
+        @param number: The number of this element in the list of detected elements in signal
+        @param threshold_spectral: The threshold spectral for detection of two dimensional elements
+        @param minsize_spectral: The spectral min size of two dimensional elements detection
+        @param location:
+        @param findSpectralSublements: If this element should perform the search of sub elements
+        @param specgramSettings: Settings of specgram computation
+        @param trim_threshold: Threshold to select the section of specgram corresponding
+        to this element for parameter measurement. The section depends of overlap and NFFT in  specgramSettings
+        but if there is no energy enough that section would be trimed for left and right
+        until the energy increases this trim_threshold.
+        @return:
+        """
         OneDimensionalElement.__init__(self,signal,indexFrom,indexTo)
         text = pg.TextItem(str(number),color=(255,255,255),anchor=(0.5,0.5))
         text.setPos(self.indexFrom/2.0+self.indexTo/2.0, 0.75*2**(signal.bitDepth-1))
@@ -64,6 +82,8 @@ class OscilogramElement(OneDimensionalElement):
 
         self.visual_figures.append([self.lr,True])#item visibility
         self.visual_text.append([text,True])
+
+        #region location
         if(location is not None):
             self.measurementLocation = location
             #width = (indexTo-indexFrom)/5
@@ -100,21 +120,28 @@ class OscilogramElement(OneDimensionalElement):
         else:
             self.measurementLocation = SpectralMeasurementLocation()
 
+        #endregion
+
         if specgramSettings is None:
             raise Exception("None parameter")
         self.specgramSettings = specgramSettings
         if self.specgramSettings.Pxx != [] and self.specgramSettings.bins != [] and self.specgramSettings.freqs != []:
             #spec_resolution, temp_resolution = signal.samplingRate/2.0*len(freqs),bins[1]-bins[0]
             spec_resolution, temp_resolution = 1000.0/self.specgramSettings.freqs[1],(self.specgramSettings.bins[1]-self.specgramSettings.bins[0])*1000.0
+
             #minsize came with the hz, sec of min size elements and its translated to index values in pxx for comparations
             minsize_spectral = (max(1,int(minsize_spectral[0]*spec_resolution)),max(1,int(minsize_spectral[1]*temp_resolution)))
+
             sr = signal.samplingRate*1.0
             columnsize = (self.specgramSettings.bins[1] - self.specgramSettings.bins[0])*sr
             overlap = int(round(self.specgramSettings.overlap,0))
             overlap_delay = 0 if overlap <= 0 else 99 if overlap >=100 else overlap/(100-overlap)
+
             aux = max(0,int(indexFrom/columnsize)-overlap_delay)
             aux2 = min(int(round(indexTo/columnsize,0))+overlap_delay,len(self.specgramSettings.Pxx[0]))
+
             left, rigth = self.trimMatrix(self.specgramSettings.Pxx,aux,aux2,trim_threshold)
+
             self.matrix = self.specgramSettings.Pxx[:,left:rigth]
             self.indexFromInPxx,self.indexToInPxx = left,rigth
 
@@ -133,6 +160,13 @@ class OscilogramElement(OneDimensionalElement):
 
         return aux, aux2
 
+    def computeTwoDimensionalElements(self,threshold_spectral, pxx, freqs, bins, minsize_spectral):
+        detector = TwoDimensionalElementsDetector()
+        detector.detect(self.signal,threshold_spectral, pxx,freqs,bins, minsize_spectral,one_dimensional_parent=self,location= self.measurementLocation)
+        for elem in detector.elements:
+            self.twoDimensionalElements.append(elem)
+
+    #region Oscilogram parameter measurement
     def startTime(self):
         #the start time in s
         return round(self.indexFrom*1.0/self.signal.samplingRate,self.parameterDecimalPlaces)
@@ -145,12 +179,6 @@ class OscilogramElement(OneDimensionalElement):
         returns the len in s of an element (float)
         """
         return round((self.indexTo-self.indexFrom)*1.0/self.signal.samplingRate,self.parameterDecimalPlaces)
-
-    def computeTwoDimensionalElements(self,threshold_spectral, pxx, freqs, bins, minsize_spectral):
-        detector = TwoDimensionalElementsDetector()
-        detector.detect(self.signal,threshold_spectral, pxx,freqs,bins, minsize_spectral,one_dimensional_parent=self,location= self.measurementLocation)
-        for elem in detector.elements:
-            self.twoDimensionalElements.append(elem)
 
     def distanceFromStartToMax(self):
         if(self.parameters["StartToMax"] is None):
@@ -184,6 +212,9 @@ class OscilogramElement(OneDimensionalElement):
         s = len(self.twoDimensionalElements)
         return s-1 if s > 0 else s
 
+    #endregion
+
+    #region Spectral Parameter Measurement
     def peakFreqAverage(self):
         index = 1
         if "peak" not in self.parameters["average"]:
@@ -199,14 +230,14 @@ class OscilogramElement(OneDimensionalElement):
             ])
             adj = np.array([[0,1]])
             self.parameters["average"][("peak","visual")] = True
-            #self.twoDimensionalElements[0].addVisualGraph(pos,adj,dict(size=2, symbol='o', pxMode=False))
+            self.twoDimensionalElements[0].addVisualGraph(pos,adj,dict(size=2, symbol='o', pxMode=False))
 
 
         return self.parameters["average"]["peak"]
 
-    def maxFreqAverage(self,dict):
-        if "threshold" in dict:
-            threshold = dict["threshold"]
+    def maxFreqAverage(self,dictionary):
+        if "threshold" in dictionary:
+            threshold = dictionary["threshold"]
             minIndex = 1
             maxIndex = 1
             maxf,minf=0,0
@@ -217,20 +248,20 @@ class OscilogramElement(OneDimensionalElement):
                 self.parameters["average"]["max"] = (maxf,maxIndex)
 
             if len(self.twoDimensionalElements) > 0 and not ("max","visual") in self.parameters["average"]:
-                ## Define positions of node
+                ## Define visual positions of node
                 pos = np.array([
                     [self.indexFromInPxx,self.parameters["average"]["max"][1]],
                     [self.indexToInPxx, self.parameters["average"]["max"][1]]
                 ])
                 adj = np.array([[0,1]])
                 self.parameters["average"][("max","visual")] = True
-                #self.twoDimensionalElements[0].addVisualGraph(pos,adj,dict(size=2, symbol=['o','o'], pxMode=False))
+                self.twoDimensionalElements[0].addVisualGraph(pos,adj,dict(size=2, symbol='o', pxMode=False))
 
             return self.parameters["average"]["max"][0]
 
-    def minFreqAverage(self,dict):
-        if "threshold" in dict:
-            threshold = dict["threshold"]
+    def minFreqAverage(self,dictionary):
+        if "threshold" in dictionary:
+            threshold = dictionary["threshold"]
             minIndex = 1
             maxIndex = 1
             maxf,minf=0,0
@@ -247,12 +278,10 @@ class OscilogramElement(OneDimensionalElement):
                 ])
                 adj = np.array([[0,1]])
                 self.parameters["average"][("min","visual")] = True
-                #self.twoDimensionalElements[0].addVisualGraph(pos,adj,dict(size=2, symbol=['o','o'], pxMode=False))
-
-
+                self.twoDimensionalElements[0].addVisualGraph(pos,adj,dict(size=2, symbol='o', pxMode=False))
             return self.parameters["average"]["min"][0]
 
-    #espectral parameters
+
     def getMatrixIndexFromLocation(self,location):
         """
         @param location: the measurement location
@@ -283,16 +312,15 @@ class OscilogramElement(OneDimensionalElement):
         value -= value % 10
         return value,freq_index,round(-20*log10(1 if self.specgramSettings.freqs[freq_index]< 0.1 else self.specgramSettings.freqs[freq_index]),self.parameterDecimalPlaces)
 
-    def peakFreq(self,dict):
-        if "location" in dict:
-            location = dict["location"]
+    def peakFreq(self,dictionary):
+        if "location" in dictionary:
+            location = dictionary["location"]
             index = self.getMatrixIndexFromLocation(location)
             if index not in self.parameters["peakFreq"]:
-                peak,freq_index,peakamplitude = self.peak_f_a(index)
-                if(len(self.twoDimensionalElements)>0):
-                    rect = QtGui.QGraphicsRectItem(QtCore.QRectF(self.indexFromInPxx + index,freq_index,1,1))
-                    rect.setPen(QtGui.QPen(QtGui.QColor(255, 0, 0)))
-                    rect.setBrush(QtGui.QBrush(self.color))
+                peak, freq_index, peakamplitude = self.peak_f_a(index)
+                if len(self.twoDimensionalElements) > 0:
+                    rect = QtGui.QGraphicsRectItem(QtCore.QRectF(self.indexFromInPxx + index, freq_index, 1, 1))
+                    rect.setPen(QtGui.QPen(self.color,2))
                     t = (self.indexFromInPxx + index,freq_index,1,1)
                     self.twoDimensionalElements[0].figurePosition.append(t)
                     self.twoDimensionalElements[0].visual_figures.append([rect, True])
@@ -301,9 +329,9 @@ class OscilogramElement(OneDimensionalElement):
             return self.parameters["peakFreq"][index]
         return "Invalid Params"
 
-    def peakAmplitude(self,dict):
-        if "location" in dict:
-            location = dict["location"]
+    def peakAmplitude(self,dictionary):
+        if "location" in dictionary:
+            location = dictionary["location"]
             index = self.getMatrixIndexFromLocation(location)
             if index not in self.parameters["peakAmplitude"]:
                 peak,freq_index,peakamplitude = self.peak_f_a(index)
@@ -335,11 +363,11 @@ class OscilogramElement(OneDimensionalElement):
             maxf -= maxf % 10
         return minf,minfIndex,maxf,maxfIndex,maxf-minf,len(regionsPeaks)
 
-    def minFreq(self,dict):
-        if "location" in dict and "threshold" in dict and "peaksThreshold" in dict:
-            location = dict["location"]
-            threshold = dict["threshold"]
-            peakthreshold = dict["peaksThreshold"]
+    def minFreq(self,dictionary):
+        if "location" in dictionary and "threshold" in dictionary and "peaksThreshold" in dictionary:
+            location = dictionary["location"]
+            threshold = dictionary["threshold"]
+            peakthreshold = dictionary["peaksThreshold"]
             index = self.getMatrixIndexFromLocation(location)
             if (index,threshold) not in self.parameters["minFreq"]:
                 minf, minfIndex, maxf, maxfIndex, band, peaks = self.freq_min_max_band_peaksAbove(index,threshold,peakthreshold)
@@ -352,17 +380,17 @@ class OscilogramElement(OneDimensionalElement):
                 ## Define positions of nodes
                 pos = np.array([[self.indexFromInPxx + index,self.parameters["minFreq"][(index,threshold)][1]]])
                 self.parameters["minFreq"][(index,"visual")] = True
-                #self.twoDimensionalElements[0].addVisualGraph(pos,np.array([[]]),dict(size=min(self.parameters["maxFreq"][(index,threshold)][1]-self.parameters["minFreq"][(index,threshold)][1],2), symbol='+', pxMode=False))
+                self.twoDimensionalElements[0].addVisualGraph(pos,np.array([]),dict(size=min(self.parameters["maxFreq"][(index,threshold)][1]-self.parameters["minFreq"][(index,threshold)][1],2), symbol='d', pxMode=False))
 
 
             return self.parameters["minFreq"][(index,threshold)][0]
         return "Invalid Params"
 
-    def maxFreq(self,dict):
-        if "location" in dict and "threshold" in dict and "peaksThreshold" in dict:
-            location = dict["location"]
-            threshold = dict["threshold"]
-            peakthreshold = dict["peaksThreshold"]
+    def maxFreq(self,dictionary):
+        if "location" in dictionary and "threshold" in dictionary and "peaksThreshold" in dictionary:
+            location = dictionary["location"]
+            threshold = dictionary["threshold"]
+            peakthreshold = dictionary["peaksThreshold"]
             index = self.getMatrixIndexFromLocation(location)
             if (index,threshold) not in self.parameters["maxFreq"]:
                 minf, minfIndex, maxf, maxfIndex, band, peaks = self.freq_min_max_band_peaksAbove(index,threshold,peakthreshold)
@@ -378,15 +406,17 @@ class OscilogramElement(OneDimensionalElement):
                     [self.indexFromInPxx + index, self.parameters["maxFreq"][(index,threshold)][1]]
                 ])
                 self.parameters["maxFreq"][ (index,"visual")] = True
-                #self.twoDimensionalElements[0].addVisualGraph(pos,np.array([[]]),dict(size=min(self.parameters["maxFreq"][(index,threshold)][1]-self.parameters["minFreq"][(index,threshold)][1],2), symbol='+', pxMode=False))
+                self.twoDimensionalElements[0].addVisualGraph(pos,np.array([]),dict(size=min(self.parameters["maxFreq"][(index,threshold)][1]-self.parameters["minFreq"][(index,threshold)][1],2), symbol='+', pxMode=False))
+
             return self.parameters["maxFreq"][(index,threshold)][0]
+
         return "Invalid Params"
 
-    def bandwidth(self,dict):
-        if "location" in dict and "threshold" in dict and "peaksThreshold" in dict:
-            location = dict["location"]
-            threshold = dict["threshold"]
-            peakthreshold = dict["peaksThreshold"]
+    def bandwidth(self,dictionary):
+        if "location" in dictionary and "threshold" in dictionary and "peaksThreshold" in dictionary:
+            location = dictionary["location"]
+            threshold = dictionary["threshold"]
+            peakthreshold = dictionary["peaksThreshold"]
             index = self.getMatrixIndexFromLocation(location)
             if (index,threshold) not in self.parameters["bandwidth"]:
                 minf, minfIndex, maxf, maxfIndex, band, peaks = self.freq_min_max_band_peaksAbove(index,threshold,peakthreshold)
@@ -402,18 +432,19 @@ class OscilogramElement(OneDimensionalElement):
                     [self.indexFromInPxx + index, self.parameters["bandwidth"][(index,threshold)][2]]
                 ])
                 adj = np.array([[0,1]])
-
                 self.parameters["bandwidth"][(index,"visual")] = True
-                #self.twoDimensionalElements[0].addVisualGraph(pos,adj,dict(size=min(self.parameters["bandwidth"][(index,threshold)][2]-self.parameters["bandwidth"][(index,threshold)][1],2),
-                #          symbol=['+','+'], pxMode=False))
+                self.twoDimensionalElements[0].addVisualGraph(pos,adj,dict(size=min(self.parameters["bandwidth"][(index,threshold)][2]-self.parameters["bandwidth"][(index,threshold)][1],2),
+                          symbol='+', pxMode=False))
+
             return self.parameters["bandwidth"][(index,threshold)][0]
+
         return "Invalid Params"
 
-    def peaksAbove(self,dict):
-        if "location" in dict and "threshold" in dict and "peaksThreshold" in dict:
-            location = dict["location"]
-            threshold = dict["threshold"]
-            peakthreshold = dict["peaksThreshold"]
+    def peaksAbove(self,dictionary):
+        if "location" in dictionary and "threshold" in dictionary and "peaksThreshold" in dictionary:
+            location = dictionary["location"]
+            threshold = dictionary["threshold"]
+            peakthreshold = dictionary["peaksThreshold"]
             index = self.getMatrixIndexFromLocation(location)
             if (index,peakthreshold) not in self.parameters["peaksAbove"]:
                 self.parameters["minFreq"][(index,threshold)], minfIndex,self.parameters["maxFreq"][(index,threshold)], maxfIndex,\
@@ -421,10 +452,22 @@ class OscilogramElement(OneDimensionalElement):
             return self.parameters["peaksAbove"][(index,peakthreshold)]
         return "Invalid Params"
 
+    #endregion
+
     def mouseClickEvent(self, event):
-        self.clicked(self.number-1,event.button())
+        """
+        Interception of GUI events by switching this method for its similar
+        in the visual figures of the element
+        @param event: The event raised
+        """
+        self.elementClicked.emit(self.number-1)
 
     def setNumber(self,n):
+        """
+        Updates the info in this element when its number changes.
+        Is updated his instance variables and visual figures.
+        @param n: The new index
+        """
         self.number = n
         self.visual_text[0][0].setText(str(n))
         for e in self.twoDimensionalElements:

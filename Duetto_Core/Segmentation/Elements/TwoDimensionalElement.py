@@ -31,8 +31,8 @@ class SpecgramElement(TwoDimensionalElement):
         TwoDimensionalElement.__init__(self,signal,matrix)
         self.measurementLocation = location
         if one_dimensional_parent is not None:
-            starttime+=one_dimensional_parent.indexFromInPxx
-            endtime+=one_dimensional_parent.indexFromInPxx
+            starttime += one_dimensional_parent.indexFromInPxx
+            endtime += one_dimensional_parent.indexFromInPxx
             self.parentnumber = one_dimensional_parent.number
 
         self.bins = bins
@@ -83,9 +83,9 @@ class SpecgramElement(TwoDimensionalElement):
             #    self.visual_locations.append([quartile3,True])
         #endregion
 
-        #positions of visual elements management
-        self.textPosition = []
-        self.figurePosition = []
+        #positions of visual elements management for the shift in spectrogram
+        self.textPosition = [] #(x,y) for TextItem
+        self.figurePosition = [] #(pos,adj,options_dict) if GraphItem (x,y,width,heigth) for RectItem
 
 
         try:
@@ -98,7 +98,7 @@ class SpecgramElement(TwoDimensionalElement):
             self.textPosition.append((self.timeStartIndex+(self.timeEndIndex-self.timeStartIndex)/2,
                                     self.freqEndIndex))
             text.setPos(self.textPosition[0][0],self.textPosition[0][1])
-            text.setFont(QtGui.QFont("Arial",pointSize=10))
+            text.setFont(QtGui.QFont("Arial",pointSize=13))
 
             self.visual_text.append([text,True])
             t = (self.timeStartIndex,self.freqStartIndex,self.timeEndIndex-self.timeStartIndex,self.freqEndIndex-self.freqStartIndex)
@@ -134,7 +134,7 @@ class SpecgramElement(TwoDimensionalElement):
             self.visual_figures.append([g,True])
 
             text = pg.TextItem(str(one_dimensional_parent.number),color=(255,255,255),anchor=(0.5,0))
-
+            text.setFont(QtGui.QFont("Arial",pointSize=13))
             _t = (self.timeStartIndex/2.0+self.timeEndIndex/2.0, self.freqStartIndex+f*95/100)
             self.textPosition.append(_t)
             text.setPos(_t[0],_t[1])
@@ -177,8 +177,8 @@ class SpecgramElement(TwoDimensionalElement):
         return self.parameters["peekToPeek"][0]
 
     def addVisualGraph(self,nodes,adj,dictionary=None):
-        d = dictionary if dictionary is not None else dict(nodes=nodes,adj=adj,size=1, symbol='d', pxMode=False,pen=(pg.mkPen(self.color,width=3)))
-        self.figurePosition.append(nodes)
+        d = dictionary if dictionary is not None else dict(size=1, symbol='d', pxMode=False,pen=(pg.mkPen(self.color,width=3)))
+        self.figurePosition.append((nodes,adj,d))
         g = pg.GraphItem()
         g.setData(**d)
         self.visual_figures.append([g,True])
@@ -186,20 +186,23 @@ class SpecgramElement(TwoDimensionalElement):
     def shift(self,function):
         for i,x in enumerate(self.visual_text):
             x[0].setPos(function(self.textPosition[i][0]),self.textPosition[i][1])
-
-        for i,x in enumerate(self.visual_figures):
-            if isinstance(x[0],QtGui.QGraphicsRectItem):
-                t = self.figurePosition[i]
-                x[0].setRect(function(t[0]),t[1],t[2],t[3])
-            elif isinstance(x[0],pg.GraphItem):
-                _f = self.figurePosition[i]
-                arr = np.copy(_f[0])
-                for j in range(len(arr)):
-                    arr[j,0] = function(arr[j,0])
-                x[0].setData(pos=arr,adj=_f[1],**_f[2])
-            else:
-                print("The shift of "+str(type(x)+" is not implemented for spectrogram"))
+        try:
+            for i,x in enumerate(self.visual_figures):
+                if isinstance(x[0],QtGui.QGraphicsRectItem):
+                    t = self.figurePosition[i]
+                    x[0].setRect(function(t[0]),t[1],t[2],t[3])
+                elif isinstance(x[0],pg.GraphItem):
+                    _f = self.figurePosition[i]
+                    arr = np.copy(_f[0])
+                    for j in range(len(arr)):
+                        arr[j,0] = function(arr[j,0])
+                    x[0].setData(pos=arr,adj=_f[1],**_f[2])
+                else:
+                    print("The shift of one element is not implemented")
+        except:
+            pass
 
     def setNumber(self,n):
         self.number = n
         self.visual_text[0][0].setText(str(n))
+
