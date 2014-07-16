@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime
 from PyQt4.QtCore import pyqtSignal, QRect, Qt, QTimer
 from PyQt4.QtGui import *
 from PyQt4 import QtCore, QtGui
@@ -10,7 +9,6 @@ from pyqtgraph.Point import Point
 from Duetto_Core.AudioSignals.WavFileSignal import WavFileSignal
 from Duetto_Core.AudioSignals.AudioSignal import AudioSignal
 from Duetto_Core.Cursors.IntervalCursor import IntervalCursor
-from Graphic_Interface.Widgets.Axis import *
 from Duetto_Core.Cursors.PointerCursor import PointerCursor
 from Duetto_Core.Cursors.RectangularCursor import RectangularCursor
 from Duetto_Core.SignalProcessors.CommonSignalProcessor import CommonSignalProcessor
@@ -102,8 +100,6 @@ class QSignalVisualizerWidget(QWidget):
         self._recordTimer = QTimer(self)
         self._recordTimer.timeout.connect(self.on_newDataRecorded)
 
-
-
         self._doRefresh.connect(self._refresh)
         self.playing.connect(self.notifyPlayingCursor)
 
@@ -128,8 +124,6 @@ class QSignalVisualizerWidget(QWidget):
         updOsc = False
         updSpec = False
         dataChange = False
-        self.histogram.region.setRegion(theme.histRange)
-        self.histogram.gradient.restoreState(theme.colorBarState)
 
         self.osc_color = theme.osc_plot
 
@@ -228,8 +222,8 @@ class QSignalVisualizerWidget(QWidget):
             self.axesSpecgram.setVisible(self.visibleSpectrogram)
             self.refresh(updateSpectrogram=True)
             self.zoomNone()
-            self.axesOscilogram.zoomRegion.setBounds([self.mainCursor.min, self.mainCursor.max])
-            self.axesSpecgram.zoomRegion.setBounds([0, self._from_osc_to_spec(self.mainCursor.max)])
+            self.axesOscilogram.zoomRegion.setBounds([0, len(self.signalProcessor.signal.data)])
+            self.axesSpecgram.zoomRegion.setBounds([0, self._from_osc_to_spec( len(self.signalProcessor.signal.data))])
 
     def record(self):
         self.axesOscilogram.mouseZoomEnabled = False
@@ -324,7 +318,7 @@ class QSignalVisualizerWidget(QWidget):
         self.axesOscilogram.emitIntervalOscChanged = False
         self.axesOscilogram.zoomRegion.setRegion([min, max])
         self.axesOscilogram.emitIntervalOscChanged = True
-        self.stop()
+
 
     def dropEvent(self, event):
         data = event.mimeData().data()
@@ -616,11 +610,11 @@ class QSignalVisualizerWidget(QWidget):
             if (self.mainCursor.max < 1):
                 self.zoomOut()
             self.zoomCursor.max = self.zoomCursor.min
+            self.rangeChanged.emit(self.mainCursor.min, self.mainCursor.max, len(self.signalProcessor.signal.data))
+            self.refresh()
             self.axesOscilogram.zoomRegion.setBounds([0, len(self.signalProcessor.signal.data)])
             self.axesSpecgram.zoomRegion.setBounds([0, self._from_osc_to_spec(len(self.signalProcessor.signal.data))])
             self.axesSpecgram.zoomRegion.setRegion([0,0])
-            self.rangeChanged.emit(self.mainCursor.min, self.mainCursor.max, len(self.signalProcessor.signal.data))
-            self.refresh()
 
     def copy(self):
         if (len(self.signalProcessor.signal.data) > 0 and self.signalProcessor.signal.opened()):
@@ -630,12 +624,11 @@ class QSignalVisualizerWidget(QWidget):
         if (self.signalProcessor.signal.opened):
             self.editionSignalProcessor.paste(self.editionSignalProcessor.clipboard, self.zoomCursor.min)
             self.mainCursor.max += len(self.editionSignalProcessor.clipboard)
+            self.rangeChanged.emit(self.mainCursor.min, self.mainCursor.max, len(self.signalProcessor.signal.data))
+            self.refresh()
             self.axesOscilogram.zoomRegion.setBounds([0, len(self.signalProcessor.signal.data)])
             self.axesSpecgram.zoomRegion.setBounds([0, self._from_osc_to_spec(len(self.signalProcessor.signal.data))])
             self.axesSpecgram.zoomRegion.setRegion([0,0])
-
-            self.rangeChanged.emit(self.mainCursor.min, self.mainCursor.max, len(self.signalProcessor.signal.data))
-            self.refresh()
 
     #endregion
 
@@ -650,10 +643,10 @@ class QSignalVisualizerWidget(QWidget):
 
     def updateZoomAndMainCursorFromSignalChangingSizeProcessingAction(self,ms_added):
         self.mainCursor.max += ms_added*self.signalProcessor.signal.samplingRate/1000
-        self.axesOscilogram.zoomRegion.setBounds([0, len(self.signalProcessor.signal.data)])
-        self.axesSpecgram.zoomRegion.setBounds([0, self._from_osc_to_spec(len(self.signalProcessor.signal.data))])
         self.clearZoomCursor()
         self.refresh()
+        self.axesOscilogram.zoomRegion.setBounds([0, len(self.signalProcessor.signal.data)])
+        self.axesSpecgram.zoomRegion.setBounds([0, self._from_osc_to_spec(len(self.signalProcessor.signal.data))])
 
 
     def insertPinkNoise(self, ms, type, Fc, Fl, Fu):
@@ -818,4 +811,3 @@ class QSignalVisualizerWidget(QWidget):
             fh = open(path, 'w')
             fh.write(state.__repr__())
             fh.close()
-

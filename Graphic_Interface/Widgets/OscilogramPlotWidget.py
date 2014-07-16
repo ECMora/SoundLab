@@ -9,6 +9,7 @@ from Graphic_Interface.Widgets.Tools import Tools
 from Graphic_Interface.Widgets.Tools import RectROI
 
 class OscilogramPlotWidget(pg.PlotWidget):
+
     def __init__(self,  parent=None,**kargs):
         self.parentQsignal = parent
         # the axes asumes that its parent is a Qsignalvisualizer  not a PLot widget
@@ -63,7 +64,6 @@ class OscilogramPlotWidget(pg.PlotWidget):
             self.parentQsignal.refresh(False,True,False)
         if update_graph:
             self.update()
-
 
     def select_region(self,indexFrom,indexTo,brush=None):
         """
