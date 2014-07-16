@@ -28,7 +28,7 @@ from Graphic_Interface.Widgets.Tools import Tools
 
 class QSignalVisualizerWidget(QWidget):
     """Widget to visualize a signal in time and frequency domain"""
-    playing = pyqtSignal(int)  #signal that its raised when the audio is been played
+    playing = pyqtSignal(int)  #signal that is raised when the audio is being played
     rangeChanged = pyqtSignal(int, int, int) #signal that its raised when the range of visible signal has changed
     _doRefresh = pyqtSignal(bool, bool, bool, bool) #?
     rangeAmplitudeChanged = pyqtSignal(int, int)
@@ -109,8 +109,8 @@ class QSignalVisualizerWidget(QWidget):
         self._playerLineTimer.timeout.connect(
             lambda: self.notifyPlayingCursor(int(self.playerLineOsc.value() + self._playDelta)))
 
-        self._lastRecordRefresh = datetime.now()
-        self._recordRefreshRate = 5
+        self._recordTimer = QTimer(self)
+        self._recordTimer.timeout.connect(self.on_newDataRecorded)
 
         self._doRefresh.connect(self._refresh)
         self.playing.connect(self.notifyPlayingCursor)
@@ -229,6 +229,7 @@ class QSignalVisualizerWidget(QWidget):
         self.signalProcessor.signal.stop()
         self.removePlayerLine()
         if prevStatus == AudioSignal.RECORDING:
+            self._recordTimer.stop()
             self.axesOscilogram.mouseZoomEnabled = True
             self.axesSpecgram.mouseZoomEnabled = True
             self.visibleSpectrogram = True
@@ -245,6 +246,8 @@ class QSignalVisualizerWidget(QWidget):
         self.axesOscilogram.setVisible(True)
         self.axesSpecgram.setVisible(False)
         self.signalProcessor.signal.record()
+        updateTime = 15
+        self._recordTimer.start(updateTime)
         #self.createPlayerLine(self.mainCursor.min)
 
     def createPlayerLine(self, value):
@@ -259,7 +262,7 @@ class QSignalVisualizerWidget(QWidget):
         if self.playerLineSpec not in self.axesSpecgram.viewBox.addedItems:
             self.axesSpecgram.viewBox.addItem(self.playerLineSpec)
 
-        updateTime = 41 #41ms=1/24s
+        updateTime = 41  # 41ms = 1/24s
         self._playDelta = self.signalProcessor.signal.samplingRate * self.playerSpeed / 100 * updateTime / 1000
         self._playerLineTimer.start(updateTime)
 
@@ -470,7 +473,9 @@ class QSignalVisualizerWidget(QWidget):
         if emit:
             self.rangeChanged.emit(self.mainCursor.min, self.mainCursor.max, len(self.signalProcessor.signal.data))
 
-    def on_newDataRecorded(self, frame_count):
+    def on_newDataRecorded(self):
+        self.signalProcessor.signal.readFromStream()
+
         self.mainCursor.max = len(self.signalProcessor.signal.data)
         self.mainCursor.min = max(0,
                                   len(self.signalProcessor.signal.data) - 3 * self.signalProcessor.signal.samplingRate)
@@ -522,6 +527,8 @@ class QSignalVisualizerWidget(QWidget):
         # perform some heavy calculations
         self.mainCursor.max = min(self.mainCursor.max, len(self.signalProcessor.signal.data))
         width = False if not self.visibleSpectrogram else self.axesSpecgram.viewBox.width()
+        if not isinstance(width,bool) and width == 0:
+            width = 1
         if self.visibleSpectrogram and updateSpectrogram and self.signalProcessor.signal \
             and self.signalProcessor.signal.opened() and self.signalProcessor.signal.playStatus != AudioSignal.RECORDING \
             and self.mainCursor.max > self.mainCursor.min and width:
@@ -892,7 +899,7 @@ class QSignalVisualizerWidget(QWidget):
         self.axesSpecgram.zoomRegion.setBounds([0, self._from_osc_to_spec(self.mainCursor.max)])
         self.axesOscilogram.getPlotItem().getViewBox().sigRangeChangedManually.connect(self._oscRangeChanged)
         self.axesSpecgram.viewBox.sigRangeChangedManually.connect(self._specRangeChanged)
-        self.signalProcessor.signal.recordNotifier = self.on_newDataRecorded#self.newDataRecorded.emit
+        #self.signalProcessor.signal.recordNotifier = self.on_newDataRecorded#self.newDataRecorded.emit
         self.signalProcessor.signal.playNotifier = self.playing.emit
         self.rangeChanged.emit(0, len(self.signalProcessor.signal.data), len(self.signalProcessor.signal.data))
         self.axesOscilogram.changeSelectedTool(Tools.Zoom)
