@@ -745,18 +745,17 @@ class QSignalVisualizerWidget(QWidget):
         self.maxYSpc = self.signalProcessor.signal.samplingRate/2000
         self.minYSpc = 0
         self.refresh(False,False)
-
-        self.axesSpecgram.zoomRegion.setBounds([0, self._from_osc_to_spec(self.mainCursor.max)])
-        self.axesOscilogram.getPlotItem().getViewBox().sigRangeChangedManually.connect(self._oscRangeChanged)
-        self.axesSpecgram.viewBox.sigRangeChangedManually.connect(self._specRangeChanged)
         self.signalProcessor.signal.recordNotifier = self.on_newDataRecorded#self.newDataRecorded.emit
         self.signalProcessor.signal.playNotifier = self.playing.emit
-        self.rangeChanged.emit(0, len(self.signalProcessor.signal.data), len(self.signalProcessor.signal.data))
+        self.axesOscilogram.getPlotItem().getViewBox().sigRangeChangedManually.connect(self._oscRangeChanged)
+        self.axesSpecgram.viewBox.sigRangeChangedManually.connect(self._specRangeChanged)
         self.axesOscilogram.changeSelectedTool(Tools.Zoom)
         self.axesSpecgram.changeSelectedTool(Tools.Zoom)
+        self.rangeChanged.emit(0, len(self.signalProcessor.signal.data), len(self.signalProcessor.signal.data))
+        self.refresh()
+        self.axesSpecgram.zoomRegion.setBounds([0, self._from_osc_to_spec(self.mainCursor.max)])
         self.axesOscilogram.zoomRegion.setRegion([0, 0])
         self.axesSpecgram.zoomRegion.setRegion([0, 0])
-        self.refresh()
 
     def save(self, fname):
         self.signalProcessor.signal.save(fname)
