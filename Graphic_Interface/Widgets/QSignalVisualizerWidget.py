@@ -446,13 +446,12 @@ class QSignalVisualizerWidget(QWidget):
         self.zoomCursor.max = self.zoomCursor.min
         self.axesOscilogram.emitIntervalOscChanged = False
         self.axesSpecgram.emitIntervalSpecChanged = False
-        self.axesOscilogram.zoomRegion.setRegion([self.zoomCursor.min, self.zoomCursor.max])
-        self.axesSpecgram.zoomRegion.setRegion([0, 0])
         self.axesOscilogram.emitIntervalOscChanged = True
         self.axesSpecgram.emitIntervalSpecChanged = True
 
     def changeRange(self, left, right, emit=True, updateOscillogram=True, updateSpectrogram=True):
         self.mainCursor.min, self.mainCursor.max = left, right
+        self.clearZoomCursor()
         self.refresh(dataChanged=False, updateOscillogram=updateOscillogram, updateSpectrogram=updateSpectrogram)
         if emit:
             self.rangeChanged.emit(self.mainCursor.min, self.mainCursor.max, len(self.signalProcessor.signal.data))
@@ -572,9 +571,11 @@ class QSignalVisualizerWidget(QWidget):
 
             self.axesSpecgram.viewBox.setRange(xRange=(self._from_osc_to_spec(self.mainCursor.min),
                                                        self._from_osc_to_spec(self.mainCursor.max)), padding=0)
+
             self.updateSpecZoomRegion(self.zoomCursor.min, self.zoomCursor.max)
 
             self.updateSpectrogramColors()
+
             self.updateSpecZoomRegion(self.zoomCursor.min, self.zoomCursor.max)
 
 

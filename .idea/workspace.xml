@@ -2,10 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="48337854-64fc-444d-bf1c-d8a83511c4ea" name="Default" comment="">
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Graphic_Interface/Widgets/OscilogramPlotWidget.py" afterPath="$PROJECT_DIR$/Graphic_Interface/Widgets/OscilogramPlotWidget.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Graphic_Interface/Widgets/PowSpecPlotWidget.py" afterPath="$PROJECT_DIR$/Graphic_Interface/Widgets/PowSpecPlotWidget.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Graphic_Interface/Widgets/QSignalVisualizerWidget.py" afterPath="$PROJECT_DIR$/Graphic_Interface/Widgets/QSignalVisualizerWidget.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/Graphic_Interface/Widgets/SpectrogramPlotWidget.py" afterPath="$PROJECT_DIR$/Graphic_Interface/Widgets/SpectrogramPlotWidget.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="DuettoSystem.iws" />
@@ -20,7 +17,7 @@
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/DuettoSystem$pygletexample.coverage" NAME="pygletexample Coverage Results" MODIFIED="1401360692744" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/example pyglet" />
     <SUITE FILE_PATH="coverage/DuettoSystem$Segment.coverage" NAME="Segment Coverage Results" MODIFIED="1401793031795" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Duetto_Core/Segmentation" />
-    <SUITE FILE_PATH="coverage/DuettoSystem$Duetto_Sound_Lab_pyw.coverage" NAME="Duetto_Sound_Lab.pyw Coverage Results" MODIFIED="1405541003016" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/DuettoSystem$Duetto_Sound_Lab_pyw.coverage" NAME="Duetto_Sound_Lab.pyw Coverage Results" MODIFIED="1405543331094" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/DuettoSystem$SpecgramSettings.coverage" NAME="SpecgramSettings Coverage Results" MODIFIED="1401393444838" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Duetto_Core" />
     <SUITE FILE_PATH="coverage/DuettoSystem$WavFileSignal.coverage" NAME="WavFileSignal Coverage Results" MODIFIED="1400409399936" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Duetto_Core/AudioSignals" />
   </component>
@@ -254,85 +251,44 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="QSignalVisualizerWidget.py" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="QSignalVisualizerWidget.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/Graphic_Interface/Widgets/QSignalVisualizerWidget.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="648" column="46" selection-start="30469" selection-end="30478" vertical-scroll-proportion="0.33333334" vertical-offset="12881" max-vertical-offset="16275">
+            <state line="509" column="8" selection-start="22865" selection-end="22865" vertical-scroll-proportion="36.24" vertical-offset="7931" max-vertical-offset="12075">
               <folding>
                 <element signature="e#24#78#0" expanded="true" />
-                <element signature="e#1701#4804#0" expanded="false" />
-                <element signature="e#4989#5597#0" expanded="false" />
                 <element signature="e#5773#5938#0" expanded="false" />
+                <element signature="e#6012#6461#0" expanded="false" />
+                <element signature="e#6461#6474#0" expanded="false" />
                 <element signature="e#6524#7975#0" expanded="false" />
-                <element signature="e#36482#36762#0" expanded="false" />
-                <element signature="e#36799#37447#0" expanded="false" />
-                <element signature="e#37495#38292#0" expanded="false" />
-                <element signature="e#38330#38636#0" expanded="false" />
+                <element signature="e#8017#8345#0" expanded="false" />
+                <element signature="e#8375#9222#0" expanded="false" />
+                <element signature="e#9264#9408#0" expanded="false" />
+                <element signature="e#9438#10229#0" expanded="false" />
+                <element signature="e#10261#10610#0" expanded="false" />
+                <element signature="e#10659#11417#0" expanded="false" />
+                <element signature="e#11459#11811#0" expanded="false" />
+                <element signature="e#11842#11914#0" expanded="false" />
+                <element signature="e#12084#12318#0" expanded="false" />
+                <element signature="e#12334#12385#0" expanded="false" />
+                <element signature="e#15444#16497#0" expanded="false" />
+                <element signature="e#16667#17552#0" expanded="false" />
+                <element signature="e#17585#18667#0" expanded="false" />
+                <element signature="e#18701#19147#0" expanded="false" />
+                <element signature="e#20213#20641#0" expanded="false" />
+                <element signature="e#29584#29617#0" expanded="false" />
+                <element signature="e#36367#36647#0" expanded="false" />
+                <element signature="e#36684#37332#0" expanded="false" />
+                <element signature="e#37380#38177#0" expanded="false" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="SpectrogramPlotWidget.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Graphic_Interface/Widgets/SpectrogramPlotWidget.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="12" column="0" selection-start="467" selection-end="467" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1300">
-              <folding>
-                <element signature="e#561#2547#0" expanded="false" />
-                <element signature="e#2847#3511#0" expanded="false" />
-                <element signature="e#3560#3716#0" expanded="false" />
-                <element signature="e#3760#3821#0" expanded="false" />
-                <element signature="e#3870#5475#0" expanded="false" />
-                <element signature="e#5523#5708#0" expanded="false" />
-                <element signature="e#5754#5880#0" expanded="false" />
-                <element signature="e#5928#10268#0" expanded="false" />
-                <element signature="e#10316#12280#0" expanded="false" />
-                <element signature="e#12334#13466#0" expanded="false" />
-                <element signature="e#13516#14452#0" expanded="false" />
-                <element signature="e#14501#14651#0" expanded="false" />
-                <element signature="e#14704#14828#0" expanded="false" />
-                <element signature="e#14880#15156#0" expanded="false" />
-                <element signature="e#15208#16326#0" expanded="false" />
-                <element signature="e#16379#17447#0" expanded="false" />
-                <element signature="e#17500#17979#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="OscilogramPlotWidget.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/Graphic_Interface/Widgets/OscilogramPlotWidget.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state line="66" column="0" selection-start="3019" selection-end="3019" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1350">
-              <folding>
-                <element signature="e#445#2404#0" expanded="false" />
-                <element signature="e#2447#3018#0" expanded="false" />
-                <element signature="e#3086#3547#0" expanded="false" />
-                <element signature="e#3593#3717#0" expanded="false" />
-                <element signature="e#3767#4071#0" expanded="false" />
-                <element signature="e#4324#4480#0" expanded="false" />
-                <element signature="e#4524#4585#0" expanded="false" />
-                <element signature="e#4634#6030#0" expanded="false" />
-                <element signature="e#6089#6308#0" expanded="false" />
-                <element signature="e#6356#11245#0" expanded="false" />
-                <element signature="e#11293#13293#0" expanded="false" />
-                <element signature="e#13347#14107#0" expanded="false" />
-                <element signature="e#14157#15033#0" expanded="false" />
-                <element signature="e#15082#15232#0" expanded="false" />
-                <element signature="e#15285#15409#0" expanded="false" />
-                <element signature="e#15461#15850#0" expanded="false" />
-                <element signature="e#15902#16938#0" expanded="false" />
-                <element signature="e#16991#17977#0" expanded="false" />
-                <element signature="e#18027#18219#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="DuettoSoundLabWindow.py" pinned="false" current="false" current-in-tab="false">
+      <file leaf-file-name="DuettoSoundLabWindow.py" pinned="false" current="true" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/Graphic_Interface/Windows/DuettoSoundLabWindow.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state line="746" column="0" selection-start="39299" selection-end="39299" vertical-scroll-proportion="0.0" vertical-offset="17938" max-vertical-offset="25000">
+            <state line="233" column="8" selection-start="13321" selection-end="13321" vertical-scroll-proportion="-0.8082192" vertical-offset="5881" max-vertical-offset="25000">
               <folding />
             </state>
           </provider>
@@ -367,11 +323,11 @@
         <option value="$PROJECT_DIR$/Duetto_Core/AudioSignals/AudioSignal.py" />
         <option value="$PROJECT_DIR$/Graphic_Interface/Windows/WorkTheme.py" />
         <option value="$PROJECT_DIR$/Duetto_Core/SpecgramSettings.py" />
-        <option value="$PROJECT_DIR$/Graphic_Interface/Windows/DuettoSoundLabWindow.py" />
         <option value="$PROJECT_DIR$/Graphic_Interface/Widgets/PowSpecPlotWidget.py" />
         <option value="$PROJECT_DIR$/Graphic_Interface/Widgets/SpectrogramPlotWidget.py" />
         <option value="$PROJECT_DIR$/Graphic_Interface/Widgets/OscilogramPlotWidget.py" />
         <option value="$PROJECT_DIR$/Graphic_Interface/Widgets/QSignalVisualizerWidget.py" />
+        <option value="$PROJECT_DIR$/Graphic_Interface/Windows/DuettoSoundLabWindow.py" />
       </list>
     </option>
   </component>
@@ -454,6 +410,24 @@
             </PATH_ELEMENT>
             <PATH_ELEMENT>
               <option name="myItemId" value="Windows" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="DuettoSystem" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="DuettoSystem" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Graphic_Interface" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="Widgets" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -869,12 +843,16 @@
       <created>1405537648345</created>
       <updated>1405537648345</updated>
     </task>
-    <option name="localTasksCounter" value="19" />
+    <task id="LOCAL-00019" summary="Arreglo de errores con los bounds del cursor de zoom.">
+      <created>1405541108793</created>
+      <updated>1405541108793</updated>
+    </task>
+    <option name="localTasksCounter" value="20" />
     <servers />
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1456" height="876" extended-state="6" />
-    <editor active="false" />
+    <editor active="true" />
     <layout>
       <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.23994452" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
       <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3268921" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
@@ -889,8 +867,8 @@
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32956383" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.19440459" sideWeight="0.7600555" order="3" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.1276901" sideWeight="0.7600555" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.19440459" sideWeight="0.7600555" order="3" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.1276901" sideWeight="0.6588072" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
@@ -899,27 +877,27 @@
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
     </layout>
     <layout-to-restore>
-      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.24061196" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
-      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32850242" sideWeight="0.5" order="12" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.23994452" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.3268921" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32850242" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.34299517" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32850242" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.38164252" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="true" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32962447" sideWeight="0.5" order="11" side_tool="false" content_ui="tabs" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
-      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.34119278" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Remote Host" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.37520128" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="1" side_tool="true" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32956383" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32956383" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.20988655" sideWeight="0.6698873" order="0" side_tool="false" content_ui="combo" />
-      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.19440459" sideWeight="0.7600555" order="3" side_tool="false" content_ui="combo" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33011273" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.1276901" sideWeight="0.6588072" order="4" side_tool="false" content_ui="tabs" />
     </layout-to-restore>
   </component>
   <component name="VcsContentAnnotationSettings">
@@ -940,27 +918,18 @@
     <MESSAGE value="Errores minimos arreglados. Actualizacion de las frecuencias minimas al abrir nuevo fichero, movimiento de los axis desde el control signal visualizer hacia el plot widget,&#10;error de calculo en getindexfrom and to del control principal." />
     <MESSAGE value="sfsg" />
     <MESSAGE value="Adicion de procesamiento unidimensional.&#10;Mejoras de eficiencia en la grabacion&#10;Arreglo de errores del cursor de zoom&#10;" />
-    <option name="LAST_COMMIT_MESSAGE" value="Adicion de procesamiento unidimensional.&#10;Mejoras de eficiencia en la grabacion&#10;Arreglo de errores del cursor de zoom&#10;" />
+    <MESSAGE value="Arreglo de errores con los bounds del cursor de zoom." />
+    <option name="LAST_COMMIT_MESSAGE" value="Arreglo de errores con los bounds del cursor de zoom." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints-dialog>
         <breakpoints-dialog />
       </breakpoints-dialog>
-      <option name="time" value="41" />
+      <option name="time" value="42" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://C:/Python27/Lib/site-packages/pyqtgraph/graphicsItems/AxisItem.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="923" column="0" selection-start="36903" selection-end="36903" vertical-scroll-proportion="0.0" vertical-offset="15431" max-vertical-offset="15793" />
-      </provider>
-    </entry>
-    <entry file="file://C:/Python27/Lib/site-packages/pyqtgraph/GraphicsScene/GraphicsScene.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state line="280" column="0" selection-start="13159" selection-end="13159" vertical-scroll-proportion="0.2962963" vertical-offset="4606" max-vertical-offset="9894" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Duetto_Sound_Lab.pyw">
       <provider selected="true" editor-type-id="text-editor">
         <state line="19" column="8" selection-start="634" selection-end="634" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1600">
@@ -1070,18 +1039,22 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://C:/Python27/Lib/site-packages/pyqtgraph/graphicsItems/LinearRegionItem.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="88" column="8" selection-start="4125" selection-end="4125" vertical-scroll-proportion="0.3328446" vertical-offset="1873" max-vertical-offset="7325">
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/Graphic_Interface/Widgets/SpectrogramPlotWidget.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="12" column="0" selection-start="467" selection-end="467" vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1300">
+        <state line="168" column="20" selection-start="6935" selection-end="6935" vertical-scroll-proportion="0.0" vertical-offset="2465" max-vertical-offset="4700">
           <folding>
-            <element signature="e#561#2547#0" expanded="false" />
-            <element signature="e#2847#3511#0" expanded="false" />
             <element signature="e#3560#3716#0" expanded="false" />
             <element signature="e#3760#3821#0" expanded="false" />
             <element signature="e#3870#5475#0" expanded="false" />
             <element signature="e#5523#5708#0" expanded="false" />
             <element signature="e#5754#5880#0" expanded="false" />
-            <element signature="e#5928#10268#0" expanded="false" />
             <element signature="e#10316#12280#0" expanded="false" />
             <element signature="e#12334#13466#0" expanded="false" />
             <element signature="e#13516#14452#0" expanded="false" />
@@ -1095,27 +1068,49 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/Graphic_Interface/Windows/DuettoSoundLabWindow.py">
+    <entry file="file://C:/Python27/Lib/site-packages/pyqtgraph/imageview/ImageView.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="746" column="0" selection-start="39299" selection-end="39299" vertical-scroll-proportion="0.0" vertical-offset="17938" max-vertical-offset="25000">
+        <state line="642" column="8" selection-start="23288" selection-end="23288" vertical-scroll-proportion="0.670088" vertical-offset="15593" max-vertical-offset="16275">
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Graphic_Interface/Widgets/QSignalVisualizerWidget.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state line="648" column="46" selection-start="30469" selection-end="30478" vertical-scroll-proportion="0.33333334" vertical-offset="12881" max-vertical-offset="16275">
+        <state line="509" column="8" selection-start="22865" selection-end="22865" vertical-scroll-proportion="36.24" vertical-offset="7931" max-vertical-offset="12075">
           <folding>
             <element signature="e#24#78#0" expanded="true" />
-            <element signature="e#1701#4804#0" expanded="false" />
-            <element signature="e#4989#5597#0" expanded="false" />
             <element signature="e#5773#5938#0" expanded="false" />
+            <element signature="e#6012#6461#0" expanded="false" />
+            <element signature="e#6461#6474#0" expanded="false" />
             <element signature="e#6524#7975#0" expanded="false" />
-            <element signature="e#36482#36762#0" expanded="false" />
-            <element signature="e#36799#37447#0" expanded="false" />
-            <element signature="e#37495#38292#0" expanded="false" />
-            <element signature="e#38330#38636#0" expanded="false" />
+            <element signature="e#8017#8345#0" expanded="false" />
+            <element signature="e#8375#9222#0" expanded="false" />
+            <element signature="e#9264#9408#0" expanded="false" />
+            <element signature="e#9438#10229#0" expanded="false" />
+            <element signature="e#10261#10610#0" expanded="false" />
+            <element signature="e#10659#11417#0" expanded="false" />
+            <element signature="e#11459#11811#0" expanded="false" />
+            <element signature="e#11842#11914#0" expanded="false" />
+            <element signature="e#12084#12318#0" expanded="false" />
+            <element signature="e#12334#12385#0" expanded="false" />
+            <element signature="e#15444#16497#0" expanded="false" />
+            <element signature="e#16667#17552#0" expanded="false" />
+            <element signature="e#17585#18667#0" expanded="false" />
+            <element signature="e#18701#19147#0" expanded="false" />
+            <element signature="e#20213#20641#0" expanded="false" />
+            <element signature="e#29584#29617#0" expanded="false" />
+            <element signature="e#36367#36647#0" expanded="false" />
+            <element signature="e#36684#37332#0" expanded="false" />
+            <element signature="e#37380#38177#0" expanded="false" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/Graphic_Interface/Windows/DuettoSoundLabWindow.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state line="233" column="8" selection-start="13321" selection-end="13321" vertical-scroll-proportion="-0.8082192" vertical-offset="5881" max-vertical-offset="25000">
+          <folding />
         </state>
       </provider>
     </entry>
