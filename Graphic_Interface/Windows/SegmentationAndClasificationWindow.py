@@ -80,25 +80,25 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         params = [{u'name': u'Temporal Detection Settings', u'type': u'group', u'children': [
             {u'name': u'Detection Method', u'type': u'list', u'default':DetectionType.Envelope_Abs_Decay_Averaged, u'values':
-                [(u'Local Max',DetectionType.LocalMax),(u'Local Hold Time',DetectionType.LocalHoldTime),(u'Local Max Proportion',DetectionType.LocalMaxProportion),
+                [(u'Local Max',DetectionType.LocalMax),
                              (u'Interval Rms',DetectionType.IntervalRms),(u'Interval Max Media',DetectionType.IntervalMaxMedia),
-                             (u'Interval Max Proportion',DetectionType.IntervalMaxProportion),(u'Interval Frecuencies',DetectionType.IntervalFrecuencies),
+                             (u'Interval Max Proportion',DetectionType.IntervalMaxProportion),
                              (u'Envelope Abs Decay Averaged',DetectionType.Envelope_Abs_Decay_Averaged),(u'Envelope Rms',DetectionType.Envelope_Rms)]},
-            {u'name': u'Threshold (db)', u'type': u'float', u'value': -40.00, u'step': 0.1},
+            {u'name': u'Threshold (db)', u'type': u'float', u'value': -40.00, u'step': 1},
             {u'name': u'Auto', u'type': u'bool',u'default': True, u'value': True},
-            {u'name': u'Min Size (ms)', u'type': u'float', u'value': 1.00, u'step': 0.1},
-            {u'name': u'Decay (ms)', u'type': u'float', u'value': 1.00, u'step': 0.1},
-            {u'name': u'Threshold 2(db)', u'type': u'float', u'value': 0.00, u'step': 0.1},
-            {u'name': u'Soft Factor', u'type': u'float', u'value': 6, u'step': 0.1},
-            {u'name': u'Merge Factor (%)', u'type': u'float', u'value': 5.00, u'step': 0.1, u'limits' : (0,100)}
+            {u'name': u'Min Size (ms)', u'type': u'float', u'value': 1.00, u'step': 1},
+            {u'name': u'Decay (ms)', u'type': u'float', u'value': 1.00, u'step': 0.5},
+            {u'name': u'Threshold 2(db)', u'type': u'float', u'value': 0.00, u'step': 1},
+            {u'name': u'Soft Factor', u'type': u'float', u'value': 6, u'step': 1},
+            {u'name': u'Merge Factor (%)', u'type': u'float', u'value': 5.00, u'step': 1, u'limits' : (0,50)}
         ]},
 
         {u'name': u'Spectral Detection Settings', u'type': u'group', u'children': [
             {u'name': u'Detect Spectral Subelements', u'type': u'bool',u'default': False, u'value': False},
-            {u'name': u'Threshold (%)', u'type': u'float', u'value': 95.00, u'step': 0.1, u'limits' : (0,100)},
+            {u'name': u'Threshold (%)', u'type': u'float', u'value': 95.00, u'step': 1, u'limits' : (0,100)},
             {u'name':u'Minimum size', u'type': u'group', u'children': [
-                {u'name': u'Time (ms)', u'type': u'float', u'value': 0.00, u'step': 0.1},
-                {u'name': u'Frequency (kHz)', u'type': u'float', u'value': 0.00, u'step': 0.1}]}
+                {u'name': u'Time (ms)', u'type': u'float', u'value': 0.00, u'step': 1},
+                {u'name': u'Frequency (kHz)', u'type': u'float', u'value': 0.00, u'step': 1}]}
             ]},
 
          {u'name': u'Measurement Location', u'type': u'group', u'children': [
@@ -113,8 +113,6 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.timeMeditions = [
             ["Start(s)", True, lambda x,d: x.startTime()],
             ["End(s)", True, lambda x,d: x.endTime()],
-            ["PeekToPeek(V)", False, lambda x,d: x.peekToPeek()],
-            ["RMS(V)", False, lambda x,d: x.rms()],
             ["StartToMax(s)", False,lambda x,d: x.distanceFromStartToMax()],
             ["Duration(s)", True,lambda x,d: x.duration()],
         ]
@@ -167,8 +165,8 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         self.ParamTree = Parameter.create(name=u'params', type=u'group', children=params)
 
- #the spectral parameters that changes in function of the location measurements
-         #funciones que reciben un elemento spectral 2 dimensiones y devuelven el valor del parametro medido
+        #the spectral parameters that changes in function of the location measurements
+        #funciones que reciben un elemento spectral 2 dimensiones y devuelven el valor del parametro medido
         #the order of the elements in the array of self.parameterMeasurement["Temporal"] is relevant for the visualization in the table and the
         #binding to the checkboxes in the dialog of parameter measurement
         self.widget.axesSpecgram.PointerSpecChanged.connect(self.updateStatusBar)
@@ -691,6 +689,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
     @pyqtSlot()
     def on_actionDetection_triggered(self):
         elementsDetectorDialog = ElemDetectSettingsDialog(parent=self,paramTree=self.ParamTree)
+        elementsDetectorDialog.load_Theme(self.theme)
         self.widget.selectElement(-1)
 
         if elementsDetectorDialog.exec_():

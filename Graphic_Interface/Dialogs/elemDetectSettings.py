@@ -7,6 +7,7 @@ from Duetto_Core.Segmentation.Detectors.ElementsDetectors.OneDimensional.OneDime
 from Graphic_Interface.Dialogs.ui_elemDetectSettings import Ui_Dialog
 from pyqtgraph.parametertree import Parameter, ParameterTree
 
+
 class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
     def __init__(self, parent, paramTree):
         super(QDialog,self).__init__(parent)
@@ -20,9 +21,12 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
             self.widget.signalProcessor.signal = parent.widget.signalProcessor.signal
         else:
             self.widget.specgramSettings.overlap = 50
-        self.detectortypeData = [DetectionType.LocalMax,DetectionType.LocalHoldTime,DetectionType.LocalMaxProportion,
-                             DetectionType.IntervalRms,DetectionType.IntervalMaxMedia,DetectionType.IntervalMaxProportion,DetectionType.IntervalFrecuencies,
-                             DetectionType.Envelope_Abs_Decay_Averaged,DetectionType.Envelope_Rms]
+
+        self.detectortypeData = [DetectionType.LocalMax,
+                             DetectionType.IntervalRms,DetectionType.IntervalMaxMedia,
+                             DetectionType.IntervalMaxProportion,
+                             DetectionType.Envelope_Abs_Decay_Averaged,
+                             DetectionType.Envelope_Rms]
 
         self.detectionSettings = DetectionSettings(DetectionType.Envelope_Abs_Decay_Averaged,AutomaticThresholdType.Global_MaxMean)
         self.widget.setSelectedTool("OscilogramThreshold")
@@ -67,11 +71,9 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         self.widget.axesOscilogram.threshold.setBounds((-2**(self.widget.signalProcessor.signal.bitDepth-1),2**(self.widget.signalProcessor.signal.bitDepth-1)))
 
         self.widget.histogram.setImageItem(self.widget.axesSpecgram.imageItem)
-
-
         self.widget.visualChanges = True
         self.widget.computeSpecgramSettings()
-        self.widget.refresh()
+        self.detect()
 
 
     def changeDetectionMethod(self,paramTree,changes):
@@ -119,27 +121,6 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         self.widget.refresh()
         self.widget.histogram.region.lineMoved()
         self.widget.histogram.region.lineMoveFinished()
-
-    @pyqtSlot(bool)
-    def on_chbxDetectOsc_toggled(self, checked):
-        self.dsbxThreshold.setEnabled(checked)
-        self.dsbxThreshold2.setEnabled(checked)
-        self.dsbxMinSize.setEnabled(checked)
-        self.dsbxMergeFactor.setEnabled(checked)
-        self.dsbxDecay.setEnabled(checked)
-        self.sbxSoftFactor.setEnabled(checked)
-
-
-#region  HOLA ALE
-    @pyqtSlot(bool)
-    def on_chbxDetectSpec_toggled(self, checked):
-        self.dsbxThresholdSpec.setEnabled(checked)
-        self.dsbxminSizeTime.setEnabled(checked)
-        self.dsbxMinSizeFreq.setEnabled(checked)
-        self.sbxMergeFactorTime.setEnabled(checked)
-        self.sbxMergeFactorFreq.setEnabled(checked)
-        self.cbxmeasurementLocationCenter
-#endregion
 
 
     @pyqtSlot()

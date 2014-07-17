@@ -51,6 +51,7 @@ class QSignalVisualizerWidget(QWidget):
         self.axesSpecgram = SpectrogramPlotWidget(parent=self)
         self.axesSpecgram.show()
 
+
         self.axesOscilogram.IntervalOscChanged.connect(self.updateSpecZoomRegion)
         self.axesSpecgram.IntervalSpecChanged.connect(self.updateOscZoomRegion)
         self.axesOscilogram.PointerCursorPressed.connect(self.axesSpecgram.clearPointerCursor)
@@ -231,7 +232,10 @@ class QSignalVisualizerWidget(QWidget):
         self.axesSpecgram.mouseZoomEnabled = False
         self.axesOscilogram.setVisible(True)
         self.axesSpecgram.setVisible(False)
-        self.signalProcessor.signal.record()
+        try:
+            self.signalProcessor.signal.record()
+        except:
+            self.stop()
         updateTime = 15
         self._recordTimer.start(updateTime)
         #self.createPlayerLine(self.mainCursor.min)

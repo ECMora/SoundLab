@@ -497,7 +497,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         segWindow = SegmentationAndClasificationWindow(parent=self, signal=signal)
         if not segWindow.rejectSignal:
-            segWindow.widget.maxYOsc =  self.ParamTree.param(u'Oscillogram Settings').param(u'Amplitude(%)').param(u'Max').value()
+            segWindow.widget.maxYOsc = self.ParamTree.param(u'Oscillogram Settings').param(u'Amplitude(%)').param(u'Max').value()
             segWindow.widget.minYOsc = self.ParamTree.param(u'Oscillogram Settings').param(u'Amplitude(%)').param(u'Min').value()
             segWindow.widget.minYSpc = self.ParamTree.param(u'Spectrogram Settings').param(u'Frequency(kHz)').param(u'Min').value()
             segWindow.widget.maxYSpc = self.ParamTree.param(u'Spectrogram Settings').param(u'Frequency(kHz)').param(u'Max').value()
@@ -823,9 +823,16 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.on_load()
 
     def _open(self,f=''):
-
         self.actionCombined.setEnabled(True)
         self.actionSpectogram.setEnabled(True)
+
+        if self.widget.signalProcessor.signal is not None and self.widget.signalProcessor.signal.playStatus == WavFileSignal.RECORDING:
+            self.actionZoom_out.setEnabled(True)
+            self.actionZoom_out_entire_file.setEnabled(True)
+            self.actionZoomIn.setEnabled(True)
+            self.actionPause_Sound.setEnabled(True)
+            self.actionPlay_Sound.setEnabled(True)
+
         if f != u'':
             try:
                 self.lastopen = f
