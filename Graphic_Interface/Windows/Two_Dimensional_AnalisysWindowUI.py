@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Sound Lab\DuettoSystem\Graphic_Interface\UI Files\Two_Dimensional_AnalisysWindowUI.ui'
 #
-# Created: Wed Jul 16 00:05:28 2014
+# Created: Thu Jul 17 13:46:15 2014
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -56,6 +56,8 @@ class Ui_TwoDimensionalWindow(object):
         self.actionHide_Show_Settings.setObjectName(_fromUtf8("actionHide_Show_Settings"))
         self.actionSaveGraphImage = QtGui.QAction(TwoDimensionalWindow)
         self.actionSaveGraphImage.setObjectName(_fromUtf8("actionSaveGraphImage"))
+        self.actionMark_Selected_Elements_As = QtGui.QAction(TwoDimensionalWindow)
+        self.actionMark_Selected_Elements_As.setObjectName(_fromUtf8("actionMark_Selected_Elements_As"))
 
         self.retranslateUi(TwoDimensionalWindow)
         QtCore.QMetaObject.connectSlotsByName(TwoDimensionalWindow)
@@ -66,5 +68,6 @@ class Ui_TwoDimensionalWindow(object):
         self.actionHide_Show_Settings.setText(QtGui.QApplication.translate("TwoDimensionalWindow", "Hide-Show Settings", None, QtGui.QApplication.UnicodeUTF8))
         self.actionHide_Show_Settings.setShortcut(QtGui.QApplication.translate("TwoDimensionalWindow", "Ctrl+Space", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSaveGraphImage.setText(QtGui.QApplication.translate("TwoDimensionalWindow", "Save Graph Image", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionMark_Selected_Elements_As.setText(QtGui.QApplication.translate("TwoDimensionalWindow", "Mark Selected Elements As", None, QtGui.QApplication.UnicodeUTF8))
 
 from Graphic_Interface.Widgets.TwoDPlotWidget import TwoDPlotWidget

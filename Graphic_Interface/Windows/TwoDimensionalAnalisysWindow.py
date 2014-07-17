@@ -34,6 +34,7 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow,Ui_TwoDimensionalWindow):
         self.widget.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
         self.widget.addAction(self.actionHide_Show_Settings)
         self.widget.addAction(self.actionSaveGraphImage)
+        self.widget.addAction(self.actionMark_Selected_Elements_As)
         self.createParameterTreeOptions(self.columns)
 
     @pyqtSlot()
@@ -156,13 +157,25 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow,Ui_TwoDimensionalWindow):
         self.widget.removeSelectionRect()
         self.widget.addSelectionRect()
 
-    def getSelectedElements(self):
+    @pyqtSlot()
+    def on_actionMark_Selected_Elements_As_triggered(self):
         """
 
         @return: the indexes of the selected elements in the graph
         """
-        rect = self.widget.ElementSelectionRect
-        selected = [e for e in self.data]
+        if self.scatter_plot is None:
+            return []
+
+        rect = self.widget.ElementSelectionRect.rect()
+        x1, y1 = rect.x(),rect.y()
+        x2, y2 = x1 + rect.width(),y1 + rect.height()
+        x1,x2,y1,y2 = min(x1,x2),max(x1,x2),min(y1,y2),max(y1,y2)
+
+        selected = [x.data() for x in self.scatter_plot.points() if x.pos().x() >= x1 and x.pos().x() <= x2 and x.pos().y() >= y1 and x.pos().y() <= y2]
+        if len(selected) == 0:
+            QtGui.QMessageBox.warning(QtGui.QMessageBox(), "Warning", "There is no element selected.")
+        print(selected)
+
 
     def elementFigureClicked(self,x,y):
         self.selectElement(y[0].data())

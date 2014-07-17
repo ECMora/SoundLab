@@ -74,6 +74,11 @@
     <string>Save Graph Image</string>
    </property>
   </action>
+  <action name="actionMark_Selected_Elements_As">
+   <property name="text">
+    <string>Mark Selected Elements As</string>
+   </property>
+  </action>
  </widget>
  <customwidgets>
   <customwidget>

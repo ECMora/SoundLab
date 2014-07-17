@@ -7,9 +7,9 @@ class TwoDPlotWidget(pg.PlotWidget):
 
     def __init__(self,parent=None):
         pg.PlotWidget.__init__(self,parent)
-        self.makingElementSelection = True
         self.mousePressed = False
-        self.ElementSelectionRect = QtGui.QGraphicsRectItem(QtCore.QRectF(0,0, 0.5, 0.6))
+        self.oldX,self.oldY = 0, 0
+        self.ElementSelectionRect = QtGui.QGraphicsRectItem(QtCore.QRectF(0,0, 0, 0))
         self.ElementSelectionRect.setPen(QtGui.QPen(QtGui.QColor(255,255,255)))
 
     def removeSelectionRect(self):
@@ -22,19 +22,19 @@ class TwoDPlotWidget(pg.PlotWidget):
 
     def mousePressEvent(self, ev):
         pg.PlotWidget.mousePressEvent(self, ev)
-        self.mousePressed = True
-        if self.makingElementSelection:
-            rang = self.viewRect()
-            rect = self.rect()
-            x, y, w, h = rang.x()+rang.width()*((ev.x()-rect.x())/rect.width()), rang.y()+rang.height()*((ev.y()-rect.y())/rect.height()), 0.5, 0.5
-            self.ElementSelectionRect.setRect(x, y, w, h)
+        if ev.button() == QtCore.Qt.LeftButton:
+            self.mousePressed = True
+            point = self.getPlotItem().getViewBox().mapSceneToView(QtCore.QPointF(ev.x(),ev.y()))
+            self.oldX, self.oldY = point.x(),point.y()
+            self.ElementSelectionRect.setRect(self.oldX,self.oldY,0,0)
             self.update()
 
-    def changeSelectionMode(self,bool):
-        self.makingElementSelection = bool
-        if bool is False:
-            self.ElementSelectionRect = QtGui.QGraphicsRectItem(QtCore.QRectF(0,0, 0, 0))
-            self.update()
+    def __updateSelectionRect(self,ev):
+        point = self.getPlotItem().getViewBox().mapSceneToView(QtCore.QPointF(ev.x(),ev.y()))
+        x, y = point.x(), point.y()
+        #self.oldX,self.oldY, x, y = min(self.oldX,x),min(self.oldY,y),max(self.oldX,x),max(self.oldY,y)
+        self.ElementSelectionRect.setRect(self.oldX,self.oldY,x-self.oldX,y - self.oldY)
+        print( self.oldX,self.oldY, x, y)
 
     def mouseReleaseEvent(self, ev):
         pg.PlotWidget.mouseReleaseEvent(self, ev)
@@ -42,6 +42,7 @@ class TwoDPlotWidget(pg.PlotWidget):
 
     def mouseMoveEvent(self, ev):
         pg.PlotWidget.mouseMoveEvent(self,ev)
-        if self.makingElementSelection and self.mousePressed:
+        if self.mousePressed:
+            self.__updateSelectionRect(ev)
             self.update()
 
