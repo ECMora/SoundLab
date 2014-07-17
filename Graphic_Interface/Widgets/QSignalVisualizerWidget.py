@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from datetime import datetime
 from PyQt4.QtCore import pyqtSignal, QRect, Qt, QTimer
 from PyQt4.QtGui import *
 from PyQt4 import QtCore, QtGui
