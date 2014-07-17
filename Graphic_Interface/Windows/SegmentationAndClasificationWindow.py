@@ -20,6 +20,8 @@ from ..Dialogs.elemDetectSettings import ElemDetectSettingsDialog
 from Graphic_Interface.Widgets.Tools import Tools
 from Graphic_Interface.Windows.TwoDimensionalAnalisysWindow import TwoDimensionalAnalisysWindow
 from SegmentationAndClasificationWindowUI import Ui_MainWindow
+from pyqtgraph.parametertree import Parameter, ParameterTree
+
 
 
 class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
@@ -74,32 +76,98 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.widget.axesOscilogram.threshold.sigPositionChangeFinished.connect(self.updateThreshold)
         self.widget.axesOscilogram.threshold.setBounds((-2**(self.widget.signalProcessor.signal.bitDepth-1),2**(self.widget.signalProcessor.signal.bitDepth-1)))
         self.detectionSettings = {"Threshold": -40, "Threshold2": 0, "MergeFactor": 5, "MinSize": 1, "Decay": 1,
-                                  "SoftFactor": 6,"ThresholdSpectral": 95 ,"minSizeTimeSpectral": 0, "minSizeFreqSpectral": 0,
-                                  "SpectralLocMeasureThreshold": -20,"PeaksThreshold": -20}
-        self.noParametrizedmeditions = \
-        [
-                      ["Start(s)", True, lambda x,d: x.startTime()],
-                      ["End(s)", True, lambda x,d: x.endTime()],
-                      ["PeekToPeek(V)", False, lambda x,d: x.peekToPeek()],
-                      ["RMS(V)", False, lambda x,d: x.rms()],
-                      ["StartToMax(s)", False,lambda x,d: x.distanceFromStartToMax()],
-                      ["Duration(s)", True,lambda x,d: x.duration()],
-                      ["Spectral Elems", False,lambda x,d: x.spectralElements()],
-                      ["Peak Freq Average(Hz)", False,lambda x,d: x.peakFreqAverage()],
-                      ["Min Freq Average(Hz)", False,lambda x,d: x.minFreqAverage(d)],
-                      ["Max Freq Average(Hz)", False,lambda x,d: x.maxFreqAverage(d)]
+                                  "SoftFactor": 6,"ThresholdSpectral": 95 ,"minSizeTimeSpectral": 0, "minSizeFreqSpectral": 0}
 
+        params = [{u'name': u'Temporal Detection Settings', u'type': u'group', u'children': [
+            {u'name': u'Detection Method', u'type': u'list', u'default':DetectionType.Envelope_Abs_Decay_Averaged, u'values':
+                [(u'Local Max',DetectionType.LocalMax),(u'Local Hold Time',DetectionType.LocalHoldTime),(u'Local Max Proportion',DetectionType.LocalMaxProportion),
+                             (u'Interval Rms',DetectionType.IntervalRms),(u'Interval Max Media',DetectionType.IntervalMaxMedia),
+                             (u'Interval Max Proportion',DetectionType.IntervalMaxProportion),(u'Interval Frecuencies',DetectionType.IntervalFrecuencies),
+                             (u'Envelope Abs Decay Averaged',DetectionType.Envelope_Abs_Decay_Averaged),(u'Envelope Rms',DetectionType.Envelope_Rms)]},
+            {u'name': u'Threshold (db)', u'type': u'float', u'value': -40.00, u'step': 0.1},
+            {u'name': u'Auto', u'type': u'bool',u'default': True, u'value': True},
+            {u'name': u'Min Size (ms)', u'type': u'float', u'value': 1.00, u'step': 0.1},
+            {u'name': u'Decay (ms)', u'type': u'float', u'value': 1.00, u'step': 0.1},
+            {u'name': u'Threshold 2(db)', u'type': u'float', u'value': 0.00, u'step': 0.1},
+            {u'name': u'Soft Factor', u'type': u'float', u'value': 6, u'step': 0.1},
+            {u'name': u'Merge Factor (%)', u'type': u'float', u'value': 5.00, u'step': 0.1, u'limits' : (0,100)}
+        ]},
 
+        {u'name': u'Spectral Detection Settings', u'type': u'group', u'children': [
+            {u'name': u'Detect Spectral Subelements', u'type': u'bool',u'default': False, u'value': False},
+            {u'name': u'Threshold (%)', u'type': u'float', u'value': 95.00, u'step': 0.1, u'limits' : (0,100)},
+            {u'name':u'Minimum size', u'type': u'group', u'children': [
+                {u'name': u'Time (ms)', u'type': u'float', u'value': 0.00, u'step': 0.1},
+                {u'name': u'Frequency (kHz)', u'type': u'float', u'value': 0.00, u'step': 0.1}]}
+            ]},
+
+         {u'name': u'Measurement Location', u'type': u'group', u'children': [
+            {u'name': u'Start', u'type': u'bool',u'default': False, u'value': False},
+            {u'name': u'Center', u'type': u'bool',u'default': False, u'value': False},
+            {u'name': u'End', u'type': u'bool',u'default': False, u'value': False},
+            {u'name': u'Quartile 25', u'type': u'bool',u'default': False, u'value': False},
+            {u'name': u'Mean', u'type': u'bool',u'default': False, u'value': False},
+            {u'name': u'Quartile 75', u'type': u'bool',u'default': False, u'value': False}]}
         ]
-        self.parametrizedMeditions = [
-            ["Max Freq(Hz)",False,lambda x,d :x.maxFreq(d)],
-            ["Min Freq(Hz)",False,lambda x,d :x.minFreq(d)],
+
+        self.timeMeditions = [
+            ["Start(s)", True, lambda x,d: x.startTime()],
+            ["End(s)", True, lambda x,d: x.endTime()],
+            ["PeekToPeek(V)", False, lambda x,d: x.peekToPeek()],
+            ["RMS(V)", False, lambda x,d: x.rms()],
+            ["StartToMax(s)", False,lambda x,d: x.distanceFromStartToMax()],
+            ["Duration(s)", True,lambda x,d: x.duration()],
+        ]
+
+        self.spectralMeditions = [
+            ["Spectral Elems", False,lambda x,d: x.spectralElements()],
             ["Peak Freq(Hz)",False,lambda x,d :x.peakFreq(d)],
             ["Peak Amplitude(dB)",False,lambda x,d :x.peakAmplitude(d)],
-            ["Band Width(Hz)",False,lambda x,d :x.bandwidth(d)],
-            ["Peaks Above",False,lambda x,d :x.peaksAbove(d)],
+            ["Frequency",
+                [
+                    ["Threshold (db)",-20]
+                ],
+                [
+                    ["Min Freq(Hz)",False,lambda x,d :x.minFreq(d)],
+                    ["Max Freq(Hz)",False,lambda x,d :x.maxFreq(d)],
+                    ["Band Width(Hz)",False,lambda x,d :x.bandwidth(d)]
+                ]
+            ],
+            ["Peaks",
+                [
+                    ["Threshold (db)",-20]
+                ],
+                [
+                    ["Peaks Above",False,lambda x,d :x.peaksAbove(d)],
+                ]
+            ]
 
-        ] #the spectral parameters that changes in function of the location measurements
+        ]
+
+        self.waveMeditions = [
+            ["PeekToPeek(V)", False, lambda x,d: x.peekToPeek()],
+            ["RMS(V)", False, lambda x,d: x.rms()],
+        ]
+
+        self.meditions = [( u'Temporal Meditions',self.timeMeditions),(u'Spectral Meditions',self.spectralMeditions),(u'Waveform Meditions',self.waveMeditions)]
+
+        for name,dict in self.meditions:
+            children = []
+            for x in dict:
+                if isinstance(x[1],bool):
+                    children.append({u'name': x[0], u'type': u'bool',u'default': x[1], u'value': x[1]})
+                else:
+                    temp = []
+                    for y in x[1]:
+                        temp.append({u'name': y[0], u'type': u'float', u'value':y[1], u'step': 0.1})
+                    for y in x[2]:
+                        temp.append({u'name': y[0], u'type': u'bool',u'default': y[1], u'value': y[1]})
+                    children.append({u'name': x[0], u'type': u'group', u'children': temp})
+            params.append({u'name': name, u'type': u'group', u'children': children})
+
+        self.ParamTree = Parameter.create(name=u'params', type=u'group', children=params)
+
+ #the spectral parameters that changes in function of the location measurements
          #funciones que reciben un elemento spectral 2 dimensiones y devuelven el valor del parametro medido
         #the order of the elements in the array of self.parameterMeasurement["Temporal"] is relevant for the visualization in the table and the
         #binding to the checkboxes in the dialog of parameter measurement
@@ -228,34 +296,54 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     #region Threshold
 
-    def getspectralParameters(self, spectralMeasurementLocation):
+    def getspectralParameters(self):
         """
         obtain the methods for spectral parameter meausrement of the measurementLocations
         """
         params = []
-        threshold = self.detectionSettings["SpectralLocMeasureThreshold"]
-        peaksThreshold = self.detectionSettings["PeaksThreshold"]
-        if spectralMeasurementLocation.MEDITIONS[spectralMeasurementLocation.START][0]:
-            for p in self.parametrizedMeditions:
-                if p[1]:
-                    params.append([p[0]+"(start)", p[2], {"location": spectralMeasurementLocation.START, "threshold": threshold, "peaksThreshold": peaksThreshold}])
-        if spectralMeasurementLocation.MEDITIONS[spectralMeasurementLocation.CENTER][0]:
-            for p in self.parametrizedMeditions:
-                if p[1]:
-                    params.append([p[0]+"(center)", p[2], {"location": spectralMeasurementLocation.CENTER, "threshold": threshold, "peaksThreshold": peaksThreshold}])
-        if spectralMeasurementLocation.MEDITIONS[spectralMeasurementLocation.END][0]:
-            for p in self.parametrizedMeditions:
-                if p[1]:
-                    params.append([p[0]+"(end)", p[2], {"location": spectralMeasurementLocation.END, "threshold": threshold, "peaksThreshold": peaksThreshold}])
-        if spectralMeasurementLocation.MEDITIONS[spectralMeasurementLocation.QUARTILE25][0]:
-            for p in self.parametrizedMeditions:
-                if p[1]:
-                    params.append([p[0]+"(quartile25)", p[2], {"location": spectralMeasurementLocation.QUARTILE25, "threshold": threshold, "peaksThreshold": peaksThreshold}])
-        if spectralMeasurementLocation.MEDITIONS[spectralMeasurementLocation.QUARTILE75][0]:
-            for p in self.parametrizedMeditions:
-                if p[1]:
-                    params.append([p[0]+"(quartile75)",p[2], {"location": spectralMeasurementLocation.QUARTILE75, "threshold": threshold, "peaksThreshold": peaksThreshold}])
+
+        for x in self.spectralMeditions:
+            if isinstance(x[1],bool):
+                if x[1]:
+                    if self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.START][0]:
+                        params.append([x[0]+"(start)", x[2], [["location",self.spectralMeasurementLocation.START]]])
+                    if self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.CENTER][0]:
+                        params.append([x[0]+"(center)", x[2],[["location",self.spectralMeasurementLocation.CENTER]]])
+                    if self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.END][0]:
+                        params.append([x[0]+"(end)", x[2], [["location",self.spectralMeasurementLocation.END]]])
+                    if self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.QUARTILE25][0]:
+                        params.append([x[0]+"(quartile25)", x[2],[["location",self.spectralMeasurementLocation.QUARTILE25]]])
+                    if self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.QUARTILE75][0]:
+                        params.append([x[0]+"(quartile75)", x[2],[["location",self.spectralMeasurementLocation.QUARTILE75]]])
+            else:
+                for y in x[2]:
+                    if y[1]:
+                        if self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.START][0]:
+                            params.append([y[0]+"(start)", y[2], x[1].append(["location",self.spectralMeasurementLocation.START])])
+                        if self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.CENTER][0]:
+                            params.append([y[0]+"(center)", y[2],x[1].append(["location",self.spectralMeasurementLocation.CENTER])])
+                        if self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.END][0]:
+                            params.append([y[0]+"(end)", y[2], x[1].append(["location",self.spectralMeasurementLocation.END])])
+                        if self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.QUARTILE25][0]:
+                            params.append([y[0]+"(quartile25)", y[2],x[1].append(["location",self.spectralMeasurementLocation.QUARTILE25])])
+                        if self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.QUARTILE75][0]:
+                            params.append([y[0]+"(quartile75)", y[2],x[1].append(["location",self.spectralMeasurementLocation.QUARTILE75])])
+
         return params
+
+    def getParameters(self):
+         params = []
+         for name,dict in self.meditions:
+            if not name == u'Spectral Meditions':
+                for x in dict:
+                    if isinstance(x[1],bool):
+                        if x[1]:
+                            params.append([x[0], x[2], []])
+                    else:
+                        for y in x[2]:
+                            if y[1]:
+                                params.append([y[0], y[2], x[1]])
+         return params + self.getspectralParameters()
 
     def updateThreshold(self,line):
         self.detectionSettings["Threshold"] = self.toDB() if line.value() == 0 else self.toDB(line.value())
@@ -462,14 +550,14 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                                            location= self.spectralMeasurementLocation,
                                            findSpectralSublements=False)
 
-                    paramsTomeasure = [x for x in self.noParametrizedmeditions if x[1]]
-                    spectralparamsTomeasure = self.getspectralParameters(self.spectralMeasurementLocation)
+                    paramsTomeasure = self.getParameters()
+
 
                     table.setRowCount(detector.elementCount())
 
-                    table.setColumnCount(len(paramsTomeasure) + len(spectralparamsTomeasure))
+                    table.setColumnCount(len(paramsTomeasure))
                     self.columnNames = [label[0] for label in paramsTomeasure]
-                    self.columnNames.extend([label[0] for label in spectralparamsTomeasure])
+
 
                     table.setHorizontalHeaderLabels(self.columnNames)
                     self.tableParameterOscilogram.resizeColumnsToContents()
@@ -478,12 +566,9 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
 
                     for i,element in enumerate(detector.elements()):
                         for j,prop in enumerate(paramsTomeasure):
-                            item = QtGui.QTableWidgetItem(str(prop[2](element,{"threshold": self.detectionSettings["SpectralLocMeasureThreshold"]})))
-                            table.setItem(i, j, item)
-                        for x,prop in enumerate(spectralparamsTomeasure):
                             item = QtGui.QTableWidgetItem(str(prop[1](element,prop[2])))
                             item.setBackgroundColor(self.parameterTable_rowcolor_odd if i%2==0 else self.parameterTable_rowcolor_even)
-                            table.setItem(i, len(paramsTomeasure) + x, item)
+                            table.setItem(i, j, item)
                     if singlefile:
                         ws = wb.add_sheet(signalProcessor.signal.name)
                         self.writedata(ws,table)
@@ -557,98 +642,42 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
     #endregion
 
     #region Detection
-    def setSettings(self,elementsDetectorDialog):
-        elementsDetectorDialog.load_Theme(self.theme)
-        elementsDetectorDialog.dsbxThreshold.setValue(self.detectionSettings["Threshold"])
-        elementsDetectorDialog.sbxSoftFactor.setValue(self.detectionSettings["SoftFactor"])
-        elementsDetectorDialog.dsbxMinSize.setValue(self.detectionSettings["MinSize"])
-        elementsDetectorDialog.dsbxThreshold2.setValue(self.detectionSettings["Threshold2"])
-        elementsDetectorDialog.dsbxMergeFactor.setValue(self.detectionSettings["MergeFactor"])
-        elementsDetectorDialog.dsbxDecay.setValue(self.detectionSettings["Decay"])
-        elementsDetectorDialog.detectionSettings =  self.algorithmDetectorSettings
-        elementsDetectorDialog.cmbxDetectionMethod.setCurrentIndex(self.algorithmDetectorSettings.detectiontype)
-        #specgram settings
-        elementsDetectorDialog.dsbxThresholdSpec.setValue(self.detectionSettings["ThresholdSpectral"])
-        elementsDetectorDialog.dsbxMinSizeFreq.setValue(self.detectionSettings["minSizeFreqSpectral"])
-        elementsDetectorDialog.dsbxminSizeTime.setValue(self.detectionSettings["minSizeTimeSpectral"])
-        elementsDetectorDialog.spbxSpectralLocMeasureThreshold.setValue(self.detectionSettings["SpectralLocMeasureThreshold"])
-        elementsDetectorDialog.spbxPeaksThreshold.setValue(self.detectionSettings["PeaksThreshold"])
-
-        #parameters
-        elementsDetectorDialog.cbxStartTime.setChecked(self.noParametrizedmeditions[0][1])#start time
-        elementsDetectorDialog.cbxEndTime.setChecked(self.noParametrizedmeditions[1][1])#end time
-        elementsDetectorDialog.cbxPeekToPeek.setChecked(self.noParametrizedmeditions[2][1])#peek to peek
-        elementsDetectorDialog.cbxRms.setChecked(self.noParametrizedmeditions[3][1])#rms
-        elementsDetectorDialog.cbxStartToMax.setChecked(self.noParametrizedmeditions[4][1])#distance to max
-        elementsDetectorDialog.cbxDuration.setChecked(self.noParametrizedmeditions[5][1])#duration
-        elementsDetectorDialog.cbxSpectralElems.setChecked(self.noParametrizedmeditions[6][1])#spectral elems
-
-
-        elementsDetectorDialog.cbxMaxFreq.setChecked(self.parametrizedMeditions[0][1])#max freq
-        elementsDetectorDialog.cbxMinFreq.setChecked(self.parametrizedMeditions[1][1])#min freq
-        elementsDetectorDialog.cbxPeakFreq.setChecked(self.parametrizedMeditions[2][1])#peak freq
-
-        elementsDetectorDialog.cbxPeakAmplitude.setChecked(self.parametrizedMeditions[3][1])#peaak amplitude
-        elementsDetectorDialog.cbxBandWidth.setChecked(self.parametrizedMeditions[4][1])#band width
-        elementsDetectorDialog.cbxPeaksAbove.setChecked(self.parametrizedMeditions[5][1])#peaks above
-
-        elementsDetectorDialog.widget.histogram.region.setRegion(self.theme.histRange)
-        elementsDetectorDialog.widget.histogram.gradient.restoreState(self.theme.colorBarState)
-
-
-
-        #measurements
-        averageComputation = self.noParametrizedmeditions[7][1] or self.noParametrizedmeditions[8][1] or self.noParametrizedmeditions[9][1]
-        elementsDetectorDialog.cbxmeasurementLocationStart.setChecked(self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.START][0])#start medition
-        elementsDetectorDialog.cbxmeasurementLocationEnd.setChecked(self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.END][0])#end medition
-        elementsDetectorDialog.cbxmeasurementLocationCenter.setChecked(self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.CENTER][0])#center medition
-        elementsDetectorDialog.cbxmeasurementLocationQuartile25.setChecked(self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.QUARTILE25][0])#25 % medition
-        elementsDetectorDialog.cbxmeasurementLocationQuartile75.setChecked(self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.QUARTILE75][0])#75 % medition
-        elementsDetectorDialog.cbxmeasurementLocationAverage.setChecked(averageComputation)#75 % medition
 
     def getSettings(self,elementsDetectorDialog):
-        self.detectionSettings["Threshold"] = elementsDetectorDialog.dsbxThreshold.value()
-        self.detectionSettings["Threshold2"] = elementsDetectorDialog.dsbxThreshold2.value()
-        self.detectionSettings["MinSize"] = elementsDetectorDialog.dsbxMinSize.value()
-        self.detectionSettings["MergeFactor"] = elementsDetectorDialog.dsbxMergeFactor.value()
-        self.detectionSettings["SoftFactor"] = elementsDetectorDialog.sbxSoftFactor.value()
-        self.detectionSettings["Decay"] = elementsDetectorDialog.dsbxDecay.value()
+
+        self.detectionSettings["Threshold"] = self.ParamTree.param(u'Temporal Detection Settings').param(u'Threshold (db)').value()
+        self.detectionSettings["Threshold2"] = self.ParamTree.param(u'Temporal Detection Settings').param(u'Threshold 2(db)').value()
+        self.detectionSettings["MinSize"] = self.ParamTree.param(u'Temporal Detection Settings').param(u'Min Size (ms)').value()
+        self.detectionSettings["MergeFactor"] = self.ParamTree.param(u'Temporal Detection Settings').param(u'Merge Factor (%)').value()
+        self.detectionSettings["SoftFactor"] = self.ParamTree.param(u'Temporal Detection Settings').param(u'Soft Factor').value()
+        self.detectionSettings["Decay"] = self.ParamTree.param(u'Temporal Detection Settings').param(u'Decay (ms)').value()
         self.algorithmDetectorSettings = elementsDetectorDialog.detectionSettings
 
         #spectral
-        self.detectionSettings["ThresholdSpectral"] = elementsDetectorDialog.dsbxThresholdSpec.value()
-        self.detectionSettings["minSizeFreqSpectral"] = elementsDetectorDialog.dsbxMinSizeFreq.value()
-        self.detectionSettings["minSizeTimeSpectral"] = elementsDetectorDialog.dsbxminSizeTime.value()
-        self.detectionSettings["SpectralLocMeasureThreshold"] = elementsDetectorDialog.spbxSpectralLocMeasureThreshold.value()
-        self.detectionSettings["PeaksThreshold"] = elementsDetectorDialog.spbxPeaksThreshold.value()
+        self.detectionSettings["ThresholdSpectral"] = self.ParamTree.param(u'Spectral Detection Settings').param(u'Threshold (%)').value()
+        self.detectionSettings["minSizeFreqSpectral"] = self.ParamTree.param(u'Spectral Detection Settings').param(u'Minimum size').param(u'Frequency (kHz)').value()
+        self.detectionSettings["minSizeTimeSpectral"] = self.ParamTree.param(u'Spectral Detection Settings').param(u'Minimum size').param(u'Time (ms)').value()
         self.updateThresholdLine()
         #parameters
-        self.noParametrizedmeditions[0][1] = elementsDetectorDialog.cbxStartTime.isChecked()
-        self.noParametrizedmeditions[1][1] = elementsDetectorDialog.cbxEndTime.isChecked()#end time
-        self.noParametrizedmeditions[2][1] = elementsDetectorDialog.cbxPeekToPeek.isChecked()#peek to peek
-        self.noParametrizedmeditions[3][1] = elementsDetectorDialog.cbxRms.isChecked()#rms
-        self.noParametrizedmeditions[4][1] = elementsDetectorDialog.cbxStartToMax.isChecked()#distance to max
-        self.noParametrizedmeditions[5][1] = elementsDetectorDialog.cbxDuration.isChecked()#duratio
-        self.noParametrizedmeditions[6][1] = elementsDetectorDialog.cbxSpectralElems.isChecked()#duratio\
-
-        self.noParametrizedmeditions[7][1] = elementsDetectorDialog.cbxPeakFreq.isChecked()#peak freq average
-        self.noParametrizedmeditions[8][1] = elementsDetectorDialog.cbxMinFreq.isChecked()#min freq average
-        self.noParametrizedmeditions[9][1] = elementsDetectorDialog.cbxMaxFreq.isChecked()#max freq average
 
 
-        self.parametrizedMeditions[0][1] = elementsDetectorDialog.cbxMaxFreq.isChecked()#max freq
-        self.parametrizedMeditions[1][1] = elementsDetectorDialog.cbxMinFreq.isChecked()#min freq
-        self.parametrizedMeditions[2][1] = elementsDetectorDialog.cbxPeakFreq.isChecked()#peak freq
-        self.parametrizedMeditions[3][1] = elementsDetectorDialog.cbxPeakAmplitude.isChecked()#peaak amplitude
-        self.parametrizedMeditions[4][1] = elementsDetectorDialog.cbxBandWidth.isChecked()#band width
-        self.parametrizedMeditions[5][1] = elementsDetectorDialog.cbxPeaksAbove.isChecked()#peak above
+        for name,dict in self.meditions:
+            for x in dict:
+                if isinstance(x[1],bool):
+                    x[1] = self.ParamTree.param(name).param(x[0]).value()
+                else:
+                    for y in x[1]:
+                        y[1] = self.ParamTree.param(name).param(x[0]).param(y[0]).value()
+                    for y in x[2]:
+                        y[1] = self.ParamTree.param(name).param(x[0]).param(y[0]).value()
 
-        #measurements
-        self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.START][0] = elementsDetectorDialog.cbxmeasurementLocationStart.isChecked()#start medition
-        self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.END][0]  = elementsDetectorDialog.cbxmeasurementLocationEnd.isChecked()#end medition
-        self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.CENTER][0]  = elementsDetectorDialog.cbxmeasurementLocationCenter.isChecked()#center medition
-        self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.QUARTILE25][0]  = elementsDetectorDialog.cbxmeasurementLocationQuartile25.isChecked()#25 % medition
-        self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.QUARTILE75][0]  = elementsDetectorDialog.cbxmeasurementLocationQuartile75.isChecked()#75 % medition
+        #measurements u'Measurement Location'
+        self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.START][0] = self.ParamTree.param(u'Measurement Location').param(u'Start').value()
+        self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.END][0]  = self.ParamTree.param(u'Measurement Location').param(u'End').value()
+        self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.CENTER][0]  = self.ParamTree.param(u'Measurement Location').param(u'Center').value()
+        self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.QUARTILE25][0]  = self.ParamTree.param(u'Measurement Location').param(u'Quartile 25').value()
+        self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.QUARTILE75][0]  = self.ParamTree.param(u'Measurement Location').param( u'Quartile 75').value()
+
 
     def updateDetectionProgressBar(self, x):
         self.windowProgressDetection.setValue(x)
@@ -661,8 +690,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     @pyqtSlot()
     def on_actionDetection_triggered(self):
-        elementsDetectorDialog = ElemDetectSettingsDialog(parent=self)
-        self.setSettings(elementsDetectorDialog)
+        elementsDetectorDialog = ElemDetectSettingsDialog(parent=self,paramTree=self.ParamTree)
         self.widget.selectElement(-1)
 
         if elementsDetectorDialog.exec_():
@@ -671,8 +699,8 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                 self.getSettings(elementsDetectorDialog)
 
                 self.actionView_Threshold.setChecked(True)
-                paramsTomeasure = [x for x in self.noParametrizedmeditions if x[1]]
-                spectralparamsTomeasure = self.getspectralParameters(self.spectralMeasurementLocation)
+                paramsTomeasure = self.getParameters()
+
                 self.windowProgressDetection.resize(self.widget.width()/3, self.windowProgressDetection.size().height())
                 self.windowProgressDetection.move(self.widget.x()+self.widget.width()/3,self.widget.y()-self.windowProgressDetection.height()/2 + self.widget.height()/2)
                 self.windowProgressDetection.show()
@@ -683,16 +711,17 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                                                              self.detectionSettings["minSizeTimeSpectral"]),
                                            location=self.spectralMeasurementLocation,
                                            progress=self.updateDetectionProgressBar,
-                                           findSpectralSublements=elementsDetectorDialog.cbxSpectralSubelements.isChecked())
+                                           findSpectralSublements= self.ParamTree.param(u'Spectral Detection Settings').param(u'Detect Spectral Subelements').value())
+
 
                 self.tableParameterOscilogram.clear()
                 self.tableParameterOscilogram.cellPressed.connect(self.elementSelectedInTable)
                 self.tableParameterOscilogram.setRowCount(len(self.widget.Elements))
-                self.tableParameterOscilogram.setColumnCount(len(paramsTomeasure) + len(spectralparamsTomeasure))
+                self.tableParameterOscilogram.setColumnCount(len(paramsTomeasure))
                 self.columnNames = [label[0] for label in paramsTomeasure]
-                self.columnNames.extend([label[0] for label in spectralparamsTomeasure])
                 self.tableParameterOscilogram.setHorizontalHeaderLabels(self.columnNames)
                 self.updateDetectionProgressBar(95)
+
 
                 #for select the element in the table. Binding for the element click to the table
                 for index in range(len(self.widget.Elements)):
@@ -704,20 +733,13 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                 for i in range(self.tableParameterOscilogram.rowCount()):
                     for j,prop in enumerate(paramsTomeasure):
                         try:
-                            self.measuredParameters[i,j] = prop[2](self.widget.Elements[i],{"threshold": self.detectionSettings["SpectralLocMeasureThreshold"]})
+                            self.measuredParameters[i,j] = prop[1](self.widget.Elements[i],prop[2])
                             item = QtGui.QTableWidgetItem(unicode(self.measuredParameters[i,j]))
                             item.setBackgroundColor(self.parameterTable_rowcolor_odd if i%2==0 else self.parameterTable_rowcolor_even)
                         except Exception as e:
                             item = QtGui.QTableWidgetItem("Error"+e.message)
                         self.tableParameterOscilogram.setItem(i, j, item)
-                    for x,prop in enumerate(spectralparamsTomeasure):
-                        try:
-                            self.measuredParameters[i,len(paramsTomeasure)+x] = prop[1](self.widget.Elements[i],prop[2])
-                            item = QtGui.QTableWidgetItem(unicode(self.measuredParameters[i,len(paramsTomeasure)+x]))
-                            item.setBackgroundColor(self.parameterTable_rowcolor_odd if i%2==0 else self.parameterTable_rowcolor_even)
-                        except Exception as e:
-                            item = QtGui.QTableWidgetItem("Error"+e.message)
-                        self.tableParameterOscilogram.setItem(i, len(paramsTomeasure) + x, item)
+
 
                 self.updateDetectionProgressBar(100)
 

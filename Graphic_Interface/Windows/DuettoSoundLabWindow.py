@@ -410,12 +410,10 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 self.widget.axesSpecgram.getHistogramWidget().item._pixelVectorCache.append(data)
 
             elif childName ==u'Spectrogram Settings.Frequency(kHz).Min':
-                self.widget.minYSpc = data
-                self.widget.refresh(dataChanged=True, updateOscillogram=False, updateSpectrogram=True)
+                 self.defaultTheme.minYSpec = data
 
             elif childName == u'Spectrogram Settings.Frequency(kHz).Max':
-                self.widget.maxYSpc = data
-                self.widget.refresh(dataChanged=True, updateOscillogram=False, updateSpectrogram=True)
+                self.defaultTheme.maxYSpec = data
 
             elif childName == u'Spectrogram Settings.FFT overlap':
                 self.widget.specgramSettings.overlap = data
@@ -457,11 +455,11 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 return
 
             elif childName == u'Oscillogram Settings.Amplitude(%).Min':
-                self.widget.minYOsc = data
-                self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
+                self.defaultTheme.minYOsc = data
+
             elif childName == u'Oscillogram Settings.Amplitude(%).Max':
-                self.widget.maxYOsc = data
-                self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)
+                self.defaultTheme.maxYOsc = data
+
             elif childName == u'Oscillogram Settings.Connect Lines':
                 self.widget.lines = data
                 self.widget.refresh(dataChanged=True, updateOscillogram=True, updateSpectrogram=False)

@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
+from PyQt4 import QtGui
 from math import log10
 from PyQt4.QtCore import pyqtSlot
 from PyQt4.QtGui import QDialog
 from Duetto_Core.Segmentation.Detectors.ElementsDetectors.OneDimensional.OneDimensionalElementsDetector import DetectionSettings, DetectionType,AutomaticThresholdType
 from Graphic_Interface.Dialogs.ui_elemDetectSettings import Ui_Dialog
-
+from pyqtgraph.parametertree import Parameter, ParameterTree
 
 class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
-    def __init__(self, parent):
+    def __init__(self, parent, paramTree):
         super(QDialog,self).__init__(parent)
         self.setupUi(self)
 
@@ -24,27 +25,29 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
                              DetectionType.Envelope_Abs_Decay_Averaged,DetectionType.Envelope_Rms]
 
         self.detectionSettings = DetectionSettings(DetectionType.Envelope_Abs_Decay_Averaged,AutomaticThresholdType.Global_MaxMean)
-        self.cmbxDetectionMethod.setCurrentIndex(7)
-
-        self.cmbxDetectionMethod.currentIndexChanged.connect(self.changeDetectionMethod)
-
         self.widget.setSelectedTool("OscilogramThreshold")
-        #spectrogram
-        self.dsbxThresholdSpec.valueChanged.connect(self.detect)
-        self.dsbxMinSizeFreq.valueChanged.connect(self.detect)
-        self.dsbxminSizeTime.valueChanged.connect(self.detect)
-        #oscillogram
-        self.dsbxThreshold.valueChanged.connect(self.detect)
-        self.dsbxThreshold.valueChanged.connect(self.updateThresholdLine)
 
-        self.cbxSpectralSubelements.stateChanged.connect(self.updateGraphsVisibility)
-        self.checboxAutomaticThreshold.stateChanged.connect(self.changeDetectionMethod)
+        self.ParamTree = paramTree
+        self.ParamTree.param(u'Temporal Detection Settings').sigTreeStateChanged.connect(self.detect)
+        self.ParamTree.param(u'Spectral Detection Settings').sigTreeStateChanged.connect(self.detect)
+        self.ParamTree.param(u'Temporal Detection Settings').param(u'Detection Method').sigTreeStateChanged.connect(self.changeDetectionMethod)
+        self.ParamTree.param(u'Temporal Detection Settings').param(u'Threshold (db)').sigTreeStateChanged.connect(self.updateThresholdLine)
+        self.ParamTree.param(u'Spectral Detection Settings').param(u'Detect Spectral Subelements').sigTreeStateChanged.connect(self.updateGraphsVisibility)
+        self.ParamTree.param(u'Temporal Detection Settings').param(u'Auto').sigTreeStateChanged.connect(self.changeDetectionMethod)
+        self.parameterTree = ParameterTree()
+        self.parameterTree.setAutoScroll(True)
+        self.parameterTree.setFixedWidth(340)
 
-        self.dsbxThreshold2.valueChanged.connect(self.detect)
-        self.dsbxDecay.valueChanged.connect(self.detect)
-        self.dsbxMinSize.valueChanged.connect(self.detect)
-        self.dsbxMergeFactor.valueChanged.connect(self.detect)
-        self.sbxSoftFactor.valueChanged.connect(self.detect)
+        self.parameterTree.setHeaderHidden(True)
+        self.parameterTree.setParameters(self.ParamTree, showTop=False)
+
+        lay1 = QtGui.QVBoxLayout()
+        lay1.setMargin(0)
+        lay1.addWidget(self.parameterTree)
+
+        self.osc_settings_contents.setLayout(lay1)
+        #self.dock_settings.setVisible(False)
+        self.dock_settings.setFixedWidth(350)
 
         self.widget.visibleSpectrogram = False
         self.widget.visibleOscilogram = True
@@ -71,22 +74,33 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         self.widget.refresh()
 
 
-    def changeDetectionMethod(self,text):
-        self.detectionSettings.detectiontype = self.detectortypeData[self.cmbxDetectionMethod.currentIndex()]
-        self.detectionSettings.automaticthresholdtype = AutomaticThresholdType.Global_MaxMean if  self.checboxAutomaticThreshold.isChecked() else AutomaticThresholdType.UserDefined
-
+    def changeDetectionMethod(self,paramTree,changes):
+        for param, change, data in changes:
+            path = self.ParamTree.childPath(param)
+            if path is not None:
+                childName = '.'.join(path)
+            else:
+                childName = param.name()
+            if childName == u'Temporal Detection Settings.Detection Method':
+                self.detectionSettings.detectiontype = self.detectortypeData[data]
+            elif childName == u'Temporal Detection Settings.Auto':
+                if data:
+                    self.detectionSettings.automaticthresholdtype = AutomaticThresholdType.Global_MaxMean
+                else:
+                    self.detectionSettings.automaticthresholdtype = AutomaticThresholdType.UserDefined
         self.detect()
 
     def updateGraphsVisibility(self):
-        self.widget.visibleSpectrogram = self.cbxSpectralSubelements.isChecked()
+        self.widget.visibleSpectrogram = self.ParamTree.param(u'Spectral Detection Settings').param(u'Detect Spectral Subelements').value()
         self.widget.refresh()
 
 
     def updateThreshold(self,line):
-        self.dsbxThreshold.setValue(self.toDB() if line.value() == 0 else self.toDB(line.value()))
+        self.ParamTree.param(u'Temporal Detection Settings').param(u'Threshold (db)').setValue(self.toDB() if line.value() == 0 else self.toDB(line.value()))
 
     def updateThresholdLine(self):
-        self.widget.axesOscilogram.threshold.setValue(round((10.0**((60+self.dsbxThreshold.value())/20.0))*(2**self.widget.signalProcessor.signal.bitDepth)/1000.0,0)
+        thresholdValue = self.ParamTree.param(u'Temporal Detection Settings').param(u'Threshold (db)').value()
+        self.widget.axesOscilogram.threshold.setValue(round((10.0**((60 + thresholdValue)/20.0))*(2**self.widget.signalProcessor.signal.bitDepth)/1000.0,0)
                                                       *self.widget.envelopeFactor-2**(self.widget.signalProcessor.signal.bitDepth-1))
 
 
@@ -130,8 +144,17 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
 
     @pyqtSlot()
     def detect(self):
-        self.widget.detectElements(threshold=abs(self.dsbxThreshold.value()),detectionsettings=self.detectionSettings, decay=self.dsbxDecay.value(), minSize= self.dsbxMinSize.value(), softfactor=self.sbxSoftFactor.value(), merge_factor=self.dsbxMergeFactor.value(),threshold2=abs(self.dsbxThreshold2.value())
-        ,threshold_spectral=self.dsbxThresholdSpec.value(), minsize_spectral=(self.dsbxMinSizeFreq.value(),self.dsbxminSizeTime.value()),findSpectralSublements = self.cbxSpectralSubelements.isChecked())
+        self.widget.detectElements(threshold= self.ParamTree.param(u'Temporal Detection Settings').param(u'Threshold (db)').value(),
+                                   detectionsettings=self.detectionSettings,
+                                   decay=self.ParamTree.param(u'Temporal Detection Settings').param(u'Decay (ms)').value(),
+                                   minSize= self.ParamTree.param(u'Temporal Detection Settings').param(u'Min Size (ms)').value(),
+                                   softfactor = self.ParamTree.param(u'Temporal Detection Settings').param(u'Soft Factor').value(),
+                                   merge_factor = self.ParamTree.param(u'Temporal Detection Settings').param(u'Merge Factor (%)').value(),
+                                   threshold2 = self.ParamTree.param(u'Temporal Detection Settings').param(u'Threshold 2(db)').value(),
+                                   threshold_spectral = self.ParamTree.param(u'Spectral Detection Settings').param(u'Threshold (%)').value(),
+                                   minsize_spectral=(self.ParamTree.param(u'Spectral Detection Settings').param(u'Minimum size').param(u'Frequency (kHz)').value(),
+                                                     self.ParamTree.param(u'Spectral Detection Settings').param(u'Minimum size').param(u'Time (ms)').value()),
+                                   findSpectralSublements = self.ParamTree.param(u'Spectral Detection Settings').param(u'Detect Spectral Subelements').value())
         self.widget.refresh()
 
 
