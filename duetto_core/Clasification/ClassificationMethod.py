@@ -20,3 +20,4 @@ class ClassificationMethod:
     def addTrainingVector(self,vector):
         pass
 
+
