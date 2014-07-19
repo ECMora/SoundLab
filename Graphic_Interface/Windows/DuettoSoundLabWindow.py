@@ -19,6 +19,7 @@ from MainWindow import Ui_DuettoMainWindow
 from Graphic_Interface.Dialogs import InsertSilenceDialog as sdialog, FilterOptionsDialog as filterdg, ChangeVolumeDialog as cvdialog
 from WorkTheme import SerializedData
 from Graphic_Interface.Widgets.Tools import Tools
+from Duetto_Core.Clasification.ClassificationData import ClassificationData
 
 
 MIN_SAMPLING_RATE = 1000
@@ -153,12 +154,18 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.hist.item.gradient.restoreState(self.defaultTheme.colorBarState)
         self.hist.item.region.setRegion(self.defaultTheme.histRange)
         self.hist.item.region.sigRegionChanged.connect(self.updateRegionTheme)
+        #the next line is a PARCHE for the error of deselect zoom region when the region changes
+        self.hist.item.region.sigRegionChanged.connect(self.widget.clearZoomCursor)
+
 
         action = self.hist.item.gradient.hsvAction
         action.triggered.disconnect()
         action.triggered.connect(self.widget.SaveColorBar)
         action.setCheckable(False)
         action.setText("Save")
+
+        #classifPath = os.path.join(os.path.join("Utils","Classification"),"RedBlackTheme.dth")
+        self.classificationData = self.DeserializeClassificationData()
 
         lay1.addWidget(self.hist)
         self.osc_settings_contents.setLayout(lay1)
@@ -279,6 +286,19 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             return data
         return SerializedData()
 
+    def SerializeClassificationData(self,filename=""):
+        if filename and os.path.exists(filename):
+            file = open(filename,'wb')
+            pickle.dump(self.classificationData,file)
+            file.close()
+
+    def DeserializeClassificationData(self,filename=""):
+        if filename and os.path.exists(filename):
+            file = open(filename,'rb')
+            data = pickle.load(file)
+            file.close()
+            return data
+        return ClassificationData()
 
     @pyqtSlot()
     def on_actionChangePlayStatus_triggered(self):
@@ -482,6 +502,12 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             #print('  data:      %s' % str(data))
             #print('  ----------')
 
+    def __updateClassificationData(self,classificationData):
+        if isinstance(classificationData,ClassificationData):
+            self.classificationData = classificationData
+            print("emit")
+
+
     @pyqtSlot()
     def on_actionSegmentation_And_Clasification_triggered(self):
         self.defaultTheme.centerColor = self.ParamTree.param(u'Detection Visual Settings').param(u'Measurement Location').param(u'Center').value()
@@ -495,7 +521,8 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         if t > f:
             signal.data = self.widget.signalProcessor.signal.data[f:t]
 
-        segWindow = SegmentationAndClasificationWindow(parent=self, signal=signal)
+        segWindow = SegmentationAndClasificationWindow(parent=self, signal=signal,classifcationSettings=self.classificationData)
+        segWindow.classificationDataChanged.connect(self.__updateClassificationData)
         if not segWindow.rejectSignal:
             segWindow.widget.maxYOsc = self.ParamTree.param(u'Oscillogram Settings').param(u'Amplitude(%)').param(u'Max').value()
             segWindow.widget.minYOsc = self.ParamTree.param(u'Oscillogram Settings').param(u'Amplitude(%)').param(u'Min').value()
@@ -785,6 +812,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.close()
 
     def closeEvent(self,event):
+        self.SerializeClassificationData(os.path.join(os.path.join("Utils","Classification"),"classifSettings"))
         self._save(event)
         self.close()
 

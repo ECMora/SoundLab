@@ -275,9 +275,11 @@ padding:1%;</string>
    <addaction name="actionOscilogram"/>
    <addaction name="actionSpectogram"/>
    <addaction name="separator"/>
+   <addaction name="actionDetection"/>
    <addaction name="actionTwo_Dimensional_Graphs"/>
    <addaction name="actionDelete_Selected_Elements"/>
    <addaction name="actionDeselect_Elements"/>
+   <addaction name="separator"/>
    <addaction name="actionSignalName"/>
   </widget>
   <widget class="QDockWidget" name="dockWidgetParameterTableOscilogram">
@@ -337,7 +339,6 @@ padding:1%;</string>
     <property name="title">
      <string>Detection</string>
     </property>
-    <addaction name="actionDetection"/>
     <addaction name="actionDelete_Selected_Elements"/>
     <addaction name="actionDeselect_Elements"/>
     <addaction name="actionMeditions"/>
@@ -366,7 +367,6 @@ padding:1%;</string>
     <property name="title">
      <string>Classification</string>
     </property>
-    <addaction name="actionTraining_Mode"/>
     <addaction name="actionClassification_Settings"/>
    </widget>
    <addaction name="menuTools"/>
