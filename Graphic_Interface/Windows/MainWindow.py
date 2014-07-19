@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Sound Lab\DuettoSystem\Graphic_Interface\UI Files\MainWindow.ui'
 #
-# Created: Mon Jun 30 22:04:24 2014
+# Created: Sat Jul 19 20:47:47 2014
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -90,7 +90,7 @@ class Ui_DuettoMainWindow(object):
         self.dock_settings.setMinimumSize(QtCore.QSize(250, 40))
         self.dock_settings.setMaximumSize(QtCore.QSize(250, 524287))
         self.dock_settings.setStyleSheet(_fromUtf8("background-color: rgb(255, 255, 255);"))
-        self.dock_settings.setFloating(True)
+        self.dock_settings.setFloating(False)
         self.dock_settings.setFeatures(QtGui.QDockWidget.AllDockWidgetFeatures)
         self.dock_settings.setObjectName(_fromUtf8("dock_settings"))
         self.osc_settings_contents = QtGui.QWidget()
@@ -423,8 +423,8 @@ class Ui_DuettoMainWindow(object):
         self.toolBar.addAction(self.actionSettings)
         self.toolBar.addAction(self.actionSegmentation_And_Clasification)
         self.toolBar.addAction(self.actionFile_Up)
-        self.toolBar.addAction(self.actionSignalName)
         self.toolBar.addAction(self.actionFile_Down)
+        self.toolBar.addAction(self.actionSignalName)
 
         self.retranslateUi(DuettoMainWindow)
         QtCore.QMetaObject.connectSlotsByName(DuettoMainWindow)

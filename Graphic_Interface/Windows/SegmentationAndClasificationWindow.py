@@ -1,15 +1,18 @@
 # -*- coding: utf-8 -*-
 from math import log10
 import os.path
-from PyQt4.QtCore import pyqtSlot, Qt
+
+from PyQt4.QtCore import pyqtSignal,pyqtSlot, Qt
 import PyQt4.QtCore as QtCore
 from PyQt4 import QtGui
 from matplotlib import mlab
 import xlwt
 import numpy as np
-from PyQt4.QtGui import QFileDialog, QAbstractItemView
+from PyQt4.QtGui import QFileDialog, QAbstractItemView,QDialog, QWidget
+from pyqtgraph.parametertree import Parameter
 from Duetto_Core.AudioSignals.AudioSignal import AudioSignal
 from Duetto_Core.AudioSignals.WavFileSignal import WavFileSignal
+from Duetto_Core.Clasification.ClassificationData import ClassificationData
 from Duetto_Core.Segmentation.Detectors.ElementsDetectors.OneDimensional.OneDimensionalElementsDetector import DetectionType, AutomaticThresholdType, DetectionSettings
 from Duetto_Core.Segmentation.Detectors.ElementsDetectors.OneDimensional import OneDimensionalElementsDetector
 from Duetto_Core.Segmentation.Elements.Element import Element
@@ -20,13 +23,16 @@ from ..Dialogs.elemDetectSettings import ElemDetectSettingsDialog
 from Graphic_Interface.Widgets.Tools import Tools
 from Graphic_Interface.Windows.TwoDimensionalAnalisysWindow import TwoDimensionalAnalisysWindow
 from SegmentationAndClasificationWindowUI import Ui_MainWindow
-from pyqtgraph.parametertree import Parameter, ParameterTree
+import Graphic_Interface.Dialogs.EditCategoriesDialogUI as editCateg
+from Graphic_Interface.Dialogs.EditCategoriesDialog import EditCategoriesDialog
+from Graphic_Interface.Widgets.EditCategoriesWidget import EditCategoriesWidget
 
 
 
 class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
+    classificationDataChanged = pyqtSignal(object)
 
-    def __init__(self, parent=None,signal=None):
+    def __init__(self, parent=None,signal=None,classifcationSettings=None):
         super(QtGui.QMainWindow, self).__init__(parent)
         self.setupUi(self)
         if not signal:
@@ -40,6 +46,9 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         assert isinstance(signal, AudioSignal)
         self.widget.signalProcessor.signal = signal
+
+        self.classificationData = classifcationSettings if classifcationSettings is not None else ClassificationData()
+
         if parent is not None:
             self.widget.specgramSettings.NFFT = parent.widget.specgramSettings.NFFT
             self.widget.specgramSettings.overlap = parent.widget.specgramSettings.overlap
@@ -210,7 +219,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
             QtGui.QMessageBox.warning(QtGui.QMessageBox(), "Error", "There is not parameters measurement.\n The two dimensional analisys requires at least one parameter measured.")
             return
 
-        wnd = TwoDimensionalAnalisysWindow(self, columns=self.columnNames,data=self.measuredParameters)
+        wnd = TwoDimensionalAnalisysWindow(self, columns=self.columnNames,data=self.measuredParameters,classificationData=self.classificationData)
         wnd.elementSelected.connect(self.elementSelectedInTable)
         if self.theme:
             wnd.load_Theme(self.theme)
@@ -219,7 +228,11 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
             wnd.selectElement(self.twodimensionalGraphs[0].previousSelectedElement)
 
         self.twodimensionalGraphs.append(wnd)
+        wnd.elementsClasification.connect(self.elementsClasification)
 
+    def elementsClasification(self,indexes_list,dictionary):
+        print(indexes_list)
+        print(dictionary)
 
     #endregion
 
@@ -752,6 +765,46 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
 
             self.windowProgressDetection.hide()
 
+    @pyqtSlot()
+    def on_actionClassification_Settings_triggered(self):
+        editCategDialog = editCateg.Ui_Dialog()
+        editCategDialogWindow = EditCategoriesDialog(self)
+        editCategDialog.setupUi(editCategDialogWindow)
+        widget = QWidget()
+        self.clasiffCategories_vlayout = QtGui.QVBoxLayout()
+
+        for k in self.classificationData.categories.keys():
+            a = EditCategoriesWidget(self, k, self.classificationData.categories[k])
+            a.setStyleSheet("background-color:#EEF")
+            self.clasiffCategories_vlayout.addWidget(a)
+
+        editCategDialog.bttnAddCategory.clicked.connect(self.addCategory)
+        widget.setLayout(self.clasiffCategories_vlayout)
+        editCategDialog.listWidget.setWidget(widget)
+        editCategDialogWindow.exec_()
+
+    def addCategory(self):
+        dialog = QtGui.QDialog(self)
+        dialog.setWindowTitle("Create New Category")
+        layout = QtGui.QVBoxLayout()
+        layout.addWidget(QtGui.QLabel("Insert the name of the new Category"))
+        text = QtGui.QLineEdit()
+        layout.addWidget(text)
+        butts = QtGui.QDialogButtonBox()
+
+        butts.addButton(QtGui.QDialogButtonBox.Ok)
+        butts.addButton(QtGui.QDialogButtonBox.Cancel)
+        QtCore.QObject.connect(butts, QtCore.SIGNAL("accepted()"), dialog.accept)
+        QtCore.QObject.connect(butts, QtCore.SIGNAL("rejected()"), dialog.reject)
+
+        layout.addWidget(butts)
+        dialog.setLayout(layout)
+        if dialog.exec_():
+            category = text.text()
+            if self.clasiffCategories_vlayout:
+                self.classificationData.addCategory(category)
+                self.clasiffCategories_vlayout.addWidget(EditCategoriesWidget(self, category,self.classificationData.categories[category]))
+
     #endregion
 
     #region Zoom
@@ -871,5 +924,8 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
     def on_actionDeselect_Elements_triggered(self):
         self.widget.selectElement() # select the element
         self.widget.clearZoomCursor()
+
+        for wnd in self.twodimensionalGraphs:
+            wnd.deselectElement()
 
 

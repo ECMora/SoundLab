@@ -246,7 +246,7 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
     <string notr="true">background-color: rgb(255, 255, 255);</string>
    </property>
    <property name="floating">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="features">
     <set>QDockWidget::AllDockWidgetFeatures</set>
@@ -305,8 +305,8 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
    <addaction name="actionSettings"/>
    <addaction name="actionSegmentation_And_Clasification"/>
    <addaction name="actionFile_Up"/>
-   <addaction name="actionSignalName"/>
    <addaction name="actionFile_Down"/>
+   <addaction name="actionSignalName"/>
   </widget>
   <action name="actionOpen">
    <property name="icon">
