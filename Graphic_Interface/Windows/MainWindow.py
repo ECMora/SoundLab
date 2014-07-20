@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Sound Lab\DuettoSystem\Graphic_Interface\UI Files\MainWindow.ui'
 #
-# Created: Sat Jul 19 20:47:47 2014
+# Created: Sun Jul 20 11:00:40 2014
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -18,7 +18,7 @@ class Ui_DuettoMainWindow(object):
     def setupUi(self, DuettoMainWindow):
         DuettoMainWindow.setObjectName(_fromUtf8("DuettoMainWindow"))
         DuettoMainWindow.setWindowModality(QtCore.Qt.ApplicationModal)
-        DuettoMainWindow.resize(932, 600)
+        DuettoMainWindow.resize(936, 593)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -46,7 +46,7 @@ class Ui_DuettoMainWindow(object):
         self.verticalLayout_2.addWidget(self.horizontalScrollBar)
         DuettoMainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(DuettoMainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 932, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 936, 21))
         self.menubar.setAutoFillBackground(False)
         self.menubar.setStyleSheet(_fromUtf8(""))
         self.menubar.setObjectName(_fromUtf8("menubar"))
@@ -79,6 +79,7 @@ class Ui_DuettoMainWindow(object):
         self.menuPlay_Speed.setObjectName(_fromUtf8("menuPlay_Speed"))
         DuettoMainWindow.setMenuBar(self.menubar)
         self.statusbar = QtGui.QStatusBar(DuettoMainWindow)
+        self.statusbar.setStyleSheet(_fromUtf8("background-color: rgb(255, 255, 255);"))
         self.statusbar.setObjectName(_fromUtf8("statusbar"))
         DuettoMainWindow.setStatusBar(self.statusbar)
         self.dock_settings = QtGui.QDockWidget(DuettoMainWindow)
@@ -259,12 +260,12 @@ class Ui_DuettoMainWindow(object):
         self.actionFull_Screen.setObjectName(_fromUtf8("actionFull_Screen"))
         self.actionFile_Up = QtGui.QAction(DuettoMainWindow)
         icon24 = QtGui.QIcon()
-        icon24.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/downfile.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon24.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/upfile.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionFile_Up.setIcon(icon24)
         self.actionFile_Up.setObjectName(_fromUtf8("actionFile_Up"))
         self.actionFile_Down = QtGui.QAction(DuettoMainWindow)
         icon25 = QtGui.QIcon()
-        icon25.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/upfile.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon25.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/downfile.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionFile_Down.setIcon(icon25)
         self.actionFile_Down.setObjectName(_fromUtf8("actionFile_Down"))
         self.actionOsc_Image = QtGui.QAction(DuettoMainWindow)

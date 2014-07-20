@@ -35,4 +35,5 @@
     <file>zoomin_26x26.png</file>
     <file>zoomout_26x26.png</file>
   </qresource>
+  <qresource prefix="GraphicInterface\Windows"/>
 </RCC>

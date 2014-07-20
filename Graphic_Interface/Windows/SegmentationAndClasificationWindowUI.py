@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Sound Lab\DuettoSystem\Graphic_Interface\UI Files\SegmentationAndClasificationWindowUI.ui'
 #
-# Created: Fri Jul 18 10:18:26 2014
+# Created: Sun Jul 20 11:43:41 2014
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -137,7 +137,7 @@ class Ui_MainWindow(object):
         self.dockWidgetContents.setObjectName(_fromUtf8("dockWidgetContents"))
         self.verticalLayout_3 = QtGui.QVBoxLayout(self.dockWidgetContents)
         self.verticalLayout_3.setObjectName(_fromUtf8("verticalLayout_3"))
-        self.tableParameterOscilogram = QtGui.QTableWidget(self.dockWidgetContents)
+        self.tableParameterOscilogram = TableWidget(self.dockWidgetContents)
         self.tableParameterOscilogram.setObjectName(_fromUtf8("tableParameterOscilogram"))
         self.tableParameterOscilogram.setColumnCount(0)
         self.tableParameterOscilogram.setRowCount(0)
@@ -468,5 +468,6 @@ class Ui_MainWindow(object):
         self.actionClassification_Settings.setText(QtGui.QApplication.translate("MainWindow", "Settings", None, QtGui.QApplication.UnicodeUTF8))
         self.actionMethod.setText(QtGui.QApplication.translate("MainWindow", "Method", None, QtGui.QApplication.UnicodeUTF8))
 
+from pyqtgraph import TableWidget
 from Graphic_Interface.Widgets.QSignalDetectorWidget import QSignalDetectorWidget
 import icons_rc

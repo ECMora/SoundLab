@@ -198,11 +198,11 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow,Ui_TwoDimensionalWindow):
         editCategDialog.setupUi(editCategDialogWindow)
         widget = QWidget()
         self.clasiffCategories_vlayout = QtGui.QVBoxLayout()
-        selection_widgets = []
+        self.selection_widgets = []
         for k in self.classificationData.categories.keys():
-            a = EditCategoriesWidget(self, k, self.classificationData.categories[k],selectionOnly=True)
-            a.setStyleSheet("background-color:#EEF")
-            selection_widgets.append(a)
+            a = EditCategoriesWidget(self, k, self.classificationData,selectionOnly=True)
+            # a.setStyleSheet("background-color:#EEF")
+            self.selection_widgets.append(a)
             self.clasiffCategories_vlayout.addWidget(a)
 
         editCategDialog.bttnAddCategory.clicked.connect(self.addCategory)
@@ -211,7 +211,7 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow,Ui_TwoDimensionalWindow):
         editCategDialog.listWidget.setWidget(widget)
         editCategDialogWindow.exec_()
         d = dict([(x.categoryName,self.classificationData.categories[x.categoryName][x.comboCategories.currentIndex()])\
-                  for x in selection_widgets])
+                  for x in self.selection_widgets if x.comboCategories.count()>0])
         self.elementsClasification.emit(selected_elements,d)
 
     def addCategory(self):
@@ -231,10 +231,14 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow,Ui_TwoDimensionalWindow):
         layout.addWidget(butts)
         dialog.setLayout(layout)
         if dialog.exec_():
-            category = text.text()
-            if self.clasiffCategories_vlayout:
-                self.classificationData.addCategory(category)
-                self.clasiffCategories_vlayout.addWidget(EditCategoriesWidget(self, category,[]))
+            category = str(text.text())
+            if category == "":
+                QtGui.QMessageBox.warning(QtGui.QMessageBox(), "Error", "Invalid Category Name.")
+                return
+            if self.clasiffCategories_vlayout and self.classificationData.addCategory(category):
+                w = EditCategoriesWidget(self, category,self.classificationData)
+                self.selection_widgets.append(w)
+                self.clasiffCategories_vlayout.addWidget(w)
             
 
 
