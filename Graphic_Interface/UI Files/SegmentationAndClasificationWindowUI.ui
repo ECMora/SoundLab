@@ -295,7 +295,7 @@ padding:1%;</string>
    <widget class="QWidget" name="dockWidgetContents">
     <layout class="QVBoxLayout" name="verticalLayout_3">
      <item>
-      <widget class="QTableWidget" name="tableParameterOscilogram">
+      <widget class="TableWidget" name="tableParameterOscilogram">
        <property name="toolTip">
         <string>Oscilogram elements  meditions</string>
        </property>
@@ -783,6 +783,11 @@ padding:1%;</string>
    <extends>QWidget</extends>
    <header>Graphic_Interface.Widgets.QSignalDetectorWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>TableWidget</class>
+   <extends>QTableWidget</extends>
+   <header>pyqtgraph.h</header>
   </customwidget>
  </customwidgets>
  <resources>

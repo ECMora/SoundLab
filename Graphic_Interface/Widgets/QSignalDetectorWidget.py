@@ -220,7 +220,8 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         sorted_arr = np.array([x.indexFrom for x in self.Elements])
 
         indexFrom,indexTo = np.searchsorted(sorted_arr,start),np.searchsorted(sorted_arr,end) - 1
-        indexFrom -= 1 if end <= self.Elements[indexFrom].indexTo else 0
+        print(self.Elements[indexFrom].indexFrom,self.Elements[indexFrom].indexTo,start,end)
+        indexFrom -= 1 if indexFrom > 0 and end >= self.Elements[indexFrom-1].indexTo else 0
 
         if indexFrom < 0 or indexTo < indexFrom or indexTo >= len(self.Elements):
             return None
