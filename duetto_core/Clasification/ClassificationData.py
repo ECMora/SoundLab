@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 #Classification Methods based on a set of previously classified elements
-#stored as {'data':numpy array,''}
+#stored as {'data':numpy array}
 from PyQt4.QtCore import pyqtSignal,QObject
 
 
@@ -8,7 +8,6 @@ class ClassificationData(QObject):
     categoryAdded = pyqtSignal(str)    #category that was added
     valueAdded = pyqtSignal(str, str)   #New category,value
     valueRemoved = pyqtSignal(str, str) #category,value that was removed
-
 
     def __init__(self,trainingData = None,categories=None):
         """
@@ -19,8 +18,7 @@ class ClassificationData(QObject):
         """
         QObject.__init__(self)
         trainingData = [] if trainingData is None else trainingData
-        default = {"Specie":["Cartacuba","Sinsonte"]
-                   }
+        default = {"Specie":["Cartacuba"],"Taxa":["Birds"]}
         categories =  default if categories is None else categories
         if any([not isinstance(x,ClassificationVector) for x in trainingData]) or\
            categories is None or not isinstance(categories, dict):
@@ -39,7 +37,7 @@ class ClassificationData(QObject):
 
     def addValue(self,category,value):
         if category not in self.categories:
-            self.categories[category] = []
+            self.categories[category] = [value]
 
         if not value in self.categories[category]:
             self.categories[category].append(value)

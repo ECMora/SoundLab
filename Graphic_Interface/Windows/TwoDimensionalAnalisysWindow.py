@@ -11,11 +11,14 @@ from Graphic_Interface.Windows.Two_Dimensional_AnalisysWindowUI import Ui_TwoDim
 from PyQt4 import QtGui, QtCore
 
 
-class TwoDimensionalAnalisysWindow(QtGui.QMainWindow,Ui_TwoDimensionalWindow):
-    elementSelected = QtCore.Signal(int)  #selected element index
-    elementsClasification = QtCore.Signal(list,dict) #indexes of clasified elements dict of Category,value
+class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
+    elementSelected = QtCore.Signal(int)
+    #selected element index
 
-    def __init__(self,parent=None,columns=None, data=None,classificationData = None):
+    elementsClasification = QtCore.Signal(list,dict)
+    #indexes of clasified elements dict of Category,value
+
+    def __init__(self,parent=None,columns=None, data=None, classificationData=None):
         super(TwoDimensionalAnalisysWindow, self).__init__(parent)
         self.setupUi(self)
 
@@ -38,7 +41,7 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow,Ui_TwoDimensionalWindow):
         self.previousSelectedElement = -1
         self.columns = columns if columns is not None else []
         #the numpy [,] array with the parameter measurement
-        self.data = data if data is not None else numpy.zeros(4).reshape((2,2))
+        self.data = data if data is not None else numpy.zeros(4).reshape((2, 2))
         self.widget.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
         self.widget.addAction(self.actionHide_Show_Settings)
         self.widget.addAction(self.actionSaveGraphImage)

@@ -119,7 +119,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
              {u'name': u'Plot color',u'type': u'color',u'value':self.defaultTheme.pow_Plot, 'default': self.defaultTheme.pow_Plot},
         ]},
         {u'name': u'Themes', u'type': u'group', u'children': [
-         {u'name': u'Theme Selected', u'type': u'list', u'value':u"" if len(themesInFolder) == 0 else themesInFolder[0][themesInFolder[0].rfind(os.path.sep)+1:themesInFolder[0].rfind(".dth")],\
+        {u'name': u'Theme Selected', u'type': u'list', u'value':u"" if len(themesInFolder) == 0 else themesInFolder[0][themesInFolder[0].rfind(os.path.sep)+1:themesInFolder[0].rfind(".dth")],\
           u'default':u"" if len(themesInFolder) == 0 else themesInFolder[0],u'values': [(x[x.rfind(os.path.sep)+1:x.rfind(".dth")], x) for x in themesInFolder]},
         ]
         } ,
@@ -163,8 +163,8 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         action.triggered.connect(self.widget.SaveColorBar)
         action.setCheckable(False)
         action.setText("Save")
-
-        #classifPath = os.path.join(os.path.join("Utils","Classification"),"RedBlackTheme.dth")
+        #
+        # # classifPath = os.path.join(os.path.join("Utils","Classification"),"classifSettings")
         self.classificationData = self.DeserializeClassificationData()
 
         lay1.addWidget(self.hist)
@@ -244,7 +244,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.widget.specgramSettings.NFFT = self.ParamTree.param(u'Spectrogram Settings').param(u'FFT size').value()
         self.widget.specgramSettings.overlap = self.ParamTree.param(u'Spectrogram Settings').param(u'FFT overlap').value()
         p = os.path.join(os.path.join(u"Utils",u"Didactic Signals"),u"duetto.wav")
-       
+
         if os.path.exists(p):
             self.widget.open(p)
             self.actionSignalName.setText(u"File Name: "+ self.widget.signalName())
@@ -502,10 +502,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             #print('  data:      %s' % str(data))
             #print('  ----------')
 
-    def __updateClassificationData(self,classificationData):
-        if isinstance(classificationData,ClassificationData):
-            self.classificationData = classificationData
-            print("emit")
 
 
     @pyqtSlot()
@@ -522,7 +518,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             signal.data = self.widget.signalProcessor.signal.data[f:t]
 
         segWindow = SegmentationAndClasificationWindow(parent=self, signal=signal,classifcationSettings=self.classificationData)
-        segWindow.classificationDataChanged.connect(self.__updateClassificationData)
         if not segWindow.rejectSignal:
             segWindow.widget.maxYOsc = self.ParamTree.param(u'Oscillogram Settings').param(u'Amplitude(%)').param(u'Max').value()
             segWindow.widget.minYOsc = self.ParamTree.param(u'Oscillogram Settings').param(u'Amplitude(%)').param(u'Min').value()
@@ -812,7 +807,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.close()
 
     def closeEvent(self,event):
-        self.SerializeClassificationData(os.path.join(os.path.join("Utils","Classification"),"classifSettings"))
+        # self.SerializeClassificationData(os.path.join(os.path.join("Utils","Classification"),"classifSettings"))
         self._save(event)
         self.close()
 
