@@ -11,7 +11,7 @@ from PyQt4.QtGui import QFileDialog, QAbstractItemView
 from Duetto_Core.AudioSignals.AudioSignal import AudioSignal
 from Duetto_Core.AudioSignals.WavFileSignal import WavFileSignal
 from Duetto_Core.Segmentation.Detectors.ElementsDetectors.OneDimensional.OneDimensionalElementsDetector import DetectionType, AutomaticThresholdType, DetectionSettings
-from Duetto_Core.Segmentation.Detectors.ElementsDetectors.OneDimensional import OneDimensionalElementsDetector
+from Duetto_Core.Segmentation.Detectors.ElementsDetectors.OneDimensional.OneDimensionalElementsDetector import OneDimensionalElementsDetector
 from Duetto_Core.Segmentation.Elements.Element import Element
 from Duetto_Core.SignalProcessors.SignalProcessor import SignalProcessor
 from Duetto_Core.SpecgramSettings import SpecgramSettings
