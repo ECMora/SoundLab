@@ -14,7 +14,7 @@ from Duetto_Core.AudioSignals.AudioSignal import AudioSignal
 from Duetto_Core.AudioSignals.WavFileSignal import WavFileSignal
 from Duetto_Core.Clasification.ClassificationData import ClassificationData
 from Duetto_Core.Segmentation.Detectors.ElementsDetectors.OneDimensional.OneDimensionalElementsDetector import DetectionType, AutomaticThresholdType, DetectionSettings
-from Duetto_Core.Segmentation.Detectors.ElementsDetectors.OneDimensional import OneDimensionalElementsDetector
+from Duetto_Core.Segmentation.Detectors.ElementsDetectors.OneDimensional.OneDimensionalElementsDetector import OneDimensionalElementsDetector
 from Duetto_Core.Segmentation.Elements.Element import Element
 from Duetto_Core.SignalProcessors.SignalProcessor import SignalProcessor
 from Duetto_Core.SpecgramSettings import SpecgramSettings
@@ -28,9 +28,7 @@ from Graphic_Interface.Dialogs.EditCategoriesDialog import EditCategoriesDialog
 from Graphic_Interface.Widgets.EditCategoriesWidget import EditCategoriesWidget
 
 
-
 class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
-    classificationDataChanged = pyqtSignal(object)
 
     def __init__(self, parent=None,signal=None,classifcationSettings=None):
         super(QtGui.QMainWindow, self).__init__(parent)
@@ -46,13 +44,6 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         assert isinstance(signal, AudioSignal)
         self.widget.signalProcessor.signal = signal
-
-        self.classificationData = classifcationSettings if classifcationSettings is not None else ClassificationData()
-        self.classificationData.valueAdded.connect(self.classificationCategoryValueAdded)
-        self.classificationData.valueRemoved.connect(self.classificationCategoryValueRemove)
-        self.classificationData.categoryAdded.connect(self.classificationCategoryAdded)
-
-
 
         if parent is not None:
             self.widget.specgramSettings.NFFT = parent.widget.specgramSettings.NFFT
@@ -124,6 +115,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
             {u'name': u'Quartile 75', u'type': u'bool',u'default': False, u'value': False}]}
         ]
 
+        #region Time And Spectral Medition Parameters
         self.timeMeditions = [
             ["Start(s)", True, lambda x,d: x.startTime()],
             ["End(s)", True, lambda x,d: x.endTime()],
@@ -177,6 +169,8 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                     children.append({u'name': x[0], u'type': u'group', u'children': temp})
             params.append({u'name': name, u'type': u'group', u'children': children})
 
+        #endregion
+
         self.ParamTree = Parameter.create(name=u'params', type=u'group', children=params)
 
         #the spectral parameters that changes in function of the location measurements
@@ -209,6 +203,12 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
 
 
         self.measuredParameters = np.array([[], []]) # stores the measured parameters of the sdetected elements
+
+        self.classificationData = classifcationSettings if classifcationSettings is not None else ClassificationData()
+        self.classificationData.valueAdded.connect(self.classificationCategoryValueAdded)
+        self.classificationData.valueRemoved.connect(self.classificationCategoryValueRemove)
+        self.classificationData.categoryAdded.connect(self.classificationCategoryAdded)
+
         #stores the clasification data that are present in the table of meditions
         #has the form of a list with [["category name","category value"]] for each element
         # example with 2 elements and 2 categories
@@ -495,7 +495,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
             fname = unicode(QFileDialog.getSaveFileName(self,"Save meditions as excel file",self.widget.signalName()+".xls","*.xls"))
         if fname:
             wb = xlwt.Workbook()
-            a =  "Elements Meditions"
+            a = "Elements Meditions"
             ws = wb.add_sheet(a)
             self.writedata(ws,table)
             #add spectral meditions
@@ -571,24 +571,36 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                                            findSpectralSublements=False)
 
                     paramsTomeasure = self.getParameters()
-
-
                     table.setRowCount(detector.elementCount())
 
-                    table.setColumnCount(len(paramsTomeasure))
+                    validcategories = [k for k in self.classificationData.categories.keys() if len(self.classificationData.getvalues(k)) > 0]
+                    self.elementsClasificationTableData = [[[k, "No Identified"] for k in validcategories] for _ in range(table.rowCount())]
+
+
+                    table.setColumnCount(len(paramsTomeasure)+len(validcategories))
                     self.columnNames = [label[0] for label in paramsTomeasure]
 
 
-                    table.setHorizontalHeaderLabels(self.columnNames)
+                    table.setHorizontalHeaderLabels(self.columnNames+validcategories)
                     self.tableParameterOscilogram.resizeColumnsToContents()
 
                     self.listwidgetProgress.addItem("Save data of " +signalProcessor.signal.name)
 
-                    for i,element in enumerate(detector.elements()):
+                    for i,element in enumerate(detector.elements):
                         for j,prop in enumerate(paramsTomeasure):
                             item = QtGui.QTableWidgetItem(str(prop[1](element,prop[2])))
                             item.setBackgroundColor(self.parameterTable_rowcolor_odd if i%2==0 else self.parameterTable_rowcolor_even)
                             table.setItem(i, j, item)
+
+                        for c in range(len(validcategories)):
+                            try:
+                                val = self.elementsClasificationTableData[i][c][1]
+                                item = QtGui.QTableWidgetItem(unicode(val))
+                                item.setBackgroundColor(self.parameterTable_rowcolor_odd if i%2==0 else self.parameterTable_rowcolor_even)
+                            except Exception as e:
+                                item = QtGui.QTableWidgetItem("Error"+e.message)
+                            self.tableParameterOscilogram.setItem(i, c+len(paramsTomeasure), item)
+
                     if singlefile:
                         ws = wb.add_sheet(signalProcessor.signal.name)
                         self.writedata(ws,table)
@@ -597,8 +609,8 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                     self.listwidgetProgress.addItem(signalProcessor.signal.name+" has been processed")
                     self.listwidgetProgress.update()
                     processed += 1
-                except:
-                    self.listwidgetProgress.addItem("Some problem found while processing ")
+                except Exception as e:
+                    self.listwidgetProgress.addItem("Some problem found while processing "+e.message)
                 self.progressBarProcesed.setValue(round(100.0*(processed)/len(sounds)))
                 self.progressBarProcesed.update()
                 #valorar si ya existe el fichero reescribirlo o guardalo con otro nombre
@@ -651,11 +663,13 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         stylebody = xlwt.easyxf('font: name Times New Roman, color-index black, height 220', num_format_str='#,##0.00')
         stylecopyrigth = xlwt.easyxf('font: name Arial, color-index pale_blue, height 250, italic on', num_format_str='#,##0.00')
 
-        for index,header in enumerate(self.columnNames):
+        headers = [str(tableParameter.takeHorizontalHeaderItem(pos).text()) for pos in range(tableParameter.columnCount())]
+        for index,header in enumerate(headers):
             ws.write(0, index, header,styleheader)
         for i in range(1,tableParameter.model().rowCount()+1):
             for j in range(tableParameter.model().columnCount()):
-                ws.write(i, j, str(tableParameter.item(i-1, j).data(Qt.DisplayRole).toString()),stylebody)
+                if tableParameter.item(i-1, j):
+                    ws.write(i, j, str(tableParameter.item(i-1, j).data(Qt.DisplayRole).toString()),stylebody)
         ws.write(tableParameter.model().rowCount()+3,0,"Duetto Sound Lab Oscilogram Meditions",stylecopyrigth)
 
     #endregion
@@ -832,19 +846,20 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     def classificationCategoryValueRemove(self,category, value):
         # print("In Category "+category+" was removed the value: " + value)
-        for i,elem in enumerate(self.elementsClasificationTableData):
-                for j,l in enumerate(elem):
+        for i, elem in enumerate(self.elementsClasificationTableData):
+                for j, l in enumerate(elem):
                     if l[0] == category and l[1] == value:
                         self.elementsClasificationTableData[i][j][1] = "No Identified"
                         item = QtGui.QTableWidgetItem(unicode(self.elementsClasificationTableData[i][j][1]))
                         item.setBackgroundColor(self.parameterTable_rowcolor_odd if i%2==0 else self.parameterTable_rowcolor_even)
                         self.tableParameterOscilogram.setItem(i,len(self.measuredParameters[i])+j,item)
-                        self.tableParameterOscilogram.update()
+
+        self.tableParameterOscilogram.update()
 
     def classificationCategoryAdded(self,category):
         for i,elem in enumerate(self.elementsClasificationTableData):
-            self.elementsClasificationTableData[i].append([category,"No Identified"])
-
+            self.elementsClasificationTableData[i].append([str(category),"No Identified"])
+        print(self.elementsClasificationTableData)
         if self.tableParameterOscilogram.rowCount() > 0:
             self.tableParameterOscilogram.insertColumn(self.tableParameterOscilogram.columnCount())
             column = self.tableParameterOscilogram.columnCount()-1
@@ -857,16 +872,16 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
             #insert data in clasification Data
             self.tableParameterOscilogram.update()
 
-    def elementsClasification(self,indexes_list,dictionary):
-            for i in indexes_list:
-                for column,l in enumerate(self.elementsClasificationTableData[i]):
-                    if l[0] in dictionary:
-                        self.elementsClasificationTableData[i][column][1] = dictionary[l[0]]
-                        item = QtGui.QTableWidgetItem(unicode(self.elementsClasificationTableData[i][column][1]))
-                        item.setBackgroundColor(self.parameterTable_rowcolor_odd if i%2==0 else self.parameterTable_rowcolor_even)
-                        self.tableParameterOscilogram.setItem(i,len(self.measuredParameters[i])+column,item)
+    def elementsClasification(self,indexes_list, dictionary):
+        for i in indexes_list:
+            for column,l in enumerate(self.elementsClasificationTableData[i]):
+                if l[0] in dictionary:
+                    self.elementsClasificationTableData[i][column][1] = dictionary[l[0]]
+                    item = QtGui.QTableWidgetItem(unicode(self.elementsClasificationTableData[i][column][1]))
+                    item.setBackgroundColor(self.parameterTable_rowcolor_odd if i%2==0 else self.parameterTable_rowcolor_even)
+                    self.tableParameterOscilogram.setItem(i,len(self.measuredParameters[i])+column,item)
 
-            self.tableParameterOscilogram.update()
+        self.tableParameterOscilogram.update()
 
     #endregion
 
