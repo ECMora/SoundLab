@@ -369,8 +369,7 @@ class SpectrogramPlotWidget(GraphicsView):
 
     def getFreqTimeAndIntensity(self,x,y):
         #YSpec = numpy.searchsorted(self.parent().specgramSettings.freqs, self.parent().minYSpc*1000)
-        time = (self.parent().mainCursor.min + self.parent()._from_spec_to_osc(x))*1.0/self.parent().signalProcessor.signal.samplingRate
-        #time = numpy.round(self.parent().specgramSettings.bins[x],4)
+        time = numpy.round((self.parent().mainCursor.min + self.parent()._from_spec_to_osc(x))*1.0/self.parent().signalProcessor.signal.samplingRate,2)
         freq = numpy.round(self.parent().specgramSettings.freqs[y]*1.0/1000,1)
         intensity = numpy.round(10*numpy.log10(self.parent().specgramSettings.Pxx[y][x - self.parent()._from_osc_to_spec(self.parent().mainCursor.min)-1]*1.0/numpy.amax(self.parent().specgramSettings.Pxx)),2)
         return [time, freq, intensity]
