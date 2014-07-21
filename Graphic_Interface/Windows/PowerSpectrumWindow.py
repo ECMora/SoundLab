@@ -24,7 +24,7 @@ class PowerSpectrumWindow(QtGui.QMainWindow,Ui_PowSpecWindow):
         self.ui.widget.gridY = theme.pow_GridY
         self.ui.widget.PointerChanged.connect(self.updateStatusBar)
         self.ui.widget.getPlotItem().hideButtons()
-        self.ui.dock_settings_contents.setStyleSheet("")
+        self.ui.dock_settings_contents.setStyleSheet("background-color:#DDF")
         #Parameter Tree Settings
 
         params = self.ui.widget.getParamsList()

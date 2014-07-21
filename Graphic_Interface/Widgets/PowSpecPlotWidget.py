@@ -249,7 +249,7 @@ class AveragePowSpec(OneDimensionalFunction):
             self.widget.setRange(xRange = (0,freqs[len(freqs) - 1]/1000),yRange = (np.amin(db),0) ,padding=0,update=True)
             self.widget.setBackground(self.widget.backColor)
             self.widget.getPlotItem().showGrid(x=self.widget.gridX, y=self.widget.gridY)
-            self.widget.getPlotItem().setLabel(axis='bottom',text='<font size=6>Frequency<\\font>')
+            self.widget.getPlotItem().setLabel(axis='bottom',text='<font size=6>Frequency (kHz)<\\font>')
             self.widget.getPlotItem().setLabel(axis='left', text='<font size=6>Intensity<\\font>', units='<font size=6>dB<\\font>')
             self.widget.getPlotItem().setTitle(title='<font size=6>Power spectrum(Average)<\\font>')
             self.widget.updateViewBox()
