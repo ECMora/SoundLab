@@ -96,27 +96,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             ]},
             {u'name': u'Background color', u'type': u'color',u'value':self.defaultTheme.spec_background, u'default': self.defaultTheme.spec_background},
         ]},
-
-        {u'name': u'Power Spectrum Settings', u'type': u'group', u'children': [
-
-            {u'name': u'FFT size', u'type': u'list', u'default':512, u'values': [(u'Automatic', 512),(u"128", 128),(u"256", 256), (u"512", 512), (u"1024", 1024)], u'value': u'Automatic'},
-            {u'name': u'FFT window',u'type': u'list', u'value':self.widget.specgramSettings.windows[0],u'default':self.widget.specgramSettings.windows[0],u'values': [(u'Bartlett',self.widget.specgramSettings.windows[4]),(u"Blackman", self.widget.specgramSettings.windows[3]),(u"Hamming", self.widget.specgramSettings.windows[0]), (u"Hanning", self.widget.specgramSettings.windows[2]),(u'Kaiser',self.widget.specgramSettings.windows[5]),(u'None',self.widget.specgramSettings.windows[6]),(u"Rectangular", self.widget.specgramSettings.windows[1])]},
-            {u'name': u'FFT overlap', u'type': u'int',u'value':self.pow_overlap, u'limits' : (-1,100)},
-            {u'name': u'Grid', u'type': u'group', u'children': [
-                {u'name': u'X', u'type': u'bool',u'default': self.defaultTheme.pow_GridX, u'value': self.defaultTheme.pow_GridX},
-                {u'name': u'Y', u'type': u'bool',u'default':self.defaultTheme.pow_GridY , u'value': self.defaultTheme.pow_GridY},
-
-             ]},
-             {u'name': u'Connect Lines',u'type': u'bool',u'default': self.pow_spec_lines, u'value': self.pow_spec_lines},
-             {u'name': u'YBounds', u'type': u'group', u'children': [
-                {u'name': u'MinY', u'type': u'int', u'limits' : (-60,5),u'default': -50, u'value': -50},
-                {u'name': u'MaxY', u'type': u'int', u'limits' : (-60,5),u'default': 5 ,u'value': 5},
-
-
-             ]},
-             {u'name':u'Background color', u'type':u'color',u'value':self.defaultTheme.pow_Back, 'default':self.defaultTheme.pow_Back},
-             {u'name': u'Plot color',u'type': u'color',u'value':self.defaultTheme.pow_Plot, 'default': self.defaultTheme.pow_Plot},
-        ]},
         {u'name': u'Themes', u'type': u'group', u'children': [
          {u'name': u'Theme Selected', u'type': u'list', u'value':u"" if len(themesInFolder) == 0 else themesInFolder[0][themesInFolder[0].rfind(os.path.sep)+1:themesInFolder[0].rfind(".dth")],\
           u'default':u"" if len(themesInFolder) == 0 else themesInFolder[0],u'values': [(x[x.rfind(os.path.sep)+1:x.rfind(".dth")], x) for x in themesInFolder]},
@@ -422,23 +401,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             elif childName == u'Power Spectrum Settings.FFT size':
                 self.NFFT_pow = data
 
-            elif childName == u'Power Spectrum Settings.FFT window':
-                self.window_pow = data
-            elif childName == u'Power Spectrum Settings.FFT overlap':
-                self.pow_overlap = data
-
-            elif childName == u'Power Spectrum Settings.Background color':
-                self.defaultTheme.pow_Back = data
-
-            elif childName == u'Power Spectrum Settings.Plot color':
-                self.defaultTheme.pow_Plot = data
-
-            elif childName == u'Power Spectrum Settings.Grid.X':
-                self.defaultTheme.pow_GridX = data
-
-            elif childName == u'Power Spectrum Settings.Grid.Y':
-                self.defaultTheme.pow_GridY = data
-
             elif childName == u'Oscillogram Settings.Background color':
                 self.defaultTheme.osc_background = data
 
@@ -468,13 +430,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             elif childName ==u'Themes.Theme Selected':
                 p = os.path.join(os.path.join(u"Utils",u"Themes"),data)
                 self.updateMyTheme(self.DeSerializeTheme(p))
-
-            elif childName == u'Power Spectrum Settings.YBounds.MaxY':
-                self.pow_spec_maxY = data
-            elif childName == u'Power Spectrum Settings.YBounds.MinY':
-                self.pow_spec_minY = data
-            elif childName == u'Power Spectrum Settings.Connect Lines':
-                self.pow_spec_lines = data
 
             self.widget.load_Theme(self.defaultTheme)
             #print('  parameter: %s' % childName)
@@ -738,10 +693,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     def updatePowSpecWin(self):
         for win in self.pow_spec_windows:
-            minx = self.widget.zoomCursor.min
-            maxx = max(self.widget.zoomCursor.max,
-                       min(minx + self.NFFT_pow, len(self.widget.signalProcessor.signal.data)))
-            win.updatePowSpectrumInterval(self.widget.signalProcessor.signal.data[minx:maxx])
+            win.updatePowSpectrumInterval([self.widget.zoomCursor.min, self.widget.zoomCursor.max])
 
     @pyqtSlot()
     def on_actionZoomIn_triggered(self):
@@ -765,9 +717,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     @pyqtSlot()
     def on_actionPower_Spectrum_triggered(self):
-        minx = self.widget.zoomCursor.min
-        maxx = max(self.widget.zoomCursor.max, min(minx + self.NFFT_pow, len(self.widget.signalProcessor.signal.data)))
-        dg_pow_spec = PowerSpectrumWindow(self, self.pow_spec_minY,self.pow_spec_maxY,self.pow_spec_lines,self.widget.signalProcessor.signal.data[minx:maxx],self.defaultTheme,self.widget.signalProcessor.signal.samplingRate,self.widget.signalProcessor.signal.bitDepth,self.widget.maxYOsc)
+        dg_pow_spec = PowerSpectrumWindow(self, self.pow_spec_lines, self.widget.signalProcessor.signal.data, [self.widget.zoomCursor.min,self.widget.zoomCursor.max], self.widget.specgramSettings.NFFT, self.defaultTheme,self.widget.signalProcessor.signal.samplingRate,self.widget.signalProcessor.signal.bitDepth, self.widget.updateBothZoomRegions)
         self.pow_spec_windows.append(dg_pow_spec)
 
     @pyqtSlot()
