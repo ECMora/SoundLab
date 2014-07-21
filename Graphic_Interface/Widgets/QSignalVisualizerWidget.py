@@ -309,6 +309,16 @@ class QSignalVisualizerWidget(QWidget):
         self.zoomCursor.min, self.zoomCursor.max = int(range[0]), int(range[1])
         #self.emit(SIGNAL("IntervalChanged"))
 
+    def updateBothZoomRegions(self,a,b):
+        self.axesOscilogram.emitIntervalOscChanged = False
+        self.axesOscilogram.zoomRegion.setRegion([a,b])
+        self.axesOscilogram.emitIntervalOscChanged = True
+        minSpec = self._from_osc_to_spec(a)
+        maxSpec = self._from_osc_to_spec(b)
+        self.axesSpecgram.emitIntervalSpecChanged = False
+        self.axesSpecgram.zoomRegion.setRegion([minSpec, maxSpec])
+        self.axesSpecgram.emitIntervalSpecChanged = True
+
     def updateSpecZoomRegion(self, a, b):
         min = self._from_osc_to_spec(a)
         max = self._from_osc_to_spec(b)
