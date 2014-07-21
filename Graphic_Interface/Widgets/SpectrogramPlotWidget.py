@@ -158,9 +158,9 @@ class SpectrogramPlotWidget(GraphicsView):
 
             if self.mouseReleased:
                 info0 = self.getFreqTimeAndIntensity(self.last['pos'][0],self.last['pos'][1])
-                self.PointerSpecChanged.emit(str.format('t0: {0}s  dt: {1}s  Intensity: {2}dB',info0[0],info[0] - info0[0] ,info[2]))
+                self.PointerSpecChanged.emit(str.format('t0: {0}s  t1 {1}  dt: {2}s',info0[0],info[0],info[0] - info0[0] ))
             else:
-                self.PointerSpecChanged.emit(str.format('Time: {0}s  Frequency: {1}kHz Intensity: {2}dB',info[0],info[1],info[2]))
+                self.PointerSpecChanged.emit(str.format('Time: {0}s          Freq: {1}kHz          Amp: {2}dB',info[0],info[1],info[2]))
             self.viewBox.update()
             self.setCursor(QCursor(QtCore.Qt.CrossCursor))
         elif self.selectedTool == Tools.Zoom:
@@ -212,14 +212,14 @@ class SpectrogramPlotWidget(GraphicsView):
                 info1 = self.getFreqTimeAndIntensity(self.rectRegion['x'][1], self.rectRegion['y'][1])
                 self.rectRegion['y'][0] = info[1]
                 self.rectRegion['y'][1] = info1[1]
-                self.PointerSpecChanged.emit(str.format('t0: {0}s  t1: {1}s dt: {2}s  Min Frequency: {3}kHz  Max Frequency: {4}kHz ',info[0],info1[0],info1[0] - info[0],info[1],info1[1]))
+                self.PointerSpecChanged.emit(str.format('t0: {0}s  t1: {1}s dt: {2}s          MinF: {3}kHz  MaxF: {4}kHz  dF: {5}kHz',info[0],info1[0],info1[0] - info[0],info[1],info1[1],info1[1]-info[1]))
             else:
                 info = self.getFreqTimeAndIntensity(x, y)
                 if x == -1 or y == -1:
                     self.setCursor(QCursor(QtCore.Qt.ArrowCursor))
                     return
                 else:
-                    self.PointerSpecChanged.emit(str.format('Time: {0}s  Frequency: {1}kHz Intensity: {2}dB',info[0],info[1],info[2]))
+                    self.PointerSpecChanged.emit(str.format("Time: {0}s          Freq: {1}kHz          Amp: {2}dB",info[0],info[1],info[2]))
             self.setCursor(QCursor(QtCore.Qt.ArrowCursor))
             self.update()
 
@@ -369,7 +369,8 @@ class SpectrogramPlotWidget(GraphicsView):
 
     def getFreqTimeAndIntensity(self,x,y):
         #YSpec = numpy.searchsorted(self.parent().specgramSettings.freqs, self.parent().minYSpc*1000)
-        time =  x * 1.0/self.parent().signalProcessor.signal.samplingRate
+        time = (self.parent().mainCursor.min + self.parent()._from_spec_to_osc(x))*1.0/self.parent().signalProcessor.signal.samplingRate
+        #time = numpy.round(self.parent().specgramSettings.bins[x],4)
         freq = numpy.round(self.parent().specgramSettings.freqs[y]*1.0/1000,1)
-        intensity = 10*numpy.log10(self.parent().specgramSettings.Pxx[y][x - self.parent()._from_osc_to_spec(self.parent().mainCursor.min)-1]*1.0/numpy.amax(self.parent().specgramSettings.Pxx))
+        intensity = numpy.round(10*numpy.log10(self.parent().specgramSettings.Pxx[y][x - self.parent()._from_osc_to_spec(self.parent().mainCursor.min)-1]*1.0/numpy.amax(self.parent().specgramSettings.Pxx)),2)
         return [time, freq, intensity]

@@ -157,9 +157,9 @@ class OscilogramPlotWidget(pg.PlotWidget):
                  info0 = self.getAmplitudeTimeInfo(self.last['pos'][0],self.last['pos'][1])
                  info0 = round(info0[0],self.decimalPlaces),round(info0[1],self.decimalPlaces)
 
-                 self.PointerOscChanged.emit(str.format('t0: {0}s  dt: {1}s  Amplitude: {2}%',info0[0],info[0] - info0[0] ,info[1]))
+                 self.PointerOscChanged.emit(str.format('t0: {0}s  t1: {1}s  dt: {2}s          Amp: {3}%',info0[0],info[0],info[0] - info0[0] ,info[1]))
             else:
-                self.PointerOscChanged.emit(str.format('Time: {0}s  Amplitude: {1}%',info[0],info[1]))
+                self.PointerOscChanged.emit(str.format('Time: {0}s          Amp: {1}%',info[0],info[1]))
             #self.viewBox.update()
             self.setCursor(QCursor(QtCore.Qt.CrossCursor))
         elif self.selectedTool == Tools.Zoom:
@@ -218,7 +218,7 @@ class OscilogramPlotWidget(pg.PlotWidget):
 
                 self.rectRegion['y'][0] = info[1]
                 self.rectRegion['y'][1] = info1[1]
-                self.PointerOscChanged.emit(str.format('t0: {0}s  t1: {1}s dt: {2}s  Max Amplitude: {3}% Min Amplitude: {4}% ',info[0],info1[0],info1[0] - info[0],info[1],info1[1]))
+                self.PointerOscChanged.emit(str.format('t0: {0}s  t1: {1}s dt: {2}s          MaxA: {3}% MinA: {4}% ',info[0],info1[0],info1[0] - info[0],info[1],info1[1]))
             else:
                 info = self.getAmplitudeTimeInfo(x, y)
                 info = round(info[0],self.decimalPlaces),round(info[1],self.decimalPlaces)
@@ -228,7 +228,7 @@ class OscilogramPlotWidget(pg.PlotWidget):
                     self.setCursor(QCursor(QtCore.Qt.ArrowCursor))
                     return
                 else:
-                    self.PointerOscChanged.emit(str.format('Time: {0}s  Amplitude: {1}%',info[0],info[1]))
+                    self.PointerOscChanged.emit(str.format('Time: {0}s          Amp: {1}%',info[0],info[1]))
             self.setCursor(QCursor(QtCore.Qt.ArrowCursor))
             self.update()
 
