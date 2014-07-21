@@ -379,10 +379,10 @@ class SpectrogramPlotWidget(GraphicsView):
         if time < 1:
             time *= 1000
             unit = 'ms'
-        elif time > 100:
+        elif time > 60:
             time /= 60
             unit = 'm'
-            if time > 100:
+            if time > 60:
                 time /= 60
                 unit = 'h'
         return str(numpy.round(time,1)) + unit
