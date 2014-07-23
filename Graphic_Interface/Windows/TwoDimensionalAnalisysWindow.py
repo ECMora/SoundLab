@@ -1,18 +1,24 @@
 # -*- coding: utf-8 -*-
-from PyQt4.QtGui import QFileDialog
+from PyQt4.QtGui import QFileDialog, QWidget
 from PyQt4.QtCore import pyqtSlot
 import numpy
 from pyqtgraph.parametertree import Parameter, ParameterTree
 import pyqtgraph as pg
-from Graphic_Interface.Widgets.Tools import Tools
+from Graphic_Interface.Dialogs.EditCategoriesDialog import EditCategoriesDialog
+import Graphic_Interface.Dialogs.EditCategoriesDialogUI as editCateg
+from Graphic_Interface.Widgets.EditCategoriesWidget import EditCategoriesWidget
 from Graphic_Interface.Windows.Two_Dimensional_AnalisysWindowUI import Ui_TwoDimensionalWindow
 from PyQt4 import QtGui, QtCore
 
 
-class TwoDimensionalAnalisysWindow(QtGui.QMainWindow,Ui_TwoDimensionalWindow):
-    elementSelected = QtCore.Signal(int)  #selected element index
+class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
+    elementSelected = QtCore.Signal(int)
+    #selected element index
 
-    def __init__(self,parent=None,columns=None, data=None):
+    elementsClasification = QtCore.Signal(list,dict)
+    #indexes of clasified elements dict of Category,value
+
+    def __init__(self,parent=None,columns=None, data=None, classificationData=None):
         super(TwoDimensionalAnalisysWindow, self).__init__(parent)
         self.setupUi(self)
 
@@ -23,14 +29,19 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow,Ui_TwoDimensionalWindow):
         self.widget.setMenuEnabled(False)
         self.widget.enableAutoRange()
         self.scatter_plot = None
+
         #if there is a selection of several elements.
         #draw a rectangle with cursor and later mapRectFromDevice to get the element that are selected
 
         self.font = QtGui.QFont()
+        if classificationData is None:
+            raise Exception("classificationData could not be None.")
+
+        self.classificationData = classificationData
         self.previousSelectedElement = -1
         self.columns = columns if columns is not None else []
         #the numpy [,] array with the parameter measurement
-        self.data = data if data is not None else numpy.zeros(4).reshape((2,2))
+        self.data = data if data is not None else numpy.zeros(4).reshape((2, 2))
         self.widget.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
         self.widget.addAction(self.actionHide_Show_Settings)
         self.widget.addAction(self.actionSaveGraphImage)
@@ -57,7 +68,7 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow,Ui_TwoDimensionalWindow):
                 [{u'name': u'Y Axis', u'type': u'list', u'value':0,
              u'default': 0, u'values': [(name, i) for i,name in enumerate(xaxis)]}]},
             {u'name': u'Color', u'type': u'color', u'value': "00F"},
-            {u'name': u'Figures Size', u'type': u'int', u'value': 10},
+            {u'name': u'Figures Size', u'type': u'int', u'value': 15},
             {u'name': u'Figures Shape', u'type': u'list', u'value': "o",
              u'default': "o", u'values': [("Circle","o"),("Square","s"),("Triangle","t"),("Diamond","d"),("Plus","+")]},
             {u'name': u'Change Font', u'type': u'action'},
@@ -80,7 +91,7 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow,Ui_TwoDimensionalWindow):
         self.ParamTree.param(u'Change Font').sigActivated.connect(self.changeFont)
         self.plot()
 
-    def loadData(self,columns=None, data=None):
+    def loadData(self, columns=None, data=None):
         self.data = data
         #update graph and paramtree
         if self.columns != columns:
@@ -118,6 +129,13 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow,Ui_TwoDimensionalWindow):
             elems[self.previousSelectedElement].setBrush(pg.mkBrush(color))
 
         self.previousSelectedElement = index
+
+    def deselectElement(self):
+        if self.scatter_plot is None or self.previousSelectedElement < 0 :
+            return
+        color = self.ParamTree.param(u'Color').value()
+
+        self.scatter_plot.points()[self.previousSelectedElement].setBrush(pg.mkBrush(color))
 
     @pyqtSlot()
     def on_actionSaveGraphImage_triggered(self):
@@ -160,21 +178,72 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow,Ui_TwoDimensionalWindow):
     @pyqtSlot()
     def on_actionMark_Selected_Elements_As_triggered(self):
         """
-
         @return: the indexes of the selected elements in the graph
         """
         if self.scatter_plot is None:
             return []
 
         rect = self.widget.ElementSelectionRect.rect()
+        #the width and height could be negatives
         x1, y1 = rect.x(),rect.y()
         x2, y2 = x1 + rect.width(),y1 + rect.height()
-        x1,x2,y1,y2 = min(x1,x2),max(x1,x2),min(y1,y2),max(y1,y2)
+        x1, x2, y1, y2 = min(x1,x2),max(x1,x2),min(y1,y2),max(y1,y2)
 
-        selected = [x.data() for x in self.scatter_plot.points() if x.pos().x() >= x1 and x.pos().x() <= x2 and x.pos().y() >= y1 and x.pos().y() <= y2]
-        if len(selected) == 0:
+        selected_elements = [x.data() for x in self.scatter_plot.points() if x.pos().x() >= x1 and x.pos().x() <= x2 and x.pos().y() >= y1 and x.pos().y() <= y2]
+
+        if len(selected_elements) == 0:
             QtGui.QMessageBox.warning(QtGui.QMessageBox(), "Warning", "There is no element selected.")
-        print(selected)
+            return
+
+        # get the selection
+        editCategDialog = editCateg.Ui_Dialog()
+        editCategDialogWindow = EditCategoriesDialog(self)
+        editCategDialog.setupUi(editCategDialogWindow)
+        widget = QWidget()
+        self.clasiffCategories_vlayout = QtGui.QVBoxLayout()
+        self.selection_widgets = []
+        for k in self.classificationData.categories.keys():
+            a = EditCategoriesWidget(self, k, self.classificationData,selectionOnly=True)
+            # a.setStyleSheet("background-color:#EEF")
+            self.selection_widgets.append(a)
+            self.clasiffCategories_vlayout.addWidget(a)
+
+        editCategDialog.bttnAddCategory.clicked.connect(self.addCategory)
+
+        widget.setLayout(self.clasiffCategories_vlayout)
+        editCategDialog.listWidget.setWidget(widget)
+        editCategDialogWindow.exec_()
+        d = dict([(x.categoryName,self.classificationData.categories[x.categoryName][x.comboCategories.currentIndex()])\
+                  for x in self.selection_widgets if x.comboCategories.count()>0])
+        self.elementsClasification.emit(selected_elements,d)
+
+    def addCategory(self):
+        dialog = QtGui.QDialog(self)
+        dialog.setWindowTitle("Create New Category")
+        layout = QtGui.QVBoxLayout()
+        layout.addWidget(QtGui.QLabel("Insert the name of the new Category"))
+        text = QtGui.QLineEdit()
+        layout.addWidget(text)
+        butts = QtGui.QDialogButtonBox()
+
+        butts.addButton(QtGui.QDialogButtonBox.Ok)
+        butts.addButton(QtGui.QDialogButtonBox.Cancel)
+        QtCore.QObject.connect(butts, QtCore.SIGNAL("accepted()"), dialog.accept)
+        QtCore.QObject.connect(butts, QtCore.SIGNAL("rejected()"), dialog.reject)
+
+        layout.addWidget(butts)
+        dialog.setLayout(layout)
+        if dialog.exec_():
+            category = str(text.text())
+            if category == "":
+                QtGui.QMessageBox.warning(QtGui.QMessageBox(), "Error", "Invalid Category Name.")
+                return
+            if self.clasiffCategories_vlayout and self.classificationData.addCategory(category):
+                w = EditCategoriesWidget(self, category,self.classificationData)
+                self.selection_widgets.append(w)
+                self.clasiffCategories_vlayout.addWidget(w)
+            
+
 
 
     def elementFigureClicked(self,x,y):

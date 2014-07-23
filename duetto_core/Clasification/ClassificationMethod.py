@@ -1,22 +1,11 @@
-# -*- coding: utf-8 -*-
-#Classification Methods based on a set of previously classified elements
-#stored as {'data':numpy array,''}
+from ClassificationData import ClassificationData
 
 
 class ClassificationMethod:
-    def __init__(self,trainingData,classification):
-        if trainingData is None or len(trainingData) == 0:
-            raise Exception("Invalid Arguments")
+    def __init__(self, classificationData=None):
+        if not isinstance(classificationData,ClassificationData):
+            raise TypeError("classificationData is not of type ClassificationData")
+        self.data = classificationData
 
-        self.data = trainingData
-        self.classification = classification
-
-    def dimension(self):
-        return len(self.data[0])
-
-    def classify(self,newData):
+    def classify(self,vector):
         pass
-
-    def addTrainingVector(self,vector):
-        pass
-

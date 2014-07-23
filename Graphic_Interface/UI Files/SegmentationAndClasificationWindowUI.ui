@@ -275,9 +275,11 @@ padding:1%;</string>
    <addaction name="actionOscilogram"/>
    <addaction name="actionSpectogram"/>
    <addaction name="separator"/>
+   <addaction name="actionDetection"/>
    <addaction name="actionTwo_Dimensional_Graphs"/>
    <addaction name="actionDelete_Selected_Elements"/>
    <addaction name="actionDeselect_Elements"/>
+   <addaction name="separator"/>
    <addaction name="actionSignalName"/>
   </widget>
   <widget class="QDockWidget" name="dockWidgetParameterTableOscilogram">
@@ -293,7 +295,7 @@ padding:1%;</string>
    <widget class="QWidget" name="dockWidgetContents">
     <layout class="QVBoxLayout" name="verticalLayout_3">
      <item>
-      <widget class="QTableWidget" name="tableParameterOscilogram">
+      <widget class="TableWidget" name="tableParameterOscilogram">
        <property name="toolTip">
         <string>Oscilogram elements  meditions</string>
        </property>
@@ -337,7 +339,6 @@ padding:1%;</string>
     <property name="title">
      <string>Detection</string>
     </property>
-    <addaction name="actionDetection"/>
     <addaction name="actionDelete_Selected_Elements"/>
     <addaction name="actionDeselect_Elements"/>
     <addaction name="actionMeditions"/>
@@ -366,7 +367,6 @@ padding:1%;</string>
     <property name="title">
      <string>Classification</string>
     </property>
-    <addaction name="actionTraining_Mode"/>
     <addaction name="actionClassification_Settings"/>
    </widget>
    <addaction name="menuTools"/>
@@ -783,6 +783,11 @@ padding:1%;</string>
    <extends>QWidget</extends>
    <header>Graphic_Interface.Widgets.QSignalDetectorWidget.h</header>
    <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>TableWidget</class>
+   <extends>QTableWidget</extends>
+   <header>pyqtgraph.h</header>
   </customwidget>
  </customwidgets>
  <resources>

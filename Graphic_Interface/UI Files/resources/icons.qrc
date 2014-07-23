@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="myappicons">
+    <file>add.png</file>
     <file>deselectElements.png</file>
     <file>deleteElements.png</file>
     <file>2dgraphs.png</file>
@@ -34,4 +35,5 @@
     <file>zoomin_26x26.png</file>
     <file>zoomout_26x26.png</file>
   </qresource>
+  <qresource prefix="GraphicInterface\Windows"/>
 </RCC>

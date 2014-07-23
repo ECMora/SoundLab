@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Sound Lab\DuettoSystem\Graphic_Interface\UI Files\SegmentationAndClasificationWindowUI.ui'
 #
-# Created: Mon Jul 14 15:36:28 2014
+# Created: Sun Jul 20 11:43:41 2014
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -137,7 +137,7 @@ class Ui_MainWindow(object):
         self.dockWidgetContents.setObjectName(_fromUtf8("dockWidgetContents"))
         self.verticalLayout_3 = QtGui.QVBoxLayout(self.dockWidgetContents)
         self.verticalLayout_3.setObjectName(_fromUtf8("verticalLayout_3"))
-        self.tableParameterOscilogram = QtGui.QTableWidget(self.dockWidgetContents)
+        self.tableParameterOscilogram = TableWidget(self.dockWidgetContents)
         self.tableParameterOscilogram.setObjectName(_fromUtf8("tableParameterOscilogram"))
         self.tableParameterOscilogram.setColumnCount(0)
         self.tableParameterOscilogram.setRowCount(0)
@@ -343,9 +343,11 @@ class Ui_MainWindow(object):
         self.toolBar.addAction(self.actionOscilogram)
         self.toolBar.addAction(self.actionSpectogram)
         self.toolBar.addSeparator()
+        self.toolBar.addAction(self.actionDetection)
         self.toolBar.addAction(self.actionTwo_Dimensional_Graphs)
         self.toolBar.addAction(self.actionDelete_Selected_Elements)
         self.toolBar.addAction(self.actionDeselect_Elements)
+        self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionSignalName)
         self.menuPeak_Frecuencies.addAction(self.actionElements_Peaks)
         self.menuPeak_Frecuencies.addAction(self.actionSub_Elements_Peaks)
@@ -359,7 +361,6 @@ class Ui_MainWindow(object):
         self.menuParameters.addAction(self.actionSpectral_Figures)
         self.menuParameters.addAction(self.menuPeak_Frecuencies.menuAction())
         self.menuParameters.addAction(self.actionFull_Screen)
-        self.menuDetection.addAction(self.actionDetection)
         self.menuDetection.addAction(self.actionDelete_Selected_Elements)
         self.menuDetection.addAction(self.actionDeselect_Elements)
         self.menuDetection.addAction(self.actionMeditions)
@@ -378,7 +379,6 @@ class Ui_MainWindow(object):
         self.menuTools.addAction(self.actionRectangular_Eraser)
         self.menuTools.addSeparator()
         self.menuTools.addAction(self.actionTwo_Dimensional_Graphs)
-        self.menuClasification.addAction(self.actionTraining_Mode)
         self.menuClasification.addAction(self.actionClassification_Settings)
         self.menuBar.addAction(self.menuTools.menuAction())
         self.menuBar.addAction(self.menuParameters.menuAction())
@@ -468,5 +468,6 @@ class Ui_MainWindow(object):
         self.actionClassification_Settings.setText(QtGui.QApplication.translate("MainWindow", "Settings", None, QtGui.QApplication.UnicodeUTF8))
         self.actionMethod.setText(QtGui.QApplication.translate("MainWindow", "Method", None, QtGui.QApplication.UnicodeUTF8))
 
+from pyqtgraph import TableWidget
 from Graphic_Interface.Widgets.QSignalDetectorWidget import QSignalDetectorWidget
 import icons_rc
