@@ -15,6 +15,8 @@ class DuettoListParameterItem(WidgetParameterItem):
         for (a, b) in self.values:
             self.valuesDict[a] = b
         WidgetParameterItem.__init__(self, param, depth)
+        self.widget.sigChanged.connect(self.widgetValueChanged)
+
 
     def makeWidget(self):
         opts = self.param.opts

@@ -133,9 +133,9 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.hist.item.gradient.restoreState(self.defaultTheme.colorBarState)
         self.hist.item.region.setRegion(self.defaultTheme.histRange)
         self.hist.item.region.sigRegionChanged.connect(self.updateRegionTheme)
-        #the next line is a PARCHE for the error of deselect zoom region when the region changes
+        #the next 2 lines are a PARCHE for the error of deselect zoom region when the region changes
         self.hist.item.region.sigRegionChanged.connect(self.widget.clearZoomCursor)
-
+        self.ParamTree.sigTreeStateChanged.connect(self.widget.clearZoomCursor)
 
         action = self.hist.item.gradient.hsvAction
         action.triggered.disconnect()
@@ -450,8 +450,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 return
 
             elif childName ==u'Themes.Theme Selected':
-                p = os.path.join(os.path.join(u"Utils",u"Themes"),data)
-                self.updateMyTheme(self.DeSerializeTheme(p))
+                self.updateMyTheme(self.DeSerializeTheme(data))
 
             self.widget.load_Theme(self.defaultTheme)
             #print('  parameter: %s' % childName)
@@ -843,16 +842,16 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     @pyqtSlot()
     def on_actionFile_Up_triggered(self):
-        if self.filesInFolderIndex < len(self.filesInFolder)-1:
-            self.filesInFolderIndex += 1
+        if self.filesInFolderIndex > 0:
+            self.filesInFolderIndex -= 1
             if os.path.exists(self.filesInFolder[self.filesInFolderIndex]):
                 self._open(self.filesInFolder[self.filesInFolderIndex])
 
 
     @pyqtSlot()
     def on_actionFile_Down_triggered(self):
-        if self.filesInFolderIndex > 0:
-            self.filesInFolderIndex -= 1
+        if self.filesInFolderIndex < len(self.filesInFolder)-1:
+            self.filesInFolderIndex += 1
             if os.path.exists(self.filesInFolder[self.filesInFolderIndex]):
                 self._open(self.filesInFolder[self.filesInFolderIndex])
 

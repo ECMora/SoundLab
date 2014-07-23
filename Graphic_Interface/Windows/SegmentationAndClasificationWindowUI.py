@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Sound Lab\DuettoSystem\Graphic_Interface\UI Files\SegmentationAndClasificationWindowUI.ui'
 #
-# Created: Sun Jul 20 11:43:41 2014
+# Created: Wed Jul 23 10:02:03 2014
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -116,7 +116,7 @@ class Ui_MainWindow(object):
         self.tabwidget.addTab(self.tab_2, _fromUtf8(""))
         self.verticalLayout_2.addWidget(self.tabwidget)
         self.horizontalScrollBar = QtGui.QScrollBar(self.centralwidget)
-        self.horizontalScrollBar.setStyleSheet(_fromUtf8("background-color: rgb(200, 200, 255);"))
+        self.horizontalScrollBar.setStyleSheet(_fromUtf8(""))
         self.horizontalScrollBar.setOrientation(QtCore.Qt.Horizontal)
         self.horizontalScrollBar.setObjectName(_fromUtf8("horizontalScrollBar"))
         self.verticalLayout_2.addWidget(self.horizontalScrollBar)
@@ -327,9 +327,19 @@ class Ui_MainWindow(object):
         self.actionTraining_Mode.setChecked(True)
         self.actionTraining_Mode.setObjectName(_fromUtf8("actionTraining_Mode"))
         self.actionClassification_Settings = QtGui.QAction(MainWindow)
+        icon21 = QtGui.QIcon()
+        icon21.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/categories.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionClassification_Settings.setIcon(icon21)
         self.actionClassification_Settings.setObjectName(_fromUtf8("actionClassification_Settings"))
         self.actionMethod = QtGui.QAction(MainWindow)
         self.actionMethod.setObjectName(_fromUtf8("actionMethod"))
+        self.toolBar.addAction(self.actionDetection)
+        self.toolBar.addAction(self.actionTwo_Dimensional_Graphs)
+        self.toolBar.addAction(self.actionDelete_Selected_Elements)
+        self.toolBar.addAction(self.actionDeselect_Elements)
+        self.toolBar.addSeparator()
+        self.toolBar.addAction(self.actionClassification_Settings)
+        self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionZoomIn)
         self.toolBar.addAction(self.actionZoom_out)
         self.toolBar.addAction(self.actionZoom_out_entire_file)
@@ -342,11 +352,6 @@ class Ui_MainWindow(object):
         self.toolBar.addAction(self.actionCombined)
         self.toolBar.addAction(self.actionOscilogram)
         self.toolBar.addAction(self.actionSpectogram)
-        self.toolBar.addSeparator()
-        self.toolBar.addAction(self.actionDetection)
-        self.toolBar.addAction(self.actionTwo_Dimensional_Graphs)
-        self.toolBar.addAction(self.actionDelete_Selected_Elements)
-        self.toolBar.addAction(self.actionDeselect_Elements)
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionSignalName)
         self.menuPeak_Frecuencies.addAction(self.actionElements_Peaks)
@@ -361,6 +366,7 @@ class Ui_MainWindow(object):
         self.menuParameters.addAction(self.actionSpectral_Figures)
         self.menuParameters.addAction(self.menuPeak_Frecuencies.menuAction())
         self.menuParameters.addAction(self.actionFull_Screen)
+        self.menuDetection.addAction(self.actionDetection)
         self.menuDetection.addAction(self.actionDelete_Selected_Elements)
         self.menuDetection.addAction(self.actionDeselect_Elements)
         self.menuDetection.addAction(self.actionMeditions)
@@ -380,10 +386,10 @@ class Ui_MainWindow(object):
         self.menuTools.addSeparator()
         self.menuTools.addAction(self.actionTwo_Dimensional_Graphs)
         self.menuClasification.addAction(self.actionClassification_Settings)
-        self.menuBar.addAction(self.menuTools.menuAction())
-        self.menuBar.addAction(self.menuParameters.menuAction())
         self.menuBar.addAction(self.menuDetection.menuAction())
         self.menuBar.addAction(self.menuClasification.menuAction())
+        self.menuBar.addAction(self.menuTools.menuAction())
+        self.menuBar.addAction(self.menuParameters.menuAction())
 
         self.retranslateUi(MainWindow)
         self.tabwidget.setCurrentIndex(0)
@@ -465,7 +471,7 @@ class Ui_MainWindow(object):
         self.actionDeselect_Elements.setText(QtGui.QApplication.translate("MainWindow", "Deselect Elements", None, QtGui.QApplication.UnicodeUTF8))
         self.actionTwo_Dimensional_Graphs.setText(QtGui.QApplication.translate("MainWindow", "Two Dimensional Graphs", None, QtGui.QApplication.UnicodeUTF8))
         self.actionTraining_Mode.setText(QtGui.QApplication.translate("MainWindow", "Training Mode", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionClassification_Settings.setText(QtGui.QApplication.translate("MainWindow", "Settings", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionClassification_Settings.setText(QtGui.QApplication.translate("MainWindow", "Edit Categories", None, QtGui.QApplication.UnicodeUTF8))
         self.actionMethod.setText(QtGui.QApplication.translate("MainWindow", "Method", None, QtGui.QApplication.UnicodeUTF8))
 
 from pyqtgraph import TableWidget

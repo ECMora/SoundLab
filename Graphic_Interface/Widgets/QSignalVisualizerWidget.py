@@ -504,7 +504,6 @@ class QSignalVisualizerWidget(QWidget):
         overlap = overlap if overlap is not None else int(
             self.specgramSettings.NFFT * self.specgramSettings.overlap / 100.)
 
-        #print(self.signalProcessor.signal._padded)
         if self.signalProcessor.signal._padded:
             smin = self.mainCursor.min - self.specgramSettings.NFFT + 4096
             smax = self.mainCursor.max + self.specgramSettings.NFFT + 4096

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from PyQt4.QtGui import QFileDialog, QWidget
 from PyQt4.QtCore import pyqtSlot
-import numpy
+import numpy,random
 from pyqtgraph.parametertree import Parameter, ParameterTree
 import pyqtgraph as pg
 from Graphic_Interface.Dialogs.EditCategoriesDialog import EditCategoriesDialog
@@ -60,13 +60,14 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         xaxis = [unicode(x) for x in columnNames]
         if len(xaxis) == 0:
             return
+        x, y = random.randint(0,len(xaxis)/2),random.randint(len(xaxis)/2,len(xaxis)-1)
         params = [
             {u'name': u'X Axis Parameter Settings', u'type': u'group', u'children':
-                [{u'name': u'X Axis', u'type': u'list',u'value': 0,
-                  u'default': 0, u'values': [(name, i) for i,name in enumerate(xaxis)]}]},
+                [{u'name': u'X Axis', u'type': u'list',u'value': x,
+                  u'default': x, u'values': [(name, i) for i,name in enumerate(xaxis)]}]},
             {u'name': u'Y Axis Parameter Settings', u'type': u'group', u'children':
-                [{u'name': u'Y Axis', u'type': u'list', u'value':0,
-             u'default': 0, u'values': [(name, i) for i,name in enumerate(xaxis)]}]},
+                [{u'name': u'Y Axis', u'type': u'list', u'value':y,
+             u'default': y, u'values': [(name, i) for i,name in enumerate(xaxis)]}]},
             {u'name': u'Color', u'type': u'color', u'value': "00F"},
             {u'name': u'Figures Size', u'type': u'int', u'value': 15},
             {u'name': u'Figures Shape', u'type': u'list', u'value': "o",
@@ -85,13 +86,14 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         self.parameterTree.setParameters(self.ParamTree, showTop=False)
         self.dockWidgetContents.setLayout(lay1)
         self.dockWidgetContents.setStyleSheet("background-color:#DDF")
-        self.parameterTree.setFixedWidth(340)
+        self.parameterTree.setMinimumWidth(200)
         self.ParamTree.sigTreeStateChanged.connect(self.plot)
         self.ParamTree.param(u'Save Graph as Image').sigActivated.connect(self.on_actionSaveGraphImage_triggered)
         self.ParamTree.param(u'Change Font').sigActivated.connect(self.changeFont)
         self.plot()
 
     def loadData(self, columns=None, data=None):
+        self.deselectElement()
         self.data = data
         #update graph and paramtree
         if self.columns != columns:
@@ -158,6 +160,11 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
 
         x_coords = [e[i] for e in self.data]
         y_coords = [e[j] for e in self.data]
+        xmin, xmax = min(x_coords), max(x_coords)
+        ymin, ymax = min(y_coords), max(y_coords)
+        xshift = (xmax-xmin)*0.15
+        yshift = (ymax-ymin)*0.15
+
         self.scatter_plot = pg.ScatterPlotItem(x=x_coords,y=y_coords,data=numpy.arange(len(x_coords)),size=fig_size,symbol=shape,brush=(pg.mkBrush(color)))
         self.scatter_plot.sigClicked.connect(self.elementFigureClicked)
 
@@ -172,6 +179,7 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         self.widget.getPlotItem().getAxis("left").setLabel(text=str(self.columns[j]),**text_size)
 
         self.widget.addItem(self.scatter_plot)
+        self.widget.getPlotItem().setRange(xRange=(xmin-xshift,xmax+xshift),yRange=(ymin-yshift,ymax+yshift))
         self.widget.removeSelectionRect()
         self.widget.addSelectionRect()
 
