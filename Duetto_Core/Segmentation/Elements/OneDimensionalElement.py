@@ -137,8 +137,8 @@ class OscilogramElement(OneDimensionalElement):
             overlap = int(round(self.specgramSettings.overlap,0))
             overlap_delay = 0 if overlap <= 0 else 99 if overlap >=100 else overlap/(100-overlap)
 
-            aux = max(0,int(indexFrom/columnsize)-overlap_delay)
-            aux2 = min(int(round(indexTo/columnsize,0))+overlap_delay,len(self.specgramSettings.Pxx[0]))
+            aux = max(0,int(indexFrom*1.0/columnsize))
+            aux2 = min(int(indexTo*1.0/columnsize)+overlap_delay,len(self.specgramSettings.Pxx[0]))
 
             left, rigth = self.trimMatrix(self.specgramSettings.Pxx,aux,aux2,trim_threshold)
 
@@ -236,8 +236,8 @@ class OscilogramElement(OneDimensionalElement):
         return self.parameters["average"]["peak"]
 
     def maxFreqAverage(self,dictionary):
-        if "threshold" in dictionary:
-            threshold = dictionary["threshold"]
+        if "Threshold (db)" in dictionary:
+            threshold = dictionary["Threshold (db)"]
             minIndex = 1
             maxIndex = 1
             maxf,minf=0,0
@@ -260,8 +260,8 @@ class OscilogramElement(OneDimensionalElement):
             return self.parameters["average"]["max"][0]
 
     def minFreqAverage(self,dictionary):
-        if "threshold" in dictionary:
-            threshold = dictionary["threshold"]
+        if "Threshold (db)" in dictionary:
+            threshold = dictionary["Threshold (db)"]
             minIndex = 1
             maxIndex = 1
             maxf,minf=0,0
@@ -327,7 +327,8 @@ class OscilogramElement(OneDimensionalElement):
 
                 self.parameters["peakFreq"][index],self.parameters["peakAmplitude"][index] = peak,peakamplitude
             return self.parameters["peakFreq"][index]
-        return "Invalid Params"
+        return 0
+        # return "Invalid Params"
 
     def peakAmplitude(self,dictionary):
         if "location" in dictionary:
@@ -337,7 +338,8 @@ class OscilogramElement(OneDimensionalElement):
                 peak,freq_index,peakamplitude = self.peak_f_a(index)
                 self.parameters["peakFreq"][index],self.parameters["peakAmplitude"][index] = peak,peakamplitude
             return self.parameters["peakAmplitude"][index]
-        return "Invalid Params"
+        # return "Invalid Params"
+        return 0
 
     def freq_min_max_band_peaksAbove(self,index,threshold, peaksThreshold,array=None):
         """
@@ -364,10 +366,11 @@ class OscilogramElement(OneDimensionalElement):
         return minf,minfIndex,maxf,maxfIndex,maxf-minf,len(regionsPeaks)
 
     def minFreq(self,dictionary):
-        if "location" in dictionary and "threshold" in dictionary and "peaksThreshold" in dictionary:
+        print("DICTIONARY "+str(dictionary))
+        if "location" in dictionary and "Threshold (db)" in dictionary:
             location = dictionary["location"]
-            threshold = dictionary["threshold"]
-            peakthreshold = dictionary["peaksThreshold"]
+            threshold = dictionary["Threshold (db)"]
+            peakthreshold = dictionary["Peaks Threshold (db)"] if "Peaks Threshold (db)" in dictionary else threshold
             index = self.getMatrixIndexFromLocation(location)
             if (index,threshold) not in self.parameters["minFreq"]:
                 minf, minfIndex, maxf, maxfIndex, band, peaks = self.freq_min_max_band_peaksAbove(index,threshold,peakthreshold)
@@ -384,13 +387,14 @@ class OscilogramElement(OneDimensionalElement):
 
 
             return self.parameters["minFreq"][(index,threshold)][0]
-        return "Invalid Params"
+        # return "Invalid Params"
+        return 0
 
     def maxFreq(self,dictionary):
-        if "location" in dictionary and "threshold" in dictionary and "peaksThreshold" in dictionary:
+        if "location" in dictionary and "Threshold (db)" in dictionary:
             location = dictionary["location"]
-            threshold = dictionary["threshold"]
-            peakthreshold = dictionary["peaksThreshold"]
+            threshold = dictionary["Threshold (db)"]
+            peakthreshold = dictionary["Peaks Threshold (db)"] if "Peaks Threshold (db)" in dictionary else threshold
             index = self.getMatrixIndexFromLocation(location)
             if (index,threshold) not in self.parameters["maxFreq"]:
                 minf, minfIndex, maxf, maxfIndex, band, peaks = self.freq_min_max_band_peaksAbove(index,threshold,peakthreshold)
@@ -410,13 +414,14 @@ class OscilogramElement(OneDimensionalElement):
 
             return self.parameters["maxFreq"][(index,threshold)][0]
 
-        return "Invalid Params"
+        # return "Invalid Params"
+        return 0
 
     def bandwidth(self,dictionary):
-        if "location" in dictionary and "threshold" in dictionary and "peaksThreshold" in dictionary:
+        if "location" in dictionary and "Threshold (db)" in dictionary:
             location = dictionary["location"]
-            threshold = dictionary["threshold"]
-            peakthreshold = dictionary["peaksThreshold"]
+            threshold = dictionary["Threshold (db)"]
+            peakthreshold = dictionary["Peaks Threshold (db)"] if "Peaks Threshold (db)" in dictionary else threshold
             index = self.getMatrixIndexFromLocation(location)
             if (index,threshold) not in self.parameters["bandwidth"]:
                 minf, minfIndex, maxf, maxfIndex, band, peaks = self.freq_min_max_band_peaksAbove(index,threshold,peakthreshold)
@@ -438,19 +443,21 @@ class OscilogramElement(OneDimensionalElement):
 
             return self.parameters["bandwidth"][(index,threshold)][0]
 
-        return "Invalid Params"
+        return 0
+        # return "Invalid Params"
 
     def peaksAbove(self,dictionary):
-        if "location" in dictionary and "threshold" in dictionary and "peaksThreshold" in dictionary:
+        if "location" in dictionary and "Threshold (db)" in dictionary:
             location = dictionary["location"]
-            threshold = dictionary["threshold"]
-            peakthreshold = dictionary["peaksThreshold"]
+            threshold = dictionary["Threshold (db)"]
+            peakthreshold = dictionary["Peaks Threshold (db)"] if "Peaks Threshold (db)" in dictionary else threshold
             index = self.getMatrixIndexFromLocation(location)
             if (index,peakthreshold) not in self.parameters["peaksAbove"]:
                 self.parameters["minFreq"][(index,threshold)], minfIndex,self.parameters["maxFreq"][(index,threshold)], maxfIndex,\
                 self.parameters["bandwidth"][(index,threshold)],self.parameters["peaksAbove"][(index,peakthreshold)] = self.freq_min_max_band_peaksAbove(index,threshold,peakthreshold)
             return self.parameters["peaksAbove"][(index,peakthreshold)]
-        return "Invalid Params"
+        return 0
+        # return "Invalid Params"
 
     #endregion
 

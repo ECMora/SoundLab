@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="myappicons">
+    <file>categories.png</file>
     <file>add.png</file>
     <file>deselectElements.png</file>
     <file>deleteElements.png</file>

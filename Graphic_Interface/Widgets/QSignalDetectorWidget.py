@@ -207,6 +207,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         else:
             self.axesOscilogram.select_region(0, 0)
 
+    @property
     def deleteSelectedElements(self):
         """
         Deletes the elements between the zoom cursor if any
@@ -219,16 +220,15 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
         sorted_arr = np.array([x.indexFrom for x in self.Elements])
 
-        indexFrom,indexTo = np.searchsorted(sorted_arr,start),np.searchsorted(sorted_arr,end) - 1
-        print(self.Elements[indexFrom].indexFrom,self.Elements[indexFrom].indexTo,start,end)
-        indexFrom -= 1 if indexFrom > 0 and end >= self.Elements[indexFrom-1].indexTo else 0
+        indexFrom,indexTo = np.searchsorted(sorted_arr,start),np.searchsorted(sorted_arr,end)
+        indexFrom -= 1 if indexFrom > 0 and start <= self.Elements[indexFrom-1].indexTo else 0
 
         if indexFrom < 0 or indexTo < indexFrom or indexTo >= len(self.Elements):
             return None
 
-        self.removeVisualElements(elements=self.Elements[indexFrom:indexTo+1])
+        self.removeVisualElements(elements=self.Elements[indexFrom:indexTo])
 
-        self.Elements = self.Elements[0:indexFrom]+self.Elements[indexTo+1:]
+        self.Elements = self.Elements[0:indexFrom]+self.Elements[indexTo:]
 
         for i,x in enumerate(self.Elements):
             x.setNumber(i+1)
@@ -236,7 +236,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         self.axesOscilogram.update()
         self.axesSpecgram.update()
 
-        return indexFrom,indexTo
+        return indexFrom,indexTo-1
 
 
 

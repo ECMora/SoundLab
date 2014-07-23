@@ -227,7 +227,7 @@ padding:1%;</string>
     <item>
      <widget class="QScrollBar" name="horizontalScrollBar">
       <property name="styleSheet">
-       <string notr="true">background-color: rgb(200, 200, 255);</string>
+       <string notr="true"/>
       </property>
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
@@ -262,6 +262,13 @@ padding:1%;</string>
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionDetection"/>
+   <addaction name="actionTwo_Dimensional_Graphs"/>
+   <addaction name="actionDelete_Selected_Elements"/>
+   <addaction name="actionDeselect_Elements"/>
+   <addaction name="separator"/>
+   <addaction name="actionClassification_Settings"/>
+   <addaction name="separator"/>
    <addaction name="actionZoomIn"/>
    <addaction name="actionZoom_out"/>
    <addaction name="actionZoom_out_entire_file"/>
@@ -274,11 +281,6 @@ padding:1%;</string>
    <addaction name="actionCombined"/>
    <addaction name="actionOscilogram"/>
    <addaction name="actionSpectogram"/>
-   <addaction name="separator"/>
-   <addaction name="actionDetection"/>
-   <addaction name="actionTwo_Dimensional_Graphs"/>
-   <addaction name="actionDelete_Selected_Elements"/>
-   <addaction name="actionDeselect_Elements"/>
    <addaction name="separator"/>
    <addaction name="actionSignalName"/>
   </widget>
@@ -339,6 +341,7 @@ padding:1%;</string>
     <property name="title">
      <string>Detection</string>
     </property>
+    <addaction name="actionDetection"/>
     <addaction name="actionDelete_Selected_Elements"/>
     <addaction name="actionDeselect_Elements"/>
     <addaction name="actionMeditions"/>
@@ -369,10 +372,10 @@ padding:1%;</string>
     </property>
     <addaction name="actionClassification_Settings"/>
    </widget>
-   <addaction name="menuTools"/>
-   <addaction name="menuParameters"/>
    <addaction name="menuDetection"/>
    <addaction name="menuClasification"/>
+   <addaction name="menuTools"/>
+   <addaction name="menuParameters"/>
   </widget>
   <action name="actionZoomIn">
    <property name="icon">
@@ -766,8 +769,12 @@ padding:1%;</string>
    </property>
   </action>
   <action name="actionClassification_Settings">
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/categories.png</normaloff>:/myappicons/categories.png</iconset>
+   </property>
    <property name="text">
-    <string>Settings</string>
+    <string>Edit Categories</string>
    </property>
   </action>
   <action name="actionMethod">

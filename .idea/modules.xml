@@ -2,7 +2,9 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/../../Games/DuettoGames/.idea/DuettoGames.iml" filepath="$PROJECT_DIR$/../../Games/DuettoGames/.idea/DuettoGames.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/DuettoSystem.iml" filepath="$PROJECT_DIR$/.idea/DuettoSystem.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../../Clases/Python/untitled/.idea/untitled.iml" filepath="$PROJECT_DIR$/../../../Clases/Python/untitled/.idea/untitled.iml" />
     </modules>
   </component>
 </project>
