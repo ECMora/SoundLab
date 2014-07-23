@@ -19,6 +19,7 @@ from MainWindow import Ui_DuettoMainWindow
 from Graphic_Interface.Dialogs import InsertSilenceDialog as sdialog, FilterOptionsDialog as filterdg, ChangeVolumeDialog as cvdialog
 from WorkTheme import SerializedData
 from Graphic_Interface.Widgets.Tools import Tools
+from Duetto_Core.Clasification.ClassificationData import ClassificationData
 
 
 MIN_SAMPLING_RATE = 1000
@@ -97,7 +98,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             {u'name': u'Background color', u'type': u'color',u'value':self.defaultTheme.spec_background, u'default': self.defaultTheme.spec_background},
         ]},
         {u'name': u'Themes', u'type': u'group', u'children': [
-         {u'name': u'Theme Selected', u'type': u'list', u'value':u"" if len(themesInFolder) == 0 else themesInFolder[0][themesInFolder[0].rfind(os.path.sep)+1:themesInFolder[0].rfind(".dth")],\
+        {u'name': u'Theme Selected', u'type': u'list', u'value':u"" if len(themesInFolder) == 0 else themesInFolder[0][themesInFolder[0].rfind(os.path.sep)+1:themesInFolder[0].rfind(".dth")],\
           u'default':u"" if len(themesInFolder) == 0 else themesInFolder[0],u'values': [(x[x.rfind(os.path.sep)+1:x.rfind(".dth")], x) for x in themesInFolder]},
         ]
         } ,
@@ -132,12 +133,18 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.hist.item.gradient.restoreState(self.defaultTheme.colorBarState)
         self.hist.item.region.setRegion(self.defaultTheme.histRange)
         self.hist.item.region.sigRegionChanged.connect(self.updateRegionTheme)
+        #the next line is a PARCHE for the error of deselect zoom region when the region changes
+        self.hist.item.region.sigRegionChanged.connect(self.widget.clearZoomCursor)
+
 
         action = self.hist.item.gradient.hsvAction
         action.triggered.disconnect()
         action.triggered.connect(self.widget.SaveColorBar)
         action.setCheckable(False)
         action.setText("Save")
+        #
+        # # classifPath = os.path.join(os.path.join("Utils","Classification"),"classifSettings")
+        self.classificationData = self.DeserializeClassificationData()
 
         lay1.addWidget(self.hist)
         self.osc_settings_contents.setLayout(lay1)
@@ -216,7 +223,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.widget.specgramSettings.NFFT = self.ParamTree.param(u'Spectrogram Settings').param(u'FFT size').value()
         self.widget.specgramSettings.overlap = self.ParamTree.param(u'Spectrogram Settings').param(u'FFT overlap').value()
         p = os.path.join(os.path.join(u"Utils",u"Didactic Signals"),u"duetto.wav")
-       
+
         if os.path.exists(p):
             self.widget.open(p)
             self.actionSignalName.setText(u"File Name: "+ self.widget.signalName())
@@ -239,11 +246,11 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     def SerializeTheme(self,filename):
         if filename:
-            self.defaultTheme.centerColor = self.ParamTree.param('Detection Settings').param('Measurement Location').param('Center').value()
-            self.defaultTheme.startColor = self.ParamTree.param('Detection Settings').param('Measurement Location').param('Start').value()
-            self.defaultTheme.quart1Color = self.ParamTree.param('Detection Settings').param('Measurement Location').param('Quartile25').value()
-            self.defaultTheme.quart2Color = self.ParamTree.param('Detection Settings').param('Measurement Location').param('Quartile75').value()
-            self.defaultTheme.endColor = self.ParamTree.param('Detection Settings').param('Measurement Location').param('End').value()
+            self.defaultTheme.centerColor = self.ParamTree.param('Detection Visual Settings').param('Measurement Location').param('Center').value()
+            self.defaultTheme.startColor = self.ParamTree.param('Detection Visual Settings').param('Measurement Location').param('Start').value()
+            self.defaultTheme.quart1Color = self.ParamTree.param('Detection Visual Settings').param('Measurement Location').param('Quartile25').value()
+            self.defaultTheme.quart2Color = self.ParamTree.param('Detection Visual Settings').param('Measurement Location').param('Quartile75').value()
+            self.defaultTheme.endColor = self.ParamTree.param('Detection Visual Settings').param('Measurement Location').param('End').value()
             self.defaultTheme.histRange = self.hist.item.region.getRegion()
             self.defaultTheme.colorBarState = self.hist.item.gradient.saveState()
             file = open(filename,'wb')
@@ -258,6 +265,19 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             return data
         return SerializedData()
 
+    def SerializeClassificationData(self,filename=""):
+        if filename and os.path.exists(filename):
+            file = open(filename,'wb')
+            pickle.dump(self.classificationData,file)
+            file.close()
+
+    def DeserializeClassificationData(self,filename=""):
+        if filename and os.path.exists(filename):
+            file = open(filename,'rb')
+            data = pickle.load(file)
+            file.close()
+            return data
+        return ClassificationData()
 
     @pyqtSlot()
     def on_actionChangePlayStatus_triggered(self):
@@ -290,11 +310,12 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.ParamTree.param(u'Spectrogram Settings').param(u'Background color').setValue(theme.spec_background)
         self.ParamTree.param(u'Spectrogram Settings').param(u'Threshold(dB)').param(u'Min').setValue(theme.histRange[0])
         self.ParamTree.param(u'Spectrogram Settings').param(u'Threshold(dB)').param(u'Max').setValue(theme.histRange[1])
-        self.ParamTree.param(u'Power Spectrum Settings').param(u'Grid').param(u'X').setValue(self.defaultTheme.pow_GridX)
-        self.ParamTree.param(u'Power Spectrum Settings').param(u'Grid').param(u'Y').setValue(self.defaultTheme.pow_GridY)
-        self.ParamTree.param(u'Power Spectrum Settings').param(u'Background color').setValue(theme.pow_Back)
-        self.ParamTree.param(u'Power Spectrum Settings').param(u'Plot color').setValue(self.defaultTheme.pow_Plot)
+        self.ParamTree.param(u'Spectrogram Settings').param(u'Frequency(kHz)').param(u'Min').setValue(theme.minYSpec/1000.0)
+        self.ParamTree.param(u'Spectrogram Settings').param(u'Frequency(kHz)').param(u'Max').setValue(theme.maxYSpec/1000.0)
+        self.ParamTree.param(u'Oscillogram Settings').param(u'Amplitude(%)').param(u'Min').setValue(theme.minYOsc)
+        self.ParamTree.param(u'Oscillogram Settings').param(u'Amplitude(%)').param(u'Max').setValue(theme.maxYOsc)
         self.ParamTree.param(u'Detection Visual Settings').param(u'Measurement Location').param(u'Center').setValue(theme.centerColor)
+        self.ParamTree.param(u'Detection Visual Settings').param(u'Measurement Location').param(u'End').setValue(theme.endColor)
         self.ParamTree.param(u'Detection Visual Settings').param(u'Measurement Location').param(u'Start').setValue(theme.startColor)
         self.ParamTree.param(u'Detection Visual Settings').param(u'Measurement Location').param(u'Quartile25').setValue(theme.quart1Color)
         self.ParamTree.param(u'Detection Visual Settings').param(u'Measurement Location').param(u'Quartile75').setValue(theme.quart2Color)
@@ -302,8 +323,9 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     @pyqtSlot()
     def on_actionLoad_Theme_triggered(self):
         filename = QFileDialog.getOpenFileName(parent=self,directory = os.path.join(u"Utils",u"Themes"), caption=u"Load Theme",filter=u"Duetto Theme Files (*.dth);;All Files (*)")
-        data = self.DeSerializeTheme(filename)
-        self.updateMyTheme(data)
+        if filename and os.path.exists(filename):
+            data = self.DeSerializeTheme(filename)
+            self.updateMyTheme(data)
 
     #region Drag and Drop file
 
@@ -437,6 +459,8 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             #print('  data:      %s' % str(data))
             #print('  ----------')
 
+
+
     @pyqtSlot()
     def on_actionSegmentation_And_Clasification_triggered(self):
         self.defaultTheme.centerColor = self.ParamTree.param(u'Detection Visual Settings').param(u'Measurement Location').param(u'Center').value()
@@ -450,7 +474,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         if t > f:
             signal.data = self.widget.signalProcessor.signal.data[f:t]
 
-        segWindow = SegmentationAndClasificationWindow(parent=self, signal=signal)
+        segWindow = SegmentationAndClasificationWindow(parent=self, signal=signal,classifcationSettings=self.classificationData)
         if not segWindow.rejectSignal:
             segWindow.widget.maxYOsc = self.ParamTree.param(u'Oscillogram Settings').param(u'Amplitude(%)').param(u'Max').value()
             segWindow.widget.minYOsc = self.ParamTree.param(u'Oscillogram Settings').param(u'Amplitude(%)').param(u'Min').value()
@@ -735,6 +759,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.close()
 
     def closeEvent(self,event):
+        # self.SerializeClassificationData(os.path.join(os.path.join("Utils","Classification"),"classifSettings"))
         self._save(event)
         self.close()
 

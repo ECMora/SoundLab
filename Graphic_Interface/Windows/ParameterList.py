@@ -8,7 +8,7 @@ class DuettoListParameterItem(WidgetParameterItem):
 
     """
     def __init__(self, param, depth):
-        param.opts[u'value'] = param.opts[u'value'][1]
+        param.opts[u'value'] = param.opts[u'default']
         self.targetValue = None
         self.values = param.opts.get(u'values',[])
         self.valuesDict = {}

@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>932</width>
-    <height>600</height>
+    <width>936</width>
+    <height>593</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -65,7 +65,7 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>932</width>
+     <width>936</width>
      <height>21</height>
     </rect>
    </property>
@@ -222,7 +222,11 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
    <addaction name="menuView"/>
    <addaction name="menuSound"/>
   </widget>
-  <widget class="QStatusBar" name="statusbar"/>
+  <widget class="QStatusBar" name="statusbar">
+   <property name="styleSheet">
+    <string notr="true">background-color: rgb(255, 255, 255);</string>
+   </property>
+  </widget>
   <widget class="QDockWidget" name="dock_settings">
    <property name="sizePolicy">
     <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
@@ -246,7 +250,7 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
     <string notr="true">background-color: rgb(255, 255, 255);</string>
    </property>
    <property name="floating">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="features">
     <set>QDockWidget::AllDockWidgetFeatures</set>
@@ -305,8 +309,8 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
    <addaction name="actionSettings"/>
    <addaction name="actionSegmentation_And_Clasification"/>
    <addaction name="actionFile_Up"/>
-   <addaction name="actionSignalName"/>
    <addaction name="actionFile_Down"/>
+   <addaction name="actionSignalName"/>
   </widget>
   <action name="actionOpen">
    <property name="icon">
@@ -695,7 +699,7 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
   <action name="actionFile_Up">
    <property name="icon">
     <iconset resource="resources/icons.qrc">
-     <normaloff>:/myappicons/downfile.png</normaloff>:/myappicons/downfile.png</iconset>
+     <normaloff>:/myappicons/upfile.png</normaloff>:/myappicons/upfile.png</iconset>
    </property>
    <property name="text">
     <string>File Up</string>
@@ -707,7 +711,7 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
   <action name="actionFile_Down">
    <property name="icon">
     <iconset resource="resources/icons.qrc">
-     <normaloff>:/myappicons/upfile.png</normaloff>:/myappicons/upfile.png</iconset>
+     <normaloff>:/myappicons/downfile.png</normaloff>:/myappicons/downfile.png</iconset>
    </property>
    <property name="text">
     <string>File Down</string>
