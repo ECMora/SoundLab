@@ -13,11 +13,10 @@ class UndoRedoManager:
         self.actionIndex = -1
 
     def undo(self):
-        if(self.actionIndex >= 0):
+        if self.actionIndex >= 0:
             action = self.actionsList[self.actionIndex]
             if action is not None:
                 action.undo()
-                self.widget.visualChanges = True
                 self.widget.refresh()
             self.actionIndex -= 1
 
@@ -27,9 +26,9 @@ class UndoRedoManager:
             action = self.actionsList[self.actionIndex]
             if action is not None:
                 action.redo()
-                self.widget.visualChanges = True
                 self.widget.refresh()
-
+            else:
+                self.actionIndex -= 1
 
     def addAction(self,action):
         self.actionIndex += 1
@@ -40,7 +39,7 @@ class UndoRedoManager:
         self.actionsList[self.actionIndex] = action
 
     def clearActions(self):
-        self.actionIndex = 0
+        self.actionIndex = -1
         self.actionsList = [None] * 20
 
     def count(self):

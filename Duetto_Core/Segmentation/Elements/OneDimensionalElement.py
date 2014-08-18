@@ -366,7 +366,6 @@ class OscilogramElement(OneDimensionalElement):
         return minf,minfIndex,maxf,maxfIndex,maxf-minf,len(regionsPeaks)
 
     def minFreq(self,dictionary):
-        print("DICTIONARY "+str(dictionary))
         if "location" in dictionary and "Threshold (db)" in dictionary:
             location = dictionary["location"]
             threshold = dictionary["Threshold (db)"]

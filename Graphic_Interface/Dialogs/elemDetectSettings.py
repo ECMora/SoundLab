@@ -13,7 +13,6 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         super(QDialog,self).__init__(parent)
         self.setupUi(self)
 
-
         if parent is not None:
             self.widget.specgramSettings.NFFT = parent.widget.specgramSettings.NFFT
             self.widget.specgramSettings.overlap = parent.widget.specgramSettings.overlap

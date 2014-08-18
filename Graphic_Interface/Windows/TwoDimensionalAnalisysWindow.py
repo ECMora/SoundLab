@@ -250,9 +250,6 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
                 w = EditCategoriesWidget(self, category,self.classificationData)
                 self.selection_widgets.append(w)
                 self.clasiffCategories_vlayout.addWidget(w)
-            
-
-
 
     def elementFigureClicked(self,x,y):
         self.selectElement(y[0].data())
