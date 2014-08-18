@@ -35,8 +35,6 @@ class QSignalVisualizerWidget(QWidget):
         QWidget.__init__(self, parent)
         self.histogram = pg.HistogramLUTWidget()
         self._Z = np.array([[0]])
-
-
         self.osc_color = QColor(255, 255, 255)
 
         self.axesOscilogram = OscilogramPlotWidget(parent=self)
@@ -106,6 +104,8 @@ class QSignalVisualizerWidget(QWidget):
         self.playing.connect(self.notifyPlayingCursor)
 
         self._pivot = self.zoomCursor.min
+
+
 
     def setSelectedTool(self, tool):
         self.axesSpecgram.changeSelectedTool(tool)

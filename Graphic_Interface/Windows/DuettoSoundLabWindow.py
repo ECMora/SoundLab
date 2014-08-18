@@ -52,6 +52,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         self.widget.osc_color = self.defaultTheme.osc_plot
 
+
         self.pow_spec_lines = True
 
         self.pow_spec_maxY = 5
@@ -759,7 +760,9 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     def closeEvent(self,event):
         # self.SerializeClassificationData(os.path.join(os.path.join("Utils","Classification"),"classifSettings"))
-        self._save(event)
+        print(self.widget.undoRedoManager.count())
+        if self.widget.undoRedoManager.count() > 0:
+            self._save(event)
         self.close()
 
     def _save(self,event = None):

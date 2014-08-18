@@ -32,7 +32,22 @@ def validLicense():
 
 if __name__ == '__main__':
     import sys
+    print(QLocale(QLocale.Portuguese).name())
+    print(QLocale(QLocale.French).name())
+    print(QLocale(QLocale.German).name())
+    print(QLocale(QLocale.Italian).name())
+    print(QLocale(QLocale.Russian).name())
+
+
+
+
+
     app = QApplication(sys.argv)
+
+    locale = QLocale.system().name()
+    qtTranslator = QTranslator()
+    if qtTranslator.load(locale, "I18n\\"):
+        app.installTranslator(qtTranslator)
 
     dmw = DuettoSoundLabWindow()
     path = os.path.join(os.path.join("Utils","PresentationVideo"),"duettoinit.mp4")
@@ -55,8 +70,9 @@ if __name__ == '__main__':
         sys.exit(app.exec_())
     else:
          QMessageBox.warning(QMessageBox(), "Error",
-                                        "Your Duetto Sound Lab Licence has some troubles.\n"
-                                        " Could be because your trial version is over. Try to open again.")
+                                        " Valid duetto Sound Lab license is missing or trial period is over.\n"
+                                        " If you have a valid license try to open the application again, otherwise"\
+                                        " contact duetto support team.")
          sys.exit(0)
 
     # start the Qt main loop execution, exiting from this script

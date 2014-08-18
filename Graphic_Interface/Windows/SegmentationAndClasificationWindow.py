@@ -121,7 +121,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
             ["Start(s)", True, lambda x,d: x.startTime()],
             ["End(s)", True, lambda x,d: x.endTime()],
             ["StartToMax(s)", False,lambda x,d: x.distanceFromStartToMax()],
-            ["Duration(s)", True,lambda x,d: x.duration()],
+            ["Duration(s)", True,lambda x,d: x.duration],
         ]
 
         self.spectralMeditions = [
@@ -360,7 +360,6 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                             l.append(["location",self.spectralMeasurementLocation.QUARTILE75])
                             params.append([y[0]+"(quartile75)", y[2], l])
 
-        print("params "+str(params))
         return params
 
     def getParameters(self):

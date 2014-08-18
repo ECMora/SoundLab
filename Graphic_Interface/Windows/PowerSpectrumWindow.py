@@ -1,12 +1,8 @@
 # -*- coding: utf-8 -*-
 from PyQt4.QtCore import pyqtSlot
-from matplotlib import mlab
-import numpy
 from Graphic_Interface.Widgets.Power_Spectrum  import Ui_PowSpecWindow
-from PyQt4 import QtGui,QtCore
-from Duetto_Core.SpecgramSettings import FFTWindows
+from PyQt4 import QtGui
 from Graphic_Interface.Windows.ParameterList import DuettoListParameterItem
-from pyqtgraph.parametertree.Parameter import Parameter, ParameterItem
 from pyqtgraph.parametertree.parameterTypes import WidgetParameterItem,ListParameter
 from pyqtgraph.parametertree import Parameter, ParameterTree
 

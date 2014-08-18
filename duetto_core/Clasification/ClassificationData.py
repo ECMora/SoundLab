@@ -18,7 +18,7 @@ class ClassificationData(QObject):
         """
         QObject.__init__(self)
         trainingData = [] if trainingData is None else trainingData
-        default = {"Specie":["Cartacuba"],"Taxa":["Birds"]}
+        default = {"Specie": ["Cartacuba","Arriero"], "Taxa": ["Birds", "Mammals"]}
         categories =  default if categories is None else categories
         if any([not isinstance(x,ClassificationVector) for x in trainingData]) or\
            categories is None or not isinstance(categories, dict):
