@@ -25,12 +25,12 @@ class PowerSpectrumWindow(QtGui.QMainWindow,Ui_PowSpecWindow):
 
         params = self.ui.widget.getParamsList()
 
-        wSettings = {u'name': u'Window Settings', u'type': u'group', u'children': [
-            {u'name':u'Plot color', u'type': u'color', u'value':self.ui.widget.plotColor},
-            {u'name': u'Background color', u'type': u'color', u'value':self.ui.widget.backColor},
-            {u'name': u'Grid', u'type': u'group', u'children':[
-                {u'name': u'X', u'type': u'bool', u'value': self.ui.widget.gridX},
-                {u'name': u'Y', u'type': u'bool', u'value':self.ui.widget.gridY}]},
+        wSettings = {u'name': unicode(self.tr(u'Window Settings')), u'type': u'group', u'children': [
+            {u'name': unicode(self.tr(u'Plot color')), u'type': u'color', u'value':self.ui.widget.plotColor},
+            {u'name': unicode(self.tr(u'Background color')), u'type': u'color', u'value':self.ui.widget.backColor},
+            {u'name': unicode(self.tr(u'Grid')), u'type': u'group', u'children':[
+                {u'name': unicode(self.tr(u'X')), u'type': u'bool', u'value': self.ui.widget.gridX},
+                {u'name': unicode(self.tr(u'Y')), u'type': u'bool', u'value':self.ui.widget.gridY}]},
             # {u'name': u'Lines', u'type':u'bool', u'value': self.ui.widget.lines},
         ]}
         params.append(wSettings)
@@ -63,17 +63,17 @@ class PowerSpectrumWindow(QtGui.QMainWindow,Ui_PowSpecWindow):
             else:
                 childName = param.name()
 
-            if childName ==u'Window Settings.Plot color':
+            if childName == unicode(self.tr(u'Window Settings.Plot color')):
                 self.ui.widget.plotColor = data
-            elif childName ==u'Window Settings.Background color':
+            elif childName == unicode(self.tr(u'Window Settings.Background color')):
                 self.ui.widget.backColor = data
                 self.ui.widget.setBackground(data)
                 return
-            elif childName ==u'Window Settings.Grid.X':
+            elif childName == unicode(self.tr(u'Window Settings.Grid.X')):
                 self.ui.widget.gridX = data
                 self.ui.widget.showGrid(x=data, y=self.ui.widget.gridY)
                 return
-            elif childName ==u'Window Settings.Grid.Y':
+            elif childName == unicode(self.tr(u'Window Settings.Grid.Y')):
                 self.ui.widget.gridY = data
                 self.ui.widget.showGrid(x=self.ui.widget.gridX, y=data)
                 return

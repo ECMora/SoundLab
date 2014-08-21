@@ -32,16 +32,6 @@ def validLicense():
 
 if __name__ == '__main__':
     import sys
-    print(QLocale(QLocale.Portuguese).name())
-    print(QLocale(QLocale.French).name())
-    print(QLocale(QLocale.German).name())
-    print(QLocale(QLocale.Italian).name())
-    print(QLocale(QLocale.Russian).name())
-
-
-
-
-
     app = QApplication(sys.argv)
 
     locale = QLocale.system().name()
@@ -75,5 +65,5 @@ if __name__ == '__main__':
                                         " contact duetto support team.")
          sys.exit(0)
 
-    # start the Qt main loop execution, exiting from this script
-    # with the same return code of Qt application
+    #start the Qt main loop execution, exiting from this script
+    #with the same return code of Qt application

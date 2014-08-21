@@ -2,6 +2,7 @@
 from numpy import array, concatenate
 from Duetto_Core.SignalProcessors.SignalProcessor import SignalProcessor
 
+
 class EditionSignalProcessor(SignalProcessor):
     def __init__(self, signal=None):
         SignalProcessor.__init__(self, signal)

@@ -44,6 +44,17 @@ SOURCES += ..\Graphic_Interface\Widgets\Tools.py
 SOURCES += ..\Graphic_Interface\Widgets\TwoDPlotWidget.py
 SOURCES += ..\Graphic_Interface\Widgets\UndoRedoActions.py
 
+SOURCES += ..\Duetto_Core\AudioSignals\AudioSignal.py
+SOURCES += ..\Duetto_Core\AudioSignals\FileAudioSignal.py
+SOURCES += ..\Duetto_Core\AudioSignals\SplitArray.py
+SOURCES += ..\Duetto_Core\AudioSignals\WavFileSignal.py
+SOURCES += ..\Duetto_Core\Clasification\ClassificationData.py
+SOURCES += ..\Duetto_Core\Clasification\ClassificationMethod.py
+SOURCES += ..\Duetto_Core\Segmentation\Elements\Element.py
+SOURCES += ..\Duetto_Core\Segmentation\Elements\OneDimensionalElement.py
+SOURCES += ..\Duetto_Core\Segmentation\Elements\TwoDimensionalElement.py
+
+
 TRANSLATIONS += es_ES.ts
 TRANSLATIONS += pt_PT.ts
 TRANSLATIONS += de_DE.ts

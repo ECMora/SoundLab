@@ -1,21 +1,21 @@
 # -*- coding: utf-8 -*-
 from PyQt4 import QtCore
-from PyQt4.QtCore import SIGNAL, pyqtSignal
-from PyQt4.QtGui import QCursor,QColor
+from PyQt4.QtCore import pyqtSignal, QObject
+from PyQt4.QtGui import QCursor
 from matplotlib import mlab
-from PyQt4 import QtGui
-import pyqtgraph as pg
 from Graphic_Interface.Widgets.Tools import Tools
 from Axis import *
 from Duetto_Core.SpecgramSettings import FFTWindows
 import numpy as np
-from Graphic_Interface.Widgets.Tools import RectROI
 
-class OneDimensionalFunction:
+
+class OneDimensionalFunction(QObject):
     def __init__(self,widget):
+        QObject.__init__(self)
         self.myOptions = {}
         self.widget = widget
         self.windows = FFTWindows()
+        self.pTree = None
 
     def connectMySignal(self,pTree):
         self.pTree = pTree
@@ -37,18 +37,19 @@ class OneDimensionalFunction:
     def getStrPoint(self, info):
         pass
 
+
 class LogarithmicPowSpec(OneDimensionalFunction):
     def __init__(self,widget):
         OneDimensionalFunction.__init__(self,widget)
-        self.myOptions = {u'name': u'Power spectrum(Logarithmic)', u'type': u'group', u'children': [
-            {u'name': u'FFT window', u'type': u'list', u'value':self.windows.Hamming, u'default':self.windows.Hamming,
+        self.myOptions = {u'name': unicode(self.tr(u'Power spectrum(Logarithmic)')), u'type': u'group', u'children': [
+            {u'name': unicode(self.tr(u'FFT window')), u'type': u'list', u'value':self.windows.Hamming, u'default':self.windows.Hamming,
              u'values': [(u'Hamming', self.windows.Hamming), (u'Bartlett',self.windows.Bartlett),(u'Blackman', self.windows.Blackman),(u'Hanning', self.windows.Hanning),(u'Kaiser',self.windows.Kaiser),(u'None',self.windows.WindowNone),(u"Rectangular", self.windows.Rectangular)]},
-            {u'name': u'Apply Function', u'type': u'action'},
+            {u'name': unicode(self.tr(u'Apply Function')), u'type': u'action'},
         ]}
 
     def connectMySignal(self,pTree):
         OneDimensionalFunction.connectMySignal(self,pTree)
-        self.pTree.param('Power spectrum(Logarithmic)', 'Apply Function').sigActivated.connect(self.processing)
+        self.pTree.param(unicode(self.tr(u'Power spectrum(Logarithmic)')), unicode(self.tr(u'Apply Function'))).sigActivated.connect(self.processing)
 
     def processing(self):
         OneDimensionalFunction.processing(self)
@@ -57,7 +58,7 @@ class LogarithmicPowSpec(OneDimensionalFunction):
         maxx = max(self.widget.rangeX[1], min(minx + self.widget.NFFTSpec, len(self.widget.data)))
         data = self.widget.data[minx:maxx]
 
-        window = self.pTree.param('Power spectrum(Logarithmic)', 'FFT window').value()
+        window = self.pTree.param(unicode(self.tr(u'Power spectrum(Logarithmic)')), unicode(self.tr(u'FFT window'))).value()
         windowVals = window(np.ones((len(data),), data.dtype))
         dataWindowed = windowVals * data
         #apply the window function to the result
@@ -90,29 +91,34 @@ class LogarithmicPowSpec(OneDimensionalFunction):
         a0 = np.round(info0[1],1)
         f1 = np.round(info1[0],1)
         a1 = np.round(info1[1],1)
-        return str.format('f0: {0}kHz  Amplitude0: {1}dB f1: {2}kHz Amplitude1: {3}dB df: {4}kHz dAmplitude: {5}dB',f0,a0 ,f1, a1,np.abs(f1-f0),np.abs(a1-a0))
+        return str.format('f0: {0}kHz  ' + self.tr('Amplitude') + '0: {1}dB f1: {2}kHz ' + self.tr('Amplitude') \
+                          + '1: {3}dB df: {4}kHz ' + self.tr('dAmplitude') + \
+                          ': {5}dB', f0, a0, f1, a1, np.abs(f1-f0), np.abs(a1-a0))
 
     def getStrPoint(self, info):
-        return str.format('Frequency: {0}kHz  Amplitude: {1}dB',np.round(info[0],1),np.round(info[1],1))
+        return str.format(self.tr('Frequency') + ': {0}kHz  ' + self.tr('Amplitude')
+                          + ': {1}dB', np.round(info[0], 1), np.round(info[1], 1))
+
 
 class Envelope(OneDimensionalFunction):
     def __init__(self,widget):
         OneDimensionalFunction.__init__(self,widget)
-        self.myOptions = {u'name': u'Envelope', u'type': u'group', u'children':[
-            {u'name':u'Amplitude', u'type':u'group', u'children':[
-                {u'name':u'Min', u'type':u'float', u'value': -100, u'step': 0.1, 'default': -100},
-                {u'name':u'Max', u'type':u'float', u'value': 100, u'step': 0.1, 'default': 100}
+        self.myOptions = {u'name': unicode(self.tr(u'Envelope')), u'type': u'group', u'children':[
+            {u'name':unicode(self.tr(u'Amplitude')), u'type':u'group', u'children':[
+                {u'name':unicode(self.tr(u'Min')), u'type':u'float', u'value': -100, u'step': 0.1, 'default': -100},
+                {u'name':unicode(self.tr(u'Max')), u'type':u'float', u'value': 100, u'step': 0.1, 'default': 100}
             ]},
-            {u'name':u'Apply Function', u'type':'action'},
+            {u'name':unicode(self.tr(u'Apply Function')), u'type':'action'},
          ]}
 
     def connectMySignal(self,pTree):
         OneDimensionalFunction.connectMySignal(self,pTree)
-        self.pTree.param('Envelope', 'Apply Function').sigActivated.connect(self.processing)
+        self.pTree.param(unicode(self.tr(u'Envelope')), unicode(self.tr(u'Apply Function'))).sigActivated.connect(self.processing)
 
     def processing(self):
         OneDimensionalFunction.processing(self)
-        max = self.pTree.param('Envelope').param('Amplitude').param('Max').value() * 0.01 * np.amax(self.widget.data)
+        max = self.pTree.param(unicode(self.tr(u'Envelope'))).param(unicode(self.tr(u'Amplitude')))\
+                  .param(unicode(self.tr(u'Max'))).value() * 0.01 * np.amax(self.widget.data)
 
         envelope = self.abs_decay_averaged_envelope(self.widget.data)
         # envelopeFactor = (2.0 ** (self.widget.bitdepth) * max / 100) / envelope[np.argmax(envelope)]
@@ -161,14 +167,15 @@ class Envelope(OneDimensionalFunction):
             return np.array([np.mean(arr[i-softfactor:i]) for i,_ in enumerate(arr, start=softfactor)])
         return arr
 
+
 class InstantaneousFrequencies(OneDimensionalFunction):
     def __init__(self,widget):
         OneDimensionalFunction.__init__(self,widget)
-        self.myOptions = {u'name': u'Instantaneous Frequency', u'type': u'group', u'children':[{u'name':'Apply Function', u'type':'action'}]}
+        self.myOptions = {u'name': unicode(self.tr(u'Instantaneous Frequency')), u'type': u'group', u'children':[{u'name':unicode(self.tr(u'Apply Function')), u'type':u'action'}]}
 
     def connectMySignal(self,pTree):
         OneDimensionalFunction.connectMySignal(self,pTree)
-        self.pTree.param('Instantaneous Frequency', 'Apply Function').sigActivated.connect(self.processing)
+        self.pTree.param(unicode(self.tr(u'Instantaneous Frequency')), unicode(self.tr(u'Apply Function'))).sigActivated.connect(self.processing)
 
     def processing(self):
         OneDimensionalFunction.processing(self)
@@ -208,31 +215,40 @@ class InstantaneousFrequencies(OneDimensionalFunction):
         t1 = info1[0]
         f1 = np.round(info1[1]/1000,1)
         a1 = np.round(info1[2],1)
-        return str.format('t0: {0}s f0: {1}kHz  Amplitude0: {2}dB t1: {3}s  f0: {4}kHz  Amplitude1: {5}dB dt: {6}s df: {7}kHz dAmplitude: {8}dB',t0,f0,a0,t1,f1,a1,np.abs(t1-t0),np.abs(f1-f0), np.abs(a1-a0))
+        return str.format('t0: {0}s f0: {1}kHz  '+
+                          self.tr('Amplitude') + '0: {2}dB t1: {3}s  f0: {4}kHz  ' +
+                          self.tr('Amplitude') + '1: {5}dB dt: {6}s df: {7}kHz '+
+                          self.tr('dAmplitude') + ': {8}dB', t0, f0, a0, t1, f1, a1,
+                          np.abs(t1-t0),np.abs(f1-f0), np.abs(a1-a0))
 
     def getStrPoint(self, info):
-        return str.format('Time: {0}s  Frequency: {1}kHz Amplitude: {2}dB  ' ,info[0],np.round(info[1]/1000,1),np.round(info[2],1))
+        return str.format(self.tr('Time') +\
+                          ': {0}s  ' + self.tr('Frequency') + ': {1}kHz '+\
+                          self.tr('Amplitude') +\
+                          ': {2}dB  ', info[0], np.round(info[1]/1000, 1), np.round(info[2], 1))
+
 
 class AveragePowSpec(OneDimensionalFunction):
         def __init__(self,widget):
             OneDimensionalFunction.__init__(self,widget)
-            self.myOptions = {u'name': u'Power spectrum(Average)', u'type': u'group', u'children': [
-            {u'name':u'FFT size', u'type': u'list', u'default':512, u'values': [(u'Automatic', 512),(u"128", 128), (u"256", 256),(u"512", 512), (u"1024", 1024)], u'value': u'512'},
-            {u'name': u'FFT window', u'type': u'list', u'value':self.windows.Hamming,u'default':self.windows.Hamming,
+            self.myOptions = {u'name': unicode(self.tr(u'Power spectrum(Average)')), u'type': u'group', u'children': [
+            {u'name':unicode(self.tr(u'FFT size')), u'type': u'list', u'default':512, u'values': [(unicode(self.tr(u'Automatic')), 512),(u"128", 128), (u"256", 256),(u"512", 512), (u"1024", 1024)], u'value': u'512'},
+            {u'name': unicode(self.tr(u'FFT window')), u'type': u'list', u'value':self.windows.Hamming,u'default':self.windows.Hamming,
              u'values': [(u"Hamming", self.windows.Hamming),(u'Bartlett',self.windows.Bartlett),(u"Blackman", self.windows.Blackman), (u"Hanning", self.windows.Hanning),(u'Kaiser',self.windows.Kaiser),(u'None',self.windows.WindowNone),(u"Rectangular", self.windows.Rectangular)]},
-            {u'name': u'FFT overlap', u'type': u'int', u'value':50, u'limits': (-1, 99)},
-            {u'name': u'Apply Function', u'type': u'action'},
+            {u'name': unicode(self.tr(u'FFT overlap')), u'type': u'int', u'value':50, u'limits': (-1, 99)},
+            {u'name': unicode(self.tr(u'Apply Function')), u'type': u'action'},
         ]}
 
         def connectMySignal(self,pTree):
             self.pTree = pTree
-            self.pTree.param('Power spectrum(Average)', 'Apply Function').sigActivated.connect(self.processing)
+            self.pTree.param(unicode(self.tr(u'Power spectrum(Average)')),\
+                             unicode(self.tr(u'Apply Function'))).sigActivated.connect(self.processing)
 
         def processing(self):
             OneDimensionalFunction.processing(self)
-            window = self.pTree.param('Power spectrum(Average)', 'FFT window').value()
-            NFFT = self.pTree.param('Power spectrum(Average)', 'FFT size').value()
-            overlap = self.pTree.param('Power spectrum(Average)', 'FFT overlap').value() * NFFT/100.
+            window = self.pTree.param(unicode(self.tr(u'Power spectrum(Average)')), unicode(self.tr(u'FFT window'))).value()
+            NFFT = self.pTree.param(unicode(self.tr(u'Power spectrum(Average)')), unicode(self.tr(u'FFT size'))).value()
+            overlap = self.pTree.param(unicode(self.tr(u'Power spectrum(Average)')), unicode(self.tr(u'FFT overlap'))).value() * NFFT/100.
 
             minx = self.widget.rangeX[0]
             maxx = max(self.widget.rangeX[1], min(minx + NFFT, len(self.widget.data)))
@@ -267,10 +283,14 @@ class AveragePowSpec(OneDimensionalFunction):
             a0 = np.round(info0[1],1)
             f1 = np.round(info1[0],1)
             a1 = np.round(info1[1],1)
-            return str.format('f0: {0}kHz  Amplitude0: {1}dB f1: {2}kHz Amplitude1: {3}dB df: {4}kHz dAmplitude: {5}dB',f0,a0 ,f1, a1,np.abs(f1-f0),np.abs(a1-a0))
+            return str.format('f0: {0}kHz  ' + self.tr('Amplitude') + '0: {1}dB f1: {2}kHz '+\
+                    self.tr('Amplitude')+ '1: {3}dB df: {4}kHz ' + self.tr('dAmplitude') + \
+                            ': {5}dB',f0,a0 ,f1, a1,np.abs(f1-f0),np.abs(a1-a0))
 
         def getStrPoint(self, info):
-            return str.format('Frecuencia: {0}kHz  Amplitud: {1}dB', np.round(info[0], 1), np.round(info[1], 1))
+            return str.format(self.tr('Frecuencia') + ': {0}kHz  ' + \
+                              self.ttr('Amplitud') + ': {1}dB', np.round(info[0], 1), np.round(info[1], 1))
+
 
 class PowSpecPlotWidget(pg.PlotWidget):
 
@@ -281,10 +301,10 @@ class PowSpecPlotWidget(pg.PlotWidget):
         self.wSettings = []
 
         self.proc = [LogarithmicPowSpec(self), AveragePowSpec(self), InstantaneousFrequencies(self)]
-        self.lastProc = lambda : None
-        self.getInfo = lambda  : None
-        self.getStr = lambda : None
-        self.getStrPoint = lambda : None
+        self.lastProc = lambda x: None
+        self.getInfo = lambda x: None
+        self.getStr = lambda x: None
+        self.getStrPoint = lambda x: None
 
         self.windows = FFTWindows()
         pg.PlotWidget.__init__(self, **kargs)
@@ -396,7 +416,6 @@ class PowSpecPlotWidget(pg.PlotWidget):
         a, b = self.getPlotItem().viewRange()[0]
         return int(vb.x() + round((maxx) * (indexX - a) * 1. / (b - a), 0))
 
-    #PIXELS_BETWEEN_AXES_AND_DATA = 10 #the pixels for the numbers in the left side
 
     def fromCanvasToClient(self, xPixel):
         """
