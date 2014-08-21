@@ -8,12 +8,12 @@ class EditCategoriesWidget(Ui_EditCategoryWidget,QWidget):
     # valueAdded = pyqtSignal(str,str) #category, value
     # valueRemoved = pyqtSignal(str,str) #category, value
 
-    def __init__(self,parent=None,categoryName="",classificationData=None, selectionOnly=False):
+    def __init__(self,parent=None,categoryName=u"",classificationData=None, selectionOnly=False):
         super(QWidget, self).__init__(parent)
         self.setupUi(self)
         if not isinstance(categoryName,str) and not isinstance(categoryName,QtCore.QString):
-            categoryName = "No Name Category"
-        self.labelCategoryName.setText("<h2>Category: "+categoryName+"</h2>")
+            categoryName = self.tr(u"No Name Category")
+        self.labelCategoryName.setText(u"<h2>"+self.tr(u"Category:")+u" "+categoryName+u"</h2>")
 
         self.labelCategoryName.setStyleSheet("background-color:#FFF")
         self.comboCategories.setStyleSheet("background-color:#DDF")
@@ -36,13 +36,13 @@ class EditCategoriesWidget(Ui_EditCategoryWidget,QWidget):
     def addValue(self):
         val = str(self.lineEditCategoryValue.text())
         if val == "":
-            QtGui.QMessageBox.warning(QtGui.QMessageBox(), "Error", "The value for this category should have a name.")
+            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"), self.tr(u"The value for this category should have a name."))
             return
         if self.classificationData.addValue(self.categoryName,val):
             self.comboCategories.addItem(val)
             self.comboCategories.setCurrentIndex(self.comboCategories.count()-1)
         else:
-            QtGui.QMessageBox.warning(QtGui.QMessageBox(), "Error", "There is other value with that name in the category")
+            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"), self.tr(u"There is other value with that name in the category"))
 
     def removeValue(self):
         if self.comboCategories.count() > 0:
@@ -50,4 +50,4 @@ class EditCategoriesWidget(Ui_EditCategoryWidget,QWidget):
             if self.classificationData.removeValue(self.categoryName,val):
                 self.comboCategories.removeItem(self.comboCategories.currentIndex())
             else:
-                QtGui.QMessageBox.warning(QtGui.QMessageBox(), "Error", "The value can't be removed because is in use.")
+                QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"), self.tr(u"The value can't be removed because is in use."))

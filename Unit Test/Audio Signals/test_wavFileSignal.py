@@ -15,3 +15,6 @@ class TestWavFileSignal(TestCase):
 
     def test_save(self):
         self.fail()
+
+    def test_readUserChunk(self):
+        self.fail()

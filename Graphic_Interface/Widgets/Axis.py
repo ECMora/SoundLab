@@ -6,7 +6,7 @@ class OscXAxis(pg.AxisItem):
     def __init__(self, parent, *args, **kwargs):
         pg.AxisItem.__init__(self, *args, **kwargs)
         self.parent = parent
-        self.setLabel(text="Time (s)")
+        self.setLabel(text=self.tr(u"Time (s)"))
         font = QFont(self.font)
         font.setPointSize(8)
         self.setTickFont(font)
@@ -43,7 +43,7 @@ class OscYAxis(pg.AxisItem):
     def __init__(self, parent, *args, **kwargs):
         pg.AxisItem.__init__(self, *args, **kwargs)
         self.parent = parent
-        self.setLabel(text="Amplitude (%)")
+        self.setLabel(text=self.tr(u"Amplitude (%)"))
         font = QFont(self.font)
         font.setPointSize(8)
         self.setTickFont(font)
@@ -59,7 +59,7 @@ class SpecYAxis(pg.AxisItem):
     def __init__(self,parent,*args,**kwargs):
         pg.AxisItem.__init__(self,*args,**kwargs)
         self.parent = parent;
-        self.setLabel(text="Frequency (KHz)")
+        self.setLabel(text=self.tr(u"Frequency (KHz)"))
     def tickStrings(self, values, scale, spacing):
         self.freqs = self.parent.parent().specgramSettings.freqs
         if self.freqs is None:

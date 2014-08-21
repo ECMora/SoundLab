@@ -243,6 +243,7 @@ class OscilogramElement(OneDimensionalElement):
             maxf,minf=0,0
             if "max" not in self.parameters["average"]:
                 Pxx , freqs = mlab.psd(self.signal.data[self.indexFrom:self.indexTo],Fs= self.signal.samplingRate,NFFT=self.specgramSettings.NFFT,window=self.specgramSettings.window,noverlap=self.specgramSettings.overlap,scale_by_freq=False)
+                Pxx , freqs = mlab.psd(self.signal.data[self.indexFrom:self.indexTo],Fs= self.signal.samplingRate,NFFT=self.specgramSettings.NFFT,window=self.specgramSettings.window,noverlap=self.specgramSettings.overlap,scale_by_freq=False)
                 minf,minIndex,maxf, maxIndex, _, __ = self.freq_min_max_band_peaksAbove(0,threshold,threshold,Pxx)
                 self.parameters["average"]["min"] = (minf,minIndex)
                 self.parameters["average"]["max"] = (maxf,maxIndex)

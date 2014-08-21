@@ -164,7 +164,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Graphic_Interface/Windows/MainWindow.py" line="434"/>
         <source>Duetto Sound Lab</source>
-        <translation type="unfinished"></translation>
+        <translation>JAJAJAJ</translation>
     </message>
     <message>
         <location filename="../Graphic_Interface/Windows/MainWindow.py" line="435"/>
@@ -219,7 +219,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Graphic_Interface/Windows/MainWindow.py" line="445"/>
         <source>Open</source>
-        <translation type="unfinished"></translation>
+        <translation>Abrir</translation>
     </message>
     <message>
         <location filename="../Graphic_Interface/Windows/MainWindow.py" line="446"/>
@@ -424,7 +424,7 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Graphic_Interface/Windows/MainWindow.py" line="487"/>
         <source>Change Volume</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Modulación de Amplitud</translation>
     </message>
     <message>
         <location filename="../Graphic_Interface/Windows/MainWindow.py" line="488"/>
@@ -639,6 +639,144 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Graphic_Interface/Windows/MainWindow.py" line="530"/>
         <source>Close</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>DuettoSoundLabWindow</name>
+    <message>
+        <location filename="../Graphic_Interface/Windows/DuettoSoundLabWindow.py" line="64"/>
+        <source>Welcome to Duetto Sound Lab</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="../Graphic_Interface/Windows/DuettoSoundLabWindow.py" line="66"/>
+        <source>Oscillogram Settings</source>
+        <translation>Opciones del Oscilograma</translation>
+    </message>
+    <message>
+        <location filename="../Graphic_Interface/Windows/DuettoSoundLabWindow.py" line="67"/>
+        <source>Amplitude(%)</source>
+        <translation>Amplitud(%)</translation>
+    </message>
+    <message>
+        <location filename="../Graphic_Interface/Windows/DuettoSoundLabWindow.py" line="91"/>
+        <source>Min</source>
+        <translation>Min</translation>
+    </message>
+    <message>
+        <location filename="../Graphic_Interface/Windows/DuettoSoundLabWindow.py" line="92"/>
+        <source>Max</source>
+        <translation>Max</translation>
+    </message>
+    <message>
+        <location filename="../Graphic_Interface/Windows/DuettoSoundLabWindow.py" line="94"/>
+        <source>Grid</source>
+        <translation>Cuadricular</translation>
+    </message>
+    <message>
+        <location filename="../Graphic_Interface/Windows/DuettoSoundLabWindow.py" line="99"/>
+        <source>Background color</source>
+        <translation>Color de Fondo</translation>
+    </message>
+    <message>
+        <location filename="../Graphic_Interface/Windows/DuettoSoundLabWindow.py" line="78"/>
+        <source>Plot color</source>
+        <translation>Color de pluma</translation>
+    </message>
+    <message>
+        <location filename="../Graphic_Interface/Windows/DuettoSoundLabWindow.py" line="79"/>
+        <source>Connect Lines</source>
+        <translation>Unir Lineas</translation>
+    </message>
+    <message>
+        <location filename="../Graphic_Interface/Windows/DuettoSoundLabWindow.py" line="82"/>
+        <source>Spectrogram Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Graphic_Interface/Windows/DuettoSoundLabWindow.py" line="83"/>
+        <source>Frequency(kHz)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Graphic_Interface/Windows/DuettoSoundLabWindow.py" line="87"/>
+        <source>FFT size</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Graphic_Interface/Windows/DuettoSoundLabWindow.py" line="87"/>
+        <source>Automatic</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Graphic_Interface/Windows/DuettoSoundLabWindow.py" line="88"/>
+        <source>FFT window</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Graphic_Interface/Windows/DuettoSoundLabWindow.py" line="88"/>
+        <source>None</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Graphic_Interface/Windows/DuettoSoundLabWindow.py" line="89"/>
+        <source>FFT overlap</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Graphic_Interface/Windows/DuettoSoundLabWindow.py" line="90"/>
+        <source>Threshold(dB)</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Graphic_Interface/Windows/DuettoSoundLabWindow.py" line="101"/>
+        <source>Themes</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Graphic_Interface/Windows/DuettoSoundLabWindow.py" line="102"/>
+        <source>Theme Selected</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Graphic_Interface/Windows/DuettoSoundLabWindow.py" line="106"/>
+        <source>Detection Visual Settings</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Graphic_Interface/Windows/DuettoSoundLabWindow.py" line="107"/>
+        <source>Measurement Location</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Graphic_Interface/Windows/DuettoSoundLabWindow.py" line="108"/>
+        <source>Start</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Graphic_Interface/Windows/DuettoSoundLabWindow.py" line="109"/>
+        <source>Quartile25</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Graphic_Interface/Windows/DuettoSoundLabWindow.py" line="110"/>
+        <source>Center</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Graphic_Interface/Windows/DuettoSoundLabWindow.py" line="111"/>
+        <source>Quartile75</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Graphic_Interface/Windows/DuettoSoundLabWindow.py" line="112"/>
+        <source>End</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../Graphic_Interface/Windows/DuettoSoundLabWindow.py" line="145"/>
+        <source>Save</source>
         <translation type="unfinished"></translation>
     </message>
 </context>

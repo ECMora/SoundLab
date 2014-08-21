@@ -35,7 +35,7 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
 
         self.font = QtGui.QFont()
         if classificationData is None:
-            raise Exception("classificationData could not be None.")
+            raise Exception(unicode(self.tr(u"ClassificationData could not be None.")))
 
         self.classificationData = classificationData
         self.previousSelectedElement = -1
@@ -62,18 +62,18 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
             return
         x, y = random.randint(0,len(xaxis)/2),random.randint(len(xaxis)/2,len(xaxis)-1)
         params = [
-            {u'name': u'X Axis Parameter Settings', u'type': u'group', u'children':
-                [{u'name': u'X Axis', u'type': u'list',u'value': x,
+            {u'name': unicode(self.tr(u'X Axis Parameter Settings')), u'type': u'group', u'children':
+                [{u'name': unicode(self.tr(u'X Axis')), u'type': u'list',u'value': x,
                   u'default': x, u'values': [(name, i) for i,name in enumerate(xaxis)]}]},
-            {u'name': u'Y Axis Parameter Settings', u'type': u'group', u'children':
-                [{u'name': u'Y Axis', u'type': u'list', u'value':y,
+            {u'name': unicode(self.tr(u'Y Axis Parameter Settings')), u'type': u'group', u'children':
+                [{u'name': unicode(self.tr(u'Y Axis')), u'type': u'list', u'value':y,
              u'default': y, u'values': [(name, i) for i,name in enumerate(xaxis)]}]},
-            {u'name': u'Color', u'type': u'color', u'value': "00F"},
-            {u'name': u'Figures Size', u'type': u'int', u'value': 15},
-            {u'name': u'Figures Shape', u'type': u'list', u'value': "o",
+            {u'name': unicode(self.tr(u'Color')), u'type': u'color', u'value': "00F"},
+            {u'name': unicode(self.tr(u'Figures Size')), u'type': u'int', u'value': 15},
+            {u'name': unicode(self.tr(u'Figures Shape')), u'type': u'list', u'value': "o",
              u'default': "o", u'values': [("Circle","o"),("Square","s"),("Triangle","t"),("Diamond","d"),("Plus","+")]},
-            {u'name': u'Change Font', u'type': u'action'},
-            {u'name': u'Save Graph as Image', u'type': u'action'}]
+            {u'name': unicode(self.tr(u'Change Font')), u'type': u'action'},
+            {u'name': unicode(self.tr(u'Save Graph as Image')), u'type': u'action'}]
 
         lay1 = QtGui.QVBoxLayout()
         lay1.setMargin(0)
@@ -88,8 +88,8 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         self.dockWidgetContents.setStyleSheet("background-color:#DDF")
         self.parameterTree.setMinimumWidth(200)
         self.ParamTree.sigTreeStateChanged.connect(self.plot)
-        self.ParamTree.param(u'Save Graph as Image').sigActivated.connect(self.on_actionSaveGraphImage_triggered)
-        self.ParamTree.param(u'Change Font').sigActivated.connect(self.changeFont)
+        self.ParamTree.param(unicode(self.tr(u'Save Graph as Image'))).sigActivated.connect(self.on_actionSaveGraphImage_triggered)
+        self.ParamTree.param(unicode(self.tr(u'Change Font'))).sigActivated.connect(self.changeFont)
         self.plot()
 
     def loadData(self, columns=None, data=None):
@@ -98,11 +98,11 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         #update graph and paramtree
         if self.columns != columns:
             xaxis = [unicode(x) for x in columns]
-            self.ParamTree.param(u'X Axis Parameter Settings').removeChild(self.ParamTree.param(u'X Axis Parameter Settings').param(u'X Axis'))
-            self.ParamTree.param(u'X Axis Parameter Settings').addChild(Parameter.create(**{u'name': u'X Axis', u'type': u'list',u'value': 0,
+            self.ParamTree.param(unicode(self.tr(u'X Axis Parameter Settings'))).removeChild(self.ParamTree.param(unicode(self.tr(u'X Axis Parameter Settings'))).param(unicode(self.tr(u'X Axis'))))
+            self.ParamTree.param(unicode(self.tr(u'X Axis Parameter Settings'))).addChild(Parameter.create(**{u'name': unicode(self.tr(u'X Axis')), u'type': u'list',u'value': 0,
                   u'default': 0, u'values': [(name, i) for i,name in enumerate(xaxis)]}))
-            self.ParamTree.param(u'Y Axis Parameter Settings').removeChild(self.ParamTree.param(u'Y Axis Parameter Settings').param(u'Y Axis'))
-            self.ParamTree.param(u'Y Axis Parameter Settings').addChild(Parameter.create(**{u'name': u'Y Axis', u'type': u'list',u'value': 0,
+            self.ParamTree.param(unicode(self.tr(u'Y Axis Parameter Settings'))).removeChild(self.ParamTree.param(unicode(self.tr(u'Y Axis Parameter Settings'))).param(unicode(self.tr(u'Y Axis'))))
+            self.ParamTree.param(unicode(self.tr(u'Y Axis Parameter Settings'))).addChild(Parameter.create(**{u'name': unicode(self.tr(u'Y Axis')), u'type': u'list',u'value': 0,
                   u'default': 0, u'values': [(name, i) for i,name in enumerate(xaxis)]}))
             self.columns = columns
         self.plot()
@@ -124,7 +124,7 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         if len(elems) <= index:
             return
 
-        color = self.ParamTree.param(u'Color').value()
+        color = self.ParamTree.param(unicode(self.tr(u'Color'))).value()
         elem = elems[index]
         elem.setBrush(pg.mkBrush("FFF"))
         if self.previousSelectedElement != -1:
@@ -135,13 +135,13 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
     def deselectElement(self):
         if self.scatter_plot is None or self.previousSelectedElement < 0 :
             return
-        color = self.ParamTree.param(u'Color').value()
+        color = self.ParamTree.param(unicode(self.tr(u'Color'))).value()
 
         self.scatter_plot.points()[self.previousSelectedElement].setBrush(pg.mkBrush(color))
 
     @pyqtSlot()
     def on_actionSaveGraphImage_triggered(self):
-        fname = unicode(QFileDialog.getSaveFileName(self,"Save two dimensional graphics as an Image ","-Duetto-Image","*.jpg"))
+        fname = unicode(QFileDialog.getSaveFileName(self, self.tr(u"Save two dimensional graphics as an Image "),unicode(self.tr(u"-Duetto-Image")),"*.jpg"))
         if fname:
             #save as image
             image = QtGui.QPixmap.grabWindow(self.widget.winId())
@@ -151,12 +151,12 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         #the elements and the colors to plot
         self.widget.clear()
 
-        i, j = self.ParamTree.param(u'X Axis Parameter Settings').param(u'X Axis').value(),\
-               self.ParamTree.param(u'Y Axis Parameter Settings').param(u'Y Axis').value()
+        i, j = self.ParamTree.param(unicode(self.tr(u'X Axis Parameter Settings'))).param(unicode(self.tr(u'X Axis'))).value(),\
+               self.ParamTree.param(unicode(self.tr(u'Y Axis Parameter Settings'))).param(unicode(self.tr(u'Y Axis'))).value()
 
-        color = self.ParamTree.param(u'Color').value()
-        shape = self.ParamTree.param(u'Figures Shape').value()
-        fig_size = self.ParamTree.param(u'Figures Size').value()
+        color = self.ParamTree.param(unicode(self.tr(u'Color'))).value()
+        shape = self.ParamTree.param(unicode(self.tr(u'Figures Shape'))).value()
+        fig_size = self.ParamTree.param(unicode(self.tr(u'Figures Size'))).value()
 
         x_coords = [e[i] for e in self.data]
         y_coords = [e[j] for e in self.data]
@@ -227,9 +227,9 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
 
     def addCategory(self):
         dialog = QtGui.QDialog(self)
-        dialog.setWindowTitle("Create New Category")
+        dialog.setWindowTitle(unicode(self.tr(u"Create New Category")))
         layout = QtGui.QVBoxLayout()
-        layout.addWidget(QtGui.QLabel("Insert the name of the new Category"))
+        layout.addWidget(QtGui.QLabel(unicode(self.tr(u"Insert the name of the new Category"))))
         text = QtGui.QLineEdit()
         layout.addWidget(text)
         butts = QtGui.QDialogButtonBox()
@@ -244,7 +244,7 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         if dialog.exec_():
             category = str(text.text())
             if category == "":
-                QtGui.QMessageBox.warning(QtGui.QMessageBox(), "Error", "Invalid Category Name.")
+                QtGui.QMessageBox.warning(QtGui.QMessageBox(), unicode(self.tr(u"Error")), unicode(self.tr(u"Invalid Category Name.")))
                 return
             if self.clasiffCategories_vlayout and self.classificationData.addCategory(category):
                 w = EditCategoriesWidget(self, category,self.classificationData)

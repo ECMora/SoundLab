@@ -116,7 +116,6 @@ class QSignalVisualizerWidget(QWidget):
         this method implements the  way in wich the controls load the theme
         all changes made by the theme are made in this place
         """
-
         #assert isinstance(theme,SerializedData)
 
         self.axesOscilogram.load_Theme(theme)
@@ -820,7 +819,7 @@ class QSignalVisualizerWidget(QWidget):
 
     def SaveColorBar(self):
         state = self.axesSpecgram.getHistogramWidget().item.gradient.saveState()
-        path = QtGui.QFileDialog.getSaveFileName(self, "Save Color Bar", filter="Bar Files (*.bar);;All Files (*)")
+        path = QtGui.QFileDialog.getSaveFileName(self, self.tr(u"Save Color Bar"), filter=self.tr(u"Bar Files") +  u"(*.bar);;All Files (*)")
         if path != "":
             fh = open(path, 'w')
             fh.write(state.__repr__())

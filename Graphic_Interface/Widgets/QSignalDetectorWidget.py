@@ -238,8 +238,6 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
         return indexFrom,indexTo-1
 
-
-
     def refresh(self, dataChanged=True, updateOscillogram=True, updateSpectrogram=True, partial=True):
         QSignalVisualizerWidget.refresh(self,dataChanged, updateOscillogram, updateSpectrogram, partial)
         if self.visibleElements:

@@ -34,17 +34,16 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         super(QtGui.QMainWindow, self).__init__(parent)
         self.setupUi(self)
         if not signal:
-            QtGui.QMessageBox.warning(QtGui.QMessageBox(), "Error", "There is no signal to analyze.")
+            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"), self.tr(u"There is no signal to analyze."))
         if len(signal.data) / signal.samplingRate > 60:
-            QtGui.QMessageBox.warning(QtGui.QMessageBox(), "Error", "The signal has more than 1 min of duration.\n "
-                                                                    "Use the splitter to divide it")
+            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"), self.tr(u"The signal has more than 1 min of duration.") + " \n" +
+                                                                    self.tr(u"Use the splitter to divide it"))
             self.close()
             self.rejectSignal = True
             return
 
         assert isinstance(signal, AudioSignal)
         self.widget.signalProcessor.signal = signal
-        print("OVERLAP "+str(self.widget.specgramSettings.overlap))
 
         if parent is not None:
             self.widget.specgramSettings.NFFT = parent.widget.specgramSettings.NFFT
@@ -57,7 +56,6 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                 else:
                     self.widget.specgramSettings.overlap = 50
 
-        print("OVERLAP "+str(self.widget.specgramSettings.overlap))
         self.widget.mainCursor.min = 0
         self.widget.mainCursor.max = len(self.widget.signalProcessor.signal.data)
 
@@ -84,77 +82,81 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.detectionSettings = {"Threshold": -40, "Threshold2": 0, "MergeFactor": 5, "MinSize": 1, "Decay": 1,
                                   "SoftFactor": 6,"ThresholdSpectral": 95 ,"minSizeTimeSpectral": 0, "minSizeFreqSpectral": 0}
 
-        params = [{u'name': u'Temporal Detection Settings', u'type': u'group', u'children': [
-            {u'name': u'Detection Method', u'type': u'list', u'default':DetectionType.Envelope_Abs_Decay_Averaged, u'values':
-                [(u'Local Max',DetectionType.LocalMax),
-                             (u'Interval Rms',DetectionType.IntervalRms),(u'Interval Max Media',DetectionType.IntervalMaxMedia),
-                             (u'Interval Max Proportion',DetectionType.IntervalMaxProportion),
-                             (u'Envelope Abs Decay Averaged',DetectionType.Envelope_Abs_Decay_Averaged),(u'Envelope Rms',DetectionType.Envelope_Rms)]},
-            {u'name': u'Threshold (db)', u'type': u'float', u'value': -40.00, u'step': 1},
-            {u'name': u'Auto', u'type': u'bool',u'default': True, u'value': True},
-            {u'name': u'Min Size (ms)', u'type': u'float', u'value': 2.00, u'step': 1},
-            {u'name': u'Decay (ms)', u'type': u'float', u'value': 1.00, u'step': 0.5},
-            {u'name': u'Threshold 2(db)', u'type': u'float', u'value': 0.00, u'step': 1},
-            {u'name': u'Soft Factor', u'type': u'float', u'value': 6, u'step': 1},
-            {u'name': u'Merge Factor (%)', u'type': u'float', u'value': 5.00, u'step': 1, u'limits' : (0,50)}
+        params = [{u'name': unicode(self.tr(u'Temporal Detection Settings')), u'type': u'group', u'children': [
+            {u'name': unicode(self.tr(u'Detection Method')), u'type': u'list', u'default':DetectionType.Envelope_Abs_Decay_Averaged, u'values':
+                [(unicode(self.tr(u'Local Max')),DetectionType.LocalMax),
+                             (unicode(self.tr(u'Interval Rms')),DetectionType.IntervalRms),
+                             (unicode(self.tr(u'Interval Max Media')),DetectionType.IntervalMaxMedia),
+                             (unicode(self.tr(u'Interval Max Proportion')),DetectionType.IntervalMaxProportion),
+                             (unicode(self.tr(u'Envelope Abs Decay Averaged')),DetectionType.Envelope_Abs_Decay_Averaged),
+                             (unicode(self.tr(u'Envelope Rms')),DetectionType.Envelope_Rms)]},
+            {u'name': unicode(self.tr(u'Threshold (db)')), u'type': u'float', u'value': -40.00, u'step': 1},
+            {u'name': unicode(self.tr(u'Auto')), u'type': u'bool',u'default': True, u'value': True},
+            {u'name': unicode(self.tr(u'Min Size (ms)')), u'type': u'float', u'value': 2.00, u'step': 1},
+            {u'name': unicode(self.tr(u'Decay (ms)')), u'type': u'float', u'value': 1.00, u'step': 0.5},
+            {u'name': unicode(self.tr(u'Threshold 2(db)')), u'type': u'float', u'value': 0.00, u'step': 1},
+            {u'name': unicode(self.tr(u'Soft Factor')), u'type': u'float', u'value': 6, u'step': 1},
+            {u'name': unicode(self.tr(u'Merge Factor (%)')), u'type': u'float', u'value': 5.00, u'step': 1, u'limits' : (0,50)}
         ]},
 
-        {u'name': u'Spectral Detection Settings', u'type': u'group', u'children': [
-            {u'name': u'Detect Spectral Subelements', u'type': u'bool',u'default': False, u'value': False},
-            {u'name': u'Threshold (%)', u'type': u'float', u'value': 95.00, u'step': 1, u'limits' : (0,100)},
-            {u'name':u'Minimum size', u'type': u'group', u'children': [
-                {u'name': u'Time (ms)', u'type': u'float', u'value': 0.00, u'step': 1},
-                {u'name': u'Frequency (kHz)', u'type': u'float', u'value': 0.00, u'step': 1}]}
+        {u'name': unicode(self.tr(u'Spectral Detection Settings')), u'type': u'group', u'children': [
+            {u'name': unicode(self.tr(u'Detect Spectral Subelements')), u'type': u'bool',u'default': False, u'value': False},
+            {u'name': unicode(self.tr(u'Threshold (%)')), u'type': u'float', u'value': 95.00, u'step': 1, u'limits' : (0,100)},
+            {u'name':unicode(self.tr(u'Minimum size')), u'type': u'group', u'children': [
+                {u'name': unicode(self.tr(u'Time (ms)')), u'type': u'float', u'value': 0.00, u'step': 1},
+                {u'name': unicode(self.tr(u'Frequency (kHz)')), u'type': u'float', u'value': 0.00, u'step': 1}]}
             ]},
 
-         {u'name': u'Measurement Location', u'type': u'group', u'children': [
-            {u'name': u'Start', u'type': u'bool',u'default': False, u'value': False},
-            {u'name': u'Center', u'type': u'bool',u'default': False, u'value': False},
-            {u'name': u'End', u'type': u'bool',u'default': False, u'value': False},
-            {u'name': u'Quartile 25', u'type': u'bool',u'default': False, u'value': False},
-            {u'name': u'Mean', u'type': u'bool',u'default': False, u'value': False},
-            {u'name': u'Quartile 75', u'type': u'bool',u'default': False, u'value': False}]}
+         {u'name': unicode(self.tr(u'Measurement Location')), u'type': u'group', u'children': [
+            {u'name': unicode(self.tr(u'Start')), u'type': u'bool',u'default': False, u'value': False},
+            {u'name': unicode(self.tr(u'Center')), u'type': u'bool',u'default': False, u'value': False},
+            {u'name': unicode(self.tr(u'End')), u'type': u'bool',u'default': False, u'value': False},
+            {u'name': unicode(self.tr(u'Quartile 25')), u'type': u'bool',u'default': False, u'value': False},
+            {u'name': unicode(self.tr(u'Mean')), u'type': u'bool',u'default': False, u'value': False},
+            {u'name': unicode(self.tr(u'Quartile 75')), u'type': u'bool',u'default': False, u'value': False}]}
         ]
 
         #region Time And Spectral Medition Parameters
         self.timeMeditions = [
-            ["Start(s)", True, lambda x,d: x.startTime()],
-            ["End(s)", True, lambda x,d: x.endTime()],
-            ["StartToMax(s)", False,lambda x,d: x.distanceFromStartToMax()],
-            ["Duration(s)", True,lambda x,d: x.duration],
+            [unicode(self.tr(u"Start(s)")), True, lambda x,d: x.startTime()],
+            [unicode(self.tr(u"End(s)")), True, lambda x,d: x.endTime()],
+            [unicode(self.tr(u"StartToMax(s)")), False,lambda x,d: x.distanceFromStartToMax()],
+            [unicode(self.tr(u"Duration(s)")), True,lambda x,d: x.duration()],
         ]
 
         self.spectralMeditions = [
-            ["Spectral Elems", False,lambda x,d: x.spectralElements()],
-            ["Peak Freq(Hz)",False,lambda x,d :x.peakFreq(d)],
-            ["Peak Amplitude(dB)",False,lambda x,d :x.peakAmplitude(d)],
-            ["Frequency",
+            [unicode(self.tr(u"Spectral Elems")), False,lambda x,d: x.spectralElements()],
+            [unicode(self.tr(u"Peak Freq(Hz)")),False,lambda x,d :x.peakFreq(d)],
+            [unicode(self.tr(u"Peak Amplitude(dB)")),False,lambda x,d :x.peakAmplitude(d)],
+            [unicode(self.tr(u"Frequency")),
                 [
-                    ["Threshold (db)",-20]
+                    [unicode(self.tr(u"Threshold (db)")),-20]
                 ],
                 [
-                    ["Min Freq(Hz)",False,lambda x,d :x.minFreq(d)],
-                    ["Max Freq(Hz)",False,lambda x,d :x.maxFreq(d)],
-                    ["Band Width(Hz)",False,lambda x,d :x.bandwidth(d)]
+                    [unicode(self.tr(u"Min Freq(Hz)")),False,lambda x,d :x.minFreq(d)],
+                    [unicode(self.tr(u"Max Freq(Hz)")),False,lambda x,d :x.maxFreq(d)],
+                    [unicode(self.tr(u"Band Width(Hz)")),False,lambda x,d :x.bandwidth(d)]
                 ]
             ],
-            ["Peaks",
+            [unicode(self.tr(u"Peaks")),
                 [
-                    ["Peaks Threshold (db)",-20]
+                    [unicode(self.tr(u"Peaks Threshold (db)")),-20]
                 ],
                 [
-                    ["Peaks Above",False,lambda x,d :x.peaksAbove(d)],
+                    [unicode(self.tr(u"Peaks Above")),False,lambda x,d :x.peaksAbove(d)],
                 ]
             ]
 
         ]
 
         self.waveMeditions = [
-            ["PeekToPeek(V)", False, lambda x,d: x.peekToPeek()],
-            ["RMS(V)", False, lambda x,d: x.rms()],
+            [unicode(self.tr(u"PeekToPeek(V)")), False, lambda x,d: x.peekToPeek()],
+            [unicode(self.tr(u"RMS(V)")), False, lambda x,d: x.rms()],
         ]
 
-        self.meditions = [( u'Temporal Meditions',self.timeMeditions),(u'Spectral Meditions',self.spectralMeditions),(u'Waveform Meditions',self.waveMeditions)]
+        self.meditions = [( unicode(self.tr(u'Temporal Meditions')),self.timeMeditions),\
+                          (unicode(self.tr(u'Spectral Meditions')),self.spectralMeditions),\
+                          (unicode(self.tr(u'Waveform Meditions')),self.waveMeditions)]
 
         for name,dict in self.meditions:
             children = []
@@ -227,10 +229,10 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
     @pyqtSlot()
     def on_actionTwo_Dimensional_Graphs_triggered(self):
         if self.tableParameterOscilogram.rowCount() == 0:
-            QtGui.QMessageBox.warning(QtGui.QMessageBox(), "Error", "There is not detected elements.\n The two dimensional analisys requires at least one detected element.")
+            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"), self.tr(u"There is not detected elements.")+ u" \n" + self.tr(u"The two dimensional analisys requires at least one detected element."))
             return
         if self.tableParameterOscilogram.columnCount() == 0:
-            QtGui.QMessageBox.warning(QtGui.QMessageBox(), "Error", "There is not parameters measurement.\n The two dimensional analisys requires at least one parameter measured.")
+            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"), self.tr(u"There is not parameters measurement.")+ u"\n" + self.tr(u"The two dimensional analisys requires at least one parameter measured."))
             return
 
         wnd = TwoDimensionalAnalisysWindow(self, columns=self.columnNames,data=self.measuredParameters,classificationData=self.classificationData)
@@ -365,7 +367,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
     def getParameters(self):
          params = []
          for name,dict in self.meditions:
-            if not name == u'Spectral Meditions':
+            if not name == unicode(self.tr(u'Spectral Meditions')):
                 for x in dict:
                     if isinstance(x[1],bool):
                         if x[1]:
@@ -466,28 +468,28 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
     @pyqtSlot()
     def on_actionOsgram_Image_triggered(self):
         if self.widget.visibleOscilogram:
-            self.saveImage(self.widget.axesOscilogram,"oscilogram")
+            self.saveImage(self.widget.axesOscilogram,self.tr(u"oscilogram"))
         else:
-            QtGui.QMessageBox.warning(QtGui.QMessageBox(), "Error", "The Oscilogram plot widget is not visible.\n You should see the data that you are going to save.")
+            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"), self.tr(u"The Oscilogram plot widget is not visible.")+ u" \n" + self.tr(u"You should see the data that you are going to save."))
 
     @pyqtSlot()
     def on_actionCombined_Image_triggered(self):
         if self.widget.visibleOscilogram and self.widget.visibleSpectrogram:
-            self.saveImage(self.widget,"graph")
+            self.saveImage(self.widget,self.tr(u"graph"))
         else:
-            QtGui.QMessageBox.warning(QtGui.QMessageBox(), "Error", "One of the plot widgets is not visible.\n You should see the data that you are going to save.")
+            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"), self.tr(u"One of the plot widgets is not visible")+ u" \n" + self.tr(u"You should see the data that you are going to save."))
 
 
     @pyqtSlot()
     def on_actionSpecgram_Image_triggered(self):
         if self.widget.visibleSpectrogram:
-            self.saveImage(self.widget.axesSpecgram,"specgram")
+            self.saveImage(self.widget.axesSpecgram,self.tr(u"specgram"))
         else:
-            QtGui.QMessageBox.warning(QtGui.QMessageBox(), "Error", "The Espectrogram plot widget is not visible.\n You should see the data that you are going to save.")
+            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"), self.tr(u"The Espectrogram plot widget is not visible.")+ u" \n"+ self.tr(u"You should see the data that you are going to save."))
 
 
     def saveImage(self,widget,text=""):
-        fname = unicode(QFileDialog.getSaveFileName(self,"Save "+ text +" as an Image ",str(self.widget.signalName())+"-"+text+"-Duetto-Image","*.jpg"))
+        fname = unicode(QFileDialog.getSaveFileName(self,self.tr(u"Save")+u" "+ text +self.tr(u" as an Image "),str(self.widget.signalName())+ u"-" + text + self.tr(u"-Duetto-Image"),"*.jpg"))
         if fname:
             #save as image
             image = QtGui.QPixmap.grabWindow(widget.winId())
@@ -503,10 +505,10 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         else:
             if not self.widget.signalProcessor.signal.opened():
                 return
-            fname = unicode(QFileDialog.getSaveFileName(self,"Save meditions as excel file",self.widget.signalName()+".xls","*.xls"))
+            fname = unicode(QFileDialog.getSaveFileName(self,self.tr(u"Save meditions as excel file"),self.widget.signalName()+".xls","*.xls"))
         if fname:
             wb = xlwt.Workbook()
-            a = "Elements Meditions"
+            a = self.tr(u"Elements Meditions")
             ws = wb.add_sheet(a)
             self.writedata(ws,table)
             #add spectral meditions
@@ -539,10 +541,10 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         directoryinput = str(self.lineeditFilePath.text())
         directoryoutput = str(self.lineEditOutputFolder.text())
         if(not os.path.isdir(directoryinput)):
-            QtGui.QMessageBox.warning(QtGui.QMessageBox(), "Error", "The input path is not a directory.")
+            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"), self.tr(u"The input path is not a directory."))
             return
         if(not os.path.isdir(directoryoutput)):
-            QtGui.QMessageBox.warning(QtGui.QMessageBox(), "Error", "The output path is not a directory.")
+            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"), self.tr(u"The output path is not a directory."))
             return
         sounds = [] #the files
         raiz = ""
@@ -564,7 +566,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                 try:
                     signalProcessor = SignalProcessor()
                     signalProcessor.signal = WavFileSignal(filename)
-                    self.listwidgetProgress.addItem("Processing "+signalProcessor.signal.name)
+                    self.listwidgetProgress.addItem(self.tr(u"Processing")+u" "+signalProcessor.signal.name)
 
                     table = QtGui.QTableWidget()
                     spSettngs = SpecgramSettings(self.widget.specgramSettings.NFFT,self.widget.specgramSettings.overlap,self.widget.specgramSettings.window)
@@ -585,7 +587,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                     table.setRowCount(detector.elementCount())
 
                     validcategories = [k for k in self.classificationData.categories.keys() if len(self.classificationData.getvalues(k)) > 0]
-                    self.elementsClasificationTableData = [[[k, "No Identified"] for k in validcategories] for _ in range(table.rowCount())]
+                    self.elementsClasificationTableData = [[[k, self.tr(u"No Identified")] for k in validcategories] for _ in range(table.rowCount())]
 
 
                     table.setColumnCount(len(paramsTomeasure)+len(validcategories))
@@ -595,7 +597,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                     table.setHorizontalHeaderLabels(self.columnNames+validcategories)
                     table.resizeColumnsToContents()
 
-                    self.listwidgetProgress.addItem("Save data of " +signalProcessor.signal.name)
+                    self.listwidgetProgress.addItem(self.tr(u"Save data of ") +signalProcessor.signal.name)
 
                     for i,element in enumerate(detector.elements):
                         for j,prop in enumerate(paramsTomeasure):
@@ -618,23 +620,23 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                         self.writedata(ws,table)
                     else:
                         self.on_actionMeditions_triggered(os.path.join(directoryoutput,signalProcessor.signal.name+".xls"),table)
-                    self.listwidgetProgress.addItem(signalProcessor.signal.name+" has been processed")
+                    self.listwidgetProgress.addItem(signalProcessor.signal.name+u" "+self.tr(u"has been processed"))
                     self.listwidgetProgress.update()
                     processed += 1
                 except Exception as e:
-                    self.listwidgetProgress.addItem("Some problem found while processing "+e.message)
+                    self.listwidgetProgress.addItem(self.tr(u"Some problem found while processing")+u" "+e.message)
                 self.progressBarProcesed.setValue(round(100.0*(processed)/len(sounds)))
                 self.progressBarProcesed.update()
                 #valorar si ya existe el fichero reescribirlo o guardalo con otro nombre
                 if singlefile:
-                    wb.save(os.path.join(directoryoutput,"Duetto Sound Lab Meditions.xls"))
+                    wb.save(os.path.join(directoryoutput,self.tr(u"Duetto Sound Lab Meditions")+u".xls"))
             #open folder
         if self.rbttnSplitFile.isChecked():
             save = WavFileSignal()
             for filename in sounds:
                 try:
                     signal = WavFileSignal(filename)
-                    self.listwidgetProgress.addItem("Processing "+signal.name)
+                    self.listwidgetProgress.addItem(self.tr(u"Processing") + u" " + signal.name)
                     save.channels = signal.channels
                     save.bitDepth = signal.bitDepth
                     save.samplingRate = signal.samplingRate
@@ -651,11 +653,11 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                         save.save(os.path.join(directoryoutput,str(pieces+1)+"-"+signal.name))
                     processed += 1
                     self.progressBarProcesed.setValue(100.0*processed/len(sounds))
-                    self.listwidgetProgress.addItem(signal.name+" has been processed")
+                    self.listwidgetProgress.addItem(signal.name + u" " + self.tr(u"has been processed"))
                     self.progressBarProcesed.update()
                     self.listwidgetProgress.update()
                 except:
-                    print("some split problems")
+                    print(self.tr(u"some split problems"))
         self.progressBarProcesed.setValue(100)
 
     def selectInputFolder(self):
@@ -683,9 +685,9 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                 if tableParameter.item(i-1, j):
                     ws.write(i, j, str(tableParameter.item(i-1, j).data(Qt.DisplayRole).toString()),stylebody)
                 else:
-                    ws.write(i,j,"No Identified",stylebody)
+                    ws.write(i,j,self.tr(u"No Identified"),stylebody)
 
-        ws.write(tableParameter.model().rowCount()+3,0,"Duetto Sound Lab Oscilogram Meditions",stylecopyrigth)
+        ws.write(tableParameter.model().rowCount()+3,0,self.tr(u"Duetto Sound Lab Oscilogram Meditions"),stylecopyrigth)
 
     #endregion
 
@@ -693,21 +695,20 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     def getSettings(self,elementsDetectorDialog):
 
-        self.detectionSettings["Threshold"] = self.ParamTree.param(u'Temporal Detection Settings').param(u'Threshold (db)').value()
-        self.detectionSettings["Threshold2"] = self.ParamTree.param(u'Temporal Detection Settings').param(u'Threshold 2(db)').value()
-        self.detectionSettings["MinSize"] = self.ParamTree.param(u'Temporal Detection Settings').param(u'Min Size (ms)').value()
-        self.detectionSettings["MergeFactor"] = self.ParamTree.param(u'Temporal Detection Settings').param(u'Merge Factor (%)').value()
-        self.detectionSettings["SoftFactor"] = self.ParamTree.param(u'Temporal Detection Settings').param(u'Soft Factor').value()
-        self.detectionSettings["Decay"] = self.ParamTree.param(u'Temporal Detection Settings').param(u'Decay (ms)').value()
+        self.detectionSettings["Threshold"] = self.ParamTree.param(unicode(self.tr(u'Temporal Detection Settings'))).param(unicode(self.tr(u'Threshold (db)'))).value()
+        self.detectionSettings["Threshold2"] = self.ParamTree.param(unicode(self.tr(u'Temporal Detection Settings'))).param(unicode(self.tr(u'Threshold 2(db)'))).value()
+        self.detectionSettings["MinSize"] = self.ParamTree.param(unicode(self.tr(u'Temporal Detection Settings'))).param(unicode(self.tr(u'Min Size (ms)'))).value()
+        self.detectionSettings["MergeFactor"] = self.ParamTree.param(unicode(self.tr(u'Temporal Detection Settings'))).param(unicode(self.tr(u'Merge Factor (%)'))).value()
+        self.detectionSettings["SoftFactor"] = self.ParamTree.param(unicode(self.tr(u'Temporal Detection Settings'))).param(unicode(self.tr(u'Soft Factor'))).value()
+        self.detectionSettings["Decay"] = self.ParamTree.param(unicode(self.tr(u'Temporal Detection Settings'))).param(unicode(self.tr(u'Decay (ms)'))).value()
         self.algorithmDetectorSettings = elementsDetectorDialog.detectionSettings
 
         #spectral
-        self.detectionSettings["ThresholdSpectral"] = self.ParamTree.param(u'Spectral Detection Settings').param(u'Threshold (%)').value()
-        self.detectionSettings["minSizeFreqSpectral"] = self.ParamTree.param(u'Spectral Detection Settings').param(u'Minimum size').param(u'Frequency (kHz)').value()
-        self.detectionSettings["minSizeTimeSpectral"] = self.ParamTree.param(u'Spectral Detection Settings').param(u'Minimum size').param(u'Time (ms)').value()
+        self.detectionSettings["ThresholdSpectral"] = self.ParamTree.param(unicode(self.tr(u'Spectral Detection Settings'))).param(unicode(self.tr(u'Threshold (%)'))).value()
+        self.detectionSettings["minSizeFreqSpectral"] = self.ParamTree.param(unicode(self.tr(u'Spectral Detection Settings'))).param(unicode(self.tr(u'Minimum size'))).param(unicode(self.tr(u'Frequency (kHz)'))).value()
+        self.detectionSettings["minSizeTimeSpectral"] = self.ParamTree.param(unicode(self.tr(u'Spectral Detection Settings'))).param(unicode(self.tr(u'Minimum size'))).param(unicode(self.tr(u'Time (ms)'))).value()
         self.updateThresholdLine()
         #parameters
-
 
         for name,dict in self.meditions:
             for x in dict:
@@ -720,11 +721,11 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                         y[1] = self.ParamTree.param(name).param(x[0]).param(y[0]).value()
 
         #measurements u'Measurement Location'
-        self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.START][0] = self.ParamTree.param(u'Measurement Location').param(u'Start').value()
-        self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.END][0]  = self.ParamTree.param(u'Measurement Location').param(u'End').value()
-        self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.CENTER][0]  = self.ParamTree.param(u'Measurement Location').param(u'Center').value()
-        self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.QUARTILE25][0]  = self.ParamTree.param(u'Measurement Location').param(u'Quartile 25').value()
-        self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.QUARTILE75][0]  = self.ParamTree.param(u'Measurement Location').param( u'Quartile 75').value()
+        self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.START][0] = self.ParamTree.param(unicode(self.tr(u'Measurement Location'))).param(unicode(self.tr(u'Start'))).value()
+        self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.END][0]  = self.ParamTree.param(unicode(self.tr(u'Measurement Location'))).param(unicode(self.tr(u'End'))).value()
+        self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.CENTER][0]  = self.ParamTree.param(unicode(self.tr(u'Measurement Location'))).param(unicode(self.tr(u'Center'))).value()
+        self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.QUARTILE25][0]  = self.ParamTree.param(unicode(self.tr(u'Measurement Location'))).param(unicode(self.tr(u'Quartile 25'))).value()
+        self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.QUARTILE75][0]  = self.ParamTree.param(unicode(self.tr(u'Measurement Location'))).param(unicode(self.tr(u'Quartile 75'))).value()
 
     def updateDetectionProgressBar(self, x):
         self.windowProgressDetection.setValue(x)
@@ -748,7 +749,6 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
 
                     self.actionView_Threshold.setChecked(True)
                     paramsTomeasure = self.getParameters()
-
                     self.windowProgressDetection.resize(self.widget.width()/3, self.windowProgressDetection.size().height())
                     self.windowProgressDetection.move(self.widget.x()+self.widget.width()/3,self.widget.y()-self.windowProgressDetection.height()/2 + self.widget.height()/2)
                     self.windowProgressDetection.show()
@@ -759,7 +759,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                                                                  self.detectionSettings["minSizeTimeSpectral"]),
                                                location=self.spectralMeasurementLocation,
                                                progress=self.updateDetectionProgressBar,
-                                               findSpectralSublements= self.ParamTree.param(u'Spectral Detection Settings').param(u'Detect Spectral Subelements').value())
+                                               findSpectralSublements= self.ParamTree.param(unicode(self.tr(u'Spectral Detection Settings'))).param(unicode(self.tr(u'Detect Spectral Subelements'))).value())
 
                     self.tableParameterOscilogram.clear()
                     self.tableParameterOscilogram.cellPressed.connect(self.elementSelectedInTable)
@@ -767,13 +767,12 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                     self.columnNames = [label[0] for label in paramsTomeasure]
 
                     validcategories = [k for k in self.classificationData.categories.keys() if len(self.classificationData.getvalues(k)) > 0]
-                    self.elementsClasificationTableData = [[[k, "No Identified"] for k in validcategories] for _ in range(self.tableParameterOscilogram.rowCount())]
+                    self.elementsClasificationTableData = [[[k, self.tr(u"No Identified")] for k in validcategories] for _ in range(self.tableParameterOscilogram.rowCount())]
 
                     self.tableParameterOscilogram.setColumnCount(len(paramsTomeasure)+len(validcategories))
                     self.tableParameterOscilogram.setHorizontalHeaderLabels(self.columnNames+validcategories)
                     self.updateDetectionProgressBar(95)
                     self.tableParameterOscilogram.resizeColumnsToContents()
-
 
                     #for select the element in the table. Binding for the element click to the table
                     for index in range(len(self.widget.Elements)):
@@ -791,7 +790,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                                 item.setBackgroundColor(self.parameterTable_rowcolor_odd if i%2==0 else self.parameterTable_rowcolor_even)
                             except Exception as e:
                                 item = QtGui.QTableWidgetItem(0)#"Error"+e.message)
-                                print(e.message)
+                                print(e.message + "HOLA")
                                 print(prop[2])
                             self.tableParameterOscilogram.setItem(i, j, item)
                         for c in range(len(validcategories)):
@@ -839,9 +838,9 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     def addCategory(self):
         dialog = QtGui.QDialog(self)
-        dialog.setWindowTitle("Create New Category")
+        dialog.setWindowTitle(self.tr(u"Create New Category"))
         layout = QtGui.QVBoxLayout()
-        layout.addWidget(QtGui.QLabel("Insert the name of the new Category"))
+        layout.addWidget(QtGui.QLabel(self.tr(u"Insert the name of the new Category")))
         text = QtGui.QLineEdit()
         layout.addWidget(text)
         butts = QtGui.QDialogButtonBox()
@@ -856,7 +855,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         if dialog.exec_():
             category = str(text.text())
             if category == "":
-                QtGui.QMessageBox.warning(QtGui.QMessageBox(), "Error", "Invalid Category Name.")
+                QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"), self.tr(u"Invalid Category Name."))
                 return
             if self.clasiffCategories_vlayout and self.classificationData.addCategory(category):
                 self.clasiffCategories_vlayout.addWidget(EditCategoriesWidget(self, category,self.classificationData))
@@ -870,7 +869,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         for i, elem in enumerate(self.elementsClasificationTableData):
                 for j, l in enumerate(elem):
                     if l[0] == category and l[1] == value:
-                        self.elementsClasificationTableData[i][j][1] = "No Identified"
+                        self.elementsClasificationTableData[i][j][1] = self.tr(u"No Identified")
                         item = QtGui.QTableWidgetItem(unicode(self.elementsClasificationTableData[i][j][1]))
                         item.setBackgroundColor(self.parameterTable_rowcolor_odd if i%2==0 else self.parameterTable_rowcolor_even)
                         self.tableParameterOscilogram.setItem(i,len(self.measuredParameters[i])+j,item)
@@ -879,14 +878,14 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     def classificationCategoryAdded(self,category):
         for i,elem in enumerate(self.elementsClasificationTableData):
-            self.elementsClasificationTableData[i].append([str(category),"No Identified"])
+            self.elementsClasificationTableData[i].append([str(category),self.tr(u"No Identified")])
         print(self.elementsClasificationTableData)
         if self.tableParameterOscilogram.rowCount() > 0:
             self.tableParameterOscilogram.insertColumn(self.tableParameterOscilogram.columnCount())
             column = self.tableParameterOscilogram.columnCount()-1
             #put rows in table
             for row in range(self.tableParameterOscilogram.rowCount()):
-                item = QtGui.QTableWidgetItem(unicode("No Identified"))
+                item = QtGui.QTableWidgetItem(unicode(self.tr(u"No Identified")))
                 item.setBackgroundColor(self.parameterTable_rowcolor_odd if row%2==0 else self.parameterTable_rowcolor_even)
                 self.tableParameterOscilogram.setItem(row, column, item)
                 self.tableParameterOscilogram.setHorizontalHeaderItem(column,QtGui.QTableWidgetItem(category))
@@ -933,7 +932,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         if self.widget.signalProcessor.signal.playStatus == AudioSignal.PLAYING or\
                         self.widget.signalProcessor.signal.playStatus == AudioSignal.RECORDING:
             self.widget.stop()
-        mbox = QtGui.QMessageBox(QtGui.QMessageBox.Question,"Save meditions","Do you want to save the meditions?",QtGui.QMessageBox.Yes | QtGui.QMessageBox.No | QtGui.QMessageBox.Cancel,self)
+        mbox = QtGui.QMessageBox(QtGui.QMessageBox.Question,self.tr(u"Save meditions"),self.tr(u"Do you want to save the meditions?"),QtGui.QMessageBox.Yes | QtGui.QMessageBox.No | QtGui.QMessageBox.Cancel,self)
         if self.tableParameterOscilogram.rowCount() > 0:
             result = mbox.exec_()
             if result == QtGui.QMessageBox.Cancel:
@@ -943,7 +942,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                 wb = xlwt.Workbook()
                 ws = wb.add_sheet(self.widget.signalName())
                 self.writedata(ws, self.tableParameterOscilogram)
-                fname = unicode(QFileDialog.getSaveFileName(self,"Save meditions as excel file",self.widget.signalName()+".xls","*.xls"))
+                fname = unicode(QFileDialog.getSaveFileName(self,self.tr(u"Save meditions as excel file"),self.widget.signalName()+".xls","*.xls"))
                 if fname:
                     wb.save(fname)
             for w in self.twodimensionalGraphs:
