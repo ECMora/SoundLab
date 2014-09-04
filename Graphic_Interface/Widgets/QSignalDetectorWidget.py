@@ -223,7 +223,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         indexFrom,indexTo = np.searchsorted(sorted_arr,start),np.searchsorted(sorted_arr,end)
         indexFrom -= 1 if indexFrom > 0 and start <= self.Elements[indexFrom-1].indexTo else 0
 
-        if indexFrom < 0 or indexTo < indexFrom or indexTo >= len(self.Elements):
+        if indexTo < indexFrom or indexTo > len(self.Elements):
             return None
 
         self.removeVisualElements(elements=self.Elements[indexFrom:indexTo])

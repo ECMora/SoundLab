@@ -22,14 +22,15 @@ class FFTWindows:
 
     def Kaiser(self,M):
         return numpy.kaiser(len(M),14)
+
     def Blackman(self,M):
         return numpy.blackman(len(M))
+
     def Bartlett(self,M):
         return numpy.bartlett(len(M))
+
     def Hamming(self,M):
         return numpy.hamming(len(M))
-
-
 
     def WindowNone(self,M):
         return mlab.window_none(len(M))
@@ -50,11 +51,7 @@ class SpecgramSettings:
         self.overlap=overlap
         self.visualOverlap = overlap
         self.window=window
-        #self.colorPalette=ListedColormap(self.colors[0],name="DuettoColorMap")
-
         self._colorPaletteIndex=0#the color palette with the specgram is displayed its a matplotlib.cm.Colormap object
         self.threshold=30#the % of the specgram that is not visible
         self.grid=False
 
-
-M = numpy.arange(10)

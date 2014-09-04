@@ -160,9 +160,9 @@ class SpectrogramPlotWidget(GraphicsView):
                 info0 = self.getFreqTimeAndIntensity(self.last['pos'][0],self.last['pos'][1])
                 self.PointerSpecChanged.emit(str.format('t0: {0}  t1: {1}  dt: {2}',self.timeToStr(info0[0]),self.timeToStr(info[0]),self.timeToStr(info[0] - info0[0])))
             else:
-                self.PointerSpecChanged.emit(str.format(self.tr('Time:') + '  {0}          '+\
-                        self.tr('Freq:') + ' {1}kHz          ' +\
-                        self.tr('Amp:') + ' {2}dB', self.timeToStr(info[0]), info[1], info[2]))
+                self.PointerSpecChanged.emit(str.format(str(self.tr('Time')) + ':  {0}          '+\
+                        str(self.tr('Freq')) + ': {1}kHz          ' +\
+                        str(self.tr('Amp')) + ': {2}dB', self.timeToStr(info[0]), info[1], info[2]))
             self.viewBox.update()
             self.setCursor(QCursor(QtCore.Qt.CrossCursor))
         elif self.selectedTool == Tools.Zoom:
@@ -215,8 +215,8 @@ class SpectrogramPlotWidget(GraphicsView):
                 self.rectRegion['y'][0] = info[1]
                 self.rectRegion['y'][1] = info1[1]
                 self.PointerSpecChanged.emit(str.format('t0: {0}  t1: {1} dt: {2}          ' + \
-                                                        self.tr('MinFreq:') + ' {3}kHz  '+\
-                                                        self.tr('MaxFreq:') + ' {4}kHz  dF: {5}kHz', \
+                                                        str(self.tr('MinFreq')) + ': {3}kHz  '+\
+                                                        str(self.tr('MaxFreq')) + ': {4}kHz  dF: {5}kHz', \
                                                         self.timeToStr(info[0]), self.timeToStr(info1[0]), \
                                                         self.timeToStr(info1[0] - info[0]),info[1], info1[1], info1[1]-info[1]))
             else:
@@ -225,9 +225,9 @@ class SpectrogramPlotWidget(GraphicsView):
                     self.setCursor(QCursor(QtCore.Qt.ArrowCursor))
                     return
                 else:
-                    self.PointerSpecChanged.emit(str.format(self.tr("Time:") + " {0}          "+\
-                                                            self.tr("Freq:") + " {1}kHz          "+\
-                                                            self.tr("Amp:") +  " {2}dB", \
+                    self.PointerSpecChanged.emit(str.format(str(self.tr("Time")) + ": {0}          "+\
+                                                            str(self.tr("Freq")) + ": {1}kHz          "+\
+                                                            str(self.tr("Amp")) + ": {2}dB",\
                                                             self.timeToStr(info[0]), info[1], info[2]))
             self.setCursor(QCursor(QtCore.Qt.ArrowCursor))
             self.update()

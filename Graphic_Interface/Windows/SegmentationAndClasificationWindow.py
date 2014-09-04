@@ -508,7 +508,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
             fname = unicode(QFileDialog.getSaveFileName(self,self.tr(u"Save meditions as excel file"),self.widget.signalName()+".xls","*.xls"))
         if fname:
             wb = xlwt.Workbook()
-            a = self.tr(u"Elements Meditions")
+            a = unicode(self.tr(u"Elements Meditions"))
             ws = wb.add_sheet(a)
             self.writedata(ws,table)
             #add spectral meditions
@@ -685,9 +685,9 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                 if tableParameter.item(i-1, j):
                     ws.write(i, j, str(tableParameter.item(i-1, j).data(Qt.DisplayRole).toString()),stylebody)
                 else:
-                    ws.write(i,j,self.tr(u"No Identified"),stylebody)
+                    ws.write(i,j,unicode(self.tr(u"No Identified")),stylebody)
 
-        ws.write(tableParameter.model().rowCount()+3,0,self.tr(u"Duetto Sound Lab Oscilogram Meditions"),stylecopyrigth)
+        ws.write(tableParameter.model().rowCount()+3,0,unicode(self.tr(u"Duetto Sound Lab Oscilogram Meditions")),stylecopyrigth)
 
     #endregion
 

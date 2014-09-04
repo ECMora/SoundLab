@@ -141,7 +141,7 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
 
     @pyqtSlot()
     def on_actionSaveGraphImage_triggered(self):
-        fname = unicode(QFileDialog.getSaveFileName(self, self.tr(u"Save two dimensional graphics as an Image "),unicode(self.tr(u"-Duetto-Image")),"*.jpg"))
+        fname = unicode(QFileDialog.getSaveFileName(self, self.tr(u"Save two dimensional graphics as an Image "),self.tr(u"-Duetto-Image"),"*.jpg"))
         if fname:
             #save as image
             image = QtGui.QPixmap.grabWindow(self.widget.winId())

@@ -3,17 +3,8 @@ from unittest import TestCase
 __author__ = 'Orlando'
 
 
-class TestOscilogramPlotWidget(TestCase):
+class TestSpectrogramPlotWidget(TestCase):
     def test_load_Theme(self):
-        self.fail()
-
-    def test_select_region(self):
-        self.fail()
-
-    def test_on_zoomRegionChanged(self):
-        self.fail()
-
-    def test_setVisibleThreshold(self):
         self.fail()
 
     def test_clearRectangularCursor(self):
@@ -25,7 +16,10 @@ class TestOscilogramPlotWidget(TestCase):
     def test_changeSelectedTool(self):
         self.fail()
 
-    def test_setZoomRegionVisible(self):
+    def test_showGrid(self):
+        self.fail()
+
+    def test_on_zoomRegionChanged(self):
         self.fail()
 
     def test_mouseMoveEvent(self):
@@ -55,5 +49,8 @@ class TestOscilogramPlotWidget(TestCase):
     def test_fromCanvasToClientY(self):
         self.fail()
 
-    def test_getAmplitudeTimeInfo(self):
+    def test_getFreqTimeAndIntensity(self):
+        self.fail()
+
+    def test_timeToStr(self):
         self.fail()
