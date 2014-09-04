@@ -1,49 +1,79 @@
 # -*- coding: utf-8 -*-
-
+from PyQt4.QtCore import pyqtSignal, QObject
 from Duetto_Core.SignalProcessors.CommonSignalProcessor import CommonSignalProcessor
 from Duetto_Core.SignalProcessors.FilterSignalProcessor import FilterSignalProcessor
 
 import numpy as np
 
 
-class UndoRedoManager:
-    def __init__(self,widget):
-        self.widget = widget
-        self.actionsList = [None] * 20  #initial space for actions
-        self.actionIndex = -1
+class UndoRedoManager(QObject):
+    """
+    Data structure for handling undo and redo actions.
+    """
+    #signal that raise when an action is undo or redo
+    actionExec = pyqtSignal(object)
+
+    def __init__(self):
+        QObject.__init__(self)
+
+        #initial space for actions
+        #list that stores the actions
+        self.__actionsList = [None] * 20
+
+        #index that points into the last action processed
+        self.__actionIndex = -1
 
     def undo(self):
-        if self.actionIndex >= 0:
-            action = self.actionsList[self.actionIndex]
+        """
+        Undo the last action.
+        """
+        if self.__actionIndex >= 0:
+            action = self.__actionsList[self.__actionIndex]
             if action is not None:
                 action.undo()
-                self.widget.refresh()
-            self.actionIndex -= 1
+                self.actionExec.emit(action)
+            self.__actionIndex -= 1
 
     def redo(self):
-        if self.actionIndex < len(self.actionsList)-1:
-            self.actionIndex += 1
-            action = self.actionsList[self.actionIndex]
+        """
+        Redo the last action.
+        """
+        if self.__actionIndex < self.count() - 1:
+            self.__actionIndex += 1
+            action = self.__actionsList[self.__actionIndex]
             if action is not None:
                 action.redo()
-                self.widget.refresh()
+                self.actionExec.emit(action)
             else:
-                self.actionIndex -= 1
+                self.__actionIndex -= 1
 
     def addAction(self,action):
-        self.actionIndex += 1
-        if(len(self.actionsList) <= self.actionIndex):
-            self.actionsList = [self.actionsList[i] if i < len(self.actionsList) else None for i in range(2*len(self.actionsList))]
-        elif self.actionIndex > 0:
-            self.actionsList[self.actionIndex:] = [None] * (len(self.actionsList) - self.actionIndex)
-        self.actionsList[self.actionIndex] = action
+        """
+        Add a new action to the object.
+        @param action: The undo redo action to add.
+        """
+        if not isinstance(action, UndoRedoAction):
+            return
+        self.__actionIndex += 1
+        if len(self.__actionsList) <= self.__actionIndex:
+            self.__actionsList = [self.__actionsList[i] if i < len(self.__actionsList) else None for i in range(2*len(self.__actionsList))]
+        elif self.__actionIndex > 0:
+            #borrando las acciones que antes estaban por rehacer
+            self.__actionsList[self.__actionIndex:] = [None] * (len(self.__actionsList) - self.__actionIndex)
+        self.__actionsList[self.__actionIndex] = action
 
     def clearActions(self):
-        self.actionIndex = -1
-        self.actionsList = [None] * 20
+        """
+        Clear all the actions.
+        """
+        self.__actionIndex = -1
+        self.__actionsList = [None] * 20
 
     def count(self):
-        return self.actionIndex+1
+        """
+        @return: The count of actions stored in the data structure.
+        """
+        return len([x for x in self.__actionsList if x is not None])
 
 
 class UndoRedoAction:
@@ -51,6 +81,12 @@ class UndoRedoAction:
         assert callable(undo) and callable(redo)
         self.undo = undo
         self.redo = redo
+
+    def undo(self):
+        pass
+
+    def redo(self):
+        pass
 
 
 class ReverseAction(UndoRedoAction):

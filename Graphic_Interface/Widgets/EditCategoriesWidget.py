@@ -5,10 +5,8 @@ from Graphic_Interface.Windows.EditCategoryWidgetUI import Ui_EditCategoryWidget
 
 
 class EditCategoriesWidget(Ui_EditCategoryWidget,QWidget):
-    # valueAdded = pyqtSignal(str,str) #category, value
-    # valueRemoved = pyqtSignal(str,str) #category, value
 
-    def __init__(self,parent=None,categoryName=u"",classificationData=None, selectionOnly=False):
+    def __init__(self,parent=None,categoryName="",classificationData=None, selectionOnly=False):
         super(QWidget, self).__init__(parent)
         self.setupUi(self)
         if not isinstance(categoryName,str) and not isinstance(categoryName,QtCore.QString):

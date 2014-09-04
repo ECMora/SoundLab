@@ -159,10 +159,10 @@ class OscilogramPlotWidget(pg.PlotWidget):
                  info0 = round(info0[0],self.decimalPlaces),round(info0[1],self.decimalPlaces)
 
                  self.PointerOscChanged.emit(str.format('t0: {0}s  t1: {1}s  dt: {2}s          '\
-                                                        + self.tr('Amp') + ': {3}%', info0[0], info[0], info[0] - info0[0], info[1]))
+                                                        + str(self.tr('Amp')) + ': {3}%', info0[0], info[0], info[0] - info0[0], info[1]))
             else:
-                self.PointerOscChanged.emit(str.format(self.tr('Time:') + ' {0}s          '\
-                                                       +self.tr('Amp') + ': {1}%', info[0], info[1]))
+                self.PointerOscChanged.emit(str.format(str(self.tr('Time:')) + ' {0}s          '\
+                                                       +str(self.tr('Amp')) + ': {1}%', info[0], info[1]))
             #self.viewBox.update()
             self.setCursor(QCursor(QtCore.Qt.CrossCursor))
         elif self.selectedTool == Tools.Zoom:
@@ -221,8 +221,8 @@ class OscilogramPlotWidget(pg.PlotWidget):
 
                 self.rectRegion['y'][0] = info[1]
                 self.rectRegion['y'][1] = info1[1]
-                self.PointerOscChanged.emit(str.format('t0: {0}s  t1: {1}s dt: {2}s          ' + self.tr('MaxAmp') \
-                                                       + ': {3}% ' + self.tr('MinAmp') + \
+                self.PointerOscChanged.emit(str.format('t0: {0}s  t1: {1}s dt: {2}s          ' + str(self.tr('MaxAmp')) \
+                                                       + ': {3}% ' + str(self.tr('MinAmp')) + \
                                                        ': {4}% ', info[0], info1[0], info1[0] - info[0], info[1], info1[1]))
             else:
                 info = self.getAmplitudeTimeInfo(x, y)
@@ -233,8 +233,8 @@ class OscilogramPlotWidget(pg.PlotWidget):
                     self.setCursor(QCursor(QtCore.Qt.ArrowCursor))
                     return
                 else:
-                    self.PointerOscChanged.emit(str.format(self.tr('Time:') + ' {0}s          '+ \
-                                                           self.tr('Amp:') + '  {1}%', info[0], info[1]))
+                    self.PointerOscChanged.emit(str.format(str(self.tr('Time')) + ': {0}s          '+ \
+                                                           str(self.tr('Amp')) + ':  {1}%', info[0], info[1]))
             self.setCursor(QCursor(QtCore.Qt.ArrowCursor))
             self.update()
 

@@ -39,7 +39,8 @@ class QSignalVisualizerWidget(QWidget):
 
         self.axesOscilogram = OscilogramPlotWidget(parent=self)
 
-        self.undoRedoManager = UndoRedoManager(self)
+        self.undoRedoManager = UndoRedoManager()
+        self.undoRedoManager.actionExec.connect(lambda x: self.refresh())
         self.minYOsc = -100
         self.maxYOsc = 100
         self.minYSpc = 0

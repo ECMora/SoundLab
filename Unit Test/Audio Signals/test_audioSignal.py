@@ -74,16 +74,30 @@ class TestAudioSignal(TestCase):
         for i in range(1000,20000,1000):
             sound = AudioSignal()
             sound.openNew(i,1,16,False)
-            # self.assertIsNone(sound.stream,"Stream is not none before play")
-            # sound.play()
-            # self.assertIsNotNone(sound.stream,"Stream is none after play")
-            sound.stop()
             self.assertIsNone(sound.stream,"Stream is not none before play")
+            sound.play()
+            self.assertIsNotNone(sound.stream,"Stream is none after play")
+            self.assertEqual(sound.playStatus,AudioSignal.PLAYING,"Fail the play")
+            sound.stop()
+            self.assertIsNone(sound.stream,"Stream is not none after play")
             self.checkMetadata(sound,i,16,i,1)
             self.assertEqual(sound.playStatus,AudioSignal.STOPPED,"Fail the play")
 
     def test_pause(self):
-        self.fail()
+        for i in range(1000,20000,1000):
+            sound = AudioSignal()
+            sound.openNew(i,1,16,False)
+            self.assertIsNone(sound.stream,"Stream is not none before play")
+            sound.play()
+            self.assertEqual(sound.playStatus,AudioSignal.PLAYING,"Fail the play")
+            self.assertIsNotNone(sound.stream,"Stream is none during play")
+            sound.pause()
+            self.assertIsNotNone(sound.stream,"Stream is none during pause")
+            self.checkMetadata(sound,i,16,i,1)
+            self.assertEqual(sound.playStatus,AudioSignal.PAUSED,"Fail the play")
+            sound.play()
+            self.assertEqual(sound.playStatus,AudioSignal.PLAYING,"Fail the play")
+
 
     def test_record(self):
         self.fail()
