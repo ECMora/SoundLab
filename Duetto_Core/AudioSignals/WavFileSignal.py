@@ -46,13 +46,26 @@ class WavFileSignal(FileAudioSignal):
         self.path=path
 
     def smallSignal(self):
-        if  len(self.data) < 0.1 * self.samplingRate: #<100 ms
+        """
+        computes and return (through an heuristic) an small signal
+        that represent the current one. The small signal has less than 100ms of duration
+        and is provided as a way of search characteristics of the whole signal.
+        Must be "as similar as possible to the complete signal".
+
+        :return: Wav signal.
+        """
+        if len(self.data) < 0.1 * self.samplingRate: #<100 ms
             return self
+
+        #memoize pattern for O(1) amortized analysis
         if self.small is not None:
             return self.small
+
+        #signal of 40 ms
         s = WavFileSignal(samplingRate=self.samplingRate, duration=0.04, bitDepth=self.bitDepth, whiteNoise=False)
 
         #10 intervals of 3 ms sep by 1 ms of  silence
+        #garantize taht the mas amplitude interval is in the small signal
         i_max,media = argmax(self.data),sum(abs(self.data))/len(self.data)
 
         ms = int(self.samplingRate/1000)
@@ -64,6 +77,8 @@ class WavFileSignal(FileAudioSignal):
             if i == 4:
                 continue
             try:
+                #The current signal is divide in 10 pieces and
+                # a random 1ms frame of each piece is copied into the small signal
                 x = random.randint(0,10)
                 index =i*len(self.data)/10+x*len(self.data)/100
                 s.data[i * 4 * ms: (i * 4 + 3) * ms] = self.data[index:index + 3 * ms]
@@ -73,6 +88,10 @@ class WavFileSignal(FileAudioSignal):
         return s
 
     def read(self, file):
+        """
+        Reads a file that contains an wav signal.
+        :param file:
+        """
         if hasattr(file, 'read'):
             fid = file
         else:

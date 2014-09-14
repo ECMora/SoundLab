@@ -1,7 +1,6 @@
 from math import sin, pi
 
 from numpy import array, zeros, concatenate
-from Duetto_Core.Segmentation.Detectors.FeatureExtractionDetectors.MaxMinPeakDetector import MaxMinPeakDetector
 
 from Duetto_Core.SignalProcessors.SignalProcessor import SignalProcessor
 
@@ -11,25 +10,6 @@ class CommonSignalProcessor(SignalProcessor):
 
     def __init__(self, signal=None):
         SignalProcessor.__init__(self, signal)
-
-    def normalize(self, indexFrom=0, indexTo=-1, interval=None):
-        """
-        normalize the signal in a specific interval
-        interval is a tuple (a,b) with the  limits of the interval. Are [-1,1] by default
-        """
-        if indexTo == -1:
-            indexTo = len(self.signal.data)
-        self.signal.data = array(self.signal.data, float)
-        if(interval is None):
-            value = max(max(self.signal.data),abs(min(self.signal.data)))
-            interval = (-value,value)
-            print(value)
-        maxp, _, minp, _ = MaxMinPeakDetector().maxMinPeaks(self.signal, indexFrom, indexTo)
-        amplitude = 1.0 * abs(maxp - minp)
-        for i in range(indexFrom, indexTo):
-            self.signal.data[i] = interval[0] + (interval[1] - interval[0]) * (
-                abs(self.signal.data[i] - minp) / amplitude)
-        return self.signal
 
     def setSilence(self, indexFrom=0, indexTo=-1):
         """

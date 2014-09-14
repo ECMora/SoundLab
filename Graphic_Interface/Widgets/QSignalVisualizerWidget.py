@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime
 from PyQt4.QtCore import pyqtSignal, QRect, Qt, QTimer
 from PyQt4.QtGui import *
 from PyQt4 import QtCore, QtGui
@@ -9,9 +8,6 @@ import matplotlib.mlab as mlab
 from pyqtgraph.Point import Point
 from Duetto_Core.AudioSignals.WavFileSignal import WavFileSignal
 from Duetto_Core.AudioSignals.AudioSignal import AudioSignal
-from Duetto_Core.Cursors.IntervalCursor import IntervalCursor
-from Duetto_Core.Cursors.PointerCursor import PointerCursor
-from Duetto_Core.Cursors.RectangularCursor import RectangularCursor
 from Duetto_Core.SignalProcessors.CommonSignalProcessor import CommonSignalProcessor
 from Duetto_Core.SignalProcessors.FilterSignalProcessor import *
 from Duetto_Core.SignalProcessors.SignalProcessor import SignalProcessor
@@ -21,6 +17,12 @@ from OscilogramPlotWidget import OscilogramPlotWidget
 from Graphic_Interface.Widgets.UndoRedoActions import UndoRedoManager, FilterAction
 from Graphic_Interface.Widgets.SpectrogramPlotWidget import SpectrogramPlotWidget
 from Graphic_Interface.Widgets.Tools import Tools
+
+
+class IntervalCursor:
+    def __init__(self, minvalue=0,maxvalue=0):
+        self.min = minvalue
+        self.max = maxvalue
 
 
 class QSignalVisualizerWidget(QWidget):
@@ -335,15 +337,6 @@ class QSignalVisualizerWidget(QWidget):
         self.axesOscilogram.emitIntervalOscChanged = True
 
 
-    def dropEvent(self, event):
-        data = event.mimeData().data()
-        file = QtCore.QFile()
-        file.setFileName("local.wav")
-        file.write(data)
-        file.close()
-        event.accept()
-        self.open("local.wav")
-
     def deselectZoomRegion(self):
         self.clearZoomCursor()
         self.refresh(dataChanged=False)
@@ -619,7 +612,7 @@ class QSignalVisualizerWidget(QWidget):
     #region Edition CUT,COPY PASTE
 
     def cut(self):
-        if (len(self.signalProcessor.signal.data) > 0 and self.signalProcessor.signal.opened()):
+        if len(self.signalProcessor.signal.data) > 0 and self.signalProcessor.signal.opened():
             self.editionSignalProcessor.cut(self.zoomCursor.min, self.zoomCursor.max)
             self.mainCursor.max -= self.zoomCursor.max - self.zoomCursor.min
             if (self.mainCursor.max < 1):
@@ -709,8 +702,6 @@ class QSignalVisualizerWidget(QWidget):
         self.signalProcessingAction(FilterSignalProcessor(self.signalProcessor.signal). \
                                         filter, filterType, FCut, FLow, FUpper)
 
-    def normalize(self):
-        self.signalProcessingAction(CommonSignalProcessor(self.signalProcessor.signal).normalize)
 
     def absoluteValue(self, sign):
         self.signalProcessingAction(CommonSignalProcessor(self.signalProcessor.signal).absoluteValue, sign)
@@ -743,8 +734,7 @@ class QSignalVisualizerWidget(QWidget):
 
         self.editionSignalProcessor = EditionSignalProcessor(self.signalProcessor.signal)
 
-        if isinstance(self.signalProcessor.signal, WavFileSignal):
-            self.loadUserData(self.signalProcessor.signal.userData)
+
         self.mainCursor.min = 0
         self.mainCursor.max = len(self.signalProcessor.signal.data)
         self.specgramSettings.threshold = 50
@@ -781,42 +771,6 @@ class QSignalVisualizerWidget(QWidget):
         signal.data = self.signalProcessor.signal.data[indexF:indexTo]
         signal.save(fname)
 
-    def cursorsData(self):
-        cursData = PointerCursor().intToByteArray(len(self.cursors))
-        for x in self.cursors:
-            if isinstance(x, PointerCursor):
-                cursData.extend(bytearray([0, 0]))  # pcur ---> pointer cursor
-            if isinstance(x, IntervalCursor):
-                cursData.extend(bytearray([0, 1]))  # icur ---> interval cursor
-            if isinstance(x, RectangularCursor):
-                cursData.extend(bytearray([0, 2]))  # rcur ---> rectangular cursor
-            data = x.toByteArray()
-            cursData.extend(PointerCursor().intToByteArray(len(data)))
-            cursData.extend(data)
-        return bytearray(cursData)
-
-    def loadUserData(self, userData):
-        userData = bytearray(userData)
-        if len(userData) == 0:
-            return
-        index = 4
-        size = 0
-        cursor = PointerCursor()
-        n = cursor.byteArrayToInt(bytearray(userData[0:4]))
-        for i in range(n):
-            type = bytearray(userData[index:index + 2])
-            index += 2
-            if type == bytearray([0, 0]):
-                cursor = PointerCursor()
-            if type == bytearray([0, 1]):
-                cursor = IntervalCursor()
-            if type == bytearray([0, 2]):
-                cursor = RectangularCursor()
-            size = PointerCursor().byteArrayToInt(userData[index:index + 4])
-            index += 4
-            cursor.fromByteArray(userData[index:index + size])
-            index += size
-            self.cursors.append(cursor)
 
     def SaveColorBar(self):
         state = self.axesSpecgram.getHistogramWidget().item.gradient.saveState()
