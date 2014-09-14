@@ -208,6 +208,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         separator4.setSeparator(True)
 
         self.widget.setStyleSheet(self.styleSheet())
+
         self.widget.createContextCursor([self.actionCopy, self.actionCut, self.actionPaste, separator,
                                          self.actionNegative_Values, self.actionPositive_Values, self.actionChange_Sign,
                                          separator2,
@@ -820,11 +821,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         start, end = self.widget.getIndexFromAndTo()
         self.widget.undoRedoManager.addAction(SilenceAction(self.widget.signalProcessor.signal, start, end))
         self.widget.silence()
-
-    @pyqtSlot()
-    def on_actionNormalize_triggered(self):
-        self.widget.undoRedoManager.addAction(UndoRedoAction(self.widget.normalizeUndoAction, self.widget.normalize))
-        self.widget.normalize()
 
     @pyqtSlot()
     def on_actionFull_Screen_triggered(self):
