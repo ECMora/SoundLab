@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'E:\Biologia\SISTEMA\DuettoSystem\Graphic_Interface\UI Files\insertSilence.ui'
+# Form implementation generated from reading ui file 'E:\Biologia\SISTEMA\DuettoSystem\graphic_interface\UI Files\insertSilence.ui'
 #
 # Created: Fri Apr 25 12:05:06 2014
 #      by: PyQt4 UI code generator 4.9.5

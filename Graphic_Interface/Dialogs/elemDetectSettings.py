@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
-from PyQt4 import QtGui
 from math import log10
+
+from PyQt4 import QtGui
 from PyQt4.QtCore import pyqtSlot
 from PyQt4.QtGui import QDialog
-from Duetto_Core.Segmentation.Detectors.ElementsDetectors.OneDimensional.OneDimensionalElementsDetector import DetectionSettings, DetectionType,AutomaticThresholdType
-from Graphic_Interface.Dialogs.ui_elemDetectSettings import Ui_Dialog
-from pyqtgraph.parametertree import Parameter, ParameterTree
+from pyqtgraph.parametertree import ParameterTree
+
+from sound_lab_core.Segmentation.Detectors.ElementsDetectors.OneDimensional.OneDimensionalElementsDetector import DetectionSettings, DetectionType,AutomaticThresholdType
+from graphic_interface.dialogs.ui_elemDetectSettings import Ui_Dialog
 
 
 class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
@@ -70,7 +72,6 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         self.widget.axesOscilogram.threshold.setBounds((-2**(self.widget.signalProcessor.signal.bitDepth-1),2**(self.widget.signalProcessor.signal.bitDepth-1)))
 
         self.widget.histogram.setImageItem(self.widget.axesSpecgram.imageItem)
-        self.widget.visualChanges = True
         self.widget.computeSpecgramSettings()
         self.detect()
 

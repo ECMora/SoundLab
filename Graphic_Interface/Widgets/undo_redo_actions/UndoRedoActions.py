@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 from PyQt4.QtCore import pyqtSignal, QObject
-from Duetto_Core.SignalProcessors.CommonSignalProcessor import CommonSignalProcessor
-from Duetto_Core.SignalProcessors.FilterSignalProcessor import FilterSignalProcessor
-
+from duetto.signal_processing.CommonSignalProcessor import CommonSignalProcessor
+from duetto.signal_processing.filter_signal_processors.frequency_domain_filters import *
 import numpy as np
 
 
