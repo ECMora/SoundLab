@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Sound Lab\DuettoSystem\Graphic_Interface\UI Files\SegmentationAndClasificationWindowUI.ui'
+# Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Sound Lab\DuettoSystem\graphic_interface\UI Files\SegmentationAndClasificationWindowUI.ui'
 #
 # Created: Wed Jul 23 10:02:03 2014
 #      by: PyQt4 UI code generator 4.9.5
@@ -475,5 +475,5 @@ class Ui_MainWindow(object):
         self.actionMethod.setText(QtGui.QApplication.translate("MainWindow", "Method", None, QtGui.QApplication.UnicodeUTF8))
 
 from pyqtgraph import TableWidget
-from Graphic_Interface.Widgets.QSignalDetectorWidget import QSignalDetectorWidget
+from graphic_interface.widgets.QSignalDetectorWidget import QSignalDetectorWidget
 import icons_rc

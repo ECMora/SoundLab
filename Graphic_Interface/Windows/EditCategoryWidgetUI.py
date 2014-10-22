@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Sound Lab\DuettoSystem\Graphic_Interface\UI Files\EditCategoryWidgetUI.ui'
+# Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Sound Lab\DuettoSystem\graphic_interface\UI Files\EditCategoryWidgetUI.ui'
 #
 # Created: Sun Jul 20 10:59:16 2014
 #      by: PyQt4 UI code generator 4.9.5

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Sound Lab\DuettoSystem\Graphic_Interface\UI Files\EditCategoriesDialogUI.ui'
+# Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Sound Lab\DuettoSystem\graphic_interface\UI Files\EditCategoriesDialogUI.ui'
 #
 # Created: Sat Jul 19 21:57:43 2014
 #      by: PyQt4 UI code generator 4.9.5
@@ -68,4 +68,4 @@ class Ui_Dialog(object):
         Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "Edit Categories", None, QtGui.QApplication.UnicodeUTF8))
         self.bttnAddCategory.setText(QtGui.QApplication.translate("Dialog", "Add Category ", None, QtGui.QApplication.UnicodeUTF8))
 
-import Graphic_Interface.Windows.icons_rc
+import graphic_interface.windows.icons_rc

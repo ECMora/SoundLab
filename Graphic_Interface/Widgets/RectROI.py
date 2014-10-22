@@ -1,11 +1,6 @@
 # -*- coding: utf-8 -*-
 import pyqtgraph as pg
 
-class Tools:
-    """
-    the tools for interaction with the signal in the QSignalVisualizerWidget.
-    """
-    Zoom,RectangularCursor,CircularEraser,RectangularEraser,PointerCursor, OscilogramThreshold = range(6)
 
 class RectROI(pg.ROI):
     def __init__(self, pos, size, centered=False, sideScalers=False, **args):

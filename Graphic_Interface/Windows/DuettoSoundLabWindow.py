@@ -2,29 +2,21 @@
 import os
 import pickle
 from PyQt4 import QtCore, QtGui
-from pyqtgraph.python2_3 import asUnicode
-from pyqtgraph.parametertree.parameterTypes import WidgetParameterItem, ListParameter
-from Graphic_Interface.Windows.ParameterList import DuettoListParameterItem
+from pyqtgraph.parametertree.parameterTypes import ListParameter
 from pyqtgraph.parametertree import Parameter, ParameterTree
 from PyQt4.QtGui import QDialog, QMessageBox, QFileDialog, QActionGroup, QAction
 from PyQt4.QtCore import SIGNAL, pyqtSlot, QTimer
-from Graphic_Interface.Dialogs.NewFileDialog import NewFileDialog
-from Duetto_Core.AudioSignals.WavFileSignal import WavFileSignal
-from Graphic_Interface.Widgets.HorizontalHistogram import HorizontalHistogramWidget
-from Graphic_Interface.Windows.PowerSpectrumWindow import PowerSpectrumWindow
+from graphic_interface.windows.ParameterList import DuettoListParameterItem
+from graphic_interface.dialogs.NewFileDialog import NewFileDialog
+from graphic_interface.widgets.HorizontalHistogram import HorizontalHistogramWidget
+from graphic_interface.windows.PowerSpectrumWindow import PowerSpectrumWindow
 from SegmentationAndClasificationWindow import SegmentationAndClasificationWindow
-from Duetto_Core.SignalProcessors.FilterSignalProcessor import FILTER_TYPE
-from Graphic_Interface.Widgets.UndoRedoActions import *
+from graphic_interface.widgets.undo_redo_actions.UndoRedoActions import *
 from MainWindow import Ui_DuettoMainWindow
-from Graphic_Interface.Dialogs import InsertSilenceDialog as sdialog, FilterOptionsDialog as filterdg, \
+from graphic_interface.dialogs import InsertSilenceDialog as sdialog, FilterOptionsDialog as filterdg, \
     ChangeVolumeDialog as cvdialog
-from WorkTheme import SerializedData
-from Graphic_Interface.Widgets.Tools import Tools
-from Duetto_Core.Clasification.ClassificationData import ClassificationData
-
-
-MIN_SAMPLING_RATE = 1000
-MAX_SAMPLING_RATE = 2000000
+from graphic_interface.WorkTheme import SerializedData
+from sound_lab_core.Clasification.ClassificationData import ClassificationData
 
 
 class InsertSilenceDialog(sdialog.Ui_Dialog, QDialog):
@@ -39,8 +31,36 @@ class FilterDialog(filterdg.Ui_Dialog, QDialog):
     pass
 
 
+def folderFiles(folder, extensions=None):
+    """
+    Method that computes all the files that contains a provided folder in
+    the file system.
+    :param folder: The folder to search files.
+    :param extensions: list with possible file extensions to limit the search
+    :return: list of string with path of every detected file.
+    """
+    #list of files to return
+    files = []
+    extensions = [".wav"] if (extensions is None or len(extensions) == 0) else extensions
+
+    #walk for the folder file system tree
+    for root, dirs, filenames in os.walk(folder):
+        for f in filenames:
+            if any([f.endswith(x) for x in extensions]):
+                #if file extension is one of the wanted
+                files.append(unicode(root + os.path.sep + f))
+
+    return files
+
+
 class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
+    #SIGNALS
+    #signal raised when a file is drop into the window
     dropchanged = QtCore.pyqtSignal(QtCore.QMimeData)
+
+    #CONSTANTS
+    MIN_SAMPLING_RATE = 1000
+    MAX_SAMPLING_RATE = 2000000
 
     def __init__(self, parent=None):
         super(DuettoSoundLabWindow, self).__init__(parent)
@@ -49,9 +69,12 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.hist = HorizontalHistogramWidget()
         self.widget.histogram = self.hist
         self.pow_overlap = 90
+
+        #theme for the visual options of the software
         self.defaultTheme = self.DeSerializeTheme(os.path.join(os.path.join("Utils", "Themes"), "RedBlackTheme.dth"))
 
-        themesInFolder = self.folderFiles(os.path.join("Utils", "Themes"), extensions=[".dth"])
+        #all the themes that are in the static folder for themes
+        themesInFolder = folderFiles(os.path.join("Utils", "Themes"), extensions=[".dth"])
 
         self.widget.osc_color = self.defaultTheme.osc_plot
 
@@ -64,6 +87,12 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.statusbar.setSizeGripEnabled(False)
         self.lastopen = ''
         self.statusbar.showMessage(self.tr(u"Welcome to Duetto Sound Lab"), 5000)
+
+        #several visual and parameters display options for the software.
+        #provide a user interface using a prameter tree
+
+        #region Parameter Tree definition
+
         params = [
             {u'name': unicode(self.tr(u'Oscillogram Settings')), u'type': u'group', u'children': [
                 {u'name': unicode(self.tr(u'Amplitude(%)')), u'type': u'group', u'children': [
@@ -154,17 +183,21 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.parameterTree.setHeaderHidden(True)
         self.parameterTree.setParameters(self.ParamTree, showTop=False)
 
+        #endregion
+
         lay1 = QtGui.QVBoxLayout()
         lay1.setMargin(0)
         lay1.addWidget(self.parameterTree)
 
+        #initialize the object for spectral threshold manipulation (Histogram)
         self.hist.setFixedWidth(340)
         self.hist.setFixedHeight(100)
         self.hist.item.setImageItem(self.widget.axesSpecgram.imageItem)
         self.hist.item.gradient.restoreState(self.defaultTheme.colorBarState)
         self.hist.item.region.setRegion(self.defaultTheme.histRange)
         self.hist.item.region.sigRegionChanged.connect(self.updateRegionTheme)
-        # the next 2 lines are a PARCHE for the error of deselect zoom region when the region changes
+
+        #the next 2 lines are a PARCHE for the error of deselect zoom region when the region changes
         self.hist.item.region.sigRegionChanged.connect(self.widget.clearZoomCursor)
         self.ParamTree.sigTreeStateChanged.connect(self.widget.clearZoomCursor)
 
@@ -174,7 +207,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         action.setCheckable(False)
         action.setText(self.tr("Save"))
         #
-        # # classifPath = os.path.join(os.path.join("Utils","Classification"),"classifSettings")
+        #classifPath = os.path.join(os.path.join("Utils","Classification"),"classifSettings")
         self.classificationData = self.DeserializeClassificationData()
 
         lay1.addWidget(self.hist)
@@ -242,16 +275,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.ParamTree.param(unicode(self.tr(u'Oscillogram Settings'))).param(unicode(self.tr(u'Amplitude(%)'))).param(
             unicode(self.tr(u'Max'))).setValue(max)
 
-    def folderFiles(self, folder, extensions=None):
-        files = []
-        extensions = [".wav"] if extensions is None else extensions
-        for root, dirs, filenames in os.walk(folder):
-            for f in filenames:
-                if extensions is None or any([f.endswith(x) for x in extensions]):
-                    files.append(unicode(root + os.path.sep + f))
-
-        return files
-
     def updateStatusBar(self, line):
         self.statusbar.showMessage(line)
 
@@ -307,11 +330,11 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             file.close()
 
     def DeSerializeTheme(self, filename):
-        if filename and os.path.exists(filename):
-            file = open(filename, 'rb')
-            data = pickle.load(file)
-            file.close()
-            return data
+        # if filename and os.path.exists(filename):
+        #     file = open(filename, 'rb')
+        #     data = pickle.load(file)
+        #     file.close()
+        #     return data
         return SerializedData()
 
     def SerializeClassificationData(self, filename=""):
@@ -418,7 +441,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.widget.visibleSpectrogram = True
         path = mimeUrl[1:len(mimeUrl)]
         path_base = os.path.split(path)[0]
-        self.filesInFolder = self.folderFiles(path_base)
+        self.filesInFolder = folderFiles(path_base)
 
         try:
             self.filesInFolderIndex = self.filesInFolder.index(path)
@@ -947,7 +970,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 self.widget.specgramSettings.overlap = self.ParamTree.param(
                     unicode(self.tr(u'Spectrogram Settings'))).param(unicode(self.tr(u'FFT overlap'))).value()
                 path_base = os.path.split(f)[0]
-                self.filesInFolder = self.folderFiles(path_base)
+                self.filesInFolder = folderFiles(path_base)
 
                 try:
                     self.filesInFolderIndex = self.filesInFolder.index(f)
@@ -1004,7 +1027,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         fname = unicode(QFileDialog.getSaveFileName(self, self.tr(u"Save signal"),
                                                     self.tr(u"Selection-") + self.widget.signalName(), u"*.wav"))
         if fname:
-            self.widget.saveSelected(fname)
+            self.widget.saveSelectedSectionAsSignal(fname)
 
     @pyqtSlot()
     def on_actionPlay_Sound_triggered(self):

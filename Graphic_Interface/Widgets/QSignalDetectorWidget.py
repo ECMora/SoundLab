@@ -1,23 +1,37 @@
 from PyQt4 import QtGui
-from Duetto_Core.Segmentation.Elements.Element import Element
-from .QSignalVisualizerWidget import QSignalVisualizerWidget
-from Duetto_Core.Segmentation.Detectors.ElementsDetectors.OneDimensional.OneDimensionalElementsDetector import DetectionType,OneDimensionalElementsDetector
 import pyqtgraph as pg
 import numpy as np
+from sound_lab_core.Segmentation.Elements.Element import Element
+from duetto.widgets.QSignalVisualizerWidget import QSignalVisualizerWidget
+from sound_lab_core.Segmentation.Detectors.ElementsDetectors.OneDimensional.OneDimensionalElementsDetector import \
+    DetectionType, OneDimensionalElementsDetector
 
 
 class QSignalDetectorWidget(QSignalVisualizerWidget):
-    """This widget performs the detections operations on a signal.
+    """
+    This widget performs the detections operations on a signal.
+    Provide methods to interact with the detected segments: Highlight, remove, etc
     """
 
-    def __init__(self,parent):
+    def __init__(self, parent):
         QSignalVisualizerWidget.__init__(self, parent)
+
+        # curve to display envelope when detection method is envelope
         self.envelopeCurve = pg.PlotCurveItem(np.array([0]), pen=pg.mkPen(self.osc_color, width=1),
                                               shadowPen=pg.mkPen(QtGui.QColor(255, 0, 0), width=3))
         self.axesOscilogram.addItem(self.envelopeCurve)
-        self.envelopeFactor = 2 #factor to expand the envelope for best visualization
+
+        #factor to expand the envelope for best visualization
+        self.envelopeFactor = 2
+
+        #visibility of all detected elements. is used when they are displayed
         self.visibleElements = True
-        self.Elements = []  # list of elements detected in oscilogram each element contains the object it self and the extra data for visualize it
+
+        #list of elements detected each element contains the object
+        # it self and the extra data for visualize it
+        self.Elements = []
+
+        #detector for one dimensional detection
         self.elements_detector = OneDimensionalElementsDetector()
 
     def load_Theme(self, theme):
@@ -25,28 +39,45 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         this method implements the  way in wich the controls load the theme
         all changes made by the theme are made in this place
         """
-        #assert isinstance(theme,SerializedData)
-        QSignalVisualizerWidget.load_Theme(self,theme)
+        # assert isinstance(theme,SerializedData)
+        QSignalVisualizerWidget.load_Theme(self, theme)
 
         self.histogram.item.region.setRegion(theme.histRange)
         self.histogram.item.gradient.restoreState(theme.colorBarState)
 
-
+        #update values for envelope display
         self.envelopeCurve.setPen(pg.mkPen(self.osc_color, width=1))
         self.envelopeCurve.setShadowPen(pg.mkPen(QtGui.QColor(255, 0, 0), width=3))
 
-    def setEnvelopeVisibility(self, bool):
-        inaxes = self.envelopeCurve in self.axesOscilogram.items()
-        if bool and not inaxes:
+    def setEnvelopeVisibility(self, visibility):
+        """
+        Method that change the visibility of the envelope curve
+        :param visibility: visibility of the envelope curve
+        """
+        envelope_in_axes = self.envelopeCurve in self.axesOscilogram.items()
+
+        # alternative implem
+        # method = self.axesOscilogram.addItem if (not envelope_in_axes and visibility) \
+        #     else (self.axesOscilogram.removeItem if (not visibility and envelope_in_axes) else lambda x: x)
+        # method(self.envelopeCurve)
+
+        if not envelope_in_axes and visibility:
+            #the curve must be set to visible
             self.axesOscilogram.addItem(self.envelopeCurve)
-        elif not bool and inaxes:
+        elif not visibility and envelope_in_axes:
+            #the curve must be set to invisible
             self.axesOscilogram.removeItem(self.envelopeCurve)
+
         self.axesOscilogram.update()
 
-    def getTransformedEnvelope(self, array):
-        self.envelopeFactor = (2.0 ** (self.signalProcessor.signal.bitDepth) * self.maxYOsc / 100) / array[
-            np.argmax(array)]
-        return (self.envelopeFactor * array - 2 ** (self.signalProcessor.signal.bitDepth - 1) * self.maxYOsc / 100)
+    def getTransformedEnvelope(self):
+        """
+        Return thearray of the envelope curve scaled by the envelope factor for display.
+        :return: scaled envelope array
+        """
+        self.envelopeFactor = (2.0 ** (self.signalProcessor.signal.bitDepth) * self.maxYOsc / 100) / self.elements_detector.envelope[
+            np.argmax(self.elements_detector.envelope)]
+        return (self.envelopeFactor * self.elements_detector.envelope - 2 ** (self.signalProcessor.signal.bitDepth - 1) * self.maxYOsc / 100)
 
     def detectElements(self, threshold=20, decay=1, minSize=0, detectionsettings=None, softfactor=5, merge_factor=50,
                        threshold2=0, threshold_spectral=95, pxx=[], freqs=[], bins=[], minsize_spectral=(0, 0),
@@ -73,9 +104,9 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         """
         self.clearDetection()
 
-        a,b = self.mainCursor.min,self.mainCursor.max
+        a, b = self.mainCursor.min, self.mainCursor.max
 
-        self.mainCursor.min,self.mainCursor.max = 0,len(self.signalProcessor.signal.data)
+        self.mainCursor.min, self.mainCursor.max = 0, len(self.signalProcessor.signal.data)
 
         self.computeSpecgramSettings()
 
@@ -88,7 +119,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
                                       specgramSettings=self.specgramSettings)
 
         if detectionsettings is None or detectionsettings.detectiontype == DetectionType.Envelope_Abs_Decay_Averaged or detectionsettings.detectiontype == DetectionType.Envelope_Rms:
-            self.envelopeCurve.setData(self.getTransformedEnvelope(self.elements_detector.envelope))
+            self.envelopeCurve.setData(self.getTransformedEnvelope())
             self.setEnvelopeVisibility(True)
             self.axesOscilogram.threshold.setValue(self.elements_detector.getThreshold())
         else:
@@ -97,16 +128,20 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         self.axesOscilogram.setVisibleThreshold(True)
 
         for c in self.elements_detector.elements:
-            self.Elements.append(c)# the elment the space for the span selector and the text
-            #incorporar deteccion en espectrograma
+            self.Elements.append(c)  # the elment the space for the span selector and the text
+            # incorporar deteccion en espectrograma
 
         if a != self.mainCursor.min or b != self.mainCursor.max:
-            self.zoomCursor.min,self.zoomCursor.max = a,b
+            self.zoomCursor.min, self.zoomCursor.max = a, b
             self.zoomIn()
 
     def changeElementsVisibility(self, visible, element_type=Element.Figures, oscilogramItems=True):
-        #change the visibility of the visual items in items
-        #that objects must be previously added into oscilogram or specgram widgets
+        """
+        Change the visibility of the visual items
+        :param visible:
+        :param element_type:
+        :param oscilogramItems:
+        """
         iterable = self.Elements
         if not oscilogramItems:
             aux = [x.twoDimensionalElements for x in self.Elements]
@@ -141,11 +176,16 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
                 elem.shift(lambda x: self._from_osc_to_spec(self._from_spec_to_osc(x)))
 
     def computeSpecgramSettings(self, overlap=None):
-        QSignalVisualizerWidget.computeSpecgramSettings(self,overlap)
+        QSignalVisualizerWidget.computeSpecgramSettings(self, overlap)
         self.shiftElementsVisualObjects()
 
     def drawElements(self, oscilogramItems=None):
         # if oscilogramItems = None its updated the oscilogram and spectrogram widgets
+        """
+        Add to the visual gui widgets the visible elements of the detected segments
+        :param oscilogramItems: true if draw elements in oscilogram false for spectrogram
+        None for both
+        """
         osc = oscilogramItems is None or oscilogramItems
         spec = oscilogramItems is None or not oscilogramItems
 
@@ -163,7 +203,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
                         self.axesOscilogram.removeItem(item)
             self.axesOscilogram.update()
 
-        if (self.visibleSpectrogram and spec):
+        if self.visibleSpectrogram and spec:
             for i in range(len(self.Elements)):
                 for j in range(len(self.Elements[i].twoDimensionalElements)):
                     if self.Elements[i].twoDimensionalElements[j].visible:
@@ -179,29 +219,45 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
             self.axesSpecgram.update()
 
-    def removeVisualElements(self, oscilogram=True, specgram=True,elements=None):
+    def removeVisualElements(self, oscilogram=True, specgram=True, elements=None):
+        """
+        Method that remove the visual representation of the elements in the widget.
+        Used for remove selected elements or a group of them.
+        :param oscilogram: Removes the oscilogram visual elements
+        :param specgram: Removes the spectrogram visual elements
+        :param elements: the elements that would be analyzed to remove visual components.
+        all the self.Elements if None
+        """
         elements = elements if elements is not None else self.Elements
-        if (oscilogram):
+        if oscilogram:
             for elem in elements:
                 for item, visible in elem.visualwidgets():
                     self.axesOscilogram.removeItem(item)
-        if (specgram):
+        if specgram:
             for elem in elements:
                 for elem2 in elem.twoDimensionalElements:
                     for item, visible in elem2.visualwidgets():
                         self.axesSpecgram.viewBox.removeItem(item)
 
-    def clearDetection(self, oscilogram=True, specgram=True):
+    def clearDetection(self):
+        """
+        Clears the detected elements and their visual components from the widget
+        """
         self.removeVisualElements(oscilogram=True, specgram=True)
-        self.Elements = [] if oscilogram and specgram else self.Elements
+        self.Elements = []
 
     def selectElement(self, number=-1):
-        if len(self.Elements) > number and number >= 0:
-            f, t = self.Elements[number].indexFrom, self.Elements[number].indexTo
-            self.axesOscilogram.select_region(f, t, pg.mkBrush(QtGui.QColor(255, 255, 255, 150)))
-            if f < self.mainCursor.min or t > self.mainCursor.max:
+        """
+        Method that select an element in the widget
+        by highlighting it
+        :param number: the element index. Must be > 0.
+        """
+        if 0 <= number < len(self.Elements):
+            index_from, index_to = self.Elements[number].indexFrom, self.Elements[number].indexTo
+            self.axesOscilogram.select_region(index_from, index_to, pg.mkBrush(QtGui.QColor(255, 255, 255, 150)))
+            if index_from < self.mainCursor.min or index_to > self.mainCursor.max:
                 sizeInterval = self.mainCursor.max - self.mainCursor.min
-                self.mainCursor.min = max(0, (f + t - sizeInterval) / 2)
+                self.mainCursor.min = max(0, (index_from + index_to - sizeInterval) / 2)
                 self.mainCursor.max = min(self.mainCursor.min + sizeInterval, len(self.signalProcessor.signal.data))
                 self.refresh()
         else:
@@ -214,31 +270,34 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         returns the tuple (x,y) of init and end of the interval deleted.
         If no element is deleted returns None
         """
-        start,end = self.zoomCursor.min,self.zoomCursor.max
+        start, end = self.zoomCursor.min, self.zoomCursor.max
         if end == start or len(self.Elements) == 0:
             return None
 
+        # create a list with start index of each element
         sorted_arr = np.array([x.indexFrom for x in self.Elements])
 
-        indexFrom,indexTo = np.searchsorted(sorted_arr,start),np.searchsorted(sorted_arr,end)
-        indexFrom -= 1 if indexFrom > 0 and start <= self.Elements[indexFrom-1].indexTo else 0
+        #binary search
+        indexFrom, indexTo = np.searchsorted(sorted_arr, start), np.searchsorted(sorted_arr, end)
+        indexFrom -= 1 if indexFrom > 0 and start <= self.Elements[indexFrom - 1].indexTo else 0
 
         if indexTo < indexFrom or indexTo > len(self.Elements):
             return None
 
         self.removeVisualElements(elements=self.Elements[indexFrom:indexTo])
 
-        self.Elements = self.Elements[0:indexFrom]+self.Elements[indexTo:]
+        self.Elements = self.Elements[0:indexFrom] + self.Elements[indexTo:]
 
-        for i,x in enumerate(self.Elements):
-            x.setNumber(i+1)
+        for i, x in enumerate(self.Elements):
+            x.setNumber(i + 1)
 
         self.axesOscilogram.update()
         self.axesSpecgram.update()
 
-        return indexFrom,indexTo-1
+        return indexFrom, indexTo - 1
 
     def refresh(self, dataChanged=True, updateOscillogram=True, updateSpectrogram=True, partial=True):
-        QSignalVisualizerWidget.refresh(self,dataChanged, updateOscillogram, updateSpectrogram, partial)
+        QSignalVisualizerWidget.refresh(self, dataChanged, updateOscillogram, updateSpectrogram, partial)
         if self.visibleElements:
             self.drawElements()
+

@@ -4,35 +4,45 @@ from PyQt4.QtCore import pyqtSlot
 import numpy,random
 from pyqtgraph.parametertree import Parameter, ParameterTree
 import pyqtgraph as pg
-from Graphic_Interface.Dialogs.EditCategoriesDialog import EditCategoriesDialog
-import Graphic_Interface.Dialogs.EditCategoriesDialogUI as editCateg
-from Graphic_Interface.Widgets.EditCategoriesWidget import EditCategoriesWidget
-from Graphic_Interface.Windows.Two_Dimensional_AnalisysWindowUI import Ui_TwoDimensionalWindow
+from graphic_interface.dialogs.EditCategoriesDialog import EditCategoriesDialog
+import graphic_interface.dialogs.EditCategoriesDialogUI as editCateg
+from graphic_interface.widgets.EditCategoriesWidget import EditCategoriesWidget
+from graphic_interface.windows.Two_Dimensional_AnalisysWindowUI import Ui_TwoDimensionalWindow
 from PyQt4 import QtGui, QtCore
 
 
 class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
-    elementSelected = QtCore.Signal(int)
-    #selected element index
+    """
+    Window that provide an interface to create two dimensional
+    graphs.
+    """
 
+    #SIGNALS
+    #Signal raised when an element is selected in the graph.
+    #Raise the index of the selected element
+    elementSelected = QtCore.Signal(int)
+
+    #SIGNALS
+    #Signal raised when a selection of elements are manually classified.
+    #raise the classification indexes of the elements as a list and the dict of Category,value for each one
     elementsClasification = QtCore.Signal(list,dict)
-    #indexes of clasified elements dict of Category,value
 
     def __init__(self,parent=None,columns=None, data=None, classificationData=None):
         super(TwoDimensionalAnalisysWindow, self).__init__(parent)
         self.setupUi(self)
 
         self.show()
+        #initialization settings for the plot widget
         self.widget.getPlotItem().showGrid(x=True, y=True)
         self.widget.getPlotItem().hideButtons()
         self.widget.setMouseEnabled(x=False, y=False)
         self.widget.setMenuEnabled(False)
         self.widget.enableAutoRange()
+
+        #scatter plot to graphs the elements
         self.scatter_plot = None
 
-        #if there is a selection of several elements.
-        #draw a rectangle with cursor and later mapRectFromDevice to get the element that are selected
-
+        #font to use in the axis of the graph
         self.font = QtGui.QFont()
         if classificationData is None:
             raise Exception(unicode(self.tr(u"ClassificationData could not be None.")))
@@ -40,6 +50,7 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         self.classificationData = classificationData
         self.previousSelectedElement = -1
         self.columns = columns if columns is not None else []
+
         #the numpy [,] array with the parameter measurement
         self.data = data if data is not None else numpy.zeros(4).reshape((2, 2))
         self.widget.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
@@ -108,6 +119,9 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         self.plot()
 
     def changeFont(self):
+        """
+        Change the font of the axis in the plot widget.
+        """
         self.font, ok = QtGui.QFontDialog.getFont(self.font)
         if ok:
             self.widget.getPlotItem().getAxis("bottom").setTickFont(self.font)

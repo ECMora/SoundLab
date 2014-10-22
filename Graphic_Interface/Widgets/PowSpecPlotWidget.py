@@ -3,10 +3,9 @@ from PyQt4 import QtCore
 from PyQt4.QtCore import pyqtSignal, QObject
 from PyQt4.QtGui import QCursor
 from matplotlib import mlab
-from Graphic_Interface.Widgets.Tools import Tools
-from Axis import *
-from Duetto_Core.SpecgramSettings import FFTWindows
 import numpy as np
+from duetto.widgets.Axis import *
+
 
 
 class OneDimensionalFunction(QObject):
@@ -14,7 +13,7 @@ class OneDimensionalFunction(QObject):
         QObject.__init__(self)
         self.myOptions = {}
         self.widget = widget
-        self.windows = FFTWindows()
+        self.windows = None #FFTWindows()
         self.pTree = None
 
     def connectMySignal(self,pTree):

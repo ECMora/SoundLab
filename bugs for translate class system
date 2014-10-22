@@ -1,0 +1,18 @@
+1 Sound Lab Window
+    cambiar la filosofia de utilizacion de los filtros
+    ... de los procesamientos de señales
+    * cambiar la forma en la que se abre una señal por los readers (wav)
+    * cambiar la forma en la que se pasa una señal a la ventana de segmentacion
+    * cambiar la interacion con el control principal
+
+2 arreglar los controles principales para que sean modulares e independientes.
+
+3 arreglar la conexion de las undo redo actions
+
+4 arreglar la conexion con el signal handler para la reproduccion y grabacion de señales
+
+5 ajustar tema visual,
+
+6 arreglar las operaciones de edicion con el clipboard
+
+comentarios

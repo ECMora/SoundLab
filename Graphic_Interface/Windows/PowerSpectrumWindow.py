@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 from PyQt4.QtCore import pyqtSlot
-from Graphic_Interface.Widgets.Power_Spectrum  import Ui_PowSpecWindow
+from graphic_interface.widgets.Power_Spectrum  import Ui_PowSpecWindow
 from PyQt4 import QtGui
-from Graphic_Interface.Windows.ParameterList import DuettoListParameterItem
+from graphic_interface.windows.ParameterList import DuettoListParameterItem
 from pyqtgraph.parametertree.parameterTypes import WidgetParameterItem,ListParameter
 from pyqtgraph.parametertree import Parameter, ParameterTree
 

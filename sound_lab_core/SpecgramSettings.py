@@ -35,6 +35,7 @@ class FFTWindows:
     def WindowNone(self,M):
         return mlab.window_none(len(M))
 
+
 class SpecgramSettings:
     """Struct for the representation of usefull FFT params"""
     fwin=FFTWindows()

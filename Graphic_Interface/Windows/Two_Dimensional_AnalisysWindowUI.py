@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Sound Lab\DuettoSystem\Graphic_Interface\UI Files\Two_Dimensional_AnalisysWindowUI.ui'
+# Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Sound Lab\DuettoSystem\graphic_interface\UI Files\Two_Dimensional_AnalisysWindowUI.ui'
 #
 # Created: Thu Jul 17 13:46:15 2014
 #      by: PyQt4 UI code generator 4.9.5
@@ -70,4 +70,4 @@ class Ui_TwoDimensionalWindow(object):
         self.actionSaveGraphImage.setText(QtGui.QApplication.translate("TwoDimensionalWindow", "Save Graph Image", None, QtGui.QApplication.UnicodeUTF8))
         self.actionMark_Selected_Elements_As.setText(QtGui.QApplication.translate("TwoDimensionalWindow", "Mark Selected Elements As", None, QtGui.QApplication.UnicodeUTF8))
 
-from Graphic_Interface.Widgets.TwoDPlotWidget import TwoDPlotWidget
+from graphic_interface.widgets.TwoDPlotWidget import TwoDPlotWidget

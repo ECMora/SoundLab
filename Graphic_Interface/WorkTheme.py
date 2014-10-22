@@ -3,7 +3,7 @@
 
 class SerializedData:
     """
-        The options to customize the environment of work in the system
+    The options to customize the environment of work in the system
     """
 
     def __init__(self, oscBack="000", oscPlot="", oscGridX=True, oscGridY=True, minYOsc = -100,maxYOsc = 100, minYSpec = 0,maxYSpec = 22, powBack="000", powPlot="FFF", powGridX=True,

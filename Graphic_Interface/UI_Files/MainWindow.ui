@@ -870,7 +870,7 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
   <customwidget>
    <class>QSignalVisualizerWidget</class>
    <extends>QWidget</extends>
-   <header>Graphic_Interface.Widgets.QSignalVisualizerWidget</header>
+   <header>duetto.widgets.QSignalVisualizerWidget</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
