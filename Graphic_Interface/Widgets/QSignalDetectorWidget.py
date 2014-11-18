@@ -19,6 +19,8 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         # curve to display envelope when detection method is envelope
         self.envelopeCurve = pg.PlotCurveItem(np.array([0]), pen=pg.mkPen(self.osc_color, width=1),
                                               shadowPen=pg.mkPen(QtGui.QColor(255, 0, 0), width=3))
+
+        #an extra item to display envelope in oscilogram graph
         self.axesOscilogram.addItem(self.envelopeCurve)
 
         #factor to expand the envelope for best visualization
@@ -36,14 +38,14 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
     def load_Theme(self, theme):
         """
-        this method implements the  way in wich the controls load the theme
+        this method implements the  way in which the widget load the theme
         all changes made by the theme are made in this place
         """
         # assert isinstance(theme,SerializedData)
         QSignalVisualizerWidget.load_Theme(self, theme)
 
-        self.histogram.item.region.setRegion(theme.histRange)
-        self.histogram.item.gradient.restoreState(theme.colorBarState)
+        # self.histogram.item.region.setRegion(theme.histRange)
+        # self.histogram.item.gradient.restoreState(theme.colorBarState)
 
         #update values for envelope display
         self.envelopeCurve.setPen(pg.mkPen(self.osc_color, width=1))
