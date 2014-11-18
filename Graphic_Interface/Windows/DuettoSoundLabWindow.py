@@ -33,13 +33,13 @@ class FilterDialog(filterdg.Ui_Dialog, QDialog):
 
 def folderFiles(folder, extensions=None):
     """
-    Method that computes all the files that contains a provided folder in
+    Method that gets all the files that contains a provided folder in
     the file system.
     :param folder: The folder to search files.
-    :param extensions: list with possible file extensions to limit the search
+    :param extensions: list with admissible file extensions to limit the search
     :return: list of string with path of every detected file.
     """
-    #list of files to return
+    # list of files to return
     files = []
     extensions = [".wav"] if (extensions is None or len(extensions) == 0) else extensions
 
@@ -47,14 +47,14 @@ def folderFiles(folder, extensions=None):
     for root, dirs, filenames in os.walk(folder):
         for f in filenames:
             if any([f.endswith(x) for x in extensions]):
-                #if file extension is one of the wanted
+                #if file extension is admissible
                 files.append(unicode(root + os.path.sep + f))
 
     return files
 
 
 class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
-    #SIGNALS
+    # SIGNALS
     #signal raised when a file is drop into the window
     dropchanged = QtCore.pyqtSignal(QtCore.QMimeData)
 
@@ -152,8 +152,8 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             {u'name': unicode(self.tr(u'Themes')), u'type': u'group', u'children': [
                 {u'name': unicode(self.tr(u'Theme Selected')), u'type': u'list',
                  u'value': u"" if len(themesInFolder) == 0 else themesInFolder[0][
-                                                                themesInFolder[0].rfind(os.path.sep) + 1:themesInFolder[
-                                                                    0].rfind(".dth")], \
+                                                                themesInFolder[0].rfind(os.path.sep) + 1
+                                                                :themesInFolder[0].rfind(".dth")],
                  u'default': u"" if len(themesInFolder) == 0 else themesInFolder[0],
                  u'values': [(x[x.rfind(os.path.sep) + 1:x.rfind(".dth")], x) for x in themesInFolder]},
             ]
@@ -225,9 +225,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.connect(self.widget, SIGNAL(u"IntervalChanged"), self.updatePowSpecWin)
         self.NFFT_pow = 512
 
-        self.window_pow = self.widget.specgramSettings.windows[0]
-        self.window_spec = self.widget.specgramSettings.windows[0]
-
         self.pow_spec_windows = []
 
         self.setAcceptDrops(True)
@@ -240,8 +237,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         separator4 = QtGui.QAction(self)
         separator4.setSeparator(True)
 
-        self.widget.setStyleSheet(self.styleSheet())
-
+        #include the context menu actions into the widget
         self.widget.createContextCursor([self.actionCopy, self.actionCut, self.actionPaste, separator,
                                          self.actionNegative_Values, self.actionPositive_Values, self.actionChange_Sign,
                                          separator2,
@@ -276,6 +272,11 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             unicode(self.tr(u'Max'))).setValue(max)
 
     def updateStatusBar(self, line):
+        """
+        Update the status barr window message.
+        :param line: The (string) to show as message
+        :return: None
+        """
         self.statusbar.showMessage(line)
 
     def on_load(self):
@@ -538,7 +539,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 self.widget.specgramSettings.overlap = data
                 self.widget.refresh(dataChanged=True, updateOscillogram=False, updateSpectrogram=True)
 
-            elif childName == unicode(self.tr(u'Power Spectrum Settings')) + u"." +\
+            elif childName == unicode(self.tr(u'Power Spectrum Settings')) + u"." + \
                     unicode(self.tr(u'FFT size')):
                 self.NFFT_pow = data
 
@@ -547,12 +548,12 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 self.defaultTheme.osc_background = data
 
             elif childName == unicode(self.tr(u'Oscillogram Settings')) + u"." + \
-                    unicode(self.tr(u'Grid')) + u"." +\
+                    unicode(self.tr(u'Grid')) + u"." + \
                     unicode(self.tr(u'X')):
                 self.defaultTheme.osc_GridX = data
 
             elif childName == unicode(self.tr(u'Oscillogram Settings')) + u"." + \
-                    unicode(self.tr(u'Grid')) + u"." +\
+                    unicode(self.tr(u'Grid')) + u"." + \
                     unicode(self.tr(u'Y')):
                 self.defaultTheme.osc_GridY = data
 
@@ -564,12 +565,12 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 return
 
             elif childName == unicode(self.tr(u'Oscillogram Settings')) + u"." + \
-                    unicode(self.tr(u'Amplitude(%)')) + u"." +\
+                    unicode(self.tr(u'Amplitude(%)')) + u"." + \
                     unicode(self.tr(u'Min')):
                 self.defaultTheme.minYOsc = data
 
             elif childName == unicode(self.tr(u'Oscillogram Settings')) + u"." + \
-                    unicode(self.tr(u'Amplitude(%)')) + u"." +\
+                    unicode(self.tr(u'Amplitude(%)')) + u"." + \
                     unicode(self.tr(u'Max')):
                 self.defaultTheme.maxYOsc = data
 
@@ -588,7 +589,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             #print('  change:    %s' % change)
             #print('  data:      %s' % unicode(data))
             #print('  ----------')
-
 
     @pyqtSlot()
     def on_actionSegmentation_And_Clasification_triggered(self):
@@ -628,7 +628,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             segWindow.widget.refresh()
 
         self.widget.undoRedoManager.clearActions()
-
 
     @pyqtSlot()
     def on_actionZoom_Cursor_triggered(self):

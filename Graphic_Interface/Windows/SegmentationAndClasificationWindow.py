@@ -10,6 +10,7 @@ import xlwt
 import numpy as np
 from PyQt4.QtGui import QFileDialog, QAbstractItemView, QWidget
 from pyqtgraph.parametertree import Parameter
+from duetto.audio_signals.AudioSignal import AudioSignal
 
 from sound_lab_core.Clasification.ClassificationData import ClassificationData
 from sound_lab_core.Segmentation.Detectors.ElementsDetectors.OneDimensional.OneDimensionalElementsDetector import \
@@ -337,7 +338,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
             self.actionPointer_Cursor.setChecked(False)
             self.actionRectangular_Cursor.setChecked(False)
             self.actionRectangular_Eraser.setChecked(False)
-            self.widget.setSelectedTool(Tools.Zoom)
+            # self.widget.setSelectedTool(Tools.Zoom)
         else:
             self.actionZoom_Cursor.setChecked(True)
 
@@ -347,7 +348,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
             self.actionZoom_Cursor.setChecked(False)
             self.actionRectangular_Cursor.setChecked(False)
             self.actionRectangular_Eraser.setChecked(False)
-            self.widget.setSelectedTool(Tools.PointerCursor)
+            # self.widget.setSelectedTool(Tools.PointerCursor)
         else:
             self.actionPointer_Cursor.setChecked(True)
 
@@ -357,7 +358,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
             self.actionPointer_Cursor.setChecked(False)
             self.actionZoom_Cursor.setChecked(False)
             self.actionRectangular_Eraser.setChecked(False)
-            self.widget.setSelectedTool(Tools.RectangularCursor)
+            # self.widget.setSelectedTool(Tools.RectangularCursor)
         else:
             self.actionRectangular_Cursor.setChecked(True)
 
@@ -367,7 +368,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
             self.actionZoom_Cursor.setChecked(False)
             self.actionPointer_Cursor.setChecked(False)
             self.actionRectangular_Cursor.setChecked(False)
-            self.widget.setSelectedTool(Tools.RectangularEraser)
+            # self.widget.setSelectedTool(Tools.RectangularEraser)
         else:
             self.actionRectangular_Eraser.setChecked(True)
 
@@ -473,8 +474,6 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         self.widget.histogram.item.region.lineMoved()
         self.widget.histogram.item.region.lineMoveFinished()
-
-        #self.tableParameterOscilogram.setStyleSheet("background-color: #" +str(self.widget.osc_background) + ";")
 
     #endregion
 
@@ -669,7 +668,6 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         thread.started.connect(processworker.work)
         processworker.moveToThread(thread)
         thread.start()
-
 
     def getSpectralData(self, signal, specgramSettings):
         """
@@ -1044,8 +1042,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                                     self.parameterTable_rowcolor_odd if i % 2 == 0 else self.parameterTable_rowcolor_even)
                             except Exception as e:
                                 item = QtGui.QTableWidgetItem(0)  #"Error"+e.message)
-                                print(e.message + "HOLA")
-                                print(prop[2])
+
                             self.tableParameterOscilogram.setItem(i, j, item)
                         for c in range(len(validcategories)):
                             try:
