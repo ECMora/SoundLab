@@ -44,6 +44,7 @@ class PointerCursorTool(SignalVisualizerTool):
         self.last = {'pos': [x, y], 'pen': {'color': 'w', 'width': 2}, 'brush': pg.intColor(255, 255), 'symbol': '+',
                      'size': 20}
         self.pointerCursor.addPoints([self.last])
+        self.detectedDataChanged.emit({"x":x, "y":y})
 
     def mouseDoubleClickEvent(self, event):
         pass
