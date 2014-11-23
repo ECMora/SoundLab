@@ -1,21 +1,21 @@
 # -*- coding: utf-8 -*-
 from PyQt4 import QtCore
 import numpy
-import pyqtgraph as pg
 from PyQt4.QtGui import QCursor
-from RectROI import RectROI
-from graphic_interface.widgets.signal_visualizer_tools.SignalVisualizerTool import SignalVisualizerTool
+from SpectrogramTool import SpectrogramTool
+from graphic_interface.widgets.signal_visualizer_tools.OscilogramTools.RectROI import RectROI
 
 
-class RectangularCursorTool(SignalVisualizerTool):
+class RectangularCursorTool(SpectrogramTool):
     def __init__(self, widget):
-        SignalVisualizerTool.__init__(self, widget)
+        SpectrogramTool.__init__(self, widget)
         self.last = {'pos': [0,0]}
         self.rectangularCursor = RectROI([0, 0], [0, 0], pen=(0, 9), movable=False)
+        self.widget.viewBox.addItem(self.rectangularCursor)
         self.rectRegion = {'x': [0, 0], 'y': [0, 0]}
+        self.detectedData = []
 
     def mouseMoveEvent(self, event):
-        self.setRectRegionVisible(True)
         x = self.fromCanvasToClient(event.x())
         y = self.fromCanvasToClientY(event.y())
 
@@ -43,35 +43,28 @@ class RectangularCursorTool(SignalVisualizerTool):
             self.rectangularCursor.setSize([dx, dy])
             self.rectRegion['x'][1] = self.rectRegion['x'][0] + dx
             self.rectRegion['y'][1] = self.rectRegion['y'][0] + dy
-            info = self.getAmplitudeTimeInfo(self.rectRegion['x'][0], self.rectRegion['y'][0])
-            info = round(info[0], self.DECIMAL_PLACES), round(info[1], self.DECIMAL_PLACES)
-
-            info1 = self.getAmplitudeTimeInfo(self.rectRegion['x'][1], self.rectRegion['y'][1])
-            info1 = round(info1[0], self.DECIMAL_PLACES), round(info1[1], self.DECIMAL_PLACES)
-
+            info = self.getFreqTimeAndIntensity(self.rectRegion['x'][0], self.rectRegion['y'][0])
+            info1 = self.getFreqTimeAndIntensity(self.rectRegion['x'][1], self.rectRegion['y'][1])
             self.rectRegion['y'][0] = info[1]
             self.rectRegion['y'][1] = info1[1]
-
-            # clean the detected data for update
-            self.detectedData = [("t0", info[0]),
-                                 ("t1", info1[0]),
-                                 ("dt", info1[0] - info[0]),
-                                 ("MaxAmp",info[1]),
-                                 ("MinAmp", info1[1])
+            self.detectedData = [("t0", self.timeToStr(round(info[0], self.DECIMAL_PLACES))),
+                                 ("t1", self.timeToStr(round(info1[0], self.DECIMAL_PLACES))),
+                                 ("dt", self.timeToStr(round(info1[0] - info[0],self.DECIMAL_PLACES))),
+                                 ("MinFreq", round(info[1],self.DECIMAL_PLACES)),
+                                 ("MaxFreq", round(info1[1],self.DECIMAL_PLACES)),
+                                 ("dF", round(info1[1] - info[1],self.DECIMAL_PLACES))
                                 ]
-
         else:
-            info = self.getAmplitudeTimeInfo(x, y)
-            info = round(info[0], self.DECIMAL_PLACES), round(info[1], self.DECIMAL_PLACES)
-
+            info = self.getFreqTimeAndIntensity(x, y)
             if x == -1 or y == -1:
                 self.widget.setCursor(QCursor(QtCore.Qt.ArrowCursor))
                 return
             else:
-                self.detectedData = [("Time", info[0]),
-                                     ("Amp", info[1])
+                self.detectedData = [("Time", self.timeToStr(round(info[0],self.DECIMAL_PLACES))),
+                                     ("Freq", round(info[1],self.DECIMAL_PLACES)),
+                                     ("Amp", round(info[2],self.DECIMAL_PLACES))
                                     ]
-
+        self.widget.setCursor(QCursor(QtCore.Qt.ArrowCursor))
         self.detectedDataChanged.emit(self.detectedData)
 
     def mousePressEvent(self, event):
@@ -82,10 +75,9 @@ class RectangularCursorTool(SignalVisualizerTool):
 
     def mouseDoubleClickEvent(self, event):
         x = self.fromCanvasToClient(event.x())
-        y = self.fromCanvasToClientY(event.y())
-        y = numpy.round(y * 100.0 / self.widget.signal.maximumValue, 0)
+        y = numpy.round(self.parent().specgramSettings.freqs[self.fromCanvasToClientY(event.y())] * 1.0 / 1000, 1)
         if self.mouseInsideRectArea(x, y):
-            #make the zoom in the rectangle area
+            #make the zomm self.makeZoomRect(specCoords=True)
             pass
 
     def mouseReleaseEvent(self, event):
@@ -95,29 +87,6 @@ class RectangularCursorTool(SignalVisualizerTool):
         return x <= self.rectRegion['x'][1] and x >= self.rectRegion['x'][0] \
                and self.rectRegion['y'][1] >= y >= self.rectRegion['y'][0]
 
-    def fromCanvasToClientY(self, yPixel):
-        """
-        Translates the coordinates from the canvas to its corresponding  index in the signal array
-        """
-        vb = self.widget.getPlotItem().getViewBox()
-        miny = vb.y()
-        maxy = vb.height() + miny
-        a, b = self.widget.getPlotItem().viewRange()[1]
-        yPixel = maxy - yPixel
-        if yPixel < miny:
-            yPixel = miny
-
-        if yPixel > maxy:
-                yPixel = maxy
-
-        return a + int(round((yPixel - miny) * (b - a) * 1. / (maxy - miny), 0))
-
     def dispose(self):
-        self.setRectRegionVisible(False)
-
-    def setRectRegionVisible(self, value=False):
-        if value and self.rectangularCursor not in self.widget.items():
-            self.widget.addItem(self.rectangularCursor)
-        elif not value and self.rectangularCursor in self.widget.items():
-            self.widget.removeItem(self.rectangularCursor)
+        self.widget.viewBox.removeItem(self.rectangularCursor)
 

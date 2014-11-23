@@ -11,10 +11,12 @@ class PointerCursorTool(SignalVisualizerTool):
     def __init__(self, widget):
         SignalVisualizerTool.__init__(self, widget)
         self.pointerCursor = pg.ScatterPlotItem()
+        self.widget.addItem(self.pointerCursor)
         self.last = {'pos': [0, 0], 'pen': {'color': 'w', 'width': 2}, 'brush': pg.intColor(255, 255), 'symbol': '+',
                      'size': 20}
 
     def mouseMoveEvent(self, event):
+
         x = self.fromCanvasToClient(event.x())
         y = self.fromCanvasToClientY(event.y())
         info = self.getAmplitudeTimeInfo(x, y)
@@ -22,14 +24,23 @@ class PointerCursorTool(SignalVisualizerTool):
         if x == -1 or y == -1:
             self.widget.setCursor(QCursor(QtCore.Qt.ArrowCursor))
             return
+        #clean the detected data for update
+
         if not self.mousePressed:
             info = self.getAmplitudeTimeInfo(self.last['pos'][0], self.last['pos'][1])
             info0 = round(info0[0], self.DECIMAL_PLACES), round(info0[1], self.DECIMAL_PLACES)
-            data = str.format('t0: {0}s  t1: {1}s  dt: {2}s          ' + str('Amp') + ': {3}%',
-                              info0[0], info[0],info[0] - info0[0], info[1])
+            self.detectedData = [("t0", round(info0[0],self.DECIMAL_PLACES)),
+                                 ("t1", round(info[0],self.DECIMAL_PLACES)),
+                                 ("dt", round(info[0] - info0[0],self.DECIMAL_PLACES)),
+                                 ("Amp",round(info[1],self.DECIMAL_PLACES))
+                                ]
+
+
         else:
-            data = str.format(str('Time:') + ' {0}s          ' \
-                            + str('Amp') + ': {1}%', info[0], info[1])
+            self.detectedData = [("Time", round(info[0],self.DECIMAL_PLACES)),
+                                 ("Amp", round(info[1], self.DECIMAL_PLACES))
+                                ]
+        self.detectedDataChanged.emit(self.detectedData)
 
         self.widget.setCursor(QCursor(QtCore.Qt.CrossCursor))
 
@@ -44,7 +55,6 @@ class PointerCursorTool(SignalVisualizerTool):
         self.last = {'pos': [x, y], 'pen': {'color': 'w', 'width': 2}, 'brush': pg.intColor(255, 255), 'symbol': '+',
                      'size': 20}
         self.pointerCursor.addPoints([self.last])
-        self.detectedDataChanged.emit({"x":x, "y":y})
 
     def mouseDoubleClickEvent(self, event):
         pass
@@ -61,18 +71,15 @@ class PointerCursorTool(SignalVisualizerTool):
         maxy = vb.height() + miny
         a, b = self.widget.getPlotItem().viewRange()[1]
         yPixel = maxy - yPixel
-        if yPixel < miny:
+        if yPixel < miny or yPixel > maxy:
             self.pointerCursor.clear()
             if not self.mousePressed:
                 self.pointerCursor.addPoints([self.last])
             return -1
-        if yPixel > maxy:
-            self.pointerCursor.clear()
-            if not self.mousePressed:
-                self.pointerCursor.addPoints([self.last])
-            return -1
+
         return a + int(round((yPixel - miny) * (b - a) * 1. / (maxy - miny), 0))
 
     def dispose(self):
-        pass
+        self.widget.removeItem(self.pointerCursor)
+        self.widget.setCursor(QCursor(QtCore.Qt.ArrowCursor))
 
