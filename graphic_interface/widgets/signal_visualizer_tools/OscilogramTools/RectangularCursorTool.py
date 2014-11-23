@@ -15,8 +15,7 @@ class RectangularCursorTool(SignalVisualizerTool):
         self.rectRegion = {'x': [0, 0], 'y': [0, 0]}
 
     def mouseMoveEvent(self, event):
-        if self.rectangularCursor not in self.widget.items():
-            self.widget.addItem(self.rectangularCursor)
+        self.setRectRegionVisible(True)
         x = self.fromCanvasToClient(event.x())
         y = self.fromCanvasToClientY(event.y())
 
@@ -52,19 +51,27 @@ class RectangularCursorTool(SignalVisualizerTool):
 
             self.rectRegion['y'][0] = info[1]
             self.rectRegion['y'][1] = info1[1]
-            data = str.format('t0: {0}s  t1: {1}s dt: {2}s          ' + str('MaxAmp') \
-                                                   + ': {3}% ' + str('MinAmp') + \
-                                                   ': {4}% ', info[0], info1[0], info1[0] - info[0], info[1], info1[1])
+
+            # clean the detected data for update
+            self.detectedData = [("t0", round(info[0], self.DECIMAL_PLACES)),
+                                 ("t1", round(info1[0], self.DECIMAL_PLACES)),
+                                 ("dt", round(info1[0] - info[0], self.DECIMAL_PLACES)),
+                                 ("MaxAmp",round(info[1], self.DECIMAL_PLACES)),
+                                 ("MinAmp", round(info1[1], self.DECIMAL_PLACES))
+                                ]
+
         else:
             info = self.getAmplitudeTimeInfo(x, y)
-            info = round(info[0], self.DECIMAL_PLACES), round(info[1], self.DECIMAL_PLACES)
 
             if x == -1 or y == -1:
                 self.widget.setCursor(QCursor(QtCore.Qt.ArrowCursor))
                 return
             else:
-                data = str.format(str('Time') + ': {0}s          ' + \
-                                  str('Amp') + ':  {1}%', info[0], info[1])
+                self.detectedData = [("Time", round(info[0],self.DECIMAL_PLACES)),
+                                     ("Amp", round(info[1],self.DECIMAL_PLACES))
+                                    ]
+
+        self.detectedDataChanged.emit(self.detectedData)
 
     def mousePressEvent(self, event):
         self.mousePressed = True
@@ -105,5 +112,11 @@ class RectangularCursorTool(SignalVisualizerTool):
         return a + int(round((yPixel - miny) * (b - a) * 1. / (maxy - miny), 0))
 
     def dispose(self):
-        pass
+        self.setRectRegionVisible(False)
+
+    def setRectRegionVisible(self, value=False):
+        if value and self.rectangularCursor not in self.widget.items():
+            self.widget.addItem(self.rectangularCursor)
+        elif not value and self.rectangularCursor in self.widget.items():
+            self.widget.removeItem(self.rectangularCursor)
 

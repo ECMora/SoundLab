@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\DuettoSystem\graphic_interface\UI_Files\MainWindow.ui'
+# Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\DuettoSystem\graphic_interface\UI_Files\MainWindow.ui'
 #
-# Created: Tue Oct 14 09:40:24 2014
+# Created: Sun Nov 23 11:55:13 2014
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -529,5 +529,5 @@ class Ui_DuettoMainWindow(object):
         self.actionSave_selected_interval_as.setText(QtGui.QApplication.translate("DuettoMainWindow", "Save selected as", None, QtGui.QApplication.UnicodeUTF8))
         self.actionClose.setText(QtGui.QApplication.translate("DuettoMainWindow", "Close", None, QtGui.QApplication.UnicodeUTF8))
 
-from duetto.widgets.QSignalVisualizerWidget import QSignalVisualizerWidget
+from ..widgets.QSignalVisualizerWidget import QSignalVisualizerWidget
 import icons_rc

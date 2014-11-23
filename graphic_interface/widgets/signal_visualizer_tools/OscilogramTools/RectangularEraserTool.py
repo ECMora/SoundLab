@@ -53,10 +53,10 @@ class RectangularEraserTool(SignalVisualizerTool):
     def mouseDoubleClickEvent(self, event):
         pg.PlotWidget.mouseDoubleClickEvent(self.widget, event)
         # if self.mouseInsideZoomArea(event.x()) and self.makeZoom and callable(self.makeZoom):
-        # rgn = self.zoomRegion.getRegion()
+        #     rgn = self.zoomRegion.getRegion()
         #     if rgn[0] == rgn[1]:
         #         return
-        #     # self.makeZoom(rgn[0], rgn[1])
+        #     self.rangeChanged.emit()
         #     self.zoomRegion.setRegion([rgn[0], rgn[0]])
 
     def mouseReleaseEvent(self, event):
