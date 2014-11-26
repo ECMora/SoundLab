@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from PyQt4.QtCore import pyqtSignal, QObject
+from Utils.Utils import FLOATING_POINT_EPSILON
 from duetto.signal_processing.CommonSignalProcessor import CommonSignalProcessor
 from duetto.signal_processing.filter_signal_processors.frequency_domain_filters import *
 import numpy as np
@@ -142,20 +143,52 @@ class InsertSilenceAction(UndoRedoAction):
         CommonSignalProcessor(self.signal).insertSilence(self.start,ms=self.ms)
 
 
-class ScaleAction(UndoRedoAction):
-    def __init__(self,signal,start,end,factor, function, fade):
+class ModulateAction(UndoRedoAction):
+    def __init__(self,signal,start,end,function, fade):
         self.signal = signal
         self.start = start
         self.end = end
-        self.factor,self.function,self.fade= factor,function,fade
+        self.function, self.fade = function,fade
         self.data = np.array(signal.data[start:end])
 
     def undo(self):
         for i in range(self.start,self.end):
-            self.signal.data[i] = self.data[i-self.start]
+            self.signal.data[i] = self.data[i - self.start]
 
     def redo(self):
-        CommonSignalProcessor(self.signal).scale(self.start,self.end,self.factor, self.function, self.fade)
+        CommonSignalProcessor(self.signal).modulate(self.start,self.end, self.function, self.fade)
+
+
+class ScaleAction(UndoRedoAction):
+    def __init__(self, signal, start, end, factor):
+        if abs(factor) < FLOATING_POINT_EPSILON:
+            raise Exception("The factor is to small for scale. Use silence instead.")
+        self.signal = signal
+        self.start = start
+        self.end = end
+        self.factor = factor
+        self.inverse_factor = 1.0 / self.factor
+
+    def undo(self):
+        CommonSignalProcessor(self.signal).scale(self.start, self.end, self.inverse_factor)
+
+    def redo(self):
+        CommonSignalProcessor(self.signal).scale(self.start, self.end, self.factor)
+
+
+class NormalizeAction(UndoRedoAction):
+    def __init__(self, signal, start, end, factor):
+        self.signal = signal
+        self.start = start
+        self.end = end
+        self.factor = factor
+        self.inverse_factor = max(signal.data[start:end]) * 100.0 / signal.maximumValue
+
+    def undo(self):
+        CommonSignalProcessor(self.signal).normalize(self.start, self.end, self.inverse_factor)
+
+    def redo(self):
+        CommonSignalProcessor(self.signal).normalize(self.start, self.end, self.factor)
 
 
 class FilterAction(UndoRedoAction):

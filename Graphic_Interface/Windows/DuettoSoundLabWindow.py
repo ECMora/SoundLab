@@ -1,14 +1,16 @@
 # -*- coding: utf-8 -*-
 import os
 import pickle
+
 from PyQt4 import QtCore, QtGui
 from pyqtgraph.parametertree.parameterTypes import ListParameter
 from pyqtgraph.parametertree import Parameter, ParameterTree
 from PyQt4.QtGui import QDialog, QMessageBox, QFileDialog, QActionGroup, QAction
-from PyQt4.QtCore import SIGNAL, pyqtSlot, QTimer
+from PyQt4.QtCore import pyqtSlot, QTimer
+
+from Utils.Utils import saveImage, folderFiles
 from graphic_interface.windows.ParameterList import DuettoListParameterItem
 from graphic_interface.dialogs.NewFileDialog import NewFileDialog
-from graphic_interface.widgets.HorizontalHistogram import HorizontalHistogramWidget
 from graphic_interface.windows.PowerSpectrumWindow import PowerSpectrumWindow
 from SegmentationAndClasificationWindow import SegmentationAndClasificationWindow
 from graphic_interface.widgets.undo_redo_actions.UndoRedoActions import *
@@ -33,35 +35,6 @@ class ChangeVolumeDialog(cvdialog.Ui_Dialog, QDialog):
 class FilterDialog(filterdg.Ui_Dialog, QDialog):
     pass
 
-
-def folderFiles(folder, extensions=None):
-    """
-    Method that gets all the files that contains a provided folder in
-    the file system.
-    :param folder: The folder to search files.
-    :param extensions: list with admissible file extensions to limit the search
-    :return: list of string with path of every detected file.
-    """
-    # list of files to return
-    files = []
-    extensions = [".wav"] if (extensions is None or len(extensions) == 0) else extensions
-
-    #walk for the folder file system tree
-    for root, dirs, filenames in os.walk(folder):
-        for f in filenames:
-            if any([f.endswith(x) for x in extensions]):
-                #if file extension is admissible
-                files.append(unicode(root + os.path.sep + f))
-
-    return files
-
-def saveImage(widget, text=""):
-    fname = unicode(QFileDialog.getSaveFileName(u"Save " + text + u" as an Image "),
-                                                u"-" + text + u"-Duetto-Image", u"*.jpg")
-    if fname:
-        #save as image
-        image = QtGui.QPixmap.grabWindow(widget.winId())
-        image.save(fname, u'jpg')
 
 class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     # SIGNALS
@@ -734,18 +707,14 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             fade = u""
             factor = scaleDialog.spinboxConstValue.value()
             if scaleDialog.rbuttonConst.isChecked():
-                function = u"const"
+                self.widget.scale(factor)
             elif scaleDialog.rbuttonNormalize.isChecked():
-                function = u"normalize"
                 factor = scaleDialog.spinboxNormalizePercent.value()
+                self.widget.normalize(factor)
             else:
                 function = scaleDialog.cboxModulationType.currentText()
-                fade = u"IN" if scaleDialog.rbuttonFadeIn.isChecked() else (
-                    u"OUT" if scaleDialog.rbuttonFadeOut.isChecked() else "")
-                if fade == "":
-                    return
-
-            self.widget.scale(factor, function, fade)
+                fade = u"IN" if scaleDialog.rbuttonFadeIn.isChecked() else u"OUT"
+                self.widget.modulate(function, fade)
 
     @pyqtSlot()
     def on_actionInsert_Silence_triggered(self):

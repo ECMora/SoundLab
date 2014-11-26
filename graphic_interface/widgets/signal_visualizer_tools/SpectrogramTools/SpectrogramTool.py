@@ -59,7 +59,7 @@ class SpectrogramTool(SignalVisualizerTool):
         time, freq, intensity = 0, 0, 0
         return [time, freq, intensity]
 
-    def timeToStr(self, time):
+    def timeToStr(self):
         unit = 's'
         if time < 1:
             time *= 1000

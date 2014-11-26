@@ -42,7 +42,6 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
         self.minY = 0
         self.maxY = 22
 
-
     def changeTool(self, new_tool_class):
         SoundLabWidget.changeTool(self,new_tool_class)
         if self.gui_user_tool is not None:

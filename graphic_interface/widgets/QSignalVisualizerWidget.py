@@ -100,9 +100,11 @@ class QSignalVisualizerWidget(QWidget):
         elif tool == Tools.PointerTool:
             self.axesOscilogram.changeTool(OscilogramPointerTool)
             self.axesSpecgram.changeTool(SpectrogramPointerTool)
+
         elif tool == Tools.RectangularZoomTool:
             self.axesOscilogram.changeTool(OscilogramRectangularCursorTool)
             self.axesSpecgram.changeTool(SpectrogramRectangularCursorTool)
+
         # elif tool == Tools.RectangularEraser:
         #     self.axesSpecgram.changeTool(tool)
         #     self.axesOscilogram.changeTool(tool)
@@ -374,11 +376,24 @@ class QSignalVisualizerWidget(QWidget):
         self.__signal.insertSilence(indexFrom, indexTo, ms)
         self.updateZoomAndMainCursorFromSignalChangingSizeProcessingAction(ms)
 
-    def scale(self, factor, function="normalize", fade="IN"):
+    def modulate(self,function="normalize", fade="IN"):
         start, end = self.getIndexFromAndTo()
         self.undoRedoManager.addAction(
-                ScaleAction(self.signal, start, end, factor, function, fade))
-        self.signalProcessingAction(self.commonSignalProcessor.scale, factor, function, fade)
+                ModulateAction(self.signal, start, end, function, fade))
+        self.signalProcessingAction(self.commonSignalProcessor.modulate, function, fade)
+
+    def normalize(self,factor):
+        start, end = self.getIndexFromAndTo()
+        self.undoRedoManager.addAction(
+            NormalizeAction(self.signal, start, end, factor))
+        self.signalProcessingAction(self.commonSignalProcessor.normalize, factor)
+
+    def scale(self, factor):
+        start, end = self.getIndexFromAndTo()
+        self.undoRedoManager.addAction(
+            ScaleAction(self.signal, start, end, factor))
+        self.signalProcessingAction(self.commonSignalProcessor.scale, factor)
+
 
     def silence(self):
         start, end = self.getIndexFromAndTo()
