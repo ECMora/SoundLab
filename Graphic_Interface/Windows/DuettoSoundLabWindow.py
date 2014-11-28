@@ -600,7 +600,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             segWindow.load_Theme(self.defaultTheme)
             segWindow.widget.graph()
 
-        self.widget.undoRedoManager.clearActions()
+        self.widget.undoRedoManager.clear()
 
     @pyqtSlot()
     def on_actionZoom_Cursor_triggered(self):
@@ -647,7 +647,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         if resamplingDialogWindow.exec_():
             val = resamplingDialog.insertSpinBox.value()
             if val > MIN_SAMPLING_RATE and val < MAX_SAMPLING_RATE:
-                self.widget.undoRedoManager.addAction(ResamplingAction(self.widget.signalProcessor.signal, val))
+                self.widget.undoRedoManager.add(ResamplingAction(self.widget.signalProcessor.signal, val))
                 self.widget.resampling(val)
             else:
                 if val < MIN_SAMPLING_RATE:
@@ -724,7 +724,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         if silenceDialogWindow.exec_():
             start, end = self.widget.getIndexFromAndTo()
             ms = silenceDialog.insertSpinBox.value()
-            self.widget.undoRedoManager.addAction(InsertSilenceAction(self.widget.signalProcessor.signal, start, ms))
+            self.widget.undoRedoManager.add(InsertSilenceAction(self.widget.signalProcessor.signal, start, ms))
             self.widget.insertSilence(ms)
 
     @pyqtSlot()
@@ -739,7 +739,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             if type_ != None:
                 ms = whiteNoiseDialog.insertSpinBox.value()
                 start, _ = self.widget.getIndexFromAndTo()
-                self.widget.undoRedoManager.addAction(
+                self.widget.undoRedoManager.add(
                     GeneratePinkNoiseAction(self.widget.signalProcessor.signal, start, ms, type_, Fc, Fl, Fu))
                 self.widget.insertPinkNoise(ms, type_, Fc, Fl, Fu)
 
@@ -753,7 +753,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         if whiteNoiseDialogWindow.exec_():
             ms = whiteNoiseDialog.insertSpinBox.value()
             start, end = self.widget.getIndexFromAndTo()
-            self.widget.undoRedoManager.addAction(
+            self.widget.undoRedoManager.add(
                 GenerateWhiteNoiseAction(self.widget.signalProcessor.signal, start, ms))
             self.widget.insertWhiteNoise(ms)
 
@@ -786,7 +786,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         type_, Fc, Fl, Fu = self.filter_helper()
         if type_ is not None:
             start, end = self.widget.getIndexFromAndTo()
-            self.widget.undoRedoManager.addAction(
+            self.widget.undoRedoManager.add(
                 FilterAction(self.widget.signalProcessor.signal, start, end, type_, Fc, Fl, Fu))
             self.widget.filter(type_, Fc, Fl, Fu)
 
