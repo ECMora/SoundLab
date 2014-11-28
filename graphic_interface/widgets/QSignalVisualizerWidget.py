@@ -2,6 +2,7 @@
 from PyQt4.QtGui import *
 from PyQt4 import QtCore, QtGui
 import pyqtgraph as pg
+from PyQt4.QtCore import QTimer
 from duetto.audio_signals.AudioSignalPlayer import AudioSignalPlayer
 from duetto.audio_signals.Synthesizer import Synthesizer
 from duetto.audio_signals.AudioSignal import AudioSignal
@@ -90,6 +91,9 @@ class QSignalVisualizerWidget(QWidget):
         self.playerLineOsc = pg.InfiniteLine()
         self.playerLineSpec = pg.InfiniteLine()
 
+        self._recordTimer = QTimer(self)
+        self._recordTimer.timeout.connect(self.on_newDataRecorded)
+
     def setSelectedTool(self, tool):
         if tool == Tools.ZoomTool:
             self.axesOscilogram.changeTool(OscilogramZoomTool)
@@ -176,11 +180,42 @@ class QSignalVisualizerWidget(QWidget):
             self.play()
 
     def stop(self):
-        self.removePlayerLine()
+
+        # self.removePlayerLine()
         self.signalPlayer.stop()
 
+        if self.signalPlayer.playStatus == self.signalPlayer.RECORDING:
+            self._recordTimer.stop()
+            self.axesOscilogram.mouseZoomEnabled = True
+            self.axesSpecgram.mouseZoomEnabled = True
+            self.axesOscilogram.setVisible(True)
+            self.axesSpecgram.setVisible(True)
+            self.graph()
+            self.zoomNone()
+
+    def on_newDataRecorded(self):
+
+        self.signalPlayer.readFromStream()
+
+        self.mainCursor.max = len(self.signal.data)
+        self.mainCursor.min = max(0,
+                                  len(self.signal.data) - 3 * self.signal.samplingRate)
+        self.axesOscilogram.graph(self.mainCursor.min, self.mainCursor.max)
+        self.rangeChanged.emit(self.mainCursor.min, self.mainCursor.max, len(self.signal.data))
+
     def record(self):
-        pass
+
+        self.axesOscilogram.mouseZoomEnabled = False
+        self.axesSpecgram.mouseZoomEnabled = False
+        self.axesOscilogram.setVisible(True)
+        self.axesSpecgram.setVisible(False)
+        try:
+            self.signalPlayer.record()
+        except:
+            self.stop()
+        updateTime = 15
+        self._recordTimer.start(updateTime)
+        #self.createPlayerLine(self.mainCursor.min)
 
     def pause(self):
         self.signalPlayer.pause()

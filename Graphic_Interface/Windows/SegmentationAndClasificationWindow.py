@@ -19,7 +19,7 @@ from sound_lab_core.Segmentation.Detectors.ElementsDetectors.OneDimensional.OneD
     OneDimensionalElementsDetector
 from sound_lab_core.Segmentation.Elements.Element import Element
 from sound_lab_core.Segmentation.Elements.OneDimensionalElement import SpectralMeasurementLocation
-from ..dialogs.elemDetectSettings import ElemDetectSettingsDialog
+from ..Dialogs.elemDetectSettings import ElemDetectSettingsDialog
 from graphic_interface.windows.TwoDimensionalAnalisysWindow import TwoDimensionalAnalisysWindow
 from SegmentationAndClasificationWindowUI import Ui_MainWindow
 import graphic_interface.dialogs.EditCategoriesDialogUI as editCateg

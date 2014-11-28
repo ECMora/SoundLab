@@ -64,4 +64,4 @@ class Ui_PowSpecWindow(object):
         self.actionOneDimFunctSettings.setText(QtGui.QApplication.translate("PowSpecWindow", "OneDimFunctSettings", None, QtGui.QApplication.UnicodeUTF8))
 
 from PowSpecPlotWidget import PowSpecPlotWidget
-import graphic_interface.windows.icons_rc
+import Graphic_Interface.Windows.icons_rc
