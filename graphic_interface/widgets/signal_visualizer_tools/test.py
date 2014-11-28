@@ -12,12 +12,13 @@ app = QApplication([])
 w = QSignalVisualizerWidget()
 
 s = WavStreamManager().read(open("1.wav"))
-# t = QTimer()
-# t.timeout.connect(w.c)
-# t.start(4000)
-w.signal = s
-w.graph()
-w.show()
-app.exec_()
+
+# # t = QTimer()
+# # t.timeout.connect(w.c)
+# # t.start(4000)
+# w.signal = s
+# w.graph()
+# w.show()
+# app.exec_()
 
 

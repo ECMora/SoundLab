@@ -5,19 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5adf17e0-4e56-49f7-b78c-ca249c2dd736" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/graphic_interface/UI_Files/ChangeVolumeDialog.ui" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Utils/Utils.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/Utils/__init__.py" />
-      <change type="DELETED" beforePath="D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\DuettoSystem\graphic_interface\UI_Files\ChangeVolume.ui" afterPath="" />
+      <change type="DELETED" beforePath="D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\DuettoSystem\graphic_interface\dialogs\ChangeVolumeDialog.py" afterPath="" />
+      <change type="MODIFICATION" beforePath="D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\DuettoSystem\graphic_interface\UI_Files\ChangeVolumeDialog.ui" afterPath="$PROJECT_DIR$/graphic_interface/UI_Files/ChangeVolumeDialog.ui" />
       <change type="MODIFICATION" beforePath="D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\DuettoSystem\graphic_interface\windows\DuettoSoundLabWindow.py" afterPath="$PROJECT_DIR$/graphic_interface/windows/DuettoSoundLabWindow.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/DuettoSystem.iml" afterPath="$PROJECT_DIR$/.idea/DuettoSystem.iml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/graphic_interface/widgets/QSignalVisualizerWidget.py" afterPath="$PROJECT_DIR$/graphic_interface/widgets/QSignalVisualizerWidget.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/SignalVisualizerTool.py" afterPath="$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/SignalVisualizerTool.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/graphic_interface/widgets/SoundLabSpectrogramWidget.py" afterPath="$PROJECT_DIR$/graphic_interface/widgets/SoundLabSpectrogramWidget.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/graphic_interface/widgets/SoundLabWidget.py" afterPath="$PROJECT_DIR$/graphic_interface/widgets/SoundLabWidget.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/SpectrogramTools/SpectrogramTool.py" afterPath="$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/SpectrogramTools/SpectrogramTool.py" />
+      <change type="MODIFICATION" beforePath="D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\DuettoSystem\graphic_interface\windows\TwoDimensionalAnalisysWindow.py" afterPath="$PROJECT_DIR$/graphic_interface/windows/TwoDimensionalAnalisysWindow.py" />
       <change type="MODIFICATION" beforePath="D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\DuettoSystem\graphic_interface\widgets\undo_redo_actions\UndoRedoActions.py" afterPath="$PROJECT_DIR$/graphic_interface/widgets/undo_redo_actions/UndoRedoActions.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/modules.xml" afterPath="$PROJECT_DIR$/.idea/modules.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/test.py" afterPath="$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/test.py" />
+      <change type="MODIFICATION" beforePath="D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\DuettoSystem\unit test\Widgets\test_undoRedoManager.py" afterPath="$PROJECT_DIR$/unit test/Widgets/test_undoRedoManager.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="DuettoSystem.iws" />
@@ -31,18 +28,21 @@
   <component name="ChangesViewManager" flattened_view="true" show_ignored="false" />
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/DuettoSystem$__init__.coverage" NAME="__init__ Coverage Results" MODIFIED="1413814968507" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/DuettoSystem$Unittest_TestAudioSignal_test_copy.coverage" NAME="Unittest TestAudioSignal.test_copy Coverage Results" MODIFIED="1417123858943" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../../../duetto_API/duetto/duetto_unit_test" />
+    <SUITE FILE_PATH="coverage/DuettoSystem$Unittest_TestAudioSignal_test_copy_section.coverage" NAME="Unittest TestAudioSignal.test_copy_section Coverage Results" MODIFIED="1417096679307" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../../../duetto_API/duetto/duetto_unit_test" />
     <SUITE FILE_PATH="coverage/DuettoSystem$Nosetest_TestAudioSignal_test_pause.coverage" NAME="Nosetest TestAudioSignal.test_pause Coverage Results" MODIFIED="1409857537688" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Unit Test/Audio Signals" />
     <SUITE FILE_PATH="coverage/DuettoSystem$Doctests_in_D__Fac_Biologia_DUETTO_PROGRAMS_Desktop_Sound_Lab_DuettoSystem_Unit_Test_Audio_Signals.coverage" NAME="Doctests in D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\DuettoSystem\Unit Test\Audio Signals Coverage Results" MODIFIED="1409840454312" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Unit Test/Audio Signals" />
     <SUITE FILE_PATH="coverage/DuettoSystem$Nosetest_TestAudioSignal_test_stop.coverage" NAME="Nosetest TestAudioSignal.test_stop Coverage Results" MODIFIED="1409858206045" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Unit Test/Audio Signals" />
+    <SUITE FILE_PATH="coverage/DuettoSystem$Unittests_in_test_commonSignalProcessor.coverage" NAME="Unittests in test_commonSignalProcessor Coverage Results" MODIFIED="1417022240540" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../../../duetto_API/duetto/duetto_unit_test" />
     <SUITE FILE_PATH="coverage/DuettoSystem$Unittests_in_setup.coverage" NAME="Unittests in setup Coverage Results" MODIFIED="1413297172664" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../../../duetto-API/duetto_API" />
     <SUITE FILE_PATH="coverage/DuettoSystem$Nosetest_TestAudioSignal_test_play.coverage" NAME="Nosetest TestAudioSignal.test_play Coverage Results" MODIFIED="1409857704029" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Unit Test/Audio Signals" />
-    <SUITE FILE_PATH="coverage/DuettoSystem$Duetto_Sound_Lab_pyw.coverage" NAME="Duetto_Sound_Lab.pyw Coverage Results" MODIFIED="1417021252206" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
-    <SUITE FILE_PATH="coverage/DuettoSystem$test.coverage" NAME="test Coverage Results" MODIFIED="1413297531051" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../../../duetto-API" />
+    <SUITE FILE_PATH="coverage/DuettoSystem$Duetto_Sound_Lab_pyw.coverage" NAME="Duetto_Sound_Lab.pyw Coverage Results" MODIFIED="1417211690137" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/DuettoSystem$test.coverage" NAME="test Coverage Results" MODIFIED="1417123891678" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../../../duetto_API" />
     <SUITE FILE_PATH="coverage/DuettoSystem$QSignalDetectorWidget.coverage" NAME="QSignalDetectorWidget Coverage Results" MODIFIED="1413814921844" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Graphic_Interface/Widgets" />
     <SUITE FILE_PATH="coverage/DuettoSystem$mainWindow.coverage" NAME="mainWindow Coverage Results" MODIFIED="1412869413847" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../../../../Clases/GUI Programing in PyQt/Example" />
-    <SUITE FILE_PATH="coverage/DuettoSystem$a.coverage" NAME="a Coverage Results" MODIFIED="1416431755417" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$USER_HOME$/Desktop" />
+    <SUITE FILE_PATH="coverage/DuettoSystem$a.coverage" NAME="a Coverage Results" MODIFIED="1417022985004" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$USER_HOME$/Desktop" />
+    <SUITE FILE_PATH="coverage/DuettoSystem$test__1_.coverage" NAME="test (1) Coverage Results" MODIFIED="1417097208402" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools" />
     <SUITE FILE_PATH="coverage/DuettoSystem$duetto_API.coverage" NAME="duetto API Coverage Results" MODIFIED="1413297514419" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../../../duetto-API/duetto_API" />
-    <SUITE FILE_PATH="coverage/DuettoSystem$test__1_.coverage" NAME="test (1) Coverage Results" MODIFIED="1416929725318" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools" />
   </component>
   <component name="CreatePatchCommitExecutor">
     <option name="PATCH_PATH" value="" />
@@ -55,95 +55,7 @@
     <favorites_list name="DuettoSystem" />
   </component>
   <component name="FileEditorManager">
-    <leaf>
-      <file leaf-file-name="CommonSignalProcessor.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../../../duetto_API/duetto/signal_processing/CommonSignalProcessor.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="66" max-vertical-offset="816">
-              <caret line="12" column="46" selection-start-line="12" selection-start-column="46" selection-end-line="12" selection-end-column="46" />
-              <folding>
-                <element signature="e#0#24#0" expanded="true" />
-                <element signature="e#209#290#1" expanded="true" />
-                <element signature="e#4585#5185#1" expanded="false" />
-                <element signature="e#6805#7052#1" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="DuettoSoundLabWindow.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/graphic_interface/windows/DuettoSoundLabWindow.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="-7.035714" vertical-offset="43" max-vertical-offset="7752">
-              <caret line="10" column="0" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
-              <folding>
-                <element signature="e#1403#1407#0" expanded="false" />
-                <element signature="e#1469#1473#0" expanded="false" />
-                <element signature="e#1529#1533#0" expanded="false" />
-                <element signature="e#1850#12473#0" expanded="false" />
-                <element signature="e#18037#21699#0" expanded="true" />
-                <element signature="e#22204#22231#0" expanded="false" />
-                <element signature="e#36246#36994#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="QSignalVisualizerWidget.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/graphic_interface/widgets/QSignalVisualizerWidget.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="1461" max-vertical-offset="3312">
-              <caret line="370" column="0" selection-start-line="370" selection-start-column="0" selection-end-line="370" selection-end-column="0" />
-              <folding>
-                <element signature="e#7341#7354#0" expanded="false" />
-                <element signature="e#9267#9318#0" expanded="false" />
-                <element signature="e#11290#11315#0" expanded="false" />
-                <element signature="e#12041#12074#0" expanded="false" />
-                <element signature="e#12345#12375#0" expanded="false" />
-                <element signature="e#17303#17699#0" expanded="true" />
-                <element signature="e#17736#17846#0" expanded="true" />
-                <element signature="e#17906#18497#0" expanded="true" />
-                <element signature="e#18535#18904#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="UndoRedoActions.py" pinned="false" current="true" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/graphic_interface/widgets/undo_redo_actions/UndoRedoActions.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.39614856" vertical-offset="0" max-vertical-offset="1320">
-              <caret line="103" column="0" selection-start-line="103" selection-start-column="0" selection-end-line="103" selection-end-column="0" />
-              <folding>
-                <element signature="e#343#2524#0" expanded="false" />
-                <element signature="e#2553#2751#0" expanded="false" />
-                <element signature="e#2795#3096#0" expanded="false" />
-                <element signature="e#3143#3450#0" expanded="false" />
-                <element signature="e#3494#3882#0" expanded="false" />
-                <element signature="e#3932#4316#0" expanded="false" />
-                <element signature="e#4361#4839#0" expanded="false" />
-                <element signature="e#4623#4719#0" expanded="true" />
-                <element signature="e#4749#4839#0" expanded="true" />
-                <element signature="e#4881#5437#0" expanded="false" />
-                <element signature="e#5249#5332#0" expanded="true" />
-                <element signature="e#5362#5437#0" expanded="true" />
-                <element signature="e#5483#5952#0" expanded="false" />
-                <element signature="e#5539#5726#0" expanded="true" />
-                <element signature="e#5756#5843#0" expanded="true" />
-                <element signature="e#5873#5952#0" expanded="true" />
-                <element signature="e#5995#6509#0" expanded="false" />
-                <element signature="e#6556#6801#0" expanded="false" />
-                <element signature="e#6856#7218#0" expanded="false" />
-                <element signature="e#7272#7872#0" expanded="false" />
-                <element signature="e#7912#8345#0" expanded="false" />
-                <element signature="e#8387#8822#0" expanded="false" />
-                <element signature="e#8874#9305#0" expanded="false" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-    </leaf>
+    <leaf />
   </component>
   <component name="FindManager">
     <FindUsagesManager>
@@ -162,13 +74,6 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/Duetto_Sound_Lab.pyw" />
-        <option value="$PROJECT_DIR$/Graphic_Interface/Widgets/SpectrogramPlotWidget.py" />
-        <option value="$PROJECT_DIR$/Graphic_Interface/Widgets/OscilogramPlotWidget.py" />
-        <option value="$PROJECT_DIR$/../../../duetto-API/duetto_API/duetto/widgets/QSignalVisualizerWidget.py" />
-        <option value="$PROJECT_DIR$/../../../duetto-API/duetto_API/duetto/widgets/Axis.py" />
-        <option value="$PROJECT_DIR$/../../../duetto-API/duetto_API/duetto/widgets/SpectrogramPlotWidget.py" />
-        <option value="$PROJECT_DIR$/../../../duetto-API/duetto_API/duetto/signal_processing/SignalProcessor.py" />
         <option value="$PROJECT_DIR$/Graphic_Interface/Widgets/PowSpecPlotWidget.py" />
         <option value="$PROJECT_DIR$/../../../duetto-API/duetto_API/duetto/__init__.py" />
         <option value="$PROJECT_DIR$/../../../duetto-API/test.py" />
@@ -190,7 +95,6 @@
         <option value="$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/SignalVisualizer.py" />
         <option value="$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/SoundLabOscilogramWidget.py" />
         <option value="$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/SoundLabSpectrogramWidget.py" />
-        <option value="$USER_HOME$/Desktop/a.py" />
         <option value="$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/SoundLabWidget.py" />
         <option value="$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/OscilogramTools/PointerCursorTool.py" />
         <option value="$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/SpectrogramTools/ZoomTool.py" />
@@ -200,7 +104,6 @@
         <option value="$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/SpectrogramTools/PointerCursorTool.py" />
         <option value="C:/Python27/Lib/site-packages/duetto/widgets/OscillogramWidget.py" />
         <option value="$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/SpectrogramTools/SpectrogramZoomTool.py" />
-        <option value="$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/test.py" />
         <option value="$PROJECT_DIR$/graphic_interface/widgets/SoundLabOscilogramWidget.py" />
         <option value="$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/OscilogramTools/RectangularEraserTool.py" />
         <option value="$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/OscilogramTools/ZoomTool.py" />
@@ -208,11 +111,20 @@
         <option value="$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/SignalVisualizerTool.py" />
         <option value="$PROJECT_DIR$/graphic_interface/widgets/SoundLabWidget.py" />
         <option value="$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/SpectrogramTools/SpectrogramTool.py" />
-        <option value="$PROJECT_DIR$/graphic_interface/widgets/QSignalVisualizerWidget.py" />
         <option value="$PROJECT_DIR$/graphic_interface/windows/DuettoSoundLabWindow.py" />
         <option value="$PROJECT_DIR$/Utils/Utils.py" />
-        <option value="$PROJECT_DIR$/graphic_interface/widgets/undo_redo_actions/UndoRedoActions.py" />
+        <option value="$USER_HOME$/Desktop/a.py" />
+        <option value="$PROJECT_DIR$/../../../duetto_API/duetto/duetto_unit_test/test_audioSignal.py" />
+        <option value="$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/test.py" />
+        <option value="$PROJECT_DIR$/../../../duetto_API/duetto/__init__.py" />
         <option value="$PROJECT_DIR$/../../../duetto_API/duetto/signal_processing/CommonSignalProcessor.py" />
+        <option value="$PROJECT_DIR$/../../../duetto_API/test.py" />
+        <option value="$PROJECT_DIR$/../../../duetto_API/duetto/audio_signals/AudioSignal.py" />
+        <option value="$PROJECT_DIR$/../../../duetto_API/duetto/signal_processing/SignalProcessor.py" />
+        <option value="$PROJECT_DIR$/../../../duetto_API/duetto/signal_processing/EditionSignalProcessor.py" />
+        <option value="$PROJECT_DIR$/../../../duetto_API/duetto/widgets/OscillogramWidget.py" />
+        <option value="$PROJECT_DIR$/graphic_interface/widgets/undo_redo_actions/UndoRedoActions.py" />
+        <option value="$PROJECT_DIR$/graphic_interface/widgets/QSignalVisualizerWidget.py" />
       </list>
     </option>
   </component>
@@ -248,7 +160,6 @@
       <sortByType />
     </navigator>
     <panes>
-      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -263,12 +174,13 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="duetto_API" />
+              <option name="myItemId" value="DuettoSystem" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
         </subPane>
       </pane>
+      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -303,63 +215,6 @@
     </key>
   </component>
   <component name="RunManager" selected="Python.Duetto_Sound_Lab.pyw">
-    <configuration default="false" name="test" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="C:/Python27/pythonw.exe" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../../../duetto-API" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="DuettoSystem" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../../../duetto-API/test.py" />
-      <option name="PARAMETERS" value="" />
-      <RunnerSettings RunnerId="PythonRunner" />
-      <ConfigurationWrapper RunnerId="PythonRunner" />
-      <method />
-    </configuration>
-    <configuration default="false" name="__init__" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="DuettoSystem" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/__init__.py" />
-      <option name="PARAMETERS" value="" />
-      <RunnerSettings RunnerId="PythonRunner" />
-      <ConfigurationWrapper RunnerId="PythonRunner" />
-      <method />
-    </configuration>
-    <configuration default="false" name="a" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$USER_HOME$/Desktop" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="DuettoSystem" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$USER_HOME$/Desktop/a.py" />
-      <option name="PARAMETERS" value="" />
-      <RunnerSettings RunnerId="PythonRunner" />
-      <ConfigurationWrapper RunnerId="PythonRunner" />
-      <method />
-    </configuration>
     <configuration default="false" name="test (1)" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -375,9 +230,7 @@
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/test.py" />
       <option name="PARAMETERS" value="" />
-      <RunnerSettings RunnerId="PyDebugRunner" />
       <RunnerSettings RunnerId="PythonRunner" />
-      <ConfigurationWrapper RunnerId="PyDebugRunner" />
       <ConfigurationWrapper RunnerId="PythonRunner" />
       <method />
     </configuration>
@@ -396,7 +249,9 @@
       <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/Duetto_Sound_Lab.pyw" />
       <option name="PARAMETERS" value="" />
+      <RunnerSettings RunnerId="PyDebugRunner" />
       <RunnerSettings RunnerId="PythonRunner" />
+      <ConfigurationWrapper RunnerId="PyDebugRunner" />
       <ConfigurationWrapper RunnerId="PythonRunner" />
       <method />
     </configuration>
@@ -484,6 +339,9 @@
       <option name="PARAMETERS" value="" />
       <method />
     </configuration>
+    <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug">
+      <method />
+    </configuration>
     <configuration default="true" type="tests" factoryName="Unittests">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -505,9 +363,6 @@
       <option name="PUREUNITTEST" value="true" />
       <option name="PARAMS" value="" />
       <option name="USE_PARAM" value="false" />
-      <method />
-    </configuration>
-    <configuration default="true" type="JavascriptDebugType" factoryName="JavaScript Debug">
       <method />
     </configuration>
     <configuration default="true" type="tests" factoryName="Doctests">
@@ -550,40 +405,14 @@
       <option name="USE_PATTERN" value="false" />
       <method />
     </configuration>
-    <configuration default="false" name="duetto API" type="PythonConfigurationType" factoryName="Python">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="C:/Python27/python.exe" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../../../duetto-API/duetto_API" />
-      <option name="IS_MODULE_SDK" value="false" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="duetto_API" />
-      <EXTENSION ID="PythonCoverageRunConfigurationExtension" enabled="false" sample_coverage="true" runner="coverage.py" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../../../duetto-API/duetto_API/setup.py" />
-      <option name="PARAMETERS" value="install" />
-      <RunnerSettings RunnerId="PythonRunner" />
-      <ConfigurationWrapper RunnerId="PythonRunner" />
-      <method />
-    </configuration>
-    <list size="6">
-      <item index="0" class="java.lang.String" itemvalue="Python.duetto API" />
-      <item index="1" class="java.lang.String" itemvalue="Python.test" />
-      <item index="2" class="java.lang.String" itemvalue="Python.__init__" />
-      <item index="3" class="java.lang.String" itemvalue="Python.a" />
-      <item index="4" class="java.lang.String" itemvalue="Python.test (1)" />
-      <item index="5" class="java.lang.String" itemvalue="Python.Duetto_Sound_Lab.pyw" />
+    <list size="2">
+      <item index="0" class="java.lang.String" itemvalue="Python.test (1)" />
+      <item index="1" class="java.lang.String" itemvalue="Python.Duetto_Sound_Lab.pyw" />
     </list>
     <recent_temporary>
-      <list size="5">
+      <list size="2">
         <item index="0" class="java.lang.String" itemvalue="Python.Duetto_Sound_Lab.pyw" />
         <item index="1" class="java.lang.String" itemvalue="Python.test (1)" />
-        <item index="2" class="java.lang.String" itemvalue="Python.test" />
-        <item index="3" class="java.lang.String" itemvalue="Python.a" />
-        <item index="4" class="java.lang.String" itemvalue="Python.__init__" />
       </list>
     </recent_temporary>
   </component>
@@ -617,7 +446,11 @@
       <created>1416344113328</created>
       <updated>1416344113328</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="operaciones de signal processing: normalize, scale, modulation con sus respectivas undo redo actions">
+      <created>1417021988447</created>
+      <updated>1417021988447</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TodoView" selected-index="4">
@@ -650,11 +483,11 @@
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2724138" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32928804" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="true" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.3511327" sideWeight="0.835503" order="4" side_tool="false" content_ui="combo" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39811066" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.22977346" sideWeight="0.835503" order="4" side_tool="false" content_ui="combo" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39700806" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32911393" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.105747126" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24022989" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.20023015" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
@@ -662,8 +495,8 @@
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="combo" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
     </layout>
     <layout-to-restore>
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -683,9 +516,9 @@
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Project" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.17313915" sideWeight="0.835503" order="4" side_tool="false" content_ui="combo" />
-      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.26927504" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="combo" />
       <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="combo" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.26927504" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
     </layout-to-restore>
   </component>
   <component name="Vcs.Log.UiProperties">
@@ -710,223 +543,15 @@
     <MESSAGE value="Estructuracion y comentarios. Sepracion de las herramientas de trabajo visual mediante jerarqui de clases. Filtros.&#10;" />
     <MESSAGE value="Spectrogram creation. Comments" />
     <MESSAGE value=" Sepracion de las herramientas de trabajo visual mediante jerarqui de clases.&#10; Implementacion de la separacion provisional de las herramientas de los controles&#10;" />
-    <option name="LAST_COMMIT_MESSAGE" value=" Sepracion de las herramientas de trabajo visual mediante jerarqui de clases.&#10; Implementacion de la separacion provisional de las herramientas de los controles&#10;" />
+    <MESSAGE value="operaciones de signal processing: normalize, scale, modulation con sus respectivas undo redo actions" />
+    <option name="LAST_COMMIT_MESSAGE" value="operaciones de signal processing: normalize, scale, modulation con sus respectivas undo redo actions" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
-      <option name="time" value="8" />
+      <option name="time" value="12" />
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/graphic_interface/widgets/HorizontalHistogram.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="72" max-vertical-offset="2232">
-          <caret line="18" column="33" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/graphic_interface/windows/Two_Dimensional_AnalisysWindowUI.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1896">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/graphic_interface/windows/SegmentationAndClasificationWindowUI.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="11640">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/graphic_interface/windows/TwoDimensionalAnalisysWindow.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="3312" max-vertical-offset="4368">
-          <caret line="147" column="36" selection-start-line="147" selection-start-column="36" selection-end-line="147" selection-end-column="36" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/graphic_interface/dialogs/elemDetectSettings.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.5985748" vertical-offset="0" max-vertical-offset="842">
-          <caret line="133" column="29" selection-start-line="133" selection-start-column="29" selection-end-line="133" selection-end-column="29" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="uml://Python/#D:/Fac Biologia/DUETTO PROGRAMS/Desktop/Sound Lab/DuettoSystem/Duetto_Core">
-      <provider selected="true" editor-type-id="UmlEditorProvider">
-        <state>
-          <ID>Python</ID>
-          <OriginalElement>#D:/Fac Biologia/DUETTO PROGRAMS/Desktop/Sound Lab/DuettoSystem/Duetto_Core</OriginalElement>
-          <nodes>
-            <node x="" y="">Duetto_Core.Clasification.ClassificationData.ClassificationVector</node>
-            <node x="" y="">Duetto_Core.Segmentation.Detectors.ElementsDetectors.ElementsDetector.ElementsDetector</node>
-            <node x="" y="">Duetto_Core.SignalProcessors.FilterSignalProcessor.FilterSignalProcessor</node>
-            <node x="" y="">Duetto_Core.Segmentation.Elements.TwoDimensionalElement.SpecgramElement</node>
-            <node x="" y="">OneDimensionalElementsDetector</node>
-            <node x="" y="">Duetto_Core.Segmentation.Detectors.FeatureExtractionDetectors.MaxMinPeakDetector.MaxMinPeakDetector</node>
-            <node x="" y="">Duetto_Core.Segmentation.Detectors.ElementsDetectors.OneDimensional.PeakToPeakElemDetector.PeakToPeakElemDetector</node>
-            <node x="" y="">Duetto_Core.SpecgramSettings.FFTWindows</node>
-            <node x="" y="">Duetto_Core.Segmentation.Segment.Segment</node>
-            <node x="" y="">Duetto_Core.SignalProcessors.FilterSignalProcessor.FILTER_TYPE</node>
-            <node x="" y="">Duetto_Core.SignalProcessors.EditionSignalProcessor.EditionSignalProcessor</node>
-            <node x="" y="">Duetto_Core.Segmentation.Detectors.ElementsDetectors.OneDimensional.IntervalElemDetector.IntervalElemDetector</node>
-            <node x="" y="">Duetto_Core.Segmentation.Detectors.ElementsDetectors.OneDimensional.OneDimensionalElementsDetector.DetectionSettings</node>
-            <node x="" y="">Duetto_Core.SignalProcessors.CommonSignalProcessor.CommonSignalProcessor</node>
-            <node x="" y="">Duetto_Core.Clasification.ClassificationMethod.ClassificationMethod</node>
-            <node x="" y="">Duetto_Core.Clasification.ClassificationData.ClassificationData</node>
-            <node x="" y="">Duetto_Core.AudioSignals.FileAudioSignal.FileAudioSignal</node>
-            <node x="" y="">Duetto_Core.Segmentation.Elements.OneDimensionalElement.OneDimensionalElement</node>
-            <node x="" y="">Duetto_Core.AudioSignals.SplitArray.SplitArray</node>
-            <node x="" y="">Duetto_Core.AudioSignals.WavFileSignal.WavFileSignal</node>
-            <node x="" y="">Duetto_Core.Segmentation.Elements.Element.Element</node>
-            <node x="" y="">Duetto_Core.SignalProcessors.SignalProcessor.SignalProcessor</node>
-            <node x="" y="">Duetto_Core.Segmentation.Detectors.ElementsDetectors.OneDimensional.OneDimensionalElementsDetector.OneDimensionalElementsDetector</node>
-            <node x="" y="">Duetto_Core.Segmentation.Elements.OneDimensionalElement.OscilogramElement</node>
-            <node x="" y="">Duetto_Core.Segmentation.Detectors.ElementsDetectors.OneDimensional.OneDimensionalElementsDetector.AutomaticThresholdType</node>
-            <node x="" y="">Duetto_Core.Segmentation.Elements.TwoDimensionalElement.TwoDimensionalElement</node>
-            <node x="" y="">Duetto_Core.Segmentation.Detectors.ElementsDetectors.TwoDimensional.TwoDimensionalElementsDetector.TwoDimensionalElementsDetector</node>
-            <node x="" y="">Duetto_Core.Segmentation.Detectors.ElementsDetectors.OneDimensional.OneDimensionalElementsDetector.DetectionType</node>
-            <node x="" y="">Duetto_Core.AudioSignals.AudioSignal.AudioSignal</node>
-            <node x="" y="">Duetto_Core.Segmentation.Elements.OneDimensionalElement.SpectralMeasurementLocation</node>
-            <node x="" y="">Duetto_Core.Clasification.KNN.KNN</node>
-            <node x="" y="">Duetto_Core.SpecgramSettings.SpecgramSettings</node>
-            <node x="" y="">Duetto_Core.Segmentation.Detectors.FeatureExtractionDetectors.MaxInstantFrequencyDetector.MaxInstantFrequencyDetector</node>
-          </nodes>
-          <notes />
-          <edges />
-          <settings layout="Hierarchic Group" zoom="0.8664734730271957" x="902.0" y="-334.0" />
-          <SelectedNodes />
-          <Categories />
-          <SCOPE>All</SCOPE>
-        </state>
-      </provider>
-    </entry>
-    <entry file="uml://Python/#D:/Fac Biologia/DUETTO PROGRAMS/Desktop/Sound Lab/DuettoSystem/Graphic_Interface">
-      <provider selected="true" editor-type-id="UmlEditorProvider">
-        <state>
-          <ID>Python</ID>
-          <OriginalElement>#D:/Fac Biologia/DUETTO PROGRAMS/Desktop/Sound Lab/DuettoSystem/Graphic_Interface</OriginalElement>
-          <nodes>
-            <node x="" y="">Graphic_Interface.Widgets.UndoRedoActions.UndoRedoAction</node>
-            <node x="" y="">pyqtgraph.graphicsItems.HistogramLUTItem.HistogramLUTItem</node>
-            <node x="" y="">Graphic_Interface.Widgets.EditCategoriesWidget.EditCategoriesWidget</node>
-            <node x="" y="">Graphic_Interface.Dialogs.ChangeVolumeDialog.Ui_Dialog</node>
-            <node x="" y="">Graphic_Interface.Widgets.UndoRedoActions.GeneratePinkNoiseAction</node>
-            <node x="" y="">Graphic_Interface.Widgets.PowSpecPlotWidget.PowSpecPlotWidget</node>
-            <node x="" y="">PyQt4.QtGui.QGraphicsWidget</node>
-            <node x="" y="">pyqtgraph.widgets.HistogramLUTWidget.HistogramLUTWidget</node>
-            <node x="" y="">Graphic_Interface.Widgets.UndoRedoActions.ChangeSignAction</node>
-            <node x="" y="">Graphic_Interface.Widgets.UndoRedoActions.ScaleAction</node>
-            <node x="" y="">Graphic_Interface.Widgets.Tools.RectROI</node>
-            <node x="" y="">Graphic_Interface.Widgets.PowSpecPlotWidget.LogarithmicPowSpec</node>
-            <node x="" y="">Graphic_Interface.Widgets.UndoRedoActions.GenerateWhiteNoiseAction</node>
-            <node x="" y="">Graphic_Interface.Dialogs.FilterOptionsDialog.Ui_Dialog</node>
-            <node x="" y="">Graphic_Interface.Widgets.QSignalVisualizerWidget.QSignalVisualizerWidget</node>
-            <node x="" y="">Graphic_Interface.Widgets.UndoRedoActions.ResamplingAction</node>
-            <node x="" y="">Graphic_Interface.Widgets.UndoRedoActions.InsertSilenceAction</node>
-            <node x="" y="">Graphic_Interface.Widgets.QSignalDetectorWidget.QSignalDetectorWidget</node>
-            <node x="" y="">Graphic_Interface.Windows.DuettoSoundLabWindow.FilterDialog</node>
-            <node x="" y="">Graphic_Interface.Widgets.UndoRedoActions.FilterAction</node>
-            <node x="" y="">PyQt4.QtGui.QGraphicsLayoutItem</node>
-            <node x="" y="">pyqtgraph.graphicsItems.GraphicsWidget.GraphicsWidget</node>
-            <node x="" y="">Graphic_Interface.Windows.MainWindow.Ui_DuettoMainWindow</node>
-            <node x="" y="">Graphic_Interface.Windows.SegmentationAndClasificationWindowUI.Ui_MainWindow</node>
-            <node x="" y="">Graphic_Interface.Windows.DuettoSoundLabWindow.InsertSilenceDialog</node>
-            <node x="" y="">Graphic_Interface.Widgets.UndoRedoActions.PasteAction</node>
-            <node x="" y="">Graphic_Interface.Widgets.PowSpecPlotWidget.InstantaneousFrequencies</node>
-            <node x="" y="">Graphic_Interface.Widgets.UndoRedoActions.ReverseAction</node>
-            <node x="" y="">Graphic_Interface.Windows.SegmentationAndClasificationWindow.SegmentationAndClasificationWindow</node>
-            <node x="" y="">Graphic_Interface.Dialogs.ui_new_file_dialog.Ui_NewFileDialog</node>
-            <node x="" y="">Graphic_Interface.Widgets.UndoRedoActions.UndoRedoManager</node>
-            <node x="" y="">pyqtgraph.widgets.PlotWidget.PlotWidget</node>
-            <node x="" y="">Graphic_Interface.Widgets.HorizontalHistogram.HorizontalHistogramItem</node>
-            <node x="" y="">Graphic_Interface.Widgets.Tools.Tools</node>
-            <node x="" y="">Graphic_Interface.Widgets.TwoDPlotWidget.TwoDPlotWidget</node>
-            <node x="" y="">Graphic_Interface.Windows.PowerSpectrumWindow.PowerSpectrumWindow</node>
-            <node x="" y="">Graphic_Interface.Widgets.PowSpecPlotWidget.OneDimensionalFunction</node>
-            <node x="" y="">Graphic_Interface.Windows.EditCategoryWidgetUI.Ui_EditCategoryWidget</node>
-            <node x="" y="">Graphic_Interface.Dialogs.EditCategoriesDialog.EditCategoriesDialog</node>
-            <node x="" y="">pyqtgraph.parametertree.ParameterItem.ParameterItem</node>
-            <node x="" y="">Graphic_Interface.Widgets.PowSpecPlotWidget.Envelope</node>
-            <node x="" y="">Graphic_Interface.Windows.DuettoSoundLabWindow.ChangeVolumeDialog</node>
-            <node x="" y="">Graphic_Interface.Windows.WorkTheme.SerializedData</node>
-            <node x="" y="">Graphic_Interface.Dialogs.NewFileDialog.NewFileDialog</node>
-            <node x="" y="">Graphic_Interface.Windows.DuettoSoundLabWindow.DuettoSoundLabWindow</node>
-            <node x="" y="">Graphic_Interface.Windows.PresentationSlogan.presentation.Ui_MainWindow</node>
-            <node x="" y="">pyqtgraph.graphicsItems.GraphicsItem.GraphicsItem</node>
-            <node x="" y="">Graphic_Interface.Widgets.Power_Spectrum.Ui_PowSpecWindow</node>
-            <node x="" y="">Graphic_Interface.Widgets.UndoRedoActions.SilenceAction</node>
-            <node x="" y="">Graphic_Interface.Dialogs.InsertSilenceDialog.Ui_Dialog</node>
-            <node x="" y="">Graphic_Interface.Dialogs.elemDetectSettings.ElemDetectSettingsDialog</node>
-            <node x="" y="">Graphic_Interface.Widgets.OscilogramPlotWidget.OscilogramPlotWidget</node>
-            <node x="" y="">pyqtgraph.parametertree.parameterTypes.WidgetParameterItem</node>
-            <node x="" y="">Graphic_Interface.Widgets.Axis.SpecYAxis</node>
-            <node x="" y="">Graphic_Interface.Windows.Two_Dimensional_AnalisysWindowUI.Ui_TwoDimensionalWindow</node>
-            <node x="" y="">Graphic_Interface.Windows.ParameterList.DuettoListParameterItem</node>
-            <node x="" y="">Graphic_Interface.Widgets.Axis.OscYAxis</node>
-            <node x="" y="">Graphic_Interface.Widgets.UndoRedoActions.CutAction</node>
-            <node x="" y="">Graphic_Interface.Widgets.UndoRedoActions.Absolute_ValuesAction</node>
-            <node x="" y="">Graphic_Interface.Widgets.Axis.OscXAxis</node>
-            <node x="" y="">Graphic_Interface.Widgets.PowSpecPlotWidget.AveragePowSpec</node>
-            <node x="" y="">Graphic_Interface.Widgets.HorizontalHistogram.HorizontalHistogramWidget</node>
-            <node x="" y="">Graphic_Interface.Widgets.SpectrogramPlotWidget.SpectrogramPlotWidget</node>
-            <node x="" y="">Graphic_Interface.Dialogs.EditCategoriesDialogUI.Ui_Dialog</node>
-            <node x="" y="">Graphic_Interface.Dialogs.ui_elemDetectSettings.Ui_Dialog</node>
-            <node x="" y="">Graphic_Interface.Widgets.QSignalVisualizerWidget.IntervalCursor</node>
-            <node x="" y="">Graphic_Interface.Windows.TwoDimensionalAnalisysWindow.TwoDimensionalAnalisysWindow</node>
-          </nodes>
-          <notes />
-          <edges />
-          <settings layout="Hierarchic Group" zoom="0.8999999999999999" x="522.0" y="695.0" />
-          <SelectedNodes />
-          <Categories />
-          <SCOPE>All</SCOPE>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/Python27/Lib/site-packages/pyqtgraph/graphicsItems/AxisItem.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.33283803" vertical-offset="1792" max-vertical-offset="22296">
-          <caret line="92" column="28" selection-start-line="92" selection-start-column="28" selection-end-line="92" selection-end-column="28" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/graphic_interface/windows/MainWindow.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="708" max-vertical-offset="12936">
-          <caret line="37" column="0" selection-start-line="37" selection-start-column="0" selection-end-line="37" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/graphic_interface/windows/SegmentationAndClasificationWindow.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.5156055" vertical-offset="6883" max-vertical-offset="12192">
-          <caret line="1087" column="15" selection-start-line="1087" selection-start-column="15" selection-end-line="1087" selection-end-column="15" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="607">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/graphic_interface/widgets/Power_Spectrum.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="696">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/graphic_interface/widgets/PowSpecPlotWidget.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.4074074" vertical-offset="2169" max-vertical-offset="2736">
-          <caret line="415" column="75" selection-start-line="415" selection-start-column="75" selection-end-line="415" selection-end-column="75" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/graphic_interface/widgets/EditCategoriesWidget.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="828">
@@ -1081,25 +706,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/graphic_interface/widgets/SoundLabOscilogramWidget.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="454" max-vertical-offset="1296">
-          <caret line="71" column="32" selection-start-line="71" selection-start-column="32" selection-end-line="71" selection-end-column="32" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="576">
-          <caret line="16" column="15" selection-start-line="16" selection-start-column="15" selection-end-line="16" selection-end-column="15" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/SpectrogramTools/PointerCursorTool.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.7394451" vertical-offset="827" max-vertical-offset="1656">
           <caret line="60" column="61" selection-start-line="60" selection-start-column="61" selection-end-line="60" selection-end-column="61" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1107,7 +717,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="504" max-vertical-offset="1320">
           <caret line="12" column="6" selection-start-line="12" selection-start-column="6" selection-end-line="12" selection-end-column="6" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1115,15 +724,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1104">
           <caret line="39" column="23" selection-start-line="39" selection-start-column="8" selection-end-line="39" selection-end-column="23" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/graphic_interface/widgets/SoundLabSpectrogramWidget.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="960">
-          <caret line="14" column="65" selection-start-line="14" selection-start-column="32" selection-end-line="14" selection-end-column="65" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1131,7 +731,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="172" max-vertical-offset="840">
           <caret line="10" column="33" selection-start-line="10" selection-start-column="33" selection-end-line="10" selection-end-column="33" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -1139,17 +738,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.5700713" vertical-offset="0" max-vertical-offset="842">
           <caret line="72" column="47" selection-start-line="72" selection-start-column="47" selection-end-line="72" selection-end-column="47" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../duetto_API/duetto/widgets/QSignalVisualizerWidget.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.33293125" vertical-offset="2508" max-vertical-offset="3432">
-          <caret line="272" column="8" selection-start-line="272" selection-start-column="8" selection-end-line="272" selection-end-column="8" />
-          <folding>
-            <element signature="e#10574#10659#0" expanded="false" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1157,95 +745,149 @@
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="610">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/graphic_interface/windows/DuettoSoundLabWindow.py">
+    <entry file="file://$USER_HOME$/Desktop/a.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-7.035714" vertical-offset="43" max-vertical-offset="7752">
-          <caret line="10" column="0" selection-start-line="10" selection-start-column="0" selection-end-line="10" selection-end-column="0" />
-          <folding>
-            <element signature="e#1403#1407#0" expanded="false" />
-            <element signature="e#1469#1473#0" expanded="false" />
-            <element signature="e#1529#1533#0" expanded="false" />
-            <element signature="e#1850#12473#0" expanded="false" />
-            <element signature="e#18037#21699#0" expanded="true" />
-            <element signature="e#22204#22231#0" expanded="false" />
-            <element signature="e#36246#36994#0" expanded="true" />
-          </folding>
+        <state vertical-scroll-proportion="0.5415677" vertical-offset="0" max-vertical-offset="912">
+          <caret line="19" column="1" selection-start-line="19" selection-start-column="1" selection-end-line="19" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="600">
+          <caret line="13" column="42" selection-start-line="13" selection-start-column="42" selection-end-line="13" selection-end-column="42" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphic_interface/widgets/SoundLabSpectrogramWidget.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.8476923" vertical-offset="241" max-vertical-offset="1056">
+          <caret line="82" column="8" selection-start-line="82" selection-start-column="8" selection-end-line="82" selection-end-column="8" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/Utils/Utils.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.27540985" vertical-offset="0" max-vertical-offset="610">
-          <caret line="7" column="0" selection-start-line="7" selection-start-column="0" selection-end-line="7" selection-end-column="0" />
-          <folding>
-            <element signature="e#24#33#0" expanded="true" />
-          </folding>
+        <state vertical-scroll-proportion="0.18461539" vertical-offset="0" max-vertical-offset="650">
+          <caret line="5" column="0" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/Python27/Lib/site-packages/numpy/lib/function_base.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="687" max-vertical-offset="5760">
+          <caret line="780" column="4" selection-start-line="780" selection-start-column="4" selection-end-line="780" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphic_interface/windows/DuettoSoundLabWindow.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="10632">
+          <caret line="813" column="0" selection-start-line="813" selection-start-column="0" selection-end-line="813" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/Python27/Lib/site-packages/pyqtgraph/graphicsItems/PlotCurveItem.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.24786325" vertical-offset="1093" max-vertical-offset="2040">
+          <caret line="282" column="41" selection-start-line="282" selection-start-column="41" selection-end-line="282" selection-end-column="41" />
+          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/graphic_interface/widgets/QSignalVisualizerWidget.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="1461" max-vertical-offset="3312">
-          <caret line="370" column="0" selection-start-line="370" selection-start-column="0" selection-end-line="370" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.61916465" vertical-offset="0" max-vertical-offset="4128">
+          <caret line="124" column="0" selection-start-line="124" selection-start-column="0" selection-end-line="124" selection-end-column="0" />
           <folding>
-            <element signature="e#7341#7354#0" expanded="false" />
-            <element signature="e#9267#9318#0" expanded="false" />
-            <element signature="e#11290#11315#0" expanded="false" />
-            <element signature="e#12041#12074#0" expanded="false" />
-            <element signature="e#12345#12375#0" expanded="false" />
-            <element signature="e#17303#17699#0" expanded="true" />
-            <element signature="e#17736#17846#0" expanded="true" />
-            <element signature="e#17906#18497#0" expanded="true" />
-            <element signature="e#18535#18904#0" expanded="true" />
+            <element signature="e#1617#1733#0" expanded="false" />
+            <element signature="e#4479#4609#1" expanded="false" />
+            <element signature="e#5709#5744#0" expanded="false" />
+            <element signature="e#8341#8652#0" expanded="true" />
+            <element signature="e#8755#8782#0" expanded="true" />
+            <element signature="e#10464#10713#0" expanded="true" />
+            <element signature="e#10967#10998#0" expanded="true" />
+            <element signature="e#12861#12886#0" expanded="false" />
+            <element signature="e#13584#13851#1" expanded="false" />
+            <element signature="e#14436#14563#1" expanded="false" />
+            <element signature="e#14685#14698#0" expanded="false" />
+            <element signature="e#14728#14952#0" expanded="true" />
+            <element signature="e#14974#15004#0" expanded="false" />
+            <element signature="e#15033#15308#1" expanded="false" />
+            <element signature="e#16650#16760#1" expanded="false" />
+            <element signature="e#17807#17869#0" expanded="true" />
+            <element signature="e#17912#18866#0" expanded="true" />
+            <element signature="e#19354#19358#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../../../duetto_API/duetto/signal_processing/CommonSignalProcessor.py">
+    <entry file="file://$PROJECT_DIR$/graphic_interface/widgets/SoundLabOscilogramWidget.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="66" max-vertical-offset="816">
-          <caret line="12" column="46" selection-start-line="12" selection-start-column="46" selection-end-line="12" selection-end-column="46" />
+        <state vertical-scroll-proportion="0.085510686" vertical-offset="0" max-vertical-offset="842">
+          <caret line="6" column="65" selection-start-line="6" selection-start-column="65" selection-end-line="6" selection-end-column="65" />
           <folding>
-            <element signature="e#0#24#0" expanded="true" />
-            <element signature="e#209#290#1" expanded="true" />
-            <element signature="e#4585#5185#1" expanded="false" />
-            <element signature="e#6805#7052#1" expanded="false" />
+            <element signature="e#324#3321#0" expanded="false" />
+            <element signature="e#3150#3321#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/graphic_interface/widgets/undo_redo_actions/UndoRedoActions.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.39614856" vertical-offset="0" max-vertical-offset="1320">
-          <caret line="103" column="0" selection-start-line="103" selection-start-column="0" selection-end-line="103" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.2434457" vertical-offset="5637" max-vertical-offset="6744">
+          <caret line="308" column="0" selection-start-line="308" selection-start-column="0" selection-end-line="308" selection-end-column="0" />
           <folding>
-            <element signature="e#343#2524#0" expanded="false" />
-            <element signature="e#2553#2751#0" expanded="false" />
-            <element signature="e#2795#3096#0" expanded="false" />
-            <element signature="e#3143#3450#0" expanded="false" />
-            <element signature="e#3494#3882#0" expanded="false" />
-            <element signature="e#3932#4316#0" expanded="false" />
-            <element signature="e#4361#4839#0" expanded="false" />
-            <element signature="e#4623#4719#0" expanded="true" />
-            <element signature="e#4749#4839#0" expanded="true" />
-            <element signature="e#4881#5437#0" expanded="false" />
-            <element signature="e#5249#5332#0" expanded="true" />
-            <element signature="e#5362#5437#0" expanded="true" />
-            <element signature="e#5483#5952#0" expanded="false" />
-            <element signature="e#5539#5726#0" expanded="true" />
-            <element signature="e#5756#5843#0" expanded="true" />
-            <element signature="e#5873#5952#0" expanded="true" />
-            <element signature="e#5995#6509#0" expanded="false" />
-            <element signature="e#6556#6801#0" expanded="false" />
-            <element signature="e#6856#7218#0" expanded="false" />
-            <element signature="e#7272#7872#0" expanded="false" />
-            <element signature="e#7912#8345#0" expanded="false" />
-            <element signature="e#8387#8822#0" expanded="false" />
-            <element signature="e#8874#9305#0" expanded="false" />
+            <element signature="e#488#554#1" expanded="true" />
+            <element signature="e#3329#3437#0" expanded="true" />
+            <element signature="e#3467#3530#0" expanded="true" />
+            <element signature="e#3560#3623#0" expanded="true" />
+            <element signature="e#3715#3823#0" expanded="true" />
+            <element signature="e#3853#3919#0" expanded="true" />
+            <element signature="e#3949#4015#0" expanded="true" />
+            <element signature="e#4104#4265#0" expanded="true" />
+            <element signature="e#4295#4389#0" expanded="true" />
+            <element signature="e#4419#4485#0" expanded="true" />
+            <element signature="e#4579#4685#0" expanded="true" />
+            <element signature="e#4715#4856#0" expanded="true" />
+            <element signature="e#4886#4957#0" expanded="true" />
+            <element signature="e#5062#5272#0" expanded="true" />
+            <element signature="e#5302#5398#0" expanded="true" />
+            <element signature="e#5428#5518#0" expanded="true" />
+            <element signature="e#5616#5936#0" expanded="true" />
+            <element signature="e#5966#6049#0" expanded="true" />
+            <element signature="e#6079#6154#0" expanded="true" />
+            <element signature="e#6256#6481#0" expanded="true" />
+            <element signature="e#6511#6598#0" expanded="true" />
+            <element signature="e#6628#6707#0" expanded="true" />
+            <element signature="e#6815#7046#0" expanded="true" />
+            <element signature="e#7076#7170#0" expanded="true" />
+            <element signature="e#7200#7302#0" expanded="true" />
+            <element signature="e#7387#7507#0" expanded="true" />
+            <element signature="e#7537#7571#0" expanded="true" />
+            <element signature="e#7601#7632#0" expanded="true" />
+            <element signature="e#7731#7837#0" expanded="true" />
+            <element signature="e#7867#8007#0" expanded="true" />
+            <element signature="e#8037#8087#0" expanded="true" />
+            <element signature="e#8204#8375#0" expanded="true" />
+            <element signature="e#8406#8546#0" expanded="true" />
+            <element signature="e#8576#8779#0" expanded="true" />
+            <element signature="e#8865#9149#0" expanded="true" />
+            <element signature="e#9178#9216#0" expanded="true" />
+            <element signature="e#9246#9292#0" expanded="true" />
+            <element signature="e#9381#9556#0" expanded="true" />
+            <element signature="e#9586#9751#0" expanded="true" />
+            <element signature="e#9781#9828#0" expanded="true" />
+            <element signature="e#9916#10200#0" expanded="true" />
+            <element signature="e#10230#10276#0" expanded="true" />
+            <element signature="e#10306#10344#0" expanded="true" />
+            <element signature="e#10446#10632#0" expanded="true" />
+            <element signature="e#10662#10756#0" expanded="true" />
+            <element signature="e#10786#10865#0" expanded="true" />
           </folding>
         </state>
       </provider>
