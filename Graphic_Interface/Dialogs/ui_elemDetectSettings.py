@@ -79,4 +79,4 @@ class Ui_Dialog(object):
         Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "Detection Settings", None, QtGui.QApplication.UnicodeUTF8))
         self.widget.setToolTip(QtGui.QApplication.translate("Dialog", "<html><head/><body><p>Signal to learn about algorithm parameters</p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
 
-from graphic_interface.widgets.QSignalDetectorWidget import QSignalDetectorWidget
+from Graphic_Interface.Widgets.QSignalDetectorWidget import QSignalDetectorWidget
