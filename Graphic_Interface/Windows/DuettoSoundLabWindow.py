@@ -17,7 +17,7 @@ from Graphic_Interface.Dialogs import InsertSilenceDialog as sdialog, FilterOpti
     ChangeVolumeDialog as cvdialog
 from Graphic_Interface.Windows.WorkTheme import SerializedData
 from sound_lab_core.Clasification.ClassificationData import ClassificationData
-from duetto.dimensional_transformations.two_dimensional_transforms.Spectrogram.WindowFunctions import WindowFunction
+#from duetto.dimensional_transformations.two_dimensional_transforms.Spectrogram.WindowFunctions import WindowFunction
 from duetto.audio_signals.Synthesizer import Synthesizer
 from Graphic_Interface.Widgets.signal_visualizer_tools.SignalVisualizerTool import Tools
 

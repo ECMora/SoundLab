@@ -4,10 +4,10 @@ from PyQt4.QtCore import pyqtSlot
 import numpy,random
 from pyqtgraph.parametertree import Parameter, ParameterTree
 import pyqtgraph as pg
-from graphic_interface.dialogs.EditCategoriesDialog import EditCategoriesDialog
-import graphic_interface.dialogs.EditCategoriesDialogUI as editCateg
-from graphic_interface.widgets.EditCategoriesWidget import EditCategoriesWidget
-from graphic_interface.windows.Two_Dimensional_AnalisysWindowUI import Ui_TwoDimensionalWindow
+from Graphic_Interface.Dialogs.EditCategoriesDialog import EditCategoriesDialog
+import Graphic_Interface.Dialogs.EditCategoriesDialogUI as editCateg
+from Graphic_Interface.Widgets.EditCategoriesWidget import EditCategoriesWidget
+from Graphic_Interface.Windows.Two_Dimensional_AnalisysWindowUI import Ui_TwoDimensionalWindow
 from PyQt4 import QtGui, QtCore
 
 
