@@ -314,6 +314,7 @@ class QSignalVisualizerWidget(QWidget):
     def paste(self):
         start, end = self.getIndexFromAndTo()
         #modify the undo redo action for paste
+
         self.editionSignalProcessor.paste(start)
         self.signal = self.editionSignalProcessor.signal
         self.graph()
