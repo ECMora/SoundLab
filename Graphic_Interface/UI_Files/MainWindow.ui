@@ -414,21 +414,6 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
     <string>Power Spectrum</string>
    </property>
   </action>
-  <action name="actionOscillogram_Settings">
-   <property name="text">
-    <string>Oscillogram Settings</string>
-   </property>
-  </action>
-  <action name="actionSpectogram_Settings">
-   <property name="text">
-    <string>Spectrogram Settings</string>
-   </property>
-  </action>
-  <action name="actionPower_Spectrum_Settings">
-   <property name="text">
-    <string>Power Spectrum Settings</string>
-   </property>
-  </action>
   <action name="actionPlay_Sound">
    <property name="icon">
     <iconset resource="resources/icons.qrc">
