@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\DuettoSystem\graphic_interface\UI_Files\MainWindow.ui'
 #
-# Created: Sun Nov 23 11:55:13 2014
+# Created: Sun Nov 30 15:23:36 2014
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -150,12 +150,6 @@ class Ui_DuettoMainWindow(object):
         icon9.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/powerspec.ico")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionPower_Spectrum.setIcon(icon9)
         self.actionPower_Spectrum.setObjectName(_fromUtf8("actionPower_Spectrum"))
-        self.actionOscillogram_Settings = QtGui.QAction(DuettoMainWindow)
-        self.actionOscillogram_Settings.setObjectName(_fromUtf8("actionOscillogram_Settings"))
-        self.actionSpectogram_Settings = QtGui.QAction(DuettoMainWindow)
-        self.actionSpectogram_Settings.setObjectName(_fromUtf8("actionSpectogram_Settings"))
-        self.actionPower_Spectrum_Settings = QtGui.QAction(DuettoMainWindow)
-        self.actionPower_Spectrum_Settings.setObjectName(_fromUtf8("actionPower_Spectrum_Settings"))
         self.actionPlay_Sound = QtGui.QAction(DuettoMainWindow)
         icon10 = QtGui.QIcon()
         icon10.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/02049_26x26.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -456,9 +450,6 @@ class Ui_DuettoMainWindow(object):
         self.actionNew.setText(QtGui.QApplication.translate("DuettoMainWindow", "New", None, QtGui.QApplication.UnicodeUTF8))
         self.actionNew.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Ctrl+N", None, QtGui.QApplication.UnicodeUTF8))
         self.actionPower_Spectrum.setText(QtGui.QApplication.translate("DuettoMainWindow", "Power Spectrum", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionOscillogram_Settings.setText(QtGui.QApplication.translate("DuettoMainWindow", "Oscillogram Settings", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionSpectogram_Settings.setText(QtGui.QApplication.translate("DuettoMainWindow", "Spectrogram Settings", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionPower_Spectrum_Settings.setText(QtGui.QApplication.translate("DuettoMainWindow", "Power Spectrum Settings", None, QtGui.QApplication.UnicodeUTF8))
         self.actionPlay_Sound.setText(QtGui.QApplication.translate("DuettoMainWindow", "Play Sound", None, QtGui.QApplication.UnicodeUTF8))
         self.actionPlay_Sound.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Ctrl+P", None, QtGui.QApplication.UnicodeUTF8))
         self.actionStop_Sound.setText(QtGui.QApplication.translate("DuettoMainWindow", "Stop Sound", None, QtGui.QApplication.UnicodeUTF8))
