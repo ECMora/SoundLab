@@ -102,7 +102,7 @@ class UndoRedoAction(QObject):
 
 
 class ReverseAction(UndoRedoAction):
-    def __init__(self,signal,start,end):
+    def __init__(self, signal, start, end):
         UndoRedoAction.__init__(self)
         self.signal = signal
         self.start = start
@@ -271,6 +271,7 @@ class GeneratePinkNoiseAction(UndoRedoAction):
         self.signal.generateWhiteNoise(self.ms,self.start)
         FilterSignalProcessor(self.signal).filter(self.start,self.start + self.ms*self.signal.samplingRate/1000,self.filterType,self.Fc,self.Fl,self.Fu)
 
+#region CUT,COPY,PASTE
 
 class CutAction(UndoRedoAction):
 
@@ -323,6 +324,7 @@ class PasteAction(UndoRedoAction):
     def redo(self):
         self.editionProcesor.paste(self.start)
 
+#endregion
 
 class Absolute_ValuesAction(UndoRedoAction):
     def __init__(self,signal,start,end,sign):

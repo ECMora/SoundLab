@@ -553,7 +553,24 @@ class QSignalVisualizerWidget(QWidget):
         self.graph()
 
     def insertSilence(self, ms=0):
-        pass
+        """
+        Insert a silence signal of ms duration in milliseconds.
+        If the zoom tool is selected and there is a selection made
+        the silence signal would be inserted ni the start of the selection
+        otherwise would be inserted at the start of the current
+        visualization interval
+        :param ms: time in milliseconds of the silence signal to insert
+        :return:
+        """
+        start, end = self.getIndexFromAndTo()
+
+        #add the undo redo action
+        self.undoRedoManager.add(
+                InsertSilenceAction(self.signal, start, end, ms))
+
+        #generate the silence signal and insert into the signal
+        silence_signal = Synthesizer.generateSilence()
+        self.signal.insert(silence_signal, start)
 
     def modulate(self,function="normalize", fade="IN"):
         """
