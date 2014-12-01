@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/DuettoSystem.iml" filepath="$PROJECT_DIR$/.idea/DuettoSystem.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../../../duetto_API/API/.idea/duetto_API.iml" filepath="$PROJECT_DIR$/../../../duetto_API/API/.idea/duetto_API.iml" />
     </modules>
   </component>
 </project>
