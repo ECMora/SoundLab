@@ -181,27 +181,31 @@ class QSignalVisualizerWidget(QWidget):
 
     def stop(self):
 
-        # self.removePlayerLine()
-        self.signalPlayer.stop()
-
         if self.signalPlayer.playStatus == self.signalPlayer.RECORDING:
+
             self._recordTimer.stop()
+            print('on stop:' + str(self._recordTimer.isActive()))
             self.axesOscilogram.mouseZoomEnabled = True
             self.axesSpecgram.mouseZoomEnabled = True
             self.axesOscilogram.setVisible(True)
             self.axesSpecgram.setVisible(True)
             self.graph()
             self.zoomNone()
+        self.signalPlayer.stop()
+
+
 
     def on_newDataRecorded(self):
 
+        # print('On new data:' + str(self._recordTimer.isActive()))
         self.signalPlayer.readFromStream()
 
-        self.mainCursor.max = len(self.signal.data)
+        self.mainCursor.max = len(self.signal.data) - 1
         self.mainCursor.min = max(0,
                                   len(self.signal.data) - 3 * self.signal.samplingRate)
         self.axesOscilogram.graph(self.mainCursor.min, self.mainCursor.max)
-        self.rangeChanged.emit(self.mainCursor.min, self.mainCursor.max, len(self.signal.data))
+
+        #self.regionChanged.emit(self.mainCursor.min, self.mainCursor.max, len(self.signal.data))
 
     def record(self):
 
@@ -212,7 +216,7 @@ class QSignalVisualizerWidget(QWidget):
         try:
             self.signalPlayer.record()
         except:
-            self.stop()
+             self.stop()
         updateTime = 15
         self._recordTimer.start(updateTime)
         #self.createPlayerLine(self.mainCursor.min)
