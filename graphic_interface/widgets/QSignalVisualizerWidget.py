@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from PyQt4.QtGui import *
 from PyQt4 import QtCore, QtGui
+from duetto.audio_signals.audio_signals_stream_readers.FileManager import FileManager
 import pyqtgraph as pg
 from PyQt4.QtCore import QTimer
 from duetto.audio_signals.AudioSignalPlayer import AudioSignalPlayer
@@ -448,16 +449,14 @@ class QSignalVisualizerWidget(QWidget):
         if not filename:
             raise Exception("Invalid filename")
 
-        signal = WavStreamManager().read(open(filename))
+        signal = FileManager().read(filename)
 
         self.signal = signal
 
         self.graph()
 
     def save(self, fname):
-        signal_saver = WavStreamManager()
-        signal_saver.signal = self.__signal
-        signal_saver.save(fname)
+        FileManager().write(self.__signal, fname)
 
     def saveSelectedSectionAsSignal(self, fname):
         """
