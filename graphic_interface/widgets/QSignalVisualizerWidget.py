@@ -95,6 +95,7 @@ class QSignalVisualizerWidget(QWidget):
         self._recordTimer = QTimer(self)
         self._recordTimer.timeout.connect(self.on_newDataRecorded)
 
+
     def setSelectedTool(self, tool):
         if tool == Tools.ZoomTool:
             self.axesOscilogram.changeTool(OscilogramZoomTool)
@@ -185,7 +186,6 @@ class QSignalVisualizerWidget(QWidget):
         if self.signalPlayer.playStatus == self.signalPlayer.RECORDING:
 
             self._recordTimer.stop()
-            print('on stop:' + str(self._recordTimer.isActive()))
             self.axesOscilogram.mouseZoomEnabled = True
             self.axesSpecgram.mouseZoomEnabled = True
             self.axesOscilogram.setVisible(True)
@@ -193,8 +193,6 @@ class QSignalVisualizerWidget(QWidget):
             self.graph()
             self.zoomNone()
         self.signalPlayer.stop()
-
-
 
     def on_newDataRecorded(self):
 
@@ -218,6 +216,9 @@ class QSignalVisualizerWidget(QWidget):
             self.signalPlayer.record()
         except:
              self.stop()
+        self.__signal = self.signalPlayer.signal
+        self.axesOscilogram.signal = self.signalPlayer.signal
+        self.axesSpecgram.signal = self.signalPlayer.signal
         updateTime = 15
         self._recordTimer.start(updateTime)
         #self.createPlayerLine(self.mainCursor.min)
