@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/DuettoSystem.iml" filepath="$PROJECT_DIR$/.idea/DuettoSystem.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../../../duetto_API/API/.idea/duetto_API.iml" filepath="$PROJECT_DIR$/../../../duetto_API/API/.idea/duetto_API.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/DuettoSystemYasel.iml" filepath="$PROJECT_DIR$/.idea/DuettoSystemYasel.iml" />
     </modules>
   </component>
 </project>

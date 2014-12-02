@@ -475,5 +475,5 @@ class Ui_MainWindow(object):
         self.actionMethod.setText(QtGui.QApplication.translate("MainWindow", "Method", None, QtGui.QApplication.UnicodeUTF8))
 
 from pyqtgraph import TableWidget
-from graphic_interface.widgets.QSignalDetectorWidget import QSignalDetectorWidget
+from Graphic_Interface.Widgets.QSignalDetectorWidget import QSignalDetectorWidget
 import icons_rc
