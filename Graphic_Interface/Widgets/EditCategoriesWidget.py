@@ -6,7 +6,7 @@ from graphic_interface.windows.EditCategoryWidgetUI import Ui_EditCategoryWidget
 
 class EditCategoriesWidget(Ui_EditCategoryWidget,QWidget):
 
-    def __init__(self,parent=None,categoryName="",classificationData=None, selectionOnly=False):
+    def __init__(self, parent=None,categoryName="",classificationData=None, selectionOnly=False):
         super(QWidget, self).__init__(parent)
         self.setupUi(self)
         if not isinstance(categoryName,str) and not isinstance(categoryName,QtCore.QString):

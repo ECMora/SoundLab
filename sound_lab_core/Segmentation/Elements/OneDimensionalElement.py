@@ -32,12 +32,15 @@ class OneDimensionalElement(Element):
     # raise the index of the element (number)
     elementClicked = QtCore.Signal(int)
 
+    #CONSTANTS
+    # decimal places to round the measurements
+    DECIMAL_PLACES = 4
+
     def __init__(self, signal, indexFrom, indexTo):
         Element.__init__(self, signal)
         self.indexFrom =  indexFrom #index of start of the element
         self.indexTo = indexTo
-        # decimal places to round the measurements
-        self.parameterDecimalPlaces = 4
+
 
 
 class OscilogramElement(OneDimensionalElement):
@@ -178,25 +181,25 @@ class OscilogramElement(OneDimensionalElement):
     #region Oscilogram parameter measurement
     def startTime(self):
         #the start time in s
-        return round(self.indexFrom*1.0/self.signal.samplingRate,self.parameterDecimalPlaces)
+        return round(self.indexFrom*1.0/self.signal.samplingRate,self.DECIMAL_PLACES)
 
     def endTime(self):
-        return round(self.indexTo*1.0/self.signal.samplingRate,self.parameterDecimalPlaces)
+        return round(self.indexTo*1.0/self.signal.samplingRate,self.DECIMAL_PLACES)
 
     def duration(self):
         """
         returns the len in s of an element (float)
         """
-        return round((self.indexTo-self.indexFrom)*1.0/self.signal.samplingRate,self.parameterDecimalPlaces)
+        return round((self.indexTo-self.indexFrom)*1.0/self.signal.samplingRate,self.DECIMAL_PLACES)
 
     def distanceFromStartToMax(self):
         if(self.parameters["StartToMax"] is None):
-            self.parameters["StartToMax"] = round(np.argmax(self.signal.data[self.indexFrom:self.indexTo])*1.0/self.signal.samplingRate,self.parameterDecimalPlaces)
+            self.parameters["StartToMax"] = round(np.argmax(self.signal.data[self.indexFrom:self.indexTo])*1.0/self.signal.samplingRate,self.DECIMAL_PLACES)
         return self.parameters["StartToMax"]
 
     def peekToPeek(self):
         if(self.parameters["peekToPeek"] is None):
-            self.parameters["peekToPeek"] = round(np.ptp(self.signal.data[self.indexFrom:self.indexTo])*1.0/(2**self.signal.bitDepth),self.parameterDecimalPlaces)
+            self.parameters["peekToPeek"] = round(np.ptp(self.signal.data[self.indexFrom:self.indexTo])*1.0/(2**self.signal.bitDepth),self.DECIMAL_PLACES)
         return self.parameters["peekToPeek"]
 
     def rms(self):
@@ -214,7 +217,7 @@ class OscilogramElement(OneDimensionalElement):
                     intervalSum = 0.0
 
             globalSum += intervalSum * 1.0 / max(self.indexTo-self.indexFrom,1)
-            self.parameters["rms"] = round(np.sqrt(globalSum)*1.0/(2**self.signal.bitDepth),self.parameterDecimalPlaces)
+            self.parameters["rms"] = round(np.sqrt(globalSum)*1.0/(2**self.signal.bitDepth),self.DECIMAL_PLACES)
         return self.parameters["rms"]
 
     def spectralElements(self):
@@ -320,7 +323,7 @@ class OscilogramElement(OneDimensionalElement):
         minIndex = np.argmin(self.matrix[:, index])
         value = int(round(self.specgramSettings.freqs[freq_index],0))
         value -= value % 10
-        return value,freq_index,round(-20*log10(1 if self.specgramSettings.freqs[freq_index]< 0.1 else self.specgramSettings.freqs[freq_index]),self.parameterDecimalPlaces)
+        return value,freq_index,round(-20*log10(1 if self.specgramSettings.freqs[freq_index]< 0.1 else self.specgramSettings.freqs[freq_index]),self.DECIMAL_PLACES)
 
     def peakFreq(self,dictionary):
         if "location" in dictionary:

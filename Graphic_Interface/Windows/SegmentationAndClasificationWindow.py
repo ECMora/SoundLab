@@ -39,6 +39,12 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
     Provides options for save the meditions to excell.
     """
 
+    #CONSTANTS
+    # diferent colors for the even and odds rows in the parameter table and segment colors.
+    TABLE_ROW_COLOR_ODD = QtGui.QColor(0, 0, 255, 150)
+    TABLE_ROW_COLOR_EVEN = QtGui.QColor(0, 255, 0, 150)
+
+
     def __init__(self, parent=None, signal=None, classifcationSettings=None):
         super(QtGui.QMainWindow, self).__init__(parent)
         self.setupUi(self)
@@ -55,7 +61,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
             return
 
         assert isinstance(signal, AudioSignal)
-        self.widget.signalProcessor.signal = signal
+        self.widget.signal = signal
 
         #TODO Parche que limita la obtencion de los parametros del spectrogram
         if parent is not None:
@@ -70,33 +76,26 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                     self.widget.specgramSettings.overlap = 50
 
         self.widget.mainCursor.min = 0
-        self.widget.mainCursor.max = len(self.widget.signalProcessor.signal.data)
+        self.widget.mainCursor.max = len(self.widget.signal.data)
 
         self.widget.computeSpecgramSettings(self.widget.specgramSettings.overlap)
 
-        self.widget.visibleOscilogram = True
-        self.widget.visibleSpectrogram = True
-
-        self.widget.graph()
+        self.changeWidgetsVisibility(True, True)
 
         self.rejectSignal = False
-        self.widget.mainCursor.min, self.widget.mainCursor.max = 0, len(self.widget.signalProcessor.signal.data)
+        self.widget.mainCursor.min, self.widget.mainCursor.max = 0, len(self.widget.signal.data)
         self.dockWidgetParameterTableOscilogram.setVisible(False)
         self.tableParameterOscilogram.setSelectionBehavior(QAbstractItemView.SelectRows)
 
         self.show()
 
-        #diferent colors for the even and odds rows in the parameter table and segment colors.
-        self.parameterTable_rowcolor_odd, self.parameterTable_rowcolor_even = QtGui.QColor(0, 0, 255,
-                                                                                           150), QtGui.QColor(0, 255, 0,
-                                                                                                              150)
         self.algorithmDetectorSettings = DetectionSettings(DetectionType.Envelope_Abs_Decay_Averaged,
                                                            AutomaticThresholdType.Global_MaxMean)
 
         self.spectralMeasurementLocation = SpectralMeasurementLocation()
         self.widget.axesOscilogram.threshold.sigPositionChangeFinished.connect(self.updateThreshold)
-        self.widget.axesOscilogram.threshold.setBounds((-2 ** (self.widget.signalProcessor.signal.bitDepth - 1),
-                                                        2 ** (self.widget.signalProcessor.signal.bitDepth - 1)))
+        self.widget.axesOscilogram.threshold.setBounds((-2 ** (self.widget.signal.bitDepth - 1),
+                                                        2 ** (self.widget.signal.bitDepth - 1)))
         self.detectionSettings = {"Threshold": -40, "Threshold2": 0, "MergeFactor": 5, "MinSize": 1, "Decay": 1,
                                   "SoftFactor": 6, "ThresholdSpectral": 95, "minSizeTimeSpectral": 0,
                                   "minSizeFreqSpectral": 0}
@@ -224,24 +223,62 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         separator3.setSeparator(True)
         separator4.setSeparator(True)
 
+        #region Add Context Menu Actions
         self.widget.createContextCursor(
-            [self.actionZoomIn, self.actionZoom_out, self.actionZoom_out_entire_file, separator1, self.actionCombined,
-             self.actionOscilogram, self.actionSpectogram,
-             separator, self.actionClear_Meditions, self.actionMeditions, self.actionView_Parameters, separator2,
-             self.actionZoom_Cursor, self.actionPointer_Cursor, self.actionRectangular_Cursor,
+            [
+             #Zoom Actions
+             self.actionZoomIn,
+             self.actionZoom_out,
+             self.actionZoom_out_entire_file,
+             separator1,
+
+             #widgets visibility actions
+             self.actionCombined,
+             self.actionOscilogram,
+             self.actionSpectogram,
+             separator,
+
+             #meditions manipulation actions
+             self.actionClear_Meditions,
+             self.actionMeditions,
+             self.actionView_Parameters,
+             separator2,
+
+             #change tools actions
+             self.actionZoom_Cursor,
+             self.actionPointer_Cursor,
+             self.actionRectangular_Cursor,
              self.actionRectangular_Eraser,
-             separator3, self.actionDeselect_Elements, self.actionDelete_Selected_Elements, separator4,
-             self.actionOsgram_Image, self.actionSpecgram_Image, self.actionCombined_Image])
+             separator3,
+
+             #elements select/deselect
+             self.actionDeselect_Elements,
+             self.actionDelete_Selected_Elements,
+             separator4,
+
+             #widgets images
+             self.actionOsgram_Image,
+             self.actionSpecgram_Image,
+             self.actionCombined_Image])
+
+        #endregion
+
+        #create the progress bar that is showed while the detection is made
         self.windowProgressDetection = QtGui.QProgressBar(self.widget)
+
+        #set the name of the signal to the visible label
         self.actionSignalName.setText(self.widget.signalName())
 
-        #array of windows with two dimensional graphs. Are stored for a similar behavior to the one dimensional
-        #in the main window. Updates the graphs
-        self.twodimensionalGraphs = []
+        #array of windows with two dimensional graphs.
+        # Are stored for a similar behavior to the one dimensional
+        #in the main window. Updates the windows graphs on change etc
+        self.two_dim_windows = []
 
         # stores the measured parameters of the sdetected elements
         self.measuredParameters = np.array([[], []])
 
+        #set the conections for the classification data to
+        #update when is added, changed or deleted a value or category
         self.classificationData = classifcationSettings if classifcationSettings is not None else ClassificationData()
         self.classificationData.valueAdded.connect(self.classificationCategoryValueAdded)
         self.classificationData.valueRemoved.connect(self.classificationCategoryValueRemove)
@@ -254,10 +291,8 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         # [["Specie","Sinsonte"],["Location","Camaguey"]]]
         self.elementsClasificationTableData = []
 
-
         #the names of the columns in the table of parameters measured
         self.columnNames = []
-        self.widget.histogram.setImageItem(self.widget.axesSpecgram.imageItem)
 
     #region Two Dimensional Graphs
 
@@ -287,10 +322,10 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         if self.theme:
             wnd.load_Theme(self.theme)
 
-        if len(self.twodimensionalGraphs) > 0:
-            wnd.selectElement(self.twodimensionalGraphs[0].previousSelectedElement)
+        if len(self.two_dim_windows) > 0:
+            wnd.selectElement(self.two_dim_windows[0].previousSelectedElement)
 
-        self.twodimensionalGraphs.append(wnd)
+        self.two_dim_windows.append(wnd)
         wnd.elementsClasification.connect(self.elementsClasification)
 
     #endregion
@@ -444,16 +479,16 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
     def updateThresholdLine(self):
         self.widget.axesOscilogram.threshold.setValue(round(
             (10.0 ** ((60 + self.detectionSettings["Threshold"]) / 20.0)) * (
-                2 ** self.widget.signalProcessor.signal.bitDepth) / 1000.0, 0)
+                2 ** self.widget.signal.bitDepth) / 1000.0, 0)
                                                       * self.widget.envelopeFactor - 2 ** (
-            self.widget.signalProcessor.signal.bitDepth - 1))
+            self.widget.signal.bitDepth - 1))
 
     def toDB(self, value=None):
         if value is None:
             return -60
         return -60 + int(20 * log10(abs(
-            (value + 2 ** (self.widget.signalProcessor.signal.bitDepth - 1)) / self.widget.envelopeFactor) * 1000.0 / (
-                                        2 ** self.widget.signalProcessor.signal.bitDepth)))
+            (value + 2 ** (self.widget.signal.bitDepth - 1)) / self.widget.envelopeFactor) * 1000.0 / (
+                                        2 ** self.widget.signal.bitDepth)))
 
     @pyqtSlot(bool)
     def setVisibleThreshold(self, bool):
@@ -637,7 +672,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         if name != "":
             fname = name
         else:
-            if not self.widget.signalProcessor.signal.opened():
+            if not self.widget.signal.opened():
                 return
             fname = unicode(QFileDialog.getSaveFileName(self, self.tr(u"Save meditions as excel file"),
                                                         self.widget.signalName() + ".xls", "*.xls"))
@@ -780,7 +815,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                             #save the meditions into the table field
                             item = QtGui.QTableWidgetItem(str(prop[1](element, dictionary)))
                             item.setBackgroundColor(
-                                self.parameterTable_rowcolor_odd if i % 2 == 0 else self.parameterTable_rowcolor_even)
+                                self.TABLE_ROW_COLOR_ODD if i % 2 == 0 else self.TABLE_ROW_COLOR_EVEN)
                             table.setItem(i, j, item)
 
                         for c in range(len(validcategories)):
@@ -788,7 +823,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                                 val = self.elementsClasificationTableData[i][c][1]
                                 item = QtGui.QTableWidgetItem(unicode(val))
                                 item.setBackgroundColor(
-                                    self.parameterTable_rowcolor_odd if i % 2 == 0 else self.parameterTable_rowcolor_even)
+                                    self.TABLE_ROW_COLOR_ODD if i % 2 == 0 else self.TABLE_ROW_COLOR_EVEN)
                             except Exception as e:
                                 item = QtGui.QTableWidgetItem(0)  #"Error"+e.message)
                             table.setItem(i, c + len(paramsTomeasure), item)
@@ -965,7 +1000,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         """
         self.tableParameterOscilogram.selectRow(row)
         self.widget.selectElement(row)  #select the correct element in oscilogram
-        for wnd in self.twodimensionalGraphs:
+        for wnd in self.two_dim_windows:
             wnd.selectElement(row)
 
     @pyqtSlot()
@@ -1039,7 +1074,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                                 self.measuredParameters[i, j] = prop[1](self.widget.Elements[i], dictionary)
                                 item = QtGui.QTableWidgetItem(unicode(self.measuredParameters[i, j]))
                                 item.setBackgroundColor(
-                                    self.parameterTable_rowcolor_odd if i % 2 == 0 else self.parameterTable_rowcolor_even)
+                                    self.TABLE_ROW_COLOR_ODD if i % 2 == 0 else self.TABLE_ROW_COLOR_EVEN)
                             except Exception as e:
                                 item = QtGui.QTableWidgetItem(0)  #"Error"+e.message)
 
@@ -1049,14 +1084,14 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                                 val = self.elementsClasificationTableData[i][c][1]
                                 item = QtGui.QTableWidgetItem(unicode(val))
                                 item.setBackgroundColor(
-                                    self.parameterTable_rowcolor_odd if i % 2 == 0 else self.parameterTable_rowcolor_even)
+                                    self.TABLE_ROW_COLOR_ODD if i % 2 == 0 else self.TABLE_ROW_COLOR_EVEN)
                             except Exception as e:
                                 item = QtGui.QTableWidgetItem(0)  #"Error"+e.message)
                             self.tableParameterOscilogram.setItem(i, c + len(paramsTomeasure), item)
 
                     self.updateDetectionProgressBar(100)
 
-                    for wnd in self.twodimensionalGraphs:
+                    for wnd in self.two_dim_windows:
                         wnd.loadData(self.columnNames, self.measuredParameters)
 
                 except Exception as e:
@@ -1129,7 +1164,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                     self.elementsClasificationTableData[i][j][1] = self.tr(u"No Identified")
                     item = QtGui.QTableWidgetItem(unicode(self.elementsClasificationTableData[i][j][1]))
                     item.setBackgroundColor(
-                        self.parameterTable_rowcolor_odd if i % 2 == 0 else self.parameterTable_rowcolor_even)
+                        self.TABLE_ROW_COLOR_ODD if i % 2 == 0 else self.TABLE_ROW_COLOR_EVEN)
                     self.tableParameterOscilogram.setItem(i, len(self.measuredParameters[i]) + j, item)
 
         self.tableParameterOscilogram.update()
@@ -1145,7 +1180,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
             for row in range(self.tableParameterOscilogram.rowCount()):
                 item = QtGui.QTableWidgetItem(unicode(self.tr(u"No Identified")))
                 item.setBackgroundColor(
-                    self.parameterTable_rowcolor_odd if row % 2 == 0 else self.parameterTable_rowcolor_even)
+                    self.TABLE_ROW_COLOR_ODD if row % 2 == 0 else self.TABLE_ROW_COLOR_EVEN)
                 self.tableParameterOscilogram.setItem(row, column, item)
                 self.tableParameterOscilogram.setHorizontalHeaderItem(column, QtGui.QTableWidgetItem(category))
             #insert data in clasification Data
@@ -1158,7 +1193,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                     self.elementsClasificationTableData[i][column][1] = dictionary[l[0]]
                     item = QtGui.QTableWidgetItem(unicode(self.elementsClasificationTableData[i][column][1]))
                     item.setBackgroundColor(
-                        self.parameterTable_rowcolor_odd if i % 2 == 0 else self.parameterTable_rowcolor_even)
+                        self.TABLE_ROW_COLOR_ODD if i % 2 == 0 else self.TABLE_ROW_COLOR_EVEN)
                     self.tableParameterOscilogram.setItem(i, len(self.measuredParameters[i]) + column, item)
 
         self.tableParameterOscilogram.update()
@@ -1166,7 +1201,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
     #endregion
 
     #region Zoom
-
+    #delegate in the widget the zoom interaction with the signal
     @QtCore.pyqtSlot()
     def on_actionZoomIn_triggered(self):
         self.widget.zoomIn()
@@ -1188,8 +1223,8 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
 
 
     def closeEvent(self, event):
-        if self.widget.signalProcessor.signal.playStatus == AudioSignal.PLAYING or \
-                        self.widget.signalProcessor.signal.playStatus == AudioSignal.RECORDING:
+        if self.widget.signal.playStatus == AudioSignal.PLAYING or \
+                        self.widget.signal.playStatus == AudioSignal.RECORDING:
             self.widget.stop()
         mbox = QtGui.QMessageBox(QtGui.QMessageBox.Question, self.tr(u"Save meditions"),
                                  self.tr(u"Do you want to save the meditions?"),
@@ -1207,7 +1242,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                                                             self.widget.signalName() + ".xls", "*.xls"))
                 if fname:
                     wb.save(fname)
-            for w in self.twodimensionalGraphs:
+            for w in self.two_dim_windows:
                 w.close()
 
     #endregion
@@ -1217,32 +1252,52 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
     def on_actionClear_Meditions_triggered(self):
         self.widget.clearDetection()
         self.widget.selectElement()
-        self.widget.visualChanges = True
-        self.widget.refresh()
+        self.widget.graph()
+    #endregion
 
+    #region Widgets Visibility
     @QtCore.pyqtSlot()
     def on_actionCombined_triggered(self):
-        self.widget.visibleOscilogram = True
-        self.widget.visibleSpectrogram = True
-        self.widget.refresh(dataChanged=False)
+        """
+        Shows both axes visualization oscilogram and spectrogram.
+        :return:
+        """
+        self.changeWidgetsVisibility(True, True)
 
 
     @QtCore.pyqtSlot()
     def on_actionSpectogram_triggered(self):
-        self.widget.visibleOscilogram = False
-        self.widget.visibleSpectrogram = True
-        self.widget.refresh(dataChanged=False)
+        """
+        Shows the spectrogram visualization graph only.
+        :return:
+        """
+        self.changeWidgetsVisibility(False, True)
 
 
     @QtCore.pyqtSlot()
     def on_actionOscilogram_triggered(self):
-        self.widget.visibleOscilogram = True
-        self.widget.visibleSpectrogram = False
-        self.widget.refresh(dataChanged=False)
+        """
+        Shows the oscilogram visualization graph only.
+        :return:
+        """
+        self.changeWidgetsVisibility(True, False)
+
+    def changeWidgetsVisibility(self, visibleOscilogram=True, visibleSpectrogram=True):
+        """
+        Method that change the visibility of the widgets
+        oscilogram and spectrogram on the main widget
+        :param visibleOscilogram:  Visibility of the oscilogram
+        :param visibleSpectrogram: Visibility of the spectrogram
+        :return:
+        """
+        self.widget.visibleOscilogram = visibleOscilogram
+        self.widget.visibleSpectrogram = visibleSpectrogram
+        self.widget.graph()
 
     #endregion
 
     #region Sound
+    #delegate the reproduction options in the widget
     @QtCore.pyqtSlot()
     def on_actionPlay_Sound_triggered(self):
         self.widget.play()
@@ -1270,7 +1325,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                 #update table bacground color
                 for j in range(self.tableParameterOscilogram.columnCount()):
                     self.tableParameterOscilogram.item(i, j).setBackgroundColor(
-                        self.parameterTable_rowcolor_odd if i % 2 == 0 else self.parameterTable_rowcolor_even)
+                        self.TABLE_ROW_COLOR_ODD if i % 2 == 0 else self.TABLE_ROW_COLOR_EVEN)
 
             #updates the numpy array  with the detected parameters
             self.measuredParameters = np.concatenate(
@@ -1278,7 +1333,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
             self.elementsClasificationTableData = self.elementsClasificationTableData[
                                                   :indx[0]] + self.elementsClasificationTableData[indx[1] + 1:]
             self.tableParameterOscilogram.update()
-            for wnd in self.twodimensionalGraphs:
+            for wnd in self.two_dim_windows:
                 wnd.loadData(self.columnNames, self.measuredParameters)
 
         self.on_actionDeselect_Elements_triggered()
@@ -1288,6 +1343,6 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.widget.selectElement()  # select the element
         self.widget.clearZoomCursor()
 
-        for wnd in self.twodimensionalGraphs:
+        for wnd in self.two_dim_windows:
             wnd.deselectElement()
 

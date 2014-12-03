@@ -8,10 +8,23 @@ from graphic_interface.widgets.signal_visualizer_tools.SignalVisualizerTool impo
 
 
 class RectangularCursorTool(SignalVisualizerTool):
+    """
+    Tool that allow to define a rectangle area on the widget and to extract
+    parameters from the signal visualized on that area.
+    """
+
     def __init__(self, widget):
         SignalVisualizerTool.__init__(self, widget)
-        self.last = {'pos': [0,0]}
+
+        #dict of data ussefull for the tool
+        #TODO must be examinated for possible improvement
+        self.last = {'pos': [0, 0]}
+
+        #visual rectangle for the tool
         self.rectangularCursor = RectROI([0, 0], [0, 0], pen=(0, 9), movable=False)
+
+        #the region of the rectangle in points start, end in x and y
+        #is used because RectROI do not provide the get size method
         self.rectRegion = {'x': [0, 0], 'y': [0, 0]}
 
     def mouseMoveEvent(self, event):
@@ -43,32 +56,32 @@ class RectangularCursorTool(SignalVisualizerTool):
             self.rectangularCursor.setSize([dx, dy])
             self.rectRegion['x'][1] = self.rectRegion['x'][0] + dx
             self.rectRegion['y'][1] = self.rectRegion['y'][0] + dy
-            info = self.getAmplitudeTimeInfo(self.rectRegion['x'][0], self.rectRegion['y'][0])
-            info = round(info[0], self.DECIMAL_PLACES), round(info[1], self.DECIMAL_PLACES)
+            amplitude_time_info = self.getAmplitudeTimeInfo(self.rectRegion['x'][0], self.rectRegion['y'][0])
+            amplitude_time_info = round(amplitude_time_info[0], self.DECIMAL_PLACES), round(amplitude_time_info[1], self.DECIMAL_PLACES)
 
             info1 = self.getAmplitudeTimeInfo(self.rectRegion['x'][1], self.rectRegion['y'][1])
             info1 = round(info1[0], self.DECIMAL_PLACES), round(info1[1], self.DECIMAL_PLACES)
 
-            self.rectRegion['y'][0] = info[1]
+            self.rectRegion['y'][0] = amplitude_time_info[1]
             self.rectRegion['y'][1] = info1[1]
 
             # clean the detected data for update
-            self.detectedData = [("t0", round(info[0], self.DECIMAL_PLACES)),
+            self.detectedData = [("t0", round(amplitude_time_info[0], self.DECIMAL_PLACES)),
                                  ("t1", round(info1[0], self.DECIMAL_PLACES)),
-                                 ("dt", round(info1[0] - info[0], self.DECIMAL_PLACES)),
-                                 ("MaxAmp",round(info[1], self.DECIMAL_PLACES)),
+                                 ("dt", round(info1[0] - amplitude_time_info[0], self.DECIMAL_PLACES)),
+                                 ("MaxAmp",round(amplitude_time_info[1], self.DECIMAL_PLACES)),
                                  ("MinAmp", round(info1[1], self.DECIMAL_PLACES))
                                 ]
 
         else:
-            info = self.getAmplitudeTimeInfo(x, y)
+            amplitude_time_info = self.getAmplitudeTimeInfo(x, y)
 
             if x == -1 or y == -1:
                 self.widget.setCursor(QCursor(QtCore.Qt.ArrowCursor))
                 return
             else:
-                self.detectedData = [("Time", round(info[0],self.DECIMAL_PLACES)),
-                                     ("Amp", round(info[1],self.DECIMAL_PLACES))
+                self.detectedData = [("Time", round(amplitude_time_info[0],self.DECIMAL_PLACES)),
+                                     ("Amp", round(amplitude_time_info[1],self.DECIMAL_PLACES))
                                     ]
 
         self.detectedDataChanged.emit(self.detectedData)
@@ -91,6 +104,12 @@ class RectangularCursorTool(SignalVisualizerTool):
         self.mousePressed = False
 
     def mouseInsideRectArea(self, x, y):
+        """
+        :param x: Position x in pixels of the widget.
+        :param y: Position y in pixels of the widget.
+        :return: True if the x,y position is inside the rectangle tool
+        selected area, False otherwise.
+        """
         return x <= self.rectRegion['x'][1] and x >= self.rectRegion['x'][0] \
                and self.rectRegion['y'][1] >= y >= self.rectRegion['y'][0]
 
@@ -114,9 +133,15 @@ class RectangularCursorTool(SignalVisualizerTool):
     def dispose(self):
         self.setRectRegionVisible(False)
 
-    def setRectRegionVisible(self, value=False):
-        if value and self.rectangularCursor not in self.widget.items():
+    def setRectRegionVisible(self, visibility=False):
+        """
+        Change the visibility of the tool region rectangle.
+        :param visibility: visibility to set the region
+        :return:
+        """
+        if visibility and self.rectangularCursor not in self.widget.items():
             self.widget.addItem(self.rectangularCursor)
-        elif not value and self.rectangularCursor in self.widget.items():
+
+        elif not visibility and self.rectangularCursor in self.widget.items():
             self.widget.removeItem(self.rectangularCursor)
 
