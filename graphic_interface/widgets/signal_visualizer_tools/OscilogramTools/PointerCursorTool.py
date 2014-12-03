@@ -6,12 +6,19 @@ from graphic_interface.widgets.signal_visualizer_tools.SignalVisualizerTool impo
 
 
 class PointerCursorTool(SignalVisualizerTool):
+    """
+    Tool that allow to get information about a point x,y
+    in the widget graph visualization.
+    """
 
     #CONSTANTS
     def __init__(self, widget):
         SignalVisualizerTool.__init__(self, widget)
         self.pointerCursor = pg.ScatterPlotItem()
         self.widget.addItem(self.pointerCursor)
+
+        # dict of data ussefull for the tool
+        #TODO must be examinated for possible improvement
         self.last = {'pos': [0, 0], 'pen': {'color': 'w', 'width': 2}, 'brush': pg.intColor(255, 255), 'symbol': '+',
                      'size': 20}
 

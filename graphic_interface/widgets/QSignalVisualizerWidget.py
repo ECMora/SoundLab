@@ -11,6 +11,7 @@ from duetto.audio_signals.audio_signals_stream_readers.WavStreamManager import W
 from duetto.signal_processing.EditionSignalProcessor import EditionSignalProcessor
 from SoundLabOscilogramWidget import SoundLabOscilogramWidget
 from SoundLabSpectrogramWidget import SoundLabSpectrogramWidget
+from duetto.signal_processing.filter_signal_processors.FilterSignalProcessor import FilterSignalProcessor
 from graphic_interface.widgets.signal_visualizer_tools.SignalVisualizerTool import Tools
 from graphic_interface.widgets.signal_visualizer_tools.OscilogramTools.ZoomTool import ZoomTool as OscilogramZoomTool
 from graphic_interface.widgets.signal_visualizer_tools.SpectrogramTools.SpectrogramZoomTool import SpectrogramZoomTool
@@ -520,12 +521,6 @@ class QSignalVisualizerWidget(QWidget):
         self.undoRedoManager.add(ReverseAction(self.signal, start, end))
         self.signalProcessingAction(self.commonSignalProcessor.reverse)
 
-    def insertWhiteNoise(self, ms=1):
-        raise NotImplementedError()
-
-    def insertPinkNoise(self, ms, type, Fc, Fl, Fu):
-        raise NotImplementedError()
-
     def resampling(self, samplingRate):
         self.undoRedoManager.add(ResamplingAction(self.signal, samplingRate))
         self.__signal.resampling(samplingRate)
@@ -581,15 +576,46 @@ class QSignalVisualizerWidget(QWidget):
         :param ms: time in milliseconds of the silence signal to insert
         :return:
         """
+        self.__insertSignal(InsertSilenceAction, ms)
+
+    def insertWhiteNoise(self, ms=1):
+        """
+        Insert a white noise signal of ms duration in milliseconds.
+        If the zoom tool is selected and there is a selection made
+        the silence signal would be inserted ni the start of the selection
+        otherwise would be inserted at the start of the current
+        visualization interval
+        :param ms: time in milliseconds of the silence signal to insert
+        :return:
+        """
+        self.__insertSignal(InsertWhiteNoiseAction,ms)
+
+    def __insertSignal(self,undo_action, ms=0):
+        """
+        Helper method to encapsulate and factorice the code of insert signals
+        into the current one.
+        :param undo_action: the undo redo action acording to the desired
+        signal to insert.
+        :param ms:
+        :return:
+        """
         start, end = self.getIndexFromAndTo()
 
-        #add the undo redo action
-        self.undoRedoManager.add(
-                InsertSilenceAction(self.signal, start, end, ms))
+        # connect the action for update because the undo of the insert action
+        # is cut and cut change the size of the signal
+        action = undo_action(self.signal, start, ms)
+        action.signal_size_changed.connect(self._updateSignal)
 
-        #generate the silence signal and insert into the signal
-        silence_signal = Synthesizer.generateSilence()
-        self.signal.insert(silence_signal, start)
+        # add the undo redo action
+        self.undoRedoManager.add(action)
+
+        # do the insert action
+        action.redo()
+
+        self.graph()
+
+    def insertPinkNoise(self, ms, type, Fc, Fl, Fu):
+        raise NotImplementedError()
 
     def modulate(self,function="normalize", fade="IN"):
         """
@@ -599,8 +625,10 @@ class QSignalVisualizerWidget(QWidget):
         :return:
         """
         start, end = self.getIndexFromAndTo()
+
         self.undoRedoManager.add(
                 ModulateAction(self.signal, start, end, function, fade))
+
         self.signalProcessingAction(self.commonSignalProcessor.modulate, function, fade)
 
     def normalize(self,factor):
@@ -634,9 +662,28 @@ class QSignalVisualizerWidget(QWidget):
         self.undoRedoManager.add(SilenceAction(self.signal, start, end))
         self.signalProcessingAction(self.commonSignalProcessor.setSilence)
 
-    def filter(self, FCut=0, FLow=0, FUpper=0):
-        # self.signalProcessingAction(self.signal.filter, FCut, FLow, FUpper)
-        raise NotImplementedError()
+    def filter(self, filter_method):
+        """
+        Method that filter the selected section
+        of the signal with the filter_method supplied.
+        The section filtered is the visible range of the signal or the
+        selected by the zoom cursor if there is a selection made.
+        :param filter_method: The filter method used
+        :return:
+        """
+        if filter_method is None or not isinstance(filter_method, FilterSignalProcessor):
+            raise Exception("Invalid filter object.")
+
+        #get the interval limits
+        start, end = self.getIndexFromAndTo()
+
+        #set signal to the supplied filter method and the undo redo action
+        filter_method.signal = self.signal
+        self.undoRedoManager.add(FilterAction(self.signal, start, end, filter_method))
+
+        #execute the filter and refresh
+        filter_method.filter(start, end)
+        self.graph()
 
     def absoluteValue(self,sign):
         """

@@ -88,8 +88,14 @@ class ZoomTool(SignalVisualizerTool):
         return rgn[0] <= xIndex <= rgn[1]
 
     def setZoomRegionVisible(self, value=False):
+        """
+        Change the visibility of the tool region.
+        :param visibility: visibility to set the region
+        :return:
+        """
         if value and self.zoomRegion not in self.widget.items():
             self.widget.addItem(self.zoomRegion)
+
         elif not value and self.zoomRegion in self.widget.items():
             self.widget.removeItem(self.zoomRegion)
 

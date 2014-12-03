@@ -18,6 +18,7 @@ from graphic_interface.dialogs import InsertSilenceDialog as sdialog, FilterOpti
 from graphic_interface.windows.WorkTheme import SerializedData
 from sound_lab_core.Clasification.ClassificationData import ClassificationData
 from duetto.dimensional_transformations.two_dimensional_transforms.Spectrogram.WindowFunctions import WindowFunction
+from duetto.signal_processing.filter_signal_processors.frequency_domain_filters import *
 from duetto.audio_signals.Synthesizer import Synthesizer
 from graphic_interface.widgets.signal_visualizer_tools.SignalVisualizerTool import Tools
 
@@ -847,36 +848,52 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         #1 second time by default
         whiteNoiseDialog.insertSpinBox.setValue(1000)
 
-        # if whiteNoiseDialogWindow.exec_():
-        #     ms = whiteNoiseDialog.insertSpinBox.value()
-        #     start, end = self.widget.getIndexFromAndTo()
-        #     self.widget.undoRedoManager.add(
-        #         GenerateWhiteNoiseAction(self.widget.signalProcessor.signal, start, ms))
-        #     self.widget.insertWhiteNoise(ms)
+        if whiteNoiseDialogWindow.exec_():
+            ms = whiteNoiseDialog.insertSpinBox.value()
+            self.widget.insertWhiteNoise(ms)
 
     def filter_helper(self):
+        """
+        Open the filter dialog and returns the concrete
+        filter implementation according to the user selection.
+        :return:
+        """
         filterDialog = filterdg.Ui_Dialog()
         filterDialogWindow = InsertSilenceDialog(self)
         filterDialog.setupUi(filterDialogWindow)
-        if filterDialogWindow.exec_():
-            type_ = None
-            Fc, Fl, Fu = 0, 0, 0
-            if filterDialog.rButtonLowPass.isChecked():
-                type_ = FILTER_TYPE().LOW_PASS
-                Fc = filterDialog.spinBoxLowPass.value()
-            elif filterDialog.rButtonHighPass.isChecked():
-                type_ = FILTER_TYPE().HIGH_PASS
-                Fc = filterDialog.spinBoxHighPass.value()
 
+        #open the filter dialog
+        if filterDialogWindow.exec_():
+            # Low Pass Filter
+            if filterDialog.rButtonLowPass.isChecked():
+                #get the frequency of cut for the low pass filter
+                freq_cut = filterDialog.spinBoxLowPass.value()
+                return LowPassFilter(self.widget.signal,freq_cut)
+
+            # High Pass Filter
+            elif filterDialog.rButtonHighPass.isChecked():
+                #get the frequency of cut for the high pass filter
+                freq_cut = filterDialog.spinBoxHighPass.value()
+                return HighPassFilter(self.widget.signal, freq_cut)
+
+            # Band Pass Filter
             elif filterDialog.rButtonBandPass.isChecked():
-                type_ = FILTER_TYPE().BAND_PASS
-                Fl = filterDialog.spinBoxBandPassFl.value()
-                Fu = filterDialog.spinBoxBandPassFu.value()
+                # get the frequencies of cut (upper and lower)
+                # for the Band pass filter
+                freq_cut_lower = filterDialog.spinBoxBandPassFl.value()
+                freq_cut_upper = filterDialog.spinBoxBandPassFu.value()
+                return BandPassFilter(self.widget.signal, freq_cut_lower, freq_cut_upper)
+
+            # Band Stop Filter
             elif filterDialog.rButtonBandStop.isChecked():
-                type_ = FILTER_TYPE().BAND_STOP
-                Fl = filterDialog.spinBoxBandStopFl.value()
-                Fu = filterDialog.spinBoxBandStopFu.value()
-        return type_, Fc, Fl, Fu
+                # get the frequencies of cut (upper and lower)
+                # for the Band Stop filter
+                freq_cut_lower = filterDialog.spinBoxBandStopFl.value()
+                freq_cut_upper = filterDialog.spinBoxBandStopFu.value()
+                return BandStopFilter(self.widget.signal, freq_cut_lower, freq_cut_upper)
+
+                #None if there is no filter implementation selected
+        return None
 
     @pyqtSlot()
     def on_actionFilter_triggered(self):
@@ -884,10 +901,12 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         execute a filter on the signal
         :return:
         """
-        pass
-        # type_, Fc, Fl, Fu = self.filter_helper()
-        # if type_ is not None:
-        #     self.widget.filter(type_, Fc, Fl, Fu)
+        filter_method = self.filter_helper()
+
+        #if there is a filter selection made then execute the filter
+        if filter_method is not None:
+            self.widget.filter(filter_method)
+
 
     @pyqtSlot()
     def on_actionSilence_triggered(self):

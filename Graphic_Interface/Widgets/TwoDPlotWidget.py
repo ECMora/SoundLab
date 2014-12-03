@@ -8,17 +8,17 @@ class TwoDPlotWidget(pg.PlotWidget):
     """
     Widget to display a two dimensional graph
     based on elements with (x,y) coordinates.
-    The widget allow o select a rectangular region of elements
+    The widget allow to select a rectangular region of elements
     by their coordinates
     """
 
     def __init__(self,parent=None):
-        pg.PlotWidget.__init__(self,parent)
+        pg.PlotWidget.__init__(self, parent)
 
         #variables for rectangular selection manipulation
         self.mousePressed = False
-        self.lastPoint = QPoint(0,0)
-        self.oldX,self.oldY = 0, 0
+        self.lastPoint = QPoint(0, 0)
+        self.oldX, self.oldY = 0, 0
         self.ElementSelectionRect = QtGui.QGraphicsRectItem(QtCore.QRectF(0,0, 0, 0))
         self.ElementSelectionRect.setPen(QtGui.QPen(QtGui.QColor(255,255,255)))
 

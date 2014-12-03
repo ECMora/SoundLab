@@ -2,6 +2,7 @@
 from PyQt4 import QtCore
 from PyQt4.QtCore import pyqtSignal, QObject
 from PyQt4.QtGui import QApplication
+from duetto.audio_signals.Synthesizer import Synthesizer
 from duetto.signal_processing.EditionSignalProcessor import EditionSignalProcessor
 from Utils.Utils import FLOATING_POINT_EPSILON
 from duetto.signal_processing.CommonSignalProcessor import CommonSignalProcessor
@@ -145,7 +146,8 @@ class SilenceAction(UndoRedoAction):
         CommonSignalProcessor(self.signal).setSilence(self.start,self.end)
 
 
-class InsertSilenceAction(UndoRedoAction):
+
+class InsertSignalAction(UndoRedoAction):
     def __init__(self,signal,start,ms):
         UndoRedoAction.__init__(self)
         self.signal = signal
@@ -153,10 +155,39 @@ class InsertSilenceAction(UndoRedoAction):
         self.ms = ms
 
     def undo(self):
-        self.signal.data = np.concatenate((self.signal.data[:self.start],self.signal.data[self.start+int(self.ms*self.signal.samplingRate/1000.0):]))
+        EditionSignalProcessor(self.signal).cut(self.start, self.start + self.ms * self.signal.samplingRate/1000.0)
+        #TODO clear the clipboard after cut
 
     def redo(self):
-        CommonSignalProcessor(self.signal).insertSilence(self.start,ms=self.ms)
+        pass
+
+
+class InsertSilenceAction(InsertSignalAction):
+    def __init__(self, signal, start, ms):
+        InsertSignalAction.__init__(self, signal, start, ms)
+
+    def redo(self):
+        silence_signal = Synthesizer.generateSilence(self.signal.samplingRate, self.signal.bitDepth, self.ms)
+        self.signal.insert(silence_signal, self.start)
+
+
+class InsertWhiteNoiseAction(InsertSignalAction):
+    def __init__(self, signal, start, ms):
+        InsertSignalAction.__init__(self, signal, start, ms)
+
+    def redo(self):
+        Synthesizer.insertWhiteNoise(self.signal, self.ms, self.start)
+
+
+class InsertPinkNoiseAction(InsertSignalAction):
+    def __init__(self, signal, start, ms, ftype, Fc, Fl, Fu):
+        InsertSignalAction.__init__(self, signal, start, ms)
+        self.filterType, self.Fc, self.Fl, self.Fu = ftype, Fc, Fl, Fu
+
+    def redo(self):
+        self.signal.generateWhiteNoise(self.ms, self.start)
+        FilterSignalProcessor(self.signal).filter(self.start, self.start + self.ms * self.signal.samplingRate / 1000,
+                                                  self.filterType, self.Fc, self.Fl, self.Fu)
 
 
 class ModulateAction(UndoRedoAction):
@@ -211,20 +242,19 @@ class NormalizeAction(UndoRedoAction):
 
 
 class FilterAction(UndoRedoAction):
-    def __init__(self,signal,start,end,filterType,Fc,Fl,Fu):
+    def __init__(self, signal, start, end, filter_processor):
         UndoRedoAction.__init__(self)
         self.signal = signal
         self.start = start
         self.end = end
-        self.filterType,self.Fc,self.Fl,self.Fu = filterType,Fc,Fl,Fu
-        self.data = np.array(signal.data[start:end])
+        self.filter_processor = filter_processor
+        self.losed_signal_data = signal.data[start:end]
 
     def undo(self):
-        for i in range(self.start,self.end):
-            self.signal.data[i] = self.data[i-self.start]
+        self.signal.data[self.start:self.end] = self.losed_signal_data
 
     def redo(self):
-        FilterSignalProcessor(self.signal).filter(self.start,self.end,self.filterType,self.Fc,self.Fl,self.Fu)
+        self.filter_processor.filter(self.start, self.end)
 
 
 class ResamplingAction(UndoRedoAction):
@@ -239,37 +269,6 @@ class ResamplingAction(UndoRedoAction):
 
     def redo(self):
         self.signal.resampling(self.sr)
-
-
-class GenerateWhiteNoiseAction(UndoRedoAction):
-    def __init__(self,signal,start,ms):
-        UndoRedoAction.__init__(self)
-        self.signal = signal
-        self.start = start
-        self.ms = ms
-
-    def undo(self):
-        self.signal.data= np.concatenate((self.signal.data[:self.start],self.signal.data[self.start+int(self.ms*self.signal.samplingRate/1000.0):]))
-
-    def redo(self):
-        self.signal.generateWhiteNoise(self.ms,self.start)
-
-
-class GeneratePinkNoiseAction(UndoRedoAction):
-    def __init__(self,signal,start,ms, ftype, Fc, Fl, Fu):
-        UndoRedoAction.__init__(self)
-        self.signal = signal
-        self.start = start
-        self.ms = ms
-        self.filterType,self.Fc,self.Fl,self.Fu = ftype,Fc,Fl,Fu
-
-
-    def undo(self):
-        self.signal.data= np.concatenate((self.signal.data[:self.start],self.signal.data[self.start+int(self.ms*self.signal.samplingRate/1000.0):]))
-
-    def redo(self):
-        self.signal.generateWhiteNoise(self.ms,self.start)
-        FilterSignalProcessor(self.signal).filter(self.start,self.start + self.ms*self.signal.samplingRate/1000,self.filterType,self.Fc,self.Fl,self.Fu)
 
 #region CUT,COPY,PASTE
 
