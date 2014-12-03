@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy
-from PyQt4 import QtCore
-from Graphic_Interface.Widgets.signal_visualizer_tools.SignalVisualizerTool import SignalVisualizerTool
+
+from graphic_interface.widgets.signal_visualizer_tools.SignalVisualizerTool import SignalVisualizerTool
 
 
 class SpectrogramTool(SignalVisualizerTool):

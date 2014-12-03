@@ -70,4 +70,4 @@ class Ui_TwoDimensionalWindow(object):
         self.actionSaveGraphImage.setText(QtGui.QApplication.translate("TwoDimensionalWindow", "Save Graph Image", None, QtGui.QApplication.UnicodeUTF8))
         self.actionMark_Selected_Elements_As.setText(QtGui.QApplication.translate("TwoDimensionalWindow", "Mark Selected Elements As", None, QtGui.QApplication.UnicodeUTF8))
 
-from Graphic_Interface.Widgets.TwoDPlotWidget import TwoDPlotWidget
+from graphic_interface.widgets.TwoDPlotWidget import TwoDPlotWidget

@@ -1,15 +1,10 @@
-from PyQt4 import QtGui
 from PyQt4 import QtCore
+
 import numpy
 from duetto.widgets.SpectrogramWidget import SpectrogramWidget
-from Graphic_Interface.Widgets.SoundLabWidget import SoundLabWidget
-from Graphic_Interface.Widgets.signal_visualizer_tools.SpectrogramTools.SpectrogramZoomTool import SpectrogramZoomTool
-from Graphic_Interface.Widgets.signal_visualizer_tools.SpectrogramTools.PointerCursorTool import PointerCursorTool
-from Graphic_Interface.Widgets.signal_visualizer_tools.SpectrogramTools.RectangularCursorTool import RectangularCursorTool
-from signal_visualizer_tools.SpectrogramTools.RectangularCursorTool import \
-    RectangularCursorTool as SpecRectangularCursorTool
+
+from graphic_interface.widgets.SoundLabWidget import SoundLabWidget
 from signal_visualizer_tools.SpectrogramTools.SpectrogramZoomTool import SpectrogramZoomTool
-from signal_visualizer_tools.SpectrogramTools.PointerCursorTool import PointerCursorTool as SpecPointerCursorTool
 
 
 class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
