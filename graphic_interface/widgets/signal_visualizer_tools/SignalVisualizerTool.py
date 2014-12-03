@@ -18,7 +18,7 @@ class SignalVisualizerTool(QtCore.QObject):
     corresponding to its function
     """
 
-    #SIGNALS
+    #region SIGNALS
 
     # Signal raised when the tool detected data has changed
     #the detected data is send as a list of tuples ("measured_param" , value)
@@ -39,6 +39,8 @@ class SignalVisualizerTool(QtCore.QObject):
     #raise the limits of the modified range x1, x2 in signal data indexes
     signalChanged = QtCore.pyqtSignal(int, int)
 
+    #endregion
+
     # CONSTANTS
     # the minimum amount of pixels that would be considered valid for a move
     #action with a mouse cursor. Is used to reduce the unnecessary gui widget refresh
@@ -47,13 +49,20 @@ class SignalVisualizerTool(QtCore.QObject):
     #The decimal places to round the numerical meditions made by the tool
     DECIMAL_PLACES = 2
 
-    def __init__(self,widget):
+    def __init__(self, widget):
         QtCore.QObject.__init__(self)
         if widget is None:
             raise Exception("Widget can't be None")
+
+        #the widget at which the tool is bounded
+        #the tool has the access to the widgets variables to
+        #implement the interaction with the widget's signal
         self.widget = widget
-        self.mousePressed = False
+
+        #the signal data detected by the tool
         self.detectedData = []
+
+        self.mousePressed = False
 
     def dispose(self):
         """

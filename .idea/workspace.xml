@@ -5,6 +5,22 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5adf17e0-4e56-49f7-b78c-ca249c2dd736" name="Default" comment="operaciones de signal processing: normalize, scale, modulation con sus respectivas undo redo actions">
+      <change type="DELETED" beforePath="D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\DuettoSystem\graphic_interface\widgets\signal_visualizer_tools\OscilogramTools\CircularEraserTool.py" afterPath="" />
+      <change type="MODIFICATION" beforePath="D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\DuettoSystem\graphic_interface\UI_Files\MainWindow.ui" afterPath="$PROJECT_DIR$/graphic_interface/UI_Files/MainWindow.ui" />
+      <change type="MODIFICATION" beforePath="D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\DuettoSystem\graphic_interface\windows\DuettoSoundLabWindow.py" afterPath="$PROJECT_DIR$/graphic_interface/windows/DuettoSoundLabWindow.py" />
+      <change type="MODIFICATION" beforePath="D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\DuettoSystem\graphic_interface\widgets\EditCategoriesWidget.py" afterPath="$PROJECT_DIR$/graphic_interface/widgets/EditCategoriesWidget.py" />
+      <change type="MODIFICATION" beforePath="D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\DuettoSystem\graphic_interface\windows\MainWindow.py" afterPath="$PROJECT_DIR$/graphic_interface/windows/MainWindow.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/sound_lab_core/Segmentation/Elements/OneDimensionalElement.py" afterPath="$PROJECT_DIR$/sound_lab_core/Segmentation/Elements/OneDimensionalElement.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/OscilogramTools/PointerCursorTool.py" afterPath="$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/OscilogramTools/PointerCursorTool.py" />
+      <change type="MODIFICATION" beforePath="D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\DuettoSystem\graphic_interface\widgets\QSignalDetectorWidget.py" afterPath="$PROJECT_DIR$/graphic_interface/widgets/QSignalDetectorWidget.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/graphic_interface/widgets/QSignalVisualizerWidget.py" afterPath="$PROJECT_DIR$/graphic_interface/widgets/QSignalVisualizerWidget.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/OscilogramTools/RectROI.py" afterPath="$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/OscilogramTools/RectROI.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/OscilogramTools/RectangularCursorTool.py" afterPath="$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/OscilogramTools/RectangularCursorTool.py" />
+      <change type="MODIFICATION" beforePath="D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\DuettoSystem\graphic_interface\windows\SegmentationAndClasificationWindow.py" afterPath="$PROJECT_DIR$/graphic_interface/windows/SegmentationAndClasificationWindow.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/SignalVisualizerTool.py" afterPath="$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/SignalVisualizerTool.py" />
+      <change type="MODIFICATION" beforePath="D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\DuettoSystem\graphic_interface\widgets\TwoDPlotWidget.py" afterPath="$PROJECT_DIR$/graphic_interface/widgets/TwoDPlotWidget.py" />
+      <change type="MODIFICATION" beforePath="D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\DuettoSystem\graphic_interface\widgets\undo_redo_actions\UndoRedoActions.py" afterPath="$PROJECT_DIR$/graphic_interface/widgets/undo_redo_actions/UndoRedoActions.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/OscilogramTools/ZoomTool.py" afterPath="$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/OscilogramTools/ZoomTool.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
     </list>
     <ignored path="DuettoSystem.iws" />
@@ -26,7 +42,7 @@
     <SUITE FILE_PATH="coverage/DuettoSystem$Unittests_in_test_commonSignalProcessor.coverage" NAME="Unittests in test_commonSignalProcessor Coverage Results" MODIFIED="1417022240540" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../../../duetto_API/duetto/duetto_unit_test" />
     <SUITE FILE_PATH="coverage/DuettoSystem$Unittests_in_setup.coverage" NAME="Unittests in setup Coverage Results" MODIFIED="1413297172664" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../../../duetto-API/duetto_API" />
     <SUITE FILE_PATH="coverage/DuettoSystem$Nosetest_TestAudioSignal_test_play.coverage" NAME="Nosetest TestAudioSignal.test_play Coverage Results" MODIFIED="1409857704029" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Unit Test/Audio Signals" />
-    <SUITE FILE_PATH="coverage/DuettoSystem$Duetto_Sound_Lab_pyw.coverage" NAME="Duetto_Sound_Lab.pyw Coverage Results" MODIFIED="1417454601239" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/DuettoSystem$Duetto_Sound_Lab_pyw.coverage" NAME="Duetto_Sound_Lab.pyw Coverage Results" MODIFIED="1417637887945" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/DuettoSystem$test.coverage" NAME="test Coverage Results" MODIFIED="1417123891678" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../../../duetto_API" />
     <SUITE FILE_PATH="coverage/DuettoSystem$QSignalDetectorWidget.coverage" NAME="QSignalDetectorWidget Coverage Results" MODIFIED="1413814921844" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/Graphic_Interface/Widgets" />
     <SUITE FILE_PATH="coverage/DuettoSystem$mainWindow.coverage" NAME="mainWindow Coverage Results" MODIFIED="1412869413847" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/../../../../Clases/GUI Programing in PyQt/Example" />
@@ -46,46 +62,167 @@
   </component>
   <component name="FileEditorManager">
     <leaf>
-      <file leaf-file-name="QSignalVisualizerWidget.py" pinned="false" current="true" current-in-tab="true">
+      <file leaf-file-name="DuettoSoundLabWindow.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/graphic_interface/windows/DuettoSoundLabWindow.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="890" max-vertical-offset="2256">
+              <caret line="54" column="0" selection-start-line="54" selection-start-column="0" selection-end-line="54" selection-end-column="0" />
+              <folding>
+                <element signature="e#24#33#0" expanded="true" />
+                <element signature="e#1482#1486#0" expanded="false" />
+                <element signature="e#1548#1552#0" expanded="false" />
+                <element signature="e#1608#1612#0" expanded="false" />
+                <element signature="e#2170#14232#0" expanded="false" />
+                <element signature="e#4091#4124#0" expanded="false" />
+                <element signature="e#14238#14276#0" expanded="false" />
+                <element signature="e#14342#14504#1" expanded="false" />
+                <element signature="e#14872#14991#1" expanded="false" />
+                <element signature="e#15516#15627#1" expanded="false" />
+                <element signature="e#16738#16751#0" expanded="false" />
+                <element signature="e#16822#16918#1" expanded="false" />
+                <element signature="e#17323#17482#1" expanded="false" />
+                <element signature="e#21346#21433#1" expanded="false" />
+                <element signature="e#22009#22153#1" expanded="false" />
+                <element signature="e#22531#22653#1" expanded="false" />
+                <element signature="e#23537#23675#1" expanded="false" />
+                <element signature="e#24223#24487#1" expanded="false" />
+                <element signature="e#31048#31529#1" expanded="false" />
+                <element signature="e#32104#32655#1" expanded="false" />
+                <element signature="e#33021#33048#0" expanded="false" />
+                <element signature="e#33360#33461#1" expanded="false" />
+                <element signature="e#33919#33939#0" expanded="false" />
+                <element signature="e#34010#34109#1" expanded="false" />
+                <element signature="e#34324#34432#1" expanded="false" />
+                <element signature="e#34665#34773#1" expanded="false" />
+                <element signature="e#35000#35104#1" expanded="false" />
+                <element signature="e#35292#35375#1" expanded="false" />
+                <element signature="e#35610#35634#0" expanded="false" />
+                <element signature="e#35904#35921#0" expanded="false" />
+                <element signature="e#36109#36142#0" expanded="false" />
+                <element signature="e#36519#36616#1" expanded="false" />
+                <element signature="e#37587#37674#1" expanded="false" />
+                <element signature="e#38094#38192#1" expanded="false" />
+                <element signature="e#39239#39338#1" expanded="false" />
+                <element signature="e#40002#40153#1" expanded="false" />
+                <element signature="e#41962#42033#1" expanded="false" />
+                <element signature="e#42483#42516#1" expanded="false" />
+                <element signature="e#43810#43836#0" expanded="false" />
+                <element signature="e#44215#44243#0" expanded="false" />
+                <element signature="e#44276#44491#1" expanded="false" />
+                <element signature="e#45650#45769#1" expanded="false" />
+                <element signature="e#45967#46093#1" expanded="false" />
+                <element signature="e#46298#46576#1" expanded="false" />
+                <element signature="e#47275#47376#1" expanded="false" />
+                <element signature="e#48288#48352#1" expanded="false" />
+                <element signature="e#48904#49044#1" expanded="false" />
+                <element signature="e#50336#50421#1" expanded="false" />
+                <element signature="e#50795#50910#1" expanded="false" />
+                <element signature="e#51321#51366#0" expanded="false" />
+                <element signature="e#51532#51638#1" expanded="false" />
+                <element signature="e#52129#52231#1" expanded="false" />
+                <element signature="e#52671#52848#1" expanded="false" />
+                <element signature="e#53361#53394#0" expanded="false" />
+                <element signature="e#53879#53987#1" expanded="false" />
+                <element signature="e#54112#54240#1" expanded="false" />
+                <element signature="e#54581#54607#0" expanded="false" />
+                <element signature="e#54675#54822#0" expanded="true" />
+                <element signature="e#54893#55031#0" expanded="true" />
+                <element signature="e#54893#54981#1" expanded="false" />
+                <element signature="e#55102#55239#0" expanded="true" />
+                <element signature="e#55102#55189#1" expanded="false" />
+                <element signature="e#55336#55608#1" expanded="false" />
+                <element signature="e#55776#55802#0" expanded="false" />
+                <element signature="e#55872#55960#1" expanded="false" />
+                <element signature="e#56454#56543#1" expanded="false" />
+                <element signature="e#57036#57170#1" expanded="false" />
+                <element signature="e#57623#57656#0" expanded="false" />
+                <element signature="e#57697#58019#0" expanded="true" />
+                <element signature="e#57697#57853#1" expanded="false" />
+                <element signature="e#58094#58189#1" expanded="false" />
+                <element signature="e#58914#58938#0" expanded="false" />
+                <element signature="e#59916#60052#1" expanded="false" />
+                <element signature="e#60165#60294#1" expanded="false" />
+                <element signature="e#60488#60643#1" expanded="false" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="OneDimensionalElementsDetector.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/sound_lab_core/Segmentation/Detectors/ElementsDetectors/OneDimensional/OneDimensionalElementsDetector.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="216" max-vertical-offset="1776">
+              <caret line="38" column="37" selection-start-line="38" selection-start-column="37" selection-end-line="38" selection-end-column="37" />
+              <folding>
+                <element signature="e#303#531#0" expanded="false" />
+                <element signature="e#756#914#0" expanded="false" />
+                <element signature="e#1052#1225#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="TwoDimensionalElementsDetector.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/sound_lab_core/Segmentation/Detectors/ElementsDetectors/TwoDimensional/TwoDimensionalElementsDetector.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.0" vertical-offset="145" max-vertical-offset="840">
+              <caret line="51" column="30" selection-start-line="51" selection-start-column="30" selection-end-line="51" selection-end-column="30" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="QSignalVisualizerWidget.py" pinned="false" current="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/graphic_interface/widgets/QSignalVisualizerWidget.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.13944224" vertical-offset="3746" max-vertical-offset="4536">
-              <caret line="644" column="29" selection-start-line="644" selection-start-column="29" selection-end-line="644" selection-end-column="29" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="720" max-vertical-offset="1728">
+              <caret line="43" column="17" selection-start-line="43" selection-start-column="17" selection-end-line="43" selection-end-column="17" />
               <folding>
-                <element signature="e#23909#24263#0" expanded="true" />
+                <element signature="e#24#49#0" expanded="true" />
+                <element signature="e#1723#1839#0" expanded="false" />
+                <element signature="e#6618#6748#1" expanded="false" />
+                <element signature="e#6929#6964#0" expanded="false" />
+                <element signature="e#8542#8559#0" expanded="false" />
+                <element signature="e#8871#8884#0" expanded="false" />
+                <element signature="e#12007#12058#0" expanded="false" />
+                <element signature="e#14384#14409#0" expanded="false" />
+                <element signature="e#16208#16221#0" expanded="false" />
+                <element signature="e#16497#16527#0" expanded="false" />
+                <element signature="e#16556#17305#0" expanded="true" />
+                <element signature="e#18826#18859#0" expanded="false" />
+                <element signature="e#20566#20825#1" expanded="false" />
+                <element signature="e#20989#21394#1" expanded="false" />
+                <element signature="e#21495#21904#1" expanded="false" />
+                <element signature="e#22017#22275#1" expanded="false" />
+                <element signature="e#22880#22959#1" expanded="false" />
+                <element signature="e#23245#23301#1" expanded="false" />
+                <element signature="e#24143#24468#1" expanded="false" />
+                <element signature="e#25602#25623#0" expanded="false" />
+                <element signature="e#26749#27052#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="EditCategoriesWidget.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/graphic_interface/widgets/EditCategoriesWidget.py">
+      <file leaf-file-name="ClassificationData.py" pinned="false" current="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/sound_lab_core/Clasification/ClassificationData.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1368">
-              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="PowSpecPlotWidget.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/graphic_interface/widgets/PowSpecPlotWidget.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="11208">
-              <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="QSignalDetectorWidget.py" pinned="false" current="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/graphic_interface/widgets/QSignalDetectorWidget.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="0.0" vertical-offset="456" max-vertical-offset="1176">
-              <caret line="82" column="0" selection-start-line="82" selection-start-column="0" selection-end-line="82" selection-end-column="0" />
+            <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="360">
+              <caret line="2" column="31" selection-start-line="2" selection-start-column="31" selection-end-line="2" selection-end-column="31" />
               <folding>
-                <element signature="e#0#23#0" expanded="true" />
+                <element signature="e#214#3436#0" expanded="false" />
+                <element signature="e#3472#3771#0" expanded="false" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="KNN.py" pinned="false" current="true" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/sound_lab_core/Clasification/KNN.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state vertical-scroll-proportion="0.37281552" vertical-offset="0" max-vertical-offset="515">
+              <caret line="10" column="12" selection-start-line="10" selection-start-column="12" selection-end-line="10" selection-end-column="12" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -109,26 +246,7 @@
   <component name="IdeDocumentHistory">
     <option name="changedFiles">
       <list>
-        <option value="$PROJECT_DIR$/../../../duetto-API/duetto_API/duetto/audio_signals/AudioSignal.py" />
-        <option value="$PROJECT_DIR$/Graphic_Interface/Windows/DuettoSoundLabWindow.py" />
-        <option value="$PROJECT_DIR$/../../../duetto-API/duetto_API/duetto/dimensional_transformations/two_dimensional_transforms/Spectrogram/SpecgramSettings.py" />
-        <option value="$PROJECT_DIR$/../../../duetto-API/duetto_API/duetto/dimensional_transformations/two_dimensional_transforms/Spectrogram/Spectrogram.py" />
-        <option value="$PROJECT_DIR$/Duetto_Core/Clasification/ClassificationData.py" />
-        <option value="$PROJECT_DIR$/../../../duetto-API/duetto_API/build/lib/duetto/widgets/QSignalVisualizerWidget.py" />
-        <option value="$PROJECT_DIR$/Graphic_Interface/Windows/SegmentationAndClasificationWindow.py" />
-        <option value="$PROJECT_DIR$/../../../duetto-API/duetto_API/duetto/signal_processing/filter_signal_processors/frequency_domain_filters/BandPassFilter.py" />
-        <option value="$PROJECT_DIR$/../../../duetto-API/duetto_API/duetto/signal_processing/filter_signal_processors/frequency_domain_filters/BandStopFilter.py" />
-        <option value="$PROJECT_DIR$/../../../duetto-API/duetto_API/duetto/widgets/OscilogramPlotWidget.py" />
-        <option value="C:/Python27/Lib/site-packages/duetto/widgets/QSignalVisualizerWidget.py" />
-        <option value="$PROJECT_DIR$/Graphic_Interface/Widgets/QSignalDetectorWidget.py" />
-        <option value="$PROJECT_DIR$/__init__.py" />
-        <option value="$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/PointerCursorTool.py" />
-        <option value="$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/OscilogramTools/RectangularCursorTool.py" />
-        <option value="$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/SignalVisualizer.py" />
-        <option value="$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/SoundLabOscilogramWidget.py" />
-        <option value="$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/SoundLabSpectrogramWidget.py" />
         <option value="$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/SoundLabWidget.py" />
-        <option value="$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/OscilogramTools/PointerCursorTool.py" />
         <option value="$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/SpectrogramTools/ZoomTool.py" />
         <option value="$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/SpectrogramTools/RectangularCursorTool.py" />
         <option value="$PROJECT_DIR$/bugs for translate class system" />
@@ -138,9 +256,7 @@
         <option value="$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/SpectrogramTools/SpectrogramZoomTool.py" />
         <option value="$PROJECT_DIR$/graphic_interface/widgets/SoundLabOscilogramWidget.py" />
         <option value="$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/OscilogramTools/RectangularEraserTool.py" />
-        <option value="$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/OscilogramTools/ZoomTool.py" />
         <option value="$PROJECT_DIR$/graphic_interface/widgets/SoundLabSpectrogramWidget.py" />
-        <option value="$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/SignalVisualizerTool.py" />
         <option value="$PROJECT_DIR$/graphic_interface/widgets/SoundLabWidget.py" />
         <option value="$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/SpectrogramTools/SpectrogramTool.py" />
         <option value="$PROJECT_DIR$/Utils/Utils.py" />
@@ -154,12 +270,33 @@
         <option value="$PROJECT_DIR$/../../../duetto_API/duetto/signal_processing/SignalProcessor.py" />
         <option value="$PROJECT_DIR$/../../../duetto_API/duetto/signal_processing/EditionSignalProcessor.py" />
         <option value="$PROJECT_DIR$/../../../duetto_API/duetto/widgets/OscillogramWidget.py" />
-        <option value="$PROJECT_DIR$/graphic_interface/widgets/undo_redo_actions/UndoRedoActions.py" />
-        <option value="$PROJECT_DIR$/graphic_interface/widgets/QSignalVisualizerWidget.py" />
         <option value="C:/Python27/Lib/site-packages/duetto/signal_processing/SignalProcessor.py" />
         <option value="$PROJECT_DIR$/../../../duetto_API/API/duetto/__init__.py" />
         <option value="$PROJECT_DIR$/../../../duetto_API/API/duetto/signal_processing/EditionSignalProcessor.py" />
+        <option value="$PROJECT_DIR$/graphic_interface/widgets/EditCategoriesWidget.py" />
+        <option value="$PROJECT_DIR$/../../../duetto_API/API/duetto/widgets/QSignalVisualizerWidget.py" />
+        <option value="$PROJECT_DIR$/graphic_interface/widgets/QSignalDetectorWidget.py" />
+        <option value="$PROJECT_DIR$/graphic_interface/windows/SegmentationAndClasificationWindow.py" />
+        <option value="$PROJECT_DIR$/../../../duetto_API/API/duetto/audio_signals/Synthesizer.py" />
+        <option value="$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/SignalVisualizerTool.py" />
+        <option value="$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/OscilogramTools/RectangularCursorTool.py" />
+        <option value="$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/OscilogramTools/PointerCursorTool.py" />
+        <option value="$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/OscilogramTools/RectROI.py" />
+        <option value="$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/OscilogramTools/ZoomTool.py" />
+        <option value="$PROJECT_DIR$/graphic_interface/widgets/TwoDPlotWidget.py" />
+        <option value="$PROJECT_DIR$/../../../duetto_API/API/duetto/signal_processing/CommonSignalProcessor.py" />
+        <option value="$PROJECT_DIR$/../../../duetto_API/API/duetto/signal_processing/SignalProcessor.py" />
+        <option value="$PROJECT_DIR$/graphic_interface/widgets/undo_redo_actions/UndoRedoActions.py" />
+        <option value="$PROJECT_DIR$/graphic_interface/widgets/QSignalVisualizerWidget.py" />
+        <option value="$PROJECT_DIR$/../../../duetto_API/API/duetto/signal_processing/filter_signal_processors/frequency_domain_filters/LowPassFilter.py" />
+        <option value="$PROJECT_DIR$/../../../duetto_API/API/duetto/signal_processing/filter_signal_processors/frequency_domain_filters/HighPassFilter.py" />
+        <option value="$PROJECT_DIR$/../../../duetto_API/API/duetto/signal_processing/filter_signal_processors/frequency_domain_filters/BandStopFilter.py" />
+        <option value="$PROJECT_DIR$/../../../duetto_API/API/duetto/signal_processing/filter_signal_processors/frequency_domain_filters/BandPassFilter.py" />
+        <option value="C:/Python27/Lib/site-packages/duetto/signal_processing/filter_signal_processors/FilterSignalProcessor.py" />
+        <option value="$PROJECT_DIR$/../../../duetto_API/API/duetto/signal_processing/filter_signal_processors/FilterSignalProcessor.py" />
+        <option value="$PROJECT_DIR$/../../../duetto_API/API/duetto/signal_processing/filter_signal_processors/frequency_domain_filters/__init__.py" />
         <option value="$PROJECT_DIR$/graphic_interface/windows/DuettoSoundLabWindow.py" />
+        <option value="$PROJECT_DIR$/sound_lab_core/Segmentation/Elements/OneDimensionalElement.py" />
       </list>
     </option>
   </component>
@@ -224,7 +361,7 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="graphic_interface" />
+              <option name="myItemId" value="sound_lab_core" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -238,11 +375,11 @@
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="graphic_interface" />
+              <option name="myItemId" value="sound_lab_core" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
             <PATH_ELEMENT>
-              <option name="myItemId" value="widgets" />
+              <option name="myItemId" value="Clasification" />
               <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
             </PATH_ELEMENT>
           </PATH>
@@ -274,11 +411,11 @@
       <recent name="D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\DuettoSystem\Duetto_Core" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\DuettoSystem\graphic_interface\windows" />
       <recent name="D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\DuettoSystem\graphic_interface\dialogs" />
       <recent name="D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\DuettoSystem\graphic_interface\widgets" />
       <recent name="D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\DuettoSystem\graphic_interface\widgets\signal_visualizer_tools\OscilogramTools" />
       <recent name="D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\DuettoSystem\Duetto_Core" />
-      <recent name="D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\DuettoSystem" />
     </key>
   </component>
   <component name="RunManager" selected="Python.Duetto_Sound_Lab.pyw">
@@ -541,28 +678,28 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1296" height="696" extended-state="0" />
-    <editor active="true" />
+    <frame x="-8" y="-8" width="1296" height="696" extended-state="6" />
+    <editor active="false" />
     <layout>
-      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32911393" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Changes" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32911393" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.5865724" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Database" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32928804" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Project" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.37944984" sideWeight="0.835503" order="4" side_tool="false" content_ui="combo" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.39700806" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Project" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" weight="0.24676375" sideWeight="0.835503" order="4" side_tool="false" content_ui="combo" />
+      <window_info id="Debug" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25485438" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="true" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.32911393" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.11264368" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.20023015" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.20711975" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="8" side_tool="false" content_ui="tabs" />
+      <window_info id="File Transfer" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.20023015" sideWeight="0.5" order="9" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
-      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.2724138" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Messages" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.33" sideWeight="0.5" order="10" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="SLIDING" type="SLIDING" visible="false" weight="0.4" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.4" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" weight="0.25" sideWeight="0.5" order="3" side_tool="false" content_ui="combo" />
     </layout>
     <layout-to-restore>
@@ -619,212 +756,6 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/graphic_interface/widgets/QSignalDetectorWidget.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="144" max-vertical-offset="1176">
-          <caret line="242" column="0" selection-start-line="242" selection-start-column="0" selection-end-line="242" selection-end-column="0" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/graphic_interface/widgets/undo_redo_actions/UndoRedoActions.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="7608" max-vertical-offset="8304">
-          <caret line="317" column="34" selection-start-line="317" selection-start-column="34" selection-end-line="317" selection-end-column="34" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/Python27/Lib/site-packages/duetto/signal_processing/EditionSignalProcessor.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="264" max-vertical-offset="2904">
-          <caret line="11" column="7" selection-start-line="11" selection-start-column="7" selection-end-line="11" selection-end-column="7" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/Python27/Lib/site-packages/duetto/signal_processing/SignalProcessor.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="24" max-vertical-offset="840">
-          <caret line="2" column="0" selection-start-line="2" selection-start-column="0" selection-end-line="2" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.PyCharm30/system/python_stubs/-2086820183/PyQt4/QtCore.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.41666666" vertical-offset="206280" max-vertical-offset="228840">
-          <caret line="14506" column="24" selection-start-line="14506" selection-start-column="21" selection-end-line="14506" selection-end-column="24" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/OscilogramTools/CircularEraserTool.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="589">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/OscilogramTools/RectangularCursorTool.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.56542814" vertical-offset="970" max-vertical-offset="2808">
-          <caret line="60" column="33" selection-start-line="55" selection-start-column="12" selection-end-line="60" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/Python27/Lib/site-packages/pyqtgraph/graphicsItems/ViewBox/ViewBox.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.33274338" vertical-offset="5188" max-vertical-offset="7080">
-          <caret line="1131" column="0" selection-start-line="1131" selection-start-column="0" selection-end-line="1131" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/Python27/Lib/site-packages/pyqtgraph/widgets/PlotWidget.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.24955752" vertical-offset="3" max-vertical-offset="1416">
-          <caret line="12" column="25" selection-start-line="12" selection-start-column="25" selection-end-line="12" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.PyCharm30/system/python_stubs/-2086820183/PyQt4/QtGui.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-0.26194692" vertical-offset="1516" max-vertical-offset="725472">
-          <caret line="137" column="0" selection-start-line="137" selection-start-column="0" selection-end-line="137" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/Python27/Lib/site-packages/pyqtgraph/GraphicsScene/GraphicsScene.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.3321234" vertical-offset="3513" max-vertical-offset="6840">
-          <caret line="183" column="58" selection-start-line="183" selection-start-column="47" selection-end-line="183" selection-end-column="58" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/bugs for translate class system">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.5496183" vertical-offset="0" max-vertical-offset="655">
-          <caret line="15" column="0" selection-start-line="15" selection-start-column="0" selection-end-line="15" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/Python27/Lib/site-packages/pyqtgraph/widgets/GraphicsView.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.33282444" vertical-offset="574" max-vertical-offset="4344">
-          <caret line="51" column="8" selection-start-line="51" selection-start-column="8" selection-end-line="51" selection-end-column="8" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/OscilogramTools/PointerCursorTool.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-12.75" vertical-offset="411" max-vertical-offset="1296">
-          <caret line="40" column="49" selection-start-line="40" selection-start-column="49" selection-end-line="40" selection-end-column="49" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/graphic_interface/widgets/TwoDPlotWidget.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="680">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/Python27/Lib/site-packages/duetto/widgets/QSignalVisualizerWidget.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.3882353" vertical-offset="0" max-vertical-offset="680">
-          <caret line="22" column="12" selection-start-line="22" selection-start-column="12" selection-end-line="22" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$USER_HOME$/.PyCharm30/system/python_stubs/-2086820183/numpy/core/multiarray.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="2800" max-vertical-offset="134892">
-          <caret line="114" column="30" selection-start-line="114" selection-start-column="30" selection-end-line="114" selection-end-column="30" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/Python27/Lib/site-packages/numpy/core/numeric.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.33333334" vertical-offset="3475" max-vertical-offset="65475">
-          <caret line="140" column="21" selection-start-line="140" selection-start-column="21" selection-end-line="140" selection-end-column="21" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/Python27/Lib/site-packages/duetto/widgets/SpectrogramWidget.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="542" max-vertical-offset="3699">
-          <caret line="31" column="44" selection-start-line="31" selection-start-column="44" selection-end-line="31" selection-end-column="44" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/Python27/Lib/site-packages/duetto/widgets/OscillogramWidget.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-0.19497785" vertical-offset="1077" max-vertical-offset="1782">
-          <caret line="38" column="0" selection-start-line="38" selection-start-column="0" selection-end-line="38" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/SpectrogramTools/RectangularCursorTool.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="600">
-          <caret line="6" column="0" selection-start-line="6" selection-start-column="0" selection-end-line="6" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/OscilogramTools/RectangularEraserTool.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="1134" max-vertical-offset="2160">
-          <caret line="59" column="57" selection-start-line="59" selection-start-column="57" selection-end-line="59" selection-end-column="57" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/OscilogramTools/ZoomTool.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="756">
-          <caret line="93" column="0" selection-start-line="93" selection-start-column="0" selection-end-line="93" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/Duetto_Sound_Lab.pyw">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="243" max-vertical-offset="1917">
-          <caret line="31" column="0" selection-start-line="31" selection-start-column="0" selection-end-line="31" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/SpectrogramTools/PointerCursorTool.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.7394451" vertical-offset="827" max-vertical-offset="1656">
-          <caret line="60" column="61" selection-start-line="60" selection-start-column="61" selection-end-line="60" selection-end-column="61" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/SignalVisualizerTool.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="504" max-vertical-offset="1320">
-          <caret line="12" column="6" selection-start-line="12" selection-start-column="6" selection-end-line="12" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/SpectrogramTools/SpectrogramZoomTool.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1104">
-          <caret line="39" column="23" selection-start-line="39" selection-start-column="8" selection-end-line="39" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/graphic_interface/widgets/SoundLabWidget.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="172" max-vertical-offset="840">
-          <caret line="10" column="33" selection-start-line="10" selection-start-column="33" selection-end-line="10" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/SpectrogramTools/SpectrogramTool.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.5700713" vertical-offset="0" max-vertical-offset="842">
-          <caret line="72" column="47" selection-start-line="72" selection-start-column="47" selection-end-line="72" selection-end-column="47" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/Utils/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="610">
@@ -881,20 +812,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/graphic_interface/widgets/undo_redo_actions/UndoRedoActions.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="4.190024" vertical-offset="0" max-vertical-offset="3936">
-          <caret line="320" column="19" selection-start-line="320" selection-start-column="19" selection-end-line="320" selection-end-column="19" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/graphic_interface/windows/MainWindow.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.33293125" vertical-offset="5412" max-vertical-offset="10464">
-          <caret line="237" column="13" selection-start-line="237" selection-start-column="13" selection-end-line="237" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://C:/Python27/Lib/site-packages/duetto/signal_processing/EditionSignalProcessor.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.63665086" vertical-offset="317" max-vertical-offset="1488">
@@ -923,27 +840,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/graphic_interface/windows/PowerSpectrumWindow.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.58064514" vertical-offset="0" max-vertical-offset="620">
-          <caret line="92" column="40" selection-start-line="92" selection-start-column="40" selection-end-line="92" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/graphic_interface/windows/DuettoSoundLabWindow.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="-0.37430167" vertical-offset="1036" max-vertical-offset="1752">
-          <caret line="326" column="0" selection-start-line="326" selection-start-column="0" selection-end-line="326" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../../../duetto_API/API/duetto/signal_processing/SignalProcessor.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.09677419" vertical-offset="0" max-vertical-offset="816">
-          <caret line="4" column="6" selection-start-line="4" selection-start-column="6" selection-end-line="4" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../../../duetto_API/API/setup.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="-1.2580645" vertical-offset="936" max-vertical-offset="1704">
@@ -951,39 +847,499 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/graphic_interface/widgets/EditCategoriesWidget.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="384">
-          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/graphic_interface/widgets/PowSpecPlotWidget.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="2736">
           <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphic_interface/widgets/EditCategoriesWidget.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="384">
+          <caret line="8" column="23" selection-start-line="8" selection-start-column="23" selection-end-line="8" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../duetto_API/API/duetto/widgets/QSignalVisualizerWidget.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.42193308" vertical-offset="2557" max-vertical-offset="3504">
+          <caret line="273" column="54" selection-start-line="273" selection-start-column="54" selection-end-line="273" selection-end-column="54" />
           <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/graphic_interface/widgets/QSignalDetectorWidget.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.0" vertical-offset="456" max-vertical-offset="1176">
-          <caret line="82" column="0" selection-start-line="82" selection-start-column="0" selection-end-line="82" selection-end-column="0" />
+        <state vertical-scroll-proportion="0.7733333" vertical-offset="194" max-vertical-offset="744">
+          <caret line="318" column="0" selection-start-line="318" selection-start-column="0" selection-end-line="318" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphic_interface/windows/SegmentationAndClasificationWindow.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.65189874" vertical-offset="3315" max-vertical-offset="9600">
+          <caret line="313" column="57" selection-start-line="313" selection-start-column="57" selection-end-line="313" selection-end-column="57" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../duetto_API/API/duetto/audio_signals/Synthesizer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="17" max-vertical-offset="1008">
+          <caret line="23" column="90" selection-start-line="23" selection-start-column="90" selection-end-line="23" selection-end-column="90" />
           <folding>
-            <element signature="e#0#23#0" expanded="true" />
+            <element signature="e#298#440#1" expanded="false" />
+            <element signature="e#1887#2047#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/Python27/Lib/site-packages/pyqtgraph/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-0.13714285" vertical-offset="72" max-vertical-offset="3432">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/OscilogramTools/PointerCursorTool.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="1008" max-vertical-offset="1584">
+          <caret line="20" column="57" selection-start-line="20" selection-start-column="57" selection-end-line="20" selection-end-column="57" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/SignalVisualizerTool.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.598513" vertical-offset="422" max-vertical-offset="1032">
+          <caret line="76" column="28" selection-start-line="76" selection-start-column="28" selection-end-line="76" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/OscilogramTools/RectROI.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="480">
+          <caret line="13" column="59" selection-start-line="13" selection-start-column="59" selection-end-line="13" selection-end-column="59" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/OscilogramTools/RectangularCursorTool.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="494" max-vertical-offset="1272">
+          <caret line="138" column="17" selection-start-line="136" selection-start-column="8" selection-end-line="140" selection-end-column="11" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphic_interface/widgets/signal_visualizer_tools/OscilogramTools/ZoomTool.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="72" max-vertical-offset="936">
+          <caret line="84" column="42" selection-start-line="84" selection-start-column="42" selection-end-line="84" selection-end-column="42" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphic_interface/widgets/TwoDPlotWidget.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.065055765" vertical-offset="13" max-vertical-offset="648">
+          <caret line="4" column="0" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphic_interface/windows/PowerSpectrumWindow.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.72571427" vertical-offset="1707" max-vertical-offset="2256">
+          <caret line="92" column="40" selection-start-line="92" selection-start-column="40" selection-end-line="92" selection-end-column="40" />
+          <folding>
+            <element signature="e#581#2815#0" expanded="false" />
+            <element signature="e#2878#3922#0" expanded="false" />
+            <element signature="e#4002#4141#0" expanded="false" />
+            <element signature="e#4190#4234#0" expanded="false" />
+            <element signature="e#4291#4323#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../duetto_API/API/duetto/signal_processing/CommonSignalProcessor.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.207767" vertical-offset="133" max-vertical-offset="720">
+          <caret line="13" column="0" selection-start-line="13" selection-start-column="0" selection-end-line="13" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#24#0" expanded="true" />
+            <element signature="e#468#765#1" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphic_interface/widgets/undo_redo_actions/UndoRedoActions.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-7.5" vertical-offset="4398" max-vertical-offset="6792">
+          <caret line="256" column="58" selection-start-line="256" selection-start-column="58" selection-end-line="256" selection-end-column="58" />
+          <folding>
+            <element signature="e#24#48#0" expanded="true" />
+            <element signature="e#545#611#1" expanded="true" />
+            <element signature="e#735#963#0" expanded="true" />
+            <element signature="e#993#1280#0" expanded="true" />
+            <element signature="e#1310#1669#0" expanded="true" />
+            <element signature="e#1705#2380#0" expanded="true" />
+            <element signature="e#2411#2530#0" expanded="true" />
+            <element signature="e#2561#2713#0" expanded="true" />
+            <element signature="e#2751#3000#1" expanded="true" />
+            <element signature="e#3207#3229#0" expanded="true" />
+            <element signature="e#3259#3263#0" expanded="true" />
+            <element signature="e#3293#3297#0" expanded="true" />
+            <element signature="e#3389#3497#0" expanded="true" />
+            <element signature="e#3527#3590#0" expanded="true" />
+            <element signature="e#3620#3683#0" expanded="true" />
+            <element signature="e#3775#3883#0" expanded="true" />
+            <element signature="e#3913#3979#0" expanded="true" />
+            <element signature="e#4009#4075#0" expanded="true" />
+            <element signature="e#4164#4325#0" expanded="true" />
+            <element signature="e#4355#4449#0" expanded="true" />
+            <element signature="e#4479#4545#0" expanded="true" />
+            <element signature="e#4639#4745#0" expanded="true" />
+            <element signature="e#5014#5299#0" expanded="false" />
+            <element signature="e#5603#6085#0" expanded="false" />
+            <element signature="e#5669#5792#0" expanded="true" />
+            <element signature="e#6688#7282#0" expanded="false" />
+            <element signature="e#6744#7064#0" expanded="true" />
+            <element signature="e#7094#7177#0" expanded="true" />
+            <element signature="e#7207#7282#0" expanded="true" />
+            <element signature="e#7328#7835#0" expanded="false" />
+            <element signature="e#7384#7609#0" expanded="true" />
+            <element signature="e#7639#7726#0" expanded="true" />
+            <element signature="e#7756#7835#0" expanded="true" />
+            <element signature="e#8414#8534#0" expanded="true" />
+            <element signature="e#8564#8598#0" expanded="true" />
+            <element signature="e#8628#8659#0" expanded="true" />
+            <element signature="e#8768#9052#0" expanded="true" />
+            <element signature="e#9081#9119#0" expanded="true" />
+            <element signature="e#9149#9195#0" expanded="true" />
+            <element signature="e#9284#9459#0" expanded="true" />
+            <element signature="e#9489#9654#0" expanded="true" />
+            <element signature="e#9684#9731#0" expanded="true" />
+            <element signature="e#9819#10103#0" expanded="true" />
+            <element signature="e#10133#10179#0" expanded="true" />
+            <element signature="e#10209#10247#0" expanded="true" />
+            <element signature="e#10360#10546#0" expanded="true" />
+            <element signature="e#10576#10670#0" expanded="true" />
+            <element signature="e#10700#10779#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/Python27/Lib/site-packages/numpy/ma/core.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="4513" max-vertical-offset="26424">
+          <caret line="838" column="0" selection-start-line="838" selection-start-column="0" selection-end-line="838" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../duetto_API/API/duetto/signal_processing/filter_signal_processors/frequency_domain_filters/BandStopFilter.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="602" max-vertical-offset="1176">
+          <caret line="21" column="0" selection-start-line="21" selection-start-column="0" selection-end-line="21" selection-end-column="0" />
+          <folding>
+            <element signature="e#311#456#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$USER_HOME$/.PyCharm30/system/python_stubs/-2086820183/math.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.36245352" vertical-offset="573" max-vertical-offset="2592">
+          <caret line="78" column="24" selection-start-line="78" selection-start-column="24" selection-end-line="78" selection-end-column="24" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/Python27/Lib/site-packages/numpy/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-0.133829" vertical-offset="72" max-vertical-offset="4200">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#3146#1" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../duetto_API/API/duetto/signal_processing/SignalProcessor.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="538">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#32#0" expanded="true" />
+            <element signature="e#819#843#0" expanded="false" />
+            <element signature="e#1213#1305#1" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../duetto_API/API/duetto/signal_processing/filter_signal_processors/frequency_domain_filters/HighPassFilter.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1224">
+          <caret line="0" column="66" selection-start-line="0" selection-start-column="66" selection-end-line="0" selection-end-column="66" />
+          <folding>
+            <element signature="e#279#447#0" expanded="true" />
+            <element signature="e#504#1769#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../duetto_API/API/duetto/signal_processing/filter_signal_processors/frequency_domain_filters/LowPassFilter.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="1032">
+          <caret line="3" column="29" selection-start-line="3" selection-start-column="29" selection-end-line="3" selection-end-column="29" />
+          <folding>
+            <element signature="e#277#352#0" expanded="true" />
+            <element signature="e#408#1748#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/Python27/Lib/site-packages/duetto/signal_processing/filter_signal_processors/FilterSignalProcessor.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="336">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../duetto_API/API/duetto/signal_processing/filter_signal_processors/FilterSignalProcessor.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="432">
+          <caret line="4" column="0" selection-start-line="4" selection-start-column="0" selection-end-line="4" selection-end-column="0" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+            <element signature="e#383#421#0" expanded="true" />
+            <element signature="e#478#838#1" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../duetto_API/API/duetto/signal_processing/filter_signal_processors/frequency_domain_filters/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.22304833" vertical-offset="0" max-vertical-offset="538">
+          <caret line="5" column="41" selection-start-line="5" selection-start-column="41" selection-end-line="5" selection-end-column="41" />
+          <folding>
+            <element signature="e#24#63#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../../duetto_API/API/duetto/signal_processing/filter_signal_processors/frequency_domain_filters/BandPassFilter.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.51262134" vertical-offset="0" max-vertical-offset="515">
+          <caret line="14" column="45" selection-start-line="14" selection-start-column="45" selection-end-line="14" selection-end-column="45" />
+          <folding>
+            <element signature="e#335#480#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphic_interface/windows/EditCategoryWidgetUI.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.82285714" vertical-offset="0" max-vertical-offset="600">
+          <caret line="75" column="15" selection-start-line="75" selection-start-column="15" selection-end-line="75" selection-end-column="15" />
+          <folding>
+            <element signature="e#490#4302#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sound_lab_core/Segmentation/Elements/Element.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="538">
+          <caret line="0" column="0" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sound_lab_core/Segmentation/Segment.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.18640776" vertical-offset="0" max-vertical-offset="515">
+          <caret line="4" column="14" selection-start-line="4" selection-start-column="14" selection-end-line="4" selection-end-column="14" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sound_lab_core/Segmentation/Elements/TwoDimensionalElement.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="216" max-vertical-offset="3552">
+          <caret line="34" column="56" selection-start-line="34" selection-start-column="48" selection-end-line="34" selection-end-column="62" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/graphic_interface/windows/DuettoSoundLabWindow.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="890" max-vertical-offset="2256">
+          <caret line="54" column="0" selection-start-line="54" selection-start-column="0" selection-end-line="54" selection-end-column="0" />
+          <folding>
+            <element signature="e#24#33#0" expanded="true" />
+            <element signature="e#1482#1486#0" expanded="false" />
+            <element signature="e#1548#1552#0" expanded="false" />
+            <element signature="e#1608#1612#0" expanded="false" />
+            <element signature="e#2170#14232#0" expanded="false" />
+            <element signature="e#4091#4124#0" expanded="false" />
+            <element signature="e#14238#14276#0" expanded="false" />
+            <element signature="e#14342#14504#1" expanded="false" />
+            <element signature="e#14872#14991#1" expanded="false" />
+            <element signature="e#15516#15627#1" expanded="false" />
+            <element signature="e#16738#16751#0" expanded="false" />
+            <element signature="e#16822#16918#1" expanded="false" />
+            <element signature="e#17323#17482#1" expanded="false" />
+            <element signature="e#21346#21433#1" expanded="false" />
+            <element signature="e#22009#22153#1" expanded="false" />
+            <element signature="e#22531#22653#1" expanded="false" />
+            <element signature="e#23537#23675#1" expanded="false" />
+            <element signature="e#24223#24487#1" expanded="false" />
+            <element signature="e#31048#31529#1" expanded="false" />
+            <element signature="e#32104#32655#1" expanded="false" />
+            <element signature="e#33021#33048#0" expanded="false" />
+            <element signature="e#33360#33461#1" expanded="false" />
+            <element signature="e#33919#33939#0" expanded="false" />
+            <element signature="e#34010#34109#1" expanded="false" />
+            <element signature="e#34324#34432#1" expanded="false" />
+            <element signature="e#34665#34773#1" expanded="false" />
+            <element signature="e#35000#35104#1" expanded="false" />
+            <element signature="e#35292#35375#1" expanded="false" />
+            <element signature="e#35610#35634#0" expanded="false" />
+            <element signature="e#35904#35921#0" expanded="false" />
+            <element signature="e#36109#36142#0" expanded="false" />
+            <element signature="e#36519#36616#1" expanded="false" />
+            <element signature="e#37587#37674#1" expanded="false" />
+            <element signature="e#38094#38192#1" expanded="false" />
+            <element signature="e#39239#39338#1" expanded="false" />
+            <element signature="e#40002#40153#1" expanded="false" />
+            <element signature="e#41962#42033#1" expanded="false" />
+            <element signature="e#42483#42516#1" expanded="false" />
+            <element signature="e#43810#43836#0" expanded="false" />
+            <element signature="e#44215#44243#0" expanded="false" />
+            <element signature="e#44276#44491#1" expanded="false" />
+            <element signature="e#45650#45769#1" expanded="false" />
+            <element signature="e#45967#46093#1" expanded="false" />
+            <element signature="e#46298#46576#1" expanded="false" />
+            <element signature="e#47275#47376#1" expanded="false" />
+            <element signature="e#48288#48352#1" expanded="false" />
+            <element signature="e#48904#49044#1" expanded="false" />
+            <element signature="e#50336#50421#1" expanded="false" />
+            <element signature="e#50795#50910#1" expanded="false" />
+            <element signature="e#51321#51366#0" expanded="false" />
+            <element signature="e#51532#51638#1" expanded="false" />
+            <element signature="e#52129#52231#1" expanded="false" />
+            <element signature="e#52671#52848#1" expanded="false" />
+            <element signature="e#53361#53394#0" expanded="false" />
+            <element signature="e#53879#53987#1" expanded="false" />
+            <element signature="e#54112#54240#1" expanded="false" />
+            <element signature="e#54581#54607#0" expanded="false" />
+            <element signature="e#54675#54822#0" expanded="true" />
+            <element signature="e#54893#55031#0" expanded="true" />
+            <element signature="e#54893#54981#1" expanded="false" />
+            <element signature="e#55102#55239#0" expanded="true" />
+            <element signature="e#55102#55189#1" expanded="false" />
+            <element signature="e#55336#55608#1" expanded="false" />
+            <element signature="e#55776#55802#0" expanded="false" />
+            <element signature="e#55872#55960#1" expanded="false" />
+            <element signature="e#56454#56543#1" expanded="false" />
+            <element signature="e#57036#57170#1" expanded="false" />
+            <element signature="e#57623#57656#0" expanded="false" />
+            <element signature="e#57697#58019#0" expanded="true" />
+            <element signature="e#57697#57853#1" expanded="false" />
+            <element signature="e#58094#58189#1" expanded="false" />
+            <element signature="e#58914#58938#0" expanded="false" />
+            <element signature="e#59916#60052#1" expanded="false" />
+            <element signature="e#60165#60294#1" expanded="false" />
+            <element signature="e#60488#60643#1" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sound_lab_core/Segmentation/Detectors/ElementsDetectors/OneDimensional/OneDimensionalElementsDetector.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="216" max-vertical-offset="1776">
+          <caret line="38" column="37" selection-start-line="38" selection-start-column="37" selection-end-line="38" selection-end-column="37" />
+          <folding>
+            <element signature="e#303#531#0" expanded="false" />
+            <element signature="e#756#914#0" expanded="false" />
+            <element signature="e#1052#1225#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sound_lab_core/Segmentation/Detectors/ElementsDetectors/TwoDimensional/TwoDimensionalElementsDetector.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="145" max-vertical-offset="840">
+          <caret line="51" column="30" selection-start-line="51" selection-start-column="30" selection-end-line="51" selection-end-column="30" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sound_lab_core/Segmentation/Elements/OneDimensionalElement.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="-0.003984064" vertical-offset="698" max-vertical-offset="1200">
+          <caret line="44" column="0" selection-start-line="44" selection-start-column="0" selection-end-line="44" selection-end-column="0" />
+          <folding>
+            <element signature="e#1657#9058#0" expanded="false" />
+            <element signature="e#1657#2703#1" expanded="false" />
+            <element signature="e#4227#4243#0" expanded="false" />
+            <element signature="e#9770#9810#0" expanded="false" />
+            <element signature="e#9844#9950#0" expanded="true" />
+            <element signature="e#11731#11769#0" expanded="false" />
+            <element signature="e#26177#26352#1" expanded="false" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/graphic_interface/widgets/QSignalVisualizerWidget.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="0.13944224" vertical-offset="3746" max-vertical-offset="4536">
-          <caret line="644" column="29" selection-start-line="644" selection-start-column="29" selection-end-line="644" selection-end-column="29" />
+        <state vertical-scroll-proportion="0.0" vertical-offset="720" max-vertical-offset="1728">
+          <caret line="43" column="17" selection-start-line="43" selection-start-column="17" selection-end-line="43" selection-end-column="17" />
           <folding>
-            <element signature="e#23909#24263#0" expanded="true" />
+            <element signature="e#24#49#0" expanded="true" />
+            <element signature="e#1723#1839#0" expanded="false" />
+            <element signature="e#6618#6748#1" expanded="false" />
+            <element signature="e#6929#6964#0" expanded="false" />
+            <element signature="e#8542#8559#0" expanded="false" />
+            <element signature="e#8871#8884#0" expanded="false" />
+            <element signature="e#12007#12058#0" expanded="false" />
+            <element signature="e#14384#14409#0" expanded="false" />
+            <element signature="e#16208#16221#0" expanded="false" />
+            <element signature="e#16497#16527#0" expanded="false" />
+            <element signature="e#16556#17305#0" expanded="true" />
+            <element signature="e#18826#18859#0" expanded="false" />
+            <element signature="e#20566#20825#1" expanded="false" />
+            <element signature="e#20989#21394#1" expanded="false" />
+            <element signature="e#21495#21904#1" expanded="false" />
+            <element signature="e#22017#22275#1" expanded="false" />
+            <element signature="e#22880#22959#1" expanded="false" />
+            <element signature="e#23245#23301#1" expanded="false" />
+            <element signature="e#24143#24468#1" expanded="false" />
+            <element signature="e#25602#25623#0" expanded="false" />
+            <element signature="e#26749#27052#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sound_lab_core/Clasification/ClassificationData.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.0" vertical-offset="0" max-vertical-offset="360">
+          <caret line="2" column="31" selection-start-line="2" selection-start-column="31" selection-end-line="2" selection-end-column="31" />
+          <folding>
+            <element signature="e#214#3436#0" expanded="false" />
+            <element signature="e#3472#3771#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/sound_lab_core/Clasification/KNN.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state vertical-scroll-proportion="0.37281552" vertical-offset="0" max-vertical-offset="515">
+          <caret line="10" column="12" selection-start-line="10" selection-start-column="12" selection-end-line="10" selection-end-column="12" />
+          <folding />
         </state>
       </provider>
     </entry>
