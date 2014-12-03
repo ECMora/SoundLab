@@ -126,13 +126,6 @@ class QSignalVisualizerWidget(QWidget):
         max = self._from_spec_to_osc(rgn[1]) + self.mainCursor.min
         self.axesOscilogram.gui_user_tool.zoomRegion.setRegion([min, max])
 
-    def _from_spec_to_osc(self, coord):
-        cs = self.axesSpecgram.specgramHandler.NFFT #- self.specgramSettings.visualOverlap
-        return int(1.0 * coord * cs - self.axesSpecgram.specgramHandler.NFFT / 2)
-
-    def _from_osc_to_spec(self, coord):
-        cs = self.axesSpecgram.specgramHandler.NFFT #- self.axesSpecgram.specgramHandler.visualOverlap
-        return 1.0 * (coord - self.mainCursor.min + self.axesSpecgram.specgramHandler.NFFT / 2) / cs
 
     def load_Theme(self, theme):
         """
@@ -183,8 +176,10 @@ class QSignalVisualizerWidget(QWidget):
 
     def stop(self):
 
-        if self.signalPlayer.playStatus == self.signalPlayer.RECORDING:
+        prevStatus = self.signalPlayer.playStatus
+        self.signalPlayer.stop()
 
+        if  prevStatus == self.signalPlayer.RECORDING:
             self._recordTimer.stop()
             self.axesOscilogram.mouseZoomEnabled = True
             self.axesSpecgram.mouseZoomEnabled = True
@@ -192,16 +187,15 @@ class QSignalVisualizerWidget(QWidget):
             self.axesSpecgram.setVisible(True)
             self.graph()
             self.zoomNone()
-        self.signalPlayer.stop()
 
     def on_newDataRecorded(self):
 
-        # print('On new data:' + str(self._recordTimer.isActive()))
         self.signalPlayer.readFromStream()
 
-        self.mainCursor.max = len(self.signal.data) - 1
+        self.mainCursor.max = len(self.signal.data)
         self.mainCursor.min = max(0,
                                   len(self.signal.data) - 3 * self.signal.samplingRate)
+
         self.axesOscilogram.graph(self.mainCursor.min, self.mainCursor.max)
 
         #self.regionChanged.emit(self.mainCursor.min, self.mainCursor.max, len(self.signal.data))
