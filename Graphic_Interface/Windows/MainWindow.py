@@ -520,5 +520,5 @@ class Ui_DuettoMainWindow(object):
         self.actionSave_selected_interval_as.setText(QtGui.QApplication.translate("DuettoMainWindow", "Save selected as", None, QtGui.QApplication.UnicodeUTF8))
         self.actionClose.setText(QtGui.QApplication.translate("DuettoMainWindow", "Close", None, QtGui.QApplication.UnicodeUTF8))
 
-from ..widgets.QSignalVisualizerWidget import QSignalVisualizerWidget
+from ..Widgets.QSignalVisualizerWidget import QSignalVisualizerWidget
 import icons_rc

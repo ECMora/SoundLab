@@ -3,7 +3,7 @@ from PyQt4 import QtCore
 import numpy
 from PyQt4.QtGui import QCursor
 from SpectrogramTool import SpectrogramTool
-from graphic_interface.widgets.signal_visualizer_tools.OscilogramTools.RectROI import RectROI
+from Graphic_Interface.Widgets.signal_visualizer_tools.OscilogramTools.RectROI import RectROI
 
 
 class RectangularCursorTool(SpectrogramTool):

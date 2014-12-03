@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 from PyQt4.QtGui import *
 from PyQt4 import QtCore, QtGui
+from duetto.audio_signals.audio_signals_stream_readers.FileManager import FileManager
 import pyqtgraph as pg
+from PyQt4.QtCore import QTimer
 from duetto.audio_signals.AudioSignalPlayer import AudioSignalPlayer
 from duetto.audio_signals.Synthesizer import Synthesizer
 from duetto.audio_signals.AudioSignal import AudioSignal
@@ -9,14 +11,14 @@ from duetto.audio_signals.audio_signals_stream_readers.WavStreamManager import W
 from duetto.signal_processing.EditionSignalProcessor import EditionSignalProcessor
 from SoundLabOscilogramWidget import SoundLabOscilogramWidget
 from SoundLabSpectrogramWidget import SoundLabSpectrogramWidget
-from graphic_interface.widgets.signal_visualizer_tools.SignalVisualizerTool import Tools
-from graphic_interface.widgets.signal_visualizer_tools.OscilogramTools.ZoomTool import ZoomTool as OscilogramZoomTool
-from graphic_interface.widgets.signal_visualizer_tools.SpectrogramTools.SpectrogramZoomTool import SpectrogramZoomTool
-from graphic_interface.widgets.signal_visualizer_tools.OscilogramTools.PointerCursorTool import PointerCursorTool as OscilogramPointerTool
-from graphic_interface.widgets.signal_visualizer_tools.SpectrogramTools.PointerCursorTool import PointerCursorTool as SpectrogramPointerTool
-from graphic_interface.widgets.signal_visualizer_tools.OscilogramTools.RectangularCursorTool import RectangularCursorTool as OscilogramRectangularCursorTool
-from graphic_interface.widgets.signal_visualizer_tools.SpectrogramTools.RectangularCursorTool import RectangularCursorTool as SpectrogramRectangularCursorTool
-from graphic_interface.widgets.undo_redo_actions.UndoRedoActions import *
+from Graphic_Interface.Widgets.signal_visualizer_tools.SignalVisualizerTool import Tools
+from Graphic_Interface.Widgets.signal_visualizer_tools.OscilogramTools.ZoomTool import ZoomTool as OscilogramZoomTool
+from Graphic_Interface.Widgets.signal_visualizer_tools.SpectrogramTools.SpectrogramZoomTool import SpectrogramZoomTool
+from Graphic_Interface.Widgets.signal_visualizer_tools.OscilogramTools.PointerCursorTool import PointerCursorTool as OscilogramPointerTool
+from Graphic_Interface.Widgets.signal_visualizer_tools.SpectrogramTools.PointerCursorTool import PointerCursorTool as SpectrogramPointerTool
+from Graphic_Interface.Widgets.signal_visualizer_tools.OscilogramTools.RectangularCursorTool import RectangularCursorTool as OscilogramRectangularCursorTool
+from Graphic_Interface.Widgets.signal_visualizer_tools.SpectrogramTools.RectangularCursorTool import RectangularCursorTool as SpectrogramRectangularCursorTool
+from Graphic_Interface.Widgets.undo_redo_actions.UndoRedoActions import *
 
 
 class IntervalCursor:
@@ -94,6 +96,9 @@ class QSignalVisualizerWidget(QWidget):
         #in each widget.
         self.playerLineOsc = pg.InfiniteLine()
         self.playerLineSpec = pg.InfiniteLine()
+
+        self._recordTimer = QTimer(self)
+        self._recordTimer.timeout.connect(self.on_newDataRecorded)
 
     def setSelectedTool(self, tool):
         """
@@ -232,20 +237,46 @@ class QSignalVisualizerWidget(QWidget):
             self.play()
 
     def stop(self):
-        """
-        Stop the current signal reproduction.
-        If the signal is stopped nothing is made.
-        :return:
-        """
-        self.removePlayerLine()
+
+        if self.signalPlayer.playStatus == self.signalPlayer.RECORDING:
+
+            self._recordTimer.stop()
+            print('on stop:' + str(self._recordTimer.isActive()))
+            self.axesOscilogram.mouseZoomEnabled = True
+            self.axesSpecgram.mouseZoomEnabled = True
+            self.axesOscilogram.setVisible(True)
+            self.axesSpecgram.setVisible(True)
+            self.graph()
+            self.zoomNone()
         self.signalPlayer.stop()
 
+
+
+    def on_newDataRecorded(self):
+
+        # print('On new data:' + str(self._recordTimer.isActive()))
+        self.signalPlayer.readFromStream()
+
+        self.mainCursor.max = len(self.signal.data) - 1
+        self.mainCursor.min = max(0,
+                                  len(self.signal.data) - 3 * self.signal.samplingRate)
+        self.axesOscilogram.graph(self.mainCursor.min, self.mainCursor.max)
+
+        #self.regionChanged.emit(self.mainCursor.min, self.mainCursor.max, len(self.signal.data))
+
     def record(self):
-        """
-        Start a record to create a new signal.
-        :return:
-        """
-        pass
+
+        self.axesOscilogram.mouseZoomEnabled = False
+        self.axesSpecgram.mouseZoomEnabled = False
+        self.axesOscilogram.setVisible(True)
+        self.axesSpecgram.setVisible(False)
+        try:
+            self.signalPlayer.record()
+        except:
+             self.stop()
+        updateTime = 15
+        self._recordTimer.start(updateTime)
+        #self.createPlayerLine(self.mainCursor.min)
 
     def pause(self):
         """
@@ -646,9 +677,8 @@ class QSignalVisualizerWidget(QWidget):
         if not filename:
             raise Exception("Invalid filename")
 
-        #open the signal with the correct Stream Manager. (only wav by now)
+        signal = FileManager().read(filename)
         try:
-            signal = WavStreamManager().read(open(filename))
 
             #update signal
             self.signal = signal
@@ -657,7 +687,7 @@ class QSignalVisualizerWidget(QWidget):
             raise ex
 
     def save(self, fname):
-        """
+        FileManager().write(self.__signal, fname)
         Save the current signal into disc.
         :param fname: The path to the file.
         """
@@ -673,12 +703,6 @@ class QSignalVisualizerWidget(QWidget):
         """
         try:
 
-            signal_saver = WavStreamManager()
-            signal_saver.signal = signal
-            signal_saver.write(fname)
-
-        except Exception as ex:
-            raise ex
 
     def saveSelectedSectionAsSignal(self, fname):
         """
