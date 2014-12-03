@@ -1,7 +1,7 @@
 from PyQt4 import QtGui,QtCore
 from PyQt4.QtGui import QWidget
 
-from Graphic_Interface.Windows.EditCategoryWidgetUI import Ui_EditCategoryWidget
+from graphic_interface.windows.EditCategoryWidgetUI import Ui_EditCategoryWidget
 
 
 class EditCategoriesWidget(Ui_EditCategoryWidget,QWidget):

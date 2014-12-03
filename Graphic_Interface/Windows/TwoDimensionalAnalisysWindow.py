@@ -4,10 +4,10 @@ from PyQt4.QtCore import pyqtSlot
 import numpy,random
 from pyqtgraph.parametertree import Parameter, ParameterTree
 import pyqtgraph as pg
-from Graphic_Interface.Dialogs.EditCategoriesDialog import EditCategoriesDialog
-import Graphic_Interface.Dialogs.EditCategoriesDialogUI as editCateg
-from Graphic_Interface.Widgets.EditCategoriesWidget import EditCategoriesWidget
-from Graphic_Interface.Windows.Two_Dimensional_AnalisysWindowUI import Ui_TwoDimensionalWindow
+from graphic_interface.dialogs.EditCategoriesDialog import EditCategoriesDialog
+import graphic_interface.dialogs.EditCategoriesDialogUI as editCateg
+from graphic_interface.widgets.EditCategoriesWidget import EditCategoriesWidget
+from graphic_interface.windows.Two_Dimensional_AnalisysWindowUI import Ui_TwoDimensionalWindow
 from PyQt4 import QtGui, QtCore
 
 
@@ -54,9 +54,9 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         #the numpy [,] array with the parameter measurement
         self.data = data if data is not None else numpy.zeros(4).reshape((2, 2))
         self.widget.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
-        self.widget.addAction(self.actionHide_Show_Settings)
-        self.widget.addAction(self.actionSaveGraphImage)
-        self.widget.addAction(self.actionMark_Selected_Elements_As)
+        self.widget.add(self.actionHide_Show_Settings)
+        self.widget.add(self.actionSaveGraphImage)
+        self.widget.add(self.actionMark_Selected_Elements_As)
         self.createParameterTreeOptions(self.columns)
 
     @pyqtSlot()

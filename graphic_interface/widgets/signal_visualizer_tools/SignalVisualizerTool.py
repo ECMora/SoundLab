@@ -18,7 +18,7 @@ class SignalVisualizerTool(QtCore.QObject):
     corresponding to its function
     """
 
-    # SIGNALS
+    #SIGNALS
 
     # Signal raised when the tool detected data has changed
     #the detected data is send as a list of tuples ("measured_param" , value)
