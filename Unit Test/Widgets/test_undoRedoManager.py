@@ -15,7 +15,7 @@ class TestUndoRedoManager(TestCase):
         self.assertEqual(manager.count(),0,"Wrong Count")
         for x in range(50):
             oldcount = manager.count()
-            manager.addAction(UndoRedoAction(lambda :None,lambda :None))
+            manager.add(UndoRedoAction(lambda :None,lambda :None))
             self.assertEqual(manager.count(),oldcount+1,"Wrong Count")
         self.assertEqual(manager.count(),50,"Wrong count")
 
