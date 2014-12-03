@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\DuettoSystem\graphic_interface\UI_Files\MainWindow.ui'
+# Form implementation generated from reading ui file 'D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\DuettoSystem\graphic_interface\UI_Files\MainWindow.ui'
 #
-# Created: Sun Nov 30 15:23:36 2014
+# Created: Tue Dec 02 14:03:13 2014
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -18,7 +18,7 @@ class Ui_DuettoMainWindow(object):
     def setupUi(self, DuettoMainWindow):
         DuettoMainWindow.setObjectName(_fromUtf8("DuettoMainWindow"))
         DuettoMainWindow.setWindowModality(QtCore.Qt.ApplicationModal)
-        DuettoMainWindow.resize(936, 593)
+        DuettoMainWindow.resize(569, 363)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -46,7 +46,7 @@ class Ui_DuettoMainWindow(object):
         self.verticalLayout_2.addWidget(self.horizontalScrollBar)
         DuettoMainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(DuettoMainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 936, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 569, 21))
         self.menubar.setAutoFillBackground(False)
         self.menubar.setStyleSheet(_fromUtf8(""))
         self.menubar.setObjectName(_fromUtf8("menubar"))
@@ -344,6 +344,7 @@ class Ui_DuettoMainWindow(object):
         self.menuTools.addAction(self.actionRectangular_Eraser)
         self.menuTools.addSeparator()
         self.menuTools.addAction(self.menuExport.menuAction())
+        self.menuGenerate.addAction(self.actionInsert_Silence)
         self.menuGenerate.addAction(self.actionGenerate_White_Noise)
         self.menuGenerate.addAction(self.actionGenerate_Pink_Noise)
         self.menuEdit.addAction(self.actionCopy)
@@ -358,7 +359,6 @@ class Ui_DuettoMainWindow(object):
         self.menuEdit.addAction(self.actionChange_Sign)
         self.menuEdit.addSeparator()
         self.menuEdit.addAction(self.action_Reverse)
-        self.menuEdit.addAction(self.actionInsert_Silence)
         self.menuEdit.addAction(self.actionSilence)
         self.menuEdit.addSeparator()
         self.menuEdit.addAction(self.actionFilter)
@@ -430,7 +430,7 @@ class Ui_DuettoMainWindow(object):
         self.menuTools.setTitle(QtGui.QApplication.translate("DuettoMainWindow", "Tools", None, QtGui.QApplication.UnicodeUTF8))
         self.menuExport.setTitle(QtGui.QApplication.translate("DuettoMainWindow", "Export", None, QtGui.QApplication.UnicodeUTF8))
         self.menuEdit.setTitle(QtGui.QApplication.translate("DuettoMainWindow", "Edit", None, QtGui.QApplication.UnicodeUTF8))
-        self.menuGenerate.setTitle(QtGui.QApplication.translate("DuettoMainWindow", "Generate", None, QtGui.QApplication.UnicodeUTF8))
+        self.menuGenerate.setTitle(QtGui.QApplication.translate("DuettoMainWindow", "Insert", None, QtGui.QApplication.UnicodeUTF8))
         self.menuView.setTitle(QtGui.QApplication.translate("DuettoMainWindow", "Analysis", None, QtGui.QApplication.UnicodeUTF8))
         self.menuSound.setTitle(QtGui.QApplication.translate("DuettoMainWindow", "Sound", None, QtGui.QApplication.UnicodeUTF8))
         self.menuPlay_Speed.setTitle(QtGui.QApplication.translate("DuettoMainWindow", "Play Speed", None, QtGui.QApplication.UnicodeUTF8))
@@ -469,7 +469,7 @@ class Ui_DuettoMainWindow(object):
         self.actionRecord.setText(QtGui.QApplication.translate("DuettoMainWindow", "Record", None, QtGui.QApplication.UnicodeUTF8))
         self.action_Reverse.setText(QtGui.QApplication.translate("DuettoMainWindow", "Reverse", None, QtGui.QApplication.UnicodeUTF8))
         self.action_Reverse.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Ctrl+R", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionInsert_Silence.setText(QtGui.QApplication.translate("DuettoMainWindow", "Insert Silence", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionInsert_Silence.setText(QtGui.QApplication.translate("DuettoMainWindow", "Silence", None, QtGui.QApplication.UnicodeUTF8))
         self.actionInsert_Silence.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Ctrl+I", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSilence.setText(QtGui.QApplication.translate("DuettoMainWindow", "Silence", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSilence.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Ctrl+S", None, QtGui.QApplication.UnicodeUTF8))
