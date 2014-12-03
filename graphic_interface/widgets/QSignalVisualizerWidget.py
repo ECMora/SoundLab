@@ -687,22 +687,11 @@ class QSignalVisualizerWidget(QWidget):
             raise ex
 
     def save(self, fname):
-        FileManager().write(self.__signal, fname)
+        """
         Save the current signal into disc.
         :param fname: The path to the file.
         """
-        self.__saveSignal(fname,self.signal)
-
-    def __saveSignal(self, fname, signal):
-        """
-        Private method to save a signal in the supplied
-        file path name.
-        :param fname: file name. Path to the file in which the signal would be stored.
-        :param signal: The signal to store
-        :return:
-        """
-        try:
-
+        FileManager().write(self.__signal, fname)
 
     def saveSelectedSectionAsSignal(self, fname):
         """
