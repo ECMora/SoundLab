@@ -2,24 +2,25 @@
 import os
 import pickle
 from PyQt4 import QtCore, QtGui
+
 from pyqtgraph.parametertree.parameterTypes import ListParameter
 from pyqtgraph.parametertree import Parameter, ParameterTree
 from PyQt4.QtGui import QDialog, QMessageBox, QFileDialog, QActionGroup, QAction
-from PyQt4.QtCore import SIGNAL, pyqtSlot, QTimer
-from Graphic_Interface.Windows.ParameterList import DuettoListParameterItem
-from Graphic_Interface.Dialogs.NewFileDialog import NewFileDialog
-from Graphic_Interface.Widgets.HorizontalHistogram import HorizontalHistogramWidget
-from Graphic_Interface.Windows.PowerSpectrumWindow import PowerSpectrumWindow
-from SegmentationAndClasificationWindow import SegmentationAndClasificationWindow
-from Graphic_Interface.Widgets.undo_redo_actions.UndoRedoActions import *
-from MainWindow import Ui_DuettoMainWindow
-from Graphic_Interface.Dialogs import InsertSilenceDialog as sdialog, FilterOptionsDialog as filterdg, \
-    ChangeVolumeDialog as cvdialog
-from Graphic_Interface.Windows.WorkTheme import SerializedData
-from sound_lab_core.Clasification.ClassificationData import ClassificationData
+from PyQt4.QtCore import pyqtSlot, QTimer
 from duetto.dimensional_transformations.two_dimensional_transforms.Spectrogram.WindowFunctions import WindowFunction
 from duetto.audio_signals.Synthesizer import Synthesizer
-from Graphic_Interface.Widgets.signal_visualizer_tools.SignalVisualizerTool import Tools
+
+from graphic_interface.windows.ParameterList import DuettoListParameterItem
+from graphic_interface.dialogs.NewFileDialog import NewFileDialog
+from graphic_interface.windows.PowerSpectrumWindow import PowerSpectrumWindow
+from SegmentationAndClasificationWindow import SegmentationAndClasificationWindow
+from graphic_interface.widgets.undo_redo_actions.UndoRedoActions import *
+from MainWindow import Ui_DuettoMainWindow
+from graphic_interface.dialogs import InsertSilenceDialog as sdialog, FilterOptionsDialog as filterdg, \
+    ChangeVolumeDialog as cvdialog
+from graphic_interface.windows.WorkTheme import SerializedData
+from sound_lab_core.Clasification.ClassificationData import ClassificationData
+from graphic_interface.widgets.signal_visualizer_tools.SignalVisualizerTool import Tools
 
 
 class InsertSilenceDialog(sdialog.Ui_Dialog, QDialog):

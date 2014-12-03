@@ -1,7 +1,7 @@
 from PyQt4 import QtCore
 from duetto.widgets.OscillogramWidget import OscillogramWidget
-from Graphic_Interface.Widgets.SoundLabWidget import SoundLabWidget
-from Graphic_Interface.Widgets.signal_visualizer_tools.OscilogramTools.ZoomTool import ZoomTool
+from graphic_interface.widgets.SoundLabWidget import SoundLabWidget
+from graphic_interface.widgets.signal_visualizer_tools.OscilogramTools.ZoomTool import ZoomTool
 
 
 class SoundLabOscilogramWidget(SoundLabWidget,OscillogramWidget):
