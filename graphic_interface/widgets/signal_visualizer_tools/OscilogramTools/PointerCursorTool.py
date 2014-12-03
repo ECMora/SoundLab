@@ -2,7 +2,7 @@
 from PyQt4 import QtCore
 import pyqtgraph as pg
 from PyQt4.QtGui import QCursor
-from Graphic_Interface.Widgets.signal_visualizer_tools.SignalVisualizerTool import SignalVisualizerTool
+from graphic_interface.widgets.signal_visualizer_tools.SignalVisualizerTool import SignalVisualizerTool
 
 
 class PointerCursorTool(SignalVisualizerTool):

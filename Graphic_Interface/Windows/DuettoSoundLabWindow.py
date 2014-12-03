@@ -1223,7 +1223,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     #endregion
 
-    #region Widgets Visibility
+    #region widgets Visibility
     @pyqtSlot()
     def on_actionCombined_triggered(self):
         """
@@ -1262,7 +1262,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     #endregion
 
-    #region Save Widgets Image
+    #region Save widgets Image
 
     @pyqtSlot()
     def on_actionOsc_Image_triggered(self):
