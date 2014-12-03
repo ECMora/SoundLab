@@ -18,7 +18,7 @@ from graphic_interface.widgets.undo_redo_actions.UndoRedoActions import *
 from MainWindow import Ui_DuettoMainWindow
 from graphic_interface.dialogs import InsertSilenceDialog as sdialog, FilterOptionsDialog as filterdg, \
     ChangeVolumeDialog as cvdialog
-from graphic_interface.windows.WorkTheme import SerializedData
+from graphic_interface.windows.WorkTheme import WorkTheme
 from sound_lab_core.Clasification.ClassificationData import ClassificationData
 from graphic_interface.widgets.signal_visualizer_tools.SignalVisualizerTool import Tools
 
@@ -81,7 +81,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.pow_overlap = 90
 
         #theme for the visual options of the software
-        self.defaultTheme = self.DeSerializeTheme(os.path.join(os.path.join("Utils", "Themes"), "RedBlackTheme.dth"))
+        self.defaultTheme = WorkTheme()  # self.DeSerializeTheme(os.path.join("Utils", "Themes", "RedBlackTheme.dth"))
 
         #all the themes that are in the static folder for themes
         themesInFolder = folderFiles(os.path.join("Utils", "Themes"), extensions=[".dth"])
@@ -111,16 +111,18 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 ]},
 
                 {u'name': unicode(self.tr(u'Grid')), u'type': u'group', u'children': [
-                    {u'name': u'X', u'type': u'bool', u'default': self.defaultTheme.osc_GridX,
-                     u'value': self.defaultTheme.osc_GridX},
-                    {u'name': u'Y', u'type': u'bool', u'default': self.defaultTheme.osc_GridY,
-                     u'value': self.defaultTheme.osc_GridY},
+                    {u'name': u'X', u'type': u'bool', u'default': self.defaultTheme.oscillogramTheme.gridX,
+                     u'value': self.defaultTheme.oscillogramTheme.gridX},
+                    {u'name': u'Y', u'type': u'bool', u'default': self.defaultTheme.oscillogramTheme.gridY,
+                     u'value': self.defaultTheme.oscillogramTheme.gridY},
 
                 ]},
                 {u'name': unicode(self.tr(u'Background color')), u'type': u'color',
-                 u'value': self.defaultTheme.osc_background, u'default': self.defaultTheme.osc_background},
-                {u'name': unicode(self.tr(u'Plot color')), u'type': u'color', u'value': self.defaultTheme.osc_plot,
-                 u'default': self.defaultTheme.osc_plot},
+                 u'value': self.defaultTheme.oscillogramTheme.background_color,
+                 u'default': self.defaultTheme.oscillogramTheme.background_color},
+                {u'name': unicode(self.tr(u'Plot color')), u'type': u'color',
+                 u'value': self.defaultTheme.oscillogramTheme.plot_color,
+                 u'default': self.defaultTheme.oscillogramTheme.plot_color},
                 {u'name': unicode(self.tr(u'Connect Lines')), u'type': u'bool', u'default': self.widget.lines,
                  u'value': self.widget.lines},
             ]},
@@ -134,7 +136,8 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                  u'values': [(unicode(self.tr(u'Automatic')), 512), (u"8192", 8192), (u"128", 128), (u"256", 256),
                              (u"512", 512), (u"1024", 1024)], u'value': u'512'},
                 {u'name': unicode(self.tr(u'FFT window')), u'type': u'list',
-                 u'value': self.widget.axesSpecgram.specgramHandler.window, u'default': self.widget.axesSpecgram.specgramHandler.window,
+                 u'value': self.widget.axesSpecgram.specgramHandler.window,
+                 u'default': self.widget.axesSpecgram.specgramHandler.window,
                  u'values': [(u'Bartlett', WindowFunction.Bartlett),
                              (u"Blackman", WindowFunction.Blackman),
                              (u"Hamming",  WindowFunction.Hamming),
@@ -145,19 +148,22 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 {u'name': unicode(self.tr(u'FFT overlap')), u'type': u'int', u'value': -1, u'limits': (-1, 99)},
                 {u'name': unicode(self.tr(u'Threshold(dB)')), u'type': u'group', u'children': [
                     {u'name': unicode(self.tr(u'Min')), u'type': u'float', u'step': 0.1,
-                     u'default': self.defaultTheme.histRange[0], u'value': self.defaultTheme.histRange[0]},
+                     u'default': self.defaultTheme.spectrogramTheme.histRange[0],
+                     u'value': self.defaultTheme.spectrogramTheme.histRange[0]},
                     {u'name': unicode(self.tr(u'Max')), u'type': u'float', u'step': 0.1,
-                     u'default': self.defaultTheme.histRange[1], u'value': self.defaultTheme.histRange[1]},
+                     u'default': self.defaultTheme.spectrogramTheme.histRange[1],
+                     u'value': self.defaultTheme.spectrogramTheme.histRange[1]},
                 ]},
                 {u'name': unicode(self.tr(u'Grid')), u'type': u'group', u'children': [
-                    {u'name': u'X', u'type': u'bool', u'default': self.defaultTheme.spec_GridX,
-                     u'value': self.defaultTheme.spec_GridX},
-                    {u'name': u'Y', u'type': u'bool', u'default': self.defaultTheme.spec_GridY,
-                     u'value': self.defaultTheme.spec_GridY},
+                    {u'name': u'X', u'type': u'bool', u'default': self.defaultTheme.spectrogramTheme.gridX,
+                     u'value': self.defaultTheme.spectrogramTheme.gridX},
+                    {u'name': u'Y', u'type': u'bool', u'default': self.defaultTheme.spectrogramTheme.gridY,
+                     u'value': self.defaultTheme.spectrogramTheme.gridY},
 
                 ]},
                 {u'name': unicode(self.tr(u'Background color')), u'type': u'color',
-                 u'value': self.defaultTheme.spec_background, u'default': self.defaultTheme.spec_background},
+                 u'value': self.defaultTheme.spectrogramTheme.background_color,
+                 u'default': self.defaultTheme.spectrogramTheme.background_color},
             ]},
             {u'name': unicode(self.tr(u'Themes')), u'type': u'group', u'children': [
                 {u'name': unicode(self.tr(u'Theme Selected')), u'type': u'list',
@@ -168,19 +174,24 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                  u'values': [(x[x.rfind(os.path.sep) + 1:x.rfind(".dth")], x) for x in themesInFolder]},
             ]
             },
-            {u'name': unicode(self.tr(u'Detection Visual Settings')), u'type': u'group', u'children': [
-                {u'name': unicode(self.tr(u'Measurement Location')), u'type': u'group', u'children': [
-                    {u'name': unicode(self.tr(u'Start')), u'type': u'color', u'value': self.defaultTheme.startColor,
-                     u'default': self.defaultTheme.startColor},
-                    {u'name': unicode(self.tr(u'Quartile25')), u'type': u'color',
-                     u'value': self.defaultTheme.quart1Color, u'default': self.defaultTheme.quart1Color},
-                    {u'name': unicode(self.tr(u'Center')), u'type': u'color', u'value': self.defaultTheme.centerColor,
-                     u'default': self.defaultTheme.centerColor},
-                    {u'name': unicode(self.tr(u'Quartile75')), u'type': u'color',
-                     u'value': self.defaultTheme.quart2Color, u'default': self.defaultTheme.quart2Color},
-                    {u'name': unicode(self.tr(u'End')), u'type': u'color', u'value': self.defaultTheme.endColor,
-                     u'default': self.defaultTheme.endColor},
-                ]}]}
+            # {u'name': unicode(self.tr(u'Detection Visual Settings')), u'type': u'group', u'children': [
+            #     {u'name': unicode(self.tr(u'Measurement Location')), u'type': u'group', u'children': [
+            #         {u'name': unicode(self.tr(u'Start')), u'type': u'color',
+            #          u'value': self.defaultTheme.startColor,
+            #          u'default': self.defaultTheme.startColor},
+            #         {u'name': unicode(self.tr(u'Quartile25')), u'type': u'color',
+            #          u'value': self.defaultTheme.quart1Color,
+            #          u'default': self.defaultTheme.quart1Color},
+            #         {u'name': unicode(self.tr(u'Center')), u'type': u'color',
+            #          u'value': self.defaultTheme.centerColor,
+            #          u'default': self.defaultTheme.centerColor},
+            #         {u'name': unicode(self.tr(u'Quartile75')), u'type': u'color',
+            #          u'value': self.defaultTheme.quart2Color,
+            #          u'default': self.defaultTheme.quart2Color},
+            #         {u'name': unicode(self.tr(u'End')), u'type': u'color',
+            #          u'value': self.defaultTheme.endColor,
+            #          u'default': self.defaultTheme.endColor},
+            #     ]}]}
 
         ]
         ListParameter.itemClass = DuettoListParameterItem
@@ -203,8 +214,8 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.hist.setFixedWidth(340)
         self.hist.setFixedHeight(100)
         self.hist.item.setImageItem(self.widget.axesSpecgram.imageItem)
-        self.hist.item.gradient.restoreState(self.defaultTheme.colorBarState)
-        self.hist.item.region.setRegion(self.defaultTheme.histRange)
+        self.hist.item.gradient.restoreState(self.defaultTheme.spectrogramTheme.colorBarState)
+        self.hist.item.region.setRegion(self.defaultTheme.spectrogramTheme.histRange)
         self.hist.item.region.sigRegionChanged.connect(self.updateRegionTheme)
 
         #the next 2 lines are a PARCHE for the error of deselect zoom region when the region changes
@@ -342,7 +353,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             data = pickle.load(file)
             file.close()
             return data
-        return SerializedData()
+        return WorkTheme()
 
     def SerializeClassificationData(self, filename=""):
         if filename and os.path.exists(filename):
@@ -371,53 +382,53 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             self.SerializeTheme(filename)
 
     def updateMyTheme(self, theme):
-        assert isinstance(theme, SerializedData)
+        assert isinstance(theme, WorkTheme)
         self.defaultTheme = theme
         self.widget.load_Theme(theme)
-        self.hist.item.gradient.restoreState(theme.colorBarState)
-        self.hist.item.region.setRegion(theme.histRange)
+        self.hist.item.gradient.restoreState(theme.spectrogramTheme.colorBarState)
+        self.hist.item.region.setRegion(theme.spectrogramTheme.histRange)
 
         self.hist.item.region.lineMoved()
         self.hist.item.region.lineMoveFinished()
 
         self.ParamTree.param(unicode(self.tr(u'Oscillogram Settings'))).param(unicode(self.tr(u'Grid'))).param(
-            unicode(self.tr(u'X'))).setValue(theme.osc_GridX)
+            unicode(self.tr(u'X'))).setValue(theme.oscillogramTheme.gridX)
         self.ParamTree.param(unicode(self.tr(u'Oscillogram Settings'))).param(unicode(self.tr(u'Grid'))).param(
-            unicode(self.tr(u'Y'))).setValue(theme.osc_GridY)
+            unicode(self.tr(u'Y'))).setValue(theme.oscillogramTheme.gridY)
         self.ParamTree.param(unicode(self.tr(u'Spectrogram Settings'))).param(unicode(self.tr(u'Grid'))).param(
-            unicode(self.tr(u'X'))).setValue(theme.spec_GridX)
+            unicode(self.tr(u'X'))).setValue(theme.spectrogramTheme.gridX)
         self.ParamTree.param(unicode(self.tr(u'Spectrogram Settings'))).param(unicode(self.tr(u'Grid'))).param(
-            unicode(self.tr(u'Y'))).setValue(theme.spec_GridY)
+            unicode(self.tr(u'Y'))).setValue(theme.spectrogramTheme.gridY)
         self.ParamTree.param(unicode(self.tr(u'Oscillogram Settings'))).param(
-            unicode(self.tr(u'Background color'))).setValue(theme.osc_background)
+            unicode(self.tr(u'Background color'))).setValue(theme.oscillogramTheme.background_color)
         self.ParamTree.param(unicode(self.tr(u'Oscillogram Settings'))).param(unicode(self.tr(u'Plot color'))).setValue(
-            theme.osc_plot)
+            theme.oscillogramTheme.plot_color)
         self.ParamTree.param(unicode(self.tr(u'Spectrogram Settings'))).param(
-            unicode(self.tr(u'Background color'))).setValue(theme.spec_background)
+            unicode(self.tr(u'Background color'))).setValue(theme.spectrogramTheme.background_color)
         self.ParamTree.param(unicode(self.tr(u'Spectrogram Settings'))).param(unicode(self.tr(u'Threshold(dB)'))).param(
-            unicode(self.tr(u'Min'))).setValue(theme.histRange[0])
+            unicode(self.tr(u'Min'))).setValue(theme.spectrogramTheme.histRange[0])
         self.ParamTree.param(unicode(self.tr(u'Spectrogram Settings'))).param(unicode(self.tr(u'Threshold(dB)'))).param(
-            unicode(self.tr(u'Max'))).setValue(theme.histRange[1])
-        self.ParamTree.param(unicode(self.tr(u'Spectrogram Settings'))).param(
-            unicode(self.tr(u'Frequency(kHz)'))).param(unicode(self.tr(u'Min'))).setValue(theme.minYSpec / 1000.0)
-        self.ParamTree.param(unicode(self.tr(u'Spectrogram Settings'))).param(
-            unicode(self.tr(u'Frequency(kHz)'))).param(unicode(self.tr(u'Max'))).setValue(theme.maxYSpec / 1000.0)
-        self.ParamTree.param(unicode(self.tr(u'Oscillogram Settings'))).param(unicode(self.tr(u'Amplitude(%)'))).param(
-            unicode(self.tr(u'Min'))).setValue(theme.minYOsc)
-        self.ParamTree.param(unicode(self.tr(u'Oscillogram Settings'))).param(unicode(self.tr(u'Amplitude(%)'))).param(
-            unicode(self.tr(u'Max'))).setValue(theme.maxYOsc)
-        self.ParamTree.param(unicode(self.tr(u'Detection Visual Settings'))).param(
-            unicode(self.tr(u'Measurement Location'))).param(unicode(self.tr(u'Center'))).setValue(theme.centerColor)
-        self.ParamTree.param(unicode(self.tr(u'Detection Visual Settings'))).param(
-            unicode(self.tr(u'Measurement Location'))).param(unicode(self.tr(u'End'))).setValue(theme.endColor)
-        self.ParamTree.param(unicode(self.tr(u'Detection Visual Settings'))).param(
-            unicode(self.tr(u'Measurement Location'))).param(unicode(self.tr(u'Start'))).setValue(theme.startColor)
-        self.ParamTree.param(unicode(self.tr(u'Detection Visual Settings'))).param(
-            unicode(self.tr(u'Measurement Location'))).param(unicode(self.tr(u'Quartile25'))).setValue(
-            theme.quart1Color)
-        self.ParamTree.param(unicode(self.tr(u'Detection Visual Settings'))).param(
-            unicode(self.tr(u'Measurement Location'))).param(unicode(self.tr(u'Quartile75'))).setValue(
-            theme.quart2Color)
+            unicode(self.tr(u'Max'))).setValue(theme.spectrogramTheme.histRange[1])
+        # self.ParamTree.param(unicode(self.tr(u'Spectrogram Settings'))).param(
+        #     unicode(self.tr(u'Frequency(kHz)'))).param(unicode(self.tr(u'Min'))).setValue(theme.minYSpec / 1000.0)
+        # self.ParamTree.param(unicode(self.tr(u'Spectrogram Settings'))).param(
+        #     unicode(self.tr(u'Frequency(kHz)'))).param(unicode(self.tr(u'Max'))).setValue(theme.maxYSpec / 1000.0)
+        # self.ParamTree.param(unicode(self.tr(u'Oscillogram Settings'))).param(unicode(self.tr(u'Amplitude(%)'))).param(
+        #     unicode(self.tr(u'Min'))).setValue(theme.minYOsc)
+        # self.ParamTree.param(unicode(self.tr(u'Oscillogram Settings'))).param(unicode(self.tr(u'Amplitude(%)'))).param(
+        #     unicode(self.tr(u'Max'))).setValue(theme.maxYOsc)
+        # self.ParamTree.param(unicode(self.tr(u'Detection Visual Settings'))).param(
+        #     unicode(self.tr(u'Measurement Location'))).param(unicode(self.tr(u'Center'))).setValue(theme.centerColor)
+        # self.ParamTree.param(unicode(self.tr(u'Detection Visual Settings'))).param(
+        #     unicode(self.tr(u'Measurement Location'))).param(unicode(self.tr(u'End'))).setValue(theme.endColor)
+        # self.ParamTree.param(unicode(self.tr(u'Detection Visual Settings'))).param(
+        #     unicode(self.tr(u'Measurement Location'))).param(unicode(self.tr(u'Start'))).setValue(theme.startColor)
+        # self.ParamTree.param(unicode(self.tr(u'Detection Visual Settings'))).param(
+        #     unicode(self.tr(u'Measurement Location'))).param(unicode(self.tr(u'Quartile25'))).setValue(
+        #     theme.quart1Color)
+        # self.ParamTree.param(unicode(self.tr(u'Detection Visual Settings'))).param(
+        #     unicode(self.tr(u'Measurement Location'))).param(unicode(self.tr(u'Quartile75'))).setValue(
+        #     theme.quart2Color)
 
     @pyqtSlot()
     def on_actionLoad_Theme_triggered(self):
@@ -479,13 +490,13 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
             elif childName == unicode(self.tr(u'Spectrogram Settings')) + u"." + \
                     unicode(self.tr(u'Grid')) + u"." + unicode(self.tr(u'X')):
-                self.defaultTheme.spec_GridX = data
+                self.defaultTheme.spectrogramTheme.gridX = data
                 print("XXX")
 
 
             elif childName == unicode(self.tr(u'Spectrogram Settings')) + u"." + \
                     unicode(self.tr(u'Grid')) + u"." + unicode(self.tr(u'Y')):
-                self.defaultTheme.spec_GridY = data
+                self.defaultTheme.spectrogramTheme.gridY = data
 
             elif childName == unicode(self.tr(u'Spectrogram Settings')) + u"." + \
                     unicode(self.tr(u'Threshold(dB)')) + u"." + unicode(self.tr(u'Min')):
@@ -522,7 +533,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
             elif childName == unicode(self.tr(u'Spectrogram Settings')) + u"." + \
                     unicode(self.tr(u'Background color')):
-                self.defaultTheme.spec_background = data
+                self.defaultTheme.spectrogramTheme.background_color = data
 
             elif childName == unicode(self.tr(u'Spectrogram Settings')) + u"." + \
                     unicode(self.tr(u'ColorMap')):
@@ -531,12 +542,12 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             elif childName == unicode(self.tr(u'Spectrogram Settings')) + u"." + \
                     unicode(self.tr(u'Frequency(kHz)')) + u"." + \
                     unicode(self.tr(u'Min')):
-                self.defaultTheme.minYSpec = data
+                pass# self.defaultTheme.spectrogramTheme.minY = data
 
             elif childName == unicode(self.tr(u'Spectrogram Settings')) + u"." + \
                     unicode(self.tr(u'Frequency(kHz)')) + u"." + \
                     unicode(self.tr(u'Max')):
-                self.defaultTheme.maxYSpec = data
+                pass# self.defaultTheme.spectrogramTheme.maxY = data
 
             elif childName == unicode(self.tr(u'Spectrogram Settings')) + u"." + \
                     unicode(self.tr(u'FFT overlap')):
@@ -549,31 +560,31 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
             elif childName == unicode(self.tr(u'Oscillogram Settings')) + u"." + \
                     unicode(self.tr(u'Background color')):
-                self.defaultTheme.osc_background = data
+                self.defaultTheme.oscillogramTheme.background_color = data
 
             elif childName == unicode(self.tr(u'Oscillogram Settings')) + u"." + \
                     unicode(self.tr(u'Grid')) + u"." + \
                     unicode(self.tr(u'X')):
-                self.defaultTheme.osc_GridX = data
+                self.defaultTheme.oscillogramTheme.gridX = data
 
             elif childName == unicode(self.tr(u'Oscillogram Settings')) + u"." + \
                     unicode(self.tr(u'Grid')) + u"." + \
                     unicode(self.tr(u'Y')):
-                self.defaultTheme.osc_GridY = data
+                self.defaultTheme.oscillogramTheme.gridY = data
 
             elif childName == unicode(self.tr(u'Oscillogram Settings')) + u"." + \
                     unicode(self.tr(u'Plot color')):
-                self.defaultTheme.osc_plot = data
+                self.defaultTheme.oscillogramTheme.plot_color = data
 
             elif childName == unicode(self.tr(u'Oscillogram Settings')) + u"." + \
                     unicode(self.tr(u'Amplitude(%)')) + u"." + \
                     unicode(self.tr(u'Min')):
-                self.defaultTheme.minYOsc = data
+                pass# self.defaultTheme.oscillogramTheme.minY = data
 
             elif childName == unicode(self.tr(u'Oscillogram Settings')) + u"." + \
                     unicode(self.tr(u'Amplitude(%)')) + u"." + \
                     unicode(self.tr(u'Max')):
-                self.defaultTheme.maxYOsc = data
+                pass# self.defaultTheme.oscillogramTheme.maxY = data
 
             elif childName == unicode(self.tr(u'Oscillogram Settings')) + u"." + \
                     unicode(self.tr(u'Connect Lines')):

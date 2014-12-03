@@ -135,13 +135,13 @@ class QSignalVisualizerWidget(QWidget):
 
     def load_Theme(self, theme):
         """
-        this method implements the  way in which the control load the theme
+        this method implements the  way in which the control loads the theme
         all the visual options are updated here.
-        The method delegate in each control (oscilogram plot widget and spectrogram)
+        The method delegates in each control (oscillogram and spectrogram plot widgets)
         the implementation of its respective visual updates.
         """
-        self.axesOscilogram.load_Theme(theme)
-        self.axesSpecgram.load_Theme(theme)
+        self.axesOscilogram.load_Theme(theme.oscillogramTheme)
+        self.axesSpecgram.load_Theme(theme.spectrogramTheme)
 
     def signalName(self):
         return "" if self.__signal is None else self.__signal.name

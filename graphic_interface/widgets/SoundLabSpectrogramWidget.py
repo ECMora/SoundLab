@@ -35,8 +35,7 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
         self.graphics_view.mousePressEvent = self.mousePressEvent
         self.changeTool(SpectrogramZoomTool)
         self.minY = 0
-        self.maxY = 22
-
+        self.maxY = 256
 
     def changeTool(self, new_tool_class):
         SoundLabWidget.changeTool(self,new_tool_class)
@@ -64,19 +63,20 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
         self.rangeChanged.emit(x1, x2)
 
     def load_Theme(self, theme):
-        self.graphics_view.setBackground(theme.spec_background)
+        self.graphics_view.setBackground(theme.background_color)
+
         # self.viewBox.showGrid(theme.spec_GridX,theme.spec_GridY)
 
-        if theme.maxYSpec == -1:
-            theme.maxYSpec = self.specgramHandler.freqs[-1]
-        YSpec = numpy.searchsorted(self.specgramHandler.freqs, [theme.minYSpec * 1000, theme.maxYSpec * 1000])
-        self.minY, self.maxY = YSpec[0], YSpec[1]
-        self.viewBox.setYRange(self.minY,
-                               self.maxY,
-                              padding=0)
+        # if theme.maxYSpec == -1:
+        #     theme.maxYSpec = self.specgramHandler.freqs[-1]
+        # YSpec = numpy.searchsorted(self.specgramHandler.freqs, [theme.minYSpec * 1000, theme.maxYSpec * 1000])
+        # self.minY, self.maxY = YSpec[0], YSpec[1]
+        # self.viewBox.setYRange(self.minY,
+        #                        self.maxY,
+        #                       padding=0)
         # self.graph()
 
-    def graph(self,indexFrom=0,indexTo=-1):
+    def graph(self, indexFrom=0, indexTo=-1):
         SpectrogramWidget.graph(self,indexFrom,indexTo)
         self.viewBox.setYRange(self.minY,
                                self.maxY,

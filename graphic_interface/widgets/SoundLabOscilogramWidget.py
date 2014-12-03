@@ -71,21 +71,23 @@ class SoundLabOscilogramWidget(SoundLabWidget,OscillogramWidget):
 
     def load_Theme(self, theme):
         update = False
-        self.setBackground(theme.osc_background)
-        self.getPlotItem().showGrid(theme.osc_GridX, theme.osc_GridY)
-        if self.osc_color != theme.osc_plot:
+        self.setBackground(theme.background_color)
+        self.getPlotItem().showGrid(theme.gridX, theme.gridY)
+        if self.osc_color != theme.plot_color:
             update = True
-            self.osc_color = theme.osc_plot
-        self.minY = -theme.minYOsc * 0.01 * self.signal.minimumValue
-        self.maxY = theme.maxYOsc * 0.01 * self.signal.maximumValue
-        self.setRange(yRange=(self.minY,
-                              self.maxY),
-                              padding=0, update=True)
+            self.osc_color = theme.plot_color
+
+        # self.minY = -theme.minYOsc * 0.01 * self.signal.minimumValue
+        # self.maxY = theme.maxYOsc * 0.01 * self.signal.maximumValue
+        # self.setRange(yRange=(self.minY,
+        #                       self.maxY),
+        #                       padding=0, update=True)
+
         if update:
             self.graph()
 
     def graph(self, indexFrom=0, indexTo=-1):
-        OscillogramWidget.graph(self,indexFrom,indexTo)
+        OscillogramWidget.graph(self, indexFrom, indexTo)
         self.setRange(yRange=(self.minY,
                               self.maxY),
                               padding=0)
