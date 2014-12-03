@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from PyQt4.QtGui import QDialog
-from Graphic_Interface.Dialogs.ui_new_file_dialog import Ui_NewFileDialog
+from graphic_interface.dialogs.ui_new_file_dialog import Ui_NewFileDialog
 
 
 class NewFileDialog(QDialog, Ui_NewFileDialog):

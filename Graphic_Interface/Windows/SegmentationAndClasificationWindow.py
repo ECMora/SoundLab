@@ -19,12 +19,12 @@ from sound_lab_core.Segmentation.Detectors.ElementsDetectors.OneDimensional.OneD
     OneDimensionalElementsDetector
 from sound_lab_core.Segmentation.Elements.Element import Element
 from sound_lab_core.Segmentation.Elements.OneDimensionalElement import SpectralMeasurementLocation
-from ..Dialogs.elemDetectSettings import ElemDetectSettingsDialog
-from Graphic_Interface.Windows.TwoDimensionalAnalisysWindow import TwoDimensionalAnalisysWindow
+from ..dialogs.elemDetectSettings import ElemDetectSettingsDialog
+from graphic_interface.windows.TwoDimensionalAnalisysWindow import TwoDimensionalAnalisysWindow
 from SegmentationAndClasificationWindowUI import Ui_MainWindow
-import Graphic_Interface.Dialogs.EditCategoriesDialogUI as editCateg
-from Graphic_Interface.Dialogs.EditCategoriesDialog import EditCategoriesDialog
-from Graphic_Interface.Widgets.EditCategoriesWidget import EditCategoriesWidget
+import graphic_interface.dialogs.EditCategoriesDialogUI as editCateg
+from graphic_interface.dialogs.EditCategoriesDialog import EditCategoriesDialog
+from graphic_interface.widgets.EditCategoriesWidget import EditCategoriesWidget
 
 
 class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
