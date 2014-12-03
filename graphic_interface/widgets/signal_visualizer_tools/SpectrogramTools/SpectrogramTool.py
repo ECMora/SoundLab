@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import numpy
-from PyQt4 import QtCore
+
 from graphic_interface.widgets.signal_visualizer_tools.SignalVisualizerTool import SignalVisualizerTool
 
 
@@ -49,15 +49,7 @@ class SpectrogramTool(SignalVisualizerTool):
 
         return a + int(round((yPixel - miny) * (b - a) * 1. / (maxy - miny), 0))
 
-    def getFreqTimeAndIntensity(self, x, y):
-        # time = numpy.round((self.parent().mainCursor.min + self.parent()._from_spec_to_osc(
-        # x)) * 1.0 / self.widget.signal.samplingRate, 4)
-        # freq = numpy.round(self.widget.specgramHandler.freqs[y] * 1.0 / 1000, 1)
-        # intensity = numpy.round(10 * numpy.log10(self.widget.specgramHandler.matriz[y][
-        #                         x - self.parent()._from_osc_to_spec(self.parent().mainCursor.min) - 1]
-        #                         * 1.0 / numpy.amax(self.parent().specgramSettings.Pxx)), 2)
-        time, freq, intensity = 0, 0, 0
-        return [time, freq, intensity]
+
 
     def timeToStr(self):
         unit = 's'
