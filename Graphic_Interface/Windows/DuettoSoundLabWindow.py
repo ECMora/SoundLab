@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 import os
 import pickle
-from PyQt4 import QtCore, QtGui
+from PyQt4 import QtGui
 
 from pyqtgraph.parametertree.parameterTypes import ListParameter
 from pyqtgraph.parametertree import Parameter, ParameterTree
 from PyQt4.QtGui import QDialog, QMessageBox, QFileDialog, QActionGroup, QAction
-from PyQt4.QtCore import pyqtSlot, QTimer
+from PyQt4.QtCore import pyqtSlot
 from duetto.dimensional_transformations.two_dimensional_transforms.Spectrogram.WindowFunctions import WindowFunction
 from duetto.audio_signals.Synthesizer import Synthesizer
+from Utils.Utils import folderFiles
 
 from graphic_interface.windows.ParameterList import DuettoListParameterItem
 from graphic_interface.dialogs.NewFileDialog import NewFileDialog
@@ -59,7 +60,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         #theme for the visual options
         theme_path = os.path.join(os.path.join("Utils", "Themes"), "RedBlackTheme.dth")
-        self.defaultTheme = self.deSerializeTheme(theme_path)
         self.defaultTheme = WorkTheme()  # self.DeSerializeTheme(os.path.join("Utils", "Themes", "RedBlackTheme.dth"))
 
         #get all the themes that are in the static folder for themes ("Utils\Themes\")
@@ -71,8 +71,8 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.hist = self.widget.axesSpecgram.histogram
         self.hist.setFixedWidth(self.SETTINGS_WINDOW_WIDTH)
         self.hist.setFixedHeight(self.SETTINGS_WINDOW_HEIGHT)
-        self.hist.item.gradient.restoreState(self.defaultTheme.colorBarState)
-        self.hist.item.region.setRegion(self.defaultTheme.histRange)
+        self.hist.item.gradient.restoreState(self.defaultTheme.spectrogramTheme.colorBarState)
+        self.hist.item.region.setRegion(self.defaultTheme.spectrogramTheme.histRange)
         self.hist.item.region.sigRegionChanged.connect(self.updateRegionTheme)
 
         #TODO rearrange this visual options that must be inside the theme
@@ -290,8 +290,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 classif_data_file = open(filename, 'wb')
                 pickle.dump(self.classificationData, classif_data_file)
                 classif_data_file.close()
-        return WorkTheme()
-
             except Exception as ex:
                 raise ex
 
@@ -356,11 +354,12 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             self.serializeTheme(filename)
 
     def updateTheme(self, theme):
-        assert isinstance(theme, WorkTheme)
+        """
         Update the current selected theme with the values of the supplied new one.
         :param theme: The new Theme to load
         :return:
         """
+        assert isinstance(theme, WorkTheme)
         #change the current theme
         self.defaultTheme = theme
 
@@ -441,9 +440,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 return data
             except Exception as ex:
                 raise ex
-
-        #return a default theme
-        return SerializedData()
 
     def updateRegionTheme(self):
         """
