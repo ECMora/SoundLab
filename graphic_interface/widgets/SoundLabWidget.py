@@ -46,6 +46,6 @@ class SoundLabWidget:
     def guiToolDetectedData(self,data_list):
         s = " "
         for atr_name,value in data_list:
-            s += str(atr_name) + ": " +str(value) + " "
+            s += str(atr_name) + ": " + str(value) + " "
         self.toolDataDetected.emit(s)
 

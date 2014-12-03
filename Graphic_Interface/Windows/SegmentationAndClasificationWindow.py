@@ -77,7 +77,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.widget.visibleOscilogram = True
         self.widget.visibleSpectrogram = True
 
-        self.widget.refresh()
+        self.widget.graph()
 
         self.rejectSignal = False
         self.widget.mainCursor.min, self.widget.mainCursor.max = 0, len(self.widget.signalProcessor.signal.data)
