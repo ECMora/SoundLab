@@ -101,6 +101,7 @@ class QSignalVisualizerWidget(QWidget):
         self._recordTimer = QTimer(self)
         self._recordTimer.timeout.connect(self.on_newDataRecorded)
 
+
     def setSelectedTool(self, tool):
         """
         Change the current selected tool of the widget.
@@ -133,13 +134,13 @@ class QSignalVisualizerWidget(QWidget):
 
     def load_Theme(self, theme):
         """
-        this method implements the  way in which the control load the theme
+        this method implements the  way in which the control loads the theme
         all the visual options are updated here.
-        The method delegate in each control (oscilogram plot widget and spectrogram)
+        The method delegates in each control (oscillogram and spectrogram plot widgets)
         the implementation of its respective visual updates.
         """
-        self.axesOscilogram.load_Theme(theme)
-        self.axesSpecgram.load_Theme(theme)
+        self.axesOscilogram.load_Theme(theme.oscillogramTheme)
+        self.axesSpecgram.load_Theme(theme.spectrogramTheme)
 
     def signalName(self):
         """
@@ -238,34 +239,25 @@ class QSignalVisualizerWidget(QWidget):
             self.play()
 
     def stop(self):
-        """
-        Stop the current signal reproduction.
-        If the signal is stopped nothing is made.
-        :return:
-        """
-        self.removePlayerLine()
         self.signalPlayer.stop()
-
-
+        if  prevStatus == self.signalPlayer.RECORDING:
 
     def on_newDataRecorded(self):
 
-        # print('On new data:' + str(self._recordTimer.isActive()))
         self.signalPlayer.readFromStream()
 
-        self.mainCursor.max = len(self.signal.data) - 1
+        self.mainCursor.max = len(self.signal.data)
         self.mainCursor.min = max(0,
                                   len(self.signal.data) - 3 * self.signal.samplingRate)
+
         self.axesOscilogram.graph(self.mainCursor.min, self.mainCursor.max)
 
         #self.regionChanged.emit(self.mainCursor.min, self.mainCursor.max, len(self.signal.data))
 
     def record(self):
-        """
-        Start a record to create a new signal.
-        :return:
-        """
-        pass
+        self.__signal = self.signalPlayer.signal
+        self.axesOscilogram.signal = self.signalPlayer.signal
+        self.axesSpecgram.signal = self.signalPlayer.signal
 
     def pause(self):
         """
@@ -711,7 +703,6 @@ class QSignalVisualizerWidget(QWidget):
     def open(self, filename):
         if not filename:
             raise Exception("Invalid filename")
-        #open the signal with the correct Stream Manager. (only wav by now)
         try:
 
             signal = FileManager().read(filename)
@@ -726,21 +717,7 @@ class QSignalVisualizerWidget(QWidget):
         Save the current signal into disc.
         :param fname: The path to the file.
         """
-        self.__saveSignal(fname,self.signal)
-
-    def __saveSignal(self, fname, signal):
-        """
-        Private method to save a signal in the supplied
-        file path name.
-        :param fname: file name. Path to the file in which the signal would be stored.
-        :param signal: The signal to store
-        :return:
-        """
-        try:
-            FileManager().write(signal, fname)
-
-        except Exception as ex:
-            raise ex
+        FileManager().write(self.__signal, fname)
 
     def saveSelectedSectionAsSignal(self, fname):
         """
