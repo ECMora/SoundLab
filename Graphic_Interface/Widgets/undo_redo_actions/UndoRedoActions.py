@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
+from PyQt4 import QtCore
 from PyQt4.QtCore import pyqtSignal, QObject
+from PyQt4.QtGui import QApplication
+from duetto.signal_processing.EditionSignalProcessor import EditionSignalProcessor
+from Utils.Utils import FLOATING_POINT_EPSILON
 from duetto.signal_processing.CommonSignalProcessor import CommonSignalProcessor
 from duetto.signal_processing.filter_signal_processors.frequency_domain_filters import *
 import numpy as np
@@ -46,7 +50,7 @@ class UndoRedoManager(QObject):
             else:
                 self.__actionIndex -= 1
 
-    def addAction(self,action):
+    def add(self,action):
         """
         Add a new action to the object.
         @param action: The undo redo action to add.
@@ -61,7 +65,7 @@ class UndoRedoManager(QObject):
             self.__actionsList[self.__actionIndex:] = [None] * (len(self.__actionsList) - self.__actionIndex)
         self.__actionsList[self.__actionIndex] = action
 
-    def clearActions(self):
+    def clear(self):
         """
         Clear all the actions.
         """
@@ -75,11 +79,20 @@ class UndoRedoManager(QObject):
         return len([x for x in self.__actionsList if x is not None])
 
 
-class UndoRedoAction:
-    def __init__(self, undo, redo):
-        assert callable(undo) and callable(redo)
-        self.undo = undo
-        self.redo = redo
+class UndoRedoAction(QObject):
+    """
+    Action that is posible make it undo and redo it.
+    Its an interface for the implementation of every undo and redo action.
+    Contains an undo method and a redo that are called when an undo or redo action its made
+    respectivily.
+    """
+    # SIGNALS
+    #signal raised when an action are performed and
+    #the signal size is changed. Raise the new changed signal
+    signal_size_changed = pyqtSignal(object)
+
+    def __init__(self):
+        QObject.__init__(self)
 
     def undo(self):
         pass
@@ -89,7 +102,8 @@ class UndoRedoAction:
 
 
 class ReverseAction(UndoRedoAction):
-    def __init__(self,signal,start,end):
+    def __init__(self, signal, start, end):
+        UndoRedoAction.__init__(self)
         self.signal = signal
         self.start = start
         self.end = end
@@ -103,6 +117,7 @@ class ReverseAction(UndoRedoAction):
 
 class ChangeSignAction(UndoRedoAction):
     def __init__(self,signal,start,end):
+        UndoRedoAction.__init__(self)
         self.signal = signal
         self.start = start
         self.end = end
@@ -116,6 +131,7 @@ class ChangeSignAction(UndoRedoAction):
 
 class SilenceAction(UndoRedoAction):
     def __init__(self,signal,start,end):
+        UndoRedoAction.__init__(self)
         self.signal = signal
         self.start = start
         self.end = end
@@ -131,6 +147,7 @@ class SilenceAction(UndoRedoAction):
 
 class InsertSilenceAction(UndoRedoAction):
     def __init__(self,signal,start,ms):
+        UndoRedoAction.__init__(self)
         self.signal = signal
         self.start = start
         self.ms = ms
@@ -142,24 +159,60 @@ class InsertSilenceAction(UndoRedoAction):
         CommonSignalProcessor(self.signal).insertSilence(self.start,ms=self.ms)
 
 
-class ScaleAction(UndoRedoAction):
-    def __init__(self,signal,start,end,factor, function, fade):
+class ModulateAction(UndoRedoAction):
+    def __init__(self,signal,start,end,function, fade):
+        UndoRedoAction.__init__(self)
         self.signal = signal
         self.start = start
         self.end = end
-        self.factor,self.function,self.fade= factor,function,fade
+        self.function, self.fade = function,fade
         self.data = np.array(signal.data[start:end])
 
     def undo(self):
         for i in range(self.start,self.end):
-            self.signal.data[i] = self.data[i-self.start]
+            self.signal.data[i] = self.data[i - self.start]
 
     def redo(self):
-        CommonSignalProcessor(self.signal).scale(self.start,self.end,self.factor, self.function, self.fade)
+        CommonSignalProcessor(self.signal).modulate(self.start,self.end, self.function, self.fade)
+
+
+class ScaleAction(UndoRedoAction):
+    def __init__(self, signal, start, end, factor):
+        UndoRedoAction.__init__(self)
+        if abs(factor) < FLOATING_POINT_EPSILON:
+            raise Exception("The factor is to small for scale. Use silence instead.")
+        self.signal = signal
+        self.start = start
+        self.end = end
+        self.factor = factor
+        self.inverse_factor = 1.0 / self.factor
+
+    def undo(self):
+        CommonSignalProcessor(self.signal).scale(self.start, self.end, self.inverse_factor)
+
+    def redo(self):
+        CommonSignalProcessor(self.signal).scale(self.start, self.end, self.factor)
+
+
+class NormalizeAction(UndoRedoAction):
+    def __init__(self, signal, start, end, factor):
+        UndoRedoAction.__init__(self)
+        self.signal = signal
+        self.start = start
+        self.end = end
+        self.factor = factor
+        self.inverse_factor = max(signal.data[start:end]) * 100.0 / signal.maximumValue
+
+    def undo(self):
+        CommonSignalProcessor(self.signal).normalize(self.start, self.end, self.inverse_factor)
+
+    def redo(self):
+        CommonSignalProcessor(self.signal).normalize(self.start, self.end, self.factor)
 
 
 class FilterAction(UndoRedoAction):
     def __init__(self,signal,start,end,filterType,Fc,Fl,Fu):
+        UndoRedoAction.__init__(self)
         self.signal = signal
         self.start = start
         self.end = end
@@ -176,6 +229,7 @@ class FilterAction(UndoRedoAction):
 
 class ResamplingAction(UndoRedoAction):
     def __init__(self,signal,sr):
+        UndoRedoAction.__init__(self)
         self.signal = signal
         self.oldsr = signal.samplingRate
         self.sr = sr
@@ -189,6 +243,7 @@ class ResamplingAction(UndoRedoAction):
 
 class GenerateWhiteNoiseAction(UndoRedoAction):
     def __init__(self,signal,start,ms):
+        UndoRedoAction.__init__(self)
         self.signal = signal
         self.start = start
         self.ms = ms
@@ -202,6 +257,7 @@ class GenerateWhiteNoiseAction(UndoRedoAction):
 
 class GeneratePinkNoiseAction(UndoRedoAction):
     def __init__(self,signal,start,ms, ftype, Fc, Fl, Fu):
+        UndoRedoAction.__init__(self)
         self.signal = signal
         self.start = start
         self.ms = ms
@@ -215,37 +271,64 @@ class GeneratePinkNoiseAction(UndoRedoAction):
         self.signal.generateWhiteNoise(self.ms,self.start)
         FilterSignalProcessor(self.signal).filter(self.start,self.start + self.ms*self.signal.samplingRate/1000,self.filterType,self.Fc,self.Fl,self.Fu)
 
+#region CUT,COPY,PASTE
 
 class CutAction(UndoRedoAction):
+
     def __init__(self,signal,start,end):
+        UndoRedoAction.__init__(self)
         self.signal = signal
         self.start = start
         self.end = end
-        self.data = np.array(signal.data[start:end])
+        self.editionProcesor = EditionSignalProcessor(self.signal)
+        self.editionProcesor.signal_size_changed.connect(lambda :self.signal_size_changed.emit(self.signal))
 
     def undo(self):
-        self.signal.data = np.concatenate((self.signal.data[:self.start], self.data, self.signal.data[self.start+1:]))
+       self.editionProcesor.paste(self.start)
 
     def redo(self):
-        self.signal.data = np.concatenate((self.signal.data[:self.start], self.signal.data[self.end:]))
+        self.editionProcesor.cut(self.start, self.end)
+
+
+class CopyAction(UndoRedoAction):
+    def __init__(self, signal, start, end):
+        UndoRedoAction.__init__(self)
+        self.signal = signal
+        self.start = start
+        self.end = end
+        self.editionProcesor = EditionSignalProcessor(self.signal)
+
+    def undo(self):
+        mime_data = QtCore.QMimeData()
+        mime_data.setData("signal", QtCore.QByteArray(""))
+        clip = QApplication.clipboard()
+        clip.setMimeData(mime_data)
+
+    def redo(self):
+        self.editionProcesor.copy(self.start, self.end)
 
 
 class PasteAction(UndoRedoAction):
-    def __init__(self,signal,start,clipboard):
+
+    def __init__(self,signal,start,end):
+        UndoRedoAction.__init__(self)
         self.signal = signal
         self.start = start
-        self.end = start + len(clipboard)
-        self.data = clipboard
-
-    def redo(self):
-        self.signal.data = np.concatenate((self.signal.data[:self.start], self.data, self.signal.data[self.start+1:]))
+        self.end = end
+        self.editionProcesor = EditionSignalProcessor(self.signal)
+        self.editionProcesor.signal_size_changed.connect(lambda: self.signal_size_changed.emit(self.signal))
 
     def undo(self):
-        self.signal.data = np.concatenate((self.signal.data[:self.start], self.signal.data[self.end:]))
+        self.editionProcesor.cut(self.start, self.end)
 
+    def redo(self):
+        self.editionProcesor.paste(self.start)
+
+#endregion
 
 class Absolute_ValuesAction(UndoRedoAction):
     def __init__(self,signal,start,end,sign):
+        UndoRedoAction.__init__(self)
         self.signal = signal
         self.start = start
         self.end = end

@@ -54,9 +54,9 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         #the numpy [,] array with the parameter measurement
         self.data = data if data is not None else numpy.zeros(4).reshape((2, 2))
         self.widget.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
-        self.widget.addAction(self.actionHide_Show_Settings)
-        self.widget.addAction(self.actionSaveGraphImage)
-        self.widget.addAction(self.actionMark_Selected_Elements_As)
+        self.widget.add(self.actionHide_Show_Settings)
+        self.widget.add(self.actionSaveGraphImage)
+        self.widget.add(self.actionMark_Selected_Elements_As)
         self.createParameterTreeOptions(self.columns)
 
     @pyqtSlot()
