@@ -4,7 +4,7 @@ import numpy
 import pyqtgraph as pg
 from PyQt4.QtGui import QCursor
 from RectROI import RectROI
-from graphic_interface.widgets.signal_visualizer_tools.SignalVisualizerTool import SignalVisualizerTool
+from Graphic_Interface.Widgets.signal_visualizer_tools.SignalVisualizerTool import SignalVisualizerTool
 
 
 class RectangularCursorTool(SignalVisualizerTool):
