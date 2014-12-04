@@ -249,7 +249,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         indexFrom -= 1 if indexFrom > 0 and start <= self.Elements[indexFrom - 1].indexTo else 0
 
         if indexTo < indexFrom or indexTo > len(self.Elements):
-            return None
+            return -1, -1
 
         self.removeVisualElements(elements=self.Elements[indexFrom:indexTo])
 

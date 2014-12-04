@@ -11,7 +11,8 @@ import numpy as np
 from PyQt4.QtGui import QFileDialog, QAbstractItemView, QWidget
 from pyqtgraph.parametertree import Parameter
 from duetto.audio_signals.AudioSignal import AudioSignal
-
+from Utils.Utils import saveImage
+from graphic_interface.widgets.signal_visualizer_tools.SignalVisualizerTool import Tools
 from sound_lab_core.Clasification.ClassificationData import ClassificationData
 from sound_lab_core.Segmentation.Detectors.ElementsDetectors.OneDimensional.OneDimensionalElementsDetector import \
     DetectionType, AutomaticThresholdType, DetectionSettings
@@ -29,7 +30,7 @@ from graphic_interface.widgets.EditCategoriesWidget import EditCategoriesWidget
 
 class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
     """
-    Class that process the segmentation and classification of a signal
+    Window that process the segmentation and classification of a signal
     Contains a QSignalDetectorWidget that wrapper several functionalities
     Allows to select the segmentations and clasifications settings,
     and parameter measurement for detected segments.
@@ -44,46 +45,43 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
     TABLE_ROW_COLOR_ODD = QtGui.QColor(0, 0, 255, 150)
     TABLE_ROW_COLOR_EVEN = QtGui.QColor(0, 255, 0, 150)
 
+    #the max duration of signal that is possible to process with the window (in seconds)
+    MAX_SIGNAL_DURATION_ALLOWED = 60
 
-    def __init__(self, parent=None, signal=None, classifcationSettings=None):
+    def __init__(self, parent, signal, classifcationSettings):
+        """
+        Create a the window of segmentation and clasiffication.
+        :param parent: the parent widget if any
+        :param signal: the signal to visualize for segmentation and clasiffication
+        :param classifcationSettings: the classification settings if any
+         was previously saved by thje user
+        :return:
+        """
+        #set the visual variables and methods from ancesters
         super(QtGui.QMainWindow, self).__init__(parent)
         self.setupUi(self)
-        #signal that the window will display
-        if not signal:
-            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
-                                      self.tr(u"There is no signal to analyze."))
-        if len(signal.data) / signal.samplingRate > 60:
+
+        # check the parameters
+        if signal is None or not isinstance(signal, AudioSignal):
+            raise Exception("The signal to analyze must be of type AudioSignal")
+
+        #check if the signal can be analyzed acording to its
+        #duration and the max duration signal allowed
+        if len(signal.data) / signal.samplingRate > self.MAX_SIGNAL_DURATION_ALLOWED:
             QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
                                       self.tr(u"The signal has more than 1 min of duration.") + " \n" +
                                       self.tr(u"Use the splitter to divide it"))
-            self.close()
-            self.rejectSignal = True
-            return
+            raise Exception("The duration of the signal is not possible to analyze.")
 
-        assert isinstance(signal, AudioSignal)
+        #set the signal to the widget
         self.widget.signal = signal
 
-        #TODO Parche que limita la obtencion de los parametros del spectrogram
-        if parent is not None:
-            self.widget.specgramSettings.NFFT = parent.widget.specgramSettings.NFFT
-            self.widget.specgramSettings.overlap = parent.widget.specgramSettings.overlap
-            self.widget.specgramSettings.window = parent.widget.specgramSettings.window
-            self.widget.specgramSettings.visualOverlap = parent.widget.specgramSettings.visualOverlap
-            if self.widget.specgramSettings.overlap < 0:
-                if parent.widget.specgramSettings.visualOverlap < parent.widget.specgramSettings.NFFT:
-                    self.widget.specgramSettings.overlap = parent.widget.specgramSettings.visualOverlap * 100.0 / parent.widget.specgramSettings.NFFT
-                else:
-                    self.widget.specgramSettings.overlap = 50
-
-        self.widget.mainCursor.min = 0
-        self.widget.mainCursor.max = len(self.widget.signal.data)
-
-        self.widget.computeSpecgramSettings(self.widget.specgramSettings.overlap)
-
+        #set visible the two widgets by default
         self.changeWidgetsVisibility(True, True)
 
-        self.rejectSignal = False
-        self.widget.mainCursor.min, self.widget.mainCursor.max = 0, len(self.widget.signal.data)
+        #connect the signal of the widget for new detected data by its tools
+        self.widget.toolDataDetected.connect(self.updateStatusBar)
+
         self.dockWidgetParameterTableOscilogram.setVisible(False)
         self.tableParameterOscilogram.setSelectionBehavior(QAbstractItemView.SelectRows)
 
@@ -93,9 +91,12 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                                                            AutomaticThresholdType.Global_MaxMean)
 
         self.spectralMeasurementLocation = SpectralMeasurementLocation()
+
+
         self.widget.axesOscilogram.threshold.sigPositionChangeFinished.connect(self.updateThreshold)
         self.widget.axesOscilogram.threshold.setBounds((-2 ** (self.widget.signal.bitDepth - 1),
                                                         2 ** (self.widget.signal.bitDepth - 1)))
+
         self.detectionSettings = {"Threshold": -40, "Threshold2": 0, "MergeFactor": 5, "MinSize": 1, "Decay": 1,
                                   "SoftFactor": 6, "ThresholdSpectral": 95, "minSizeTimeSpectral": 0,
                                   "minSizeFreqSpectral": 0}
@@ -186,7 +187,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.meditions = [( unicode(self.tr(u'Temporal Meditions')), self.timeMeditions), \
                           (unicode(self.tr(u'Spectral Meditions')), self.spectralMeditions), \
                           (unicode(self.tr(u'Waveform Meditions')), self.waveMeditions)]
-        #endregion
+
 
         for name, dict in self.meditions:
             children = []
@@ -202,7 +203,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                     children.append({u'name': x[0], u'type': u'group', u'children': temp})
             params.append({u'name': name, u'type': u'group', u'children': children})
 
-        #endregion
+        # endregion
 
         #parameter tree to provide the medition and parameter configuration into the dialog
         self.ParamTree = Parameter.create(name=u'params', type=u'group', children=params)
@@ -211,8 +212,6 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         #funciones que reciben un elemento spectral 2 dimensiones y devuelven el valor del parametro medido
         #the order of the elements in the array of self.parameterMeasurement["Temporal"] is relevant for the visualization in the table and the
         #binding to the checkboxes in the dialog of parameter measurement
-        self.widget.axesSpecgram.PointerSpecChanged.connect(self.updateStatusBar)
-        self.widget.axesOscilogram.PointerOscChanged.connect(self.updateStatusBar)
         separator, separator1, separator2, separator3, separator4 = QtGui.QAction(self), QtGui.QAction(self), \
                                                                     QtGui.QAction(self), QtGui.QAction(self), \
                                                                     QtGui.QAction(self)
@@ -274,7 +273,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         #in the main window. Updates the windows graphs on change etc
         self.two_dim_windows = []
 
-        # stores the measured parameters of the sdetected elements
+        # stores the measured parameters of the detected elements
         self.measuredParameters = np.array([[], []])
 
         #set the conections for the classification data to
@@ -294,634 +293,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         #the names of the columns in the table of parameters measured
         self.columnNames = []
 
-    #region Two Dimensional Graphs
-
-    @pyqtSlot()
-    def on_actionTwo_Dimensional_Graphs_triggered(self):
-        """
-        Creates a new two dimensional window for analysis.
-        :return:
-        """
-        #a two dim window must create after segment detection and parameters measurement
-        if self.tableParameterOscilogram.rowCount() == 0:
-            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
-                                      self.tr(u"There is not detected elements.") + u" \n" + self.tr(
-                                          u"The two dimensional analisys requires at least one detected element."))
-            return
-        if self.tableParameterOscilogram.columnCount() == 0:
-            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
-                                      self.tr(u"There is not parameters measurement.") + u"\n" + self.tr(
-                                          u"The two dimensional analisys requires at least one parameter measured."))
-            return
-
-        wnd = TwoDimensionalAnalisysWindow(self, columns=self.columnNames, data=self.measuredParameters,
-                                           classificationData=self.classificationData)
-
-        #connect the signals for update selection of elements detected
-        wnd.elementSelected.connect(self.elementSelectedInTable)
-        if self.theme:
-            wnd.load_Theme(self.theme)
-
-        if len(self.two_dim_windows) > 0:
-            wnd.selectElement(self.two_dim_windows[0].previousSelectedElement)
-
-        self.two_dim_windows.append(wnd)
-        wnd.elementsClasification.connect(self.elementsClasification)
-
-    #endregion
-
-    @QtCore.pyqtSlot(int, int, int)
-    def on_widget_rangeChanged(self, left, right, total):
-        self.horizontalScrollBar.blockSignals(True)
-        self.horizontalScrollBar.setValue(0)
-        self.horizontalScrollBar.setMinimum(0)
-        self.horizontalScrollBar.setMaximum(total - (right - left))
-        self.horizontalScrollBar.setValue(left)
-        self.horizontalScrollBar.setPageStep(right - left)
-        self.horizontalScrollBar.setSingleStep((right - left) / 16)
-        self.horizontalScrollBar.blockSignals(True)
-        self.horizontalScrollBar.blockSignals(False)
-
-    def updateStatusBar(self, line):
-        """
-        :param line:
-        """
-        self.statusbar.showMessage(line)
-
-    @QtCore.pyqtSlot(int)
-    def on_horizontalScrollBar_valueChanged(self, value):
-        self.widget.changeRange(value, value + self.horizontalScrollBar.pageStep(), emit=False)
-
-    @pyqtSlot()
-    def on_actionFull_Screen_triggered(self):
-        """
-        Switch the visualization of the window in fullscreen-normal.
-        """
-        if self.actionFull_Screen.isChecked():
-            self.showFullScreen()
-        else:
-            self.showNormal()
-
-    #region Tools
-    @pyqtSlot()
-    def on_actionZoom_Cursor_triggered(self):
-        """
-
-
-        """
-        if self.actionZoom_Cursor.isChecked():
-            self.actionPointer_Cursor.setChecked(False)
-            self.actionRectangular_Cursor.setChecked(False)
-            self.actionRectangular_Eraser.setChecked(False)
-            # self.widget.setSelectedTool(Tools.Zoom)
-        else:
-            self.actionZoom_Cursor.setChecked(True)
-
-    @pyqtSlot()
-    def on_actionPointer_Cursor_triggered(self):
-        if self.actionPointer_Cursor.isChecked():
-            self.actionZoom_Cursor.setChecked(False)
-            self.actionRectangular_Cursor.setChecked(False)
-            self.actionRectangular_Eraser.setChecked(False)
-            # self.widget.setSelectedTool(Tools.PointerCursor)
-        else:
-            self.actionPointer_Cursor.setChecked(True)
-
-    @pyqtSlot()
-    def on_actionRectangular_Cursor_triggered(self):
-        if self.actionRectangular_Cursor.isChecked():
-            self.actionPointer_Cursor.setChecked(False)
-            self.actionZoom_Cursor.setChecked(False)
-            self.actionRectangular_Eraser.setChecked(False)
-            # self.widget.setSelectedTool(Tools.RectangularCursor)
-        else:
-            self.actionRectangular_Cursor.setChecked(True)
-
-    @pyqtSlot()
-    def on_actionRectangular_Eraser_triggered(self):
-        if self.actionRectangular_Eraser.isChecked():
-            self.actionZoom_Cursor.setChecked(False)
-            self.actionPointer_Cursor.setChecked(False)
-            self.actionRectangular_Cursor.setChecked(False)
-            # self.widget.setSelectedTool(Tools.RectangularEraser)
-        else:
-            self.actionRectangular_Eraser.setChecked(True)
-
-    #endregion
-
-    #region Threshold
-
-    def getspectralParameters(self):
-        """
-        obtain the methods for spectral parameter meausrement of the measurementLocations
-        """
-        params = []
-
-        for x in self.spectralMeditions:
-            if isinstance(x[1], bool):
-                if x[1]:
-                    if self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.START][0]:
-                        params.append([x[0] + "(start)", x[2], [["location", self.spectralMeasurementLocation.START]]])
-                    if self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.CENTER][0]:
-                        params.append(
-                            [x[0] + "(center)", x[2], [["location", self.spectralMeasurementLocation.CENTER]]])
-                    if self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.END][0]:
-                        params.append([x[0] + "(end)", x[2], [["location", self.spectralMeasurementLocation.END]]])
-                    if self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.QUARTILE25][0]:
-                        params.append(
-                            [x[0] + "(quartile25)", x[2], [["location", self.spectralMeasurementLocation.QUARTILE25]]])
-                    if self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.QUARTILE75][0]:
-                        params.append(
-                            [x[0] + "(quartile75)", x[2], [["location", self.spectralMeasurementLocation.QUARTILE75]]])
-            else:
-                for y in x[2]:
-                    if y[1]:
-                        if self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.START][0]:
-                            l = [paramData for paramData in x[1]]
-                            l.append(["location", self.spectralMeasurementLocation.START])
-                            params.append([y[0] + "(start)", y[2], l])
-                        if self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.CENTER][0]:
-                            l = [paramData for paramData in x[1]]
-                            l.append(["location", self.spectralMeasurementLocation.CENTER])
-                            params.append([y[0] + "(center)", y[2], l])
-                        if self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.END][0]:
-                            l = [paramData for paramData in x[1]]
-                            l.append(["location", self.spectralMeasurementLocation.END])
-                            params.append([y[0] + "(end)", y[2], l])
-                        if self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.QUARTILE25][0]:
-                            l = [paramData for paramData in x[1]]
-                            l.append(["location", self.spectralMeasurementLocation.QUARTILE25])
-                            params.append([y[0] + "(quartile25)", y[2], l])
-                        if self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.QUARTILE75][0]:
-                            l = [paramData for paramData in x[1]]
-                            l.append(["location", self.spectralMeasurementLocation.QUARTILE75])
-                            params.append([y[0] + "(quartile75)", y[2], l])
-
-        return params
-
-    def getParameters(self):
-        params = []
-        for name, dict in self.meditions:
-            if not name == unicode(self.tr(u'Spectral Meditions')):
-                for x in dict:
-                    if isinstance(x[1], bool):
-                        if x[1]:
-                            params.append([x[0], x[2], []])
-                    else:
-                        for y in x[2]:
-                            if y[1]:
-                                params.append([y[0], y[2], x[1]])
-        return params + self.getspectralParameters()
-
-    def updateThreshold(self, line):
-        self.detectionSettings["Threshold"] = self.toDB() if line.value() == 0 else self.toDB(line.value())
-
-    def updateThresholdLine(self):
-        self.widget.axesOscilogram.threshold.setValue(round(
-            (10.0 ** ((60 + self.detectionSettings["Threshold"]) / 20.0)) * (
-                2 ** self.widget.signal.bitDepth) / 1000.0, 0)
-                                                      * self.widget.envelopeFactor - 2 ** (
-            self.widget.signal.bitDepth - 1))
-
-    def toDB(self, value=None):
-        if value is None:
-            return -60
-        return -60 + int(20 * log10(abs(
-            (value + 2 ** (self.widget.signal.bitDepth - 1)) / self.widget.envelopeFactor) * 1000.0 / (
-                                        2 ** self.widget.signal.bitDepth)))
-
-    @pyqtSlot(bool)
-    def setVisibleThreshold(self, bool):
-        self.widget.axesOscilogram.setVisibleThreshold(bool)
-        self.widget.setEnvelopeVisibility(bool)
-
-    #endregion
-
-    #region Theme
-
-    def load_Theme(self, theme):
-        """
-        Method that loads the theme to update visual options from main window.
-        :param theme:
-        """
-        self.theme = theme
-        self.widget.load_Theme(theme)
-
-        self.widget.histogram.item.region.lineMoved()
-        self.widget.histogram.item.region.lineMoveFinished()
-
-    #endregion
-
-    #region Visual Elements
-    #The visual elements are the objects that display information about detected
-    #segments. Those elements are visible on the graphs (Oscilogram and spectrogram)
-    #They are divided by its definitions and purposes and user can change visibility
-    #of a subset of them
-    @pyqtSlot()
-    def on_actionView_Parameters_triggered(self):
-        """
-        Changes the visibility on the window of the parameter table.
-        The parameter table is where the detected segments and its measured parameters
-        are displayed.
-        """
-        self.dockWidgetParameterTableOscilogram.setVisible(self.actionView_Parameters.isChecked())
-
-    @pyqtSlot()
-    def on_actionElements_Peaks_triggered(self):
-        visibility = self.actionElements_Peaks.isChecked()
-        self.widget.changeElementsVisibility(visibility, Element.PeakFreqs, oscilogramItems=False)
-
-    @pyqtSlot()
-    def on_actionTemporal_Elements_triggered(self):
-        """
-        Temporal Elements are the elements that are visible on the oscilogram graph.
-        This method allows to change its visibility
-        """
-        visibility = self.actionTemporal_Elements.isChecked()
-        for e in self.widget.Elements:
-            e.visible = visibility
-        self.widget.drawElements(oscilogramItems=True)
-
-        self.actionTemporal_Figures.setEnabled(visibility)
-        self.actionTemporal_Numbers.setEnabled(visibility)
-
-    @pyqtSlot()
-    def on_actionTemporal_Numbers_triggered(self):
-        """
-        Change visibility of the numbers of the detected segments on the oscilogram graph
-
-        """
-        visibility = self.actionTemporal_Numbers.isChecked()
-        self.widget.changeElementsVisibility(visibility, Element.Text)
-
-    @pyqtSlot()
-    def on_actionSpectral_Numbers_triggered(self):
-        """
-        Change visibility of the numbers of the detected segments on the spectrogram graph
-        """
-        visibility = self.actionSpectral_Numbers.isChecked()
-        self.widget.changeElementsVisibility(visibility, Element.Text, oscilogramItems=False)
-
-    @pyqtSlot()
-    def on_actionSpectral_Figures_triggered(self):
-        """
-        Change visibility of the figures of the detected segments on the spectrogram graph
-        """
-        visibility = self.actionSpectral_Figures.isChecked()
-        self.widget.changeElementsVisibility(visibility, Element.Figures, oscilogramItems=False)
-
-    @pyqtSlot()
-    def on_actionTemporal_Figures_triggered(self):
-        """
-        Change visibility of the figures of the detected segments on the oscilogram graph
-        """
-        visibility = self.actionTemporal_Figures.isChecked()
-        self.widget.changeElementsVisibility(visibility, Element.Figures, oscilogramItems=True)
-
-    @pyqtSlot()
-    def on_actionSpectral_Elements_triggered(self):
-        """
-        Spectral Elements are the elements that are visible on the spectrogram graph.
-        This method allows to change its visibility
-        """
-        visibility = self.actionSpectral_Elements.isChecked()
-        for e in self.widget.Elements:
-            for e2 in e.twoDimensionalElements:
-                e2.visible = visibility
-        self.widget.drawElements(oscilogramItems=False)
-        self.actionSpectral_Figures.setEnabled(visibility)
-        self.actionSpectral_Numbers.setEnabled(visibility)
-        self.actionSub_Elements_Peaks.setEnabled(visibility)
-
-
-    #endregion
-
-    #region Graphs Images
-    #Methods taht allows to save images from a gui widget
-    #use a screenshot of the control. This mean that the control has to be visible
-    #for take a picture of it.
-    @pyqtSlot()
-    def on_actionOsgram_Image_triggered(self):
-        """
-        Save the Oscilogram widget graph as image
-        """
-        if self.widget.visibleOscilogram:
-            self.saveImage(self.widget.axesOscilogram, self.tr(u"oscilogram"))
-        else:
-            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
-                                      self.tr(u"The Oscilogram plot widget is not visible.") + u" \n" + self.tr(
-                                          u"You should see the data that you are going to save."))
-
-    @pyqtSlot()
-    def on_actionCombined_Image_triggered(self):
-        """
-        Save as one image the two controls that visualize the signal
-        Oscilogram and Spectrogram.
-        """
-        if self.widget.visibleOscilogram and self.widget.visibleSpectrogram:
-            self.saveImage(self.widget, self.tr(u"graph"))
-        else:
-            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
-                                      self.tr(u"One of the plot widgets is not visible") + u" \n" + self.tr(
-                                          u"You should see the data that you are going to save."))
-
-
-    @pyqtSlot()
-    def on_actionSpecgram_Image_triggered(self):
-        """
-        Save the Spectrogram widget graph as image
-        """
-        if self.widget.visibleSpectrogram:
-            self.saveImage(self.widget.axesSpecgram, self.tr(u"specgram"))
-        else:
-            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
-                                      self.tr(u"The Espectrogram plot widget is not visible.") + u" \n" + self.tr(
-                                          u"You should see the data that you are going to save."))
-
-
-    def saveImage(self, widget, text=""):
-        """
-        Method that saves as image a widget by taking a screenshot of it.
-        All the signal graphs save images methods delegate in this one their
-        implementation.
-        :param widget: The widget to save the screenshot.
-        :param text: Alternative image name to specify the widget or graph source of the picture.
-        """
-        fname = unicode(QFileDialog.getSaveFileName(self, self.tr(u"Save") + u" " + text + self.tr(u" as an Image "),
-                                                    str(self.widget.signalName()) + u"-" + text + self.tr(
-                                                        u"-Duetto-Image"), "*.jpg"))
-        if fname:
-            #save as image
-            image = QtGui.QPixmap.grabWindow(widget.winId())
-            image.save(fname, 'jpg')
-
-    #endregion
-
-    #region Save Meditions, Excell and Batch Process
-    # After detection&classification of segments and parameters measurement
-    #user can save its meditions as excell or other formats
-    #
-    @pyqtSlot()
-    def on_actionMeditions_triggered(self, name="", table=None):
-        """
-        Save
-        :param name:
-        :param table:
-        :return:
-        """
-        if name != "":
-            fname = name
-        else:
-            if not self.widget.signal.opened():
-                return
-            fname = unicode(QFileDialog.getSaveFileName(self, self.tr(u"Save meditions as excel file"),
-                                                        self.widget.signalName() + ".xls", "*.xls"))
-        if fname:
-            wb = xlwt.Workbook()
-            a = unicode(self.tr(u"Elements Meditions"))
-            ws = wb.add_sheet(a)
-            self.writedata(ws, table)
-            #add spectral meditions
-            wb.save(fname)
-
-    @pyqtSlot()
-    def startBatchProcess(self):
-        """
-        Start a batch processing of signals with the configured parameters
-        User must configure the settings for detection&classification and parameter
-        measurement, select a folder of imput audio files and a folder for the output meditions.
-        """
-        thread = QtCore.QThread(self)
-        #implementation of batch on a diferent thread to
-        #keep user interaction responsive.
-        class worker(QtCore.QObject):
-            def __init__(self, worker):
-                QtCore.QObject.__init__(self)
-                self.work = worker
-
-        processworker = worker(self.batch)
-        thread.started.connect(processworker.work)
-        processworker.moveToThread(thread)
-        thread.start()
-
-    def getSpectralData(self, signal, specgramSettings):
-        """
-        returns the spectral data pxx,bins and freqs of spectrogram
-        """
-        overlap = int(specgramSettings.NFFT * specgramSettings.overlap / 100)
-        return mlab.specgram(signal.data, specgramSettings.NFFT, Fs=signal.samplingRate,
-                             detrend=mlab.detrend_none, window=specgramSettings.window, noverlap=overlap,
-                             sides="onesided")
-
-    def batch(self):
-        """
-        Method that performs the batch procesing
-        :return:
-        """
-        #get the input audio files folder
-        #and the output meditions folder
-        directoryinput = str(self.lineeditFilePath.text())
-        directoryoutput = str(self.lineEditOutputFolder.text())
-
-        #validate the folders
-        if not os.path.isdir(directoryinput):
-            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
-                                      self.tr(u"The input path is not a directory."))
-            return
-        if not os.path.isdir(directoryoutput):
-            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
-                                      self.tr(u"The output path is not a directory."))
-            return
-
-        sounds = []  #the audio files tgo process
-        raiz = ""
-
-        #listing all files in directoryinput folder
-        for root, dirs, files in os.walk(directoryinput):
-            raiz = root if raiz == "" else raiz
-            for f in files:
-                #get all the files to process
-                sounds.append(os.path.join(root, f))
-
-        #updating the progress bar
-        self.progressBarProcesed.setValue(0)
-
-        # the number of files processed for use in the progres bar update
-        files_processed = 0
-        if self.rbttnDetection.isChecked():
-            detector = OneDimensionalElementsDetector()
-
-            #if the meditions has to export as single file
-            singlefile = self.cbxSingleFile.isChecked()
-
-            if singlefile:
-                wb = xlwt.Workbook()
-
-            for filename in sounds:
-                try:
-                    #process every file
-                    signalProcessor = SignalProcessor()
-                    signalProcessor.signal = WavFileSignal(filename)
-                    #send a message for the user
-                    self.listwidgetProgress.addItem(self.tr(u"Processing") + u" " + signalProcessor.signal.name)
-
-                    table = QtGui.QTableWidget()
-                    spSettngs = SpecgramSettings(self.widget.specgramSettings.NFFT,
-                                                 self.widget.specgramSettings.overlap,
-                                                 self.widget.specgramSettings.window)
-
-                    #get the detection parameters
-                    spSettngs.Pxx, spSettngs.freqs, spSettngs.bins = self.getSpectralData(signalProcessor.signal,
-                                                                                          self.widget.specgramSettings)
-
-                    #detect
-                    detector.detect(signalProcessor.signal, 0, len(signalProcessor.signal.data),
-                                    threshold=abs(self.detectionSettings["Threshold"]),
-                                    decay=self.detectionSettings["Decay"], minSize=self.detectionSettings["MinSize"],
-                                    softfactor=self.detectionSettings["SoftFactor"],
-                                    merge_factor=self.detectionSettings["MergeFactor"],
-                                    secondThreshold=abs(self.detectionSettings["Threshold2"]),
-                                    specgramSettings=spSettngs,
-                                    detectionsettings=self.algorithmDetectorSettings,
-                                    threshold_spectral=self.detectionSettings["ThresholdSpectral"],
-                                    minsize_spectral=(self.detectionSettings["minSizeFreqSpectral"],
-                                                      self.detectionSettings["minSizeTimeSpectral"]),
-                                    location=self.spectralMeasurementLocation,
-                                    findSpectralSublements=False)
-
-                    #get parameters to measure
-                    paramsTomeasure = self.getParameters()
-                    table.setRowCount(detector.elementCount())
-
-                    #get the clasification data
-                    validcategories = [k for k in self.classificationData.categories.keys() if
-                                       len(self.classificationData.getvalues(k)) > 0]
-                    self.elementsClasificationTableData = [[[k, self.tr(u"No Identified")] for k in validcategories] for
-                                                           _ in range(table.rowCount())]
-
-                    table.setColumnCount(len(paramsTomeasure) + len(validcategories))
-                    self.columnNames = [label[0] for label in paramsTomeasure]
-
-                    #set the name of columns
-                    table.setHorizontalHeaderLabels(self.columnNames + validcategories)
-                    table.resizeColumnsToContents()
-
-                    self.listwidgetProgress.addItem(self.tr(u"Save data of ") + signalProcessor.signal.name)
-
-                    #measure parameters
-                    for i, element in enumerate(detector.elements):
-                        for j, prop in enumerate(paramsTomeasure):
-                            dictionary = dict(prop[2] if prop[2] is not None else [])
-                            #save the meditions into the table field
-                            item = QtGui.QTableWidgetItem(str(prop[1](element, dictionary)))
-                            item.setBackgroundColor(
-                                self.TABLE_ROW_COLOR_ODD if i % 2 == 0 else self.TABLE_ROW_COLOR_EVEN)
-                            table.setItem(i, j, item)
-
-                        for c in range(len(validcategories)):
-                            try:
-                                val = self.elementsClasificationTableData[i][c][1]
-                                item = QtGui.QTableWidgetItem(unicode(val))
-                                item.setBackgroundColor(
-                                    self.TABLE_ROW_COLOR_ODD if i % 2 == 0 else self.TABLE_ROW_COLOR_EVEN)
-                            except Exception as e:
-                                item = QtGui.QTableWidgetItem(0)  #"Error"+e.message)
-                            table.setItem(i, c + len(paramsTomeasure), item)
-
-                    if singlefile:
-                        #save meditions as new sheet in same file
-                        ws = wb.add_sheet(signalProcessor.signal.name)
-                        self.writedata(ws, table)
-                    else:
-                        #save meditions as new file
-                        self.on_actionMeditions_triggered(
-                            os.path.join(directoryoutput, signalProcessor.signal.name + ".xls"), table)
-
-                    #update progress
-                    self.listwidgetProgress.addItem(signalProcessor.signal.name + u" " + self.tr(u"has been files_processed"))
-                    self.listwidgetProgress.update()
-                    files_processed += 1
-                except Exception as e:
-                    self.listwidgetProgress.addItem(self.tr(u"Some problem found while processing") + u" " + e.message)
-                self.progressBarProcesed.setValue(round(100.0 * (files_processed) / len(sounds)))
-                self.progressBarProcesed.update()
-
-                if singlefile:
-                    wb.save(os.path.join(directoryoutput, self.tr(u"Duetto Sound Lab Meditions") + u".xls"))
-                    #TODO open file after save
-
-        if self.rbttnSplitFile.isChecked():
-            save = WavFileSignal()
-            for filename in sounds:
-                try:
-                    signal = WavFileSignal(filename)
-                    self.listwidgetProgress.addItem(self.tr(u"Processing") + u" " + signal.name)
-                    save.channels = signal.channels
-                    save.bitDepth = signal.bitDepth
-                    save.samplingRate = signal.samplingRate
-                    sr = signal.samplingRate
-                    pieceSize = self.spboxSplitTime.value() * sr
-                    pieces = len(signal.data) / pieceSize
-                    left = len(signal.data) % pieceSize
-                    if (pieces >= 1):
-                        for i in range(pieces):
-                            save.data = signal.data[i * pieceSize:(i + 1) * pieceSize]
-                            save.save(os.path.join(directoryoutput, str(i + 1) + "-" + signal.name))
-                    if left > 0:
-                        save.data = signal.data[len(signal.data) - left:]
-                        save.save(os.path.join(directoryoutput, str(pieces + 1) + "-" + signal.name))
-                    files_processed += 1
-                    self.progressBarProcesed.setValue(100.0 * files_processed / len(sounds))
-                    self.listwidgetProgress.addItem(signal.name + u" " + self.tr(u"has been files_processed"))
-                    self.progressBarProcesed.update()
-                    self.listwidgetProgress.update()
-                except:
-                    print(self.tr(u"some split problems"))
-        self.progressBarProcesed.setValue(100)
-
-    def selectInputFolder(self):
-        inputfolder = QFileDialog.getExistingDirectory()
-        self.lineeditFilePath.setText(inputfolder)
-
-    def selectOutputFolder(self):
-        outputfolder = QFileDialog.getExistingDirectory()
-        self.lineEditOutputFolder.setText(outputfolder)
-
-    def writedata(self, ws, tableParameter=None):
-        """
-        write the data from the table into an excell file.
-        :param ws:WorkSheet object from xwlt module for interacts with excell files.
-        :param tableParameter: QTableWidget with the information of the data to save.
-        """
-        if (tableParameter is None):
-            tableParameter = self.tableParameterOscilogram
-
-        #write the data of the meditions into the stylesheet of excell ws
-        styleheader = xlwt.easyxf('font: name Times New Roman, color-index black, bold on, height 300')
-        stylebody = xlwt.easyxf('font: name Times New Roman, color-index black, height 220', num_format_str='#,##0.00')
-        stylecopyrigth = xlwt.easyxf('font: name Arial, color-index pale_blue, height 250, italic on',
-                                     num_format_str='#,##0.00')
-        #set headers
-        headers = [str(tableParameter.takeHorizontalHeaderItem(pos).text()) for pos in
-                   range(tableParameter.columnCount())]
-
-        for index, header in enumerate(headers):
-            ws.write(0, index, header, styleheader)
-
-        for i in range(1, tableParameter.model().rowCount() + 1):
-            for j in range(tableParameter.model().columnCount()):
-                if tableParameter.item(i - 1, j):
-                    ws.write(i, j, str(tableParameter.item(i - 1, j).data(Qt.DisplayRole).toString()), stylebody)
-                else:
-                    ws.write(i, j, unicode(self.tr(u"No Identified")), stylebody)
-        #write data
-        #ws object must be part of a Woorkbook that would be saved later
-        ws.write(tableParameter.model().rowCount() + 3, 0, unicode(self.tr(u"Duetto Sound Lab Oscilogram Meditions")),
-                 stylecopyrigth)
-
-    #endregion
-
-    #region Detection
+    # region Detection
 
     def getSettings(self, elementsDetectorDialog):
         """
@@ -1200,6 +572,623 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     #endregion
 
+    #region Widget Scroll Bar
+
+    @QtCore.pyqtSlot(int, int, int)
+    def on_widget_rangeChanged(self, left, right, total):
+        self.horizontalScrollBar.blockSignals(True)
+        self.horizontalScrollBar.setValue(0)
+        self.horizontalScrollBar.setMinimum(0)
+        self.horizontalScrollBar.setMaximum(total - (right - left))
+        self.horizontalScrollBar.setValue(left)
+        self.horizontalScrollBar.setPageStep(right - left)
+        self.horizontalScrollBar.setSingleStep((right - left) / 16)
+        self.horizontalScrollBar.blockSignals(True)
+        self.horizontalScrollBar.blockSignals(False)
+
+    @QtCore.pyqtSlot(int)
+    def on_horizontalScrollBar_valueChanged(self, value):
+        self.widget.changeRange(value, value + self.horizontalScrollBar.pageStep(), emit=False)
+
+    #endregion
+
+    # region Two Dimensional Graphs
+
+    @pyqtSlot()
+    def on_actionTwo_Dimensional_Graphs_triggered(self):
+        """
+        Creates a new two dimensional window for analysis.
+        :return:
+        """
+        #a two dim window must create after segment detection and parameters measurement
+        if self.tableParameterOscilogram.rowCount() == 0:
+            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
+                                      self.tr(u"There is not detected elements.") + u" \n" + self.tr(
+                                          u"The two dimensional analisys requires at least one detected element."))
+            return
+        if self.tableParameterOscilogram.columnCount() == 0:
+            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
+                                      self.tr(u"There is not parameters measurement.") + u"\n" + self.tr(
+                                          u"The two dimensional analisys requires at least one parameter measured."))
+            return
+
+        wnd = TwoDimensionalAnalisysWindow(self, columns=self.columnNames, data=self.measuredParameters,
+                                           classificationData=self.classificationData)
+
+        #connect the signals for update selection of elements detected
+        wnd.elementSelected.connect(self.elementSelectedInTable)
+        if self.theme:
+            wnd.load_Theme(self.theme)
+
+        if len(self.two_dim_windows) > 0:
+            wnd.selectElement(self.two_dim_windows[0].previousSelectedElement)
+
+        self.two_dim_windows.append(wnd)
+        wnd.elementsClasification.connect(self.elementsClasification)
+
+    def clearTwoDimensionalWindows(self):
+        """
+        Close the two dimensional windows and clear the list of two dim windows
+        :return:
+        """
+        # close the open windows
+        for w in self.two_dim_windows:
+            w.close()
+
+        #initialize the list
+        self.two_dim_windows = []
+
+    #endregion
+
+    #region Tools
+    @pyqtSlot()
+    def on_actionZoom_Cursor_triggered(self):
+        """
+        Select the Zoom Tool as current working tool in the widget
+        :return:
+        """
+        self.deselectToolsActions()
+        self.actionZoom_Cursor.setChecked(True)
+        self.widget.setSelectedTool(Tools.ZoomTool)
+
+    @pyqtSlot()
+    def on_actionRectangular_Cursor_triggered(self):
+        """
+        Select the Rectangular Cursor as current working tool in the widget
+        :return:
+        """
+        self.deselectToolsActions()
+        self.actionRectangular_Cursor.setChecked(True)
+        self.widget.setSelectedTool(Tools.RectangularZoomTool)
+
+    @pyqtSlot()
+    def on_actionRectangular_Eraser_triggered(self):
+        """
+        Select the Rectangular Eraser as current working tool in the widget
+        :return:
+        """
+        self.deselectToolsActions()
+        self.actionRectangular_Eraser.setChecked(True)
+        self.widget.setSelectedTool(Tools.RectangularEraser)
+
+    @pyqtSlot()
+    def on_actionPointer_Cursor_triggered(self):
+        """
+        Select the Pointer Cursor as current working tool in the widget
+        :return:
+        """
+        self.deselectToolsActions()
+        self.actionPointer_Cursor.setChecked(True)
+        self.widget.setSelectedTool(Tools.PointerTool)
+
+    def deselectToolsActions(self):
+        """
+        Change the checked status of all the actions tools to False
+        """
+        self.actionZoom_Cursor.setChecked(False)
+        self.actionRectangular_Cursor.setChecked(False)
+        self.actionRectangular_Eraser.setChecked(False)
+        self.actionPointer_Cursor.setChecked(False)
+    #endregion
+
+    #region Threshold
+
+    def getspectralParameters(self):
+        """
+        obtain the methods for spectral parameter meausrement of the measurementLocations
+        """
+        params = []
+
+        for x in self.spectralMeditions:
+            if isinstance(x[1], bool):
+                if x[1]:
+                    if self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.START][0]:
+                        params.append([x[0] + "(start)", x[2], [["location", self.spectralMeasurementLocation.START]]])
+                    if self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.CENTER][0]:
+                        params.append(
+                            [x[0] + "(center)", x[2], [["location", self.spectralMeasurementLocation.CENTER]]])
+                    if self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.END][0]:
+                        params.append([x[0] + "(end)", x[2], [["location", self.spectralMeasurementLocation.END]]])
+                    if self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.QUARTILE25][0]:
+                        params.append(
+                            [x[0] + "(quartile25)", x[2], [["location", self.spectralMeasurementLocation.QUARTILE25]]])
+                    if self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.QUARTILE75][0]:
+                        params.append(
+                            [x[0] + "(quartile75)", x[2], [["location", self.spectralMeasurementLocation.QUARTILE75]]])
+            else:
+                for y in x[2]:
+                    if y[1]:
+                        if self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.START][0]:
+                            l = [paramData for paramData in x[1]]
+                            l.append(["location", self.spectralMeasurementLocation.START])
+                            params.append([y[0] + "(start)", y[2], l])
+                        if self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.CENTER][0]:
+                            l = [paramData for paramData in x[1]]
+                            l.append(["location", self.spectralMeasurementLocation.CENTER])
+                            params.append([y[0] + "(center)", y[2], l])
+                        if self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.END][0]:
+                            l = [paramData for paramData in x[1]]
+                            l.append(["location", self.spectralMeasurementLocation.END])
+                            params.append([y[0] + "(end)", y[2], l])
+                        if self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.QUARTILE25][0]:
+                            l = [paramData for paramData in x[1]]
+                            l.append(["location", self.spectralMeasurementLocation.QUARTILE25])
+                            params.append([y[0] + "(quartile25)", y[2], l])
+                        if self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.QUARTILE75][0]:
+                            l = [paramData for paramData in x[1]]
+                            l.append(["location", self.spectralMeasurementLocation.QUARTILE75])
+                            params.append([y[0] + "(quartile75)", y[2], l])
+
+        return params
+
+    def getParameters(self):
+        params = []
+        for name, dict in self.meditions:
+            if not name == unicode(self.tr(u'Spectral Meditions')):
+                for x in dict:
+                    if isinstance(x[1], bool):
+                        if x[1]:
+                            params.append([x[0], x[2], []])
+                    else:
+                        for y in x[2]:
+                            if y[1]:
+                                params.append([y[0], y[2], x[1]])
+        return params + self.getspectralParameters()
+
+    def updateThreshold(self, line):
+        self.detectionSettings["Threshold"] = self.toDB() if line.value() == 0 else self.toDB(line.value())
+
+    def updateThresholdLine(self):
+        self.widget.axesOscilogram.threshold.setValue(round(
+            (10.0 ** ((60 + self.detectionSettings["Threshold"]) / 20.0)) * (
+                2 ** self.widget.signal.bitDepth) / 1000.0, 0)
+                                                      * self.widget.envelopeFactor - 2 ** (
+            self.widget.signal.bitDepth - 1))
+
+    def toDB(self, value=None):
+        if value is None:
+            return -60
+        return -60 + int(20 * log10(abs(
+            (value + 2 ** (self.widget.signal.bitDepth - 1)) / self.widget.envelopeFactor) * 1000.0 / (
+                                        2 ** self.widget.signal.bitDepth)))
+
+    @pyqtSlot(bool)
+    def setVisibleThreshold(self, bool):
+        self.widget.axesOscilogram.setVisibleThreshold(bool)
+        self.widget.setEnvelopeVisibility(bool)
+
+    #endregion
+
+    #region Theme
+
+    def load_Theme(self, theme):
+        """
+        Method that loads the theme to update visual options from main window.
+        :param theme:
+        """
+        self.theme = theme
+        self.widget.load_Theme(theme)
+
+    #endregion
+
+    #region Visual Elements
+    #The visual elements are the objects that display information about detected
+    #segments. Those elements are visible on the graphs (Oscilogram and spectrogram)
+    #They are divided by its definitions and purposes and user can change visibility
+    #of a subset of them
+    @pyqtSlot()
+    def on_actionView_Parameters_triggered(self):
+        """
+        Changes the visibility on the window of the parameter table.
+        The parameter table is where the detected segments and its measured parameters
+        are displayed.
+        """
+        self.dockWidgetParameterTableOscilogram.setVisible(self.actionView_Parameters.isChecked())
+
+    @pyqtSlot()
+    def on_actionElements_Peaks_triggered(self):
+        visibility = self.actionElements_Peaks.isChecked()
+        self.widget.changeElementsVisibility(visibility, Element.PeakFreqs, oscilogramItems=False)
+
+    @pyqtSlot()
+    def on_actionTemporal_Elements_triggered(self):
+        """
+        Temporal Elements are the elements that are visible on the oscilogram graph.
+        This method allows to change its visibility
+        """
+        visibility = self.actionTemporal_Elements.isChecked()
+        for e in self.widget.Elements:
+            e.visible = visibility
+        self.widget.drawElements(oscilogramItems=True)
+
+        self.actionTemporal_Figures.setEnabled(visibility)
+        self.actionTemporal_Numbers.setEnabled(visibility)
+
+    @pyqtSlot()
+    def on_actionTemporal_Numbers_triggered(self):
+        """
+        Change visibility of the numbers of the detected segments on the oscilogram graph
+
+        """
+        visibility = self.actionTemporal_Numbers.isChecked()
+        self.widget.changeElementsVisibility(visibility, Element.Text)
+
+    @pyqtSlot()
+    def on_actionSpectral_Numbers_triggered(self):
+        """
+        Change visibility of the numbers of the detected segments on the spectrogram graph
+        """
+        visibility = self.actionSpectral_Numbers.isChecked()
+        self.widget.changeElementsVisibility(visibility, Element.Text, oscilogramItems=False)
+
+    @pyqtSlot()
+    def on_actionSpectral_Figures_triggered(self):
+        """
+        Change visibility of the figures of the detected segments on the spectrogram graph
+        """
+        visibility = self.actionSpectral_Figures.isChecked()
+        self.widget.changeElementsVisibility(visibility, Element.Figures, oscilogramItems=False)
+
+    @pyqtSlot()
+    def on_actionTemporal_Figures_triggered(self):
+        """
+        Change visibility of the figures of the detected segments on the oscilogram graph
+        """
+        visibility = self.actionTemporal_Figures.isChecked()
+        self.widget.changeElementsVisibility(visibility, Element.Figures, oscilogramItems=True)
+
+    @pyqtSlot()
+    def on_actionSpectral_Elements_triggered(self):
+        """
+        Spectral Elements are the elements that are visible on the spectrogram graph.
+        This method allows to change its visibility
+        """
+        visibility = self.actionSpectral_Elements.isChecked()
+        for e in self.widget.Elements:
+            for e2 in e.twoDimensionalElements:
+                e2.visible = visibility
+        self.widget.drawElements(oscilogramItems=False)
+        self.actionSpectral_Figures.setEnabled(visibility)
+        self.actionSpectral_Numbers.setEnabled(visibility)
+        self.actionSub_Elements_Peaks.setEnabled(visibility)
+
+
+    #endregion
+
+    #region Graphs Images
+    #Methods taht allows to save images from a gui widget
+    #use a screenshot of the control. This mean that the control has to be visible
+    #for take a picture of it.
+    @pyqtSlot()
+    def on_actionOsgram_Image_triggered(self):
+        """
+        Save the Oscilogram widget graph as image
+        """
+        if self.widget.visibleOscilogram:
+            saveImage(self.widget.axesOscilogram, self.tr(u"oscilogram"))
+        else:
+            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
+                                      self.tr(u"The Oscilogram plot widget is not visible.") + u" \n" + self.tr(
+                                          u"You should see the data that you are going to save."))
+
+    @pyqtSlot()
+    def on_actionCombined_Image_triggered(self):
+        """
+        Save as one image the two controls that visualize the signal
+        Oscilogram and Spectrogram.
+        """
+        if self.widget.visibleOscilogram and self.widget.visibleSpectrogram:
+            saveImage(self.widget, self.tr(u"graph"))
+        else:
+            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
+                                      self.tr(u"One of the plot widgets is not visible") + u" \n" + self.tr(
+                                          u"You should see the data that you are going to save."))
+
+
+    @pyqtSlot()
+    def on_actionSpecgram_Image_triggered(self):
+        """
+        Save the Spectrogram widget graph as image
+        """
+        if self.widget.visibleSpectrogram:
+            saveImage(self.widget.axesSpecgram, self.tr(u"specgram"))
+        else:
+            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
+                                      self.tr(u"The Espectrogram plot widget is not visible.") + u" \n" + self.tr(
+                                          u"You should see the data that you are going to save."))
+
+    #endregion
+
+    #region Save Meditions, Excell and Batch Process
+    # After detection&classification of segments and parameters measurement
+    #user can save its meditions as excell or other formats
+    #
+    @pyqtSlot()
+    def on_actionMeditions_triggered(self, name="", table=None):
+        """
+        Save the meditions made by the window to the elements detectde into disc.
+        :param name:
+        :param table:
+        :return:
+        """
+        if name != "":
+            fname = name
+        else:
+            if not self.widget.signal.opened():
+                return
+            fname = unicode(QFileDialog.getSaveFileName(self, self.tr(u"Save meditions as excel file"),
+                                                        self.widget.signalName() + ".xls", "*.xls"))
+        if fname:
+            wb = xlwt.Workbook()
+            a = unicode(self.tr(u"Elements Meditions"))
+            ws = wb.add_sheet(a)
+            self.writedata(ws, table)
+            #add spectral meditions
+            wb.save(fname)
+
+    @pyqtSlot()
+    def startBatchProcess(self):
+        """
+        Start a batch processing of signals with the configured parameters
+        User must configure the settings for detection&classification and parameter
+        measurement, select a folder of imput audio files and a folder for the output meditions.
+        """
+        thread = QtCore.QThread(self)
+        #implementation of batch on a diferent thread to
+        #keep user interaction responsive.
+        class worker(QtCore.QObject):
+            def __init__(self, worker):
+                QtCore.QObject.__init__(self)
+                self.work = worker
+
+        processworker = worker(self.batch)
+        thread.started.connect(processworker.work)
+        processworker.moveToThread(thread)
+        thread.start()
+
+    def getSpectralData(self, signal, specgramSettings):
+        """
+        returns the spectral data pxx,bins and freqs of spectrogram
+        """
+        overlap = int(specgramSettings.NFFT * specgramSettings.overlap / 100)
+        return mlab.specgram(signal.data, specgramSettings.NFFT, Fs=signal.samplingRate,
+                             detrend=mlab.detrend_none, window=specgramSettings.window, noverlap=overlap,
+                             sides="onesided")
+
+    def batch(self):
+        """
+        Method that performs the batch procesing
+        :return:
+        """
+        #get the input audio files folder
+        #and the output meditions folder
+        directoryinput = str(self.lineeditFilePath.text())
+        directoryoutput = str(self.lineEditOutputFolder.text())
+
+        #validate the folders
+        if not os.path.isdir(directoryinput):
+            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
+                                      self.tr(u"The input path is not a directory."))
+            return
+        if not os.path.isdir(directoryoutput):
+            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
+                                      self.tr(u"The output path is not a directory."))
+            return
+
+        sounds = []  #the audio files tgo process
+        raiz = ""
+
+        #listing all files in directoryinput folder
+        for root, dirs, files in os.walk(directoryinput):
+            raiz = root if raiz == "" else raiz
+            for f in files:
+                #get all the files to process
+                sounds.append(os.path.join(root, f))
+
+        #updating the progress bar
+        self.progressBarProcesed.setValue(0)
+
+        # the number of files processed for use in the progres bar update
+        files_processed = 0
+        if self.rbttnDetection.isChecked():
+            detector = OneDimensionalElementsDetector()
+
+            #if the meditions has to export as single file
+            singlefile = self.cbxSingleFile.isChecked()
+
+            if singlefile:
+                wb = xlwt.Workbook()
+
+            for filename in sounds:
+                try:
+                    #process every file
+                    signalProcessor = SignalProcessor()
+                    signalProcessor.signal = WavFileSignal(filename)
+                    #send a message for the user
+                    self.listwidgetProgress.addItem(self.tr(u"Processing") + u" " + signalProcessor.signal.name)
+
+                    table = QtGui.QTableWidget()
+                    spSettngs = SpecgramSettings(self.widget.specgramSettings.NFFT,
+                                                 self.widget.specgramSettings.overlap,
+                                                 self.widget.specgramSettings.window)
+
+                    #get the detection parameters
+                    spSettngs.Pxx, spSettngs.freqs, spSettngs.bins = self.getSpectralData(signalProcessor.signal,
+                                                                                          self.widget.specgramSettings)
+
+                    #detect
+                    detector.detect(signalProcessor.signal, 0, len(signalProcessor.signal.data),
+                                    threshold=abs(self.detectionSettings["Threshold"]),
+                                    decay=self.detectionSettings["Decay"], minSize=self.detectionSettings["MinSize"],
+                                    softfactor=self.detectionSettings["SoftFactor"],
+                                    merge_factor=self.detectionSettings["MergeFactor"],
+                                    secondThreshold=abs(self.detectionSettings["Threshold2"]),
+                                    specgramSettings=spSettngs,
+                                    detectionsettings=self.algorithmDetectorSettings,
+                                    threshold_spectral=self.detectionSettings["ThresholdSpectral"],
+                                    minsize_spectral=(self.detectionSettings["minSizeFreqSpectral"],
+                                                      self.detectionSettings["minSizeTimeSpectral"]),
+                                    location=self.spectralMeasurementLocation,
+                                    findSpectralSublements=False)
+
+                    #get parameters to measure
+                    paramsTomeasure = self.getParameters()
+                    table.setRowCount(detector.elementCount())
+
+                    #get the clasification data
+                    validcategories = [k for k in self.classificationData.categories.keys() if
+                                       len(self.classificationData.getvalues(k)) > 0]
+                    self.elementsClasificationTableData = [[[k, self.tr(u"No Identified")] for k in validcategories] for
+                                                           _ in range(table.rowCount())]
+
+                    table.setColumnCount(len(paramsTomeasure) + len(validcategories))
+                    self.columnNames = [label[0] for label in paramsTomeasure]
+
+                    #set the name of columns
+                    table.setHorizontalHeaderLabels(self.columnNames + validcategories)
+                    table.resizeColumnsToContents()
+
+                    self.listwidgetProgress.addItem(self.tr(u"Save data of ") + signalProcessor.signal.name)
+
+                    #measure parameters
+                    for i, element in enumerate(detector.elements):
+                        for j, prop in enumerate(paramsTomeasure):
+                            dictionary = dict(prop[2] if prop[2] is not None else [])
+                            #save the meditions into the table field
+                            item = QtGui.QTableWidgetItem(str(prop[1](element, dictionary)))
+                            item.setBackgroundColor(
+                                self.TABLE_ROW_COLOR_ODD if i % 2 == 0 else self.TABLE_ROW_COLOR_EVEN)
+                            table.setItem(i, j, item)
+
+                        for c in range(len(validcategories)):
+                            try:
+                                val = self.elementsClasificationTableData[i][c][1]
+                                item = QtGui.QTableWidgetItem(unicode(val))
+                                item.setBackgroundColor(
+                                    self.TABLE_ROW_COLOR_ODD if i % 2 == 0 else self.TABLE_ROW_COLOR_EVEN)
+                            except Exception as e:
+                                item = QtGui.QTableWidgetItem(0)  #"Error"+e.message)
+                            table.setItem(i, c + len(paramsTomeasure), item)
+
+                    if singlefile:
+                        #save meditions as new sheet in same file
+                        ws = wb.add_sheet(signalProcessor.signal.name)
+                        self.writedata(ws, table)
+                    else:
+                        #save meditions as new file
+                        self.on_actionMeditions_triggered(
+                            os.path.join(directoryoutput, signalProcessor.signal.name + ".xls"), table)
+
+                    #update progress
+                    self.listwidgetProgress.addItem(signalProcessor.signal.name + u" " + self.tr(u"has been files_processed"))
+                    self.listwidgetProgress.update()
+                    files_processed += 1
+                except Exception as e:
+                    self.listwidgetProgress.addItem(self.tr(u"Some problem found while processing") + u" " + e.message)
+                self.progressBarProcesed.setValue(round(100.0 * (files_processed) / len(sounds)))
+                self.progressBarProcesed.update()
+
+                if singlefile:
+                    wb.save(os.path.join(directoryoutput, self.tr(u"Duetto Sound Lab Meditions") + u".xls"))
+                    #TODO open file after save
+
+        if self.rbttnSplitFile.isChecked():
+            save = WavFileSignal()
+            for filename in sounds:
+                try:
+                    signal = WavFileSignal(filename)
+                    self.listwidgetProgress.addItem(self.tr(u"Processing") + u" " + signal.name)
+                    save.channels = signal.channels
+                    save.bitDepth = signal.bitDepth
+                    save.samplingRate = signal.samplingRate
+                    sr = signal.samplingRate
+                    pieceSize = self.spboxSplitTime.value() * sr
+                    pieces = len(signal.data) / pieceSize
+                    left = len(signal.data) % pieceSize
+                    if (pieces >= 1):
+                        for i in range(pieces):
+                            save.data = signal.data[i * pieceSize:(i + 1) * pieceSize]
+                            save.save(os.path.join(directoryoutput, str(i + 1) + "-" + signal.name))
+                    if left > 0:
+                        save.data = signal.data[len(signal.data) - left:]
+                        save.save(os.path.join(directoryoutput, str(pieces + 1) + "-" + signal.name))
+                    files_processed += 1
+                    self.progressBarProcesed.setValue(100.0 * files_processed / len(sounds))
+                    self.listwidgetProgress.addItem(signal.name + u" " + self.tr(u"has been files_processed"))
+                    self.progressBarProcesed.update()
+                    self.listwidgetProgress.update()
+                except:
+                    print(self.tr(u"some split problems"))
+        self.progressBarProcesed.setValue(100)
+
+    def selectInputFolder(self):
+        """
+        Select a valid folder in the file system..
+        :return:
+        """
+        inputfolder = QFileDialog.getExistingDirectory()
+
+        #update the line edit with the name of
+        self.lineeditFilePath.setText(inputfolder)
+
+    def selectOutputFolder(self):
+        outputfolder = QFileDialog.getExistingDirectory()
+        self.lineEditOutputFolder.setText(outputfolder)
+
+    def writedata(self, ws, tableParameter=None):
+        """
+        write the data from the table into an excell file.
+        :param ws:WorkSheet object from xwlt module for interacts with excell files.
+        :param tableParameter: QTableWidget with the information of the data to save.
+        """
+        if (tableParameter is None):
+            tableParameter = self.tableParameterOscilogram
+
+        #write the data of the meditions into the stylesheet of excell ws
+        styleheader = xlwt.easyxf('font: name Times New Roman, color-index black, bold on, height 300')
+        stylebody = xlwt.easyxf('font: name Times New Roman, color-index black, height 220', num_format_str='#,##0.00')
+        stylecopyrigth = xlwt.easyxf('font: name Arial, color-index pale_blue, height 250, italic on',
+                                     num_format_str='#,##0.00')
+        #set headers
+        headers = [str(tableParameter.takeHorizontalHeaderItem(pos).text()) for pos in
+                   range(tableParameter.columnCount())]
+
+        for index, header in enumerate(headers):
+            ws.write(0, index, header, styleheader)
+
+        for i in range(1, tableParameter.model().rowCount() + 1):
+            for j in range(tableParameter.model().columnCount()):
+                if tableParameter.item(i - 1, j):
+                    ws.write(i, j, str(tableParameter.item(i - 1, j).data(Qt.DisplayRole).toString()), stylebody)
+                else:
+                    ws.write(i, j, unicode(self.tr(u"No Identified")), stylebody)
+        #write data
+        #ws object must be part of a Woorkbook that would be saved later
+        ws.write(tableParameter.model().rowCount() + 3, 0, unicode(self.tr(u"Duetto Sound Lab Oscilogram Meditions")),
+                 stylecopyrigth)
+
+    #endregion
+
     #region Zoom
     #delegate in the widget the zoom interaction with the signal
     @QtCore.pyqtSlot()
@@ -1217,45 +1206,128 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
     #endregion
 
     #region Close and Exit
+
     @pyqtSlot()
     def on_actionExit_triggered(self):
+        """
+        Process the exit action requested by the user.
+        :return:
+        """
         self.close()
 
-
     def closeEvent(self, event):
-        if self.widget.signal.playStatus == AudioSignal.PLAYING or \
-                        self.widget.signal.playStatus == AudioSignal.RECORDING:
-            self.widget.stop()
+        """
+        Event that manages the close of the window.
+        Intercepts the close event for save changes.
+        :param event:
+        :return:
+        """
+
         mbox = QtGui.QMessageBox(QtGui.QMessageBox.Question, self.tr(u"Save meditions"),
                                  self.tr(u"Do you want to save the meditions?"),
                                  QtGui.QMessageBox.Yes | QtGui.QMessageBox.No | QtGui.QMessageBox.Cancel, self)
+
+        #if there is a medition made and parameters measured that could be saved
         if self.tableParameterOscilogram.rowCount() > 0:
+            # if the signal was playing must be stopped
+            self.widget.stop()
+
             result = mbox.exec_()
+            #get the user desition
             if result == QtGui.QMessageBox.Cancel:
+                #cancel the close
                 event.ignore()
                 return
+
             elif result == QtGui.QMessageBox.Yes:
+                #save the measured data as excel
                 wb = xlwt.Workbook()
                 ws = wb.add_sheet(self.widget.signalName())
                 self.writedata(ws, self.tableParameterOscilogram)
-                fname = unicode(QFileDialog.getSaveFileName(self, self.tr(u"Save meditions as excel file"),
-                                                            self.widget.signalName() + ".xls", "*.xls"))
+
+                #get the file name to save the meditions
+                fname = unicode(QFileDialog.getSaveFileName(self,
+                                self.tr(u"Save meditions as excel file"),
+                                self.widget.signalName() + ".xls", "*.xls"))
                 if fname:
                     wb.save(fname)
-            for w in self.two_dim_windows:
-                w.close()
+
+            self.clearTwoDimensionalWindows()
 
     #endregion
 
-    #region Time and Frecuency Domain Visualization
+    #region Elements Selection
+
     @pyqtSlot()
     def on_actionClear_Meditions_triggered(self):
+        """
+        Clear all the detections made. Clear the elements on the widget,
+        the meditions on the table and update the
+        :return:
+        """
+        #clear the widget elements detection and its visual figures
         self.widget.clearDetection()
-        self.widget.selectElement()
+
+        #clear the two dimensional window asociated with the elements detected
+        self.clearTwoDimensionalWindows()
+
+        #refresh the changes
         self.widget.graph()
+
+    @pyqtSlot()
+    def on_actionDelete_Selected_Elements_triggered(self):
+        """
+        Delete the element under selection.
+        the selection is the area under the zoom cursor if the zoom cursor is selected
+        or the visible area otherwise.
+        :return:
+        """
+
+        # delete the elements on the widget and get the indexes for update
+        start_removed_index, end_removed_index = self.widget.deleteSelectedElements()
+
+        # TODO complete the coment here
+        if start_removed_index is not None and start_removed_index >= 0 and end_removed_index < self.tableParameterOscilogram.rowCount():
+            for i in range(end_removed_index, start_removed_index - 1, -1):
+                #delete from table
+                self.tableParameterOscilogram.removeRow(i)
+
+            for i in range(self.tableParameterOscilogram.rowCount()):
+                #update table bacground color
+                for j in range(self.tableParameterOscilogram.columnCount()):
+                    self.tableParameterOscilogram.item(i, j).setBackgroundColor(
+                        self.TABLE_ROW_COLOR_ODD if i % 2 == 0 else self.TABLE_ROW_COLOR_EVEN)
+
+            #updates the numpy array  with the detected parameters
+            self.measuredParameters = np.concatenate(
+                (
+                    self.measuredParameters[:start_removed_index[0]], self.measuredParameters[start_removed_index[1] + 1:]))
+            self.elementsClasificationTableData = self.elementsClasificationTableData[
+                                                  :start_removed_index[0]] + self.elementsClasificationTableData[
+                                                                             start_removed_index[1] + 1:]
+
+            self.tableParameterOscilogram.update()
+            for wnd in self.two_dim_windows:
+                wnd.loadData(self.columnNames, self.measuredParameters)
+
+        # deselect the elements on the widget
+        self.on_actionDeselect_Elements_triggered()
+
+    @pyqtSlot()
+    def on_actionDeselect_Elements_triggered(self):
+        """
+        Deselects the selected element in the widget and in the
+        two dimensional windows opened.
+        :return:
+        """
+        self.widget.selectElement()
+
+        for wnd in self.two_dim_windows:
+            wnd.deselectElement()
+
     #endregion
 
-    #region Widgets Visibility
+    #region widgets Visibility
     @QtCore.pyqtSlot()
     def on_actionCombined_triggered(self):
         """
@@ -1313,36 +1385,19 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
     #endregion
 
     @pyqtSlot()
-    def on_actionDelete_Selected_Elements_triggered(self):
-        indx = self.widget.deleteSelectedElements
+    def on_actionFull_Screen_triggered(self):
+        """
+        Switch the visualization of the window in full screen - normal.
+        """
+        if self.actionFull_Screen.isChecked():
+            self.showFullScreen()
+        else:
+            self.showNormal()
 
-        if indx is not None and indx[0] >= 0 and indx[1] < self.tableParameterOscilogram.rowCount():
-            for i in range(indx[1], indx[0] - 1, -1):
-                #delete from table
-                self.tableParameterOscilogram.removeRow(i)
-
-            for i in range(self.tableParameterOscilogram.rowCount()):
-                #update table bacground color
-                for j in range(self.tableParameterOscilogram.columnCount()):
-                    self.tableParameterOscilogram.item(i, j).setBackgroundColor(
-                        self.TABLE_ROW_COLOR_ODD if i % 2 == 0 else self.TABLE_ROW_COLOR_EVEN)
-
-            #updates the numpy array  with the detected parameters
-            self.measuredParameters = np.concatenate(
-                (self.measuredParameters[:indx[0]], self.measuredParameters[indx[1] + 1:]))
-            self.elementsClasificationTableData = self.elementsClasificationTableData[
-                                                  :indx[0]] + self.elementsClasificationTableData[indx[1] + 1:]
-            self.tableParameterOscilogram.update()
-            for wnd in self.two_dim_windows:
-                wnd.loadData(self.columnNames, self.measuredParameters)
-
-        self.on_actionDeselect_Elements_triggered()
-
-    @pyqtSlot()
-    def on_actionDeselect_Elements_triggered(self):
-        self.widget.selectElement()  # select the element
-        self.widget.clearZoomCursor()
-
-        for wnd in self.two_dim_windows:
-            wnd.deselectElement()
+    def updateStatusBar(self, line):
+        """
+        Set a new message in the status bar of the window.
+        :param line: string with the line to show in the status bar
+        """
+        self.statusbar.showMessage(line)
 
