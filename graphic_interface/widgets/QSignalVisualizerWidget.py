@@ -222,7 +222,6 @@ class QSignalVisualizerWidget(QWidget):
         """
         Start to play the current signal.
         If the signal is been playing nothing is made.
-        :return:
         """
         start, end = self.getIndexFromAndTo()
         self.addPlayerLine(start)
@@ -239,30 +238,62 @@ class QSignalVisualizerWidget(QWidget):
             self.play()
 
     def stop(self):
+        """
+        Stops the reproduction or record of the current signal
+        :return:
+        """
+        prevStatus = self.signalPlayer.playStatus
+        #stopping the player
         self.signalPlayer.stop()
+        #if the previos status was RECORDING then we have to stop the timer and draw the new signal on both controls.
+        if  prevStatus == self.signalPlayer.RECORDING:
+            self._recordTimer.stop()
+            self.removePlayerLine()
+            self.axesOscilogram.setVisible(True)
+            self.axesSpecgram.setVisible(True)
+            self.graph()
+            self.zoomNone()
 
     def on_newDataRecorded(self):
-
+        """
+        This function is called when on every tick count of the record timer
+        to update the oscillogram with the new data recorded.
+        """
+        #the player read from the record stream
         self.signalPlayer.readFromStream()
-
+        #update the current view interval of the recording signal
         self.mainCursor.max = len(self.signal.data)
         self.mainCursor.min = max(0,
                                   len(self.signal.data) - 3 * self.signal.samplingRate)
-
+        #draw the current recorded interval
         self.axesOscilogram.graph(self.mainCursor.min, self.mainCursor.max)
 
-        #self.regionChanged.emit(self.mainCursor.min, self.mainCursor.max, len(self.signal.data))
-
     def record(self):
+        """
+        Start to record a new signal.
+        If the signal is been playing nothing is made.
+        """
+        try:
+            self.signalPlayer.record()
+        except:
+             self.stop()
+        #set only the oscillogram vsible while recording
+        self.visibleOscilogram = True
+        self.visibleSpectrogram = False
+        #set the new signal references
         self.__signal = self.signalPlayer.signal
         self.axesOscilogram.signal = self.signalPlayer.signal
         self.axesSpecgram.signal = self.signalPlayer.signal
+        #update oscillogram time interval for drawing the recorded section
+        updateTime = 15
+        #starting the update record timer
+        self._recordTimer.start(updateTime)
+        # self.createPlayerLine(self.mainCursor.min)
 
     def pause(self):
         """
         Pause the reproduction of the current signal.
         If the signal is paused nothing is made.
-        :return:
         """
         self.signalPlayer.pause()
 
@@ -283,7 +314,7 @@ class QSignalVisualizerWidget(QWidget):
 
         #set the values of the lines for every widget
         self.playerLineOsc.setValue(initial_value)
-        self.playerLineSpec.setValue(self._from_osc_to_spec(initial_value))
+        self.playerLineSpec.setValue(self.axesSpecgram._from_osc_to_spec(initial_value))
 
         #add the lines to the widgets if there aren't
         if self.playerLineOsc not in self.axesOscilogram.getViewBox().addedItems:
@@ -305,7 +336,7 @@ class QSignalVisualizerWidget(QWidget):
     def notifyPlayingCursor(self, frame):
         #draw the line in the axes
         self.playerLineOsc.setValue(frame)
-        self.playerLineSpec.setValue(self._from_osc_to_spec(frame))
+        self.playerLineSpec.setValue(self.axesSpecgram._from_osc_to_spec(frame))
 
     #endregion
 
