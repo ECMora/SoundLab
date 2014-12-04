@@ -224,7 +224,7 @@ class QSignalVisualizerWidget(QWidget):
         If the signal is been playing nothing is made.
         """
         start, end = self.getIndexFromAndTo()
-        self.addPlayerLine(start)
+        self.addPlayerLine(start,end)
         self.signalPlayer.play(start, end, self.playSpeed)
 
     def switchPlayStatus(self):
@@ -245,13 +245,14 @@ class QSignalVisualizerWidget(QWidget):
         prevStatus = self.signalPlayer.playStatus
         #stopping the player
         self.signalPlayer.stop()
+        self.removePlayerLine()
         #if the previos status was RECORDING then we have to stop the timer and draw the new signal on both controls.
         if  prevStatus == self.signalPlayer.RECORDING:
             self._recordTimer.stop()
-            self.removePlayerLine()
             self.axesOscilogram.setVisible(True)
             self.axesSpecgram.setVisible(True)
-            self.graph()
+            self.mainCursor.max = len(self.signal.data)
+            self.mainCursor.min = 0
             self.zoomNone()
 
     def on_newDataRecorded(self):
@@ -274,16 +275,16 @@ class QSignalVisualizerWidget(QWidget):
         If the signal is been playing nothing is made.
         """
         try:
-            self.signalPlayer.record()
+            newSignal = self.signalPlayer.record()
         except:
              self.stop()
         #set only the oscillogram vsible while recording
         self.visibleOscilogram = True
         self.visibleSpectrogram = False
         #set the new signal references
-        self.__signal = self.signalPlayer.signal
-        self.axesOscilogram.signal = self.signalPlayer.signal
-        self.axesSpecgram.signal = self.signalPlayer.signal
+        self.__signal = newSignal
+        self.axesOscilogram.signal = newSignal
+        self.axesSpecgram.signal = newSignal
         #update oscillogram time interval for drawing the recorded section
         updateTime = 15
         #starting the update record timer
@@ -297,7 +298,7 @@ class QSignalVisualizerWidget(QWidget):
         """
         self.signalPlayer.pause()
 
-    def addPlayerLine(self, initial_value):
+    def addPlayerLine(self, initial_value, end_value):
         """
         create the line to show on widgets osc and spec
         when the signal is been played as a way to
@@ -311,7 +312,7 @@ class QSignalVisualizerWidget(QWidget):
         """
         if not isinstance(initial_value, int):
             raise Exception("value can't be of type different of int")
-
+        self.playerLineEnd = end_value
         #set the values of the lines for every widget
         self.playerLineOsc.setValue(initial_value)
         self.playerLineSpec.setValue(self.axesSpecgram._from_osc_to_spec(initial_value))
@@ -337,6 +338,9 @@ class QSignalVisualizerWidget(QWidget):
         #draw the line in the axes
         self.playerLineOsc.setValue(frame)
         self.playerLineSpec.setValue(self.axesSpecgram._from_osc_to_spec(frame))
+        #if plying finish the remove the line
+        # if frame >= self.playerLineEnd:
+        #     self.removePlayerLine()
 
     #endregion
 
@@ -567,12 +571,13 @@ class QSignalVisualizerWidget(QWidget):
 
         if self.selectedTool == Tools.ZoomTool and axe is not None:
             zoom_region = axe.gui_user_tool.zoomRegion.getRegion()
-            #get the start of the region
-            indexFrom = zoom_region[0]
+            if zoom_region[0] >= indexFrom and zoom_region[1] <= indexTo:
+                #get the start of the region
+                indexFrom = zoom_region[0]
 
-            #set the max limit if the region borders are different
-            if zoom_region[1] > zoom_region[0]:
-                 indexTo = zoom_region[1]
+                #set the max limit if the region borders are different
+                if zoom_region[1] > zoom_region[0]:
+                     indexTo = zoom_region[1]
 
         return indexFrom, indexTo
 
@@ -762,11 +767,3 @@ class QSignalVisualizerWidget(QWidget):
         self.__saveSignal(fname, signal)
 
     #endregion
-
-    def _from_spec_to_osc(self, coord):
-        cs = self.axesSpecgram.specgramHandler.NFFT #- self.specgramSettings.visualOverlap
-        return int(1.0 * coord * cs - self.axesSpecgram.specgramHandler.NFFT / 2)
-
-    def _from_osc_to_spec(self, coord):
-        cs = self.axesSpecgram.specgramHandler.NFFT #- self.axesSpecgram.specgramHandler.visualOverlap
-        return 1.0 * (coord - self.mainCursor.min + self.axesSpecgram.specgramHandler.NFFT / 2) / cs
