@@ -240,7 +240,6 @@ class QSignalVisualizerWidget(QWidget):
 
     def stop(self):
         self.signalPlayer.stop()
-        if  prevStatus == self.signalPlayer.RECORDING:
 
     def on_newDataRecorded(self):
 
