@@ -377,6 +377,9 @@ class QSignalVisualizerWidget(QWidget):
         self.axesOscilogram.signal = self.__signal
         self.axesSpecgram.signal = self.__signal
 
+        #clean the previous actions to get the initial state with the new signal
+        self.undoRedoManager.clear()
+
     #endregion
 
     #region Zoom in,out, none

@@ -40,8 +40,9 @@ class TwoDPlotWidget(pg.PlotWidget):
         pg.PlotWidget.mousePressEvent(self, ev)
         if ev.button() == QtCore.Qt.LeftButton:
             self.mousePressed = True
-            #get the local graph coordinate point from the pixel where the cursor was pressed
-            #update last point
+            # get the local graph coordinate point from
+            # the pixel where the cursor was pressed
+            # update last point
             self.lastPoint = self.getPlotItem().getViewBox().mapSceneToView(QtCore.QPointF(ev.x(),ev.y()))
             self.ElementSelectionRect.setRect(self.lastPoint.x(),self.lastPoint.y(),0,0)
             self.update()

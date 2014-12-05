@@ -55,7 +55,6 @@ class PowerSpectrumWindow(QtGui.QMainWindow,Ui_PowSpecWindow):
         self.ui.dockSettings.setFixedWidth(250)
 
     def windowSettingsChange(self, param, changes):
-
         for param, change, data in changes:
             path = self.ParamTree.childPath(param)
             if path is not None:

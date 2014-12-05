@@ -1,4 +1,4 @@
-from PyQt4 import QtGui
+from PyQt4 import QtGui, QtCore
 import pyqtgraph as pg
 import numpy as np
 from sound_lab_core.Segmentation.Elements.Element import Element
@@ -12,6 +12,11 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
     This widget performs the detections operations on a signal.
     Provide methods to interact with the detected segments: Highlight, remove, etc
     """
+
+    # SIGNALS
+    # signal raised when a detected element is clicked
+    # raise the index of the clicked element
+    elementClicked = QtCore.pyqtSignal(int)
 
     def __init__(self, parent):
         QSignalVisualizerWidget.__init__(self, parent)
@@ -88,13 +93,16 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
         self.axesOscilogram.setVisibleThreshold(True)
 
-        for c in self.elements_detector.elements:
-            self.Elements.append(c)  # the elment the space for the span selector and the text
+        for index, c in enumerate(self.elements_detector.elements):
+            self.Elements.append(c)
+            c.elementClicked.connect(lambda :self.elementClicked.emit(index))
+            # the elment the space for the span selector and the text
             # incorporar deteccion en espectrograma
 
         if a != self.mainCursor.min or b != self.mainCursor.max:
             self.zoomCursor.min, self.zoomCursor.max = a, b
             self.zoomIn()
+
 
     def changeElementsVisibility(self, visible, element_type=Element.Figures, oscilogramItems=True):
         """
@@ -210,8 +218,10 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
     def selectElement(self, number=-1):
         """
         Method that select an element in the widget
-        by highlighting it
-        :param number: the element index. Must be > 0.
+        by highlighting it. If number is in the range of [0, number_of_elements] then the
+        the element at index "number" would be selected.
+        Otherwise the selection would be cleared.
+        :param number: the element index
         """
         if 0 <= number < len(self.Elements):
             index_from, index_to = self.Elements[number].indexFrom, self.Elements[number].indexTo
@@ -249,7 +259,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         indexFrom -= 1 if indexFrom > 0 and start <= self.Elements[indexFrom - 1].indexTo else 0
 
         if indexTo < indexFrom or indexTo > len(self.Elements):
-            return None
+            return -1, -1
 
         self.removeVisualElements(elements=self.Elements[indexFrom:indexTo])
 
@@ -311,8 +321,12 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         self.envelopeCurve.setPen(pg.mkPen(self.osc_color, width=1))
         self.envelopeCurve.setShadowPen(pg.mkPen(QtGui.QColor(255, 0, 0), width=3))
 
-    def refresh(self, dataChanged=True, updateOscillogram=True, updateSpectrogram=True, partial=True):
-        QSignalVisualizerWidget.refresh(self, dataChanged, updateOscillogram, updateSpectrogram, partial)
+    def graph(self):
+        """
+        Refresh the widgets visual elements and graphs
+        :return:
+        """
+        QSignalVisualizerWidget.graph(self)
         if self.visibleElements:
             self.drawElements()
 
