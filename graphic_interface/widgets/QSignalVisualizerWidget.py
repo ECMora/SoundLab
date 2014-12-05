@@ -203,8 +203,8 @@ class QSignalVisualizerWidget(QWidget):
         spectrogram_zoom_region = self.axesSpecgram.gui_user_tool.zoomRegion.getRegion()
 
         #translate the coordinates of the spectrogram zoom region into oscilogram's
-        min = self.axesSpecgram._from_spec_to_osc(spectrogram_zoom_region[0]) + self.mainCursor.min
-        max = self.axesSpecgram._from_spec_to_osc(spectrogram_zoom_region[1]) + self.mainCursor.min
+        min = self.axesSpecgram.specgramHandler.from_spec_to_osc(spectrogram_zoom_region[0])
+        max = self.axesSpecgram.specgramHandler.from_spec_to_osc(spectrogram_zoom_region[1])
 
         #update oscilogram region
         self.axesOscilogram.gui_user_tool.zoomRegion.setRegion([min, max])
@@ -420,6 +420,9 @@ class QSignalVisualizerWidget(QWidget):
         #update the signal int the two widgets that visualize it
         self.axesOscilogram.signal = self.__signal
         self.axesSpecgram.signal = self.__signal
+
+        #clean the previous actions to get the initial state with the new signal
+        self.undoRedoManager.clear()
 
     #endregion
 
