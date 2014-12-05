@@ -56,8 +56,8 @@ class QSignalVisualizerWidget(QWidget):
         self.undoRedoManager.actionExec.connect(lambda x: self.graph())
 
         #sincronization of the change range in the axes
-        self.axesSpecgram.rangeChanged.connect(lambda x1, x2: self.axesOscilogram.changeRange(x1, x2))
-        self.axesOscilogram.rangeChanged.connect(lambda x1, x2: self.axesSpecgram.changeRange(x1, x2))
+        self.axesSpecgram.rangeChanged.connect(self.updateOscillogram)
+        self.axesOscilogram.rangeChanged.connect(self.updateSpecgram)
 
         self.axesSpecgram.signalChanged.connect(lambda x1, x2: self.axesOscilogram.updateSignal(x1, x2))
         self.axesOscilogram.signalChanged.connect(lambda x1, x2: self.axesSpecgram.updateSignal(x1, x2))
@@ -100,6 +100,17 @@ class QSignalVisualizerWidget(QWidget):
 
         self._recordTimer = QTimer(self)
         self._recordTimer.timeout.connect(self.on_newDataRecorded)
+
+    def updateOscillogram(self,x1,x2):
+
+        self.axesOscilogram.changeRange(x1, x2)
+        self.mainCursor.min = x1
+        self.mainCursor.max = x2
+
+    def updateSpecgram(self,x1,x2):
+        self.axesSpecgram.changeRange(x1,x2)
+        self.mainCursor.min = x1
+        self.mainCursor.max = x2
 
 
     def setSelectedTool(self, tool):
