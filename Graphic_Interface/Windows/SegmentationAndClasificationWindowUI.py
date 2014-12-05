@@ -396,7 +396,7 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.pushButtonInputFolder, QtCore.SIGNAL(_fromUtf8("clicked()")), MainWindow.selectInputFolder)
         QtCore.QObject.connect(self.pushButtonOutputFolder, QtCore.SIGNAL(_fromUtf8("clicked()")), MainWindow.selectOutputFolder)
         QtCore.QObject.connect(self.pushButtonStart, QtCore.SIGNAL(_fromUtf8("clicked()")), MainWindow.startBatchProcess)
-        QtCore.QObject.connect(self.actionView_Threshold, QtCore.SIGNAL(_fromUtf8("triggered(bool)")), MainWindow.setVisibleThreshold)
+        QtCore.QObject.connect(self.actionView_Threshold, QtCore.SIGNAL(_fromUtf8("triggered(bool)")), MainWindow.setThresholdVisibility)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
