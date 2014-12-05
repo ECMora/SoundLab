@@ -176,8 +176,8 @@ class QSignalVisualizerWidget(QWidget):
         oscilogram_zoom_region = self.axesOscilogram.gui_user_tool.zoomRegion.getRegion()
 
         # translate the coordinates of the oscilogram zoom region into spectrogram's
-        min = self._from_osc_to_spec(oscilogram_zoom_region[0])
-        max = self._from_osc_to_spec(oscilogram_zoom_region[1])
+        min = self.axesSpecgram._from_osc_to_spec(oscilogram_zoom_region[0])
+        max = self.axesSpecgram._from_osc_to_spec(oscilogram_zoom_region[1])
 
         # update spectrogram region
         self.axesSpecgram.gui_user_tool.zoomRegion.setRegion([min, max])
@@ -192,8 +192,8 @@ class QSignalVisualizerWidget(QWidget):
         spectrogram_zoom_region = self.axesSpecgram.gui_user_tool.zoomRegion.getRegion()
 
         #translate the coordinates of the spectrogram zoom region into oscilogram's
-        min = self._from_spec_to_osc(spectrogram_zoom_region[0]) + self.mainCursor.min
-        max = self._from_spec_to_osc(spectrogram_zoom_region[1]) + self.mainCursor.min
+        min = self.axesSpecgram._from_spec_to_osc(spectrogram_zoom_region[0]) + self.mainCursor.min
+        max = self.axesSpecgram._from_spec_to_osc(spectrogram_zoom_region[1]) + self.mainCursor.min
 
         #update oscilogram region
         self.axesOscilogram.gui_user_tool.zoomRegion.setRegion([min, max])
@@ -338,9 +338,6 @@ class QSignalVisualizerWidget(QWidget):
         #draw the line in the axes
         self.playerLineOsc.setValue(frame)
         self.playerLineSpec.setValue(self.axesSpecgram._from_osc_to_spec(frame))
-        #if plying finish the remove the line
-        # if frame >= self.playerLineEnd:
-        #     self.removePlayerLine()
 
     #endregion
 
@@ -403,6 +400,7 @@ class QSignalVisualizerWidget(QWidget):
         #   the audio signal handler to play options
         self.signalPlayer = AudioSignalPlayer(self.__signal)
         self.signalPlayer.playing.connect(self.notifyPlayingCursor)
+        self.signalPlayer.playingDone.connect(self.removePlayerLine)
 
         #the edition object that manages cut and paste options
         self.editionSignalProcessor = EditionSignalProcessor(self.__signal)
