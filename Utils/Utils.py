@@ -7,6 +7,13 @@ FLOATING_POINT_EPSILON = 0.01
 
 
 def saveImage(widget, text=""):
+    """
+    Method that saves as image a widget by taking a screenshot of it.
+    All the signal graphs save images methods delegate in this one their
+    implementation.
+    :param widget: The widget to save the screenshot.
+    :param text: Alternative image name to specify the widget or graph source of the picture.
+    """
     fname = unicode(QFileDialog.getSaveFileName(u"Save " + text + u" as an Image "),
                                                 u"-" + text + u"-Duetto-Image", u"*.jpg")
     if fname:
