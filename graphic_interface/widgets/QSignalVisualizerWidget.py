@@ -187,8 +187,8 @@ class QSignalVisualizerWidget(QWidget):
         oscilogram_zoom_region = self.axesOscilogram.gui_user_tool.zoomRegion.getRegion()
 
         # translate the coordinates of the oscilogram zoom region into spectrogram's
-        min = self.axesSpecgram._from_osc_to_spec(oscilogram_zoom_region[0])
-        max = self.axesSpecgram._from_osc_to_spec(oscilogram_zoom_region[1])
+        min = self.from_osc_to_spec(oscilogram_zoom_region[0])
+        max = self.from_osc_to_spec(oscilogram_zoom_region[1])
 
         # update spectrogram region
         self.axesSpecgram.gui_user_tool.zoomRegion.setRegion([min, max])
@@ -203,8 +203,8 @@ class QSignalVisualizerWidget(QWidget):
         spectrogram_zoom_region = self.axesSpecgram.gui_user_tool.zoomRegion.getRegion()
 
         #translate the coordinates of the spectrogram zoom region into oscilogram's
-        min = self.axesSpecgram.specgramHandler.from_spec_to_osc(spectrogram_zoom_region[0])
-        max = self.axesSpecgram.specgramHandler.from_spec_to_osc(spectrogram_zoom_region[1])
+        min = self.from_spec_to_osc(spectrogram_zoom_region[0])
+        max = self.from_spec_to_osc(spectrogram_zoom_region[1])
 
         #update oscilogram region
         self.axesOscilogram.gui_user_tool.zoomRegion.setRegion([min, max])
@@ -326,7 +326,7 @@ class QSignalVisualizerWidget(QWidget):
         self.playerLineEnd = end_value
         #set the values of the lines for every widget
         self.playerLineOsc.setValue(initial_value)
-        self.playerLineSpec.setValue(self.axesSpecgram._from_osc_to_spec(initial_value))
+        self.playerLineSpec.setValue(self.from_osc_to_spec(initial_value))
 
         #add the lines to the widgets if there aren't
         if self.playerLineOsc not in self.axesOscilogram.getViewBox().addedItems:
@@ -348,7 +348,7 @@ class QSignalVisualizerWidget(QWidget):
     def notifyPlayingCursor(self, frame):
         #draw the line in the axes
         self.playerLineOsc.setValue(frame)
-        self.playerLineSpec.setValue(self.axesSpecgram._from_osc_to_spec(frame))
+        self.playerLineSpec.setValue(self.from_osc_to_spec(frame))
 
     #endregion
 
@@ -779,3 +779,9 @@ class QSignalVisualizerWidget(QWidget):
         self.__saveSignal(fname, signal)
 
     #endregion
+
+    def from_osc_to_spec(self,x):
+        return self.axesSpecgram.specgramHandler.from_osc_to_spec(x)
+
+    def from_spec_to_osc(self,x):
+        return self.axesSpecgram.specgramHandler.from_spec_to_osc(x)

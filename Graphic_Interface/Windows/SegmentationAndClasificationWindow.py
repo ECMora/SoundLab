@@ -604,7 +604,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                     self.elementsClasificationTableData[i][column][1] = dictionary[l[0]]
                     item = QtGui.QTableWidgetItem(unicode(self.elementsClasificationTableData[i][column][1]))
                     item.setBackgroundColor(
-                        self.TABLE_ROW_COLOR_O  DD if i % 2 == 0 else self.TABLE_ROW_COLOR_EVEN)
+                        self.TABLE_ROW_COLOR_ODD if i % 2 == 0 else self.TABLE_ROW_COLOR_EVEN)
                     self.tableParameterOscilogram.setItem(i, len(self.measuredParameters[i]) + column, item)
 
         self.tableParameterOscilogram.update()
