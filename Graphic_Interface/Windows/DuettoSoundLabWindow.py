@@ -995,7 +995,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             self.widget.open(duetto_signal)
             self.actionSignalName.setText(self.tr(u"File Name:") + u" " + self.widget.signalName())
         else:
-            signal = Synthesizer.generateSilence(44100, 16, 1)
+            signal = Synthesizer.generateSilence(44100, 16, 5000)
             self.widget.signal = signal
             self.actionSignalName.setText(self.tr(u"File Name: Welcome to duetto"))
 
@@ -1009,7 +1009,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         #set some initial status behavior
         self.setWindowTitle(self.tr(u"Duetto Sound Lab - Welcome to Duetto"))
-        self.statusbar.showMessage(self.tr(u"Welcome to Duetto Sound Lab."),5000)
+        self.statusbar.showMessage(self.tr(u"Welcome to Duetto Sound Lab."), 5000)
 
     @pyqtSlot()
     def on_actionExit_triggered(self):

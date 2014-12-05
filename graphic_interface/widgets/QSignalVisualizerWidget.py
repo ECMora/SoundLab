@@ -192,8 +192,8 @@ class QSignalVisualizerWidget(QWidget):
         spectrogram_zoom_region = self.axesSpecgram.gui_user_tool.zoomRegion.getRegion()
 
         #translate the coordinates of the spectrogram zoom region into oscilogram's
-        min = self._from_spec_to_osc(spectrogram_zoom_region[0]) + self.mainCursor.min
-        max = self._from_spec_to_osc(spectrogram_zoom_region[1]) + self.mainCursor.min
+        min = self.axesSpecgram.specgramHandler.from_spec_to_osc(spectrogram_zoom_region[0])
+        max = self.axesSpecgram.specgramHandler.from_spec_to_osc(spectrogram_zoom_region[1])
 
         #update oscilogram region
         self.axesOscilogram.gui_user_tool.zoomRegion.setRegion([min, max])
@@ -733,9 +733,7 @@ class QSignalVisualizerWidget(QWidget):
     #endregion
 
     def _from_spec_to_osc(self, coord):
-        cs = self.axesSpecgram.specgramHandler.NFFT #- self.specgramSettings.visualOverlap
-        return int(1.0 * coord * cs - self.axesSpecgram.specgramHandler.NFFT / 2)
+        return self.axesSpecgram.specgramHandler.from_spec_to_osc(coord)
 
     def _from_osc_to_spec(self, coord):
-        cs = self.axesSpecgram.specgramHandler.NFFT #- self.axesSpecgram.specgramHandler.visualOverlap
-        return 1.0 * (coord - self.mainCursor.min + self.axesSpecgram.specgramHandler.NFFT / 2) / cs
+        return self.axesSpecgram.specgramHandler.from_osc_to_spec(coord)
