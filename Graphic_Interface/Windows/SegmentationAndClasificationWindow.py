@@ -100,12 +100,17 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.detectionSettings = {"Threshold": -40, "Threshold2": 0, "MergeFactor": 5, "MinSize": 1, "Decay": 1,
                                   "SoftFactor": 6, "ThresholdSpectral": 95, "minSizeTimeSpectral": 0,
                                   "minSizeFreqSpectral": 0}
-        #region Medition Definitions
-        #Time And Spectral Medition Parameters
+
+        #for select the element in the table. Binding for the element click to the table
+        self.widget.elementClicked.connect(self.elementSelectedInTable)
+
+        #region Detection Params Definition
+
+        # Time And Spectral Medition Parameters
         # the medition parameters are defined here
         # are divided into time and spectral meditions
         # time are those parameters that are measured in time domain. ie Oscilogram
-        #spectral meditions are measured on spectrogram
+        # spectral meditions are measured on spectrogram
         params = [{u'name': unicode(self.tr(u'Temporal Detection Settings')), u'type': u'group', u'children': [
             {u'name': unicode(self.tr(u'Detection Method')), u'type': u'list',
              u'default': DetectionType.Envelope_Abs_Decay_Averaged, u'values':
@@ -203,7 +208,8 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                     children.append({u'name': x[0], u'type': u'group', u'children': temp})
             params.append({u'name': name, u'type': u'group', u'children': children})
 
-        # endregion
+        #endregion
+
 
         #parameter tree to provide the medition and parameter configuration into the dialog
         self.ParamTree = Parameter.create(name=u'params', type=u'group', children=params)
@@ -370,8 +376,13 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         :param column: parameter provided to reuse this method as callabck of the event selected cell
         in the QTableWidget
         """
+        #select the element in the table of meditions
         self.tableParameterOscilogram.selectRow(row)
-        self.widget.selectElement(row)  #select the correct element in oscilogram
+
+        # in the widget...
+        self.widget.selectElement(row)
+
+        # and in the opened two dimensional windows
         for wnd in self.two_dim_windows:
             wnd.selectElement(row)
 
@@ -379,101 +390,125 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
     def on_actionDetection_triggered(self):
         """
         Method that execute the detection
-
         """
         #TODO check if is possible to merge the code in this method and the batch.
         #TODO common factor code
 
         elementsDetectorDialog = ElemDetectSettingsDialog(parent=self, paramTree=self.ParamTree)
         elementsDetectorDialog.load_Theme(self.theme)
+
+        #deselect the elemnts on the widget
         self.widget.selectElement(-1)
         try:
             if elementsDetectorDialog.exec_():
-                try:
+                self.getSettings(elementsDetectorDialog)
 
-                    self.getSettings(elementsDetectorDialog)
+                self.actionView_Threshold.setChecked(True)
+                paramsTomeasure = self.getParameters()
 
-                    self.actionView_Threshold.setChecked(True)
-                    paramsTomeasure = self.getParameters()
-                    self.windowProgressDetection.resize(self.widget.width() / 3,
-                                                        self.windowProgressDetection.size().height())
-                    self.windowProgressDetection.move(self.widget.x() + self.widget.width() / 3,
-                                                      self.widget.y() - self.windowProgressDetection.height() / 2 + self.widget.height() / 2)
-                    self.windowProgressDetection.show()
-                    self.widget.detectElements(threshold=abs(self.detectionSettings["Threshold"]),
-                                               detectionsettings=self.algorithmDetectorSettings,
-                                               decay=self.detectionSettings["Decay"],
-                                               minSize=self.detectionSettings["MinSize"],
-                                               softfactor=self.detectionSettings["SoftFactor"],
-                                               merge_factor=self.detectionSettings["MergeFactor"],
-                                               threshold2=abs(self.detectionSettings["Threshold2"]),
-                                               threshold_spectral=self.detectionSettings["ThresholdSpectral"],
-                                               minsize_spectral=(self.detectionSettings["minSizeFreqSpectral"],
-                                                                 self.detectionSettings["minSizeTimeSpectral"]),
-                                               location=self.spectralMeasurementLocation,
-                                               progress=self.updateDetectionProgressBar,
-                                               findSpectralSublements=self.ParamTree.param(
-                                                   unicode(self.tr(u'Spectral Detection Settings'))).param(
-                                                   unicode(self.tr(u'Detect Spectral Subelements'))).value())
+                #show the progress bar in the middle of the widget
+                self.windowProgressDetection.resize(self.widget.width() / 3,
+                                                    self.windowProgressDetection.size().height())
+                self.windowProgressDetection.move(self.widget.x() + self.widget.width() / 3,
+                                                  self.widget.y() - self.windowProgressDetection.height() / 2 + self.widget.height() / 2)
+                self.windowProgressDetection.show()
 
-                    self.tableParameterOscilogram.clear()
-                    self.tableParameterOscilogram.cellPressed.connect(self.elementSelectedInTable)
-                    self.tableParameterOscilogram.setRowCount(len(self.widget.Elements))
-                    self.columnNames = [label[0] for label in paramsTomeasure]
+                #execute the detection
+                self.widget.detectElements(threshold=abs(self.detectionSettings["Threshold"]),
+                                           detectionsettings=self.algorithmDetectorSettings,
+                                           decay=self.detectionSettings["Decay"],
+                                           minSize=self.detectionSettings["MinSize"],
+                                           softfactor=self.detectionSettings["SoftFactor"],
+                                           merge_factor=self.detectionSettings["MergeFactor"],
+                                           threshold2=abs(self.detectionSettings["Threshold2"]),
+                                           threshold_spectral=self.detectionSettings["ThresholdSpectral"],
+                                           minsize_spectral=(self.detectionSettings["minSizeFreqSpectral"],
+                                                             self.detectionSettings["minSizeTimeSpectral"]),
+                                           location=self.spectralMeasurementLocation,
+                                           progress=self.updateDetectionProgressBar,
+                                           findSpectralSublements=self.ParamTree.param(
+                                               unicode(self.tr(u'Spectral Detection Settings'))).param(
+                                               unicode(self.tr(u'Detect Spectral Subelements'))).value())
 
-                    validcategories = [k for k in self.classificationData.categories.keys() if
-                                       len(self.classificationData.getvalues(k)) > 0]
-                    self.elementsClasificationTableData = [[[k, self.tr(u"No Identified")] for k in validcategories] for
-                                                           _ in range(self.tableParameterOscilogram.rowCount())]
 
-                    self.tableParameterOscilogram.setColumnCount(len(paramsTomeasure) + len(validcategories))
-                    self.tableParameterOscilogram.setHorizontalHeaderLabels(self.columnNames + validcategories)
-                    self.updateDetectionProgressBar(95)
-                    self.tableParameterOscilogram.resizeColumnsToContents()
+                # clasification data update TODO improve comments and implementation
+                validcategories = [k for k in self.classificationData.categories.keys() if
+                                   len(self.classificationData.getvalues(k)) > 0]
+                self.elementsClasificationTableData = [[[k, self.tr(u"No Identified")] for k in validcategories] for
+                                                       _ in range(self.tableParameterOscilogram.rowCount())]
 
-                    #for select the element in the table. Binding for the element click to the table
-                    for index in range(len(self.widget.Elements)):
-                        self.widget.Elements[index].elementClicked.connect(self.elementSelectedInTable)
+                #clear the previous meditions
+                self.tableParameterOscilogram.clear()
 
-                    #the table of parameters stored as a numpy array
-                    self.measuredParameters = np.zeros(len(self.widget.Elements) * len(paramsTomeasure)).reshape(
-                        (len(self.widget.Elements), len(paramsTomeasure)))
+                self.tableParameterOscilogram.setRowCount(len(self.widget.Elements))
 
-                    for i in range(self.tableParameterOscilogram.rowCount()):
-                        for j, prop in enumerate(paramsTomeasure):
-                            try:
-                                dictionary = dict(prop[2] if prop[2] is not None else [])
-                                self.measuredParameters[i, j] = prop[1](self.widget.Elements[i], dictionary)
-                                item = QtGui.QTableWidgetItem(unicode(self.measuredParameters[i, j]))
-                                item.setBackgroundColor(
-                                    self.TABLE_ROW_COLOR_ODD if i % 2 == 0 else self.TABLE_ROW_COLOR_EVEN)
-                            except Exception as e:
-                                item = QtGui.QTableWidgetItem(0)  #"Error"+e.message)
+                #connect the table selection with the selection of an element
+                self.tableParameterOscilogram.cellPressed.connect(self.elementSelectedInTable)
 
-                            self.tableParameterOscilogram.setItem(i, j, item)
-                        for c in range(len(validcategories)):
-                            try:
-                                val = self.elementsClasificationTableData[i][c][1]
-                                item = QtGui.QTableWidgetItem(unicode(val))
-                                item.setBackgroundColor(
-                                    self.TABLE_ROW_COLOR_ODD if i % 2 == 0 else self.TABLE_ROW_COLOR_EVEN)
-                            except Exception as e:
-                                item = QtGui.QTableWidgetItem(0)  #"Error"+e.message)
-                            self.tableParameterOscilogram.setItem(i, c + len(paramsTomeasure), item)
+                #get the column names of the meditions and set them on the table headers
+                self.columnNames = [label[0] for label in paramsTomeasure]
+                self.tableParameterOscilogram.setHorizontalHeaderLabels(self.columnNames + validcategories)
 
-                    self.updateDetectionProgressBar(100)
+                #set the number of columns to the amount of parameters measured
+                # plus the amount of categories of clasiffication
+                self.tableParameterOscilogram.setColumnCount(len(paramsTomeasure) + len(validcategories))
+                self.updateDetectionProgressBar(95)
+                self.tableParameterOscilogram.resizeColumnsToContents()
 
-                    for wnd in self.two_dim_windows:
-                        wnd.loadData(self.columnNames, self.measuredParameters)
+                #the table of parameters stored as a numpy array
+                self.measuredParameters = np.zeros(len(self.widget.Elements) * len(paramsTomeasure)).reshape(
+                    (len(self.widget.Elements), len(paramsTomeasure)))
 
-                except Exception as e:
-                    print("some detection errors" + e.message)
+                for i in range(self.tableParameterOscilogram.rowCount()):
+                    for j, params in enumerate(paramsTomeasure):
+                        try:
+                            #get the function params.
+                            # params[0] is the name of the param measured
+                            # params[1] is the function to measure the param
+                            # params[2] is the dictionary of params supplied to the function
+                            dictionary = dict(params[2] if params[2] is not None else [])
 
-                self.widget.refresh()
+                            #compute the param with the function
+                            self.measuredParameters[i, j] = params[1](self.widget.Elements[i], dictionary)
 
+                            #set the result to a table item and save it on the table
+                            item = QtGui.QTableWidgetItem(unicode(self.measuredParameters[i, j]))
+
+                            #color options for the rows of the table
+                            item.setBackgroundColor(
+                                self.TABLE_ROW_COLOR_ODD if i % 2 == 0 else self.TABLE_ROW_COLOR_EVEN)
+
+                        except Exception as e:
+                            # if some error is raised set a default value
+                            item = QtGui.QTableWidgetItem(0)  #"Error"+e.message)
+
+                        self.tableParameterOscilogram.setItem(i, j, item)
+
+                    for c in range(len(validcategories)):
+                        try:
+                            val = self.elementsClasificationTableData[i][c][1]
+                            item = QtGui.QTableWidgetItem(unicode(val))
+                            item.setBackgroundColor(
+                                self.TABLE_ROW_COLOR_ODD if i % 2 == 0 else self.TABLE_ROW_COLOR_EVEN)
+
+                        except Exception as e:
+                            #if some error is raised set a default value
+                            item = QtGui.QTableWidgetItem(0)  #"Error"+e.message)
+                        self.tableParameterOscilogram.setItem(i, c + len(paramsTomeasure), item)
+
+                # complete the progress of detection and hide the progress bar
+                self.updateDetectionProgressBar(100)
                 self.windowProgressDetection.hide()
-        except:
-            pass
+
+                #update the measured data on the two dimensional opened windows
+                for wnd in self.two_dim_windows:
+                    wnd.loadData(self.columnNames, self.measuredParameters)
+
+            #refresh changes
+            self.widget.graph()
+
+        except Exception as e:
+            print("some detection errors" + e.message)
 
     #endregion
 
@@ -481,21 +516,25 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
     @pyqtSlot()
     def on_actionClassification_Settings_triggered(self):
         """
-        Open the classsification dialog for update the categories and values
+        Open the classification dialog for update the categories and values
         in which could be classified a segment.
-
         """
+        #create and open the dialog
         editCategDialog = editCateg.Ui_Dialog()
         editCategDialogWindow = EditCategoriesDialog(self)
         editCategDialog.setupUi(editCategDialogWindow)
-        widget = QWidget()
+
         self.clasiffCategories_vlayout = QtGui.QVBoxLayout()
 
         for k in self.classificationData.categories.keys():
-            a = EditCategoriesWidget(self, k, self.classificationData)
-            self.clasiffCategories_vlayout.addWidget(a)
+            #foreach clasification category add a widget to show it
+            widget = EditCategoriesWidget(self, k, self.classificationData)
+            self.clasiffCategories_vlayout.addWidget(widget)
 
+        #connect the methods for add category action
         editCategDialog.bttnAddCategory.clicked.connect(self.addCategory)
+
+        widget = QWidget()
         widget.setLayout(self.clasiffCategories_vlayout)
         editCategDialog.listWidget.setWidget(widget)
         editCategDialogWindow.exec_()
@@ -544,7 +583,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
     def classificationCategoryAdded(self, category):
         for i, elem in enumerate(self.elementsClasificationTableData):
             self.elementsClasificationTableData[i].append([str(category), self.tr(u"No Identified")])
-        print(self.elementsClasificationTableData)
+
         if self.tableParameterOscilogram.rowCount() > 0:
             self.tableParameterOscilogram.insertColumn(self.tableParameterOscilogram.columnCount())
             column = self.tableParameterOscilogram.columnCount() - 1
@@ -565,7 +604,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                     self.elementsClasificationTableData[i][column][1] = dictionary[l[0]]
                     item = QtGui.QTableWidgetItem(unicode(self.elementsClasificationTableData[i][column][1]))
                     item.setBackgroundColor(
-                        self.TABLE_ROW_COLOR_ODD if i % 2 == 0 else self.TABLE_ROW_COLOR_EVEN)
+                        self.TABLE_ROW_COLOR_O  DD if i % 2 == 0 else self.TABLE_ROW_COLOR_EVEN)
                     self.tableParameterOscilogram.setItem(i, len(self.measuredParameters[i]) + column, item)
 
         self.tableParameterOscilogram.update()
@@ -600,11 +639,12 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         Creates a new two dimensional window for analysis.
         :return:
         """
-        #a two dim window must create after segment detection and parameters measurement
+        # a two dim window must be created after segment detection
+        # and parameters measurement
         if self.tableParameterOscilogram.rowCount() == 0:
             QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
                                       self.tr(u"There is not detected elements.") + u" \n" + self.tr(
-                                          u"The two dimensional analisys requires at least one detected element."))
+                                          u"The two dimensional analyses requires at least one detected element."))
             return
         if self.tableParameterOscilogram.columnCount() == 0:
             QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
@@ -615,16 +655,20 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         wnd = TwoDimensionalAnalisysWindow(self, columns=self.columnNames, data=self.measuredParameters,
                                            classificationData=self.classificationData)
 
-        #connect the signals for update selection of elements detected
+        #connect the signals for update the new two dim window actions
         wnd.elementSelected.connect(self.elementSelectedInTable)
+        wnd.elementsClasiffied.connect(self.elementsClasification)
+
+        #load the theme in the new two dimensional window
         if self.theme:
             wnd.load_Theme(self.theme)
 
+        #if any previous windows was opened then update in the new one the selected element
         if len(self.two_dim_windows) > 0:
             wnd.selectElement(self.two_dim_windows[0].previousSelectedElement)
 
+        #add the new window to the current opened windows
         self.two_dim_windows.append(wnd)
-        wnd.elementsClasification.connect(self.elementsClasification)
 
     def clearTwoDimensionalWindows(self):
         """
@@ -692,7 +736,9 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
     #endregion
 
     #region Threshold
-
+    # group of method that handles the visibility
+    #  of the trheshold in the oscilogram widget
+    #
     def getspectralParameters(self):
         """
         obtain the methods for spectral parameter meausrement of the measurementLocations
@@ -773,7 +819,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                                         2 ** self.widget.signal.bitDepth)))
 
     @pyqtSlot(bool)
-    def setVisibleThreshold(self, bool):
+    def setThresholdVisibility(self, bool):
         self.widget.axesOscilogram.setVisibleThreshold(bool)
         self.widget.setEnvelopeVisibility(bool)
 
@@ -786,7 +832,11 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         Method that loads the theme to update visual options from main window.
         :param theme:
         """
+        #store the theme for use it
+        #in the windows of two dim and
+        #in the detection dialog
         self.theme = theme
+
         self.widget.load_Theme(theme)
 
     #endregion

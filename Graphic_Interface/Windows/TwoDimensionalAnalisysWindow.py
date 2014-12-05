@@ -17,21 +17,32 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
     graphs.
     """
 
-    #SIGNALS
-    #Signal raised when an element is selected in the graph.
-    #Raise the index of the selected element
+    # SIGNALS
+    # Signal raised when an element is selected in the graph.
+    # Raise the index of the selected element
     elementSelected = QtCore.Signal(int)
 
-    #SIGNALS
-    #Signal raised when a selection of elements are manually classified.
-    #raise the classification indexes of the elements as a list and the dict of Category,value for each one
-    elementsClasification = QtCore.Signal(list,dict)
+    # SIGNALS
+    # Signal raised when a selection of elements are manually classified.
+    # raise the classification indexes of the elements as a list and
+    # the dict of Category,value for each one
+    elementsClasiffied = QtCore.Signal(list, dict)
 
-    def __init__(self,parent=None,columns=None, data=None, classificationData=None):
+    def __init__(self,parent=None, columns=None, data=None, classificationData=None):
+        """
+        Create a new window for two dimensional graphs
+        :param parent: parent window if any
+        :param columns: the columns of measured parameters
+        :param data: Matrix of columns*number of elements.
+        In data[i,j] is the medition of the parameter columns[i] in the j detected element
+        :param classificationData:  the clasification data for the clasification
+        :return:
+        """
         super(TwoDimensionalAnalisysWindow, self).__init__(parent)
         self.setupUi(self)
 
         self.show()
+
         #initialization settings for the plot widget
         self.widget.getPlotItem().showGrid(x=True, y=True)
         self.widget.getPlotItem().hideButtons()
@@ -47,8 +58,11 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         if classificationData is None:
             raise Exception(unicode(self.tr(u"ClassificationData could not be None.")))
 
-        self.classificationData = classificationData
-        self.previousSelectedElement = -1
+        self.classificationData = classificationData\
+
+        #index of the element currently selected in the widget if any
+        #if no selection element then -1
+        self.currentSelectedElement = -1
         self.columns = columns if columns is not None else []
 
         #the numpy [,] array with the parameter measurement
@@ -61,6 +75,10 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
 
     @pyqtSlot()
     def on_actionHide_Show_Settings_triggered(self):
+        """
+        Switch the visibility of the settings window
+        :return:
+        """
         if self.dockGraphsOptions.isVisible():
             self.dockGraphsOptions.setVisible(False)
         else:
@@ -68,17 +86,34 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
             self.dockGraphsOptions.setFloating(False)
 
     def createParameterTreeOptions(self,columnNames):
-        xaxis = [unicode(x) for x in columnNames]
-        if len(xaxis) == 0:
+        """
+        Create the parameter tree with the visual options according to the
+        measured parameters.
+        :param columnNames: the names of the measured parameters
+        :return:
+        """
+        if len(columnNames) == 0:
             return
-        x, y = random.randint(0,len(xaxis)/2),random.randint(len(xaxis)/2,len(xaxis)-1)
+        # the X axis posible params names
+        xaxis = [unicode(x) for x in columnNames]
+
+        # get two initial random parameters to visualize in x and y axis
+        x, y = random.randint(0, len(xaxis)/2), random.randint(len(xaxis)/2, len(xaxis)-1)
+
+        # set the layout for the widget
+        lay1 = QtGui.QVBoxLayout()
+        lay1.setMargin(0)
+
+        # region Set the parameter tree settings
         params = [
             {u'name': unicode(self.tr(u'X Axis Parameter Settings')), u'type': u'group', u'children':
                 [{u'name': unicode(self.tr(u'X Axis')), u'type': u'list',u'value': x,
+                  # the possible values to select for graph in the X axis (name,index)
                   u'default': x, u'values': [(name, i) for i,name in enumerate(xaxis)]}]},
             {u'name': unicode(self.tr(u'Y Axis Parameter Settings')), u'type': u'group', u'children':
                 [{u'name': unicode(self.tr(u'Y Axis')), u'type': u'list', u'value':y,
-             u'default': y, u'values': [(name, i) for i,name in enumerate(xaxis)]}]},
+                  # the possible values to select for graph in the Y axis (name,index)
+                  u'default': y, u'values': [(name, i) for i,name in enumerate(xaxis)]}]},
             {u'name': unicode(self.tr(u'Color')), u'type': u'color', u'value': "00F"},
             {u'name': unicode(self.tr(u'Figures Size')), u'type': u'int', u'value': 15},
             {u'name': unicode(self.tr(u'Figures Shape')), u'type': u'list', u'value': "o",
@@ -86,8 +121,6 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
             {u'name': unicode(self.tr(u'Change Font')), u'type': u'action'},
             {u'name': unicode(self.tr(u'Save Graph as Image')), u'type': u'action'}]
 
-        lay1 = QtGui.QVBoxLayout()
-        lay1.setMargin(0)
 
         self.ParamTree = Parameter.create(name=u'params', type=u'group', children=params)
         self.parameterTree = ParameterTree()
@@ -101,6 +134,10 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         self.ParamTree.sigTreeStateChanged.connect(self.plot)
         self.ParamTree.param(unicode(self.tr(u'Save Graph as Image'))).sigActivated.connect(self.on_actionSaveGraphImage_triggered)
         self.ParamTree.param(unicode(self.tr(u'Change Font'))).sigActivated.connect(self.changeFont)
+
+        # endregion
+
+        # visualize the changes
         self.plot()
 
     def loadData(self, columns=None, data=None):
@@ -132,7 +169,7 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         self.widget.getPlotItem().showGrid(x=theme.osc_GridX, y=theme.osc_GridY)
 
     def selectElement(self,index):
-        if self.scatter_plot is None or self.previousSelectedElement == index:
+        if self.scatter_plot is None or self.currentSelectedElement == index:
             return
         elems = self.scatter_plot.points()
         if len(elems) <= index:
@@ -141,20 +178,24 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         color = self.ParamTree.param(unicode(self.tr(u'Color'))).value()
         elem = elems[index]
         elem.setBrush(pg.mkBrush("FFF"))
-        if self.previousSelectedElement != -1:
-            elems[self.previousSelectedElement].setBrush(pg.mkBrush(color))
+        if self.currentSelectedElement != -1:
+            elems[self.currentSelectedElement].setBrush(pg.mkBrush(color))
 
-        self.previousSelectedElement = index
+        self.currentSelectedElement = index
 
     def deselectElement(self):
-        if self.scatter_plot is None or self.previousSelectedElement < 0 :
+        if self.scatter_plot is None or self.currentSelectedElement < 0 :
             return
         color = self.ParamTree.param(unicode(self.tr(u'Color'))).value()
 
-        self.scatter_plot.points()[self.previousSelectedElement].setBrush(pg.mkBrush(color))
+        self.scatter_plot.points()[self.currentSelectedElement].setBrush(pg.mkBrush(color))
 
     @pyqtSlot()
     def on_actionSaveGraphImage_triggered(self):
+        """
+        Save the widget graph as image
+        :return:
+        """
         fname = unicode(QFileDialog.getSaveFileName(self, self.tr(u"Save two dimensional graphics as an Image "),self.tr(u"-Duetto-Image"),"*.jpg"))
         if fname:
             #save as image
@@ -162,44 +203,63 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
             image.save(fname, 'jpg')
 
     def plot(self):
-        #the elements and the colors to plot
+        """
+        Plot the two dimensional graph with the options settings defined by user.
+        :return:
+        """
         self.widget.clear()
 
-        i, j = self.ParamTree.param(unicode(self.tr(u'X Axis Parameter Settings'))).param(unicode(self.tr(u'X Axis'))).value(),\
+        # get the indexes of the two params X and Y for each axis values to graph
+        x_axis_index, y_axis_index = self.ParamTree.param(unicode(self.tr(u'X Axis Parameter Settings'))).param(unicode(self.tr(u'X Axis'))).value(),\
                self.ParamTree.param(unicode(self.tr(u'Y Axis Parameter Settings'))).param(unicode(self.tr(u'Y Axis'))).value()
 
+        # get the visual options of the graph
         color = self.ParamTree.param(unicode(self.tr(u'Color'))).value()
         shape = self.ParamTree.param(unicode(self.tr(u'Figures Shape'))).value()
         fig_size = self.ParamTree.param(unicode(self.tr(u'Figures Size'))).value()
 
-        x_coords = [e[i] for e in self.data]
-        y_coords = [e[j] for e in self.data]
+        # get the values x,y of each element according to the measured parameter selected in each axis
+        x_coords = [e[x_axis_index] for e in self.data]
+        y_coords = [e[y_axis_index] for e in self.data]
+
         xmin, xmax = min(x_coords), max(x_coords)
         ymin, ymax = min(y_coords), max(y_coords)
         xshift = (xmax-xmin)*0.15
         yshift = (ymax-ymin)*0.15
 
+        # create the scatter plot with the values
         self.scatter_plot = pg.ScatterPlotItem(x=x_coords,y=y_coords,data=numpy.arange(len(x_coords)),size=fig_size,symbol=shape,brush=(pg.mkBrush(color)))
+
+        # connect the signals for selection on the plot
         self.scatter_plot.sigClicked.connect(self.elementFigureClicked)
 
+
         elems = self.scatter_plot.points()
-        if self.previousSelectedElement > 0 and self.previousSelectedElement < len(elems):
-            elems[self.previousSelectedElement].setBrush(pg.mkBrush("FFF"))
 
+        # draw the selected element with a different brush
+        if 0 < self.currentSelectedElement < len(elems):
+            elems[self.currentSelectedElement].setBrush(pg.mkBrush("FFF"))
 
-        text_size = {'color':'#FFF', 'font-size': str(self.font.pointSize())+'pt'}
+        # update font size in axis labels
+        text_size = {'color': '#FFF', 'font-size': str(self.font.pointSize())+'pt'}
+        self.widget.getPlotItem().getAxis("bottom").setLabel(text=str(self.columns[x_axis_index]),**text_size)
+        self.widget.getPlotItem().getAxis("left").setLabel(text=str(self.columns[y_axis_index]),**text_size)
 
-        self.widget.getPlotItem().getAxis("bottom").setLabel(text=str(self.columns[i]),**text_size)
-        self.widget.getPlotItem().getAxis("left").setLabel(text=str(self.columns[j]),**text_size)
-
+        # add the plot to the widget
         self.widget.addItem(self.scatter_plot)
+
+        # auto range the visible region of values
         self.widget.getPlotItem().setRange(xRange=(xmin-xshift,xmax+xshift),yRange=(ymin-yshift,ymax+yshift))
+
+        # clear the selection rectangle
         self.widget.removeSelectionRect()
         self.widget.addSelectionRect()
 
     @pyqtSlot()
     def on_actionMark_Selected_Elements_As_triggered(self):
         """
+        Make the manual clasiffication of elements on the graph by
+
         @return: the indexes of the selected elements in the graph
         """
         if self.scatter_plot is None:
@@ -209,7 +269,7 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         #the width and height could be negatives
         x1, y1 = rect.x(),rect.y()
         x2, y2 = x1 + rect.width(),y1 + rect.height()
-        x1, x2, y1, y2 = min(x1,x2),max(x1,x2),min(y1,y2),max(y1,y2)
+        x1, x2, y1, y2 = min(x1, x2), max(x1,x2), min(y1, y2), max(y1, y2)
 
         selected_elements = [x.data() for x in self.scatter_plot.points() if x.pos().x() >= x1 and x.pos().x() <= x2 and x.pos().y() >= y1 and x.pos().y() <= y2]
 
@@ -237,7 +297,7 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         editCategDialogWindow.exec_()
         d = dict([(x.categoryName,self.classificationData.categories[x.categoryName][x.comboCategories.currentIndex()])\
                   for x in self.selection_widgets if x.comboCategories.count()>0])
-        self.elementsClasification.emit(selected_elements,d)
+        self.elementsClasiffied.emit(selected_elements,d)
 
     def addCategory(self):
         dialog = QtGui.QDialog(self)
