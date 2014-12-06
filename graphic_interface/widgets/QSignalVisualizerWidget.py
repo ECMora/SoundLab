@@ -47,36 +47,38 @@ class QSignalVisualizerWidget(QWidget):
 
     def __init__(self, parent=None, **kwargs):
         QWidget.__init__(self, parent)
-        #the two widgets in which are delegated the functions of time and frequency domain
-        #representation and visualization.
+        # the two widgets in which are delegated the functions of time and frequency domain
+        # representation and visualization.
         self.axesOscilogram = SoundLabOscillogramWidget(**kwargs)
         self.axesSpecgram = SoundLabSpectrogramWidget(**kwargs)
 
         self.undoRedoManager = UndoRedoManager()
         self.undoRedoManager.actionExec.connect(lambda x: self.graph())
 
-        #sincronization of the change range in the axes
+        # sincronization of the change range in the axes
         self.axesSpecgram.rangeChanged.connect(self.updateOscillogram)
         self.axesOscilogram.rangeChanged.connect(self.updateSpecgram)
 
         self.axesSpecgram.signalChanged.connect(lambda x1, x2: self.axesOscilogram.updateSignal(x1, x2))
         self.axesOscilogram.signalChanged.connect(lambda x1, x2: self.axesSpecgram.updateSignal(x1, x2))
 
-        #connect the signals for tools data detected
+        # connect the signals for tools data detected
         self.axesOscilogram.toolDataDetected.connect(lambda x: self.toolDataDetected.emit(x))
         self.axesSpecgram.toolDataDetected.connect(lambda x: self.toolDataDetected.emit(x))
 
-        #link the x axis of each widget to visualize the same x grid and ticks
+        # link the x axis of each widget to visualize the same x grid and ticks
         self.axesSpecgram.xAxis.linkToView(self.axesOscilogram.getViewBox())
 
-        #set the tool zoom as default
+        # set the tool zoom as default
         self.setSelectedTool(Tools.ZoomTool)
 
-        #grouping the oscilogram and spectrogram widgets in the control
+        # grouping the oscilogram and spectrogram widgets in the control
         layout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(self.axesOscilogram)
         layout.addWidget(self.axesSpecgram)
+        layout.setStretch(0, 1)
+        layout.setStretch(1, 1)
         self.setLayout(layout)
 
         #the cursor for the visualization of a piece of the signal
@@ -101,7 +103,7 @@ class QSignalVisualizerWidget(QWidget):
         self._recordTimer = QTimer(self)
         self._recordTimer.timeout.connect(self.on_newDataRecorded)
 
-    def updateOscillogram(self,x1,x2):
+    def updateOscillogram(self, x1, x2):
 
         self.axesOscilogram.changeRange(x1, x2)
         self.mainCursor.min = x1
@@ -111,7 +113,6 @@ class QSignalVisualizerWidget(QWidget):
         self.axesSpecgram.changeRange(x1,x2)
         self.mainCursor.min = x1
         self.mainCursor.max = x2
-
 
     def setSelectedTool(self, tool):
         """
@@ -260,10 +261,8 @@ class QSignalVisualizerWidget(QWidget):
         #if the previos status was RECORDING then we have to stop the timer and draw the new signal on both controls.
         if  prevStatus == self.signalPlayer.RECORDING:
             self._recordTimer.stop()
-            self.axesOscilogram.setVisible(True)
-            self.axesSpecgram.setVisible(True)
-            self.mainCursor.max = len(self.signal.data)
-            self.mainCursor.min = 0
+            self.visibleOscilogram = True
+            self.visibleSpectrogram = True
             self.zoomNone()
 
     def on_newDataRecorded(self):
@@ -274,28 +273,29 @@ class QSignalVisualizerWidget(QWidget):
         #the player read from the record stream
         self.signalPlayer.readFromStream()
         #update the current view interval of the recording signal
-        self.mainCursor.max = len(self.signal.data)
-        self.mainCursor.min = max(0,
-                                  len(self.signal.data) - 3 * self.signal.samplingRate)
-        #draw the current recorded interval
-        self.axesOscilogram.graph(self.mainCursor.min, self.mainCursor.max)
+        if len(self.signal) > 0:
+            self.mainCursor.max = len(self.signal.data)
+            self.mainCursor.min = max(0,
+                                      len(self.signal.data) - 3 * self.signal.samplingRate)
+            #draw the current recorded interval
+            self.axesOscilogram.graph(self.mainCursor.min)
 
-    def record(self):
+    def record(self, newSignal=True):
         """
         Start to record a new signal.
         If the signal is been playing nothing is made.
         """
+        if newSignal:
+            self.signal = AudioSignal(self.signal.samplingRate,self.signal.bitDepth,self.signal.channelCount)
         try:
-            newSignal = self.signalPlayer.record()
+            self.signalPlayer.record()
         except:
              self.stop()
+
         #set only the oscillogram vsible while recording
         self.visibleOscilogram = True
         self.visibleSpectrogram = False
-        #set the new signal references
-        self.__signal = newSignal
-        self.axesOscilogram.signal = newSignal
-        self.axesSpecgram.signal = newSignal
+
         #update oscillogram time interval for drawing the recorded section
         updateTime = 15
         #starting the update record timer
@@ -347,8 +347,9 @@ class QSignalVisualizerWidget(QWidget):
 
     def notifyPlayingCursor(self, frame):
         #draw the line in the axes
-        self.playerLineOsc.setValue(frame)
-        self.playerLineSpec.setValue(self.from_osc_to_spec(frame))
+        if frame < self.playerLineEnd:
+            self.playerLineOsc.setValue(frame)
+            self.playerLineSpec.setValue(self.from_osc_to_spec(frame))
 
     #endregion
 
@@ -407,8 +408,8 @@ class QSignalVisualizerWidget(QWidget):
         self.axesOscilogram.signal = new_signal
         self.axesSpecgram.signal = new_signal
 
-        #update the variables that manage the signal
-        #   the audio signal handler to play options
+        # update the variables that manage the signal
+        # the audio signal handler to play options
         self.signalPlayer = AudioSignalPlayer(self._signal)
         self.signalPlayer.playing.connect(self.notifyPlayingCursor)
         self.signalPlayer.playingDone.connect(self.removePlayerLine)
@@ -416,10 +417,6 @@ class QSignalVisualizerWidget(QWidget):
         #the edition object that manages cut and paste options
         self.editionSignalProcessor = EditionSignalProcessor(self._signal)
         self.commonSignalProcessor = CommonSignalProcessor(self._signal)
-
-        #update the signal int the two widgets that visualize it
-        self.axesOscilogram.signal = self._signal
-        self.axesSpecgram.signal = self._signal
 
         #clean the previous actions to get the initial state with the new signal
         self.undoRedoManager.clear()
@@ -450,7 +447,7 @@ class QSignalVisualizerWidget(QWidget):
         The new subinterval has the middle index equal to the old one.
         :return:
         """
-        interval_size_added = self.mainCursor.max - self.mainCursor.min / self.ZOOM_STEP
+        interval_size_added = (self.mainCursor.max - self.mainCursor.min) / self.ZOOM_STEP
 
         #update the max interval limit
         if (self.mainCursor.max + interval_size_added) < len(self.signal):
@@ -480,8 +477,8 @@ class QSignalVisualizerWidget(QWidget):
     #region GRAPH
     def graph(self):
         #update the two widgets visualizations
-        self.axesSpecgram.graph(indexFrom=self.mainCursor.min, indexTo=self.mainCursor.max)
         self.axesOscilogram.graph(indexFrom=self.mainCursor.min, indexTo=self.mainCursor.max)
+        self.axesSpecgram.graph(indexFrom=self.mainCursor.min, indexTo=self.mainCursor.max)
 
     #endregion
 
@@ -631,9 +628,9 @@ class QSignalVisualizerWidget(QWidget):
 
     def __insertSignal(self,undo_action, ms=0):
         """
-        Helper method to encapsulate and factorice the code of insert signals
+        Helper method to encapsulate and factorize the code of insert signals
         into the current one.
-        :param undo_action: the undo redo action acording to the desired
+        :param undo_action: the undo redo action according to the desired
         signal to insert.
         :param ms:
         :return:

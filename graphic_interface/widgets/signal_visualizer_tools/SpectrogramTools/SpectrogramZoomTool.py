@@ -20,22 +20,21 @@ class SpectrogramZoomTool(SpectrogramTool):
         if abs(minx - event.x()) < self.PIXELS_OF_CURSORS_CHANGES or \
                         abs(maxx - event.x()) < self.PIXELS_OF_CURSORS_CHANGES:
             self.widget.setCursor(QCursor(QtCore.Qt.SizeHorCursor))
+            t0 = round(rgn[0] * 1.0 / self.widget.signal.samplingRate, self.DECIMAL_PLACES)
+            t1 = round(rgn[1] * 1.0 / self.widget.signal.samplingRate,self.DECIMAL_PLACES)
+            dt = t0 - t1
+            self.detectedData = [("t0", t0),
+                                 ("t1", t1),
+                                 ("dt", dt)
+            ]
+            self.detectedDataChanged.emit(self.detectedData)
+
         elif self.mouseInsideZoomArea(event.x()):
-            if self.mousePressed:
-                self.widget.setCursor(QCursor(QtCore.Qt.ClosedHandCursor))
-            else:
-                self.widget.setCursor(QCursor(QtCore.Qt.OpenHandCursor))
+            cursor = QtCore.Qt.ClosedHandCursor if self.mousePressed else QtCore.Qt.OpenHandCursor
+            self.widget.setCursor(QCursor(cursor))
+
         else:
             self.widget.setCursor(QCursor(QtCore.Qt.ArrowCursor))
-
-        t0 = round(rgn[0] * 1.0 / self.widget.signal.samplingRate, self.DECIMAL_PLACES)
-        t1 = round(rgn[1] * 1.0 / self.widget.signal.samplingRate,self.DECIMAL_PLACES)
-        dt = t0 - t1
-        self.detectedData = [("t0", t0),
-                             ("t1", t1),
-                             ("dt", dt)
-        ]
-        self.detectedDataChanged.emit(self.detectedData)
 
     def mousePressEvent(self, event):
         self.mousePressed = True

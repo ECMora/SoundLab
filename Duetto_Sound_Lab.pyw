@@ -8,7 +8,7 @@ from graphic_interface.windows.PresentationSlogan.presentation import Ui_MainWin
 
 
 class Duetto_Sound_Lab(QMainWindow, Ui_MainWindow):
-    def __init__(self,parent=None,path=""):
+    def __init__(self,parent=None, path=""):
         super(Duetto_Sound_Lab, self).__init__(parent)
         self.setupUi(self)
         self.setWindowFlags(Qt.SplashScreen)

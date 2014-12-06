@@ -78,8 +78,8 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
    <widget class="QMenu" name="menuFile">
     <property name="geometry">
      <rect>
-      <x>42</x>
-      <y>141</y>
+      <x>72</x>
+      <y>140</y>
       <width>158</width>
       <height>288</height>
      </rect>
@@ -535,7 +535,7 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
   </action>
   <action name="actionInsert_Silence">
    <property name="text">
-    <string>Silence</string>
+    <string>Insert Silence</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+I</string>
@@ -572,7 +572,7 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
   </action>
   <action name="actionGenerate_White_Noise">
    <property name="text">
-    <string>White Noise</string>
+    <string>Insert White Noise</string>
    </property>
   </action>
   <action name="actionSegmentation_And_Clasification">
@@ -586,7 +586,7 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
   </action>
   <action name="actionGenerate_Pink_Noise">
    <property name="text">
-    <string>Pink Noise</string>
+    <string>Insert Pink Noise</string>
    </property>
   </action>
   <action name="actionSave_theme">
@@ -827,14 +827,6 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
     <string>Change Sign</string>
    </property>
   </action>
-  <action name="actionChangePlayStatus">
-   <property name="text">
-    <string>changePlayStatus</string>
-   </property>
-   <property name="shortcut">
-    <string>Space</string>
-   </property>
-  </action>
   <action name="actionSave_selected_interval_as">
    <property name="icon">
     <iconset resource="resources/icons.qrc">
@@ -847,6 +839,14 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
   <action name="actionClose">
    <property name="text">
     <string>Close</string>
+   </property>
+  </action>
+  <action name="actionSwitchPlayStatus">
+   <property name="text">
+    <string>SwitchPlayStatus</string>
+   </property>
+   <property name="shortcut">
+    <string>M</string>
    </property>
   </action>
   <zorder>dock_settings</zorder>
