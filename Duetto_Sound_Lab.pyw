@@ -12,8 +12,8 @@ class Duetto_Sound_Lab(QMainWindow, Ui_MainWindow):
         super(Duetto_Sound_Lab, self).__init__(parent)
         self.setupUi(self)
         self.setWindowFlags(Qt.SplashScreen)
-        if path != "":
-            self.videoPlayer.load(phonon.Phonon.MediaSource(path))
+        # if path != "":
+        #     self.videoPlayer.load(phonon.Phonon.MediaSource(path))
 
 
 def validLicense():
@@ -49,9 +49,9 @@ if __name__ == '__main__':
         duetto_sound_lab_window.close()
     ## show it
     if os.path.exists(path):
-        duetto_sound_lab_window.videoPlayer.finished.connect(s)
+        # duetto_sound_lab_window.videoPlayer.finished.connect(s)
         duetto_sound_lab_window.show()
-        duetto_sound_lab_window.videoPlayer.play()
+        # duetto_sound_lab_window.videoPlayer.play()
     else:
         s()
     s()
