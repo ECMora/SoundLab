@@ -1,18 +1,11 @@
-from PyQt4 import QtCore
 from signal_visualizer_tools.SignalVisualizerTool import SignalVisualizerTool
-from signal_visualizer_tools.OscilogramTools.RectangularCursorTool import RectangularCursorTool
-from signal_visualizer_tools.OscilogramTools.ZoomTool import ZoomTool
-from signal_visualizer_tools.OscilogramTools.PointerCursorTool import PointerCursorTool
 
 
 class SoundLabWidget:
 
     def __init__(self):
         self.gui_user_tool = None
-
-    def c(self):
-        self.changeTool(self.tools[self.index])
-        self.index = (self.index + 1)% 3
+        self.theme = None
 
     def mouseMoveEvent(self, event):
         if self.gui_user_tool is not None:
@@ -48,4 +41,11 @@ class SoundLabWidget:
         for atr_name,value in data_list:
             s += str(atr_name) + ": " + str(value) + " "
         self.toolDataDetected.emit(s)
+
+    def load_Theme(self, theme):
+        """
+        Loads a visual theme and applies changes. Repaints the widget if necessary.
+        :param theme: an instance of the theme class for this widget, the theme to load
+        """
+        pass
 

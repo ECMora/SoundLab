@@ -61,7 +61,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.setupUi(self)
 
         # theme for the visual options
-        theme_path = os.path.join("Utils", "Themes", "RedBlackTheme.dth")
+        theme_path = os.path.join("Utils", "Themes", "default.dth")
         try:
             self.workTheme = self.deSerializeTheme(theme_path)
         except Exception as e:
@@ -88,7 +88,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.pow_spec_lines = True
         self.pow_spec_maxY = 5
         self.pow_spec_minY = -50
-        self.widget.lines = True
         self.NFFT_pow = 512
 
         # the path to the last opened file signal used to
@@ -128,8 +127,9 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 {u'name': unicode(self.tr(u'Plot color')), u'type': u'color',
                  u'value': self.workTheme.oscillogramTheme.plot_color,
                  u'default': self.workTheme.oscillogramTheme.plot_color},
-                {u'name': unicode(self.tr(u'Connect Lines')), u'type': u'bool', u'default': self.widget.lines,
-                 u'value': self.widget.lines},
+                {u'name': unicode(self.tr(u'Connect Points')), u'type': u'bool',
+                 u'default': self.workTheme.oscillogramTheme.connectPoints,
+                 u'value': self.workTheme.oscillogramTheme.connectPoints},
             ]},
 
             {u'name': unicode(self.tr(u'Spectrogram Settings')), u'type': u'group', u'children': [
@@ -172,11 +172,10 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             ]},
             {u'name': unicode(self.tr(u'Themes')), u'type': u'group', u'children': [
                 {u'name': unicode(self.tr(u'Theme Selected')), u'type': u'list',
-                 u'value': u"" if len(themesInFolder) == 0 else themesInFolder[0][
-                                                                themesInFolder[0].rfind(os.path.sep) + 1
-                                                                :themesInFolder[0].rfind(".dth")],
-                 u'default': u"" if len(themesInFolder) == 0 else themesInFolder[0],
-                 u'values': [(x[x.rfind(os.path.sep) + 1:x.rfind(".dth")], x) for x in themesInFolder]},
+                 u'value': u"" if not themesInFolder else os.path.basename(themesInFolder[0])[:-4],
+                 u'default': u"" if not themesInFolder else os.path.basename(themesInFolder[0])[:-4],
+                 u'values': [(u"", u"")] if not themesInFolder else [(os.path.basename(x)[:-4], x) for x in
+                                                                     themesInFolder]},
             ]
             },
             {u'name': unicode(self.tr(u'Detection Visual Settings')), u'type': u'group', u'children': [
@@ -601,9 +600,9 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 pass  # self.defaultTheme.oscillogramTheme.maxY = data
 
             elif childName == unicode(self.tr(u'Oscillogram Settings')) + u"." + \
-                    unicode(self.tr(u'Connect Lines')):
-                self.widget.lines = data
-                graph = True
+                    unicode(self.tr(u'Connect Points')):
+                self.workTheme.oscillogramTheme.connectPoints = data
+                loadTheme = True
 
             elif childName == unicode(self.tr(u'Themes')) + u"." + \
                     unicode(self.tr(u'Theme Selected')):
@@ -754,7 +753,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     def on_actionPaste_triggered(self):
         self.widget.paste()
 
-    #endregion
+    # endregion
 
     # region Undo Redo
 
@@ -1081,10 +1080,12 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         #excute the dialog of new signals generation
         if new_file_dialog.exec_():
             if new_file_dialog.rbtnSilence.isChecked():
-                signal = Synthesizer.generateSilence(new_file_dialog.SamplingRate, new_file_dialog.BitDepth, new_file_dialog.Duration * new_file_dialog.SamplingRate)
-            elif new_file_dialog.rbtnWhiteNoise.isChecked():
-                signal = Synthesizer.insertWhiteNoise(AudioSignal(new_file_dialog.SamplingRate, new_file_dialog.BitDepth,1),
+                signal = Synthesizer.generateSilence(new_file_dialog.SamplingRate, new_file_dialog.BitDepth,
                                                      new_file_dialog.Duration * new_file_dialog.SamplingRate)
+            elif new_file_dialog.rbtnWhiteNoise.isChecked():
+                signal = Synthesizer.insertWhiteNoise(
+                    AudioSignal(new_file_dialog.SamplingRate, new_file_dialog.BitDepth, 1),
+                    new_file_dialog.Duration * new_file_dialog.SamplingRate)
 
             self.widget.signal = signal
             self.setWindowTitle(self.tr(u"Duetto Sound Lab - ") + self.widget.signalName())
