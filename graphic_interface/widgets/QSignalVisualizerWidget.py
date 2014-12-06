@@ -631,9 +631,9 @@ class QSignalVisualizerWidget(QWidget):
 
     def __insertSignal(self,undo_action, ms=0):
         """
-        Helper method to encapsulate and factorice the code of insert signals
+        Helper method to encapsulate and factorize the code of insert signals
         into the current one.
-        :param undo_action: the undo redo action acording to the desired
+        :param undo_action: the undo redo action according to the desired
         signal to insert.
         :param ms:
         :return:
