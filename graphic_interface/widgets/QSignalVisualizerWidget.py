@@ -112,7 +112,6 @@ class QSignalVisualizerWidget(QWidget):
         self.mainCursor.min = x1
         self.mainCursor.max = x2
 
-
     def setSelectedTool(self, tool):
         """
         Change the current selected tool of the widget.
@@ -260,10 +259,8 @@ class QSignalVisualizerWidget(QWidget):
         #if the previos status was RECORDING then we have to stop the timer and draw the new signal on both controls.
         if  prevStatus == self.signalPlayer.RECORDING:
             self._recordTimer.stop()
-            self.axesOscilogram.setVisible(True)
-            self.axesSpecgram.setVisible(True)
-            self.mainCursor.max = len(self.signal.data)
-            self.mainCursor.min = 0
+            self.visibleOscilogram = True
+            self.visibleSpectrogram = True
             self.zoomNone()
 
     def on_newDataRecorded(self):
@@ -274,11 +271,12 @@ class QSignalVisualizerWidget(QWidget):
         #the player read from the record stream
         self.signalPlayer.readFromStream()
         #update the current view interval of the recording signal
-        self.mainCursor.max = len(self.signal.data)
-        self.mainCursor.min = max(0,
-                                  len(self.signal.data) - 3 * self.signal.samplingRate)
-        #draw the current recorded interval
-        self.axesOscilogram.graph(self.mainCursor.min, self.mainCursor.max)
+        if len(self.signal) > 0:
+            self.mainCursor.max = len(self.signal.data)
+            self.mainCursor.min = max(0,
+                                      len(self.signal.data) - 3 * self.signal.samplingRate)
+            #draw the current recorded interval
+            self.axesOscilogram.graph(self.mainCursor.min)
 
     def record(self, newSignal=True):
         """
