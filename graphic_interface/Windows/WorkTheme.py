@@ -30,18 +30,22 @@ class PowerSpectrumTheme:
         self.gridY = gridY
 
 
+class DetectionTheme:
+    def __init__(self, endColor='FFF', startColor='FFF', quart1Color='FFF', centerColor='FFF', quart2Color='FFF'):
+        self.endColor = endColor
+        self.startColor = startColor
+        self.quart1Color = quart1Color
+        self.centerColor = centerColor
+        self.quart2Color = quart2Color
+
+
 class WorkTheme:
     """
     The options to customize the environment of work in the system
     """
 
-    def __init__(self, oscillogramTheme=None, spectrogramTheme=None, powerSpectrumTheme=None):
-                 #, endColor="FFF", centerColor="FFF", startColor="FFF", quart1Color="FFF", quart2Color="FFF"):
+    def __init__(self, oscillogramTheme=None, spectrogramTheme=None, powerSpectrumTheme=None, detectionTheme=None):
         self.oscillogramTheme = oscillogramTheme if oscillogramTheme is not None else OscillogramTheme()
         self.spectrogramTheme = spectrogramTheme if spectrogramTheme is not None else SpectrogramTheme()
         self.powerSpectrumTheme = powerSpectrumTheme if powerSpectrumTheme is not None else PowerSpectrumTheme()
-        # self.endColor = endColor
-        # self.startColor = startColor
-        # self.quart1Color = quart1Color
-        # self.centerColor = centerColor
-        # self.quart2Color = quart2Color
+        self.detectionTheme = detectionTheme if detectionTheme is not None else DetectionTheme()

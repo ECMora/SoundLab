@@ -63,9 +63,21 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
         self.rangeChanged.emit(x1, x2)
 
     def load_Theme(self, theme):
+        """
+        Loads a theme and updates the view according with it.
+        :param theme: an instance of SpectrogramTheme, the part of the WorkTheme concerning the spectrogram.
+        """
+        # set background color
         self.graphics_view.setBackground(theme.background_color)
+        # set grid lines
+        self.xAxis.setGrid(88 if theme.gridX else 0)
+        self.yAxis.setGrid(88 if theme.gridY else 0)
 
-        # self.viewBox.showGrid(theme.spec_GridX,theme.spec_GridY)
+        # set the state of the histogram and make it note the change so it automatically refreshes the spectrogram
+        self.histogram.item.gradient.restoreState(theme.colorBarState)
+        self.histogram.item.region.setRegion(theme.histRange)
+        self.histogram.item.region.lineMoved()
+        self.histogram.item.region.lineMoveFinished()
 
         # if theme.maxYSpec == -1:
         #     theme.maxYSpec = self.specgramHandler.freqs[-1]

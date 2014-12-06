@@ -9,7 +9,7 @@ from duetto.audio_signals.Synthesizer import Synthesizer
 from duetto.audio_signals.AudioSignal import AudioSignal
 from duetto.audio_signals.audio_signals_stream_readers.WavStreamManager import WavStreamManager
 from duetto.signal_processing.EditionSignalProcessor import EditionSignalProcessor
-from SoundLabOscilogramWidget import SoundLabOscilogramWidget
+from SoundLabOscillogramWidget import SoundLabOscillogramWidget
 from SoundLabSpectrogramWidget import SoundLabSpectrogramWidget
 from duetto.signal_processing.filter_signal_processors.FilterSignalProcessor import FilterSignalProcessor
 from graphic_interface.widgets.signal_visualizer_tools.SignalVisualizerTool import Tools
@@ -49,7 +49,7 @@ class QSignalVisualizerWidget(QWidget):
         QWidget.__init__(self, parent)
         #the two widgets in which are delegated the functions of time and frequency domain
         #representation and visualization.
-        self.axesOscilogram = SoundLabOscilogramWidget(**kwargs)
+        self.axesOscilogram = SoundLabOscillogramWidget(**kwargs)
         self.axesSpecgram = SoundLabSpectrogramWidget(**kwargs)
 
         self.undoRedoManager = UndoRedoManager()
@@ -148,7 +148,7 @@ class QSignalVisualizerWidget(QWidget):
         otherwise.
         :return: string with the name or default name.
         """
-        return "" if self.__signal is None else self.__signal.name
+        return "" if self._signal is None else self._signal.name
 
     def createContextCursor(self, actions):
         """
@@ -254,7 +254,7 @@ class QSignalVisualizerWidget(QWidget):
         #self.regionChanged.emit(self.mainCursor.min, self.mainCursor.max, len(self.signal.data))
 
     def record(self):
-        self.__signal = self.signalPlayer.signal
+        self._signal = self.signalPlayer.signal
         self.axesOscilogram.signal = self.signalPlayer.signal
         self.axesSpecgram.signal = self.signalPlayer.signal
 
@@ -342,7 +342,7 @@ class QSignalVisualizerWidget(QWidget):
 
     @property
     def signal(self):
-        return self.__signal
+        return self._signal
 
     @signal.setter
     def signal(self, new_signal):
@@ -355,10 +355,10 @@ class QSignalVisualizerWidget(QWidget):
         if new_signal is None or not isinstance(new_signal, AudioSignal):
             raise Exception("Invalid assignation value. Must be of type AudioSignal")
 
-        self.__signal = new_signal
+        self._signal = new_signal
         #update the main cursor to visualize and process a piece of the signal
         self.mainCursor.min = 0
-        self.mainCursor.max = len(self.__signal)
+        self.mainCursor.max = len(self._signal)
 
         #update the signal on every widget
         self.axesOscilogram.signal = new_signal
@@ -366,16 +366,16 @@ class QSignalVisualizerWidget(QWidget):
 
         #update the variables that manage the signal
         #   the audio signal handler to play options
-        self.signalPlayer = AudioSignalPlayer(self.__signal)
+        self.signalPlayer = AudioSignalPlayer(self._signal)
         self.signalPlayer.playing.connect(self.notifyPlayingCursor)
 
         #the edition object that manages cut and paste options
-        self.editionSignalProcessor = EditionSignalProcessor(self.__signal)
-        self.commonSignalProcessor = CommonSignalProcessor(self.__signal)
+        self.editionSignalProcessor = EditionSignalProcessor(self._signal)
+        self.commonSignalProcessor = CommonSignalProcessor(self._signal)
 
         #update the signal int the two widgets that visualize it
-        self.axesOscilogram.signal = self.__signal
-        self.axesSpecgram.signal = self.__signal
+        self.axesOscilogram.signal = self._signal
+        self.axesSpecgram.signal = self._signal
 
     #endregion
 
@@ -514,7 +514,7 @@ class QSignalVisualizerWidget(QWidget):
 
     def resampling(self, samplingRate):
         self.undoRedoManager.add(ResamplingAction(self.signal, samplingRate))
-        self.__signal.resampling(samplingRate)
+        self._signal.resampling(samplingRate)
         self.zoomNone()
 
     def getIndexFromAndTo(self):
@@ -716,7 +716,7 @@ class QSignalVisualizerWidget(QWidget):
         Save the current signal into disc.
         :param fname: The path to the file.
         """
-        FileManager().write(self.__signal, fname)
+        FileManager().write(self._signal, fname)
 
     def saveSelectedSectionAsSignal(self, fname):
         """
@@ -725,10 +725,9 @@ class QSignalVisualizerWidget(QWidget):
         """
         #get the interval limits
         indexF, indexTo = self.getIndexFromAndTo()
-
         signal = self.signal.copy(indexF, indexTo)
 
-        self.__saveSignal(fname, signal)
+        FileManager().write(self._signal, fname)
 
     #endregion
 
