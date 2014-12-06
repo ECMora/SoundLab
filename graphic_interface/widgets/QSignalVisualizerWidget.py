@@ -280,22 +280,22 @@ class QSignalVisualizerWidget(QWidget):
         #draw the current recorded interval
         self.axesOscilogram.graph(self.mainCursor.min, self.mainCursor.max)
 
-    def record(self):
+    def record(self, newSignal=True):
         """
         Start to record a new signal.
         If the signal is been playing nothing is made.
         """
+        if newSignal:
+            self.signal = AudioSignal(self.signal.samplingRate,self.signal.bitDepth,self.signal.channelCount)
         try:
-            newSignal = self.signalPlayer.record()
+            self.signalPlayer.record()
         except:
              self.stop()
+
         #set only the oscillogram vsible while recording
         self.visibleOscilogram = True
         self.visibleSpectrogram = False
-        #set the new signal references
-        self.__signal = newSignal
-        self.axesOscilogram.signal = newSignal
-        self.axesSpecgram.signal = newSignal
+
         #update oscillogram time interval for drawing the recorded section
         updateTime = 15
         #starting the update record timer
@@ -347,8 +347,9 @@ class QSignalVisualizerWidget(QWidget):
 
     def notifyPlayingCursor(self, frame):
         #draw the line in the axes
-        self.playerLineOsc.setValue(frame)
-        self.playerLineSpec.setValue(self.from_osc_to_spec(frame))
+        if frame < self.playerLineEnd:
+            self.playerLineOsc.setValue(frame)
+            self.playerLineSpec.setValue(self.from_osc_to_spec(frame))
 
     #endregion
 
@@ -450,7 +451,7 @@ class QSignalVisualizerWidget(QWidget):
         The new subinterval has the middle index equal to the old one.
         :return:
         """
-        interval_size_added = self.mainCursor.max - self.mainCursor.min / self.ZOOM_STEP
+        interval_size_added = (self.mainCursor.max - self.mainCursor.min) / self.ZOOM_STEP
 
         #update the max interval limit
         if (self.mainCursor.max + interval_size_added) < len(self.signal):
