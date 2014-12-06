@@ -24,7 +24,6 @@ class SoundLabOscillogramWidget(SoundLabWidget, OscillogramWidget):
         OscillogramWidget.__init__(self)
         SoundLabWidget.__init__(self)
         self.changeTool(ZoomTool)
-        self.osc_color = "CC3"
         self.minY = self.signal.minimumValue if self.signal is not None else -100
         self.maxY = self.signal.maximumValue if self.signal is not None else 100
 
@@ -81,9 +80,10 @@ class SoundLabOscillogramWidget(SoundLabWidget, OscillogramWidget):
         self.getPlotItem().showGrid(theme.gridX, theme.gridY)
 
         # set the color of the plot lines; the lines will be redrawn later if the color changed
-        if self.osc_color != theme.plot_color:
+        self.plotLine.setPen(theme.plot_color)
+
+        if self.theme is None or self.theme.connectPoints != theme.connectPoints:
             update = True
-            self.osc_color = theme.plot_color
 
         # self.minY = -theme.minYOsc * 0.01 * self.signal.minimumValue
         # self.maxY = theme.maxYOsc * 0.01 * self.signal.maximumValue
@@ -91,12 +91,28 @@ class SoundLabOscillogramWidget(SoundLabWidget, OscillogramWidget):
         #                       self.maxY),
         #                       padding=0, update=True)
 
+        # keep a copy of the theme
+        self.theme = theme.copy()
+
         # update the widget if needed
         if update:
-            self.graph()
+            rangeX = self.getPlotItem().getViewBox().viewRange()[0]
+            self.graph(rangeX[0], rangeX[1])
 
     def graph(self, indexFrom=0, indexTo=-1):
-        OscillogramWidget.graph(self, indexFrom, indexTo)
+        morekwargs = dict()
+        points = indexTo - indexFrom
+        if points < 0: points += len(self.signal)
+        if self.theme is not None:
+            if not self.theme.connectPoints and points < self.getPlotItem().getViewBox().width():
+                morekwargs['symbol'] = 's'
+                morekwargs['symbolSize'] = 1
+                morekwargs['symbolPen'] = self.theme.plot_color
+                morekwargs['pen'] = '0000'
+            else:
+                morekwargs['pen'] = self.theme.plot_color
+
+        OscillogramWidget.graph(self, indexFrom, indexTo, morekwargs)
         self.setRange(yRange=(self.minY,
                               self.maxY),
                               padding=0)

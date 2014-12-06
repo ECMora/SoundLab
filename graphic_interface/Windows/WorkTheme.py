@@ -1,11 +1,15 @@
 class OscillogramTheme:
-    def __init__(self, background_color="000", plot_color="CC3", gridX=True, gridY=True):  # , minY=-100, maxY=100):
+    def __init__(self, background_color="000", plot_color="CC3", gridX=True, gridY=True, connectPoints=True):  # , minY=-100, maxY=100):
         self.background_color = background_color
         self.plot_color = plot_color
         self.gridX = gridX
         self.gridY = gridY
         # self.minY = minY
         # self.maxY = maxY
+        self.connectPoints = connectPoints
+
+    def copy(self):
+        return OscillogramTheme(self.background_color, self.plot_color, self.gridX, self.gridY, self.connectPoints)
 
 
 class SpectrogramTheme:
@@ -21,13 +25,19 @@ class SpectrogramTheme:
             'mode': 'rgb'}
         self.histRange = histRange
 
+    def copy(self):
+        return SpectrogramTheme(self.background_color, self.gridX, self.gridY, self.colorBarState, self.histRange)
 
-class PowerSpectrumTheme:
+
+class OneDimensinalTheme:
     def __init__(self, background_color="000", plot_color="FFF", gridX=True, gridY=True):
         self.background_color = background_color
         self.plot_color = plot_color
         self.gridX = gridX
         self.gridY = gridY
+
+    def copy(self):
+        return OneDimensinalTheme(self.background_color, self.plot_color, self.gridX, self.gridY)
 
 
 class DetectionTheme:
@@ -38,14 +48,21 @@ class DetectionTheme:
         self.centerColor = centerColor
         self.quart2Color = quart2Color
 
+    def copy(self):
+        return DetectionTheme(self.endColor, self.startColor, self.quart1Color, self.centerColor, self.quart2Color)
+
 
 class WorkTheme:
     """
     The options to customize the environment of work in the system
     """
 
-    def __init__(self, oscillogramTheme=None, spectrogramTheme=None, powerSpectrumTheme=None, detectionTheme=None):
+    def __init__(self, oscillogramTheme=None, spectrogramTheme=None, oneDimensionalTheme=None, detectionTheme=None):
         self.oscillogramTheme = oscillogramTheme if oscillogramTheme is not None else OscillogramTheme()
         self.spectrogramTheme = spectrogramTheme if spectrogramTheme is not None else SpectrogramTheme()
-        self.powerSpectrumTheme = powerSpectrumTheme if powerSpectrumTheme is not None else PowerSpectrumTheme()
+        self.oneDimensionalTheme = oneDimensionalTheme if oneDimensionalTheme is not None else OneDimensinalTheme()
         self.detectionTheme = detectionTheme if detectionTheme is not None else DetectionTheme()
+
+    def copy(self):
+        return WorkTheme(self.oscillogramTheme.copy(), self.spectrogramTheme.copy(), self.oneDimensionalTheme.copy(),
+                         self.detectionTheme.copy())

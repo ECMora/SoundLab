@@ -67,6 +67,7 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
         Loads a theme and updates the view according with it.
         :param theme: an instance of SpectrogramTheme, the part of the WorkTheme concerning the spectrogram.
         """
+
         # set background color
         self.graphics_view.setBackground(theme.background_color)
         # set grid lines
@@ -86,6 +87,9 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
         # self.viewBox.setYRange(self.minY,
         #                        self.maxY,
         #                       padding=0)
+
+        self.theme = theme
+
         # self.graph()
 
     def graph(self, indexFrom=0, indexTo=-1):
