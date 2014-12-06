@@ -103,7 +103,7 @@ class QSignalVisualizerWidget(QWidget):
         self._recordTimer = QTimer(self)
         self._recordTimer.timeout.connect(self.on_newDataRecorded)
 
-    def updateOscillogram(self,x1,x2):
+    def updateOscillogram(self, x1, x2):
 
         self.axesOscilogram.changeRange(x1, x2)
         self.mainCursor.min = x1
