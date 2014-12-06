@@ -10,7 +10,7 @@ from duetto.signal_processing.filter_signal_processors.frequency_domain_filters 
 from pyqtgraph.parametertree.parameterTypes import ListParameter
 from pyqtgraph.parametertree import Parameter, ParameterTree
 from PyQt4.QtGui import QDialog, QMessageBox, QFileDialog, QActionGroup, QAction
-from PyQt4.QtCore import pyqtSlot, QMimeData, pyqtSignal
+from PyQt4.QtCore import pyqtSlot, QMimeData, pyqtSignal, QTimer
 from duetto.dimensional_transformations.two_dimensional_transforms.Spectrogram.WindowFunctions import WindowFunction
 
 from Utils.Utils import folderFiles
@@ -287,7 +287,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         playSpeedActionGroup.addAction(self.action8x)
         playSpeedActionGroup.triggered.connect(self.on_playSpeedChanged_triggered)
 
-        self.on_load()
+        QTimer.singleShot(0, self.on_load)
 
     # region Segmentation And Clasification
 
