@@ -53,9 +53,7 @@ class SoundLabOscillogramWidget(SoundLabWidget, OscillogramWidget):
         :param y1:
         :param y2:
         """
-        self.setRange(xRange=(x1, x2),
-                      yRange=(self.signal.minimumValue, self.signal.maximumValue),
-                      padding=0)
+        self.graph(x1,x2)
 
     def changeRangeSignal(self, x1, x2, y1, y2):
         """
