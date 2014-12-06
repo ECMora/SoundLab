@@ -8,37 +8,44 @@ from graphic_interface.widgets.signal_visualizer_tools.SignalVisualizerTool impo
 class ZoomTool(SignalVisualizerTool):
 
     def __init__(self,widget):
-        SignalVisualizerTool.__init__(self,widget)
+        SignalVisualizerTool.__init__(self, widget)
         self.zoomRegion = pg.LinearRegionItem([0, 0])
 
     def mouseMoveEvent(self, event):
-        # self.widget.getPlotItem().mouseMoveEvent(event)
-        rgn = self.zoomRegion.getRegion()
-        minx, maxx = self.fromClientToCanvas(rgn[0]), self.fromClientToCanvas(rgn[1])
-        if abs(minx - event.x()) < self.PIXELS_OF_CURSORS_CHANGES or \
-                        abs(maxx - event.x()) < self.PIXELS_OF_CURSORS_CHANGES:
-            self.widget.setCursor(QCursor(QtCore.Qt.SizeHorCursor))
-        elif self.mouseInsideZoomArea(event.x()):
-            if self.mousePressed:
-                self.widget.setCursor(QCursor(QtCore.Qt.ClosedHandCursor))
-            else:
-                self.widget.setCursor(QCursor(QtCore.Qt.OpenHandCursor))
-        else:
-            self.widget.setCursor(QCursor(QtCore.Qt.ArrowCursor))
-
-
+        """
+        Process the mouse move event
+        :param event:
+        :return:
+        """
         pg.PlotWidget.mouseMoveEvent(self.widget, event)
 
-        t0 = round(rgn[0] * 1.0 / self.widget.signal.samplingRate,self.DECIMAL_PLACES)
-        t1 = round(rgn[1] * 1.0 / self.widget.signal.samplingRate,self.DECIMAL_PLACES)
-        dt = round(t1 - t0, self.DECIMAL_PLACES)
-        self.detectedData = [("t0", t0),
-                             ("t1", t1),
-                             ("dt", dt)
-        ]
-        self.detectedDataChanged.emit(self.detectedData)
+        # get the region selected by the tool in pixels
+        rgn = self.zoomRegion.getRegion()
 
-        self.widget.update()
+        # transform the selected region in logical widget graph coordinates
+        minx, maxx = self.fromClientToCanvas(rgn[0]), self.fromClientToCanvas(rgn[1])
+
+        if abs(minx - event.x()) < self.PIXELS_OF_CURSORS_CHANGES or \
+               abs(maxx - event.x()) < self.PIXELS_OF_CURSORS_CHANGES:
+
+            self.widget.setCursor(QCursor(QtCore.Qt.SizeHorCursor))
+
+            t0 = round(rgn[0] * 1.0 / self.widget.signal.samplingRate,self.DECIMAL_PLACES)
+            t1 = round(rgn[1] * 1.0 / self.widget.signal.samplingRate,self.DECIMAL_PLACES)
+            dt = round(t1 - t0, self.DECIMAL_PLACES)
+            self.detectedData = [("t0", t0),
+                                 ("t1", t1),
+                                 ("dt", dt)
+            ]
+
+            self.detectedDataChanged.emit(self.detectedData)
+
+        elif self.mouseInsideZoomArea(event.x()):
+            cursor = QtCore.Qt.ClosedHandCursor if self.mousePressed else QtCore.Qt.OpenHandCursor
+            self.widget.setCursor(QCursor(cursor))
+
+        else:
+            self.widget.setCursor(QCursor(QtCore.Qt.ArrowCursor))
 
     def mousePressEvent(self, event):
         self.mousePressed = True
