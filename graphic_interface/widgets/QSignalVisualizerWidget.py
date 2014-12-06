@@ -47,36 +47,38 @@ class QSignalVisualizerWidget(QWidget):
 
     def __init__(self, parent=None, **kwargs):
         QWidget.__init__(self, parent)
-        #the two widgets in which are delegated the functions of time and frequency domain
-        #representation and visualization.
+        # the two widgets in which are delegated the functions of time and frequency domain
+        # representation and visualization.
         self.axesOscilogram = SoundLabOscillogramWidget(**kwargs)
         self.axesSpecgram = SoundLabSpectrogramWidget(**kwargs)
 
         self.undoRedoManager = UndoRedoManager()
         self.undoRedoManager.actionExec.connect(lambda x: self.graph())
 
-        #sincronization of the change range in the axes
+        # sincronization of the change range in the axes
         self.axesSpecgram.rangeChanged.connect(self.updateOscillogram)
         self.axesOscilogram.rangeChanged.connect(self.updateSpecgram)
 
         self.axesSpecgram.signalChanged.connect(lambda x1, x2: self.axesOscilogram.updateSignal(x1, x2))
         self.axesOscilogram.signalChanged.connect(lambda x1, x2: self.axesSpecgram.updateSignal(x1, x2))
 
-        #connect the signals for tools data detected
+        # connect the signals for tools data detected
         self.axesOscilogram.toolDataDetected.connect(lambda x: self.toolDataDetected.emit(x))
         self.axesSpecgram.toolDataDetected.connect(lambda x: self.toolDataDetected.emit(x))
 
-        #link the x axis of each widget to visualize the same x grid and ticks
+        # link the x axis of each widget to visualize the same x grid and ticks
         self.axesSpecgram.xAxis.linkToView(self.axesOscilogram.getViewBox())
 
-        #set the tool zoom as default
+        # set the tool zoom as default
         self.setSelectedTool(Tools.ZoomTool)
 
-        #grouping the oscilogram and spectrogram widgets in the control
+        # grouping the oscilogram and spectrogram widgets in the control
         layout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(self.axesOscilogram)
         layout.addWidget(self.axesSpecgram)
+        layout.setStretch(0, 1)
+        layout.setStretch(1, 1)
         self.setLayout(layout)
 
         #the cursor for the visualization of a piece of the signal
@@ -407,8 +409,8 @@ class QSignalVisualizerWidget(QWidget):
         self.axesOscilogram.signal = new_signal
         self.axesSpecgram.signal = new_signal
 
-        #update the variables that manage the signal
-        #   the audio signal handler to play options
+        # update the variables that manage the signal
+        # the audio signal handler to play options
         self.signalPlayer = AudioSignalPlayer(self._signal)
         self.signalPlayer.playing.connect(self.notifyPlayingCursor)
         self.signalPlayer.playingDone.connect(self.removePlayerLine)
@@ -416,10 +418,6 @@ class QSignalVisualizerWidget(QWidget):
         #the edition object that manages cut and paste options
         self.editionSignalProcessor = EditionSignalProcessor(self._signal)
         self.commonSignalProcessor = CommonSignalProcessor(self._signal)
-
-        #update the signal int the two widgets that visualize it
-        self.axesOscilogram.signal = self._signal
-        self.axesSpecgram.signal = self._signal
 
         #clean the previous actions to get the initial state with the new signal
         self.undoRedoManager.clear()
@@ -480,8 +478,8 @@ class QSignalVisualizerWidget(QWidget):
     #region GRAPH
     def graph(self):
         #update the two widgets visualizations
-        self.axesSpecgram.graph(indexFrom=self.mainCursor.min, indexTo=self.mainCursor.max)
         self.axesOscilogram.graph(indexFrom=self.mainCursor.min, indexTo=self.mainCursor.max)
+        self.axesSpecgram.graph(indexFrom=self.mainCursor.min, indexTo=self.mainCursor.max)
 
     #endregion
 

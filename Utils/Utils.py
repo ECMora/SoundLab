@@ -14,8 +14,9 @@ def saveImage(widget, text=""):
     :param widget: The widget to save the screenshot.
     :param text: Alternative image name to specify the widget or graph source of the picture.
     """
-    fname = unicode(QFileDialog.getSaveFileName(u"Save " + text + u" as an Image "),
-                                                u"-" + text + u"-Duetto-Image", u"*.jpg")
+    parent = None
+    fname = unicode(QFileDialog.getSaveFileName(parent, u"Save " + text + u" as an Image ",
+                                                u"-" + text + u"-Duetto-Image", u"*.jpg"))
     if fname:
         #save as image
         image = QtGui.QPixmap.grabWindow(widget.winId())
@@ -39,6 +40,6 @@ def folderFiles(folder, extensions=None):
         for f in filenames:
             if any([f.endswith(x) for x in extensions]):
                 #if file extension is admissible
-                files.append(unicode(root + os.path.sep + f))
+                files.append(unicode(root + "/" + f))
 
     return files

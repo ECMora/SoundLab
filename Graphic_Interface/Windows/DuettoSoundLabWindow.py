@@ -13,7 +13,7 @@ from PyQt4.QtGui import QDialog, QMessageBox, QFileDialog, QActionGroup, QAction
 from PyQt4.QtCore import pyqtSlot, QMimeData, pyqtSignal, QTimer
 from duetto.dimensional_transformations.two_dimensional_transforms.Spectrogram.WindowFunctions import WindowFunction
 
-from Utils.Utils import folderFiles
+from Utils.Utils import folderFiles, saveImage
 from graphic_interface.windows.ParameterList import DuettoListParameterItem
 from graphic_interface.dialogs.NewFileDialog import NewFileDialog
 from graphic_interface.windows.PowerSpectrumWindow import PowerSpectrumWindow
@@ -1214,7 +1214,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
             #set the current index to the index of the supplied file_path
             self.filesInFolderIndex = self.filesInFolder.index(file_path)
-
         except:
             #if somethign wrong go to the initial state
             self.filesInFolder = []
@@ -1241,7 +1240,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.widget.pause()
 
     @pyqtSlot()
-    def on_actionChangePlayStatus_triggered(self):
+    def on_actionSwitchPlayStatus_triggered(self):
         """
         Change the play status of the signal from play-pause and vice versa
         :return:
