@@ -4,17 +4,17 @@ from graphic_interface.widgets.SoundLabWidget import SoundLabWidget
 from graphic_interface.widgets.signal_visualizer_tools.OscilogramTools.ZoomTool import ZoomTool
 
 
-class SoundLabOscilogramWidget(SoundLabWidget,OscillogramWidget):
+class SoundLabOscillogramWidget(SoundLabWidget, OscillogramWidget):
     # Signal raised when a tool wants to make a change on the range of visualization
-    #of it's widget.
-    #raise the limits of the new range x1, x2
+    # of it's widget.
+    # raise the limits of the new range x1, x2
     # x1 => start value in x axis
     # x2 => end value in x axis
     rangeChanged = QtCore.pyqtSignal(int, int)
 
     # Signal raised when a tool made a change on the signal data
-    #and the widget must refresh it self
-    #raise the limits of the modified range x1, x2 in signal data indexes
+    # and the widget must refresh it self
+    # raise the limits of the modified range x1, x2 in signal data indexes
     signalChanged = QtCore.pyqtSignal(int, int)
 
     # Signal raised when a tool made a medition and has new data to show
@@ -54,8 +54,8 @@ class SoundLabOscilogramWidget(SoundLabWidget,OscillogramWidget):
         :param y1:
         :param y2:
         """
-        self.setRange(xRange=(x1,x2),
-                      yRange=(self.signal.minimumValue,self.signal.maximumValue),
+        self.setRange(xRange=(x1, x2),
+                      yRange=(self.signal.minimumValue, self.signal.maximumValue),
                       padding=0)
 
     def changeRangeSignal(self, x1, x2, y1, y2):
@@ -70,9 +70,17 @@ class SoundLabOscilogramWidget(SoundLabWidget,OscillogramWidget):
         self.rangeChanged.emit(x1, x2)
 
     def load_Theme(self, theme):
+        """
+        Loads a theme and updates the view according with it.
+        :param theme: an instance of OscillogramTheme, the part of the WorkTheme concerning the oscillogram.
+        """
         update = False
+        # set background color
         self.setBackground(theme.background_color)
+        # set grid lines
         self.getPlotItem().showGrid(theme.gridX, theme.gridY)
+
+        # set the color of the plot lines; the lines will be redrawn later if the color changed
         if self.osc_color != theme.plot_color:
             update = True
             self.osc_color = theme.plot_color
@@ -83,6 +91,7 @@ class SoundLabOscilogramWidget(SoundLabWidget,OscillogramWidget):
         #                       self.maxY),
         #                       padding=0, update=True)
 
+        # update the widget if needed
         if update:
             self.graph()
 

@@ -2,7 +2,7 @@ from PyQt4.QtCore import QTimer
 from PyQt4.QtGui import *
 from duetto.audio_signals.audio_signals_stream_readers.WavStreamManager import WavStreamManager
 from graphic_interface.widgets.SoundLabSpectrogramWidget import SoundLabSpectrogramWidget
-from graphic_interface.widgets.SoundLabOscilogramWidget import SoundLabOscilogramWidget
+from graphic_interface.widgets.SoundLabOscillogramWidget import SoundLabOscillogramWidget
 from graphic_interface.widgets.QSignalVisualizerWidget import QSignalVisualizerWidget
 
 
