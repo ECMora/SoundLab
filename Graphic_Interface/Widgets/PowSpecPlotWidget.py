@@ -323,8 +323,8 @@ class PowSpecPlotWidget(pg.PlotWidget):
         self.getPlotItem().setMouseEnabled(False,False)
         self.mouseReleased = False
         self.last = []
-        self.freqs =[]
-        self.Pxx =[]
+        self.freqs = []
+        self.Pxx =  []
         self.bins = []
 
     PointerChanged = pyqtSignal(str)
@@ -414,7 +414,6 @@ class PowSpecPlotWidget(pg.PlotWidget):
         maxx = vb.width()
         a, b = self.getPlotItem().viewRange()[0]
         return int(vb.x() + round((maxx) * (indexX - a) * 1. / (b - a), 0))
-
 
     def fromCanvasToClient(self, xPixel):
         """
