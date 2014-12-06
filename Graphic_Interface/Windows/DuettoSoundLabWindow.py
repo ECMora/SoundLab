@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import pickle
+from duetto.audio_signals import AudioSignal
 
 from PyQt4 import QtGui
 from duetto.audio_signals.Synthesizer import Synthesizer
@@ -104,6 +105,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         # and display options of the application theme.
         # Is used a parameter tree to present to the user the visual options
 
+        #
         # region Parameter Tree definition
         # region params
         params = [
@@ -754,7 +756,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     #endregion
 
-    #region Undo Redo
+    # region Undo Redo
 
     @pyqtSlot()
     def on_actionUndo_triggered(self):
@@ -766,7 +768,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     #endregion
 
-    #region Signal Processing Methods
+    # region Signal Processing Methods
 
     @pyqtSlot()
     def on_actionPositive_Values_triggered(self):
@@ -969,7 +971,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     #endregion
 
-    #region Zoom IN, OUT, NONE
+    # region Zoom IN, OUT, NONE
     #delegate the task of zoom in, out and none
     #in the widget operations
     @pyqtSlot()
@@ -986,7 +988,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     #endregion
 
-    #region Open, Close and Save
+    # region Open, Close and Save
 
     def on_load(self):
         """
@@ -1003,7 +1005,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             self.widget.open(duetto_signal)
             self.actionSignalName.setText(self.tr(u"File Name:") + u" " + self.widget.signalName())
         else:
-            signal = Synthesizer.generateSilence(44100, 16, 1)
+            signal = Synthesizer.generateSilence(44100, 16, 5000)
             self.widget.signal = signal
             self.actionSignalName.setText(self.tr(u"File Name: Welcome to duetto"))
 
@@ -1075,17 +1077,19 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         :return:
         """
         new_file_dialog = NewFileDialog(parent=self)
+
+        #excute the dialog of new signals generation
         if new_file_dialog.exec_():
-            pass
-            # self.widget.specgramSettings.NFFT = self.ParamTree.param(unicode(self.tr(u'Spectrogram Settings'))).param(
-            #     unicode(self.tr(u'FFT size'))).value()
-            # self.widget.specgramSettings.overlap = self.ParamTree.param(
-            #     unicode(self.tr(u'Spectrogram Settings'))).param(unicode(self.tr(u'FFT overlap'))).value()
-            # signal = Synthesizer.generateSilence(new_file_dialog.SamplingRate, new_file_dialog.BitDepth, new_file_dialog.Duration)
-            # self.widget.signal = signal
-            # self.setWindowTitle(self.tr(u"Duetto Sound Lab - ") + self.widget.signalName())
-            # self.actionSignalName.setText(self.tr(u"File Name: ") + self.widget.signalName())
-            #
+            if new_file_dialog.rbtnSilence.isChecked():
+                signal = Synthesizer.generateSilence(new_file_dialog.SamplingRate, new_file_dialog.BitDepth, new_file_dialog.Duration * new_file_dialog.SamplingRate)
+            elif new_file_dialog.rbtnWhiteNoise.isChecked():
+                signal = Synthesizer.insertWhiteNoise(AudioSignal(new_file_dialog.SamplingRate, new_file_dialog.BitDepth,1),
+                                                     new_file_dialog.Duration * new_file_dialog.SamplingRate)
+
+            self.widget.signal = signal
+            self.setWindowTitle(self.tr(u"Duetto Sound Lab - ") + self.widget.signalName())
+            self.actionSignalName.setText(self.tr(u"File Name: ") + self.widget.signalName())
+            self.widget.graph()
 
     @pyqtSlot()
     def on_actionOpen_triggered(self):
@@ -1165,7 +1169,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     #endregion
 
-    #region Folder Files UP and DOWN manipulation
+    # region Folder Files UP and DOWN manipulation
     #a way to browse for the signal files of a folder
     #by a simple and user friendly mechanism
     @pyqtSlot()
@@ -1218,7 +1222,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     #endregion
 
-    #region Play, Pause, Stop, Record
+    # region Play, Pause, Stop, Record
     #delegate in the widget the reproduction actions
     @pyqtSlot()
     def on_actionPlay_Sound_triggered(self):
@@ -1260,7 +1264,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     #endregion
 
-    #region widgets Visibility
+    # region widgets Visibility
     @pyqtSlot()
     def on_actionCombined_triggered(self):
         """
@@ -1299,7 +1303,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     #endregion
 
-    #region Save widgets Image
+    # region Save widgets Image
 
     @pyqtSlot()
     def on_actionOsc_Image_triggered(self):
@@ -1343,7 +1347,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     #endregion
 
-    #region Onedimensional Transforms
+    # region Onedimensional Transforms
     def updatePowSpecWin(self):
         """
         Update the current interval of visualization/processing
@@ -1374,7 +1378,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     #endregion
 
-    #region Scroll Bar Range
+    # region Scroll Bar Range
     #TODO comentar e implementar esta parte
     # manipulation of the scrool bar to set the range
     #of visualization of the signal on the widget

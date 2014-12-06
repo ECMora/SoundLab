@@ -21,10 +21,10 @@ class PointerCursorTool(SpectrogramTool):
         if x == -1 or y == -1:
             self.widget.setCursor(QCursor(QtCore.Qt.ArrowCursor))
             return
-        info = self.getFreqTimeAndIntensity(x, y)
+        info = self.widget.specgramHandler.getInfo(x, y)
 
         if not self.mousePressed:
-            info0 = self.getFreqTimeAndIntensity(self.last['pos'][0], self.last['pos'][1])
+            info0 = self.widget.specgramHandler.getInfo(*self.last['pos'])
             self.detectedData = [("t0", self.timeToStr(round(info0[0], self.DECIMAL_PLACES))),
                                  ("t1", self.timeToStr(round(info[0],self.DECIMAL_PLACES))),
                                  ("dt", self.timeToStr(round(info[0] - info0[0],self.DECIMAL_PLACES)))

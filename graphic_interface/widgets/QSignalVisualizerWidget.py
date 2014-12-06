@@ -56,8 +56,8 @@ class QSignalVisualizerWidget(QWidget):
         self.undoRedoManager.actionExec.connect(lambda x: self.graph())
 
         #sincronization of the change range in the axes
-        self.axesSpecgram.rangeChanged.connect(lambda x1, x2: self.axesOscilogram.changeRange(x1, x2))
-        self.axesOscilogram.rangeChanged.connect(lambda x1, x2: self.axesSpecgram.changeRange(x1, x2))
+        self.axesSpecgram.rangeChanged.connect(self.updateOscillogram)
+        self.axesOscilogram.rangeChanged.connect(self.updateSpecgram)
 
         self.axesSpecgram.signalChanged.connect(lambda x1, x2: self.axesOscilogram.updateSignal(x1, x2))
         self.axesOscilogram.signalChanged.connect(lambda x1, x2: self.axesSpecgram.updateSignal(x1, x2))
@@ -100,6 +100,17 @@ class QSignalVisualizerWidget(QWidget):
 
         self._recordTimer = QTimer(self)
         self._recordTimer.timeout.connect(self.on_newDataRecorded)
+
+    def updateOscillogram(self,x1,x2):
+
+        self.axesOscilogram.changeRange(x1, x2)
+        self.mainCursor.min = x1
+        self.mainCursor.max = x2
+
+    def updateSpecgram(self,x1,x2):
+        self.axesSpecgram.changeRange(x1,x2)
+        self.mainCursor.min = x1
+        self.mainCursor.max = x2
 
 
     def setSelectedTool(self, tool):
@@ -176,8 +187,8 @@ class QSignalVisualizerWidget(QWidget):
         oscilogram_zoom_region = self.axesOscilogram.gui_user_tool.zoomRegion.getRegion()
 
         # translate the coordinates of the oscilogram zoom region into spectrogram's
-        min = self._from_osc_to_spec(oscilogram_zoom_region[0])
-        max = self._from_osc_to_spec(oscilogram_zoom_region[1])
+        min = self.from_osc_to_spec(oscilogram_zoom_region[0])
+        max = self.from_osc_to_spec(oscilogram_zoom_region[1])
 
         # update spectrogram region
         self.axesSpecgram.gui_user_tool.zoomRegion.setRegion([min, max])
@@ -192,8 +203,8 @@ class QSignalVisualizerWidget(QWidget):
         spectrogram_zoom_region = self.axesSpecgram.gui_user_tool.zoomRegion.getRegion()
 
         #translate the coordinates of the spectrogram zoom region into oscilogram's
-        min = self._from_spec_to_osc(spectrogram_zoom_region[0]) + self.mainCursor.min
-        max = self._from_spec_to_osc(spectrogram_zoom_region[1]) + self.mainCursor.min
+        min = self.from_spec_to_osc(spectrogram_zoom_region[0])
+        max = self.from_spec_to_osc(spectrogram_zoom_region[1])
 
         #update oscilogram region
         self.axesOscilogram.gui_user_tool.zoomRegion.setRegion([min, max])
@@ -222,10 +233,9 @@ class QSignalVisualizerWidget(QWidget):
         """
         Start to play the current signal.
         If the signal is been playing nothing is made.
-        :return:
         """
         start, end = self.getIndexFromAndTo()
-        self.addPlayerLine(start)
+        self.addPlayerLine(start,end)
         self.signalPlayer.play(start, end, self.playSpeed)
 
     def switchPlayStatus(self):
@@ -239,34 +249,67 @@ class QSignalVisualizerWidget(QWidget):
             self.play()
 
     def stop(self):
+        """
+        Stops the reproduction or record of the current signal
+        :return:
+        """
+        prevStatus = self.signalPlayer.playStatus
+        #stopping the player
         self.signalPlayer.stop()
+        self.removePlayerLine()
+        #if the previos status was RECORDING then we have to stop the timer and draw the new signal on both controls.
+        if  prevStatus == self.signalPlayer.RECORDING:
+            self._recordTimer.stop()
+            self.axesOscilogram.setVisible(True)
+            self.axesSpecgram.setVisible(True)
+            self.mainCursor.max = len(self.signal.data)
+            self.mainCursor.min = 0
+            self.zoomNone()
 
     def on_newDataRecorded(self):
-
+        """
+        This function is called when on every tick count of the record timer
+        to update the oscillogram with the new data recorded.
+        """
+        #the player read from the record stream
         self.signalPlayer.readFromStream()
-
+        #update the current view interval of the recording signal
         self.mainCursor.max = len(self.signal.data)
         self.mainCursor.min = max(0,
                                   len(self.signal.data) - 3 * self.signal.samplingRate)
-
+        #draw the current recorded interval
         self.axesOscilogram.graph(self.mainCursor.min, self.mainCursor.max)
 
-        #self.regionChanged.emit(self.mainCursor.min, self.mainCursor.max, len(self.signal.data))
-
     def record(self):
-        self._signal = self.signalPlayer.signal
-        self.axesOscilogram.signal = self.signalPlayer.signal
-        self.axesSpecgram.signal = self.signalPlayer.signal
+        """
+        Start to record a new signal.
+        If the signal is been playing nothing is made.
+        """
+        try:
+            newSignal = self.signalPlayer.record()
+        except:
+             self.stop()
+        #set only the oscillogram vsible while recording
+        self.visibleOscilogram = True
+        self.visibleSpectrogram = False
+        #set the new signal references
+        self.__signal = newSignal
+        self.axesOscilogram.signal = newSignal
+        self.axesSpecgram.signal = newSignal
+        #update oscillogram time interval for drawing the recorded section
+        updateTime = 15
+        #starting the update record timer
+        self._recordTimer.start(updateTime)
+        # self.createPlayerLine(self.mainCursor.min)
 
     def pause(self):
         """
         Pause the reproduction of the current signal.
         If the signal is paused nothing is made.
-        :return:
         """
         self.signalPlayer.pause()
 
-    def addPlayerLine(self, initial_value):
+    def addPlayerLine(self, initial_value, end_value):
         """
         create the line to show on widgets osc and spec
         when the signal is been played as a way to
@@ -280,10 +323,10 @@ class QSignalVisualizerWidget(QWidget):
         """
         if not isinstance(initial_value, int):
             raise Exception("value can't be of type different of int")
-
+        self.playerLineEnd = end_value
         #set the values of the lines for every widget
         self.playerLineOsc.setValue(initial_value)
-        self.playerLineSpec.setValue(self._from_osc_to_spec(initial_value))
+        self.playerLineSpec.setValue(self.from_osc_to_spec(initial_value))
 
         #add the lines to the widgets if there aren't
         if self.playerLineOsc not in self.axesOscilogram.getViewBox().addedItems:
@@ -305,7 +348,7 @@ class QSignalVisualizerWidget(QWidget):
     def notifyPlayingCursor(self, frame):
         #draw the line in the axes
         self.playerLineOsc.setValue(frame)
-        self.playerLineSpec.setValue(self._from_osc_to_spec(frame))
+        self.playerLineSpec.setValue(self.from_osc_to_spec(frame))
 
     #endregion
 
@@ -368,6 +411,7 @@ class QSignalVisualizerWidget(QWidget):
         #   the audio signal handler to play options
         self.signalPlayer = AudioSignalPlayer(self._signal)
         self.signalPlayer.playing.connect(self.notifyPlayingCursor)
+        self.signalPlayer.playingDone.connect(self.removePlayerLine)
 
         #the edition object that manages cut and paste options
         self.editionSignalProcessor = EditionSignalProcessor(self._signal)
@@ -376,6 +420,9 @@ class QSignalVisualizerWidget(QWidget):
         #update the signal int the two widgets that visualize it
         self.axesOscilogram.signal = self._signal
         self.axesSpecgram.signal = self._signal
+
+        #clean the previous actions to get the initial state with the new signal
+        self.undoRedoManager.clear()
 
     #endregion
 
@@ -536,12 +583,13 @@ class QSignalVisualizerWidget(QWidget):
 
         if self.selectedTool == Tools.ZoomTool and axe is not None:
             zoom_region = axe.gui_user_tool.zoomRegion.getRegion()
-            #get the start of the region
-            indexFrom = zoom_region[0]
+            if zoom_region[0] >= indexFrom and zoom_region[1] <= indexTo:
+                #get the start of the region
+                indexFrom = zoom_region[0]
 
-            #set the max limit if the region borders are different
-            if zoom_region[1] > zoom_region[0]:
-                 indexTo = zoom_region[1]
+                #set the max limit if the region borders are different
+                if zoom_region[1] > zoom_region[0]:
+                     indexTo = zoom_region[1]
 
         return indexFrom, indexTo
 
@@ -731,10 +779,8 @@ class QSignalVisualizerWidget(QWidget):
 
     #endregion
 
-    def _from_spec_to_osc(self, coord):
-        cs = self.axesSpecgram.specgramHandler.NFFT #- self.specgramSettings.visualOverlap
-        return int(1.0 * coord * cs - self.axesSpecgram.specgramHandler.NFFT / 2)
+    def from_osc_to_spec(self,x):
+        return self.axesSpecgram.specgramHandler.from_osc_to_spec(x)
 
-    def _from_osc_to_spec(self, coord):
-        cs = self.axesSpecgram.specgramHandler.NFFT #- self.axesSpecgram.specgramHandler.visualOverlap
-        return 1.0 * (coord - self.mainCursor.min + self.axesSpecgram.specgramHandler.NFFT / 2) / cs
+    def from_spec_to_osc(self,x):
+        return self.axesSpecgram.specgramHandler.from_spec_to_osc(x)
