@@ -7,7 +7,7 @@ import numpy as np
 import pyqtgraph as pg
 from PyQt4 import QtGui, QtCore
 
-from sound_lab_core.Segmentation.Detectors.ElementsDetectors.TwoDimensional.TwoDimensionalElementsDetector import TwoDimensionalElementsDetector
+from sound_lab_core.Segmentation.Detectors.TwoDimensional.TwoDimensionalElementsDetector import TwoDimensionalElementsDetector
 from sound_lab_core.Segmentation.Elements.TwoDimensionalElement import SpecgramElement
 from sound_lab_core.Segmentation.Elements.Element import Element
 
