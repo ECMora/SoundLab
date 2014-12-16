@@ -10,13 +10,14 @@ import xlwt
 import numpy as np
 from PyQt4.QtGui import QFileDialog, QAbstractItemView, QWidget
 from pyqtgraph.parametertree import Parameter
+
 from duetto.audio_signals.AudioSignal import AudioSignal
 from Utils.Utils import saveImage
 from graphic_interface.widgets.signal_visualizer_tools.SignalVisualizerTool import Tools
 from sound_lab_core.Clasification.ClassificationData import ClassificationData
-from sound_lab_core.Segmentation.Detectors.ElementsDetectors.OneDimensional.OneDimensionalElementsDetector import \
+from sound_lab_core.Segmentation.Detectors.OneDimensional.OneDimensionalElementsDetector import \
     DetectionType, AutomaticThresholdType, DetectionSettings
-from sound_lab_core.Segmentation.Detectors.ElementsDetectors.OneDimensional.OneDimensionalElementsDetector import \
+from sound_lab_core.Segmentation.Detectors.OneDimensional.OneDimensionalElementsDetector import \
     OneDimensionalElementsDetector
 from sound_lab_core.Segmentation.Elements.Element import Element
 from sound_lab_core.Segmentation.Elements.OneDimensionalElement import SpectralMeasurementLocation

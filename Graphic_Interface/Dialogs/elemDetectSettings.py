@@ -6,7 +6,7 @@ from PyQt4.QtCore import pyqtSlot
 from PyQt4.QtGui import QDialog
 from pyqtgraph.parametertree import ParameterTree
 
-from sound_lab_core.Segmentation.Detectors.ElementsDetectors.OneDimensional.OneDimensionalElementsDetector import DetectionSettings, DetectionType,AutomaticThresholdType
+from sound_lab_core.Segmentation.Detectors.OneDimensional.OneDimensionalElementsDetector import DetectionSettings, DetectionType,AutomaticThresholdType
 from graphic_interface.dialogs.ui_elemDetectSettings import Ui_Dialog
 
 

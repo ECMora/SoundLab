@@ -1,9 +1,10 @@
 from PyQt4 import QtGui, QtCore
 import pyqtgraph as pg
 import numpy as np
+
 from sound_lab_core.Segmentation.Elements.Element import Element
 from QSignalVisualizerWidget import QSignalVisualizerWidget
-from sound_lab_core.Segmentation.Detectors.ElementsDetectors.OneDimensional.OneDimensionalElementsDetector import \
+from sound_lab_core.Segmentation.Detectors.OneDimensional.OneDimensionalElementsDetector import \
     DetectionType, OneDimensionalElementsDetector
 
 
