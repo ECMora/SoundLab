@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>569</width>
+    <width>889</width>
     <height>363</height>
    </rect>
   </property>
@@ -65,7 +65,7 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>569</width>
+     <width>889</width>
      <height>21</height>
     </rect>
    </property>
@@ -181,7 +181,7 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
     <addaction name="actionOscilogram"/>
     <addaction name="actionSpectogram"/>
     <addaction name="actionCombined"/>
-    <addaction name="actionPower_Spectrum"/>
+    <addaction name="actionOneDimensionalTransformation"/>
     <addaction name="separator"/>
     <addaction name="actionSettings"/>
     <addaction name="actionSegmentation_And_Clasification"/>
@@ -304,7 +304,7 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
    <addaction name="actionCombined"/>
    <addaction name="actionOscilogram"/>
    <addaction name="actionSpectogram"/>
-   <addaction name="actionPower_Spectrum"/>
+   <addaction name="actionOneDimensionalTransformation"/>
    <addaction name="separator"/>
    <addaction name="actionSettings"/>
    <addaction name="actionSegmentation_And_Clasification"/>
@@ -405,7 +405,7 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
     <string>Ctrl+N</string>
    </property>
   </action>
-  <action name="actionPower_Spectrum">
+  <action name="actionOneDimensionalTransformation">
    <property name="icon">
     <iconset resource="resources/icons.qrc">
      <normaloff>:/myappicons/powerspec.ico</normaloff>:/myappicons/powerspec.ico</iconset>

@@ -28,7 +28,7 @@ class SoundLabOscillogramWidget(SoundLabWidget, OscillogramWidget):
         self.maxY = self.signal.maximumValue if self.signal is not None else 100
 
     def changeTool(self, new_tool_class):
-        SoundLabWidget.changeTool(self,new_tool_class)
+        SoundLabWidget.changeTool(self, new_tool_class)
         if self.gui_user_tool is not None:
             self.gui_user_tool.rangeChanged.connect(self.changeRangeSignal)
             self.gui_user_tool.signalChanged.connect(self.updateSignalManager)
@@ -71,14 +71,17 @@ class SoundLabOscillogramWidget(SoundLabWidget, OscillogramWidget):
         Loads a theme and updates the view according with it.
         :param theme: an instance of OscillogramTheme, the part of the WorkTheme concerning the oscillogram.
         """
+
         update = False
         # set background color
         self.setBackground(theme.background_color)
+
         # set grid lines
         self.getPlotItem().showGrid(theme.gridX, theme.gridY)
 
         # set the color of the plot lines; the lines will be redrawn later if the color changed
-        self.plotLine.setPen(theme.plot_color)
+        if self.plotLine:
+            self.plotLine.setPen(theme.plot_color)
 
         if self.theme is None or self.theme.connectPoints != theme.connectPoints:
             update = True

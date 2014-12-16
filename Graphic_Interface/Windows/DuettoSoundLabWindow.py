@@ -12,11 +12,10 @@ from pyqtgraph.parametertree import Parameter, ParameterTree
 from PyQt4.QtGui import QDialog, QMessageBox, QFileDialog, QActionGroup, QAction
 from PyQt4.QtCore import pyqtSlot, QMimeData, pyqtSignal, QTimer
 from duetto.dimensional_transformations.two_dimensional_transforms.Spectrogram.WindowFunctions import WindowFunction
-
 from Utils.Utils import folderFiles, saveImage
 from graphic_interface.windows.ParameterList import DuettoListParameterItem
 from graphic_interface.dialogs.NewFileDialog import NewFileDialog
-from graphic_interface.windows.PowerSpectrumWindow import PowerSpectrumWindow
+from graphic_interface.windows.OneDimensionalAnalysisWindow import OneDimensionalAnalysisWindow
 from SegmentationAndClasificationWindow import SegmentationAndClasificationWindow
 from MainWindow import Ui_DuettoMainWindow
 from graphic_interface.dialogs import InsertSilenceDialog as sdialog, FilterOptionsDialog as filterdg, \
@@ -84,12 +83,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.hist.item.region.sigRegionChanged.connect(self.updateRegionTheme)
         self.hist.item.gradient.sigGradientChanged.connect(self.histogramGradientChanged)
 
-        # TODO rearrange this visual options that must be inside the theme
-        self.pow_spec_lines = True
-        self.pow_spec_maxY = 5
-        self.pow_spec_minY = -50
-        self.NFFT_pow = 512
-
         # the path to the last opened file signal used to
         # give higher user friendly interaction on file search
         self.last_opened_signal_path = ''
@@ -141,8 +134,8 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                  u'values': [(unicode(self.tr(u'Automatic')), 512), (u"8192", 8192), (u"128", 128), (u"256", 256),
                              (u"512", 512), (u"1024", 1024)], u'value': u'512'},
                 {u'name': unicode(self.tr(u'FFT window')), u'type': u'list',
-                 u'value': self.widget.axesSpecgram.specgramHandler.window,
-                 u'default': self.widget.axesSpecgram.specgramHandler.window,
+                 u'value': WindowFunction.Rectangular,
+                 u'default': WindowFunction.Rectangular,
                  u'values': [(u'Bartlett', WindowFunction.Bartlett),
                              (u"Blackman", WindowFunction.Blackman),
                              (u"Hamming", WindowFunction.Hamming),
@@ -331,8 +324,10 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         # get the signal to analyze in segmentation window
         # could be the currently visible signal or the selected by zoom tool
+
         indexFrom, indexTo = self.widget.getIndexFromAndTo()
         signal = self.widget.signal
+
         if indexTo > indexFrom:
             signal = signal.copy(indexFrom, indexTo)
 
@@ -543,11 +538,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                     unicode(self.tr(u'Background color')):
                 self.workTheme.spectrogramTheme.background_color = data
                 loadTheme = True
-
-            # elif childName == unicode(self.tr(u'Spectrogram Settings')) + u"." + \
-            # unicode(self.tr(u'ColorMap')):
-            # self.widget.axesSpecgram.getHistogramWidget().item._pixelVectorCache.append(data)
-
             elif childName == unicode(self.tr(u'Spectrogram Settings')) + u"." + \
                     unicode(self.tr(u'Frequency(kHz)')) + u"." + \
                     unicode(self.tr(u'Min')):
@@ -1057,7 +1047,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         :return:
         """
         if self.widget.undoRedoManager.count() > 0:
-            #if any action was made then ask for save the signal
+            # if any action was made then ask for save the signal
             mbox = QtGui.QMessageBox(QtGui.QMessageBox.Question, self.tr(u"Save"),
                                      self.tr(u"Do you want to save the signal?"),
                                      QtGui.QMessageBox.Yes | QtGui.QMessageBox.No | QtGui.QMessageBox.Cancel, self)
@@ -1345,10 +1335,10 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                                       self.tr(u"One of the plot widgets is not visible.") + " \n" + self.tr(
                                           u"You should see the data that you are going to save."))
 
-    #endregion
+    # endregion
 
-    # region Onedimensional Transforms
-    def updatePowSpecWin(self):
+    # region One dimensional Transforms
+    def updateOneDimWindow(self):
         """
         Update the current interval of visualization/processing
         of the signal in the opened one dimensional windows
@@ -1356,7 +1346,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         """
         indexFrom, indexTo = self.widget.getIndexFromAndTo()
         for win in self.one_dim_windows:
-            win.updatePowSpectrumInterval([indexFrom, indexTo])
+            win.updateGraph(indexFrom, indexTo)
 
     @pyqtSlot()
     def on_actionPower_Spectrum_triggered(self):
@@ -1364,24 +1354,22 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         Create a one dimensional transform window and show it.
         :return:
         """
-        indexFrom, indexTo = self.widget.getIndexFromAndTo()
-        dg_pow_spec = PowerSpectrumWindow(self, self.pow_spec_lines, self.widget.signal.data,
-                                          [indexFrom, indexTo],
-                                          self.widget.specgramSettings.NFFT,
-                                          self.workTheme,
-                                          self.widget.signal.samplingRate,
-                                          self.widget.signal.bitDepth,
-                                          self.widget.updateBothZoomRegions)
 
-        #store the opened one dimensional transform windows for handling
-        self.one_dim_windows.append(dg_pow_spec)
+        one_dim_window = OneDimensionalAnalysisWindow(self)
+        one_dim_window.signal = self.widget.signal
+        one_dim_window.load_Theme(self.workTheme.oscillogramTheme)
+        one_dim_window.graph()
 
-    #endregion
+        # store the opened one dimensional transform windows for handling
+        self.one_dim_windows.append(one_dim_window)
+
+
+    # endregion
 
     # region Scroll Bar Range
-    #TODO comentar e implementar esta parte
+    # TODO comentar e implementar esta parte
     # manipulation of the scrool bar to set the range
-    #of visualization of the signal on the widget
+    # of visualization of the signal on the widget
 
     @pyqtSlot(int, int, int)
     def on_widget_rangeChanged(self, left, right, total):

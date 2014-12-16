@@ -11,7 +11,7 @@ app = QApplication([])
 # w = SoundLabSpectrogramWidget()
 w = QSignalVisualizerWidget()
 
-s = WavStreamManager().read(open("1.wav"))
+s = WavStreamManager().read(open("example.wav"))
 
 # # t = QTimer()
 # # t.timeout.connect(w.c)

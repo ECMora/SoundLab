@@ -329,4 +329,3 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         QSignalVisualizerWidget.graph(self)
         if self.visibleElements:
             self.drawElements()
-
