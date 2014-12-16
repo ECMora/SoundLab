@@ -1,5 +1,4 @@
 from unittest import TestCase
-
 from graphic_interface.widgets.undo_redo_actions.UndoRedoActions import UndoRedoManager,UndoRedoAction
 
 
