@@ -26,6 +26,7 @@ class SoundLabWidget:
     def changeTool(self, new_tool_class):
         if new_tool_class is None:
             raise Exception("The user visual tool can't be None")
+
         # check that new tool is descendant of Tools
         if not issubclass(new_tool_class, SignalVisualizerTool):
             raise Exception("The tool must be of type SignalVisualizerTool")
@@ -33,6 +34,7 @@ class SoundLabWidget:
         if self.gui_user_tool is not None:
             #remove old data and release resources from the tool operation
             self.gui_user_tool.dispose()
+
         self.gui_user_tool = new_tool_class(self)
         self.gui_user_tool.detectedDataChanged.connect(self.guiToolDetectedData)
 

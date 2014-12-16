@@ -9,15 +9,15 @@ from signal_visualizer_tools.SpectrogramTools.SpectrogramZoomTool import Spectro
 
 class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
     # Signal raised when a tool wants to make a change on the range of visualization
-    #of it's widget.
-    #raise the limits of the new range x1, x2
+    # of it's widget.
+    # raise the limits of the new range x1, x2
     # x1 => start value in x axis
     # x2 => end value in x axis
     rangeChanged = QtCore.pyqtSignal(int, int)
 
     # Signal raised when a tool made a change on the signal data
-    #and the widget must refresh it self
-    #raise the limits of the modified range x1, x2 in signal data indexes
+    # and the widget must refresh it self
+    # raise the limits of the modified range x1, x2 in signal data indexes
     signalChanged = QtCore.pyqtSignal(int, int)
 
     # Signal raised when a tool made a medition and has new data to show
@@ -27,8 +27,8 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
         SpectrogramWidget.__init__(self)
         SoundLabWidget.__init__(self)
 
-        #parche para capturar los eventos visuales del control
-        #TODO averiguar por que razon no se envian los eventos correctamente al widget
+        # parche para capturar los eventos visuales del control
+        # TODO averiguar por que razon no se envian los eventos correctamente al widget
         self.graphics_view.mouseMoveEvent = self.mouseMoveEvent
         self.graphics_view.mouseReleaseEvent = self.mouseReleaseEvent
         self.graphics_view.mouseDoubleClickEvent = self.mouseDoubleClickEvent
@@ -97,3 +97,9 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
         self.viewBox.setYRange(self.minY,
                                self.maxY,
                               padding=0)
+
+    def from_osc_to_spec(self,coord):
+        return self.specgramHandler.from_osc_to_spec(coord)
+
+    def from_spec_to_osc(self,coord):
+        return self.specgramHandler.from_spec_to_osc(coord)

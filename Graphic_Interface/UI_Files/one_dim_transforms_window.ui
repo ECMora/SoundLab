@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>PowSpecWindow</class>
- <widget class="QMainWindow" name="PowSpecWindow">
+ <class>OneDimensionalWindow</class>
+ <widget class="QMainWindow" name="OneDimensionalWindow">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -34,23 +34,11 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="PowSpecPlotWidget" name="widget" native="true"/>
+     <widget class="OneDimPlotWidget" name="widget" native="true"/>
     </item>
    </layout>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <widget class="QToolBar" name="toolBar">
-   <property name="windowTitle">
-    <string>toolBar</string>
-   </property>
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-   <addaction name="actionOneDimFunctSettings"/>
-  </widget>
   <widget class="QDockWidget" name="dockSettings">
    <property name="features">
     <set>QDockWidget::DockWidgetFloatable|QDockWidget::DockWidgetMovable</set>
@@ -66,21 +54,12 @@
    </attribute>
    <widget class="QWidget" name="dock_settings_contents"/>
   </widget>
-  <action name="actionOneDimFunctSettings">
-   <property name="icon">
-    <iconset resource="resources/icons.qrc">
-     <normaloff>:/myappicons/ColorSync Utility.png</normaloff>:/myappicons/ColorSync Utility.png</iconset>
-   </property>
-   <property name="text">
-    <string>OneDimFunctSettings</string>
-   </property>
-  </action>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>PowSpecPlotWidget</class>
+   <class>OneDimPlotWidget</class>
    <extends>QWidget</extends>
-   <header location="global">PowSpecPlotWidget.h</header>
+   <header location="global">..widgets.OneDimensionalPlotWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

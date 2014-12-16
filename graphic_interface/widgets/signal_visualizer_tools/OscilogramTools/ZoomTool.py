@@ -25,6 +25,8 @@ class ZoomTool(SignalVisualizerTool):
         # transform the selected region in logical widget graph coordinates
         minx, maxx = self.fromClientToCanvas(rgn[0]), self.fromClientToCanvas(rgn[1])
 
+        # update the zoom region
+
         if abs(minx - event.x()) < self.PIXELS_OF_CURSORS_CHANGES or \
                abs(maxx - event.x()) < self.PIXELS_OF_CURSORS_CHANGES:
 

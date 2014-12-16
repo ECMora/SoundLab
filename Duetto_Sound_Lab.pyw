@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
-import PyQt4.phonon as phonon
 import os,hashlib
 from graphic_interface.windows.DuettoSoundLabWindow import DuettoSoundLabWindow
 from graphic_interface.windows.PresentationSlogan.presentation import Ui_MainWindow
