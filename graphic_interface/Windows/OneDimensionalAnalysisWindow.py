@@ -13,7 +13,7 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
     """
     DOCK_OPTIONS_WIDTH = 250
 
-    def __init__(self,parent=None):
+    def __init__(self,parent=None,signal=None):
         super(OneDimensionalAnalysisWindow, self).__init__(parent)
         self.setupUi(self)
         self.show()
@@ -22,6 +22,15 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
         self.statusbar = self.statusBar()
         self.statusbar.setSizeGripEnabled(False)
         self.widget.toolDataDetected.connect(self.updateStatusBar)
+
+        self._signal = None
+
+        if signal is None:
+            raise Exception("Signal can't be None.")
+
+        # set a default one dim transform to the widget
+        self.widget.transform = Envelope()
+        self.signal = signal
 
         # Parameter Tree Settings
         self.__createParameterTree()
@@ -34,12 +43,32 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
         """
         self.widget.load_Theme(theme)
 
+    # region Properties Signal
+    @property
+    def signal(self):
+        return self._signal
+
+    @signal.setter
+    def signal(self, new_signal):
+        """
+        Modify and update the internal variables that uses the signal.
+
+        :param new_signal: the new AudioSignal
+        :raise Exception: If signal is not of type AudioSignal
+        """
+        if new_signal is None or not isinstance(new_signal, AudioSignal):
+            raise Exception("Invalid assignation value. Must be of type AudioSignal")
+
+        self._signal = new_signal
+        self.widget.signal = self.signal
+        if self.widget.transform is not None:
+            self.widget.transform.signal = self.signal
+
+    # endregion
+
     # region Graph
 
-    def graph(self):
-        self.widget.graph()
-
-    def updateGraph(self, indexFrom, indexTo):
+    def graph(self, indexFrom=0, indexTo=-1):
         """
         Update the graph of the one dimensional
         selected transformation in the signal interval supplied.
@@ -48,7 +77,8 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
         :param indexTo: end of the interval in signal data indexes
         :return:
         """
-        pass
+        indexTo = indexTo if indexTo >=0 else self.signal.length
+        self.widget.graph(indexFrom, indexTo)
 
     # endregion
 
@@ -86,9 +116,6 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
 
         # connect the signals to react when a change of transform is made
         self.ParamTree.param(unicode(self.tr(u'One_Dim_Transform'))).sigValueChanged.connect(self.changeTransform)
-
-        # set a default one dim transform to the widget
-        self.widget.transform = Envelope()
 
         # reload the new widgets transform options
         self.reloadOptionsWidget(self.widget.transform)
@@ -130,9 +157,11 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
 
         transform_class = parameter.value()
 
-        self.widget.transform = transform_class()
+        self.widget.transform = transform_class(self.signal)
 
         self.reloadOptionsWidget(self.widget.transform)
+
+        self.graph()
 
     # endregion
 
