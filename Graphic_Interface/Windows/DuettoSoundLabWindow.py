@@ -1346,7 +1346,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         """
         indexFrom, indexTo = self.widget.getIndexFromAndTo()
         for win in self.one_dim_windows:
-            win.updateGraph(indexFrom, indexTo)
+            win.graph(indexFrom, indexTo)
 
     @pyqtSlot()
     def on_actionPower_Spectrum_triggered(self):
@@ -1355,8 +1355,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         :return:
         """
 
-        one_dim_window = OneDimensionalAnalysisWindow(self)
-        one_dim_window.signal = self.widget.signal
+        one_dim_window = OneDimensionalAnalysisWindow(self,self.widget.signal)
         one_dim_window.load_Theme(self.workTheme.oscillogramTheme)
         one_dim_window.graph()
 

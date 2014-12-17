@@ -1,15 +1,19 @@
 from PyQt4.QtCore import QObject
 from matplotlib import mlab
+import numpy as np
 from pyqtgraph.parametertree.parameterTypes import ListParameter
 from pyqtgraph.parametertree import Parameter, ParameterTree
+from duetto.audio_signals import AudioSignal
 from graphic_interface.windows.ParameterList import DuettoListParameterItem
 from duetto.dimensional_transformations.two_dimensional_transforms.Spectrogram.WindowFunctions import WindowFunction
 
 
 class OneDimensionalFunction(QObject):
-    def __init__(self):
+    def __init__(self, signal=None):
         QObject.__init__(self)
         self._parameterTree = self._getParameterTree()
+
+        self._signal = signal
 
     def _getParameterTree(self):
         """
@@ -19,6 +23,7 @@ class OneDimensionalFunction(QObject):
         """
         pass
 
+    # region Properties signal, settings
     @property
     def settings(self):
         """
@@ -29,18 +34,36 @@ class OneDimensionalFunction(QObject):
         """
         return self._parameterTree
 
-    def getData(self,array):
+    @property
+    def signal(self):
+        return self._signal
+
+    @signal.setter
+    def signal(self, new_signal):
+        """
+        Modify and update the internal variables that uses the signal.
+        :param new_signal: the new AudioSignal
+        :raise Exception: If signal is not of type AudioSignal
+        """
+        if new_signal is None or not isinstance(new_signal, AudioSignal):
+            raise Exception("Invalid assignation value. Must be of type AudioSignal")
+        self._signal = new_signal
+
+    # endregion
+
+    def getData(self, indexFrom, indexTo):
         """
         Computes and returns the one dimensional transform
-        over the signal data.
-        :param array: the array of signal data to process.
+        over the signal data in the supplied interval.
+        :param indexFrom: the start of the signal interval to process in signal array data indexes.
+        :param indexTo: the end of the signal interval to process in signal array data indexes..
         """
-        pass
+        return np.zeros(indexTo-indexFrom)
 
 
 class AveragePowSpec(OneDimensionalFunction):
-    def __init__(self):
-        OneDimensionalFunction.__init__(self)
+    def __init__(self, signal=None):
+        OneDimensionalFunction.__init__(self, signal=None)
 
     def _getParameterTree(self):
         params = [ {u'name': unicode(self.tr(u'Power spectrum(Average)')), u'type': u'group',
@@ -125,8 +148,8 @@ class AveragePowSpec(OneDimensionalFunction):
 
 
 class LogarithmicPowSpec(OneDimensionalFunction):
-    def __init__(self):
-        OneDimensionalFunction.__init__(self)
+    def __init__(self, signal=None):
+        OneDimensionalFunction.__init__(self, signal=None)
 
     def _getParameterTree(self):
         params = [{u'name': unicode(self.tr(u'Power spectrum(Logarithmic)')), u'type':
@@ -206,8 +229,8 @@ class LogarithmicPowSpec(OneDimensionalFunction):
 
 
 class Envelope(OneDimensionalFunction):
-    def __init__(self):
-        OneDimensionalFunction.__init__(self)
+    def __init__(self, signal=None):
+        OneDimensionalFunction.__init__(self, signal=None)
 
     def _getParameterTree(self):
         params = [{u'name': unicode(self.tr(u'Envelope')), u'type': u'group',
@@ -228,20 +251,14 @@ class Envelope(OneDimensionalFunction):
 
         return parameterTree
 
+    def getData(self,indexFrom, indexTo):
+        envelope = self.abs_decay_averaged_envelope(self.signal.data[indexFrom:indexTo])
+        return envelope
+
     def connectMySignal(self,pTree):
         OneDimensionalFunction.connectMySignal(self,pTree)
         self.pTree.param(unicode(self.tr(u'Envelope')), unicode(self.tr(u'Apply Function'))).sigActivated.connect(self.processing)
 
-    def processing(self):
-        OneDimensionalFunction.processing(self)
-        max = self.pTree.param(unicode(self.tr(u'Envelope'))).param(unicode(self.tr(u'Amplitude')))\
-                  .param(unicode(self.tr(u'Max'))).value() * 0.01 * np.amax(self.widget.data)
-
-        envelope = self.abs_decay_averaged_envelope(self.widget.data)
-        # envelopeFactor = (2.0 ** (self.widget.bitdepth) * max / 100) / envelope[np.argmax(envelope)]
-        # data = (envelopeFactor * envelope - 2 ** (self.widget.bitdepth - 1) * max / 100)
-
-        self.widget.plot(envelope)
 
     def abs_decay_averaged_envelope(self,data, decay=1,softfactor=6,progress= None,position= (5,15),type="sin"):
         """
@@ -286,8 +303,8 @@ class Envelope(OneDimensionalFunction):
 
 
 class InstantaneousFrequencies(OneDimensionalFunction):
-    def __init__(self):
-        OneDimensionalFunction.__init__(self)
+    def __init__(self, signal=None):
+        OneDimensionalFunction.__init__(self, signal=None)
 
     def _getParameterTree(self):
         params = [{u'name': unicode(self.tr(u'Instantaneous Frequency')), u'type':
@@ -302,11 +319,6 @@ class InstantaneousFrequencies(OneDimensionalFunction):
         parameterTree.setParameters(ParamTree, showTop=False)
 
         return parameterTree
-
-
-    def connectMySignal(self,pTree):
-        OneDimensionalFunction.connectMySignal(self,pTree)
-        self.pTree.param(unicode(self.tr(u'Instantaneous Frequency')), unicode(self.tr(u'Apply Function'))).sigActivated.connect(self.processing)
 
     def processing(self):
         OneDimensionalFunction.processing(self)
