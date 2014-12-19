@@ -41,6 +41,7 @@ class OneDimPlotWidget(SoundLabOscillogramWidget):
 
         self.transform.signal = self.signal
 
+        self.transform.dataChanged.connect(self.graph)
 
     # endregion
 

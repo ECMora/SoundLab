@@ -2,7 +2,6 @@
 import os
 import pickle
 from duetto.audio_signals import AudioSignal
-
 from PyQt4 import QtGui
 from duetto.audio_signals.Synthesizer import Synthesizer
 from duetto.signal_processing.filter_signal_processors.frequency_domain_filters import BandPassFilter, HighPassFilter, \
@@ -234,36 +233,49 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         # accept drops to open signals by drop
         self.setAcceptDrops(True)
 
-        # create the separators for the context menu
-        separator, separator2, separator3, separator4 = QtGui.QAction(self), QtGui.QAction(self), QtGui.QAction(
-            self), QtGui.QAction(self)
-        separator.setSeparator(True)
-        separator2.setSeparator(True)
-        separator3.setSeparator(True)
-        separator4.setSeparator(True)
+        # region Context Menu Actions
 
-        # include the context menu actions into the widget
-        self.widget.createContextCursor([self.actionCopy,
-                                         self.actionCut,
-                                         self.actionPaste,
-                                         separator,
-                                         self.actionNegative_Values,
-                                         self.actionPositive_Values,
-                                         self.actionChange_Sign,
-                                         separator2,
-                                         self.action_Reverse,
-                                         self.actionSilence,
-                                         self.actionInsert_Silence,
-                                         separator3,
-                                         self.actionZoom_Cursor,
-                                         self.actionPointer_Cursor,
-                                         self.actionRectangular_Cursor,
-                                         self.actionRectangular_Eraser,
-                                         separator4,
-                                         self.actionOsc_Image,
-                                         self.actionSpecgram_Image,
-                                         self.actionCombined_Image
+        # create the separators for the context menu
+        separator, separator2, separator3, separator4 = [QtGui.QAction(self) for _ in range(4)]
+
+        for sep in [separator, separator2, separator3, separator4]:
+            sep.setSeparator(True)
+
+        # add actions to the context menu
+        self.widget.createContextCursor([
+
+            # Edition Actions
+            self.actionCopy,
+            self.actionCut,
+            self.actionPaste,
+            separator,
+
+            # Signal Data Sign Actions
+            self.actionNegative_Values,
+            self.actionPositive_Values,
+            self.actionChange_Sign,
+            separator2,
+
+            # common signal processing actions
+            self.action_Reverse,
+            self.actionSilence,
+            self.actionInsert_Silence,
+            separator3,
+
+            # Tools
+            self.actionZoom_Cursor,
+            self.actionPointer_Cursor,
+            self.actionRectangular_Cursor,
+            self.actionRectangular_Eraser,
+            separator4,
+
+            # widgets images
+            self.actionOsc_Image,
+            self.actionSpecgram_Image,
+            self.actionCombined_Image
         ])
+        # endregion
+
         # set a name for the default signal
         # action signal is a place in the tool bar to show the current signal name
         self.actionSignalName.setText("")
@@ -1357,11 +1369,12 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         one_dim_window = OneDimensionalAnalysisWindow(self,self.widget.signal)
         one_dim_window.load_Theme(self.workTheme.oscillogramTheme)
-        one_dim_window.graph()
+
+        indexFrom, indexTo = self.widget.getIndexFromAndTo()
+        one_dim_window.graph(indexFrom, indexTo)
 
         # store the opened one dimensional transform windows for handling
         self.one_dim_windows.append(one_dim_window)
-
 
     # endregion
 

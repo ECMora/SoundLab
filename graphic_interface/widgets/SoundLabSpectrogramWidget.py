@@ -43,7 +43,7 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
             self.gui_user_tool.rangeChanged.connect(self.changeRangeSignal)
             self.gui_user_tool.signalChanged.connect(self.updateSignalManager)
 
-    def updateSignal(self,x1, x2):
+    def updateSignal(self, x1, x2):
         """
         Update the visible data of the signal.
         :param x1:
@@ -55,7 +55,7 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
         self.updateSignal(x1, x2)
         self.signalChanged.emit(x1, x2)
 
-    def changeRange(self,x1,x2,y1=0,y2=0):
+    def changeRange(self, x1, x2, y1=0, y2=0):
         self.graph(x1, x2)
 
     def changeRangeSignal(self, x1, x2, y1, y2):
@@ -70,6 +70,7 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
 
         # set background color
         self.graphics_view.setBackground(theme.background_color)
+
         # set grid lines
         self.xAxis.setGrid(88 if theme.gridX else 0)
         self.yAxis.setGrid(88 if theme.gridY else 0)
@@ -98,8 +99,8 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
                                self.maxY,
                               padding=0)
 
-    def from_osc_to_spec(self,coord):
+    def from_osc_to_spec(self, coord):
         return self.specgramHandler.from_osc_to_spec(coord)
 
-    def from_spec_to_osc(self,coord):
+    def from_spec_to_osc(self, coord):
         return self.specgramHandler.from_spec_to_osc(coord)

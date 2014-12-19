@@ -1,4 +1,4 @@
-from PyQt4.QtCore import QObject
+from PyQt4.QtCore import QObject, pyqtSignal
 from matplotlib import mlab
 import numpy as np
 from pyqtgraph.parametertree.parameterTypes import ListParameter
@@ -9,6 +9,15 @@ from duetto.dimensional_transformations.two_dimensional_transforms.Spectrogram.W
 
 
 class OneDimensionalFunction(QObject):
+    """
+
+    """
+
+    # SIGNALS
+    # signal raised when the parameters of the transform change
+    # and the transform data must be recomputed
+    dataChanged = pyqtSignal()
+
     def __init__(self, signal=None):
         QObject.__init__(self)
         self._parameterTree = self._getParameterTree()
@@ -21,7 +30,31 @@ class OneDimensionalFunction(QObject):
         :return: returns the parameter tree with the visual options
         for the user interaction of the one dimensional function
         """
-        pass
+        return self._createParameterTree(self._createParameter([]))
+
+    def _createParameter(self, params):
+        """
+        create and returns a parameter tree with the params supplied
+        :param params:
+        :return:
+        """
+        ListParameter.itemClass = DuettoListParameterItem
+        ParamTree = Parameter.create(name=u'params', type=u'group', children=params)
+        return ParamTree
+
+    def _createParameterTree(self,parameter):
+        """
+        Create the parameter tree widget with the parameter supplied
+        :param parameter: The pyqtgraph Parameter to insert in the tree widget
+        :return:
+        """
+        parameterTree = ParameterTree()
+        parameterTree.setAutoScroll(True)
+        parameterTree.setHeaderHidden(True)
+        parameterTree.setParameters(parameter, showTop=False)
+
+        return parameterTree
+
 
     # region Properties signal, settings
     @property
@@ -61,9 +94,120 @@ class OneDimensionalFunction(QObject):
         return np.zeros(indexTo-indexFrom)
 
 
+class Envelope(OneDimensionalFunction):
+    def __init__(self, signal=None):
+        # the parameter object with the set of parameters
+        self.parameter = None
+
+        self.decay = 1.00
+        self.softfactor = 6
+        self.function_type = "sin"
+
+        OneDimensionalFunction.__init__(self, signal=signal)
+
+
+
+    def _getParameterTree(self):
+        params = [{u'name': unicode(self.tr(u'Envelope')), u'type': u'group',
+                   u'children': [
+                       {u'name': unicode(self.tr(u'Decay (ms)')), u'type': u'float', u'value': 1.00, u'step': 0.5},
+                       {u'name': unicode(self.tr(u'Soft Factor')), u'type': u'int', u'value': 6, u'step': 1}
+
+                   ]}]
+
+        self.parameter = self._createParameter(params)
+
+        # connect to register the changes on the param tree
+        self.parameter.sigTreeStateChanged.connect(self.parameterChanged)
+
+        return self._createParameterTree(self.parameter)
+
+    def parameterChanged(self, param, changes):
+        """
+        Method that listen to the changes on the parameter tree and change the
+        internal variables.
+        :param param: The parameter tree
+        :param changes: the changes made
+        :return:
+        """
+        if self.parameter is None:
+            return
+
+        data_changed = False
+
+        for param, change, data in changes:
+            path = self.parameter.childPath(param)
+            if path is not None:
+                childName = '.'.join(path)
+            else:
+                childName = param.name()
+
+            if childName == unicode(self.tr(u'Envelope')) + \
+                    u'.' + unicode(self.tr(u'Decay (ms)'))and self.decay != data:
+
+                self.decay = data
+                data_changed = True
+
+            elif childName == unicode(self.tr(u'Envelope')) + \
+                    u'.' + unicode(self.tr(u'Soft Factor')) and self.softfactor != data:
+
+                self.softfactor = data
+                data_changed = True
+
+            elif childName == unicode(self.tr(u'Envelope')) + \
+                    u'.' + unicode(self.tr(u'Envelope.Function Type')) and self.function_type != data:
+                self.function_type = data
+                data_changed = True
+
+        if data_changed:
+            self.dataChanged.emit()
+
+    def getData(self, indexFrom, indexTo):
+            envelope = self.abs_decay_averaged_envelope(self.signal.data[indexFrom:indexTo], self.decay, self.softfactor,
+                                                        self.function_type)
+            return envelope
+
+    def abs_decay_averaged_envelope(self, data, decay=1, softfactor=6, type="sin"):
+            """
+            decay is the min number of samples in data that separates two elements
+            """
+
+            rectified = np.array(abs(data))
+
+            i = 1
+            arr = np.zeros(len(rectified), dtype=np.int32)
+            current = rectified[0]
+            fall_init = None
+            progress_size = len(arr) / 8.0
+
+            while i < len(arr):
+                if fall_init is not None:
+                    value = rectified[fall_init]
+                    if type == "lineal":
+                        value -= rectified[fall_init] * (i - fall_init) / decay  # lineal
+                    elif type == "sin":
+                        value = rectified[fall_init] * np.sin(((i - fall_init) * 1.0 * np.pi) / (decay * 2) + np.pi / 2)
+                    elif type == "cuadratic":
+                        value = rectified[fall_init] * (1 - ((i - fall_init) * 1.0) / decay) ** 2
+
+                    arr[i - 1] = max(value, rectified[i])
+                    fall_init = None if (value <= rectified[i] or i - fall_init >= decay) else fall_init
+                else:
+                    fall_init = i - 1 if rectified[i] < current else None
+                    arr[i - 1] = current
+                current = rectified[i]
+                i += 1
+
+            arr[-1] = current
+
+            if softfactor > 1:
+                return np.array([np.mean(arr[i - softfactor:i]) for i, _ in enumerate(arr, start=softfactor)])
+            return arr
+
+
 class AveragePowSpec(OneDimensionalFunction):
     def __init__(self, signal=None):
-        OneDimensionalFunction.__init__(self, signal=None)
+        OneDimensionalFunction.__init__(self, signal=signal)
 
     def _getParameterTree(self):
         params = [ {u'name': unicode(self.tr(u'Power spectrum(Average)')), u'type': u'group',
@@ -85,15 +229,9 @@ class AveragePowSpec(OneDimensionalFunction):
                     {u'name': unicode(self.tr(u'FFT overlap')), u'type': u'int',
                      u'value':50, u'limits': (-1, 99)}]}]
 
-        ListParameter.itemClass = DuettoListParameterItem
-        ParamTree = Parameter.create(name=u'params', type=u'group', children=params)
+        parameter = self._createParameter(params)
 
-        parameterTree = ParameterTree()
-        parameterTree.setAutoScroll(True)
-        parameterTree.setHeaderHidden(True)
-        parameterTree.setParameters(ParamTree, showTop=False)
-
-        return parameterTree
+        return self._createParameterTree(parameter)
 
     def connectMySignal(self,pTree):
         self.pTree = pTree
@@ -149,7 +287,7 @@ class AveragePowSpec(OneDimensionalFunction):
 
 class LogarithmicPowSpec(OneDimensionalFunction):
     def __init__(self, signal=None):
-        OneDimensionalFunction.__init__(self, signal=None)
+        OneDimensionalFunction.__init__(self, signal=signal)
 
     def _getParameterTree(self):
         params = [{u'name': unicode(self.tr(u'Power spectrum(Logarithmic)')), u'type':
@@ -165,15 +303,9 @@ class LogarithmicPowSpec(OneDimensionalFunction):
                          (u"Rectangular", WindowFunction.Rectangular)]}
         ]}]
 
-        ListParameter.itemClass = DuettoListParameterItem
-        ParamTree = Parameter.create(name=u'params', type=u'group', children=params)
+        parameter = self._createParameter(params)
 
-        parameterTree = ParameterTree()
-        parameterTree.setAutoScroll(True)
-        parameterTree.setHeaderHidden(True)
-        parameterTree.setParameters(ParamTree, showTop=False)
-
-        return parameterTree
+        return self._createParameterTree(parameter)
 
     def connectMySignal(self,pTree):
         OneDimensionalFunction.connectMySignal(self,pTree)
@@ -228,80 +360,6 @@ class LogarithmicPowSpec(OneDimensionalFunction):
                           + ': {1}dB', np.round(info[0], 1), np.round(info[1], 1))
 
 
-class Envelope(OneDimensionalFunction):
-    def __init__(self, signal=None):
-        OneDimensionalFunction.__init__(self, signal=None)
-
-    def _getParameterTree(self):
-        params = [{u'name': unicode(self.tr(u'Envelope')), u'type': u'group',
-                  u'children': [
-            {u'name':unicode(self.tr(u'Amplitude')), u'type':u'group', u'children':[
-                    {u'name':unicode(self.tr(u'Min')), u'type':u'float', u'value': -100, u'step': 0.1, 'default': -100},
-                    {u'name':unicode(self.tr(u'Max')), u'type':u'float', u'value': 100, u'step': 0.1, 'default': 100}
-                ]}]}]
-
-
-        ListParameter.itemClass = DuettoListParameterItem
-        ParamTree = Parameter.create(name=u'params', type=u'group', children=params)
-
-        parameterTree = ParameterTree()
-        parameterTree.setAutoScroll(True)
-        parameterTree.setHeaderHidden(True)
-        parameterTree.setParameters(ParamTree, showTop=False)
-
-        return parameterTree
-
-    def getData(self,indexFrom, indexTo):
-        envelope = self.abs_decay_averaged_envelope(self.signal.data[indexFrom:indexTo])
-        return envelope
-
-    def connectMySignal(self,pTree):
-        OneDimensionalFunction.connectMySignal(self,pTree)
-        self.pTree.param(unicode(self.tr(u'Envelope')), unicode(self.tr(u'Apply Function'))).sigActivated.connect(self.processing)
-
-
-    def abs_decay_averaged_envelope(self,data, decay=1,softfactor=6,progress= None,position= (5,15),type="sin"):
-        """
-        decay is the min number of samples in data that separates two elements
-        """
-        progress_interval = position[1]-position[0]
-        if progress is not None:
-            progress(position[0]+progress_interval/10.0)
-        rectified = np.array(abs(data))
-        if progress is not None:
-            progress(position[0]+progress_interval/5.0)
-        i = 1
-        arr = np.zeros(len(rectified), dtype=np.int32)
-        current = rectified[0]
-        fall_init = None
-        progress_size = len(arr)/8.0
-
-        while i < len(arr):
-            if fall_init is not None:
-                value = rectified[fall_init]
-                if type=="lineal":
-                    value -= rectified[fall_init]*(i-fall_init)/decay #lineal
-                elif type=="sin":
-                    value = rectified[fall_init]*np.sin(((i-fall_init)*1.0*np.pi)/(decay*2)+np.pi/2)
-                elif type=="cuadratic":
-                    value = rectified[fall_init]*(1-((i-fall_init)*1.0)/decay)**2
-
-                arr[i-1] = max(value, rectified[i])
-                fall_init = None if(value <= rectified[i] or i-fall_init >= decay) else fall_init
-            else:
-                fall_init = i-1 if rectified[i] < current else None
-                arr[i-1] = current
-            current = rectified[i]
-            i += 1
-            if i % progress_size == 0 and progress is not None:
-                progress(position[0]+(i/progress_size)*progress_interval/10.0)
-        arr[-1] = current
-
-        if softfactor > 1:
-            return np.array([np.mean(arr[i-softfactor:i]) for i,_ in enumerate(arr, start=softfactor)])
-        return arr
-
-
 class InstantaneousFrequencies(OneDimensionalFunction):
     def __init__(self, signal=None):
         OneDimensionalFunction.__init__(self, signal=None)
@@ -310,15 +368,9 @@ class InstantaneousFrequencies(OneDimensionalFunction):
         params = [{u'name': unicode(self.tr(u'Instantaneous Frequency')), u'type':
             u'group', u'children':[]}]
 
-        ListParameter.itemClass = DuettoListParameterItem
-        ParamTree = Parameter.create(name=u'params', type=u'group', children=params)
+        parameter = self._createParameter(params)
 
-        parameterTree = ParameterTree()
-        parameterTree.setAutoScroll(True)
-        parameterTree.setHeaderHidden(True)
-        parameterTree.setParameters(ParamTree, showTop=False)
-
-        return parameterTree
+        return self._createParameterTree(parameter)
 
     def processing(self):
         OneDimensionalFunction.processing(self)

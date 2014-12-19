@@ -34,6 +34,10 @@ class QSignalVisualizerWidget(QWidget):
     #  Signal raised when a tool made a medition and has new data to show
     toolDataDetected = QtCore.pyqtSignal(str)
 
+    # signal raised whe there is signal interval selected (commonly by zoom tool)
+    # raise the limits of the interval in signal data array coordinates
+    signalIntervalSelected = QtCore.pyqtSignal(int,int)
+
     #  CONSTANTS
     #  the inverse of the amount of the visible area of the signal that must be
     #  visible after make a zoom IN
@@ -41,15 +45,30 @@ class QSignalVisualizerWidget(QWidget):
 
     def __init__(self, parent=None, **kwargs):
         QWidget.__init__(self, parent)
-        #  the two widgets in which are delegated the functions of time and frequency domain
+        #  the two widgets in which are delegated
+        #  the functions of time and frequency domain
         #  representation and visualization.
         self.axesOscilogram = SoundLabOscillogramWidget(**kwargs)
         self.axesSpecgram = SoundLabSpectrogramWidget(**kwargs)
 
+        # set the tool zoom as default
+        self.selectedTool = Tools.ZoomTool
+
+        # the cursor for the visualization of a piece of the signal
+        self.mainCursor = IntervalCursor(0, 0)
+
+        #  the zoom cursor
+        self.zoomCursor = IntervalCursor(0, 0)
+
         self.undoRedoManager = UndoRedoManager()
         self.undoRedoManager.actionExec.connect(lambda x: self.graph())
 
-        #  sincronization of the change range in the axes
+        # current signal to process and visualize
+        self.signal = Synthesizer.generateSilence()
+
+        self.setSelectedTool(self.selectedTool)
+
+        #  synchronization of the change range in the axes
         self.axesSpecgram.rangeChanged.connect(self.updateOscillogram)
         self.axesOscilogram.rangeChanged.connect(self.updateSpecgram)
 
@@ -63,9 +82,6 @@ class QSignalVisualizerWidget(QWidget):
         #  link the x axis of each widget to visualize the same x grid and ticks
         self.axesSpecgram.xAxis.linkToView(self.axesOscilogram.getViewBox())
 
-        #  set the tool zoom as default
-        self.setSelectedTool(Tools.ZoomTool)
-
         #  grouping the oscilogram and spectrogram widgets in the control
         layout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
@@ -74,15 +90,6 @@ class QSignalVisualizerWidget(QWidget):
         layout.setStretch(0, 1)
         layout.setStretch(1, 1)
         self.setLayout(layout)
-
-        #  the cursor for the visualization of a piece of the signal
-        self.mainCursor = IntervalCursor(0, 0)
-
-        #  the zoom cursor
-        self.zoomCursor = IntervalCursor(0, 0)
-
-        #  current signal to process and visualize
-        self.signal = Synthesizer.generateSilence()
 
         #  variables
         self._visibleOscillogram = True
@@ -119,7 +126,10 @@ class QSignalVisualizerWidget(QWidget):
             self.axesOscilogram.changeTool(OscilogramZoomTool)
             self.axesSpecgram.changeTool(SpectrogramZoomTool)
 
-            #  Set the connections for the zoom tool sincronization
+            # set the limits of the zoom regions to the length of the signal
+            self.updateZoomRegionsLimits()
+
+            #  Set the connections for the zoom tool synchronization
             self.axesOscilogram.gui_user_tool.zoomRegion.sigRegionChanged.connect(self.updateSpecZoomRegion)
             self.axesSpecgram.gui_user_tool.zoomRegion.sigRegionChanged.connect(self.updateOscZoomRegion)
 
@@ -135,6 +145,7 @@ class QSignalVisualizerWidget(QWidget):
         #      self.axesSpecgram.changeTool(tool)
         #      self.axesOscilogram.changeTool(tool)
         # update the current selected tool
+
         self.selectedTool = tool
 
     def load_Theme(self, theme):
@@ -171,6 +182,17 @@ class QSignalVisualizerWidget(QWidget):
     #  selected by the tool in the spectrogram when the oscilogram change his interval
     #  and vice versa.
 
+    def updateZoomRegionsLimits(self):
+        """
+        Set the limits of the zoom regions if the zoom tool is selected
+        :return:
+        """
+        if self.selectedTool == Tools.ZoomTool:
+            # set the limits of the zoom regions to the length of the signal
+            # self.axesOscilogram.gui_user_tool.zoomRegion.setRegion((0, self.signal.length))
+            # self.axesSpecgram.gui_user_tool.zoomRegion.setRegion((0, self.from_osc_to_spec(self.signal.length)))
+            pass
+
     def updateSpecZoomRegion(self):
         """
         Method that update the zoom region of
@@ -179,6 +201,7 @@ class QSignalVisualizerWidget(QWidget):
         :return:
         """
         self.updateZoomRegion(True)
+        signalIntervalSelected
 
     def updateOscZoomRegion(self):
         """
@@ -422,6 +445,9 @@ class QSignalVisualizerWidget(QWidget):
         #  update the signal on every widget
         self.axesOscilogram.signal = new_signal
         self.axesSpecgram.signal = new_signal
+
+        # update the zoom regions limit sif zoom tool is selected
+        self.updateZoomRegionsLimits()
 
         #  update the variables that manage the signal
         #  the audio signal handler to play options
