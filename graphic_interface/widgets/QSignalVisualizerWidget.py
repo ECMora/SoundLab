@@ -96,6 +96,7 @@ class QSignalVisualizerWidget(QWidget):
 
         self._recordTimer = QTimer(self)
         self._recordTimer.timeout.connect(self.on_newDataRecorded)
+        self.zoomNone()
 
     def updateOscillogram(self, x1, x2):
         self.axesOscilogram.changeRange(x1, x2)
@@ -494,6 +495,13 @@ class QSignalVisualizerWidget(QWidget):
         # update the two widgets visualizations
         self.axesOscilogram.graph(indexFrom=self.mainCursor.min, indexTo=self.mainCursor.max)
         self.axesSpecgram.graph(indexFrom=self.mainCursor.min, indexTo=self.mainCursor.max)
+
+        if self.selectedTool == Tools.ZoomTool:
+            if self.visibleSpectrogram:
+                self.axesSpecgram.gui_user_tool.zoomRegion.setRegion([0,0])
+            if self.visibleOscilogram:
+                self.axesOscilogram.gui_user_tool.setZoomRegionVisible(True)
+                self.axesOscilogram.gui_user_tool.zoomRegion.setRegion([0,0])
 
     #  endregion
 
