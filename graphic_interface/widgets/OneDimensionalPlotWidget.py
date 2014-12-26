@@ -49,4 +49,4 @@ class OneDimPlotWidget(SoundLabOscillogramWidget):
         # SoundLabOscillogramWidget.graph(self)
         if self.one_dim_transform is not None:
             self.clear()
-            self.plot(self.transform.getData(indexFrom, indexTo),pen=self.plot_color)
+            self.plot(self.transform.getData(indexFrom, indexTo), pen=self.plot_color)

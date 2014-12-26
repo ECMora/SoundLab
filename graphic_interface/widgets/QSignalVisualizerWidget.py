@@ -1,13 +1,14 @@
 # -*- coding: utf-8 -*-
 from PyQt4.QtGui import *
 from PyQt4 import QtCore, QtGui
-from duetto.audio_signals.audio_signals_stream_readers.FileManager import FileManager
+from duetto.audio_signals import openSignal
 import pyqtgraph as pg
 from PyQt4.QtCore import QTimer
 from duetto.audio_signals.AudioSignalPlayer import AudioSignalPlayer
 from duetto.audio_signals.AudioSignal import AudioSignal
 from SoundLabOscillogramWidget import SoundLabOscillogramWidget
 from SoundLabSpectrogramWidget import SoundLabSpectrogramWidget
+from duetto.audio_signals.audio_signals_stream_readers.FileManager import FileManager
 from duetto.signal_processing.filter_signal_processors.FilterSignalProcessor import FilterSignalProcessor
 from graphic_interface.widgets.signal_visualizer_tools.SignalVisualizerTool import Tools
 from graphic_interface.widgets.signal_visualizer_tools.OscilogramTools.ZoomTool import ZoomTool as OscilogramZoomTool
@@ -45,6 +46,8 @@ class QSignalVisualizerWidget(QWidget):
 
     def __init__(self, parent=None, **kwargs):
         QWidget.__init__(self, parent)
+
+        #  the order of variables initialization is relevant
         #  the two widgets in which are delegated
         #  the functions of time and frequency domain
         #  representation and visualization.
@@ -103,6 +106,7 @@ class QSignalVisualizerWidget(QWidget):
 
         self._recordTimer = QTimer(self)
         self._recordTimer.timeout.connect(self.on_newDataRecorded)
+        self.graph()
 
     def updateOscillogram(self, x1, x2):
         self.axesOscilogram.changeRange(x1, x2)
@@ -201,7 +205,6 @@ class QSignalVisualizerWidget(QWidget):
         :return:
         """
         self.updateZoomRegion(True)
-        signalIntervalSelected
 
     def updateOscZoomRegion(self):
         """
@@ -788,12 +791,14 @@ class QSignalVisualizerWidget(QWidget):
     def open(self, filename):
         if not filename:
             raise Exception("Invalid filename")
+
         try:
 
-            signal = FileManager().read(filename)
+            signal = openSignal(filename)
             # update signal
             self.signal = signal
             self.graph()
+
         except Exception as ex:
             raise ex
 
@@ -811,9 +816,13 @@ class QSignalVisualizerWidget(QWidget):
         """
         # get the interval limits
         indexF, indexTo = self.getIndexFromAndTo()
-        signal = self.signal.copy(indexF, indexTo)
 
-        FileManager().write(self._signal, fname)
+        try:
+            signal = self.signal.copy(indexF, indexTo)
+            FileManager().write(signal, fname)
+
+        except Exception as ex:
+            raise ex
 
     #  endregion
 

@@ -14,18 +14,27 @@ class UndoRedoManager(QObject):
     """
     Data structure for handling undo and redo actions.
     """
-    #signal that raise when an action is undo or redo
+
+    # signal that raise when an action is undo or redo
     actionExec = pyqtSignal(object)
 
     def __init__(self):
         QObject.__init__(self)
 
-        #initial space for actions
-        #list that stores the actions
+        # initial space for actions
+        # list that stores the actions
         self.__actionsList = [None] * 20
 
-        #index that points into the last action processed
+        # index that points into the last action processed
         self.__actionIndex = -1
+
+    @property
+    def actionIndex(self):
+        """
+        JUST FOR TESTING OPTIONS
+        :return:
+        """
+        return self.__actionIndex
 
     def undo(self):
         """
@@ -62,7 +71,7 @@ class UndoRedoManager(QObject):
         if len(self.__actionsList) <= self.__actionIndex:
             self.__actionsList = [self.__actionsList[i] if i < len(self.__actionsList) else None for i in range(2*len(self.__actionsList))]
         elif self.__actionIndex > 0:
-            #borrando las acciones que antes estaban por rehacer
+            # borrando las acciones que antes estaban por rehacer
             self.__actionsList[self.__actionIndex:] = [None] * (len(self.__actionsList) - self.__actionIndex)
         self.__actionsList[self.__actionIndex] = action
 
@@ -88,8 +97,8 @@ class UndoRedoAction(QObject):
     respectivily.
     """
     # SIGNALS
-    #signal raised when an action are performed and
-    #the signal size is changed. Raise the new changed signal
+    # signal raised when an action are performed and
+    # the signal size is changed. Raise the new changed signal
     signal_size_changed = pyqtSignal(object)
 
     def __init__(self):
