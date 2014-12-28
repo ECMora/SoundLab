@@ -1,11 +1,11 @@
 class OscillogramTheme:
-    def __init__(self, background_color="000", plot_color="CC3", gridX=True, gridY=True, connectPoints=True):  # , minY=-100, maxY=100):
+    def __init__(self, background_color="000", plot_color="CC3", gridX=True, gridY=True, connectPoints=True, minY=-100, maxY=100):
         self.background_color = background_color
         self.plot_color = plot_color
         self.gridX = gridX
         self.gridY = gridY
-        # self.minY = minY
-        # self.maxY = maxY
+        self.minY = minY
+        self.maxY = maxY
         self.connectPoints = connectPoints
 
     def copy(self):
@@ -64,5 +64,5 @@ class WorkTheme:
         self.detectionTheme = detectionTheme if detectionTheme is not None else DetectionTheme()
 
     def copy(self):
-        return WorkTheme(self.oscillogramTheme.copy(), self.spectrogramTheme.copy(), self.oneDimensionalTheme.copy(),
-                         self.detectionTheme.copy())
+        return WorkTheme(self.oscillogramTheme.copy(), self.spectrogramTheme.copy(),
+                         self.oneDimensionalTheme.copy(), self.detectionTheme.copy())

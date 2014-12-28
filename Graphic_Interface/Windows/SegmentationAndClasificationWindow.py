@@ -10,7 +10,6 @@ import xlwt
 import numpy as np
 from PyQt4.QtGui import QFileDialog, QAbstractItemView, QWidget
 from pyqtgraph.parametertree import Parameter
-
 from duetto.audio_signals.AudioSignal import AudioSignal
 from Utils.Utils import saveImage
 from graphic_interface.widgets.signal_visualizer_tools.SignalVisualizerTool import Tools
@@ -23,7 +22,7 @@ from sound_lab_core.Segmentation.Elements.Element import Element
 from sound_lab_core.Segmentation.Elements.OneDimensionalElement import SpectralMeasurementLocation
 from ..dialogs.elemDetectSettings import ElemDetectSettingsDialog
 from graphic_interface.windows.TwoDimensionalAnalisysWindow import TwoDimensionalAnalisysWindow
-from SegmentationAndClasificationWindowUI import Ui_MainWindow
+from graphic_interface.windows.ui_python_files.SegmentationAndClasificationWindowUI import Ui_MainWindow
 import graphic_interface.dialogs.EditCategoriesDialogUI as editCateg
 from graphic_interface.dialogs.EditCategoriesDialog import EditCategoriesDialog
 from graphic_interface.widgets.EditCategoriesWidget import EditCategoriesWidget
@@ -46,9 +45,6 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
     TABLE_ROW_COLOR_ODD = QtGui.QColor(0, 0, 255, 150)
     TABLE_ROW_COLOR_EVEN = QtGui.QColor(0, 255, 0, 150)
 
-    # the m  ax duration of signal that is possible to process with the window (in seconds)
-    MAX_SIGNAL_DURATION_ALLOWED = 60
-
     # region Initialize
 
     def __init__(self, parent, signal, classifcationSettings):
@@ -67,14 +63,6 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         # check the parameters
         if signal is None or not isinstance(signal, AudioSignal):
             raise Exception("The signal to analyze must be of type AudioSignal")
-
-        # check if the signal can be analyzed acording to its
-        # duration and the max duration signal allowed
-        if signal.duration > self.MAX_SIGNAL_DURATION_ALLOWED:
-            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
-                                      self.tr(u"The signal is larger than the maximum duration allowed.") + " \n" +
-                                      self.tr(u"Use the splitter to divide it"))
-            raise Exception("The duration of the signal is to long to analyze it.")
 
         # set the signal to the widget
         self.widget.signal = signal
@@ -96,9 +84,9 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         self.spectralMeasurementLocation = SpectralMeasurementLocation()
 
-        self.widget.axesOscilogram.threshold.sigPositionChangeFinished.connect(self.updateThreshold)
-        self.widget.axesOscilogram.threshold.setBounds((-2 ** (self.widget.signal.bitDepth - 1),
-                                                        2 ** (self.widget.signal.bitDepth - 1)))
+        # self.widget.axesOscilogram.threshold.sigPositionChangeFinished.connect(self.updateThreshold)
+        # self.widget.axesOscilogram.threshold.setBounds((-2 ** (self.widget.signal.bitDepth - 1),
+        #                                                 2 ** (self.widget.signal.bitDepth - 1)))
 
         self.detectionSettings = {"Threshold": -40, "Threshold2": 0, "MergeFactor": 5, "MinSize": 1, "Decay": 1,
                                   "SoftFactor": 6, "ThresholdSpectral": 95, "minSizeTimeSpectral": 0,
@@ -401,12 +389,11 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         """
         # TODO check if is possible to merge the code in this method and the batch.
         # TODO common factor code
-
         elementsDetectorDialog = ElemDetectSettingsDialog(parent=self, paramTree=self.ParamTree)
         elementsDetectorDialog.load_Theme(self.theme)
 
-        # deselect the elemnts on the widget
-        self.widget.selectElement(-1)
+        # deselect the elements on the widget
+        self.widget.deselectElement()
         try:
             if elementsDetectorDialog.exec_():
                 self.getSettings(elementsDetectorDialog)
@@ -414,12 +401,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                 self.actionView_Threshold.setChecked(True)
                 paramsTomeasure = self.getParameters()
 
-                # show the progress bar in the middle of the widget
-                self.windowProgressDetection.resize(self.widget.width() / 3,
-                                                    self.windowProgressDetection.size().height())
-                self.windowProgressDetection.move(self.widget.x() + self.widget.width() / 3,
-                                                  self.widget.y() - self.windowProgressDetection.height() / 2 + self.widget.height() / 2)
-                self.windowProgressDetection.show()
+                self.__showProgressBar()
 
                 # execute the detection
                 self.widget.detectElements(threshold=abs(self.detectionSettings["Threshold"]),
@@ -438,10 +420,10 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                                                unicode(self.tr(u'Spectral Detection Settings'))).param(
                                                unicode(self.tr(u'Detect Spectral Subelements'))).value())
 
-
                 # clasification data update TODO improve comments and implementation
                 validcategories = [k for k in self.classificationData.categories.keys() if
                                    len(self.classificationData.getvalues(k)) > 0]
+
                 self.elementsClasificationTableData = [[[k, self.tr(u"No Identified")] for k in validcategories] for
                                                        _ in range(self.tableParameterOscilogram.rowCount())]
 
@@ -516,7 +498,20 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
             self.widget.graph()
 
         except Exception as e:
-            print("some detection errors" + e.message)
+            print("detection errors: " + e.message)
+
+    def __showProgressBar(self):
+        """
+        Show the progress bar in the middle of the widget.
+        Used when a high time demanding task is going to be made to
+        show to the user it's progress.
+        :return:
+        """
+        self.windowProgressDetection.resize(self.widget.width() / 3,
+                                            self.windowProgressDetection.size().height())
+        self.windowProgressDetection.move(self.widget.x() + self.widget.width() / 3,
+                                          self.widget.y() - self.windowProgressDetection.height() / 2 + self.widget.height() / 2)
+        self.windowProgressDetection.show()
 
     # endregion
 
@@ -654,6 +649,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                                       self.tr(u"There is not detected elements.") + u" \n" + self.tr(
                                           u"The two dimensional analyses requires at least one detected element."))
             return
+
         if self.tableParameterOscilogram.columnCount() == 0:
             QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
                                       self.tr(u"There is not parameters measurement.") + u"\n" + self.tr(
@@ -1037,6 +1033,8 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         Method that performs the batch procesing
         :return:
         """
+
+        # TODO create a batch processing window
         # get the input audio files folder
         # and the output meditions folder
         directoryinput = str(self.lineeditFilePath.text())
@@ -1056,6 +1054,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         raiz = ""
 
         # listing all files in directoryinput folder
+        # TODO change by the method of UTILS
         for root, dirs, files in os.walk(directoryinput):
             raiz = root if raiz == "" else raiz
             for f in files:
@@ -1341,8 +1340,12 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         """
 
         # delete the elements on the widget and get the indexes for update
-        start_removed_index, end_removed_index = self.widget.deleteSelectedElements()
+        deleted_elements = self.widget.deleteSelectedElements()
 
+        if deleted_elements is None:
+            return
+
+        start_removed_index, end_removed_index = deleted_elements
         # TODO complete the coment here
         if start_removed_index is not None and start_removed_index >= 0 and end_removed_index < self.tableParameterOscilogram.rowCount():
             for i in range(end_removed_index, start_removed_index - 1, -1):
@@ -1377,7 +1380,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         two dimensional windows opened.
         :return:
         """
-        self.widget.selectElement()
+        self.widget.deselectElement()
 
         for wnd in self.two_dim_windows:
             wnd.deselectElement()

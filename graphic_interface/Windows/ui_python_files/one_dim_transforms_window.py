@@ -52,5 +52,4 @@ class Ui_OneDimensionalWindow(object):
         OneDimensionalWindow.setWindowTitle(QtGui.QApplication.translate("OneDimensionalWindow", "One Dimensional Functions", None, QtGui.QApplication.UnicodeUTF8))
         self.dockSettings.setWindowTitle(QtGui.QApplication.translate("OneDimensionalWindow", "Settings", None, QtGui.QApplication.UnicodeUTF8))
 
-from ..widgets.OneDimensionalPlotWidget import OneDimPlotWidget
-import icons_rc
+from graphic_interface.widgets.OneDimensionalPlotWidget import OneDimPlotWidget

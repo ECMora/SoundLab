@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+
+#
+#
+#
+#
 import os
 from PyQt4 import QtGui
 from PyQt4.QtGui import QFileDialog
@@ -35,11 +40,11 @@ def folderFiles(folder, extensions=None):
     files = []
     extensions = [".wav"] if (extensions is None or len(extensions) == 0) else extensions
 
-    #walk for the folder file system tree
+    # walk for the folder file system tree
     for root, dirs, filenames in os.walk(folder):
         for f in filenames:
             if any([f.endswith(x) for x in extensions]):
-                #if file extension is admissible
+                # if file extension is admissible
                 files.append(unicode(root + "/" + f))
 
     return files

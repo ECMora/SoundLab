@@ -25,7 +25,7 @@ class SpectralMeasurementLocation:
 
 class OneDimensionalElement(Element):
     """
-    Element defined in one-dimensional transform of a signal.
+    Element defined in one-dimensional one_dim_transform of a signal.
     """
     #SIGNALS
     # called when the element is clicked

@@ -1,14 +1,17 @@
 # -*- coding: utf-8 -*-
+import random
+
 from PyQt4.QtGui import QFileDialog, QWidget
 from PyQt4.QtCore import pyqtSlot
-import numpy, random
+import numpy
 from pyqtgraph.parametertree import Parameter, ParameterTree
 import pyqtgraph as pg
+from PyQt4 import QtGui, QtCore
+
 from graphic_interface.dialogs.EditCategoriesDialog import EditCategoriesDialog
 import graphic_interface.dialogs.EditCategoriesDialogUI as editCateg
 from graphic_interface.widgets.EditCategoriesWidget import EditCategoriesWidget
-from graphic_interface.windows.Two_Dimensional_AnalisysWindowUI import Ui_TwoDimensionalWindow
-from PyQt4 import QtGui, QtCore
+from graphic_interface.windows.ui_python_files.Two_Dimensional_AnalisysWindowUI import Ui_TwoDimensionalWindow
 
 
 class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
@@ -242,9 +245,10 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         if self.scatter_plot is None or self.selectedElementIndex < 0:
             return
 
-        # the color of the normal element figures on the graph
+        # get the color of the normal element figures on the graph
         color = self.ParamTree.param(unicode(self.tr(u'Color'))).value()
 
+        # set the normal brush color to the element selected
         self.scatter_plot.points()[self.selectedElementIndex].setBrush(pg.mkBrush(color))
 
     def elementFigureClicked(self, x, y):
@@ -391,13 +395,14 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         dialog = QtGui.QDialog(self)
         dialog.setWindowTitle(unicode(self.tr(u"Create New Category")))
 
-        layout = QtGui.QVBoxLayout()
-        layout.addWidget(QtGui.QLabel(unicode(self.tr(u"Insert the name of the new Category"))))
         text = QtGui.QLineEdit()
+        layout = QtGui.QVBoxLayout()
+        layout.addWidget(QtGui.QLabel(unicode(
+                        self.tr(u"Insert the name of the new Category"))))
         layout.addWidget(text)
-        butts = QtGui.QDialogButtonBox()
 
         # add the results buttons
+        butts = QtGui.QDialogButtonBox()
         butts.addButton(QtGui.QDialogButtonBox.Ok)
         butts.addButton(QtGui.QDialogButtonBox.Cancel)
         QtCore.QObject.connect(butts, QtCore.SIGNAL("accepted()"), dialog.accept)
@@ -407,17 +412,15 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         dialog.setLayout(layout)
 
         if dialog.exec_():
+
             # get the category
             category = str(text.text())
             if category == "":
                 QtGui.QMessageBox.warning(QtGui.QMessageBox(), unicode(self.tr(u"Error")),
                                           unicode(self.tr(u"Invalid Category Name.")))
                 return
+
             if self.clasiffCategories_vlayout and self.classificationData.addCategory(category):
                 w = EditCategoriesWidget(self, category, self.classificationData)
                 self.selection_widgets.append(w)
                 self.clasiffCategories_vlayout.addWidget(w)
-
-
-
-

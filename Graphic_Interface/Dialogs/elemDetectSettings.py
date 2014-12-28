@@ -75,7 +75,6 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         self.widget.computeSpecgramSettings()
         self.detect()
 
-
     def changeDetectionMethod(self,paramTree,changes):
         for param, change, data in changes:
             path = self.ParamTree.childPath(param)
@@ -112,13 +111,8 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
 
     def load_Theme(self,theme):
         self.theme = theme
-        self.widget.histogram.region.setRegion(theme.histRange)
-        self.widget.histogram.gradient.restoreState(theme.colorBarState)
         self.widget.load_Theme(theme)
-        self.widget.visualChanges = True
-        self.widget.refresh()
-        self.widget.histogram.region.lineMoved()
-        self.widget.histogram.region.lineMoveFinished()
+        self.widget.graph()
 
     @pyqtSlot()
     def detect(self):

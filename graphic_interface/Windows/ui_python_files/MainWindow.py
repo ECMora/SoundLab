@@ -520,5 +520,5 @@ class Ui_DuettoMainWindow(object):
         self.actionSwitchPlayStatus.setText(QtGui.QApplication.translate("DuettoMainWindow", "SwitchPlayStatus", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSwitchPlayStatus.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "M", None, QtGui.QApplication.UnicodeUTF8))
 
-from ..widgets.QSignalVisualizerWidget import QSignalVisualizerWidget
+from graphic_interface.widgets.QSignalVisualizerWidget import QSignalVisualizerWidget
 import icons_rc

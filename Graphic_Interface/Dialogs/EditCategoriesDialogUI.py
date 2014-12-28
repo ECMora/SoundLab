@@ -68,4 +68,3 @@ class Ui_Dialog(object):
         Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "Edit Categories", None, QtGui.QApplication.UnicodeUTF8))
         self.bttnAddCategory.setText(QtGui.QApplication.translate("Dialog", "Add Category ", None, QtGui.QApplication.UnicodeUTF8))
 
-import graphic_interface.windows.icons_rc

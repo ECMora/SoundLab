@@ -35,9 +35,9 @@ class QSignalVisualizerWidget(QWidget):
     #  Signal raised when a tool made a medition and has new data to show
     toolDataDetected = QtCore.pyqtSignal(str)
 
-    # signal raised whe there is signal interval selected (commonly by zoom tool)
+    # signal raised when there is a signal interval selected (commonly by zoom tool)
     # raise the limits of the interval in signal data array coordinates
-    signalIntervalSelected = QtCore.pyqtSignal(int,int)
+    signalIntervalSelected = QtCore.pyqtSignal(int, int)
 
     #  CONSTANTS
     #  the inverse of the amount of the visible area of the signal that must be
@@ -106,14 +106,30 @@ class QSignalVisualizerWidget(QWidget):
 
         self._recordTimer = QTimer(self)
         self._recordTimer.timeout.connect(self.on_newDataRecorded)
-        self.graph()
+
 
     def updateOscillogram(self, x1, x2):
+        """
+        Update the visible range of the
+        oscilogram when the signal visible range
+        has changed.
+        :param x1: the start limit of the new visible interval in signal data array indexes
+        :param x2: the end limit of the new visible interval in signal data array indexes
+        :return:
+        """
         self.axesOscilogram.changeRange(x1, x2)
         self.mainCursor.min = x1
         self.mainCursor.max = x2
 
-    def updateSpecgram(self,x1,x2):
+    def updateSpecgram(self, x1, x2):
+        """
+        Update the visible range of the
+        spectrogram when the signal visible range
+        has changed.
+        :param x1: the start limit of the new visible interval in signal data array indexes
+        :param x2: the end limit of the new visible interval in signal data array indexes
+        :return:
+        """
         self.axesSpecgram.changeRange(x1,x2)
         self.mainCursor.min = x1
         self.mainCursor.max = x2

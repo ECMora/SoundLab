@@ -24,8 +24,10 @@ class SoundLabOscillogramWidget(SoundLabWidget, OscillogramWidget):
         OscillogramWidget.__init__(self)
         SoundLabWidget.__init__(self)
         self.changeTool(ZoomTool)
-        self.minY = self.signal.minimumValue if self.signal is not None else -100
-        self.maxY = self.signal.maximumValue if self.signal is not None else 100
+
+        # % of visible signal range on y axis
+        self.minY = self.signal.minimumValue if self.signal is not None else -2**16
+        self.maxY = self.signal.maximumValue if self.signal is not None else 2**16
 
     def changeTool(self, new_tool_class):
         SoundLabWidget.changeTool(self, new_tool_class)
@@ -86,11 +88,12 @@ class SoundLabOscillogramWidget(SoundLabWidget, OscillogramWidget):
         if self.theme is None or self.theme.connectPoints != theme.connectPoints:
             update = True
 
-        # self.minY = -theme.minYOsc * 0.01 * self.signal.minimumValue
-        # self.maxY = theme.maxYOsc * 0.01 * self.signal.maximumValue
-        # self.setRange(yRange=(self.minY,
-        #                       self.maxY),
-        #                       padding=0, update=True)
+        self.minY = -theme.minY
+        self.maxY = theme.maxY
+
+        self.setRange(yRange=(self.minY * 0.01 * self.signal.minimumValue,
+                              self.maxY * 0.01 * self.signal.maximumValue),
+                              padding=0, update=True)
 
         # keep a copy of the theme
         self.theme = theme.copy()
@@ -114,7 +117,8 @@ class SoundLabOscillogramWidget(SoundLabWidget, OscillogramWidget):
                 morekwargs['pen'] = self.theme.plot_color
 
         OscillogramWidget.graph(self, indexFrom, indexTo, morekwargs)
-        self.setRange(yRange=(self.minY,
-                              self.maxY),
+
+        self.setRange(yRange=(self.minY * 0.01 * self.signal.minimumValue,
+                              self.maxY * 0.01 * self.signal.maximumValue),
                               padding=0)
 

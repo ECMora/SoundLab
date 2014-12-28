@@ -1,10 +1,8 @@
 # -*- coding: utf-8 -*-
 from PyQt4 import QtGui
-from pyqtgraph.parametertree.parameterTypes import ListParameter
-from pyqtgraph.parametertree import Parameter, ParameterTree
-from graphic_interface.windows.one_dim_transforms_window import Ui_OneDimensionalWindow
-from graphic_interface.windows.ParameterList import DuettoListParameterItem
-from graphic_interface.one_dimensional_transforms.OneDimensionalTransforms import *
+from duetto.audio_signals.AudioSignal import AudioSignal
+from graphic_interface.windows.ui_python_files.one_dim_transforms_window import Ui_OneDimensionalWindow
+from graphic_interface.one_dimensional_transforms import *
 
 
 class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
@@ -28,8 +26,8 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
         if signal is None:
             raise Exception("Signal can't be None.")
 
-        # set a default one dim transform to the widget
-        self.widget.transform = Envelope()
+        # set a default one dim one_dim_transform to the widget
+        self.widget.one_dim_transform = OneDimensionalTransform()
         self.signal = signal
 
         # Parameter Tree Settings
@@ -61,8 +59,8 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
 
         self._signal = new_signal
         self.widget.signal = self.signal
-        if self.widget.transform is not None:
-            self.widget.transform.signal = self.signal
+        if self.widget.one_dim_transform is not None:
+            self.widget.one_dim_transform.signal = self.signal
 
     # endregion
 
@@ -100,7 +98,7 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
              u'values': [(u'Envelope', Envelope),
                          (u'AveragePowSpec', AveragePowSpec),
                          (u'LogarithmicPowSpec', LogarithmicPowSpec),
-                         (u'InstantaneousFrequencies', InstantaneousFrequencies)
+                         (u'InstantFrequencies', InstantFrequencies)
              ]}
         ]
 
@@ -110,15 +108,14 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
         # create and set initial properties
         self.parameterTree = ParameterTree()
         self.parameterTree.setAutoScroll(True)
-        self.parameterTree.setFixedWidth(self.DOCK_OPTIONS_WIDTH)
         self.parameterTree.setHeaderHidden(True)
         self.parameterTree.setParameters(self.ParamTree, showTop=False)
 
-        # connect the signals to react when a change of transform is made
+        # connect the signals to react when a change of one_dim_transform is made
         self.ParamTree.param(unicode(self.tr(u'One_Dim_Transform'))).sigValueChanged.connect(self.changeTransform)
 
-        # reload the new widgets transform options
-        self.reloadOptionsWidget(self.widget.transform)
+        # reload the new widgets one_dim_transform options
+        self.reloadOptionsWidget(self.widget.one_dim_transform)
 
     def reloadOptionsWidget(self, one_dim_transform):
         """
@@ -126,16 +123,14 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
         of the options windows when a change of  transformation is made.
         removes the old transformation options and set the parameter tree
         of the new one.
-        :param one_dim_transform: the new transform.
+        :param one_dim_transform: the new one_dim_transform.
         :return:
         """
-
         options_window_layout = QtGui.QVBoxLayout()
         options_window_layout.setMargin(0)
         options_window_layout.addWidget(self.parameterTree)
-        options_window_layout.setStretchFactor(self.parameterTree,0)
 
-        # add the parameter tree of the transform if exists
+        # add the parameter tree of the one_dim_transform if exists
         if one_dim_transform is not None:
             options_window_layout.addWidget(one_dim_transform.settings)
 
@@ -143,23 +138,24 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
         self.dock_settings_contents = QtGui.QWidget()
         self.dock_settings_contents.setLayout(options_window_layout)
         self.dockSettings.setWidget(self.dock_settings_contents)
-
         self.dockSettings.setVisible(True)
-        self.dockSettings.setFixedWidth(self.DOCK_OPTIONS_WIDTH)
+        self.dockSettings.setMinimumWidth(self.DOCK_OPTIONS_WIDTH)
 
     def changeTransform(self, parameter):
         """
-        Method invoked when a new transform is selected.
-        Change the transform in the widget and update the options window
+        Method invoked when a new one_dim_transform is selected.
+        Change the one_dim_transform in the widget and update the options window
         :param parameter: the parameter tree node that change
         :return:
         """
 
         transform_class = parameter.value()
 
-        self.widget.transform = transform_class(self.signal)
+        self.widget.one_dim_transform = transform_class(self.signal)
 
-        self.reloadOptionsWidget(self.widget.transform)
+        self.reloadOptionsWidget(self.widget.one_dim_transform)
+
+        self.update()
 
         self.graph()
 
