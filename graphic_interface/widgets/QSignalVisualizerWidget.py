@@ -147,6 +147,15 @@ class QSignalVisualizerWidget(QWidget):
         self.axesOscilogram.load_Theme(theme.oscillogramTheme)
         self.axesSpecgram.load_Theme(theme.spectrogramTheme)
 
+    def load_workspace(self, workspace):
+        """
+        Loads a workspace containing all the settings of the oscillogram and spectrogram (amongst others) and updates as
+        needed
+        :param workspace: the workspace to load
+        """
+        self.axesOscilogram.load_workspace(workspace.oscillogramWorkspace)
+        self.axesSpecgram.load_workspace(workspace.spectrogramWorkspace)
+
     def signalName(self):
         """
         Returns the name of the current signal if it has one. A default name is returned

@@ -1,5 +1,6 @@
 from PyQt4 import QtCore
 from duetto.widgets.OscillogramWidget import OscillogramWidget
+from graphic_interface.Settings.Workspace import OscillogramWorkspace
 from graphic_interface.widgets.SoundLabWidget import SoundLabWidget
 from graphic_interface.widgets.signal_visualizer_tools.OscilogramTools.ZoomTool import ZoomTool
 
@@ -24,8 +25,9 @@ class SoundLabOscillogramWidget(SoundLabWidget, OscillogramWidget):
         OscillogramWidget.__init__(self)
         SoundLabWidget.__init__(self)
         self.changeTool(ZoomTool)
-        self.minY = self.signal.minimumValue if self.signal is not None else -100
-        self.maxY = self.signal.maximumValue if self.signal is not None else 100
+        # self.minY = self.signal.minimumValue if self.signal is not None else -100
+        # self.maxY = self.signal.maximumValue if self.signal is not None else 100
+        self.workspace = OscillogramWorkspace()
 
     def changeTool(self, new_tool_class):
         SoundLabWidget.changeTool(self, new_tool_class)
@@ -53,7 +55,7 @@ class SoundLabOscillogramWidget(SoundLabWidget, OscillogramWidget):
         :param y1:
         :param y2:
         """
-        self.graph(x1,x2)
+        self.graph(x1, x2)
 
     def changeRangeSignal(self, x1, x2, y1, y2):
         """
@@ -66,12 +68,7 @@ class SoundLabOscillogramWidget(SoundLabWidget, OscillogramWidget):
         self.changeRange(x1, x2, y1, y2)
         self.rangeChanged.emit(x1, x2)
 
-    def load_Theme(self, theme):
-        """
-        Loads a theme and updates the view according with it.
-        :param theme: an instance of OscillogramTheme, the part of the WorkTheme concerning the oscillogram.
-        """
-
+    def _load_theme(self, theme):
         update = False
         # set background color
         self.setBackground(theme.background_color)
@@ -83,38 +80,61 @@ class SoundLabOscillogramWidget(SoundLabWidget, OscillogramWidget):
         if self.plotLine:
             self.plotLine.setPen(theme.plot_color)
 
-        if self.theme is None or self.theme.connectPoints != theme.connectPoints:
+        if self.workspace.theme is None or self.workspace.theme.connectPoints != theme.connectPoints:
             update = True
 
-        # self.minY = -theme.minYOsc * 0.01 * self.signal.minimumValue
-        # self.maxY = theme.maxYOsc * 0.01 * self.signal.maximumValue
-        # self.setRange(yRange=(self.minY,
-        #                       self.maxY),
-        #                       padding=0, update=True)
-
         # keep a copy of the theme
-        self.theme = theme.copy()
+        self.workspace.theme = theme.copy()
+
+        # returns whether it's necessary to update the widget
+        return update
+
+    def load_Theme(self, theme):
+        """
+        Loads a theme and updates the view according with it.
+        :param theme: an instance of OscillogramTheme, the part of the WorkTheme concerning the oscillogram.
+        """
+        # load the theme and determine if it's necessary to update the widget
+        update = self._load_theme(theme)
 
         # update the widget if needed
         if update:
             rangeX = self.getPlotItem().getViewBox().viewRange()[0]
             self.graph(rangeX[0], rangeX[1])
 
-    def graph(self, indexFrom=0, indexTo=-1):
+    def load_workspace(self, workspace):
+        """
+        Loads a workspace and updates the view according with it.
+        :param workspace: an instance of OscillogramWorkspace, the part of the Workspace concerning the oscillogram
+        """
+        update = False
+
+        # set the y axis' range
+        minY = -workspace.minY * self.signal.minimumValue
+        maxY = workspace.maxY * self.signal.maximumValue
+        self.setRange(yRange=(minY, maxY), padding=0, update=True)
+
+        # load the theme
+        update = update or self._load_theme(workspace.theme)
+
+        # keep a copy of the workspace
+        self.workspace = workspace.copy()
+
+        # update the widget if needed
+        if update:
+            rangeX = self.getPlotItem().getViewBox().viewRange()[0]
+            self.graph(rangeX[0], rangeX[1])
+
+    def graph(self, indexFrom=0, indexTo=-1, morekwargs=None):
         morekwargs = dict()
         points = indexTo - indexFrom
         if points < 0: points += len(self.signal)
-        if self.theme is not None:
-            if not self.theme.connectPoints and points < self.getPlotItem().getViewBox().width():
-                morekwargs['symbol'] = 's'
-                morekwargs['symbolSize'] = 1
-                morekwargs['symbolPen'] = self.theme.plot_color
-                morekwargs['pen'] = '0000'
-            else:
-                morekwargs['pen'] = self.theme.plot_color
+        if not self.workspace.theme.connectPoints and points < self.getPlotItem().getViewBox().width():
+            morekwargs['symbol'] = 's'
+            morekwargs['symbolSize'] = 1
+            morekwargs['symbolPen'] = self.workspace.theme.plot_color
+            morekwargs['pen'] = '0000'
+        else:
+            morekwargs['pen'] = self.workspace.theme.plot_color
 
         OscillogramWidget.graph(self, indexFrom, indexTo, morekwargs)
-        self.setRange(yRange=(self.minY,
-                              self.maxY),
-                              padding=0)
-
