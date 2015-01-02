@@ -137,8 +137,8 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                  u'values': [(unicode(self.tr(u'Automatic')), 512), (u"8192", 8192), (u"128", 128), (u"256", 256),
                              (u"512", 512), (u"1024", 1024)], u'value': u'512'},
                 {u'name': unicode(self.tr(u'FFT window')), u'type': u'list',
-                 u'value': WindowFunction.Rectangular,
-                 u'default': WindowFunction.Rectangular,
+                 u'value': WindowFunction.Hanning,
+                 u'default': WindowFunction.Hanning,
                  u'values': [(u'Bartlett', WindowFunction.Bartlett),
                              (u"Blackman", WindowFunction.Blackman),
                              (u"Hamming", WindowFunction.Hamming),
@@ -282,9 +282,11 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         playSpeedActionGroup.addAction(self.action8x)
         playSpeedActionGroup.triggered.connect(self.on_playSpeedChanged_triggered)
 
-        QTimer.singleShot(0, self.on_load)
-
     # region Segmentation And Clasification
+
+    def showEvent(self, *args, **kwargs):
+        QtGui.QMainWindow.showEvent(self, *args, **kwargs)
+        QTimer.singleShot(0, self.on_load_first_time)
 
     def serializeClassificationData(self, filename=""):
         """
@@ -737,7 +739,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     def on_actionRedo_triggered(self):
         self.widget.redo()
 
-    #endregion
+    # endregion
 
     # region Signal Processing Methods
 
@@ -961,14 +963,36 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     # region Open, Close and Save
 
+    def on_load_first_time(self):
+        """
+        Method called when the window is first opened. It prompts the user whether to restore the last working session
+        and initializes stuffs accordingly.
+        """
+        if os.path.exists('duetto.ini'):
+            answer = QMessageBox.question(self, self.tr(u'Restore workspace?'),
+                                          self.tr(u'Do you wish to restore the state of the last work session?'),
+                                          QMessageBox.Yes | QMessageBox.No)
+            if answer == QMessageBox.Yes:
+                try:
+                    with open('duetto.ini', 'r') as f:
+                        self.workspace = pickle.load(f)
+                    self._open(self.workspace.openedFile)
+                except:
+                    QMessageBox.warning(self, self.tr(u'Error restoring workspace.'),
+                                        self.tr(u'An error occurred when restoring the workspace. The default state '
+                                                u'will be loaded instead.'))
+                else:
+                    return
+
+        self.on_load()
+
     def on_load(self):
         """
         Method that is called when the window has the initial state.
-        That is: when the window is created,
+        That is: when the window is created and no previous workspace is loaded,
                  when the current signal is closed but not the window.
         :return:
         """
-
         # get the didactic signal if exists
         duetto_signal = os.path.join(u"Utils", u"Didactic Signals", u"duetto.wav")
 
@@ -1005,6 +1029,10 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         # save the signal if any change
         self.save_signal_if_modified(event)
+
+        # save the workspace
+        with open('duetto.ini', 'w') as f:
+            pickle.dump(self.workspace, f)
 
         # close the window
         self.close()
@@ -1109,8 +1137,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             self.changeFrequency(0, self.widget.signal.samplingRate / 2000)
             self.changeAmplitude(-100, 100)
 
-            # self.widget.graph()
-            # self.widget.load_Theme(self.workspace.workTheme)
+            self.workspace.openedFile = file_path
             self.widget.load_workspace(self.workspace)
 
             #select the zoom tool as default
@@ -1338,7 +1365,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         :return:
         """
 
-        one_dim_window = OneDimensionalAnalysisWindow(self,self.widget.signal)
+        one_dim_window = OneDimensionalAnalysisWindow(self, self.widget.signal)
         one_dim_window.load_Theme(self.workspace.workTheme.oscillogramTheme)
         one_dim_window.graph()
 

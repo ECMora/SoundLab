@@ -1,4 +1,5 @@
 from PyQt4 import QtCore
+from duetto.dimensional_transformations.two_dimensional_transforms.Spectrogram.Spectrogram import Spectrogram
 from duetto.widgets.SpectrogramWidget import SpectrogramWidget
 from graphic_interface.Settings.Workspace import SpectrogramWorkspace
 
@@ -33,7 +34,8 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
         self.graphics_view.mouseDoubleClickEvent = self.mouseDoubleClickEvent
         self.graphics_view.mousePressEvent = self.mousePressEvent
         self.changeTool(SpectrogramZoomTool)
-        self.workspace = SpectrogramWorkspace()
+        self.workspace = None
+        self._load_workspace(SpectrogramWorkspace())
 
     def changeTool(self, new_tool_class):
         SoundLabWidget.changeTool(self,new_tool_class)
@@ -94,31 +96,26 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
             rangeX = self.specgramHandler.from_spec_to_osc(rangeX[0]), self.specgramHandler.from_spec_to_osc(rangeX[1])
             self.graph(rangeX[0], rangeX[1])
 
-    def load_workspace(self, workspace):
-        """
-        Loads a workspace and updates the view according with it.
-        :param workspace: an instance of SpectrogramWorkspace, the part of the Workspace concerning the spectrogram
-        """
+    def _load_workspace(self, workspace):
         update = False
-        rangeX = self.viewBox.viewRange()[0]
-        rangeX = self.specgramHandler.from_spec_to_osc(rangeX[0]), self.specgramHandler.from_spec_to_osc(rangeX[1])
+        noWorkspace = self.workspace is None
 
         # set the FFT size (must also reset the overlap)
-        if self.workspace.FFTSize != workspace.FFTSize:
+        if noWorkspace or self.workspace.FFTSize != workspace.FFTSize:
             self.specgramHandler.NFFT = workspace.FFTSize
-            if workspace.FFTOverlap > 0:
-                self.specgramHandler.set_overlap_ratio(workspace.FFTOverlap)
             update = True
 
         # set the FFT window
-        if self.workspace.FFTWindow != workspace.FFTWindow:
+        if noWorkspace or self.workspace.FFTWindow != workspace.FFTWindow:
             self.specgramHandler.window = workspace.FFTWindow
             update = True
 
-        # set the FFT overlap
-        if self.workspace.FFTOverlap != workspace.FFTOverlap:
+        # set the FFT overlap (it must be set if the overlap or the FFT size are changed)
+        if noWorkspace or self.workspace.FFTOverlap != workspace.FFTOverlap or self.workspace.FFTSize != workspace.FFTSize:
             if workspace.FFTOverlap >= 0:
                 self.specgramHandler.set_overlap_ratio(workspace.FFTOverlap)
+            else:
+                self.specgramHandler.overlap = workspace.FFTSize - 1
             update = True
 
         # load the theme
@@ -127,7 +124,22 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
         # keep a copy of the workspace
         self.workspace = workspace.copy()
 
-        # update the widget if needed
+        # returns whether it's necessary to update the widget
+        return update
+
+    def load_workspace(self, workspace):
+        """
+        Loads a workspace and updates the view according with it.
+        :param workspace: an instance of SpectrogramWorkspace, the part of the Workspace concerning the spectrogram
+        """
+        # get the current visualizing range (X axis)
+        rangeX = self.viewBox.viewRange()[0]
+        rangeX = self.specgramHandler.from_spec_to_osc(rangeX[0]), self.specgramHandler.from_spec_to_osc(rangeX[1])
+
+        # load the workspace and determine if it's necessary to update the widget
+        update = self._load_workspace(workspace)
+
+        # update the widget if needed (showing the same X axis' range as before)
         if update:
             self.graph(rangeX[0], rangeX[1])
 

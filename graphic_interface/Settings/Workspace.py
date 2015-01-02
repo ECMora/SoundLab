@@ -3,7 +3,17 @@ from graphic_interface.Settings.WorkTheme import WorkTheme, OscillogramTheme, Sp
     DetectionTheme
 
 
-class OscillogramWorkspace:
+_winFuncs = {'Bartlett': WindowFunction.Bartlett,
+             'Blackman': WindowFunction.Blackman,
+             'Hamming': WindowFunction.Hamming,
+             'Hanning': WindowFunction.Hanning,
+             'Kaiser': WindowFunction.Kaiser,
+             'Rectangular': WindowFunction.Rectangular}
+
+_winFuncs_inv = {value: key for key, value in _winFuncs.iteritems()}
+
+
+class OscillogramWorkspace(object):
     def __init__(self, minY=-1.0, maxY=1.0, theme=None):
         """
 
@@ -20,8 +30,8 @@ class OscillogramWorkspace:
         return OscillogramWorkspace(self.minY, self.maxY, self.theme.copy())
 
 
-class SpectrogramWorkspace:
-    def __init__(self, minY=0, maxY=22050, FFTSize=512, FFTWindow=WindowFunction.Rectangular, FFTOverlap=-1,
+class SpectrogramWorkspace(object):
+    def __init__(self, minY=0, maxY=22050, FFTSize=512, FFTWindow=WindowFunction.Hanning, FFTOverlap=-1,
                  theme=None):
         """
 
@@ -31,7 +41,6 @@ class SpectrogramWorkspace:
         :param FFTWindow:
         :param FFTOverlap: between 0 and 1
         :param theme:
-        :return:
         """
         self.minY = minY
         self.maxY = maxY
@@ -40,12 +49,20 @@ class SpectrogramWorkspace:
         self.FFTOverlap = FFTOverlap
         self.theme = theme if theme else SpectrogramTheme()
 
+    @property
+    def FFTWindow(self):
+        return _winFuncs[self._FFTWindow]
+
+    @FFTWindow.setter
+    def FFTWindow(self, value):
+        self._FFTWindow = _winFuncs_inv[value]
+
     def copy(self):
         return SpectrogramWorkspace(self.minY, self.maxY, self.FFTSize, self.FFTWindow, self.FFTOverlap,
                                     self.theme.copy())
 
 
-class OneDimensionalWorkspace:
+class OneDimensionalWorkspace(object):
     def __init__(self, theme=None):
         self.theme = theme if theme else OneDimensionalTheme()
 
@@ -53,7 +70,7 @@ class OneDimensionalWorkspace:
         return OneDimensionalWorkspace(self.theme.copy())
 
 
-class DetectionWorkspace:
+class DetectionWorkspace(object):
     def __init__(self, theme=None):
         self.theme = theme if theme else DetectionTheme()
 
@@ -61,13 +78,14 @@ class DetectionWorkspace:
         return DetectionWorkspace(self.theme.copy())
 
 
-class Workspace:
+class Workspace(object):
     def __init__(self, oscillogramWorkspace=None, spectrogramWorkspace=None, oneDimensionalWorkspace=None,
-                 detectionWorkspace=None):
+                 detectionWorkspace=None, openedFile=None):
         self.oscillogramWorkspace = oscillogramWorkspace if oscillogramWorkspace else OscillogramWorkspace()
         self.spectrogramWorkspace = spectrogramWorkspace if spectrogramWorkspace else SpectrogramWorkspace()
         self.oneDimensionalWorkspace = oneDimensionalWorkspace if oneDimensionalWorkspace else OneDimensionalWorkspace()
         self.detectionWorkspace = detectionWorkspace if detectionWorkspace else DetectionWorkspace()
+        self.openedFile = openedFile
 
     def copy(self):
         return Workspace(self.oscillogramWorkspace.copy(), self.spectrogramWorkspace.copy(),
