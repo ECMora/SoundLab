@@ -93,7 +93,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         #  get the status bar to show messages to the user
         self.statusbar = self.statusBar()
         self.statusbar.setSizeGripEnabled(False)
-        self.statusbar.showMessage(self.tr(u"Welcome to Duetto Sound Lab"), 5000)
+        self.statusbar.showMessage(self.tr(u"Welcome to duetto-Sound Lab"), 5000)
         self.widget.toolDataDetected.connect(self.updateStatusBar)
 
         #  user interface to manipulate several visual parameters
@@ -370,7 +370,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         """
         filename = QFileDialog.getSaveFileName(parent=self, caption=self.tr(u"Save Theme"),
                                                directory=os.path.join(u"Utils", u"Themes"),
-                                               filter=self.tr(u"Duetto Theme Files") + u"(*.dth);;All Files (*)")
+                                               filter=self.tr(u"duetto Theme Files") + u"(*.dth);;All Files (*)")
         if filename:
             self.serializeTheme(filename)
 
@@ -437,7 +437,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         """
         filename = QFileDialog.getOpenFileName(parent=self, directory=os.path.join(u"Utils", u"Themes"),
                                                caption=self.tr(u"Load Theme"),
-                                               filter=self.tr(u"Duetto Theme Files") + u" (*.dth);;All Files (*)")
+                                               filter=self.tr(u"duetto Theme Files") + u" (*.dth);;All Files (*)")
         if filename and os.path.exists(filename):
             try:
                 theme = self.deSerializeTheme(filename)
@@ -1024,8 +1024,8 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.widget.load_Theme(self.workTheme)
 
         #  set some initial status behavior
-        self.setWindowTitle(self.tr(u"Duetto Sound Lab - Welcome to Duetto"))
-        self.statusbar.showMessage(self.tr(u"Welcome to Duetto Sound Lab."), 5000)
+        self.setWindowTitle(self.tr(u" duetto-Sound Lab - Welcome to duetto"))
+        self.statusbar.showMessage(self.tr(u"Welcome to duetto-Sound Lab."), 5000)
 
     @pyqtSlot()
     def on_actionExit_triggered(self):
@@ -1088,14 +1088,14 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         if new_file_dialog.exec_():
             if new_file_dialog.rbtnSilence.isChecked():
                 signal = Synthesizer.generateSilence(new_file_dialog.SamplingRate, new_file_dialog.BitDepth,
-                                                     new_file_dialog.Duration * new_file_dialog.SamplingRate)
+                                                     new_file_dialog.Duration * 1000)
             elif new_file_dialog.rbtnWhiteNoise.isChecked():
                 signal = Synthesizer.insertWhiteNoise(
                     AudioSignal(new_file_dialog.SamplingRate, new_file_dialog.BitDepth, 1),
-                    new_file_dialog.Duration * new_file_dialog.SamplingRate)
+                    new_file_dialog.Duration*1000)
 
             self.widget.signal = signal
-            self.setWindowTitle(self.tr(u"Duetto Sound Lab - ") + self.widget.signalName())
+            self.setWindowTitle(self.tr(u"duetto-Sound Lab - ") + self.widget.signalName())
             self.actionSignalName.setText(self.tr(u"File Name: ") + self.widget.signalName())
             self.widget.graph()
 
@@ -1129,7 +1129,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 self.getFolderFiles(file_path)
 
                 self.widget.open(file_path)
-                self.setWindowTitle(self.tr(u"Duetto Sound Lab - ") + self.widget.signalName())
+                self.setWindowTitle(self.tr(u"duetto-Sound Lab - ") + self.widget.signalName())
                 self.actionSignalName.setText(self.tr(u"File Name: ") + self.widget.signalName())
             except Exception as ex:
                 QMessageBox.warning(QMessageBox(), self.tr(u"Error"),
@@ -1401,7 +1401,8 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     @pyqtSlot(int)
     def on_horizontalScrollBar_valueChanged(self, value):
-        self.widget.changeRange(value, value + self.horizontalScrollBar.pageStep(), emit=False)
+        pass
+        # self.widget.changeRange(value, value + self.horizontalScrollBar.pageStep(), emit=False)
 
     # endregion
 

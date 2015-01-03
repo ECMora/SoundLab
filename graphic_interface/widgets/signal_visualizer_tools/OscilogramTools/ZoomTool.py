@@ -22,7 +22,7 @@ class ZoomTool(SignalVisualizerTool):
         # get the region selected by the tool in pixels
         rgn = self.zoomRegion.getRegion()
 
-        # one_dim_transform the selected region in logical widget graph coordinates
+        # transform the selected region in logical widget graph coordinates
         minx, maxx = self.fromClientToCanvas(rgn[0]), self.fromClientToCanvas(rgn[1])
 
         # update the zoom region

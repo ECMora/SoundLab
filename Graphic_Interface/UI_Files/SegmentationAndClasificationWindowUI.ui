@@ -26,10 +26,7 @@
    <bool>false</bool>
   </property>
   <property name="styleSheet">
-   <string notr="true">font: 10pt &quot;Arial&quot;;
-background-color: qlineargradient(spread:pad, x1:0.358, y1:0.017, x2:0.341, y2:1, stop:0.0397727 rgba(101, 138, 255, 129), stop:0.988636 rgba(255, 255, 255, 255));
-color: rgb(0, 0, 0);
-padding:1%;</string>
+   <string notr="true"/>
   </property>
   <widget class="QWidget" name="centralwidget">
    <property name="styleSheet">
@@ -312,7 +309,7 @@ padding:1%;</string>
      <x>0</x>
      <y>0</y>
      <width>906</width>
-     <height>24</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuParameters">
@@ -770,7 +767,7 @@ padding:1%;</string>
   </action>
   <action name="actionClassification_Settings">
    <property name="icon">
-    <iconset resource="resources/icons.qrc">
+    <iconset>
      <normaloff>:/myappicons/categories.png</normaloff>:/myappicons/categories.png</iconset>
    </property>
    <property name="text">
@@ -788,7 +785,7 @@ padding:1%;</string>
   <customwidget>
    <class>QSignalDetectorWidget</class>
    <extends>QWidget</extends>
-   <header>Graphic_Interface.Widgets.QSignalDetectorWidget.h</header>
+   <header>graphic_interface.widgets.QSignalDetectorWidget</header>
    <container>1</container>
   </customwidget>
   <customwidget>
@@ -846,22 +843,6 @@ padding:1%;</string>
     <hint type="destinationlabel">
      <x>681</x>
      <y>-19</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>actionView_Threshold</sender>
-   <signal>triggered(bool)</signal>
-   <receiver>MainWindow</receiver>
-   <slot>setVisibleThreshold()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>384</x>
-     <y>280</y>
     </hint>
    </hints>
   </connection>

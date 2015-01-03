@@ -1,0 +1,22 @@
+Comentarios en:
+	Widget´s tools
+	Windows:
+		Segmentation
+		One dim transform
+		Two dim transform.
+
+Mejoras en las operaciones de edicion, reproduccion, undo redo, etc
+
+Scroll bar implementation
+Resampling
+Filter
+Theme improvement
+
+Detector widget implementation.
+Segmentation by polimorfic methods
+Elements detection and parameter measurement
+Comments
+Testings
+
+Meeting with Emanuel And Frank
+*	

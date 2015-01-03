@@ -2,6 +2,9 @@ from signal_visualizer_tools.SignalVisualizerTool import SignalVisualizerTool
 
 
 class SoundLabWidget:
+    """
+
+    """
 
     def __init__(self):
         self.gui_user_tool = None
@@ -32,13 +35,13 @@ class SoundLabWidget:
             raise Exception("The tool must be of type SignalVisualizerTool")
 
         if self.gui_user_tool is not None:
-            #remove old data and release resources from the tool operation
+            # remove old data and release resources from the tool operation
             self.gui_user_tool.dispose()
 
         self.gui_user_tool = new_tool_class(self)
         self.gui_user_tool.detectedDataChanged.connect(self.guiToolDetectedData)
 
-    def guiToolDetectedData(self,data_list):
+    def guiToolDetectedData(self, data_list):
         s = " "
         for atr_name,value in data_list:
             s += str(atr_name) + ": " + str(value) + " "

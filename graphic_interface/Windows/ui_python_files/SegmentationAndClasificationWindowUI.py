@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Sound Lab\DuettoSystem\graphic_interface\UI Files\SegmentationAndClasificationWindowUI.ui'
+# Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\DuettoSystem\graphic_interface\UI_Files\SegmentationAndClasificationWindowUI.ui'
 #
-# Created: Wed Jul 23 10:02:03 2014
+# Created: Sat Jan 03 20:02:38 2015
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -25,10 +25,7 @@ class Ui_MainWindow(object):
         sizePolicy.setHeightForWidth(MainWindow.sizePolicy().hasHeightForWidth())
         MainWindow.setSizePolicy(sizePolicy)
         MainWindow.setAutoFillBackground(False)
-        MainWindow.setStyleSheet(_fromUtf8("font: 10pt \"Arial\";\n"
-"background-color: qlineargradient(spread:pad, x1:0.358, y1:0.017, x2:0.341, y2:1, stop:0.0397727 rgba(101, 138, 255, 129), stop:0.988636 rgba(255, 255, 255, 255));\n"
-"color: rgb(0, 0, 0);\n"
-"padding:1%;"))
+        MainWindow.setStyleSheet(_fromUtf8(""))
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setStyleSheet(_fromUtf8(""))
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
@@ -145,7 +142,7 @@ class Ui_MainWindow(object):
         self.dockWidgetParameterTableOscilogram.setWidget(self.dockWidgetContents)
         MainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(4), self.dockWidgetParameterTableOscilogram)
         self.menuBar = QtGui.QMenuBar(MainWindow)
-        self.menuBar.setGeometry(QtCore.QRect(0, 0, 906, 24))
+        self.menuBar.setGeometry(QtCore.QRect(0, 0, 906, 21))
         self.menuBar.setObjectName(_fromUtf8("menuBar"))
         self.menuParameters = QtGui.QMenu(self.menuBar)
         self.menuParameters.setObjectName(_fromUtf8("menuParameters"))
@@ -396,7 +393,6 @@ class Ui_MainWindow(object):
         QtCore.QObject.connect(self.pushButtonInputFolder, QtCore.SIGNAL(_fromUtf8("clicked()")), MainWindow.selectInputFolder)
         QtCore.QObject.connect(self.pushButtonOutputFolder, QtCore.SIGNAL(_fromUtf8("clicked()")), MainWindow.selectOutputFolder)
         QtCore.QObject.connect(self.pushButtonStart, QtCore.SIGNAL(_fromUtf8("clicked()")), MainWindow.startBatchProcess)
-        QtCore.QObject.connect(self.actionView_Threshold, QtCore.SIGNAL(_fromUtf8("triggered(bool)")), MainWindow.setThresholdVisibility)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):

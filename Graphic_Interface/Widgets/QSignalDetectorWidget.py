@@ -24,15 +24,18 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
     SELECTED_ELEMENT_BRUSH = pg.mkBrush(QtGui.QColor(255, 255, 255, 60))
 
     def __init__(self, parent):
-        QSignalVisualizerWidget.__init__(self, parent)
+        # items to highlight elements or regions in the graph
+        self.oscSelectionRegion = pg.LinearRegionItem([0, 0], movable=False, brush=self.SELECTED_ELEMENT_BRUSH)
+
+        self.specSelectionRegion = pg.LinearRegionItem([0, 0], movable=False, brush=self.SELECTED_ELEMENT_BRUSH)
+
+        # detector for one dimensional detection
+        self.elements_detector = OneDimensionalElementsDetector()
 
         # region Envelope curve visualization
         # curve to display envelope when detection method is envelope
         self.envelopeCurve = pg.PlotCurveItem(np.array([0]), pen=pg.mkPen("CC3", width=1),
                                               shadowPen=pg.mkPen(QtGui.QColor(255, 0, 0), width=3))
-
-        # add an extra item to display envelope in oscilogram graph
-        self.axesOscilogram.addItem(self.envelopeCurve)
 
         # factor to expand the envelope for best visualization
         self.envelopeFactor = 2
@@ -47,13 +50,10 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         # and the extra data for visualize it
         self.Elements = []
 
-        # items to highlight elements or regions in the graph
-        self.oscSelectionRegion = pg.LinearRegionItem([0, 0], movable=False, brush=self.SELECTED_ELEMENT_BRUSH)
+        QSignalVisualizerWidget.__init__(self, parent)
 
-        self.specSelectionRegion = pg.LinearRegionItem([0, 0], movable=False, brush=self.SELECTED_ELEMENT_BRUSH)
-
-        # detector for one dimensional detection
-        self.elements_detector = OneDimensionalElementsDetector()
+        # add an extra item to display envelope in oscilogram graph
+        self.axesOscilogram.addItem(self.envelopeCurve)
 
     # region Elements
     def detectElements(self, threshold=20, decay=1, minSize=0, detectionsettings=None, softfactor=5, merge_factor=50,

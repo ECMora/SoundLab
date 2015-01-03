@@ -7,7 +7,7 @@ class Tools:
     """
     Enum for the different tools that can be used on a gui sound lab widget
     """
-    ZoomTool, PointerTool, RectangularZoomTool, RectangularEraser = range(4)
+    ZoomTool, PointerTool, RectangularZoomTool, RectangularEraser, NoTool = range(5)
 
 
 class SignalVisualizerTool(QtCore.QObject):
