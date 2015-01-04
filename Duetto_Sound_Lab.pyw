@@ -79,30 +79,32 @@ if __name__ == '__main__':
 
     # region Start Splash Screen Window
     dmw = DuettoSoundLabWindow()
-    path = os.path.join(os.path.join("Utils", "PresentationVideo"), "duettoinit.mp4")
-    duetto_sound_lab_window = Duetto_Sound_Lab(path=path if os.path.exists(path) else "")
+    # path = os.path.join(os.path.join("Utils", "PresentationVideo"), "duettoinit.mp4")
+    # duetto_sound_lab_window = Duetto_Sound_Lab(path=path if os.path.exists(path) else "")
 
-    def closeSplashScreenWindow():
-        dmw.show()
-        duetto_sound_lab_window.close()
+    # def closeSplashScreenWindow():
+    #     dmw.show()
+    #     duetto_sound_lab_window.close()
 
     # show it
 
-    if os.path.exists(path):
-        # duetto_sound_lab_window.videoPlayer.finished.connect(s)
-        duetto_sound_lab_window.show()
-        # duetto_sound_lab_window.videoPlayer.play()
-    else:
-        closeSplashScreenWindow()
-
-    closeSplashScreenWindow()
+    # if os.path.exists(path):
+    #     # duetto_sound_lab_window.videoPlayer.finished.connect(s)
+    #     duetto_sound_lab_window.show()
+    #     # duetto_sound_lab_window.videoPlayer.play()
+    # else:
+    #     closeSplashScreenWindow()
+    #
+    # closeSplashScreenWindow()
 
     # endregion
 
     if validLicense():
         # start the Qt main loop execution, exiting from this script
         # with the same return code of Qt application
+        dmw.show()
         sys.exit(app.exec_())
+
 
     else:
         QMessageBox.warning(QMessageBox(), "Error",invalid_license_message)

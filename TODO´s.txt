@@ -1,22 +1,113 @@
-Comentarios en:
-	Widget´s tools
-	Windows:
-		Segmentation
-		One dim transform
-		Two dim transform.
+duetto Sound Lab Tasks
+# TODO these are the tasks to do in the software development of the duetto SoundLab System.
+# TODO tasks marked with * are ready to been implemented and those marked with + are completed.
+# TODO the tasks are divided by their complexity.
 
-Mejoras en las operaciones de edicion, reproduccion, undo redo, etc
+Complexity-1: No new-code activity
 
-Scroll bar implementation
-Resampling
-Filter
-Theme improvement
+* Comment Widgets tools
+* Comment Segmentation Window
+* Comment One dim transform
+* Comment Two dim transform
 
-Detector widget implementation.
-Segmentation by polimorfic methods
-Elements detection and parameter measurement
-Comments
-Testings
+* Testing widget oscilogram
+* Testing widget spectrogram
+* Testing widget signal visualizer
+* Testing widget signal detector
+* Testing Widgets tools
+* Testing Segmentation Window
+* Testing One dim transform
+* Testing Two dim transform
++ Sound Lab window and project rename to "duetto SoundLab"
 
-Meeting with Emanuel And Frank
-*	
+
+-----------------------------------------------------------
+
+Complexity-2: Small-to-medium code changes
+
++ Start app on maximized state
+* Change KHz to kHz on the widgets
+* Fix grids lines on widgets visibility and opacity
+* Create a workspace file or .ini with options
+* Memorize the parameters supplied in the dialogs for next use
+* I18n add multiple translations. Add default system translation
+* Change app language by code
+* Associate the .wav files to the app
+* Change the file name action to show the current signal properties
+	(channels, bit depth, sr etc) and in the tooltip set a large properties display
+
+* Create a start window with the opening options
+* Tool Bar actions group by category
+* Tool Bar groups visualization by category
+* Multiples files opened on tabs
+* Operations provided to multiples files handling
+	(close all, close all except the current, etc)
+
+* Addition of Custom rich Dock Widgets to the duetto API and use them on the windows
+* Multiple visualization of the same signal
+
+* Add margins to the widgets for best visualization
+* User manage of the height relation  between the two widgets (osc and spec) when are
+  both visible
+* Remove labels on axes (Amplitude and Frequency) Set the values (% and kHz) on the border of the axes
+* Customize the axes on the amount of ticks and the scale used (possibly by context menu) with an dynamic suggested scale
+* Fix histogram bug when the histogram line values are not visible
+* Set to fixed the histogram x axis
+* Set labels into the histogram minimum and maximum thresholds
+* File Menu add the save image action
+	with submenus (osc image spec, and combined)
+* File Menu Change name of Save as to Save as...
+* File Menu add Save action (current signal with no needed confirmation)
+* File Menu Save selected interval as ad the ... equal to "Save as..."
+* Remove File up and Down actions on File menu
+* Add Browse window to browse the current signal folder files (see Avisoft)
+* Add Save Theme action (current theme with no needed confirmation)
+* Rename Save Theme action as "Save Theme as..."
+* Filter Hz rename to kHz and quit the labels changing it by sufix on the numeric up downs
+* Check spectrogram coordinate calculation
+* Provide access to the last files (5)
+* Modify order on Edit Menu
+	set Undo,Redo, Copy,Cut,Paste ...
+* Remove decimal places in spectrogram settings threshold
+* Add the tool detected data on the
+	rectangular spectrogram tool (check max and min values order)
+	pointer spectrogram tool (add amp always, and diff in the selection of an interval)
+* Check the size of strings to always show the data on the same place (best reading)
+* implement play of files even if they are not possible to play completely by the recoding
+	sampling rate (make a filter)
+* Add to the Sound Menu the sound devices action
+	allow to select the audio device (input and output) to play/record audio signals
+	must be implemented as api interface
+
+* Add to the Sound Menu the sound format action to change the format of record signals
+ (must use the properties of the selected input sound device)
+
+
+* Scroll bar implementation inside the signal visualize widget
+* Theme improvement and completion
+* Tools improvement
+* Fix zoom bug. Mouse move heavy computation
+* Edition operation improvement
+* Resampling
+* Filter
+-----------------------------------------------------------
+
+Complexity-3: Large code changes and/or multiple code files tasks
+
+* Transformations completion
+* Transformation Tools implementation
+* Transformation interaction with the main window to select intervals
+
+-----------------------------------------------------------
+
+
+Complexity-4: New Code Design and Infrastructure implementation (Somoza's Revision)
+
+* Detector widget implementation.
+* Design Segmentation by polymorphic methods
+* Design Elements detection and parameter measurement
+* Design Classification
+* Batch window implementation
+*
+
+-----------------------------------------------------------

@@ -23,6 +23,10 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
     # Signal raised when a tool made a medition and has new data to show
     toolDataDetected = QtCore.pyqtSignal(str)
 
+    # Constants
+    # Value of the axis lines opacity
+    AXIS_LINES_OPACITY = 255
+
     def __init__(self):
         SpectrogramWidget.__init__(self)
         SoundLabWidget.__init__(self)
@@ -72,8 +76,8 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
         self.graphics_view.setBackground(theme.background_color)
 
         # set grid lines
-        self.xAxis.setGrid(88 if theme.gridX else 0)
-        self.yAxis.setGrid(88 if theme.gridY else 0)
+        self.xAxis.setGrid(self.AXIS_LINES_OPACITY if theme.gridX else 0)
+        self.yAxis.setGrid(self.AXIS_LINES_OPACITY if theme.gridY else 0)
 
         # set the state of the histogram and make it note the change so it automatically refreshes the spectrogram
         self.histogram.item.gradient.restoreState(theme.colorBarState)

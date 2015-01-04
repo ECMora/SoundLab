@@ -294,7 +294,9 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         playSpeedActionGroup.addAction(self.action8x)
         playSpeedActionGroup.triggered.connect(self.on_playSpeedChanged_triggered)
 
+        self.showMaximized()
         QTimer.singleShot(0, self.on_load)
+
 
     #  region Segmentation And Clasification
 
