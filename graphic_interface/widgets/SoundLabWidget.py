@@ -43,8 +43,25 @@ class SoundLabWidget:
 
     def guiToolDetectedData(self, data_list):
         s = " "
+        decimal_places = self.gui_user_tool.DECIMAL_PLACES
+
         for atr_name,value in data_list:
-            s += str(atr_name) + ": " + str(value) + " "
+            value_str = str(value)
+            # str to concat at front of values strings to make const the amount of
+            # chars used on each value
+            # 1 char for sign (- or ' ') 3 for numbers
+            negative_padd = " " if value >= 0 else ""
+            negative_padd += "" if abs(value) >= 100 else (" " if abs(value) >= 10 else "  ")
+            try:
+                decimals = value_str[value_str.rindex("."):]
+                # concat as much '0' to the end of the str as chars to complete the decimal places
+                # + 1 because decimals contains the '.' too
+                value_str += "0" * (decimal_places - len(decimals) + 1)
+
+            except Exception as ex:
+                pass
+
+            s += str(atr_name) + ": " + negative_padd + value_str + " "
         self.toolDataDetected.emit(s)
 
     def load_Theme(self, theme):

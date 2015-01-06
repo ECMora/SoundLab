@@ -1,12 +1,9 @@
 # -*- coding: utf-8 -*-
-
-#
-#
-#
-#
 import os
 from PyQt4 import QtGui
-from PyQt4.QtGui import QFileDialog
+from PyQt4.QtCore import QLocale, QFile, QIODevice, QString
+from PyQt4.QtCore import QTranslator
+from PyQt4.QtGui import QFileDialog, QApplication
 
 FLOATING_POINT_EPSILON = 0.01
 

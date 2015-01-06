@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
+import os
 from PyQt4.QtGui import *
 from PyQt4 import QtCore, QtGui
 from duetto.audio_signals import openSignal
 import pyqtgraph as pg
-from PyQt4.QtCore import QTimer
+from PyQt4.QtCore import QTimer, Qt
 from duetto.audio_signals.AudioSignalPlayer import AudioSignalPlayer
 from duetto.audio_signals.AudioSignal import AudioSignal
 from SoundLabOscillogramWidget import SoundLabOscillogramWidget
@@ -54,6 +55,7 @@ class QSignalVisualizerWidget(QWidget):
         #  representation and visualization.
         self.axesOscilogram = SoundLabOscillogramWidget(**kwargs)
         self.axesSpecgram = SoundLabSpectrogramWidget(**kwargs)
+        self.scrollBar = QtGui.QScrollBar(Qt.Horizontal, parent=self)
 
         #  the internal variables to show the play line
         #  in each widget.
@@ -97,8 +99,10 @@ class QSignalVisualizerWidget(QWidget):
         layout.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(self.axesOscilogram)
         layout.addWidget(self.axesSpecgram)
+        layout.addWidget(self.scrollBar)
         layout.setStretch(0, 1)
         layout.setStretch(1, 1)
+        layout.setStretch(2, 1)
         self.setLayout(layout)
 
         #  variables
@@ -108,6 +112,9 @@ class QSignalVisualizerWidget(QWidget):
 
         self._recordTimer = QTimer(self)
         self._recordTimer.timeout.connect(self.on_newDataRecorded)
+
+        # signal file path to save and read the signals
+        self.signalFilePath = None
 
         self.graph()
 
@@ -202,6 +209,23 @@ class QSignalVisualizerWidget(QWidget):
         for act in actions:
             if isinstance(act, QtGui.QAction):
                 self.addAction(act)
+
+    # region Scroll Bar
+    def updateScrollBarValues(self):
+        """
+        updates the values of the scroll bar
+        using the current interval of signal visualization
+        :return:
+        """
+        self.scrollBar.setMinimum(self.mainCursor.min)
+        self.scrollBar.setMaximum(self.mainCursor.max)
+
+        # set the page step of the scroll bar to 1% of the visible signal
+        page_step = (self.mainCursor.max - self.mainCursor.min) / 100
+        page_step = max(page_step, 1)
+        self.scrollBar.setPageStep(page_step)
+
+    # endregion
 
     #  region Zoom Tool Region Management
     #  the tool Zoom make changes simultanously in both widgets
@@ -821,9 +845,13 @@ class QSignalVisualizerWidget(QWidget):
         if not filename:
             raise Exception("Invalid filename")
 
-        try:
+        if not os.path.exists(filename):
+            raise Exception("Invalid path in file system.")
 
+        try:
             signal = openSignal(filename)
+            self.signalFilePath = filename
+
             # update signal
             self.signal = signal
             self.graph()
@@ -831,12 +859,14 @@ class QSignalVisualizerWidget(QWidget):
         except Exception as ex:
             raise ex
 
-    def save(self, fname):
+    def save(self, fname=None):
         """
         Save the current signal into disc.
         :param fname: The path to the file.
         """
-        FileManager().write(self._signal, fname)
+        fname = self.signalFilePath if fname is None else fname
+        if fname:
+            FileManager().write(self._signal, fname)
 
     def saveSelectedSectionAsSignal(self, fname):
         """

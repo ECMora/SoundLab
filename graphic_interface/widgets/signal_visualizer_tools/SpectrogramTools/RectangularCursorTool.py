@@ -13,7 +13,6 @@ class RectangularCursorTool(SpectrogramTool):
         self.rectangularCursor = RectROI([0, 0], [0, 0], pen=(0, 9), movable=False)
         self.widget.viewBox.addItem(self.rectangularCursor)
         self.rectRegion = {'x': [0, 0], 'y': [0, 0]}
-        self.detectedData = []
 
     def mouseMoveEvent(self, event):
         x = self.fromCanvasToClient(event.x())
@@ -38,31 +37,36 @@ class RectangularCursorTool(SpectrogramTool):
                     self.rectangularCursor.setPos(self.last['pos'])
                     self.rectRegion['x'][0] = self.last['pos'][0]
                     self.rectRegion['y'][0] = self.last['pos'][1]
+
             dx = numpy.abs(self.last['pos'][0] - x)
             dy = numpy.abs(self.last['pos'][1] - y)
             self.rectangularCursor.setSize([dx, dy])
             self.rectRegion['x'][1] = self.rectRegion['x'][0] + dx
             self.rectRegion['y'][1] = self.rectRegion['y'][0] + dy
+
             info = self.getFreqTimeAndIntensity(self.rectRegion['x'][0], self.rectRegion['y'][0])
             info1 = self.getFreqTimeAndIntensity(self.rectRegion['x'][1], self.rectRegion['y'][1])
+
             self.rectRegion['y'][0] = info[1]
             self.rectRegion['y'][1] = info1[1]
-            self.detectedData = [("t0", self.timeToStr(round(info[0], self.DECIMAL_PLACES))),
-                                 ("t1", self.timeToStr(round(info1[0], self.DECIMAL_PLACES))),
-                                 ("dt", self.timeToStr(round(info1[0] - info[0],self.DECIMAL_PLACES))),
-                                 ("MinFreq", round(info[1],self.DECIMAL_PLACES)),
-                                 ("MaxFreq", round(info1[1],self.DECIMAL_PLACES)),
-                                 ("dF", round(info1[1] - info[1],self.DECIMAL_PLACES))
+
+            self.detectedData = [("t0", round(info[0], self.DECIMAL_PLACES)),
+                                 ("t1", round(info1[0], self.DECIMAL_PLACES)),
+                                 ("dt", round(info1[0] - info[0],self.DECIMAL_PLACES)),
+                                 ("dF", round(info1[1] - info[1], self.DECIMAL_PLACES)),
+                                 ("MinFreq(Hz)", round(info[1],self.DECIMAL_PLACES)),
+                                 ("MaxFreq(Hz)", round(info1[1],self.DECIMAL_PLACES))
                                 ]
+
         else:
             info = self.getFreqTimeAndIntensity(x, y)
             if x == -1 or y == -1:
                 self.widget.setCursor(QCursor(QtCore.Qt.ArrowCursor))
                 return
             else:
-                self.detectedData = [("Time", self.timeToStr(round(info[0],self.DECIMAL_PLACES))),
-                                     ("Freq", round(info[1],self.DECIMAL_PLACES)),
-                                     ("Amp", round(info[2],self.DECIMAL_PLACES))
+                self.detectedData = [("Time", round(info[0],self.DECIMAL_PLACES)),
+                                     ("Freq(Hz)", round(info[1],self.DECIMAL_PLACES)),
+                                     ("Amp(dB)", round(info[2],self.DECIMAL_PLACES))
                                     ]
         self.widget.setCursor(QCursor(QtCore.Qt.ArrowCursor))
         self.detectedDataChanged.emit(self.detectedData)
@@ -77,7 +81,7 @@ class RectangularCursorTool(SpectrogramTool):
         x = self.fromCanvasToClient(event.x())
         y = numpy.round(self.parent().specgramSettings.freqs[self.fromCanvasToClientY(event.y())] * 1.0 / 1000, 1)
         if self.mouseInsideRectArea(x, y):
-            #make the zomm self.makeZoomRect(specCoords=True)
+            # make the zomm self.makeZoomRect(specCoords=True)
             pass
 
     def mouseReleaseEvent(self, event):

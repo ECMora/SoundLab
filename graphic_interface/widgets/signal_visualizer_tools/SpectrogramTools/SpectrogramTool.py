@@ -49,8 +49,6 @@ class SpectrogramTool(SignalVisualizerTool):
 
         return a + int(round((yPixel - miny) * (b - a) * 1. / (maxy - miny), 0))
 
-
-
     def timeToStr(self, time):
         unit = 's'
         if time < 1:

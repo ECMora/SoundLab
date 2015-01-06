@@ -25,14 +25,15 @@ class PointerCursorTool(SpectrogramTool):
 
         if not self.mousePressed:
             info0 = self.widget.specgramHandler.getInfo(*self.last['pos'])
-            self.detectedData = [("t0", self.timeToStr(round(info0[0], self.DECIMAL_PLACES))),
-                                 ("t1", self.timeToStr(round(info[0],self.DECIMAL_PLACES))),
-                                 ("dt", self.timeToStr(round(info[0] - info0[0],self.DECIMAL_PLACES)))
+            self.detectedData = [("Amp(dB)", round(info[2], self.DECIMAL_PLACES)),
+                                 ("t0", round(info0[0], self.DECIMAL_PLACES)),
+                                 ("t1", round(info[0], self.DECIMAL_PLACES)),
+                                 ("dt", round(info[0] - info0[0], self.DECIMAL_PLACES))
                                 ]
         else:
-            self.detectedData = [("Time", self.timeToStr(round(info[0],self.DECIMAL_PLACES))),
-                                 ("Freq", str(round(info[1],self.DECIMAL_PLACES)) + " kHz"),
-                                 ("Amp", str(round(info[2],self.DECIMAL_PLACES)) + " dB")
+            self.detectedData = [("Amp(dB)", round(info[2], self.DECIMAL_PLACES)),
+                                 ("Time",  round(info[0],self.DECIMAL_PLACES)),
+                                 ("Freq(kHz)", round(info[1],self.DECIMAL_PLACES))
                                 ]
         self.widget.setCursor(QCursor(QtCore.Qt.CrossCursor))
         self.detectedDataChanged.emit(self.detectedData)

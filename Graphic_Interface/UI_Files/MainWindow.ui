@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>889</width>
+    <width>481</width>
     <height>363</height>
    </rect>
   </property>
@@ -47,23 +47,14 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
       </property>
      </widget>
     </item>
-    <item>
-     <widget class="QScrollBar" name="horizontalScrollBar">
-      <property name="orientation">
-       <enum>Qt::Horizontal</enum>
-      </property>
-     </widget>
-    </item>
    </layout>
-   <zorder>horizontalScrollBar</zorder>
-   <zorder>widget</zorder>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>889</width>
+     <width>481</width>
      <height>21</height>
     </rect>
    </property>
@@ -76,10 +67,10 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
    <widget class="QMenu" name="menuFile">
     <property name="geometry">
      <rect>
-      <x>72</x>
+      <x>59</x>
       <y>140</y>
-      <width>158</width>
-      <height>288</height>
+      <width>210</width>
+      <height>310</height>
      </rect>
     </property>
     <property name="autoFillBackground">
@@ -94,16 +85,25 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
     <property name="title">
      <string>File</string>
     </property>
+    <widget class="QMenu" name="menuSave_Images">
+     <property name="title">
+      <string>Save Images</string>
+     </property>
+     <addaction name="actionOsc_Image"/>
+     <addaction name="actionSpecgram_Image"/>
+     <addaction name="actionCombined_Image"/>
+    </widget>
     <addaction name="actionNew"/>
     <addaction name="actionOpen"/>
-    <addaction name="actionSave_selected_interval_as"/>
     <addaction name="actionSave"/>
-    <addaction name="actionFile_Up"/>
-    <addaction name="actionFile_Down"/>
+    <addaction name="actionSaveAs"/>
+    <addaction name="actionSave_selected_interval_as"/>
     <addaction name="separator"/>
-    <addaction name="actionLoad_Theme"/>
-    <addaction name="actionSave_theme"/>
+    <addaction name="actionSaveTheme"/>
+    <addaction name="actionLoadTheme"/>
+    <addaction name="actionSaveThemeAs"/>
     <addaction name="separator"/>
+    <addaction name="menuSave_Images"/>
     <addaction name="actionClose"/>
     <addaction name="actionExit"/>
    </widget>
@@ -114,14 +114,6 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
     <property name="title">
      <string>Tools</string>
     </property>
-    <widget class="QMenu" name="menuExport">
-     <property name="title">
-      <string>Export</string>
-     </property>
-     <addaction name="actionOsc_Image"/>
-     <addaction name="actionSpecgram_Image"/>
-     <addaction name="actionCombined_Image"/>
-    </widget>
     <addaction name="actionZoomIn"/>
     <addaction name="actionZoom_out"/>
     <addaction name="actionZoom_out_entire_file"/>
@@ -132,7 +124,6 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
     <addaction name="actionRectangular_Cursor"/>
     <addaction name="actionRectangular_Eraser"/>
     <addaction name="separator"/>
-    <addaction name="menuExport"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
     <property name="styleSheet">
@@ -149,12 +140,12 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
      <addaction name="actionGenerate_White_Noise"/>
      <addaction name="actionGenerate_Pink_Noise"/>
     </widget>
-    <addaction name="actionCopy"/>
-    <addaction name="actionPaste"/>
-    <addaction name="actionCut"/>
-    <addaction name="separator"/>
-    <addaction name="actionRedo"/>
     <addaction name="actionUndo"/>
+    <addaction name="actionRedo"/>
+    <addaction name="separator"/>
+    <addaction name="actionCopy"/>
+    <addaction name="actionCut"/>
+    <addaction name="actionPaste"/>
     <addaction name="separator"/>
     <addaction name="actionPositive_Values"/>
     <addaction name="actionNegative_Values"/>
@@ -454,13 +445,16 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
     <string>Zoom out entire file</string>
    </property>
   </action>
-  <action name="actionSave">
+  <action name="actionSaveAs">
    <property name="icon">
     <iconset resource="resources/icons.qrc">
      <normaloff>:/myappicons/225.ico</normaloff>:/myappicons/225.ico</iconset>
    </property>
    <property name="text">
     <string>Save as</string>
+   </property>
+   <property name="toolTip">
+    <string>Save</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+G</string>
@@ -587,15 +581,15 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
     <string>Insert Pink Noise</string>
    </property>
   </action>
-  <action name="actionSave_theme">
+  <action name="actionSaveThemeAs">
    <property name="text">
-    <string>Save theme as</string>
+    <string>Save theme as...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+T</string>
    </property>
   </action>
-  <action name="actionLoad_Theme">
+  <action name="actionLoadTheme">
    <property name="text">
     <string>Load theme</string>
    </property>
@@ -709,7 +703,7 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
      <normaloff>:/myappicons/Camera.ico</normaloff>:/myappicons/Camera.ico</iconset>
    </property>
    <property name="text">
-    <string>Osc Image</string>
+    <string>Oscilogram Image</string>
    </property>
   </action>
   <action name="actionSpecgram_Image">
@@ -718,7 +712,7 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
      <normaloff>:/myappicons/Camera.ico</normaloff>:/myappicons/Camera.ico</iconset>
    </property>
    <property name="text">
-    <string>Specgram Image</string>
+    <string>Spectrogram Image</string>
    </property>
   </action>
   <action name="actionCombined_Image">
@@ -831,7 +825,7 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
      <normaloff>:/myappicons/225.ico</normaloff>:/myappicons/225.ico</iconset>
    </property>
    <property name="text">
-    <string>Save selected as</string>
+    <string>Save selected interval as...</string>
    </property>
   </action>
   <action name="actionClose">
@@ -845,6 +839,20 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
    </property>
    <property name="shortcut">
     <string>M</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/225.ico</normaloff>:/myappicons/225.ico</iconset>
+   </property>
+   <property name="text">
+    <string>Save</string>
+   </property>
+  </action>
+  <action name="actionSaveTheme">
+   <property name="text">
+    <string>Save Theme</string>
    </property>
   </action>
   <zorder>dock_settings</zorder>

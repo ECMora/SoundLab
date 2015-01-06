@@ -9,31 +9,208 @@ from duetto.signal_processing.filter_signal_processors.frequency_domain_filters 
 from pyqtgraph.parametertree.parameterTypes import ListParameter
 from pyqtgraph.parametertree import Parameter, ParameterTree
 from PyQt4.QtGui import QDialog, QMessageBox, QFileDialog, QActionGroup, QAction
-from PyQt4.QtCore import pyqtSlot, QMimeData, pyqtSignal, QTimer
+from PyQt4.QtCore import pyqtSlot, QMimeData, pyqtSignal, QTimer, QTranslator, QFile, QIODevice, QString
 from duetto.dimensional_transformations.two_dimensional_transforms.Spectrogram.WindowFunctions import WindowFunction
-from Utils.Utils import folderFiles, saveImage
+from Utils.Utils import folderFiles,saveImage
 from graphic_interface.windows.ParameterList import DuettoListParameterItem
 from graphic_interface.dialogs.NewFileDialog import NewFileDialog
 from graphic_interface.windows.OneDimensionalAnalysisWindow import OneDimensionalAnalysisWindow
 from SegmentationAndClasificationWindow import SegmentationAndClasificationWindow
 from graphic_interface.windows.Theme.WorkTheme import WorkTheme
 from graphic_interface.windows.ui_python_files.MainWindow import Ui_DuettoMainWindow
-from graphic_interface.dialogs import InsertSilenceDialog as sdialog, FilterOptionsDialog as filterdg, \
+from graphic_interface.dialogs import insertSilence as sdialog, FilterOptionsDialog as filterdg, \
     ChangeVolumeDialog as cvdialog
 from sound_lab_core.Clasification.ClassificationData import ClassificationData
 from graphic_interface.widgets.signal_visualizer_tools.SignalVisualizerTool import Tools
 
 
 class InsertSilenceDialog(sdialog.Ui_Dialog, QDialog):
-    pass
+    """
+    Dialog to select a duration for a signal insertion.
+    """
+
+    # CONSTANTS
+    # the static dictionary that memorize the dialog
+    # element values during the application execution
+    # region dialog elements values
+
+    dialogValues = {
+        "insertSpinBox": 5000
+    }
+    # endregion
+
+    def __init__(self):
+        """
+        Initialize the dialogs elements with their last value
+        """
+        QDialog.__init__(self)
+        self.setupUi(self)
+
+        # load the previous selected values for the dialog or the defaults ones
+        self.load_values()
+        self.btonaceptar.clicked.connect(self.save_values)
+
+    def load_values(self):
+        """
+        Load into the dialog elements the previously
+        or default values.
+        """
+
+        # set the values of the selected filter type on radio buttons
+        self.insertSpinBox.setValue(self.dialogValues["insertSpinBox"])
+
+    def save_values(self):
+        """
+        Load into the dialog elements the previously
+        or default values.
+        """
+
+        # set the values of the selected amplitude modulation type on radio buttons
+        self.dialogValues["insertSpinBox"] = self.insertSpinBox.value()
 
 
 class ChangeVolumeDialog(cvdialog.Ui_Dialog, QDialog):
-    pass
+    """
+    Dialog to select a time-amplitude modulation.
+    """
+
+    # CONSTANTS
+    # the static dictionary that memorize the dialog
+    # element values during the application execution
+
+    # region dialog elements values
+
+    dialogValues = {
+        "rbuttonConst": True,
+        "rbuttonFadeIn": False,
+        "rbuttonFadeOut": False,
+        "rbuttonNormalize": False,
+        "spinboxConstValue": 1.00,
+        "spinboxNormalizePercent": 50.00,
+        "cboxModulationType": 0
+    }
+    # endregion
+
+    def __init__(self):
+        """
+        Initialize the dialogs elements with their last value
+        """
+        QDialog.__init__(self)
+        self.setupUi(self)
+
+        # load the previous selected values for the dialog or the defaults ones
+        self.load_values()
+        self.buttonBox.accepted.connect(self.save_values)
+
+    def load_values(self):
+        """
+        Load into the dialog elements the previously
+        or default values.
+        """
+
+        # set the values of the selected filter type on radio buttons
+        self.rbuttonConst.setChecked(self.dialogValues["rbuttonConst"])
+        self.rbuttonFadeIn.setChecked(self.dialogValues["rbuttonFadeIn"])
+        self.rbuttonFadeOut.setChecked(self.dialogValues["rbuttonFadeOut"])
+        self.rbuttonNormalize.setChecked(self.dialogValues["rbuttonNormalize"])
+
+        # set the values of every spin box with the previous or default selection
+        self.spinboxConstValue.setValue(self.dialogValues["spinboxConstValue"])
+        self.spinboxNormalizePercent.setValue(self.dialogValues["spinboxNormalizePercent"])
+        self.cboxModulationType.setCurrentIndex(self.dialogValues["cboxModulationType"])
+
+    def save_values(self):
+        """
+        Load into the dialog elements the previously
+        or default values.
+        """
+
+        # set the values of the selected amplitude modulation type on radio buttons
+        self.dialogValues["rbuttonConst"] = self.rbuttonConst.isChecked()
+        self.dialogValues["rbuttonFadeIn"] = self.rbuttonFadeIn.isChecked()
+        self.dialogValues["rbuttonFadeOut"] = self.rbuttonFadeOut.isChecked()
+        self.dialogValues["rbuttonNormalize"] = self.rbuttonNormalize.isChecked()
+
+        # set the values of the selected amplitude modulation
+        self.dialogValues["spinboxConstValue"] = self.spinboxConstValue.value()
+        self.dialogValues["spinboxNormalizePercent"] = self.spinboxNormalizePercent.value()
+        self.dialogValues["cboxModulationType"] = self.cboxModulationType.currentIndex()
 
 
 class FilterDialog(filterdg.Ui_Dialog, QDialog):
-    pass
+    """
+    Dialog to select a filter.
+    """
+
+    # CONSTANTS
+    # the static dictionary that memorize the dialog
+    # element values during the application execution
+
+    # region dialog elements values
+    dialogValues = {
+        "rButtonLowPass": True,
+        "rButtonHighPass": False,
+        "rButtonBandPass": False,
+        "rButtonBandStop": False,
+        "spinBoxLowPass": 0.00,
+        "spinBoxHighPass": 0.00,
+        "spinBoxBandStopFu": 0.00,
+        "spinBoxBandStopFl": 0.00,
+        "spinBoxBandPassFl": 0.00,
+        "spinBoxBandPassFu": 0.00
+    }
+    # endregion
+
+    def __init__(self):
+        """
+        Initialize the dialogs elements with their last value
+        """
+        QDialog.__init__(self)
+        self.setupUi(self)
+
+        # load the previous selected values for the dialog or the defaults ones
+        self.load_values()
+        self.btonaceptar.clicked.connect(self.save_values)
+
+    def load_values(self):
+        """
+        Load into the dialog elements the previously
+        or default values.
+        """
+
+        # set the values of the selected filter type on radio buttons
+        self.rButtonLowPass.setChecked(self.dialogValues["rButtonLowPass"])
+        self.rButtonHighPass.setChecked(self.dialogValues["rButtonHighPass"])
+        self.rButtonBandStop.setChecked(self.dialogValues["rButtonBandStop"])
+        self.rButtonBandPass.setChecked(self.dialogValues["rButtonBandPass"])
+
+        # set the values of every spin box with the kHz of frequency selection
+        self.spinBoxLowPass.setValue(self.dialogValues["spinBoxLowPass"])
+        self.spinBoxHighPass.setValue(self.dialogValues["spinBoxHighPass"])
+        self.spinBoxBandStopFu.setValue(self.dialogValues["spinBoxBandStopFu"])
+        self.spinBoxBandStopFl.setValue(self.dialogValues["spinBoxBandStopFl"])
+        self.spinBoxBandPassFl.setValue(self.dialogValues["spinBoxBandPassFl"])
+        self.spinBoxBandPassFu.setValue(self.dialogValues["spinBoxBandPassFu"])
+
+    def save_values(self):
+        """
+        Load into the dialog elements the previously
+        or default values.
+        """
+
+        # save the values of the selected filter type on radio buttons
+        self.dialogValues["rButtonLowPass"] = self.rButtonLowPass.isChecked()
+        self.dialogValues["rButtonHighPass"] = self.rButtonHighPass.isChecked()
+        self.dialogValues["rButtonBandStop"] = self.rButtonBandStop.isChecked()
+        self.dialogValues["rButtonBandPass"] = self.rButtonBandPass.isChecked()
+
+        # save the values of the spin box with the frequencies
+        self.dialogValues["spinBoxLowPass"] = self.spinBoxLowPass.value()
+        self.dialogValues["spinBoxHighPass"] = self.spinBoxHighPass.value()
+        self.dialogValues["spinBoxBandStopFu"] = self.spinBoxBandStopFu.value()
+        self.dialogValues["spinBoxBandStopFl"] = self.spinBoxBandStopFl.value()
+        self.dialogValues["spinBoxBandPassFl"] = self.spinBoxBandPassFl.value()
+        self.dialogValues["spinBoxBandPassFu"] = self.spinBoxBandPassFu.value()
 
 
 class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
@@ -44,6 +221,14 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     #  SIGNALS
     #  signal raised when a file is drop into the window
     dropchanged = pyqtSignal(QMimeData)
+
+    # signal raised when the user change the application language
+    # raise the new language file path
+    languageChanged = pyqtSignal(str)
+
+    # signal raised when the user change the application style
+    # raise the new style path
+    styleChanged = pyqtSignal(str)
 
     #  CONSTANTS
     #  minimum and maximum sampling rate used on the application
@@ -58,7 +243,14 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     SETTINGS_WINDOW_WIDTH = 340
     SETTINGS_WINDOW_HEIGHT = 100
 
-    def __init__(self, parent=None):
+    # region Initialize
+
+    def __init__(self, parent=None, signal_path=''):
+        """
+        :param parent:
+        :param signal_path: Optional Signal path to open
+        :return:
+        """
         super(DuettoSoundLabWindow, self).__init__(parent)
         self.setupUi(self)
 
@@ -73,7 +265,13 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                                 'Error: ' + str(e))
 
         #  get all the themes that are in the static folder for themes ("Utils\Themes\")
-        themesInFolder = folderFiles(os.path.join("Utils", "Themes"), extensions=[".dth"])
+        app_themes = folderFiles(os.path.join("Utils", "Themes"), extensions=[".dth"])
+
+        # get all the styles that are in the static folder for styles ("styles\")
+        app_styles = folderFiles("styles", extensions=[".qss"])
+
+        # get all the languages translations that are in the static folder for languagues ("I18n\")
+        app_languagues = folderFiles("I18n", extensions=[".qm"])
 
         #  get the histogram object of the spectrogram widget.
         #  this histogram would be visualized outside the spectrogram widget for best
@@ -101,7 +299,79 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         #  Is used a parameter tree to present to the user the visual options
 
         #  region Parameter Tree definition
-        #  region params
+
+        #  create the tree,  and connect
+        self.ParamTree = self.__getParamsTree(app_styles, app_languagues, app_themes)
+
+        self.ParamTree.sigTreeStateChanged.connect(self.change)
+
+        parameterTree = ParameterTree()
+        parameterTree.setAutoScroll(True)
+        parameterTree.setFixedWidth(self.SETTINGS_WINDOW_WIDTH)
+        parameterTree.setHeaderHidden(True)
+        parameterTree.setParameters(self.ParamTree, showTop=False)
+
+        #  endregion
+
+        #  set the vertical layout of the visual options window with the
+        #  param tree and the histogram color bar
+        layout = QtGui.QVBoxLayout()
+        layout.setMargin(0)
+        layout.addWidget(parameterTree)
+        layout.addWidget(self.hist)
+
+        self.hist.item.gradient.restoreState(self.workTheme.spectrogramTheme.colorBarState)
+        self.hist.item.region.setRegion(self.workTheme.spectrogramTheme.histRange)
+
+        self.osc_settings_contents.setLayout(layout)
+        self.dock_settings.setVisible(False)
+        self.dock_settings.setFixedWidth(self.SETTINGS_WINDOW_WIDTH)
+
+        #  get the clasification data stored
+        #  classifPath = os.path.join(os.path.join("Utils","Classification"),"classifSettings")
+        self.classificationData = self.deserializeClassificationData()
+
+        #  variables to handle the navigation across the signal files of one folder
+        #  to allow to open all the files in the folder user friendly by action up/down next file
+        self.filesInFolder = []
+        self.filesInFolderIndex = -1
+
+        #  the list of one dimensional processing windows opened by the user.
+        self.one_dim_windows = []
+
+        #  accept drops to open signals by drop
+        self.setAcceptDrops(True)
+
+        #  add context menu actions
+        self.__addContextMenuActions()
+
+
+        #  set the action group to change the play speed of the opened signal
+        playSpeedActionGroup = QActionGroup(self)
+        playSpeedActionGroup.addAction(self.action1_8x)
+        playSpeedActionGroup.addAction(self.action1_4x)
+        playSpeedActionGroup.addAction(self.action1_2x)
+        playSpeedActionGroup.addAction(self.action1x)
+        playSpeedActionGroup.addAction(self.action2x)
+        playSpeedActionGroup.addAction(self.action4x)
+        playSpeedActionGroup.addAction(self.action8x)
+        playSpeedActionGroup.triggered.connect(self.on_playSpeedChanged_triggered)
+
+        # self.showMaximized()
+
+        # open a signal if any
+        if signal_path == '':
+            QTimer.singleShot(0, self.on_load)
+        else:
+            self._open(signal_path)
+
+    def __getParamsTree(self, app_styles, app_languagues, app_themes):
+        """
+        Defines and return the Param Tree with the app options
+        :return:
+        """
+
+        # region params definition
         params = [
             {u'name': unicode(self.tr(u'Oscillogram Settings')), u'type': u'group', u'children': [
                 {u'name': unicode(self.tr(u'Amplitude(%)')), u'type': u'group', u'children': [
@@ -147,10 +417,10 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                              (u"Rectangular", WindowFunction.Rectangular)]},
                 {u'name': unicode(self.tr(u'FFT overlap')), u'type': u'int', u'value': -1, u'limits': (-1, 99)},
                 {u'name': unicode(self.tr(u'Threshold(dB)')), u'type': u'group', u'children': [
-                    {u'name': unicode(self.tr(u'Min')), u'type': u'float', u'step': 0.1,
+                    {u'name': unicode(self.tr(u'Min')), u'type': u'int', u'step': 1,
                      u'default': self.workTheme.spectrogramTheme.histRange[0],
                      u'value': self.workTheme.spectrogramTheme.histRange[0]},
-                    {u'name': unicode(self.tr(u'Max')), u'type': u'float', u'step': 0.1,
+                    {u'name': unicode(self.tr(u'Max')), u'type': u'int', u'step': 1,
                      u'default': self.workTheme.spectrogramTheme.histRange[1],
                      u'value': self.workTheme.spectrogramTheme.histRange[1]},
                 ]},
@@ -167,10 +437,26 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             ]},
             {u'name': unicode(self.tr(u'Themes')), u'type': u'group', u'children': [
                 {u'name': unicode(self.tr(u'Theme Selected')), u'type': u'list',
-                 u'value': u"" if not themesInFolder else os.path.basename(themesInFolder[0])[:-4],
-                 u'default': u"" if not themesInFolder else os.path.basename(themesInFolder[0])[:-4],
-                 u'values': [(u"", u"")] if not themesInFolder else [(os.path.basename(x)[:-4], x) for x in
-                                                                     themesInFolder]},
+                 u'value': u"" if not app_themes else os.path.basename(app_themes[0])[:-4],
+                 u'default': u"" if not app_themes else os.path.basename(app_themes[0])[:-4],
+                 u'values': [(u"", u"")] if not app_themes else [(os.path.basename(x)[:-4], x) for x in
+                                                                 app_themes]},
+            ]
+            },
+            {u'name': unicode(self.tr(u'Language')), u'type': u'group', u'children': [
+                {u'name': unicode(self.tr(u'Language Selected')), u'type': u'list',
+                 u'value': u"" if not app_languagues else os.path.basename(app_languagues[0])[:-4],
+                 u'default': u"" if not app_languagues else os.path.basename(app_languagues[0])[:-4],
+                 u'values': [(u"", u"")] if not app_languagues else [(os.path.basename(x)[:-4], x) for x in
+                                                                     app_languagues]},
+            ]
+            },
+            {u'name': unicode(self.tr(u'Style')), u'type': u'group', u'children': [
+                {u'name': unicode(self.tr(u'Style Selected')), u'type': u'list',
+                 u'value': u"" if not app_styles else os.path.basename(app_styles[0])[:-4],
+                 u'default': u"" if not app_styles else os.path.basename(app_styles[0])[:-4],
+                 u'values': [(u"", u"")] if not app_styles else [(os.path.basename(x)[:-4], x) for x in
+                                                                 app_styles]},
             ]
             },
             {u'name': unicode(self.tr(u'Detection Visual Settings')), u'type': u'group', u'children': [
@@ -194,109 +480,58 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         ]
         #  endregion
-        #  change the item class of the list parameter type to allow order in the children params added
+
+        # change the item class of the list parameter type to allow order in the children params added
         ListParameter.itemClass = DuettoListParameterItem
 
-        #  create the tree,  and connect
-        self.ParamTree = Parameter.create(name=u'params', type=u'group', children=params)
-        self.ParamTree.sigTreeStateChanged.connect(self.change)
-        parameterTree = ParameterTree()
-        parameterTree.setAutoScroll(True)
-        parameterTree.setFixedWidth(self.SETTINGS_WINDOW_WIDTH)
-        parameterTree.setHeaderHidden(True)
-        parameterTree.setParameters(self.ParamTree, showTop=False)
+        return Parameter.create(name=u'params', type=u'group', children=params)
 
-        #  endregion
+    def __addContextMenuActions(self):
+        """
+        Adds the context menu options to the central widget
+        :return:
+        """
+        # create the separators for the context menu
+        sep1, sep2, sep3, sep4 = [QtGui.QAction(self) for _ in range(4)]
 
-        #  set the vertical layout of the visual options window with the
-        #  param tree and the histogram color bar
-        layout = QtGui.QVBoxLayout()
-        layout.setMargin(0)
-        layout.addWidget(parameterTree)
-        layout.addWidget(self.hist)
-        self.hist.item.gradient.restoreState(self.workTheme.spectrogramTheme.colorBarState)
-        self.hist.item.region.setRegion(self.workTheme.spectrogramTheme.histRange)
-
-        self.osc_settings_contents.setLayout(layout)
-        self.dock_settings.setVisible(False)
-        self.dock_settings.setFixedWidth(self.SETTINGS_WINDOW_WIDTH)
-
-        #  get the clasification data stored
-        #  classifPath = os.path.join(os.path.join("Utils","Classification"),"classifSettings")
-        self.classificationData = self.deserializeClassificationData()
-
-        #  variables to handle the navigation across the signal files of one folder
-        #  to allow to open all the files in the folder user friendly by action up/down next file
-        self.filesInFolder = []
-        self.filesInFolderIndex = -1
-
-        #  the list of one dimensional processing windows opened by the user.
-        self.one_dim_windows = []
-
-        #  accept drops to open signals by drop
-        self.setAcceptDrops(True)
-
-        #  region Context Menu Actions
-
-        #  create the separators for the context menu
-        separator, separator2, separator3, separator4 = [QtGui.QAction(self) for _ in range(4)]
-
-        for sep in [separator, separator2, separator3, separator4]:
+        for sep in [sep1, sep2, sep3, sep4]:
             sep.setSeparator(True)
 
-        #  add actions to the context menu
+        # add actions to the context menu
         self.widget.createContextCursor([
 
-            #  Edition Actions
+            # Edition Actions
             self.actionCopy,
             self.actionCut,
             self.actionPaste,
-            separator,
+            sep1,
 
-            #  Signal Data Sign Actions
+            # Signal Data Sign Actions
             self.actionNegative_Values,
             self.actionPositive_Values,
             self.actionChange_Sign,
-            separator2,
+            sep2,
 
             #  common signal processing actions
             self.action_Reverse,
             self.actionSilence,
             self.actionInsert_Silence,
-            separator3,
+            sep3,
 
             #  Tools
             self.actionZoom_Cursor,
             self.actionPointer_Cursor,
             self.actionRectangular_Cursor,
             self.actionRectangular_Eraser,
-            separator4,
+            sep4,
 
             #  widgets images
             self.actionOsc_Image,
             self.actionSpecgram_Image,
             self.actionCombined_Image
         ])
-        #  endregion
 
-        #  set a name for the default signal
-        #  action signal is a place in the tool bar to show the current signal name
-        self.actionSignalName.setText("")
-
-        #  set the action group to change the play speed of the opened signal
-        playSpeedActionGroup = QActionGroup(self)
-        playSpeedActionGroup.addAction(self.action1_8x)
-        playSpeedActionGroup.addAction(self.action1_4x)
-        playSpeedActionGroup.addAction(self.action1_2x)
-        playSpeedActionGroup.addAction(self.action1x)
-        playSpeedActionGroup.addAction(self.action2x)
-        playSpeedActionGroup.addAction(self.action4x)
-        playSpeedActionGroup.addAction(self.action8x)
-        playSpeedActionGroup.triggered.connect(self.on_playSpeedChanged_triggered)
-
-        self.showMaximized()
-        QTimer.singleShot(0, self.on_load)
-
+    # endregion
 
     #  region Segmentation And Clasification
 
@@ -364,9 +599,21 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 #  endregion
 
     #  region Theme
+    @pyqtSlot()
+    def on_actionSaveTheme_triggered(self):
+        """
+        Save to disc the current theme with the visual options.
+        """
+
+        selected_theme = self.ParamTree.param(unicode(self.tr(u'Themes'))).param(
+            unicode(self.tr(u'Theme Selected'))).value()
+
+        theme_path = os.path.join("Utils", "Themes", selected_theme + ".dth")
+
+        self.serializeTheme(theme_path)
 
     @pyqtSlot()
-    def on_actionSave_theme_triggered(self):
+    def on_actionSaveThemeAs_triggered(self):
         """
         Save to disc the current theme with the visual options.
         """
@@ -433,7 +680,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             theme.detectionTheme.quart2Color)
 
     @pyqtSlot()
-    def on_actionLoad_Theme_triggered(self):
+    def on_actionLoadTheme_triggered(self):
         """
         Load a new theme (previously saved) from disc.
         """
@@ -619,6 +866,13 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 except Exception as e:
                     QMessageBox.warning(self, 'Error loading theme',
                                         'An error occurred while loading the theme.\nError:\n' + str(e))
+            elif childName == unicode(self.tr(u'Style')) + u"." + \
+                    unicode(self.tr(u'Style Selected')):
+                self.styleChanged.emit(data)
+
+            elif childName == unicode(self.tr(u'Language')) + u"." + \
+                    unicode(self.tr(u'Language Selected')):
+                self.languageChanged.emit(data)
 
         if graph:
             self.widget.graph()
@@ -795,26 +1049,24 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         Execute the scale on the selected section of the signal.
         :return:
         """
-        scaleDialog = cvdialog.Ui_Dialog()
-        scaleDialogWindow = ChangeVolumeDialog(self)
-        scaleDialog.setupUi(scaleDialogWindow)
+        scaleDialogWindow = ChangeVolumeDialog()
 
         if scaleDialogWindow.exec_():
-            factor = scaleDialog.spinboxConstValue.value()
+            factor = scaleDialogWindow.spinboxConstValue.value()
 
-            if scaleDialog.rbuttonConst.isChecked():
+            if scaleDialogWindow.rbuttonConst.isChecked():
                 # scale by a constant factor
                 self.widget.scale(factor)
 
-            elif scaleDialog.rbuttonNormalize.isChecked():
+            elif scaleDialogWindow.rbuttonNormalize.isChecked():
                 # scale by normalize the signal to the factor amplitude
-                factor = scaleDialog.spinboxNormalizePercent.value()
+                factor = scaleDialogWindow.spinboxNormalizePercent.value()
                 self.widget.normalize(factor)
 
             else:
                 # scale by using a function
-                function = scaleDialog.cboxModulationType.currentText()
-                fade = u"IN" if scaleDialog.rbuttonFadeIn.isChecked() else u"OUT"
+                function = scaleDialogWindow.cboxModulationType.currentText()
+                fade = u"IN" if scaleDialogWindow.rbuttonFadeIn.isChecked() else u"OUT"
                 self.widget.modulate(function, fade)
 
     @pyqtSlot()
@@ -823,13 +1075,11 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         Insert an amount of silence time on the signal
         :return:
         """
-        silenceDialog = sdialog.Ui_Dialog()
-        silenceDialogWindow = InsertSilenceDialog(self)
-        silenceDialog.setupUi(silenceDialogWindow)
+        silenceDialogWindow = InsertSilenceDialog()
 
         if silenceDialogWindow.exec_():
             # get the time in ms to insert as silence
-            ms = silenceDialog.insertSpinBox.value()
+            ms = silenceDialogWindow.insertSpinBox.value()
             self.widget.insertSilence(ms)
 
     @pyqtSlot()
@@ -839,15 +1089,13 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         :return:
         """
         # reuse the insert silence dialog
-        whiteNoiseDialog = sdialog.Ui_Dialog()
-        whiteNoiseDialogWindow = InsertSilenceDialog(self)
-        whiteNoiseDialog.setupUi(whiteNoiseDialogWindow)
+        whiteNoiseDialogWindow = InsertSilenceDialog()
 
         # change the label for the new task of insert pink noise
-        whiteNoiseDialog.label.setText(self.tr(u"Select the duration in ms") + " \n" + self.tr(u"of the Pink Noise."))
+        whiteNoiseDialogWindow.label.setText(self.tr(u"Select the duration in ms") + " \n" + self.tr(u"of the Pink Noise."))
 
         # 1 second time by default
-        whiteNoiseDialog.insertSpinBox.setValue(1000)
+        whiteNoiseDialogWindow.insertSpinBox.setValue(1000)
 
         #  if whiteNoiseDialogWindow.exec_():
         #      type_, Fc, Fl, Fu = self.filter_helper()
@@ -865,18 +1113,16 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         :return:
         """
         # reuse the insert silence dialog
-        whiteNoiseDialog = sdialog.Ui_Dialog()
-        whiteNoiseDialogWindow = InsertSilenceDialog(self)
-        whiteNoiseDialog.setupUi(whiteNoiseDialogWindow)
+        whiteNoiseDialogWindow = InsertSilenceDialog()
 
         # change the label for the new task of insert white noise
-        whiteNoiseDialog.label.setText(self.tr(u"Select the duration in ms") + u" \n" + self.tr(u"of the White Noise."))
+        whiteNoiseDialogWindow.label.setText(self.tr(u"Select the duration in ms") + u" \n" + self.tr(u"of the White Noise."))
 
         # 1 second time by default
-        whiteNoiseDialog.insertSpinBox.setValue(1000)
+        whiteNoiseDialogWindow.insertSpinBox.setValue(1000)
 
         if whiteNoiseDialogWindow.exec_():
-            ms = whiteNoiseDialog.insertSpinBox.value()
+            ms = whiteNoiseDialogWindow.insertSpinBox.value()
             self.widget.insertWhiteNoise(ms)
 
     def filter_helper(self):
@@ -885,38 +1131,37 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         filter implementation according to the user selection.
         :return:
         """
-        filterDialog = filterdg.Ui_Dialog()
-        filterDialogWindow = InsertSilenceDialog(self)
-        filterDialog.setupUi(filterDialogWindow)
+        filterDialogWindow = FilterDialog()
 
         # open the filter dialog
         if filterDialogWindow.exec_():
             #  Low Pass Filter
-            if filterDialog.rButtonLowPass.isChecked():
+            if filterDialogWindow.rButtonLowPass.isChecked():
                 # get the frequency of cut for the low pass filter
-                freq_cut = filterDialog.spinBoxLowPass.value()
+                # (the freq in the dialog are in kHz)
+                freq_cut = filterDialogWindow.spinBoxLowPass.value() * 1000
                 return LowPassFilter(self.widget.signal, freq_cut)
 
             #  High Pass Filter
-            elif filterDialog.rButtonHighPass.isChecked():
+            elif filterDialogWindow.rButtonHighPass.isChecked():
                 # get the frequency of cut for the high pass filter
-                freq_cut = filterDialog.spinBoxHighPass.value()
+                freq_cut = filterDialogWindow.spinBoxHighPass.value() * 1000
                 return HighPassFilter(self.widget.signal, freq_cut)
 
             #  Band Pass Filter
-            elif filterDialog.rButtonBandPass.isChecked():
+            elif filterDialogWindow.rButtonBandPass.isChecked():
                 #  get the frequencies of cut (upper and lower)
                 #  for the Band pass filter
-                freq_cut_lower = filterDialog.spinBoxBandPassFl.value()
-                freq_cut_upper = filterDialog.spinBoxBandPassFu.value()
+                freq_cut_lower = filterDialogWindow.spinBoxBandPassFl.value() * 1000
+                freq_cut_upper = filterDialogWindow.spinBoxBandPassFu.value() * 1000
                 return BandPassFilter(self.widget.signal, freq_cut_lower, freq_cut_upper)
 
             #  Band Stop Filter
-            elif filterDialog.rButtonBandStop.isChecked():
+            elif filterDialogWindow.rButtonBandStop.isChecked():
                 #  get the frequencies of cut (upper and lower)
                 #  for the Band Stop filter
-                freq_cut_lower = filterDialog.spinBoxBandStopFl.value()
-                freq_cut_upper = filterDialog.spinBoxBandStopFu.value()
+                freq_cut_lower = filterDialogWindow.spinBoxBandStopFl.value()
+                freq_cut_upper = filterDialogWindow.spinBoxBandStopFu.value()
                 return BandStopFilter(self.widget.signal, freq_cut_lower, freq_cut_upper)
 
                 # None if there is no filter implementation selected
@@ -1010,15 +1255,17 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         if os.path.exists(duetto_signal):
             self.widget.open(duetto_signal)
-            self.actionSignalName.setText(self.tr(u"File Name:") + u" " + self.widget.signalName())
+
         else:
             signal = Synthesizer.generateSilence(44100, 16, 5000)
             self.widget.signal = signal
             self.widget.graph()
-            self.actionSignalName.setText(self.tr(u"File Name: Welcome to duetto"))
 
         #  refresh and set visible both axes
         self.changeWidgetsVisibility(True, True)
+
+        # update the label with signal properties
+        self.updateSignalPropertiesLabel()
 
         #  update data in the theme from the new signal
         self.changeFrequency(0, self.widget.signal.samplingRate / 2000)
@@ -1098,7 +1345,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
             self.widget.signal = signal
             self.setWindowTitle(self.tr(u"duetto-Sound Lab - ") + self.widget.signalName())
-            self.actionSignalName.setText(self.tr(u"File Name: ") + self.widget.signalName())
+            self.updateSignalPropertiesLabel()
             self.widget.graph()
 
     @pyqtSlot()
@@ -1132,7 +1379,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
                 self.widget.open(file_path)
                 self.setWindowTitle(self.tr(u"duetto-Sound Lab - ") + self.widget.signalName())
-                self.actionSignalName.setText(self.tr(u"File Name: ") + self.widget.signalName())
+
             except Exception as ex:
                 QMessageBox.warning(QMessageBox(), self.tr(u"Error"),
                                     self.tr(u"Could not load the file.") +
@@ -1145,6 +1392,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             self.changeFrequency(0, self.widget.signal.samplingRate / 2000)
             self.changeAmplitude(-100, 100)
 
+            self.updateSignalPropertiesLabel()
             self.widget.graph()
             self.widget.load_Theme(self.workTheme)
 
@@ -1153,6 +1401,17 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     @pyqtSlot()
     def on_actionSave_triggered(self):
+        """
+        Save the signal currently analyzed into disc
+        :return:
+        """
+        if self.widget.signalFilePath is not None:
+            self.widget.save()
+        else:
+            self.on_actionSaveAs_triggered()
+
+    @pyqtSlot()
+    def on_actionSaveAs_triggered(self):
         """
         Save the signal currently analyzed into disc
         :return:
@@ -1175,6 +1434,29 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                                                         self.widget.signalName(), u"*.wav"))
         if file_name:
             self.widget.saveSelectedSectionAsSignal(file_name)
+
+    # endregion
+
+    # region Signal Properties Info Display
+
+    def updateSignalPropertiesLabel(self):
+        """
+        Updates the text of the current signal properties in toolbar.
+        :return:
+        """
+        #  action signal is a place in the tool bar to show the current signal name
+        self.actionSignalName.setText(self.tr(u"Filename: ") + self.widget.signalName())
+
+        sr = self.widget.signal.samplingRate
+        bit_depth = self.widget.signal.bitDepth
+        channels = self.widget.signal.channelCount
+
+        tooltip = "Sampling Rate: " + str(sr) + \
+                  "\nBit Depth: " + str(bit_depth) + \
+                  "\nChannels: " + str(channels) + \
+                  "\nDuration(s): " + str(self.widget.signal.duration)
+
+        self.actionSignalName.setToolTip(tooltip)
 
     # endregion
 
@@ -1272,7 +1554,20 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     # endregion
 
-    #  region widgets Visibility
+    #  region Widgets And Window Visibility
+
+    @pyqtSlot()
+    def on_actionFull_Screen_triggered(self):
+        """
+        Action that switch the window visualization state between
+        Full Screen and Normal
+        :return:
+        """
+        if self.actionFull_Screen.isChecked():
+            self.showFullScreen()
+        else:
+            self.showNormal()
+
     @pyqtSlot()
     def on_actionCombined_triggered(self):
         """
@@ -1415,18 +1710,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         :return: None
         """
         self.statusbar.showMessage(line)
-
-    @pyqtSlot()
-    def on_actionFull_Screen_triggered(self):
-        """
-        Action that switch the window visualization state between
-        Full Screen and Normal
-        :return:
-        """
-        if self.actionFull_Screen.isChecked():
-            self.showFullScreen()
-        else:
-            self.showNormal()
 
     @pyqtSlot()
     def on_actionSettings_triggered(self):

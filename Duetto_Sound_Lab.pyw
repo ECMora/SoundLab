@@ -6,7 +6,6 @@ import sys
 from graphic_interface.windows.DuettoSoundLabWindow import DuettoSoundLabWindow
 from graphic_interface.windows.PresentationSlogan.presentation import Ui_MainWindow
 
-
 invalid_license_message = " Valid duetto Sound Lab license is missing or trial period is over.\n" + " If you have a valid license try to open the application again, otherwise" + " contact duetto support team."
 
 
@@ -36,49 +35,77 @@ def validLicense():
     return False
 
 
-def loadAppStyle(qApp):
+def loadAppStyle(qApp=None, style_file=None):
     """
     Load the style to the app
     :param qApp: The QApplication to load the style in.
     :return:
     """
     try:
+        if qApp is None:
+            return
 
-        qss = QFile("styles/default.qss")
-        qss.open(QIODevice.ReadOnly | QIODevice.Text)
-        qApp.setStyleSheet(QString(qss.readAll()))
-        qss.close()
+        if style_file is not None and os.path.exists(style_file):
+            qss = QFile(style_file)
+            qss.open(QIODevice.ReadOnly | QIODevice.Text)
+            qApp.setStyleSheet(QString(qss.readAll()))
+            qss.close()
 
     except Exception as ex:
         print("error loading app style. " + ex.message)
 
 
-def loadLanguageTranslations(qApp):
+def loadLanguageTranslations(qApp=None, translation_file=None):
     """
     Load the language I18n to an app.
     :param qApp:  The QApplication to load the language.
     :return:
     """
     try:
+        if qApp is None:
+            return
 
-        locale = QLocale.system().name()
-        qtTranslator = QTranslator()
-        if qtTranslator.load(locale, "I18n\\"):
-            app.installTranslator(qtTranslator)
+        # load a supplied translation
+        if translation_file is not None and os.path.exists(translation_file):
+            translator = QTranslator()
+            if translator.load(translation_file):
+                qApp.installTranslator(translator)
+            return
+        else:
+            locale = QLocale.system().name()
+            qtTranslator = QTranslator()
+
+            # install localization if any exists
+            if qtTranslator.load(locale, "\\I18n"):
+                qApp.installTranslator(qtTranslator)
 
     except Exception as ex:
         print("error loading language I18n to the app. " + ex.message)
 
 
 if __name__ == '__main__':
+    from pyqtgraph import setConfigOptions
+    # pyqtgraph option to not use weave to speed up some operations
+    setConfigOptions(useWeave=False)
+
     app = QApplication(sys.argv)
 
-    loadAppStyle(app)
+    args = sys.argv[1] if len(sys.argv) > 1 else ''
 
+    loadAppStyle(app, "styles\\default.qss")
+
+    # load defaults locale
     loadLanguageTranslations(app)
+    loadLanguageTranslations(app,"I18n\\qt_es.qm")
+
+
+    dmw = DuettoSoundLabWindow(signal_path=args)
+
+    dmw.languageChanged.connect(lambda data: loadLanguageTranslations(app,data))
+    dmw.styleChanged.connect(lambda data: loadAppStyle(app, data))
+
 
     # region Start Splash Screen Window
-    dmw = DuettoSoundLabWindow()
     # path = os.path.join(os.path.join("Utils", "PresentationVideo"), "duettoinit.mp4")
     # duetto_sound_lab_window = Duetto_Sound_Lab(path=path if os.path.exists(path) else "")
 
@@ -104,7 +131,6 @@ if __name__ == '__main__':
         # with the same return code of Qt application
         dmw.show()
         sys.exit(app.exec_())
-
 
     else:
         QMessageBox.warning(QMessageBox(), "Error",invalid_license_message)

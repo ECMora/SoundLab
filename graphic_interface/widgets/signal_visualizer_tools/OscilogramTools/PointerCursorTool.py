@@ -48,14 +48,14 @@ class PointerCursorTool(SignalVisualizerTool):
         if not self.mousePressed:
             info = self.getAmplitudeTimeInfo(self.last['pos'][0], self.last['pos'][1])
             info0 = round(info0[0], self.DECIMAL_PLACES), round(info0[1], self.DECIMAL_PLACES)
-            self.detectedData = [("t0", round(info0[0],self.DECIMAL_PLACES)),
+            self.detectedData = [("Amp(%)", round(info[1], self.DECIMAL_PLACES)),
+                                 ("t0", round(info0[0],self.DECIMAL_PLACES)),
                                  ("t1", round(info[0],self.DECIMAL_PLACES)),
-                                 ("dt", round(info[0] - info0[0],self.DECIMAL_PLACES)),
-                                 ("Amp",round(info[1],self.DECIMAL_PLACES))
+                                 ("dt", round(info[0] - info0[0],self.DECIMAL_PLACES))
                                 ]
         else:
-            self.detectedData = [("Time", round(info[0],self.DECIMAL_PLACES)),
-                                 ("Amp", round(info[1], self.DECIMAL_PLACES))
+            self.detectedData = [("Amp(%)", round(info[1], self.DECIMAL_PLACES)),
+                                 ("Time", round(info[0],self.DECIMAL_PLACES))
                                 ]
 
         # raise the signal of detection data

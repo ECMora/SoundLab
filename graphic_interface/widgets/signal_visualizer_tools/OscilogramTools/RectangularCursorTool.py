@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+#  -*- coding: utf-8 -*-
 from PyQt4 import QtCore
 
 import numpy
@@ -17,15 +17,15 @@ class RectangularCursorTool(SignalVisualizerTool):
     def __init__(self, widget):
         SignalVisualizerTool.__init__(self, widget)
 
-        #dict of data ussefull for the tool
-        #TODO must be examinated for possible improvement
+        # dict of data ussefull for the tool
+        # TODO must be examinated for possible improvement
         self.last = {'pos': [0, 0]}
 
-        #visual rectangle for the tool
+        # visual rectangle for the tool
         self.rectangularCursor = RectROI([0, 0], [0, 0], pen=(0, 9), movable=False)
 
-        #the region of the rectangle in points start, end in x and y
-        #is used because RectROI do not provide the get size method
+        # the region of the rectangle in points start, end in x and y
+        # is used because RectROI do not provide the get size method
         self.rectRegion = {'x': [0, 0], 'y': [0, 0]}
 
     def mouseMoveEvent(self, event):
@@ -66,12 +66,12 @@ class RectangularCursorTool(SignalVisualizerTool):
             self.rectRegion['y'][0] = amplitude_time_info[1]
             self.rectRegion['y'][1] = info1[1]
 
-            # clean the detected data for update
+            #  clean the detected data for update
             self.detectedData = [("t0", round(amplitude_time_info[0], self.DECIMAL_PLACES)),
                                  ("t1", round(info1[0], self.DECIMAL_PLACES)),
                                  ("dt", round(info1[0] - amplitude_time_info[0], self.DECIMAL_PLACES)),
-                                 ("MaxAmp",round(amplitude_time_info[1], self.DECIMAL_PLACES)),
-                                 ("MinAmp", round(info1[1], self.DECIMAL_PLACES))
+                                 ("MinAmp(%)",round(amplitude_time_info[1], self.DECIMAL_PLACES)),
+                                 ("MaxAmp(%)", round(info1[1], self.DECIMAL_PLACES))
                                 ]
 
         else:
@@ -82,7 +82,7 @@ class RectangularCursorTool(SignalVisualizerTool):
                 return
             else:
                 self.detectedData = [("Time", round(amplitude_time_info[0],self.DECIMAL_PLACES)),
-                                     ("Amp", round(amplitude_time_info[1],self.DECIMAL_PLACES))
+                                     ("Amp(%)", round(amplitude_time_info[1],self.DECIMAL_PLACES))
                                     ]
 
         self.detectedDataChanged.emit(self.detectedData)
@@ -98,7 +98,7 @@ class RectangularCursorTool(SignalVisualizerTool):
         y = self.fromCanvasToClientY(event.y())
         y = numpy.round(y * 100.0 / self.widget.signal.maximumValue, 0)
         if self.mouseInsideRectArea(x, y):
-            #make the zoom in the rectangle area
+            # make the zoom in the rectangle area
             pass
 
     def mouseReleaseEvent(self, event):
@@ -111,7 +111,7 @@ class RectangularCursorTool(SignalVisualizerTool):
         :return: True if the x,y position is inside the rectangle tool
         selected area, False otherwise.
         """
-        return x <= self.rectRegion['x'][1] and x >= self.rectRegion['x'][0] \
+        return self.rectRegion['x'][1] >= x >= self.rectRegion['x'][0] \
                and self.rectRegion['y'][1] >= y >= self.rectRegion['y'][0]
 
     def fromCanvasToClientY(self, yPixel):
