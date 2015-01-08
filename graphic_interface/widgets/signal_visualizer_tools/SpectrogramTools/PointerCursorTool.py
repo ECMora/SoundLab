@@ -7,11 +7,11 @@ from SpectrogramTool import SpectrogramTool
 
 class PointerCursorTool(SpectrogramTool):
 
-    #CONSTANTS
+    # CONSTANTS
+
     def __init__(self, widget):
         SpectrogramTool.__init__(self, widget)
         self.pointerCursor = pg.ScatterPlotItem()
-        self.widget.viewBox.addItem(self.pointerCursor)
         self.last = {'pos': [0, 0], 'pen': {'color': 'w', 'width': 2}, 'brush': pg.intColor(255, 255), 'symbol': '+',
                      'size': 20}
 
@@ -57,8 +57,12 @@ class PointerCursorTool(SpectrogramTool):
     def mouseReleaseEvent(self, event):
         self.mousePressed = False
 
-    def dispose(self):
+    def disable(self):
         self.widget.viewBox.removeItem(self.pointerCursor)
         self.widget.setCursor(QCursor(QtCore.Qt.ArrowCursor))
+
+    def enable(self):
+        self.widget.viewBox.addItem(self.pointerCursor)
+
 
 

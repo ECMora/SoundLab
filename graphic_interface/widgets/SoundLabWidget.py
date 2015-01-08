@@ -1,3 +1,5 @@
+from graphic_interface.widgets.signal_visualizer_tools.OscilogramTools.ZoomTool import ZoomTool
+from graphic_interface.widgets.signal_visualizer_tools.SpectrogramTools.SpectrogramZoomTool import SpectrogramZoomTool
 from signal_visualizer_tools.SignalVisualizerTool import SignalVisualizerTool
 
 
@@ -26,6 +28,17 @@ class SoundLabWidget:
         if self.gui_user_tool is not None:
             self.gui_user_tool.mouseReleaseEvent(event)
 
+    def leaveEvent(self, QEvent):
+        # avoid the zoom tool to be disabled in just one widget
+        if self.gui_user_tool is not None and \
+           not isinstance(self.gui_user_tool,(ZoomTool,SpectrogramZoomTool)):
+            self.gui_user_tool.disable()
+
+    def enterEvent(self, QEvent):
+        # avoid the zoom tool to be disabled in just one widget
+        if self.gui_user_tool is not None:
+            self.gui_user_tool.enable()
+
     def changeTool(self, new_tool_class):
         if new_tool_class is None:
             raise Exception("The user visual tool can't be None")
@@ -36,9 +49,10 @@ class SoundLabWidget:
 
         if self.gui_user_tool is not None:
             # remove old data and release resources from the tool operation
-            self.gui_user_tool.dispose()
+            self.gui_user_tool.disable()
 
         self.gui_user_tool = new_tool_class(self)
+        self.gui_user_tool.enable()
         self.gui_user_tool.detectedDataChanged.connect(self.guiToolDetectedData)
 
     def guiToolDetectedData(self, data_list):
@@ -70,4 +84,3 @@ class SoundLabWidget:
         :param theme: an instance of the theme class for this widget, the theme to load
         """
         pass
-

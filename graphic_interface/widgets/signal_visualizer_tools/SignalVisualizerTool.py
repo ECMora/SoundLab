@@ -64,10 +64,17 @@ class SignalVisualizerTool(QtCore.QObject):
 
         self.mousePressed = False
 
-    def dispose(self):
+    def disable(self):
         """
         Method invoked when the tool must be removed from the widget.
         Release all the resources and collateral effects of the tool in the widget
+        """
+        pass
+
+    def enable(self):
+        """
+        Method invoked when the tool must be added into the widget.
+        Prepare the widget for use the tool
         """
         pass
 

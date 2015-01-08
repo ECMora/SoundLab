@@ -11,7 +11,6 @@ class RectangularCursorTool(SpectrogramTool):
         SpectrogramTool.__init__(self, widget)
         self.last = {'pos': [0,0]}
         self.rectangularCursor = RectROI([0, 0], [0, 0], pen=(0, 9), movable=False)
-        self.widget.viewBox.addItem(self.rectangularCursor)
         self.rectRegion = {'x': [0, 0], 'y': [0, 0]}
 
     def mouseMoveEvent(self, event):
@@ -68,6 +67,7 @@ class RectangularCursorTool(SpectrogramTool):
                                      ("Freq(Hz)", round(info[1],self.DECIMAL_PLACES)),
                                      ("Amp(dB)", round(info[2],self.DECIMAL_PLACES))
                                     ]
+
         self.widget.setCursor(QCursor(QtCore.Qt.ArrowCursor))
         self.detectedDataChanged.emit(self.detectedData)
 
@@ -88,9 +88,14 @@ class RectangularCursorTool(SpectrogramTool):
         self.mousePressed = False
 
     def mouseInsideRectArea(self, x, y):
-        return x <= self.rectRegion['x'][1] and x >= self.rectRegion['x'][0] \
+        return self.rectRegion['x'][1] >= x >= self.rectRegion['x'][0] \
                and self.rectRegion['y'][1] >= y >= self.rectRegion['y'][0]
 
-    def dispose(self):
+    def disable(self):
         self.widget.viewBox.removeItem(self.rectangularCursor)
+
+    def enable(self):
+        self.widget.viewBox.addItem(self.rectangularCursor)
+
+
 

@@ -37,6 +37,9 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
         self.graphics_view.mouseReleaseEvent = self.mouseReleaseEvent
         self.graphics_view.mouseDoubleClickEvent = self.mouseDoubleClickEvent
         self.graphics_view.mousePressEvent = self.mousePressEvent
+        self.graphics_view.leaveEvent = self.leaveEvent
+        self.graphics_view.enterEvent = self.enterEvent
+
         self.changeTool(SpectrogramZoomTool)
         self.minY = 0
         self.maxY = 256

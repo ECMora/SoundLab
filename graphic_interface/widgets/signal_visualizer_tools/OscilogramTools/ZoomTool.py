@@ -7,7 +7,7 @@ from graphic_interface.widgets.signal_visualizer_tools.SignalVisualizerTool impo
 
 class ZoomTool(SignalVisualizerTool):
 
-    def __init__(self,widget):
+    def __init__(self, widget):
         SignalVisualizerTool.__init__(self, widget)
         self.zoomRegion = pg.LinearRegionItem([0, 0])
 
@@ -53,7 +53,6 @@ class ZoomTool(SignalVisualizerTool):
         self.mousePressed = True
         if self.zoomRegion not in self.widget.items():
             self.zoomRegion.setRegion([self.fromCanvasToClient(event.x()), self.fromCanvasToClient(event.x())])
-            self.setZoomRegionVisible(True)
 
         else:
             rgn = self.zoomRegion.getRegion()
@@ -108,6 +107,9 @@ class ZoomTool(SignalVisualizerTool):
         elif not value and self.zoomRegion in self.widget.items():
             self.widget.removeItem(self.zoomRegion)
 
-    def dispose(self):
+    def disable(self):
         self.setZoomRegionVisible(False)
         self.widget.setCursor(QCursor(QtCore.Qt.ArrowCursor))
+
+    def enable(self):
+        self.setZoomRegionVisible(True)

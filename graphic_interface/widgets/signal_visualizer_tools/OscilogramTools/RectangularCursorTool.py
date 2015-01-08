@@ -29,7 +29,6 @@ class RectangularCursorTool(SignalVisualizerTool):
         self.rectRegion = {'x': [0, 0], 'y': [0, 0]}
 
     def mouseMoveEvent(self, event):
-        self.setRectRegionVisible(True)
         x = self.fromCanvasToClient(event.x())
         y = self.fromCanvasToClientY(event.y())
 
@@ -131,8 +130,11 @@ class RectangularCursorTool(SignalVisualizerTool):
 
         return a + int(round((yPixel - miny) * (b - a) * 1. / (maxy - miny), 0))
 
-    def dispose(self):
+    def disable(self):
         self.setRectRegionVisible(False)
+
+    def enable(self):
+        self.setRectRegionVisible(True)
 
     def setRectRegionVisible(self, visibility=False):
         """

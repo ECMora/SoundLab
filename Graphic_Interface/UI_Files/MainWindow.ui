@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>481</width>
-    <height>363</height>
+    <width>653</width>
+    <height>411</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -29,21 +29,20 @@
    <string notr="true"/>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QVBoxLayout" name="verticalLayout_2">
-    <property name="spacing">
-     <number>0</number>
-    </property>
-    <property name="sizeConstraint">
-     <enum>QLayout::SetDefaultConstraint</enum>
-    </property>
-    <property name="margin">
-     <number>0</number>
-    </property>
+   <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
-     <widget class="QSignalVisualizerWidget" name="widget" native="true">
-      <property name="styleSheet">
-       <string notr="true">background-color: rgb(217, 217, 217);
-border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 rgba(0, 0, 0, 255), stop:1 rgba(255, 255, 255, 255));</string>
+     <widget class="QTabWidget" name="tabOpenedSignals">
+      <property name="currentIndex">
+       <number>-1</number>
+      </property>
+      <property name="documentMode">
+       <bool>false</bool>
+      </property>
+      <property name="tabsClosable">
+       <bool>true</bool>
+      </property>
+      <property name="movable">
+       <bool>true</bool>
       </property>
      </widget>
     </item>
@@ -54,7 +53,7 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>481</width>
+     <width>653</width>
      <height>21</height>
     </rect>
    </property>
@@ -67,10 +66,10 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
    <widget class="QMenu" name="menuFile">
     <property name="geometry">
      <rect>
-      <x>59</x>
-      <y>140</y>
+      <x>7</x>
+      <y>126</y>
       <width>210</width>
-      <height>310</height>
+      <height>341</height>
      </rect>
     </property>
     <property name="autoFillBackground">
@@ -93,8 +92,15 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
      <addaction name="actionSpecgram_Image"/>
      <addaction name="actionCombined_Image"/>
     </widget>
+    <widget class="QMenu" name="menuRecentSignals">
+     <property name="title">
+      <string>Recent Signals</string>
+     </property>
+     <addaction name="separator"/>
+    </widget>
     <addaction name="actionNew"/>
     <addaction name="actionOpen"/>
+    <addaction name="menuRecentSignals"/>
     <addaction name="actionSave"/>
     <addaction name="actionSaveAs"/>
     <addaction name="actionSave_selected_interval_as"/>
@@ -106,6 +112,7 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
     <addaction name="menuSave_Images"/>
     <addaction name="actionClose"/>
     <addaction name="actionExit"/>
+    <addaction name="separator"/>
    </widget>
    <widget class="QMenu" name="menuTools">
     <property name="styleSheet">
@@ -236,7 +243,7 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
     </size>
    </property>
    <property name="styleSheet">
-    <string notr="true">background-color: rgb(255, 255, 255);</string>
+    <string notr="true"/>
    </property>
    <property name="floating">
     <bool>false</bool>
@@ -855,16 +862,35 @@ border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 
     <string>Save Theme</string>
    </property>
   </action>
+  <action name="actionCloseAll">
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/cerrar.png</normaloff>:/myappicons/cerrar.png</iconset>
+   </property>
+   <property name="text">
+    <string>Close All</string>
+   </property>
+  </action>
+  <action name="actionCloseOthers">
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/cerrar.png</normaloff>:/myappicons/cerrar.png</iconset>
+   </property>
+   <property name="text">
+    <string>CloseOthers</string>
+   </property>
+  </action>
+  <action name="actionCloseUnmodified">
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/cerrar.png</normaloff>:/myappicons/cerrar.png</iconset>
+   </property>
+   <property name="text">
+    <string>CloseUnmodified</string>
+   </property>
+  </action>
   <zorder>dock_settings</zorder>
  </widget>
- <customwidgets>
-  <customwidget>
-   <class>QSignalVisualizerWidget</class>
-   <extends>QWidget</extends>
-   <header>graphic_interface.widgets.QSignalVisualizerWidget</header>
-   <container>1</container>
-  </customwidget>
- </customwidgets>
  <resources>
   <include location="resources/icons.qrc"/>
  </resources>

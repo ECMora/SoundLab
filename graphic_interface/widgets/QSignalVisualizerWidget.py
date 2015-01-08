@@ -34,7 +34,7 @@ class QSignalVisualizerWidget(QWidget):
     Provides wrappers for useful signal processing methods.
     """
     #  SIGNALS
-    #  Signal raised when a tool made a medition and has new data to show
+    #  Signal raised when a tool made a measurement and has new data to show
     toolDataDetected = QtCore.pyqtSignal(str)
 
     # signal raised when there is a signal interval selected (commonly by zoom tool)
@@ -73,7 +73,7 @@ class QSignalVisualizerWidget(QWidget):
         self.undoRedoManager.actionExec.connect(lambda x: self.graph())
 
         # set the tool zoom as default
-        self.selectedTool = Tools.NoTool
+        self.__selectedTool = Tools.NoTool
 
         #  synchronization of the change range in the axes
         self.axesSpecgram.rangeChanged.connect(self.updateOscillogram)
@@ -94,7 +94,7 @@ class QSignalVisualizerWidget(QWidget):
 
         self.setSelectedTool(Tools.ZoomTool)
 
-        #  grouping the oscilogram and spectrogram widgets in the control
+        #  grouping the oscilogram, spectrogram and scroll bar widgets in the control
         layout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(self.axesOscilogram)
@@ -113,8 +113,8 @@ class QSignalVisualizerWidget(QWidget):
         self._recordTimer = QTimer(self)
         self._recordTimer.timeout.connect(self.on_newDataRecorded)
 
-        # signal file path to save and read the signals
-        self.signalFilePath = None
+        # signal file path to save and read the signals from files. None if signal was not loaded from file
+        self.__signalFilePath = None
 
         self.graph()
 
@@ -217,13 +217,11 @@ class QSignalVisualizerWidget(QWidget):
         using the current interval of signal visualization
         :return:
         """
-        self.scrollBar.setMinimum(self.mainCursor.min)
-        self.scrollBar.setMaximum(self.mainCursor.max)
+        self.scrollBar.setMinimum(0)
+        self.scrollBar.setMaximum(self.signal.length)
 
-        # set the page step of the scroll bar to 1% of the visible signal
-        page_step = (self.mainCursor.max - self.mainCursor.min) / 100
-        page_step = max(page_step, 1)
-        self.scrollBar.setPageStep(page_step)
+        # set the page step of the scroll bar to 5% of the visible signal
+        self.scrollBar.setPageStep(self.mainCursor.max - self.mainCursor.min)
 
     # endregion
 
@@ -440,9 +438,24 @@ class QSignalVisualizerWidget(QWidget):
 
     #  endregion
 
-    #  region Property oscilogram and specgram Visibility
-    #  update the visualization of the widget to show
-    #  oscilogram graph, specgram graph or both through the visibility variables
+    #  region Properties
+    @property
+    def selectedTool(self):
+        """
+        The type (Enum) of the selected tool currently used on the widget
+        :return:
+        """
+        return self.__selectedTool
+
+    @property
+    def signalFilePath(self):
+        """
+        Signal file path to save and read the signals from files.
+        None if signal was not loaded from file
+        :return:
+        """
+        return self.__signalFilePath
+
     @property
     def visibleOscilogram(self):
         return self._visibleOscillogram
@@ -510,6 +523,9 @@ class QSignalVisualizerWidget(QWidget):
         self.signalPlayer = AudioSignalPlayer(self._signal)
         self.signalPlayer.playing.connect(self.notifyPlayingCursor)
         self.signalPlayer.playingDone.connect(self.removePlayerLine)
+
+        # update scroll bar values
+        self.updateScrollBarValues()
 
         #  the edition object that manages cut and paste options
         self.editionSignalProcessor = EditionSignalProcessor(self._signal)
@@ -850,7 +866,7 @@ class QSignalVisualizerWidget(QWidget):
 
         try:
             signal = openSignal(filename)
-            self.signalFilePath = filename
+            self.__signalFilePath = filename
 
             # update signal
             self.signal = signal

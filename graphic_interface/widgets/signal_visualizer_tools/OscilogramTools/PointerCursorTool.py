@@ -15,7 +15,6 @@ class PointerCursorTool(SignalVisualizerTool):
     def __init__(self, widget):
         SignalVisualizerTool.__init__(self, widget)
         self.pointerCursor = pg.ScatterPlotItem()
-        self.widget.addItem(self.pointerCursor)
 
         # dict of data usefull for the tool
         # TODO must be examinated for possible improvement
@@ -121,7 +120,7 @@ class PointerCursorTool(SignalVisualizerTool):
 
         return min_y_amplitude + int(round((yPixel - min_y_pixels) * (max_y_amplitude - min_y_amplitude) * 1. / (max_y_pixels - min_y_pixels), 0))
 
-    def dispose(self):
+    def disable(self):
         """
         Release the resources asociated with the tool.
         :return:
@@ -129,4 +128,7 @@ class PointerCursorTool(SignalVisualizerTool):
         # remove the item of pointer on the widget and the cursor shape
         self.widget.removeItem(self.pointerCursor)
         self.widget.setCursor(QCursor(QtCore.Qt.ArrowCursor))
+
+    def enable(self):
+        self.widget.addItem(self.pointerCursor)
 

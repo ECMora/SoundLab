@@ -11,7 +11,6 @@ class SpectrogramZoomTool(SpectrogramTool):
     def __init__(self, widget):
         SpectrogramTool.__init__(self,widget)
         self.zoomRegion = pg.LinearRegionItem([0, 0])
-        self.widget.viewBox.addItem(self.zoomRegion)
 
     def mouseMoveEvent(self, event):
         pg.GraphicsView.mouseMoveEvent(self.widget.graphics_view, event)
@@ -80,6 +79,9 @@ class SpectrogramZoomTool(SpectrogramTool):
         rgn = self.zoomRegion.getRegion()
         return rgn[0] <= xIndex <= rgn[1]
 
-    def dispose(self):
+    def disable(self):
         self.widget.viewBox.removeItem(self.zoomRegion)
         self.widget.setCursor(QCursor(QtCore.Qt.ArrowCursor))
+
+    def enable(self):
+        self.widget.viewBox.addItem(self.zoomRegion)
