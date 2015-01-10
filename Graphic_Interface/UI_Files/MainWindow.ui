@@ -211,6 +211,7 @@
     <addaction name="actionRecord"/>
     <addaction name="separator"/>
     <addaction name="menuPlay_Speed"/>
+    <addaction name="actionSound_Devices"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -887,6 +888,14 @@
    </property>
    <property name="text">
     <string>CloseUnmodified</string>
+   </property>
+  </action>
+  <action name="actionSound_Devices">
+   <property name="checkable">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Sound Devices</string>
    </property>
   </action>
   <zorder>dock_settings</zorder>

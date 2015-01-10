@@ -7,6 +7,7 @@ import pyqtgraph as pg
 from PyQt4.QtCore import QTimer, Qt
 from duetto.audio_signals.AudioSignalPlayer import AudioSignalPlayer
 from duetto.audio_signals.AudioSignal import AudioSignal
+from duetto.soundDevices.Device import Device
 from SoundLabOscillogramWidget import SoundLabOscillogramWidget
 from SoundLabSpectrogramWidget import SoundLabSpectrogramWidget
 from duetto.audio_signals.audio_signals_stream_readers.FileManager import FileManager
@@ -180,7 +181,7 @@ class QSignalVisualizerWidget(QWidget):
         #      self.axesOscilogram.changeTool(tool)
         # update the current selected tool
 
-        self.selectedTool = tool
+        self.__selectedTool = tool
 
     def load_Theme(self, theme):
         """
@@ -308,14 +309,14 @@ class QSignalVisualizerWidget(QWidget):
 
     #  region Sound
     #  manages the reproduction of the signal
-    def play(self):
+    def play(self, deviceIndex=None):
         """
         Start to play the current signal.
         If the signal is been playing nothing is made.
         """
         start, end = self.getIndexFromAndTo()
         self.addPlayerLine(start, end)
-        self.signalPlayer.play(start, end, self.playSpeed)
+        self.signalPlayer.play(start, end, self.playSpeed, deviceIndex=deviceIndex)
 
     def switchPlayStatus(self):
         """
@@ -359,7 +360,7 @@ class QSignalVisualizerWidget(QWidget):
             #  draw the current recorded interval
             self.axesOscilogram.graph(self.mainCursor.min)
 
-    def record(self, newSignal=True):
+    def record(self, newSignal=True, deviceIndex=None):
         """
         Start to record a new signal.
         If the signal is been playing nothing is made.
@@ -370,7 +371,7 @@ class QSignalVisualizerWidget(QWidget):
         #   case of any IO device exception occurs then
         #  we just stop recording immediately.
         try:
-            self.signalPlayer.record()
+            self.signalPlayer.record(deviceIndex=deviceIndex)
         except:
              self.stop()
 

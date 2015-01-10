@@ -2,6 +2,8 @@
 import os
 import pickle
 from duetto.audio_signals import AudioSignal, openSignal
+from duetto.soundDevices.Device import Device
+from duetto.soundDevices.DevicesHandler import DevicesHandler
 from PyQt4 import QtGui,QtCore
 from duetto.audio_signals.Synthesizer import Synthesizer
 from duetto.signal_processing.filter_signal_processors.frequency_domain_filters import BandPassFilter, HighPassFilter, \
@@ -21,9 +23,46 @@ from SegmentationAndClasificationWindow import SegmentationAndClasificationWindo
 from graphic_interface.windows.Theme.WorkTheme import WorkTheme
 from graphic_interface.windows.ui_python_files.MainWindow import Ui_DuettoMainWindow
 from graphic_interface.dialogs import insertSilence as sdialog, FilterOptionsDialog as filterdg, \
-    ChangeVolumeDialog as cvdialog
+    ChangeVolumeDialog as cvdialog, SoundDevicesDialog as sdDialog
 from sound_lab_core.Clasification.ClassificationData import ClassificationData
 from graphic_interface.widgets.signal_visualizer_tools.SignalVisualizerTool import Tools
+
+
+class SoundDevicesDialog(sdDialog.Ui_Dialog,QDialog):
+
+    def __init__(self, input, output, inputIndex, outputIndex):
+        """
+        Initialize the dialogs elements with their last value
+        """
+        QDialog.__init__(self)
+        self.setupUi(self)
+
+        self.inputLayout = QtGui.QGridLayout(self.grpBoxInput)
+        self.inputLayout.setObjectName("gridInputLayout")
+
+        self.outputLayout = QtGui.QGridLayout(self.grpBoxOutput)
+        self.outputLayout.setObjectName("gridOutputLayout")
+
+
+        for dev in input:
+
+            rbutton = QtGui.QRadioButton(self.grpBoxInput)
+            rbutton.setObjectName(dev.name + str(dev.index))
+            rbutton.setText(dev.name + " " + str(dev.defaultSamplingRate * 1./1000) + " kHz " + str(dev.maxChannels) + " channels." )
+            self.inputLayout.addWidget(rbutton)
+
+            if dev.index == inputIndex:
+                rbutton.setChecked(True)
+
+        for dev in output:
+
+            rbutton = QtGui.QRadioButton(self.grpBoxOutput)
+            rbutton.setObjectName(dev.name + str(dev.index))
+            rbutton.setText(dev.name + " " + str(dev.defaultSamplingRate * 1./1000) + " kHz " + str(dev.maxChannels) + " channels." )
+            self.outputLayout.addWidget(rbutton)
+            if dev.index == outputIndex:
+                rbutton.setChecked(True)
+
 
 
 class InsertSilenceDialog(sdialog.Ui_Dialog, QDialog):
@@ -362,6 +401,8 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         playSpeedActionGroup.addAction(self.action4x)
         playSpeedActionGroup.addAction(self.action8x)
         playSpeedActionGroup.triggered.connect(self.on_playSpeedChanged_triggered)
+
+        self.dHandler = DevicesHandler()
 
         # self.showMaximized()
 
@@ -707,6 +748,23 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             print("Error al deserializar los datos de clasificacion. " + ex.message)
             #  return a default
             return ClassificationData()
+
+    @pyqtSlot()
+    def on_actionSound_Devices_triggered(self):
+        input = self.dHandler.inputDeviceSelected
+        output = self.dHandler.outputDeviceSelected
+        dialog = SoundDevicesDialog(self.dHandler.inputDevices,self.dHandler.outputDevices,
+                                    self.dHandler.inputDeviceSelected, self.dHandler.outputDeviceSelected)
+        if dialog.exec_():
+            for dev in self.dHandler.inputDevices:
+                if dialog.grpBoxInput.findChild(QtGui.QRadioButton, dev.name+str(dev.index)).isChecked():
+                    self.dHandler.inputDeviceSelected = dev
+                    break
+            for dev in self.dHandler.outputDevices:
+                if dialog.grpBoxOutput.findChild(QtGui.QRadioButton, dev.name+str(dev.index)).isChecked():
+                    self.dHandler.outputDeviceSelected = dev
+                    break
+
 
     @pyqtSlot()
     def on_actionSegmentation_And_Clasification_triggered(self):
@@ -1696,7 +1754,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     # delegate in the widget the reproduction actions
     @pyqtSlot()
     def on_actionPlay_Sound_triggered(self):
-        self.widget.play()
+        self.widget.play(deviceIndex=self.dHandler.outputDeviceSelected)
 
     @pyqtSlot()
     def on_actionStop_Sound_triggered(self):
@@ -1704,7 +1762,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     @pyqtSlot()
     def on_actionRecord_triggered(self):
-        self.widget.record()
+        self.widget.record(deviceIndex=self.dHandler.inputDeviceSelected)
 
     @pyqtSlot()
     def on_actionPause_Sound_triggered(self):

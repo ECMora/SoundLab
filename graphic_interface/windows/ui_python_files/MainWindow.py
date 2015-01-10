@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\MainWindow.ui'
+# Form implementation generated from reading ui file 'MainWindow.ui'
 #
-# Created: Thu Jan 08 11:29:07 2015
+# Created: Fri Jan 09 22:41:22 2015
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -326,6 +326,9 @@ class Ui_DuettoMainWindow(object):
         self.actionCloseUnmodified = QtGui.QAction(DuettoMainWindow)
         self.actionCloseUnmodified.setIcon(icon2)
         self.actionCloseUnmodified.setObjectName(_fromUtf8("actionCloseUnmodified"))
+        self.actionSound_Devices = QtGui.QAction(DuettoMainWindow)
+        self.actionSound_Devices.setCheckable(False)
+        self.actionSound_Devices.setObjectName(_fromUtf8("actionSound_Devices"))
         self.menuSave_Images.addAction(self.actionOsc_Image)
         self.menuSave_Images.addAction(self.actionSpecgram_Image)
         self.menuSave_Images.addAction(self.actionCombined_Image)
@@ -397,6 +400,7 @@ class Ui_DuettoMainWindow(object):
         self.menuSound.addAction(self.actionRecord)
         self.menuSound.addSeparator()
         self.menuSound.addAction(self.menuPlay_Speed.menuAction())
+        self.menuSound.addAction(self.actionSound_Devices)
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuEdit.menuAction())
         self.menubar.addAction(self.menuTools.menuAction())
@@ -538,5 +542,6 @@ class Ui_DuettoMainWindow(object):
         self.actionCloseAll.setText(QtGui.QApplication.translate("DuettoMainWindow", "Close All", None, QtGui.QApplication.UnicodeUTF8))
         self.actionCloseOthers.setText(QtGui.QApplication.translate("DuettoMainWindow", "CloseOthers", None, QtGui.QApplication.UnicodeUTF8))
         self.actionCloseUnmodified.setText(QtGui.QApplication.translate("DuettoMainWindow", "CloseUnmodified", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSound_Devices.setText(QtGui.QApplication.translate("DuettoMainWindow", "Sound Devices", None, QtGui.QApplication.UnicodeUTF8))
 
 import icons_rc
