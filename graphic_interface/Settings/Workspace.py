@@ -8,7 +8,8 @@ _winFuncs = {'Bartlett': WindowFunction.Bartlett,
              'Hamming': WindowFunction.Hamming,
              'Hanning': WindowFunction.Hanning,
              'Kaiser': WindowFunction.Kaiser,
-             'Rectangular': WindowFunction.Rectangular}
+             'Rectangular': WindowFunction.Rectangular,
+             'None': WindowFunction.WindowNone}
 
 _winFuncs_inv = {value: key for key, value in _winFuncs.iteritems()}
 
