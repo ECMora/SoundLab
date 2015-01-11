@@ -66,16 +66,26 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
         update = False
 
         # set background color
-        self.graphics_view.setBackground(theme.background_color)
+        if self.workspace.theme.background_color != theme.background_color:
+            self.graphics_view.setBackground(theme.background_color)
+
         # set grid lines
-        self.xAxis.setGrid(88 if theme.gridX else 0)
-        self.yAxis.setGrid(88 if theme.gridY else 0)
+        if self.workspace.theme.gridX != theme.gridX:
+            self.xAxis.setGrid(88 if theme.gridX else 0)
+        if self.workspace.theme.gridY != theme.gridY:
+            self.yAxis.setGrid(88 if theme.gridY else 0)
 
         # set the state of the histogram and make it note the change so it automatically refreshes the spectrogram
-        self.histogram.item.gradient.restoreState(theme.colorBarState)
-        self.histogram.item.region.setRegion(theme.histRange)
-        self.histogram.item.region.lineMoved()
-        self.histogram.item.region.lineMoveFinished()
+        refrHist = False
+        if self.workspace.theme.colorBarState != theme.colorBarState:
+            self.histogram.item.gradient.restoreState(theme.colorBarState)
+            refrHist = True
+        if self.workspace.theme.histRange != theme.histRange:
+            self.histogram.item.region.setRegion(theme.histRange)
+            refrHist = True
+        if refrHist:
+            self.histogram.item.region.lineMoved()
+            self.histogram.item.region.lineMoveFinished()
 
         self.workspace.theme = theme.copy()
 
@@ -127,7 +137,7 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
         # returns whether it's necessary to update the widget
         return update
 
-    def load_workspace(self, workspace):
+    def load_workspace(self, workspace, forceUpdate=False):
         """
         Loads a workspace and updates the view according with it.
         :param workspace: an instance of SpectrogramWorkspace, the part of the Workspace concerning the spectrogram
@@ -140,7 +150,7 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
         update = self._load_workspace(workspace)
 
         # update the widget if needed (showing the same X axis' range as before)
-        if update:
+        if update or forceUpdate:
             self.graph(rangeX[0], rangeX[1])
 
         # set the y axis' range (must be made after the spectrogram is computed)

@@ -147,14 +147,15 @@ class QSignalVisualizerWidget(QWidget):
         self.axesOscilogram.load_Theme(theme.oscillogramTheme)
         self.axesSpecgram.load_Theme(theme.spectrogramTheme)
 
-    def load_workspace(self, workspace):
+    def load_workspace(self, workspace, forceUpdate=False):
         """
         Loads a workspace containing all the settings of the oscillogram and spectrogram (amongst others) and updates as
         needed
         :param workspace: the workspace to load
+        :param forceUpdate: whether to update even if there were no changes to the workspace
         """
-        self.axesOscilogram.load_workspace(workspace.oscillogramWorkspace)
-        self.axesSpecgram.load_workspace(workspace.spectrogramWorkspace)
+        self.axesOscilogram.load_workspace(workspace.oscillogramWorkspace, forceUpdate)
+        self.axesSpecgram.load_workspace(workspace.spectrogramWorkspace, forceUpdate)
 
     def signalName(self):
         """

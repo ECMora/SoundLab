@@ -28,6 +28,7 @@ class SoundLabOscillogramWidget(SoundLabWidget, OscillogramWidget):
         # self.minY = self.signal.minimumValue if self.signal is not None else -100
         # self.maxY = self.signal.maximumValue if self.signal is not None else 100
         self.workspace = OscillogramWorkspace()
+        self._pointsConnectedOnLastUpdate = False
 
     def changeTool(self, new_tool_class):
         SoundLabWidget.changeTool(self, new_tool_class)
@@ -71,14 +72,19 @@ class SoundLabOscillogramWidget(SoundLabWidget, OscillogramWidget):
     def _load_theme(self, theme):
         update = False
         # set background color
-        self.setBackground(theme.background_color)
+        if self.workspace.theme.background_color != theme.background_color:
+            self.setBackground(theme.background_color)
 
         # set grid lines
-        self.getPlotItem().showGrid(theme.gridX, theme.gridY)
+        if self.workspace.theme.gridX != theme.gridX or self.workspace.theme.gridY != theme.gridY:
+            self.getPlotItem().showGrid(theme.gridX, theme.gridY)
 
         # set the color of the plot lines; the lines will be redrawn later if the color changed
         if self.plotLine:
-            self.plotLine.setPen(theme.plot_color)
+            if self._pointsConnectedOnLastUpdate:
+                self.plotLine.setPen(theme.plot_color)
+            else:
+                self.plotLine.setSymbolPen(theme.plot_color)
 
         if self.workspace.theme is None or self.workspace.theme.connectPoints != theme.connectPoints:
             update = True
@@ -102,7 +108,7 @@ class SoundLabOscillogramWidget(SoundLabWidget, OscillogramWidget):
             rangeX = self.getPlotItem().getViewBox().viewRange()[0]
             self.graph(rangeX[0], rangeX[1])
 
-    def load_workspace(self, workspace):
+    def load_workspace(self, workspace, forceUpdate=False):
         """
         Loads a workspace and updates the view according with it.
         :param workspace: an instance of OscillogramWorkspace, the part of the Workspace concerning the oscillogram
@@ -121,7 +127,7 @@ class SoundLabOscillogramWidget(SoundLabWidget, OscillogramWidget):
         self.workspace = workspace.copy()
 
         # update the widget if needed
-        if update:
+        if update or forceUpdate:
             rangeX = self.getPlotItem().getViewBox().viewRange()[0]
             self.graph(rangeX[0], rangeX[1])
 
@@ -134,7 +140,9 @@ class SoundLabOscillogramWidget(SoundLabWidget, OscillogramWidget):
             morekwargs['symbolSize'] = 1
             morekwargs['symbolPen'] = self.workspace.theme.plot_color
             morekwargs['pen'] = '0000'
+            self._pointsConnectedOnLastUpdate = False
         else:
             morekwargs['pen'] = self.workspace.theme.plot_color
+            self._pointsConnectedOnLastUpdate = True
 
         OscillogramWidget.graph(self, indexFrom, indexTo, morekwargs)

@@ -134,8 +134,8 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                     {u'name': unicode(self.tr(u'Max')), u'type': u'float', u'value': 22, u'step': 0.1},
                 ]},
                 {u'name': unicode(self.tr(u'FFT size')), u'type': u'list', u'default': 512,
-                 u'values': [(unicode(self.tr(u'Automatic')), 512), (u"8192", 8192), (u"128", 128), (u"256", 256),
-                             (u"512", 512), (u"1024", 1024)], u'value': u'512'},
+                 u'values': [(u"128", 128), (u"256", 256), (u"512", 512), (u"1024", 1024), (u"8192", 8192)],
+                 u'value': u'512'},
                 {u'name': unicode(self.tr(u'FFT window')), u'type': u'list',
                  u'value': WindowFunction.Hanning,
                  u'default': WindowFunction.Hanning,
@@ -282,11 +282,15 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         playSpeedActionGroup.addAction(self.action8x)
         playSpeedActionGroup.triggered.connect(self.on_playSpeedChanged_triggered)
 
+        self._firstTimeShown = True
+
     # region Segmentation And Clasification
 
     def showEvent(self, *args, **kwargs):
         QtGui.QMainWindow.showEvent(self, *args, **kwargs)
-        QTimer.singleShot(0, self.on_load_first_time)
+        if self._firstTimeShown:
+            QTimer.singleShot(0, self.on_load_first_time)
+            self._firstTimeShown = False
 
     def serializeClassificationData(self, filename=""):
         """
@@ -451,17 +455,19 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         Updates the variables in the param tree and the work theme that represent the region of the histogram.
         """
         reg = self.hist.item.region.getRegion()
+        # we only need to set the values to the param tree and it automatically calls the change method and does
+        # everything else
         self.ParamTree.param(unicode(self.tr(u'Spectrogram Settings'))).param(
             unicode(self.tr(u'Threshold(dB)'))).param(unicode(self.tr(u'Min'))).setValue(reg[0])
         self.ParamTree.param(unicode(self.tr(u'Spectrogram Settings'))).param(
             unicode(self.tr(u'Threshold(dB)'))).param(unicode(self.tr(u'Max'))).setValue(reg[1])
-        self.workspace.workTheme.spectrogramTheme.histRange = reg
 
-    def histogramGradientChanged(self):
+    def histogramGradientChanged(self, gradient):
         """
-        Updates the variables in the param tree and the work theme that represent the gradient colors of the histogram.
+        Updates the variables in the work theme that represent the gradient colors of the histogram.
         """
-        self.workspace.workTheme.spectrogramTheme.colorBarState = self.hist.item.gradient.saveState()
+        # as the histogram is connected to the
+        self.workspace.spectrogramWorkspace.theme.colorBarState = gradient.saveState()
 
     def serializeTheme(self, filename):
         """
@@ -505,27 +511,25 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
             elif childName == unicode(self.tr(u'Spectrogram Settings')) + u"." + \
                     unicode(self.tr(u'Threshold(dB)')) + u"." + unicode(self.tr(u'Min')):
-                if self.hist.item.region.getRegion()[0] != data:
-                    if data > self.ParamTree.param(unicode(self.tr(u'Spectrogram Settings'))).param(
-                            unicode(self.tr(u'Threshold(dB)'))).param(unicode(self.tr(u'Max'))).value():
-                        self.ParamTree.param(unicode(self.tr(u'Spectrogram Settings'))).param(
-                            unicode(self.tr(u'Threshold(dB)'))).param(unicode(self.tr(u'Min'))).setToDefault()
-                        self.ParamTree.param(unicode(self.tr(u'Spectrogram Settings'))).param(
-                            unicode(self.tr(u'Threshold(dB)'))).param(unicode(self.tr(u'Min'))).show()
-                        return
-                    self.workspace.spectrogramWorkspace.theme.histRange = data, self.hist.item.region.getRegion()[1]
+                if data > self.ParamTree.param(unicode(self.tr(u'Spectrogram Settings'))).param(
+                        unicode(self.tr(u'Threshold(dB)'))).param(unicode(self.tr(u'Max'))).value():
+                    self.ParamTree.param(unicode(self.tr(u'Spectrogram Settings'))).param(
+                        unicode(self.tr(u'Threshold(dB)'))).param(unicode(self.tr(u'Min'))).setToDefault()
+                    # self.ParamTree.param(unicode(self.tr(u'Spectrogram Settings'))).param(
+                    #     unicode(self.tr(u'Threshold(dB)'))).param(unicode(self.tr(u'Min'))).show()
+                    # return
+                self.workspace.spectrogramWorkspace.theme.histRange = data, self.hist.item.region.getRegion()[1]
 
             elif childName == unicode(self.tr(u'Spectrogram Settings')) + u"." + \
                     unicode(self.tr(u'Threshold(dB)')) + u"." + unicode(self.tr(u'Max')):
-                if self.hist.item.region.getRegion()[1] != data:
-                    if data < self.ParamTree.param(unicode(self.tr(u'Spectrogram Settings'))).param(
-                            unicode(self.tr(u'Threshold(dB)'))).param(unicode(self.tr(u'Min'))).value():
-                        self.ParamTree.param(unicode(self.tr(u'Spectrogram Settings'))).param(
-                            unicode(self.tr(u'Threshold(dB)'))).param(unicode(self.tr(u'Max'))).setToDefault()
-                        self.ParamTree.param(unicode(self.tr(u'Spectrogram Settings'))).param(
-                            unicode(self.tr(u'Threshold(dB)'))).param(unicode(self.tr(u'Max'))).setValue()
-                        return
-                    self.workspace.spectrogramWorkspace.theme.histRange = self.hist.item.region.getRegion()[0], data
+                if data < self.ParamTree.param(unicode(self.tr(u'Spectrogram Settings'))).param(
+                        unicode(self.tr(u'Threshold(dB)'))).param(unicode(self.tr(u'Min'))).value():
+                    self.ParamTree.param(unicode(self.tr(u'Spectrogram Settings'))).param(
+                        unicode(self.tr(u'Threshold(dB)'))).param(unicode(self.tr(u'Max'))).setToDefault()
+                    # self.ParamTree.param(unicode(self.tr(u'Spectrogram Settings'))).param(
+                    #     unicode(self.tr(u'Threshold(dB)'))).param(unicode(self.tr(u'Max'))).setValue()
+                    # return
+                self.workspace.spectrogramWorkspace.theme.histRange = self.hist.item.region.getRegion()[0], data
 
             elif childName == unicode(self.tr(u'Spectrogram Settings')) + u"." + \
                     unicode(self.tr(u'FFT window')):
@@ -1138,7 +1142,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             self.changeAmplitude(-100, 100)
 
             self.workspace.openedFile = file_path
-            self.widget.load_workspace(self.workspace)
+            self.widget.load_workspace(self.workspace, forceUpdate=True)
 
             #select the zoom tool as default
             self.on_actionZoom_Cursor_triggered()
