@@ -121,7 +121,7 @@ class SoundLabOscillogramWidget(SoundLabWidget, OscillogramWidget):
         self.setRange(yRange=(minY, maxY), padding=0, update=True)
 
         # load the theme
-        update = update or self._load_theme(workspace.theme)
+        update = self._load_theme(workspace.theme) or update
 
         # keep a copy of the workspace
         self.workspace = workspace.copy()

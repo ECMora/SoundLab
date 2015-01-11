@@ -62,32 +62,37 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
         self.changeRange(x1, x2, y1, y2)
         self.rangeChanged.emit(x1, x2)
 
-    def _load_theme(self, theme):
+    def _load_theme(self, theme, keepCopy=True):
         update = False
 
+        noTheme = self.workspace is None or (not hasattr(self.workspace, 'theme')) or self.workspace.theme is None
+
         # set background color
-        if self.workspace.theme.background_color != theme.background_color:
+        if noTheme or self.workspace.theme.background_color != theme.background_color:
             self.graphics_view.setBackground(theme.background_color)
 
         # set grid lines
-        if self.workspace.theme.gridX != theme.gridX:
+        if noTheme or self.workspace.theme.gridX != theme.gridX:
             self.xAxis.setGrid(88 if theme.gridX else 0)
-        if self.workspace.theme.gridY != theme.gridY:
+        if noTheme or self.workspace.theme.gridY != theme.gridY:
             self.yAxis.setGrid(88 if theme.gridY else 0)
 
         # set the state of the histogram and make it note the change so it automatically refreshes the spectrogram
         refrHist = False
-        if self.workspace.theme.colorBarState != theme.colorBarState:
+        if noTheme or self.workspace.theme.colorBarState != theme.colorBarState:
             self.histogram.item.gradient.restoreState(theme.colorBarState)
             refrHist = True
-        if self.workspace.theme.histRange != theme.histRange:
+        if noTheme or self.workspace.theme.histRange != theme.histRange:
             self.histogram.item.region.setRegion(theme.histRange)
             refrHist = True
         if refrHist:
             self.histogram.item.region.lineMoved()
             self.histogram.item.region.lineMoveFinished()
 
-        self.workspace.theme = theme.copy()
+        if keepCopy:
+            if self.workspace is None:
+                self.workspace = SpectrogramWorkspace()
+            self.workspace.theme = theme.copy()
 
         # returns whether it's necessary to update the widget
         return update
@@ -108,7 +113,7 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
 
     def _load_workspace(self, workspace):
         update = False
-        noWorkspace = self.workspace is None
+        noWorkspace = not hasattr(self, 'workspace') or self.workspace is None
 
         # set the FFT size (must also reset the overlap)
         if noWorkspace or self.workspace.FFTSize != workspace.FFTSize:
@@ -129,7 +134,7 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
             update = True
 
         # load the theme
-        update = update or self._load_theme(workspace.theme)
+        update = self._load_theme(workspace.theme, keepCopy=False) or update
 
         # keep a copy of the workspace
         self.workspace = workspace.copy()
