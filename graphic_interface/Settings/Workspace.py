@@ -36,10 +36,11 @@ class SpectrogramWorkspace(object):
                  theme=None):
         """
 
-        :param minY:
-        :param maxY:
+        :param minY: in Hz
+        :param maxY: in Hz
         :param FFTSize:
-        :param FFTWindow:
+        :param FFTWindow: the value passed must be a function (one of the values of the _winFuncs dictionary),
+                          the value stored is the corresponding string
         :param FFTOverlap: between 0 and 1
         :param theme:
         """
