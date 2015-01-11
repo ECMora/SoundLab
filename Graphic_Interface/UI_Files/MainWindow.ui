@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>653</width>
-    <height>411</height>
+    <width>811</width>
+    <height>493</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -22,6 +22,10 @@
   <property name="windowTitle">
    <string>Duetto Sound Lab</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="resources/icons.qrc">
+    <normaloff>:/myappicons/duetto_logo.png</normaloff>:/myappicons/duetto_logo.png</iconset>
+  </property>
   <property name="autoFillBackground">
    <bool>false</bool>
   </property>
@@ -29,6 +33,9 @@
    <string notr="true"/>
   </property>
   <widget class="QWidget" name="centralwidget">
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
      <widget class="QTabWidget" name="tabOpenedSignals">
@@ -46,6 +53,51 @@
       </property>
      </widget>
     </item>
+    <item>
+     <widget class="QLabel" name="noSignalOpened_lbl">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>400</width>
+        <height>300</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>400</width>
+        <height>300</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
+      <property name="cursor">
+       <cursorShape>ArrowCursor</cursorShape>
+      </property>
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
+      <property name="midLineWidth">
+       <number>0</number>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="scaledContents">
+       <bool>false</bool>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -53,7 +105,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>653</width>
+     <width>811</width>
      <height>21</height>
     </rect>
    </property>
@@ -66,10 +118,10 @@
    <widget class="QMenu" name="menuFile">
     <property name="geometry">
      <rect>
-      <x>7</x>
-      <y>126</y>
+      <x>17</x>
+      <y>137</y>
       <width>210</width>
-      <height>341</height>
+      <height>363</height>
      </rect>
     </property>
     <property name="autoFillBackground">
@@ -100,6 +152,7 @@
     </widget>
     <addaction name="actionNew"/>
     <addaction name="actionOpen"/>
+    <addaction name="actionBrowse"/>
     <addaction name="menuRecentSignals"/>
     <addaction name="actionSave"/>
     <addaction name="actionSaveAs"/>
@@ -845,7 +898,7 @@
     <string>SwitchPlayStatus</string>
    </property>
    <property name="shortcut">
-    <string>M</string>
+    <string>Space</string>
    </property>
   </action>
   <action name="actionSave">
@@ -887,6 +940,18 @@
    </property>
    <property name="text">
     <string>CloseUnmodified</string>
+   </property>
+  </action>
+  <action name="actionBrowse">
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/81.ico</normaloff>:/myappicons/81.ico</iconset>
+   </property>
+   <property name="text">
+    <string>Browse</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+B</string>
    </property>
   </action>
   <zorder>dock_settings</zorder>

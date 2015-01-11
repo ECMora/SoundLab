@@ -462,3 +462,7 @@ QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
 {
     border: 1px solid #444;
 }
+QTableWidget
+{
+    color:#FFF;
+ }

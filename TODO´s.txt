@@ -58,14 +58,14 @@ Complexity-2: Small-to-medium code changes
 
 
 
-* (Carlos) Create a workspace file or .ini with app settings
++ (Carlos) Create a workspace file or .ini with app settings
 * (Carlos) Provide access to remember the recent files (5) (init file)
 * (Carlos) Theme improvement and completion
 
 - (Yasel) Scroll bar implementation inside the signal visualizer widget
-* (Yasel) Create a start window with the opening options
-* (Yasel) Tool Bar actions group by category
-* (Yasel) Tool Bar actions groups visualization by category
++ (Yasel) Create a start window with the opening options
++ (Yasel) Tool Bar actions group by category
++ (Yasel) Tool Bar actions groups visualization by category
 * (Yasel) Add Browse window to browse the current signal folder files (see Avisoft)
 
 * (Hiram) Add margins to the widgets for best visualization (API)
@@ -73,7 +73,9 @@ Complexity-2: Small-to-medium code changes
 * (Hiram) Set fixed the histogram x axis (API)
 * (Hiram) Set labels into the histogram minimum and maximum thresholds (API)
 * (Hiram) Check spectrogram coordinate calculation
-- (Hiram) Remove labels on axes (Ampl
+- (Hiram) Remove labels on axes (Ampl)
+
+
 * (Gabriela) Implement play of files itude and Frequency) Set the values (% and kHz) on the border of the axes
 even if they are not possible to play completely by the recoding
 	sampling rate (make a filter) (API)
