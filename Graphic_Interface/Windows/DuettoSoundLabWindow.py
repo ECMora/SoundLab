@@ -266,10 +266,16 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                                 'An error occurred while loading the theme. A default theme will be loaded instead.\n' +
                                 'Error: ' + str(e))
 
+        # the list with all the actions that are depending
+        # of at least one open signal. Are disabled if there is no open signal
+        self.signalDependingActions = []
+
         self.addSignalTab(Synthesizer.generateSilence())
 
+        # some initial state configurations
         self.configureSignalsTab()
         self.configureNoOpenedWidget()
+        self.configureActionsGroups()
 
         # get all the themes that are in the static folder for themes ("Utils\Themes\")
         app_themes = folderFiles(os.path.join("Utils", "Themes"), extensions=[".dth"])
@@ -358,17 +364,17 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         playSpeedActionGroup.addAction(self.action4x)
         playSpeedActionGroup.addAction(self.action8x)
         playSpeedActionGroup.triggered.connect(self.on_playSpeedChanged_triggered)
-	
-        self.configureToolBarActionsGroups()
-        
+
         # open a signal if any
         if signal_path == '':
             # close the signal of the opening
             self.tabOpenedSignals.removeTab(0)
 
             # set the values for start with no opened signals
+
             self.tabOpenedSignals.setVisible(False)
             self.noSignalOpened_lbl.setVisible(True)
+            self.setSignalActionsEnabledState(False)
 
         else:
             self._open(signal_path)
@@ -551,7 +557,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         Adds the context menu options to the current signal widget
         :return:
         """
-        # actions = [self.actionClose,  self.actionCloseOthers]
 
         # create the separators for the context menu
         sep1, sep2, sep3, sep4, sep5 = [QtGui.QAction(self) for _ in range(5)]
@@ -559,7 +564,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         for sep in [sep1, sep2, sep3, sep4, sep5]:
             sep.setSeparator(True)
 
-        # add actions to the context menu
+        # region add actions to the context menu
         self.widget.createContextCursor([
             # Close Actions
             # self.actionCloseAll,
@@ -596,13 +601,15 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             self.actionSpecgram_Image,
             self.actionCombined_Image
         ])
+        # endregion
 
-    def configureToolBarActionsGroups(self):
+    def configureActionsGroups(self):
         """
         Configure the actions into groups for best visualization and
         user configuration.
         :return:
         """
+
         # region Add actions groups
         # create the separators for the actions
         sep1, sep2, sep3, sep4, sep5, sep6, sep7 = [QtGui.QAction(self) for _ in range(7)]
@@ -671,14 +678,19 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         # endregion
 
-        # actions groups (action,name)
+        # add the actions to the signalDependingActions list
+        for action_group in [edition_actions,play_record_actions,widgets_visibility_actions,
+                             zoom_actions,undo_redo_actions]:
 
+            self.signalDependingActions.extend(action_group.actions())
+
+        # actions groups (action,name of group)
         actions_groups = [(edition_actions,"Edition"), (open_save_actions, "Open/Save"),
                           (play_record_actions, "Play/Record"), (zoom_actions, "Zoom"),
                           (widgets_visibility_actions, "Widgets Visibility"),
                           (undo_redo_actions, "Undo/Redo"), (file_updown_actions, "File Up/Down")]
 
-        # add the way to change visibility on toolbar context menu
+        # add to the customizable sound lab toolbar
         for act in actions_groups:
             self.toolBar.addActionGroup(act[0], act[1])
 
@@ -686,6 +698,16 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.toolBar.addAction(self.actionOneDimensionalTransformation)
         self.toolBar.addAction(self.actionSegmentation_And_Clasification)
         self.toolBar.addAction(self.actionSignalName)
+
+    def setSignalActionsEnabledState(self, enable_state=True):
+        """
+        Set the enabled state to the action that depends of at least one signal
+        opened to be performed.
+        :param enable: The enable state to set
+        :return:
+        """
+        for action in self.signalDependingActions:
+            action.setEnabled(enable_state)
 
     # endregion
 
@@ -707,17 +729,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             self.noSignalOpened_lbl.setVisible(False)
             self.setSignalActionsEnabledState(True)
 
-    def setSignalActionsEnabledState(self,enable_state=True):
-        """
-        Set the enabled state to the action that depends of at least one signal
-        opened to be performed.
-        :param enable: The enable state to set
-        :return:
-        """
-        signal_depending_actions = [self.actionSegmentation_And_Clasification]
-
-        for action in signal_depending_actions:
-            action.setEnabled(enable_state)
 
     def loadSignalOnTab(self, signal, tabIndex=None):
         """
@@ -1897,7 +1908,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         :return:
         """
         self.widget.stop()
-        #  the spped is get form the text of the action (?? is posible to improve it ??)
+        #  the speed is get form the text of the action (?? it is possible to improve it ??)
         speed = {u'1/8x': 12.5, u'1/4x': 25, u'1/2x': 50,
                  u'1x': 100, u'2x': 200, u'4x': 400, u'8x': 800}[unicode(action.text())]
 
