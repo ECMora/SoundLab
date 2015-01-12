@@ -358,7 +358,9 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         playSpeedActionGroup.addAction(self.action4x)
         playSpeedActionGroup.addAction(self.action8x)
         playSpeedActionGroup.triggered.connect(self.on_playSpeedChanged_triggered)
-
+	
+        self.configureToolBarActionsGroups()
+        
         # open a signal if any
         if signal_path == '':
             # close the signal of the opening
@@ -401,7 +403,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.tabOpenedSignals.tabCloseRequested.connect(self.closeSignalAt)
 
         # add the tab context menu
-        self.tabOpenedSignals.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+        self.tabOpenedSignals.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
         actions = [self.actionClose,self.actionCloseAll,self.actionCloseOthers, self.actionCloseUnmodified]
         for act in actions:
             self.tabOpenedSignals.addAction(act)
@@ -554,7 +556,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         # create the separators for the context menu
         sep1, sep2, sep3, sep4, sep5 = [QtGui.QAction(self) for _ in range(5)]
 
-        for sep in [sep1, sep2, sep3, sep4]:
+        for sep in [sep1, sep2, sep3, sep4, sep5]:
             sep.setSeparator(True)
 
         # add actions to the context menu
@@ -594,6 +596,96 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             self.actionSpecgram_Image,
             self.actionCombined_Image
         ])
+
+    def configureToolBarActionsGroups(self):
+        """
+        Configure the actions into groups for best visualization and
+        user configuration.
+        :return:
+        """
+        # region Add actions groups
+        # create the separators for the actions
+        sep1, sep2, sep3, sep4, sep5, sep6, sep7 = [QtGui.QAction(self) for _ in range(7)]
+
+        for sep in [sep1, sep2, sep3, sep4, sep5, sep6, sep7]:
+            sep.setSeparator(True)
+
+        # open save actions
+        open_save_actions = QActionGroup(self)
+        open_save_actions_list = [self.actionNew, self.actionOpen, self.actionSave, sep1]
+
+        self.toolBar.addActions(open_save_actions_list)
+        for act in open_save_actions_list:
+            act.setActionGroup(open_save_actions)
+
+        # edition actions
+        edition_actions = QActionGroup(self)
+        edition_actions_list = [self.actionCopy, self.actionPaste, self.actionCut, sep2]
+
+        self.toolBar.addActions(edition_actions_list)
+        for act in edition_actions_list:
+            act.setActionGroup(edition_actions)
+
+        # play record actions
+        play_record_actions = QActionGroup(self)
+        play_record_actions_list = [self.actionPlay_Sound, self.actionPause_Sound, self.actionStop_Sound,
+                                    self.actionRecord, sep3]
+
+        self.toolBar.addActions(play_record_actions_list)
+        for act in play_record_actions_list:
+            act.setActionGroup(play_record_actions)
+
+        # widgets visibility actions
+        widgets_visibility_actions = QActionGroup(self)
+        widgets_visibility_actions_list = [self.actionOscilogram, self.actionSpectogram, self.actionCombined,
+                                           sep4]
+
+        self.toolBar.addActions(widgets_visibility_actions_list)
+        for act in widgets_visibility_actions_list:
+            act.setActionGroup(widgets_visibility_actions)
+
+        # undo redo actions
+        undo_redo_actions = QActionGroup(self)
+        undo_redo_actions_list = [self.actionUndo, self.actionRedo,sep5]
+
+        self.toolBar.addActions(undo_redo_actions_list)
+        for act in undo_redo_actions_list:
+            act.setActionGroup(undo_redo_actions)
+
+        # zoom actions
+        zoom_actions = QActionGroup(self)
+        zoom_actions_list = [self.actionZoomIn, self.actionZoom_out,
+                                  self.actionZoom_out_entire_file,sep6]
+
+        self.toolBar.addActions(zoom_actions_list)
+        for act in zoom_actions_list:
+            act.setActionGroup(zoom_actions)
+
+        # File up down actions
+        file_updown_actions = QActionGroup(self)
+        file_updown_actions_list = [self.actionFile_Up, self.actionFile_Down, sep7]
+
+        self.toolBar.addActions(file_updown_actions_list)
+        for act in file_updown_actions_list:
+            act.setActionGroup(file_updown_actions)
+
+        # endregion
+
+        # actions groups (action,name)
+
+        actions_groups = [(edition_actions,"Edition"), (open_save_actions, "Open/Save"),
+                          (play_record_actions, "Play/Record"), (zoom_actions, "Zoom"),
+                          (widgets_visibility_actions, "Widgets Visibility"),
+                          (undo_redo_actions, "Undo/Redo"), (file_updown_actions, "File Up/Down")]
+
+        # add the way to change visibility on toolbar context menu
+        for act in actions_groups:
+            self.toolBar.addActionGroup(act[0], act[1])
+
+        self.toolBar.addAction(self.actionSettings)
+        self.toolBar.addAction(self.actionOneDimensionalTransformation)
+        self.toolBar.addAction(self.actionSegmentation_And_Clasification)
+        self.toolBar.addAction(self.actionSignalName)
 
     # endregion
 

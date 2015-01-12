@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>811</width>
+    <width>653</width>
     <height>493</height>
    </rect>
   </property>
@@ -105,7 +105,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>811</width>
+     <width>653</width>
      <height>21</height>
     </rect>
    </property>
@@ -312,7 +312,7 @@
    </attribute>
    <widget class="QWidget" name="osc_settings_contents"/>
   </widget>
-  <widget class="QToolBar" name="toolBar">
+  <widget class="SoundLabToolBarWidget" name="toolBar">
    <property name="windowTitle">
     <string>toolBar</string>
    </property>
@@ -331,35 +331,6 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionNew"/>
-   <addaction name="actionOpen"/>
-   <addaction name="actionSave"/>
-   <addaction name="separator"/>
-   <addaction name="actionCopy"/>
-   <addaction name="actionCut"/>
-   <addaction name="actionPaste"/>
-   <addaction name="actionUndo"/>
-   <addaction name="actionRedo"/>
-   <addaction name="separator"/>
-   <addaction name="actionRecord"/>
-   <addaction name="actionPause_Sound"/>
-   <addaction name="actionPlay_Sound"/>
-   <addaction name="actionStop_Sound"/>
-   <addaction name="separator"/>
-   <addaction name="actionZoomIn"/>
-   <addaction name="actionZoom_out"/>
-   <addaction name="actionZoom_out_entire_file"/>
-   <addaction name="separator"/>
-   <addaction name="actionCombined"/>
-   <addaction name="actionOscilogram"/>
-   <addaction name="actionSpectogram"/>
-   <addaction name="actionOneDimensionalTransformation"/>
-   <addaction name="separator"/>
-   <addaction name="actionSettings"/>
-   <addaction name="actionSegmentation_And_Clasification"/>
-   <addaction name="actionFile_Up"/>
-   <addaction name="actionFile_Down"/>
-   <addaction name="actionSignalName"/>
   </widget>
   <action name="actionOpen">
    <property name="icon">
@@ -956,6 +927,13 @@
   </action>
   <zorder>dock_settings</zorder>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>SoundLabToolBarWidget</class>
+   <extends>QToolBar</extends>
+   <header>graphic_interface.widgets.SoundLabToolBar</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="resources/icons.qrc"/>
  </resources>
