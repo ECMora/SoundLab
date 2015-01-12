@@ -58,7 +58,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     SETTINGS_WINDOW_HEIGHT = 100
 
     # number of recent files to be remembered
-    RECENT_FILES = 10
+    RECENT_FILES = 5
 
     def __init__(self, parent=None):
         super(DuettoSoundLabWindow, self).__init__(parent)
