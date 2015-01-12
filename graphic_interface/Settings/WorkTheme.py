@@ -29,7 +29,7 @@ class SpectrogramTheme:
         return SpectrogramTheme(self.background_color, self.gridX, self.gridY, self.colorBarState, self.histRange)
 
 
-class OneDimensinalTheme:
+class OneDimensionalTheme:
     def __init__(self, background_color="000", plot_color="FFF", gridX=True, gridY=True):
         self.background_color = background_color
         self.plot_color = plot_color
@@ -37,7 +37,7 @@ class OneDimensinalTheme:
         self.gridY = gridY
 
     def copy(self):
-        return OneDimensinalTheme(self.background_color, self.plot_color, self.gridX, self.gridY)
+        return OneDimensionalTheme(self.background_color, self.plot_color, self.gridX, self.gridY)
 
 
 class DetectionTheme:
@@ -60,7 +60,7 @@ class WorkTheme:
     def __init__(self, oscillogramTheme=None, spectrogramTheme=None, oneDimensionalTheme=None, detectionTheme=None):
         self.oscillogramTheme = oscillogramTheme if oscillogramTheme is not None else OscillogramTheme()
         self.spectrogramTheme = spectrogramTheme if spectrogramTheme is not None else SpectrogramTheme()
-        self.oneDimensionalTheme = oneDimensionalTheme if oneDimensionalTheme is not None else OneDimensinalTheme()
+        self.oneDimensionalTheme = oneDimensionalTheme if oneDimensionalTheme is not None else OneDimensionalTheme()
         self.detectionTheme = detectionTheme if detectionTheme is not None else DetectionTheme()
 
     def copy(self):

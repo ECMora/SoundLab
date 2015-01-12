@@ -5,7 +5,7 @@ class SoundLabWidget:
 
     def __init__(self):
         self.gui_user_tool = None
-        self.theme = None
+        self.workspace = None
 
     def mouseMoveEvent(self, event):
         if self.gui_user_tool is not None:
