@@ -530,15 +530,21 @@ class QSignalVisualizerWidget(QWidget):
         # update the zoom regions limit sif zoom tool is selected
         self.updateZoomRegionsLimits()
 
+        input = None
+        output = None
         #  update the variables that manage the signal
         #  the audio signal handler to play options
-        if self.signalPlayer is not None and \
-           (self.signalPlayer.playStatus == self.signalPlayer.RECORDING or
-            self.signalPlayer.playStatus == self.signalPlayer.PLAYING):
+        if self.signalPlayer is not None:
 
-            self.stop()
+            input = self.signalPlayer.inputDevice
+            output = self.signalPlayer.outputDevice
 
-        self.signalPlayer = AudioSignalPlayer(self._signal)
+            if self.signalPlayer.playStatus == self.signalPlayer.RECORDING or\
+                self.signalPlayer.playStatus == self.signalPlayer.PLAYING:
+                self.stop()
+
+
+        self.signalPlayer = AudioSignalPlayer(self._signal, inputDevice=input, outputDevice=output)
         self.signalPlayer.playing.connect(self.notifyPlayingCursor)
         self.signalPlayer.playingDone.connect(self.removePlayerLine)
 
