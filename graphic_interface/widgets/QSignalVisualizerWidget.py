@@ -114,6 +114,10 @@ class QSignalVisualizerWidget(QWidget):
         self._recordTimer = QTimer(self)
         self._recordTimer.timeout.connect(self.on_newDataRecorded)
 
+        self.signalPlayer = AudioSignalPlayer()
+        self.signalPlayer.playing.connect(self.notifyPlayingCursor)
+        self.signalPlayer.playingDone.connect(self.removePlayerLine)
+
         # signal file path to save and read the signals from files. None if signal was not loaded from file
         self.__signalFilePath = None
 
@@ -316,13 +320,8 @@ class QSignalVisualizerWidget(QWidget):
         """
         start, end = self.getIndexFromAndTo()
 
-        # if self.signal.samplingRate * 2 > device.defaultSamplingRate:
-        #     signal = self.signal.copy()
-        #     filter = HighPassFilter(signal, device.defaultSamplingRate)
-        #     filter.filter(start,end)
-        
         self.addPlayerLine(start, end)
-        self.signalPlayer.play(start, end, self.playSpeed, device=device)
+        self.signalPlayer.play(self.signal, start, end, self.playSpeed, device=device)
 
     def switchPlayStatus(self):
         """
@@ -377,7 +376,7 @@ class QSignalVisualizerWidget(QWidget):
         #   case of any IO device exception occurs then
         #  we just stop recording immediately.
         try:
-            self.signalPlayer.record(device=device)
+            self.signalPlayer.record(self.signal,device=device)
         except:
              self.stop()
 
@@ -526,10 +525,6 @@ class QSignalVisualizerWidget(QWidget):
             self.signalPlayer.playStatus == self.signalPlayer.PLAYING):
 
             self.stop()
-
-        self.signalPlayer = AudioSignalPlayer(self._signal)
-        self.signalPlayer.playing.connect(self.notifyPlayingCursor)
-        self.signalPlayer.playingDone.connect(self.removePlayerLine)
 
         # update scroll bar values
         self.updateScrollBarValues()
