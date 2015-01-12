@@ -309,20 +309,15 @@ class QSignalVisualizerWidget(QWidget):
 
     #  region Sound
     #  manages the reproduction of the signal
-    def play(self, device=None):
+    def play(self):
         """
         Start to play the current signal.
         If the signal is been playing nothing is made.
         """
         start, end = self.getIndexFromAndTo()
-
-        # if self.signal.samplingRate * 2 > device.defaultSamplingRate:
-        #     signal = self.signal.copy()
-        #     filter = HighPassFilter(signal, device.defaultSamplingRate)
-        #     filter.filter(start,end)
         
         self.addPlayerLine(start, end)
-        self.signalPlayer.play(start, end, self.playSpeed, device=device)
+        self.signalPlayer.play(start, end, self.playSpeed)
 
     def switchPlayStatus(self):
         """
@@ -366,7 +361,7 @@ class QSignalVisualizerWidget(QWidget):
             #  draw the current recorded interval
             self.axesOscilogram.graph(self.mainCursor.min)
 
-    def record(self, newSignal=True, device=None):
+    def record(self, newSignal=True):
         """
         Start to record a new signal.
         If the signal is been playing nothing is made.
@@ -377,7 +372,7 @@ class QSignalVisualizerWidget(QWidget):
         #   case of any IO device exception occurs then
         #  we just stop recording immediately.
         try:
-            self.signalPlayer.record(device=device)
+            self.signalPlayer.record()
         except:
              self.stop()
 
@@ -398,6 +393,22 @@ class QSignalVisualizerWidget(QWidget):
         If the signal is paused nothing is made.
         """
         self.signalPlayer.pause()
+
+    @property
+    def outputDevice(self):
+        return self.signalPlayer.outputDevice
+
+    @outputDevice.setter
+    def outputDevice(self, value):
+        self.signalPlayer.outputDevice = value
+
+    @property
+    def inputDevice(self):
+        return self.signalPlayer.inputDevice
+
+    @inputDevice.setter
+    def inputDevice(self, value):
+        self.signalPlayer.inputDevice = value
 
     def addPlayerLine(self, initial_value, end_value):
         """
