@@ -7,7 +7,7 @@ import pyqtgraph as pg
 from PyQt4.QtCore import QTimer, Qt
 from duetto.audio_signals.AudioSignalPlayer import AudioSignalPlayer
 from duetto.audio_signals.AudioSignal import AudioSignal
-from duetto.soundDevices.Device import Device
+from duetto.sound_devices.Device import Device
 from SoundLabOscillogramWidget import SoundLabOscillogramWidget
 from SoundLabSpectrogramWidget import SoundLabSpectrogramWidget
 from duetto.audio_signals.audio_signals_stream_readers.FileManager import FileManager
@@ -309,14 +309,20 @@ class QSignalVisualizerWidget(QWidget):
 
     #  region Sound
     #  manages the reproduction of the signal
-    def play(self, deviceIndex=None):
+    def play(self, device=None):
         """
         Start to play the current signal.
         If the signal is been playing nothing is made.
         """
         start, end = self.getIndexFromAndTo()
+
+        # if self.signal.samplingRate * 2 > device.defaultSamplingRate:
+        #     signal = self.signal.copy()
+        #     filter = HighPassFilter(signal, device.defaultSamplingRate)
+        #     filter.filter(start,end)
+        
         self.addPlayerLine(start, end)
-        self.signalPlayer.play(start, end, self.playSpeed, deviceIndex=deviceIndex)
+        self.signalPlayer.play(start, end, self.playSpeed, device=device)
 
     def switchPlayStatus(self):
         """
@@ -360,7 +366,7 @@ class QSignalVisualizerWidget(QWidget):
             #  draw the current recorded interval
             self.axesOscilogram.graph(self.mainCursor.min)
 
-    def record(self, newSignal=True, deviceIndex=None):
+    def record(self, newSignal=True, device=None):
         """
         Start to record a new signal.
         If the signal is been playing nothing is made.
@@ -371,7 +377,7 @@ class QSignalVisualizerWidget(QWidget):
         #   case of any IO device exception occurs then
         #  we just stop recording immediately.
         try:
-            self.signalPlayer.record(deviceIndex=deviceIndex)
+            self.signalPlayer.record(device=device)
         except:
              self.stop()
 

@@ -2,8 +2,8 @@
 import os
 import pickle
 from duetto.audio_signals import AudioSignal, openSignal
-from duetto.soundDevices.Device import Device
-from duetto.soundDevices.DevicesHandler import DevicesHandler
+from duetto.sound_devices.Device import Device
+from duetto.sound_devices.DevicesHandler import DevicesHandler
 from PyQt4 import QtGui,QtCore
 from duetto.audio_signals.Synthesizer import Synthesizer
 from duetto.signal_processing.filter_signal_processors.frequency_domain_filters import BandPassFilter, HighPassFilter, \
@@ -754,7 +754,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         input = self.dHandler.inputDeviceSelected
         output = self.dHandler.outputDeviceSelected
         dialog = SoundDevicesDialog(self.dHandler.inputDevices,self.dHandler.outputDevices,
-                                    self.dHandler.inputDeviceSelected, self.dHandler.outputDeviceSelected)
+                                    self.dHandler.inputDeviceSelected.index, self.dHandler.outputDeviceSelected.index)
         if dialog.exec_():
             for dev in self.dHandler.inputDevices:
                 if dialog.grpBoxInput.findChild(QtGui.QRadioButton, dev.name+str(dev.index)).isChecked():
@@ -1754,7 +1754,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     # delegate in the widget the reproduction actions
     @pyqtSlot()
     def on_actionPlay_Sound_triggered(self):
-        self.widget.play(deviceIndex=self.dHandler.outputDeviceSelected)
+        self.widget.play(device=self.dHandler.outputDeviceSelected)
 
     @pyqtSlot()
     def on_actionStop_Sound_triggered(self):
@@ -1762,7 +1762,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     @pyqtSlot()
     def on_actionRecord_triggered(self):
-        self.widget.record(deviceIndex=self.dHandler.inputDeviceSelected)
+        self.widget.record(device=self.dHandler.inputDeviceSelected)
 
     @pyqtSlot()
     def on_actionPause_Sound_triggered(self):
