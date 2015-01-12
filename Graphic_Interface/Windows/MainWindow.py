@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\DuettoSystem\graphic_interface\UI_Files\MainWindow.ui'
+# Form implementation generated from reading ui file 'MainWindow.ui'
 #
-# Created: Sat Dec 06 15:29:42 2014
+# Created: Fri Dec 19 13:57:34 2014
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -40,13 +40,9 @@ class Ui_DuettoMainWindow(object):
 "border-color: qlineargradient(spread:pad, x1:0, y1:0, x2:1, y2:0, stop:0.136364 rgba(0, 0, 0, 255), stop:1 rgba(255, 255, 255, 255));"))
         self.widget.setObjectName(_fromUtf8("widget"))
         self.verticalLayout_2.addWidget(self.widget)
-        self.horizontalScrollBar = QtGui.QScrollBar(self.centralwidget)
-        self.horizontalScrollBar.setOrientation(QtCore.Qt.Horizontal)
-        self.horizontalScrollBar.setObjectName(_fromUtf8("horizontalScrollBar"))
-        self.verticalLayout_2.addWidget(self.horizontalScrollBar)
         DuettoMainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(DuettoMainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 569, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 800, 21))
         self.menubar.setAutoFillBackground(False)
         self.menubar.setStyleSheet(_fromUtf8(""))
         self.menubar.setObjectName(_fromUtf8("menubar"))
@@ -145,11 +141,11 @@ class Ui_DuettoMainWindow(object):
         icon8.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/Leopard Icon 60.ico")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionNew.setIcon(icon8)
         self.actionNew.setObjectName(_fromUtf8("actionNew"))
-        self.actionPower_Spectrum = QtGui.QAction(DuettoMainWindow)
+        self.actionOneDimensionalTransformation = QtGui.QAction(DuettoMainWindow)
         icon9 = QtGui.QIcon()
         icon9.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/powerspec.ico")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionPower_Spectrum.setIcon(icon9)
-        self.actionPower_Spectrum.setObjectName(_fromUtf8("actionPower_Spectrum"))
+        self.actionOneDimensionalTransformation.setIcon(icon9)
+        self.actionOneDimensionalTransformation.setObjectName(_fromUtf8("actionOneDimensionalTransformation"))
         self.actionPlay_Sound = QtGui.QAction(DuettoMainWindow)
         icon10 = QtGui.QIcon()
         icon10.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/02049_26x26.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -369,7 +365,7 @@ class Ui_DuettoMainWindow(object):
         self.menuView.addAction(self.actionOscilogram)
         self.menuView.addAction(self.actionSpectogram)
         self.menuView.addAction(self.actionCombined)
-        self.menuView.addAction(self.actionPower_Spectrum)
+        self.menuView.addAction(self.actionOneDimensionalTransformation)
         self.menuView.addSeparator()
         self.menuView.addAction(self.actionSettings)
         self.menuView.addAction(self.actionSegmentation_And_Clasification)
@@ -413,7 +409,7 @@ class Ui_DuettoMainWindow(object):
         self.toolBar.addAction(self.actionCombined)
         self.toolBar.addAction(self.actionOscilogram)
         self.toolBar.addAction(self.actionSpectogram)
-        self.toolBar.addAction(self.actionPower_Spectrum)
+        self.toolBar.addAction(self.actionOneDimensionalTransformation)
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionSettings)
         self.toolBar.addAction(self.actionSegmentation_And_Clasification)
@@ -449,7 +445,7 @@ class Ui_DuettoMainWindow(object):
         self.actionCombined.setText(QtGui.QApplication.translate("DuettoMainWindow", "Combined", None, QtGui.QApplication.UnicodeUTF8))
         self.actionNew.setText(QtGui.QApplication.translate("DuettoMainWindow", "New", None, QtGui.QApplication.UnicodeUTF8))
         self.actionNew.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Ctrl+N", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionPower_Spectrum.setText(QtGui.QApplication.translate("DuettoMainWindow", "Power Spectrum", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionOneDimensionalTransformation.setText(QtGui.QApplication.translate("DuettoMainWindow", "Power Spectrum", None, QtGui.QApplication.UnicodeUTF8))
         self.actionPlay_Sound.setText(QtGui.QApplication.translate("DuettoMainWindow", "Play Sound", None, QtGui.QApplication.UnicodeUTF8))
         self.actionPlay_Sound.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Ctrl+P", None, QtGui.QApplication.UnicodeUTF8))
         self.actionStop_Sound.setText(QtGui.QApplication.translate("DuettoMainWindow", "Stop Sound", None, QtGui.QApplication.UnicodeUTF8))
