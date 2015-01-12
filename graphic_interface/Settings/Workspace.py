@@ -95,12 +95,12 @@ class Workspace(object):
 
     @property
     def workTheme(self):
-        return WorkTheme(self.oscillogramWorkspace.theme.copy(), self.spectrogramWorkspace.theme.copy(),
-                         self.oneDimensionalWorkspace.theme.copy(), self.detectionWorkspace.theme.copy())
+        return WorkTheme(self.oscillogramWorkspace.theme, self.spectrogramWorkspace.theme,
+                         self.oneDimensionalWorkspace.theme, self.detectionWorkspace.theme)
 
     @workTheme.setter
     def workTheme(self, theme):
-        self.oscillogramWorkspace.theme = theme.oscillogramTheme.copy()
-        self.spectrogramWorkspace.theme = theme.spectrogramTheme.copy()
-        self.oneDimensionalWorkspace.theme = theme.oneDimensionalTheme.copy()
-        self.detectionWorkspace.theme = theme.detectionTheme.copy()
+        self.oscillogramWorkspace.theme = theme.oscillogramTheme
+        self.spectrogramWorkspace.theme = theme.spectrogramTheme
+        self.oneDimensionalWorkspace.theme = theme.oneDimensionalTheme
+        self.detectionWorkspace.theme = theme.detectionTheme
