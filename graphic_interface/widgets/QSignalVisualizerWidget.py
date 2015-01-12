@@ -180,7 +180,7 @@ class QSignalVisualizerWidget(QWidget):
         #      self.axesOscilogram.changeTool(tool)
         # update the current selected tool
 
-        self.selectedTool = tool
+        self.__selectedTool = tool
 
     def load_Theme(self, theme):
         """

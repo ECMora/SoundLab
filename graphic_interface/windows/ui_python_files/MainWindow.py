@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\MainWindow.ui'
 #
-# Created: Thu Jan 08 11:29:07 2015
+# Created: Fri Jan 09 12:47:10 2015
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -18,7 +18,7 @@ class Ui_DuettoMainWindow(object):
     def setupUi(self, DuettoMainWindow):
         DuettoMainWindow.setObjectName(_fromUtf8("DuettoMainWindow"))
         DuettoMainWindow.setWindowModality(QtCore.Qt.ApplicationModal)
-        DuettoMainWindow.resize(653, 411)
+        DuettoMainWindow.resize(807, 411)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -38,7 +38,7 @@ class Ui_DuettoMainWindow(object):
         self.horizontalLayout.addWidget(self.tabOpenedSignals)
         DuettoMainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(DuettoMainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 653, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 807, 21))
         self.menubar.setAutoFillBackground(False)
         self.menubar.setStyleSheet(_fromUtf8(""))
         self.menubar.setObjectName(_fromUtf8("menubar"))
@@ -92,7 +92,7 @@ class Ui_DuettoMainWindow(object):
         self.osc_settings_contents.setObjectName(_fromUtf8("osc_settings_contents"))
         self.dock_settings.setWidget(self.osc_settings_contents)
         DuettoMainWindow.addDockWidget(QtCore.Qt.DockWidgetArea(1), self.dock_settings)
-        self.toolBar = QtGui.QToolBar(DuettoMainWindow)
+        self.toolBar = SoundLabToolBarWidget(DuettoMainWindow)
         self.toolBar.setStyleSheet(_fromUtf8(""))
         self.toolBar.setIconSize(QtCore.QSize(20, 20))
         self.toolBar.setObjectName(_fromUtf8("toolBar"))
@@ -402,35 +402,6 @@ class Ui_DuettoMainWindow(object):
         self.menubar.addAction(self.menuTools.menuAction())
         self.menubar.addAction(self.menuView.menuAction())
         self.menubar.addAction(self.menuSound.menuAction())
-        self.toolBar.addAction(self.actionNew)
-        self.toolBar.addAction(self.actionOpen)
-        self.toolBar.addAction(self.actionSave)
-        self.toolBar.addSeparator()
-        self.toolBar.addAction(self.actionCopy)
-        self.toolBar.addAction(self.actionCut)
-        self.toolBar.addAction(self.actionPaste)
-        self.toolBar.addAction(self.actionUndo)
-        self.toolBar.addAction(self.actionRedo)
-        self.toolBar.addSeparator()
-        self.toolBar.addAction(self.actionRecord)
-        self.toolBar.addAction(self.actionPause_Sound)
-        self.toolBar.addAction(self.actionPlay_Sound)
-        self.toolBar.addAction(self.actionStop_Sound)
-        self.toolBar.addSeparator()
-        self.toolBar.addAction(self.actionZoomIn)
-        self.toolBar.addAction(self.actionZoom_out)
-        self.toolBar.addAction(self.actionZoom_out_entire_file)
-        self.toolBar.addSeparator()
-        self.toolBar.addAction(self.actionCombined)
-        self.toolBar.addAction(self.actionOscilogram)
-        self.toolBar.addAction(self.actionSpectogram)
-        self.toolBar.addAction(self.actionOneDimensionalTransformation)
-        self.toolBar.addSeparator()
-        self.toolBar.addAction(self.actionSettings)
-        self.toolBar.addAction(self.actionSegmentation_And_Clasification)
-        self.toolBar.addAction(self.actionFile_Up)
-        self.toolBar.addAction(self.actionFile_Down)
-        self.toolBar.addAction(self.actionSignalName)
 
         self.retranslateUi(DuettoMainWindow)
         self.tabOpenedSignals.setCurrentIndex(-1)
@@ -539,4 +510,5 @@ class Ui_DuettoMainWindow(object):
         self.actionCloseOthers.setText(QtGui.QApplication.translate("DuettoMainWindow", "CloseOthers", None, QtGui.QApplication.UnicodeUTF8))
         self.actionCloseUnmodified.setText(QtGui.QApplication.translate("DuettoMainWindow", "CloseUnmodified", None, QtGui.QApplication.UnicodeUTF8))
 
+from graphic_interface.widgets.SoundLabToolBar import SoundLabToolBarWidget
 import icons_rc
