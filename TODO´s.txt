@@ -58,14 +58,14 @@ Complexity-2: Small-to-medium code changes
 
 
 + (Carlos) Create a workspace file or .ini with app settings
-* (Carlos) Provide access to remember the recent files (5) (init file)
-* (Carlos) Theme improvement and completion
++ (Carlos) Provide access to remember the recent files (5) (init file)
++ (Carlos) Theme improvement and completion
 
-- (Hiram) Scroll bar implementation inside the signal visualizer widget
++ (Hiram) Scroll bar implementation inside the signal visualizer widget
 + (Yasel) Create a start window with the opening options
 + (Yasel) Tool Bar actions group by category
 + (Yasel) Tool Bar actions groups visualization by category
-* (Yasel) Add Browse window to browse the current signal folder files (see Avisoft)
++ (Yasel) Add Browse window to browse the current signal folder files (see Avisoft)
 
 * (Hiram) Add margins to the widgets for best visualization (API)
 * (Hiram) Fix histogram bug when the histogram line values are not visible (API)

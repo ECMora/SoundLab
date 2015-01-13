@@ -89,16 +89,15 @@ class QSignalVisualizerWidget(QWidget):
         #  link the x axis of each widget to visualize the same x grid and ticks
         self.axesSpecgram.xAxis.linkToView(self.axesOscilogram.getViewBox())
 
-        # current signal to process and visualize
-        self.signal = Synthesizer.generateSilence()
-
-        self.setSelectedTool(Tools.ZoomTool)
-
-        #creating the scrollbar
+        # creating the scrollbar
         self.horizontalScrollBar = QtGui.QScrollBar()
         self.horizontalScrollBar.setOrientation(QtCore.Qt.Horizontal)
         self.horizontalScrollBar.valueChanged.connect(self.scrollBarRangeChanged)
 
+        # current signal to process and visualize
+        self.signal = Synthesizer.generateSilence()
+
+        self.setSelectedTool(Tools.ZoomTool)
 
         #  grouping the oscilogram and spectrogram widgets in the control
         layout = QVBoxLayout()
@@ -558,9 +557,7 @@ class QSignalVisualizerWidget(QWidget):
         #  clean the previous actions to get the initial state with the new signal
         self.undoRedoManager.clear()
 
-        #  update the scrollbar
-        self.updateScrollbar()
-        self.graph(False,False)
+        self.graph(False, False)
 
     #  endregion
 
@@ -626,10 +623,12 @@ class QSignalVisualizerWidget(QWidget):
         if self.selectedTool == Tools.ZoomTool:
             left = self.mainCursor.min
             if self.visibleSpectrogram:
-                self.axesSpecgram.gui_user_tool.zoomRegion.setRegion([left,left])
+                self.axesSpecgram.gui_user_tool.zoomRegion.setRegion([left, left])
+
             if self.visibleOscilogram:
                 self.axesOscilogram.gui_user_tool.setZoomRegionVisible(True)
-                self.axesOscilogram.gui_user_tool.zoomRegion.setRegion([left,left])
+                self.axesOscilogram.gui_user_tool.zoomRegion.setRegion([left, left])
+
         self.updateScrollbar()
     #  endregion
 
