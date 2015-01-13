@@ -94,12 +94,18 @@ class QSignalVisualizerWidget(QWidget):
 
         self.setSelectedTool(Tools.ZoomTool)
 
-        #  grouping the oscilogram, spectrogram and scroll bar widgets in the control
+        #creating the scrollbar
+        self.horizontalScrollBar = QtGui.QScrollBar()
+        self.horizontalScrollBar.setOrientation(QtCore.Qt.Horizontal)
+        self.horizontalScrollBar.valueChanged.connect(self.scrollBarRangeChanged)
+
+
+        #  grouping the oscilogram and spectrogram widgets in the control
         layout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
         layout.addWidget(self.axesOscilogram)
         layout.addWidget(self.axesSpecgram)
-        layout.addWidget(self.scrollBar)
+        layout.addWidget(self.horizontalScrollBar)
         layout.setStretch(0, 1)
         layout.setStretch(1, 1)
         layout.setStretch(2, 1)
@@ -116,7 +122,32 @@ class QSignalVisualizerWidget(QWidget):
         # signal file path to save and read the signals from files. None if signal was not loaded from file
         self.__signalFilePath = None
 
+    def scrollBarRangeChanged(self, start):
+        """
+        This method is invoked when the scrollbar is moved
+        param start: the start of the range
+        """
+        self.mainCursor.min = start
+        self.mainCursor.max = start + self.horizontalScrollBar.pageStep()
         self.graph()
+
+    def updateScrollbar(self):
+        """
+        This method updates the values of the scrollbar to be compatible with the signal
+        """
+
+        # if the scrollbar is up to date then nothing is need to be done
+        if self.mainCursor.min == self.horizontalScrollBar.value() and \
+            self.mainCursor.max == self.horizontalScrollBar.value() + self.horizontalScrollBar.pageStep():
+            return
+
+        self.horizontalScrollBar.blockSignals(True)
+        self.horizontalScrollBar.setMinimum(0)
+        self.horizontalScrollBar.setMaximum(len(self.signal) - (self.mainCursor.max - self.mainCursor.min))
+        self.horizontalScrollBar.setValue(self.mainCursor.min)
+        self.horizontalScrollBar.setPageStep(self.mainCursor.max - self.mainCursor.min)
+        self.horizontalScrollBar.setSingleStep((self.mainCursor.max - self.mainCursor.min) / 8)
+        self.horizontalScrollBar.blockSignals(False)
 
     def updateOscillogram(self, x1, x2):
         """
@@ -127,9 +158,10 @@ class QSignalVisualizerWidget(QWidget):
         :param x2: the end limit of the new visible interval in signal data array indexes
         :return:
         """
-        self.axesOscilogram.changeRange(x1, x2)
+	self.axesOscilogram.changeRange(x1, x2)
         self.mainCursor.min = x1
         self.mainCursor.max = x2
+        self.graph(False,False)
 
     def updateSpecgram(self, x1, x2):
         """
@@ -192,6 +224,16 @@ class QSignalVisualizerWidget(QWidget):
         self.axesOscilogram.load_Theme(theme.oscillogramTheme)
         self.axesSpecgram.load_Theme(theme.spectrogramTheme)
 
+    def load_workspace(self, workspace, forceUpdate=False):
+        """
+        Loads a workspace containing all the settings of the oscillogram and spectrogram (amongst others) and updates as
+        needed
+        :param workspace: the workspace to load
+        :param forceUpdate: whether to update even if there were no changes to the workspace
+        """
+        self.axesOscilogram.load_workspace(workspace.oscillogramWorkspace, forceUpdate)
+        self.axesSpecgram.load_workspace(workspace.spectrogramWorkspace, forceUpdate)
+
     def signalName(self):
         """
         Returns the name of the current signal if it has one. A default name is returned
@@ -209,21 +251,6 @@ class QSignalVisualizerWidget(QWidget):
         for act in actions:
             if isinstance(act, QtGui.QAction):
                 self.addAction(act)
-
-    # region Scroll Bar
-    def updateScrollBarValues(self):
-        """
-        updates the values of the scroll bar
-        using the current interval of signal visualization
-        :return:
-        """
-        self.scrollBar.setMinimum(0)
-        self.scrollBar.setMaximum(self.signal.length)
-
-        # set the page step of the scroll bar to 5% of the visible signal
-        self.scrollBar.setPageStep(self.mainCursor.max - self.mainCursor.min)
-
-    # endregion
 
     #  region Zoom Tool Region Management
     #  the tool Zoom make changes simultanously in both widgets
@@ -524,15 +551,16 @@ class QSignalVisualizerWidget(QWidget):
         self.signalPlayer.playing.connect(self.notifyPlayingCursor)
         self.signalPlayer.playingDone.connect(self.removePlayerLine)
 
-        # update scroll bar values
-        self.updateScrollBarValues()
-
         #  the edition object that manages cut and paste options
         self.editionSignalProcessor = EditionSignalProcessor(self._signal)
         self.commonSignalProcessor = CommonSignalProcessor(self._signal)
 
         #  clean the previous actions to get the initial state with the new signal
         self.undoRedoManager.clear()
+
+        #  update the scrollbar
+        self.updateScrollbar()
+        self.graph(False,False)
 
     #  endregion
 
@@ -588,11 +616,21 @@ class QSignalVisualizerWidget(QWidget):
     #  endregion
 
     #  region GRAPH
-    def graph(self):
+    def graph(self, updateOscilogram=True, updateSpecgram=True):
         # update the two widgets visualizations
-        self.axesOscilogram.graph(indexFrom=self.mainCursor.min, indexTo=self.mainCursor.max)
-        self.axesSpecgram.graph(indexFrom=self.mainCursor.min, indexTo=self.mainCursor.max)
+        if updateOscilogram:
+            self.axesOscilogram.graph(indexFrom=self.mainCursor.min, indexTo=self.mainCursor.max)
+        if updateSpecgram:
+            self.axesSpecgram.graph(indexFrom=self.mainCursor.min, indexTo=self.mainCursor.max)
 
+        if self.selectedTool == Tools.ZoomTool:
+            left = self.mainCursor.min
+            if self.visibleSpectrogram:
+                self.axesSpecgram.gui_user_tool.zoomRegion.setRegion([left,left])
+            if self.visibleOscilogram:
+                self.axesOscilogram.gui_user_tool.setZoomRegionVisible(True)
+                self.axesOscilogram.gui_user_tool.zoomRegion.setRegion([left,left])
+        self.updateScrollbar()
     #  endregion
 
     #  region Edition CUT,COPY PASTE
