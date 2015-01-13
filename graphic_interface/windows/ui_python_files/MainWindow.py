@@ -352,6 +352,9 @@ class Ui_DuettoMainWindow(object):
         self.actionBrowse = QtGui.QAction(DuettoMainWindow)
         self.actionBrowse.setIcon(icon2)
         self.actionBrowse.setObjectName(_fromUtf8("actionBrowse"))
+        self.actionSound_Devices = QtGui.QAction(DuettoMainWindow)
+        self.actionSound_Devices.setCheckable(False)
+        self.actionSound_Devices.setObjectName(_fromUtf8("actionSound_Devices"))
         self.menuSave_Images.addAction(self.actionOsc_Image)
         self.menuSave_Images.addAction(self.actionSpecgram_Image)
         self.menuSave_Images.addAction(self.actionCombined_Image)
@@ -424,6 +427,7 @@ class Ui_DuettoMainWindow(object):
         self.menuSound.addAction(self.actionRecord)
         self.menuSound.addSeparator()
         self.menuSound.addAction(self.menuPlay_Speed.menuAction())
+        self.menuSound.addAction(self.actionSound_Devices)
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuEdit.menuAction())
         self.menubar.addAction(self.menuTools.menuAction())
@@ -537,6 +541,7 @@ class Ui_DuettoMainWindow(object):
         self.actionCloseOthers.setText(QtGui.QApplication.translate("DuettoMainWindow", "CloseOthers", None, QtGui.QApplication.UnicodeUTF8))
         self.actionCloseUnmodified.setText(QtGui.QApplication.translate("DuettoMainWindow", "CloseUnmodified", None, QtGui.QApplication.UnicodeUTF8))
         self.actionBrowse.setText(QtGui.QApplication.translate("DuettoMainWindow", "Browse", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSound_Devices.setText(QtGui.QApplication.translate("DuettoMainWindow", "Sound Devices", None, QtGui.QApplication.UnicodeUTF8))
         self.actionBrowse.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Ctrl+B", None, QtGui.QApplication.UnicodeUTF8))
 
 from graphic_interface.widgets.SoundLabToolBar import SoundLabToolBarWidget
