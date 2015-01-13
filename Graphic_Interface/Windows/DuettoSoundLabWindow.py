@@ -9,7 +9,7 @@ from duetto.signal_processing.filter_signal_processors.frequency_domain_filters 
 from pyqtgraph.parametertree.parameterTypes import ListParameter
 from pyqtgraph.parametertree import Parameter, ParameterTree
 from PyQt4.QtGui import QDialog, QMessageBox, QFileDialog, QActionGroup, QAction
-from PyQt4.QtCore import pyqtSlot, QMimeData, pyqtSignal
+from PyQt4.QtCore import pyqtSlot, QMimeData, pyqtSignal, QTimer
 from duetto.dimensional_transformations.two_dimensional_transforms.Spectrogram.WindowFunctions import WindowFunction
 from Utils.Utils import folderFiles,saveImage
 from graphic_interface.widgets.QSignalVisualizerWidget import QSignalVisualizerWidget
@@ -20,7 +20,7 @@ from graphic_interface.windows.ParameterList import DuettoListParameterItem
 from graphic_interface.dialogs.NewFileDialog import NewFileDialog
 from graphic_interface.windows.OneDimensionalAnalysisWindow import OneDimensionalAnalysisWindow
 from SegmentationAndClasificationWindow import SegmentationAndClasificationWindow
-from MainWindow import Ui_DuettoMainWindow
+from ui_python_files.MainWindow import Ui_DuettoMainWindow
 from graphic_interface.dialogs import InsertSilenceDialog as sdialog, FilterOptionsDialog as filterdg, \
     ChangeVolumeDialog as cvdialog
 from sound_lab_core.Clasification.ClassificationData import ClassificationData
@@ -258,14 +258,16 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         super(DuettoSoundLabWindow, self).__init__(parent)
         self.setupUi(self)
 
-        self._appSettings = {'Workspace': Workspace(),
-                             'RecentFiles': []}  # the recent files list contains the latest ones in the end (it should
-                                                 # probably be reversed for display)
+        # the recent files list contains the latest ones in the end (it should
+        # probably be reversed for display)
+        self._appSettings = {'Workspace': Workspace(), 'RecentFiles': []}
         
         #  theme for the visual options
         theme_path = os.path.join("Utils", "Themes", "default.dth")
+
         try:
             self._appSettings['Workspace'].workTheme = self.deSerializeTheme(theme_path)
+
         except Exception as e:
             self._appSettings['Workspace'].workTheme = WorkTheme()
             QMessageBox.warning(self, 'Error loading theme',
@@ -387,6 +389,8 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         self.showMaximized()
 
+        QTimer.singleShot(100, self.on_load_first_time)
+
     def configureNoOpenedWidget(self):
         """
         Configure the no Opened signals widget to show.
@@ -400,7 +404,8 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         text += "<li>" + self.tr(u"Browse for signals with") + \
                 "<font color='#3333AA'> Ctrl + B</font></li>"
         text += "<li>" + self.tr(u"Synthesize new signals with") + \
-                "<font color='#3333AA'> Ctrl + N</font></li></ul></div>"
+                "<font color='#3333AA'> Ctrl + N</font></li>"
+        text += "<li>" + self.tr(u"Drag and drop files form Explorer") + "</li></ul></div>"
 
         self.noSignalOpened_lbl.setText(text)
         self.noSignalOpened_lbl.setVisible(False)
@@ -735,7 +740,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             self.noSignalOpened_lbl.setVisible(False)
             self.setSignalActionsEnabledState(True)
 
-
     def loadSignalOnTab(self, signal, tabIndex=None):
         """
         Load a signal in the current widget tab
@@ -765,7 +769,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         # refresh and set visible both axes on the new widget
         self.changeWidgetsVisibility(True, True)
 
-        self.widget.load_Theme(self.workTheme)
+        self.widget.load_Theme(self._appSettings['Workspace'].workTheme)
 
         # update the app title, tab text and signal properties label
         self.setWindowTitle(self.tr(u"duetto-Sound Lab - ") + self.widget.signalName())
@@ -839,7 +843,8 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     # endregion
 
-    # region Widget Property
+    # region Properties
+
     @property
     def widget(self):
         """
@@ -851,15 +856,17 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         return self.tabOpenedSignals.currentWidget()
 
+    @property
+    def workTheme(self):
+        """
+        Gets the current working theme selected
+        :return:
+        """
+        return self._appSettings['Workspace'].workTheme
+
     # endregion
 
     #  region Segmentation And Clasification
-
-    def showEvent(self, *args, **kwargs):
-        QtGui.QMainWindow.showEvent(self, *args, **kwargs)
-        if self._firstTimeShown:
-            QTimer.singleShot(0, self.on_load_first_time)
-            self._firstTimeShown = False
 
     def serializeClassificationData(self, filename=""):
         """
@@ -1251,10 +1258,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                               unicode(self.tr(u'Tab Shape')):
                 self.tabOpenedSignals.setTabShape(data)
 
-        if graph:
-            self.widget.graph()
-        if loadTheme:
-            self.widget.load_Theme(self.workTheme)
+        self.widget.load_workspace(self._appSettings['Workspace'])
 
     def changeFrequency(self, min, max):
         """
