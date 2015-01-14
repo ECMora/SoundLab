@@ -8,6 +8,8 @@ from signal_visualizer_tools.SpectrogramTools.SpectrogramZoomTool import Spectro
 
 
 class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
+
+    # region SIGNALS
     # Signal raised when a tool wants to make a change on the range of visualization
     # of it's widget.
     # raise the limits of the new range x1, x2
@@ -23,9 +25,14 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
     # Signal raised when a tool made a medition and has new data to show
     toolDataDetected = QtCore.pyqtSignal(str)
 
-    # Constants
+    # endregion
+
+    # region CONSTANTS
+
     # Value of the axis lines opacity
     AXIS_LINES_OPACITY = 255
+
+    # endregion
 
     def __init__(self):
         SpectrogramWidget.__init__(self)
@@ -73,6 +80,8 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
         self.changeRange(x1, x2, y1, y2)
         self.rangeChanged.emit(x1, x2)
 
+    # region Theme and Workspace
+    # TODO Improve and refactor the theme code. must keep simplicity and minimality
     def _load_theme(self, theme, keepCopy=True):
         update = False
 
@@ -190,22 +199,15 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
         self.histogram.item.region.lineMoved()
         self.histogram.item.region.lineMoveFinished()
 
+    # endregion
+
     def graph(self, indexFrom=0, indexTo=-1):
-        if indexTo < 0:
-            indexTo += len(self.signal)
-        if indexTo < indexFrom:
-            indexTo = len(self.signal)
-        self.specgramHandler.recomputeSpectrogram(indexFrom, indexTo,
-                                                  self.viewBox.width() if self.workspace.FFTOverlap < 0 else None)
 
-        # set the new spectrogram image computed
-        self.imageItem.setImage(self.specgramHandler.matriz)
-        self.viewBox.setRange(xRange=(self.specgramHandler.from_osc_to_spec(indexFrom),
-                                      self.specgramHandler.from_osc_to_spec(indexTo - 1)), padding=0)
+        indexTo = indexTo if (indexTo >= 0 and indexTo > indexFrom) else self.signal.length
 
-        # update the histogram colors of the spectrogram
-        self.histogram.item.region.lineMoved()
-        self.histogram.item.region.lineMoveFinished()
+        SpectrogramWidget.graph(self, indexFrom, indexTo)
+
+        self.repaint()
 
     def from_osc_to_spec(self, coord):
         return self.specgramHandler.from_osc_to_spec(coord)

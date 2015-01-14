@@ -10,7 +10,11 @@ class SoundLabToolBarWidget(QtGui.QToolBar):
 
     def __init__(self, parent=None):
         QtGui.QToolBar.__init__(self,parent)
+        # the group of actions to manage
         self.actions_groups = []
+
+        # manage internally the context menu
+        # to show actions groups options
         self.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
 
     def addActionGroup(self, actionGroup, name=""):
@@ -29,11 +33,12 @@ class SoundLabToolBarWidget(QtGui.QToolBar):
         # create the group action manager for customize its visualization
         manager_act = QtGui.QAction(name, self)
         manager_act.setCheckable(True)
+        # actions visible by default
         manager_act.setChecked(True)
 
-        # connect to the change of visible state to customize the actio group
+        # connect to the change of visible state to customize the action group
         manager_act.toggled.connect(lambda checked_state: self.setActionGroupEnable(
-                                                         actionGroup,checked_state))
+                                                         actionGroup, checked_state))
         # add into the toolbar
         self.actions_groups.append(manager_act)
 

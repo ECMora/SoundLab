@@ -41,13 +41,15 @@ class SignalVisualizerTool(QtCore.QObject):
 
     # endregion
 
-    # CONSTANTS
+    # region CONSTANTS
     # the minimum amount of pixels that would be considered valid for a move
     # action with a mouse cursor. Is used to reduce the unnecessary gui widget refresh
     PIXELS_OF_CURSORS_CHANGES = 5
 
-    # The decimal places to round the numerical meditions made by the tool
+    # The decimal places to round the numerical measurements made by the tool
     DECIMAL_PLACES = 2
+
+    # endregion
 
     def __init__(self, widget):
         QtCore.QObject.__init__(self)
@@ -62,6 +64,7 @@ class SignalVisualizerTool(QtCore.QObject):
         # the signal data detected by the tool
         self.detectedData = []
 
+        # factorization variable for the tools
         self.mousePressed = False
 
     def disable(self):

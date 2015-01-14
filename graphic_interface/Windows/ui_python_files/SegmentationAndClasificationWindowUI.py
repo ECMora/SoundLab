@@ -306,7 +306,7 @@ class Ui_MainWindow(object):
         self.actionPointer_Cursor.setCheckable(True)
         self.actionPointer_Cursor.setObjectName(_fromUtf8("actionPointer_Cursor"))
         self.actionSignalName = QtGui.QAction(MainWindow)
-        self.actionSignalName.setObjectName(_fromUtf8("actionSignalName"))
+        self.actionSignalName.setObjectName(_fromUtf8("signalNameLineEdit"))
         self.actionDelete_Selected_Elements = QtGui.QAction(MainWindow)
         icon19 = QtGui.QIcon()
         icon19.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/deleteElements.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)

@@ -6,7 +6,12 @@ from graphic_interface.widgets.signal_visualizer_tools.OscilogramTools.ZoomTool 
 
 
 class SoundLabOscillogramWidget(SoundLabWidget, OscillogramWidget):
-    # Signal raised when a tool wants to make a change on the range of visualization
+    """
+
+    """
+
+    # region SIGNALS
+    # Signal raised when a tool wants to made a change on the range of visualization
     # of it's widget.
     # raise the limits of the new range x1, x2
     # x1 => start value in x axis
@@ -20,6 +25,8 @@ class SoundLabOscillogramWidget(SoundLabWidget, OscillogramWidget):
 
     # Signal raised when a tool made a medition and has new data to show
     toolDataDetected = QtCore.pyqtSignal(str)
+
+    # endregion
 
     def __init__(self):
         OscillogramWidget.__init__(self)
@@ -70,6 +77,9 @@ class SoundLabOscillogramWidget(SoundLabWidget, OscillogramWidget):
         """
         self.changeRange(x1, x2, y1, y2)
         self.rangeChanged.emit(x1, x2)
+
+    # region Theme and Workspace
+    # TODO Improve and refactor the theme code. must keep simplicity and minimality
 
     def _load_theme(self, theme):
         update = False
@@ -133,10 +143,13 @@ class SoundLabOscillogramWidget(SoundLabWidget, OscillogramWidget):
             rangeX = self.getPlotItem().getViewBox().viewRange()[0]
             self.graph(rangeX[0], rangeX[1])
 
+    # endregion
+
     def graph(self, indexFrom=0, indexTo=-1, morekwargs=None):
         morekwargs = dict()
         points = indexTo - indexFrom
-        if points < 0: points += len(self.signal)
+        points = points if points > 0 else self.signal.length
+
         if not self.workspace.theme.connectPoints and points < self.getPlotItem().getViewBox().width():
             morekwargs['symbol'] = 's'
             morekwargs['symbolSize'] = 1
@@ -148,3 +161,4 @@ class SoundLabOscillogramWidget(SoundLabWidget, OscillogramWidget):
             self._pointsConnectedOnLastUpdate = True
 
         OscillogramWidget.graph(self, indexFrom, indexTo, morekwargs)
+        self.repaint()

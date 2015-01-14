@@ -34,7 +34,8 @@ class QSignalVisualizerWidget(QWidget):
     Widget to visualize a signal in time and frequency domain.
     Provides wrappers for useful signal processing methods.
     """
-    #  SIGNALS
+
+    #  region SIGNALS
     #  Signal raised when a tool made a measurement and has new data to show
     toolDataDetected = QtCore.pyqtSignal(str)
 
@@ -42,18 +43,27 @@ class QSignalVisualizerWidget(QWidget):
     # raise the limits of the interval in signal data array coordinates
     signalIntervalSelected = QtCore.pyqtSignal(int, int)
 
-    #  CONSTANTS
-    #  the inverse of the amount of the visible area of the signal that must be
-    #  visible after make a zoom IN
+    # endregion
+
+    # region CONSTANTS
+
+    # The inverse of the amount of the visible area of the signal that must be
+    # visible after make a zoom IN
     ZOOM_STEP = 4
+
+    # The step of move for the scroll bar. Each scroll bar step when moved is equal
+    # to the length of the signal divided by SCROLL_BAR_STEP
+    SCROLL_BAR_STEP = 10
+
+    # endregion
 
     def __init__(self, parent=None, **kwargs):
         QWidget.__init__(self, parent)
 
         #  !!! THE ORDER OF VARIABLES INITIALIZATION IS RELEVANT !!!
-        #  the two widgets in which are delegated
-        #  the functions of time and frequency domain
-        #  representation and visualization.
+
+        #  the two widgets in which are delegated the functions of time and
+        #  frequency domain representation and visualization.
         self.axesOscilogram = SoundLabOscillogramWidget(**kwargs)
         self.axesSpecgram = SoundLabSpectrogramWidget(**kwargs)
         self.scrollBar = QtGui.QScrollBar(Qt.Horizontal, parent=self)
@@ -61,6 +71,7 @@ class QSignalVisualizerWidget(QWidget):
         #  the internal variables to show the play line
         #  in each widget.
         self.signalPlayer = None
+        self._playSpeed = 100
         self.playerLineOsc = pg.InfiniteLine()
         self.playerLineSpec = pg.InfiniteLine()
 
@@ -95,7 +106,7 @@ class QSignalVisualizerWidget(QWidget):
         self.horizontalScrollBar.setOrientation(QtCore.Qt.Horizontal)
         self.horizontalScrollBar.valueChanged.connect(self.scrollBarRangeChanged)
 
-        # current signal to process and visualize
+        # current signal to initialize
         self.signal = Synthesizer.generateSilence()
 
         self.setSelectedTool(Tools.ZoomTool)
@@ -103,32 +114,35 @@ class QSignalVisualizerWidget(QWidget):
         #  grouping the oscilogram and spectrogram widgets in the control
         layout = QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
+
         layout.addWidget(self.axesOscilogram)
         layout.addWidget(self.axesSpecgram)
         layout.addWidget(self.horizontalScrollBar)
+
         layout.setStretch(0, 1)
         layout.setStretch(1, 1)
         layout.setStretch(2, 1)
         self.setLayout(layout)
 
-        #  variables
+        #  variables for visualization
         self._visibleOscillogram = True
         self._visibleSpectrogram = True
-        self._playSpeed = 100
 
         self._recordTimer = QTimer(self)
         self._recordTimer.timeout.connect(self.on_newDataRecorded)
 
-        self.signalPlayer = AudioSignalPlayer()
+        self.signalPlayer = AudioSignalPlayer(self.signal)
         self.signalPlayer.playing.connect(self.notifyPlayingCursor)
         self.signalPlayer.playingDone.connect(self.removePlayerLine)
 
         # signal file path to save and read the signals from files. None if signal was not loaded from file
         self.__signalFilePath = None
 
+    # region Scroll Bar
+
     def scrollBarRangeChanged(self, start):
         """
-        This method is invoked when the scrollbar is moved
+        Invoked when the scrollbar is moved
         param start: the start of the range
         """
         self.mainCursor.min = start
@@ -137,7 +151,7 @@ class QSignalVisualizerWidget(QWidget):
 
     def updateScrollbar(self):
         """
-        This method updates the values of the scrollbar to be compatible with the signal
+        This method updates the values of the scrollbar
         """
 
         # if the scrollbar is up to date then nothing is need to be done
@@ -147,11 +161,15 @@ class QSignalVisualizerWidget(QWidget):
 
         self.horizontalScrollBar.blockSignals(True)
         self.horizontalScrollBar.setMinimum(0)
-        self.horizontalScrollBar.setMaximum(len(self.signal) - (self.mainCursor.max - self.mainCursor.min))
+        self.horizontalScrollBar.setMaximum(self.signal.length - (self.mainCursor.max - self.mainCursor.min))
         self.horizontalScrollBar.setValue(self.mainCursor.min)
         self.horizontalScrollBar.setPageStep(self.mainCursor.max - self.mainCursor.min)
-        self.horizontalScrollBar.setSingleStep((self.mainCursor.max - self.mainCursor.min) / 8)
+        self.horizontalScrollBar.setSingleStep((self.mainCursor.max - self.mainCursor.min) / self.SCROLL_BAR_STEP)
         self.horizontalScrollBar.blockSignals(False)
+
+    # endregion
+
+    # region Widgets synchronization
 
     def updateOscillogram(self, x1, x2):
         """
@@ -180,81 +198,7 @@ class QSignalVisualizerWidget(QWidget):
         self.mainCursor.min = x1
         self.mainCursor.max = x2
 
-    def setSelectedTool(self, tool):
-        """
-        Change the current selected tool of the widget.
-        :param tool: the new tool to set.
-        :return:
-        """
-
-        #  switch for the concrete tools implementations
-        if tool == Tools.ZoomTool:
-            self.axesOscilogram.changeTool(OscilogramZoomTool)
-            self.axesSpecgram.changeTool(SpectrogramZoomTool)
-
-            # set the limits of the zoom regions to the length of the signal
-            self.updateZoomRegionsLimits()
-
-            #  Set the connections for the zoom tool synchronization
-            self.axesOscilogram.gui_user_tool.zoomRegion.sigRegionChanged.connect(self.updateSpecZoomRegion)
-            self.axesSpecgram.gui_user_tool.zoomRegion.sigRegionChanged.connect(self.updateOscZoomRegion)
-
-        elif tool == Tools.PointerTool:
-            self.axesOscilogram.changeTool(OscilogramPointerTool)
-            self.axesSpecgram.changeTool(SpectrogramPointerTool)
-
-        elif tool == Tools.RectangularZoomTool:
-            self.axesOscilogram.changeTool(OscilogramRectangularCursorTool)
-            self.axesSpecgram.changeTool(SpectrogramRectangularCursorTool)
-
-        elif tool == Tools.NoTool:
-            self.axesOscilogram.changeTool(NoTool)
-            self.axesSpecgram.changeTool(NoTool)
-
-        #  elif tool == Tools.RectangularEraser:
-        #      self.axesSpecgram.changeTool(tool)
-        #      self.axesOscilogram.changeTool(tool)
-        # update the current selected tool
-
-        self.__selectedTool = tool
-
-    def load_Theme(self, theme):
-        """
-        this method implements the  way in which the control loads the theme
-        all the visual options are updated here.
-        The method delegates in each control (oscillogram and spectrogram plot widgets)
-        the implementation of its respective visual updates.
-        """
-        self.axesOscilogram.load_Theme(theme.oscillogramTheme)
-        self.axesSpecgram.load_Theme(theme.spectrogramTheme)
-
-    def load_workspace(self, workspace, forceUpdate=False):
-        """
-        Loads a workspace containing all the settings of the oscillogram and spectrogram (amongst others) and updates as
-        needed
-        :param workspace: the workspace to load
-        :param forceUpdate: whether to update even if there were no changes to the workspace
-        """
-        self.axesOscilogram.load_workspace(workspace.oscillogramWorkspace, forceUpdate)
-        self.axesSpecgram.load_workspace(workspace.spectrogramWorkspace, forceUpdate)
-
-    def signalName(self):
-        """
-        Returns the name of the current signal if it has one. A default name is returned
-        otherwise.
-        :return: string with the name or default name.
-        """
-        return "" if self._signal is None else self._signal.name
-
-    def createContextCursor(self, actions):
-        """
-        method that add a number of actions to the control's context menu.
-        :param actions: List of QAction
-        """
-        self.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
-        for act in actions:
-            if isinstance(act, QtGui.QAction):
-                self.addAction(act)
+    # endregion
 
     #  region Zoom Tool Region Management
     #  the tool Zoom make changes simultanously in both widgets
@@ -616,20 +560,28 @@ class QSignalVisualizerWidget(QWidget):
 
     #  region GRAPH
     def graph(self, updateOscilogram=True, updateSpecgram=True):
-        # update the two widgets visualizations
-        if updateOscilogram:
-            self.axesOscilogram.graph(indexFrom=self.mainCursor.min, indexTo=self.mainCursor.max)
+        """
+        Update the two widgets visualizations
+        :param updateOscilogram:
+        :param updateSpecgram:
+        :return:
+        """
+
+        # update first the spectrogram because is the heaviest computation
         if updateSpecgram:
             self.axesSpecgram.graph(indexFrom=self.mainCursor.min, indexTo=self.mainCursor.max)
 
+        if updateOscilogram:
+            self.axesOscilogram.graph(indexFrom=self.mainCursor.min, indexTo=self.mainCursor.max)
+
         if self.selectedTool == Tools.ZoomTool:
-            left = self.mainCursor.min
-            if self.visibleSpectrogram:
-                self.axesSpecgram.gui_user_tool.zoomRegion.setRegion([left, left])
+            # left = self.mainCursor.min
+            # if self.visibleSpectrogram:
+                # self.axesSpecgram.gui_user_tool.zoomRegion.setRegion([left, left])
 
             if self.visibleOscilogram:
                 self.axesOscilogram.gui_user_tool.setZoomRegionVisible(True)
-                self.axesOscilogram.gui_user_tool.zoomRegion.setRegion([left, left])
+                # self.axesOscilogram.gui_user_tool.zoomRegion.setRegion([left, left])
 
         self.updateScrollbar()
     #  endregion
@@ -778,7 +730,7 @@ class QSignalVisualizerWidget(QWidget):
         """
         self.__insertSignal(InsertWhiteNoiseAction,ms)
 
-    def __insertSignal(self,undo_action, ms=0):
+    def __insertSignal(self, undo_action, ms=0):
         """
         Helper method to encapsulate and factorize the code of insert signals
         into the current one.
@@ -865,8 +817,6 @@ class QSignalVisualizerWidget(QWidget):
         # get the interval limits
         start, end = self.getIndexFromAndTo()
 
-        # set signal to the supplied filter method and the undo redo action
-        filter_method.signal = self.signal
         self.undoRedoManager.add(FilterAction(self.signal, start, end, filter_method))
 
         # execute the filter and refresh
@@ -939,6 +889,86 @@ class QSignalVisualizerWidget(QWidget):
             raise ex
 
     #  endregion
+
+    # region Theme and WorkSpace
+
+    def load_Theme(self, theme):
+        """
+        this method implements the  way in which the control loads the theme
+        all the visual options are updated here.
+        The method delegates in each control (oscillogram and spectrogram plot widgets)
+        the implementation of its respective visual updates.
+        """
+        self.axesOscilogram.load_Theme(theme.oscillogramTheme)
+        self.axesSpecgram.load_Theme(theme.spectrogramTheme)
+
+    def load_workspace(self, workspace, forceUpdate=False):
+        """
+        Loads a workspace containing all the settings of the oscillogram and spectrogram (amongst others) and updates as
+        needed
+        :param workspace: the workspace to load
+        :param forceUpdate: whether to update even if there were no changes to the workspace
+        """
+        self.axesOscilogram.load_workspace(workspace.oscillogramWorkspace, forceUpdate)
+        self.axesSpecgram.load_workspace(workspace.spectrogramWorkspace, forceUpdate)
+
+    # endregion
+
+    def setSelectedTool(self, tool):
+        """
+        Change the current selected tool of the widget.
+        :param tool: the new tool to set.
+        :return:
+        """
+
+        # switch for the concrete tools implementations
+        if tool == Tools.ZoomTool:
+            self.axesOscilogram.changeTool(OscilogramZoomTool)
+            self.axesSpecgram.changeTool(SpectrogramZoomTool)
+
+            # set the limits of the zoom regions to the length of the signal
+            self.updateZoomRegionsLimits()
+
+            #  Set the connections for the zoom tool synchronization
+            self.axesOscilogram.gui_user_tool.zoomRegion.sigRegionChanged.connect(self.updateSpecZoomRegion)
+            self.axesSpecgram.gui_user_tool.zoomRegion.sigRegionChanged.connect(self.updateOscZoomRegion)
+
+        elif tool == Tools.PointerTool:
+            self.axesOscilogram.changeTool(OscilogramPointerTool)
+            self.axesSpecgram.changeTool(SpectrogramPointerTool)
+
+        elif tool == Tools.RectangularZoomTool:
+            self.axesOscilogram.changeTool(OscilogramRectangularCursorTool)
+            self.axesSpecgram.changeTool(SpectrogramRectangularCursorTool)
+
+        elif tool == Tools.NoTool:
+            self.axesOscilogram.changeTool(NoTool)
+            self.axesSpecgram.changeTool(NoTool)
+
+        #  elif tool == Tools.RectangularEraser:
+        #      self.axesSpecgram.changeTool(tool)
+        #      self.axesOscilogram.changeTool(tool)
+        # update the current selected tool
+
+        self.__selectedTool = tool
+
+    def signalName(self):
+        """
+        Returns the name of the current signal if it has one.
+        An empty string is returned if there is no signal.
+        :return: string with the name or default name.
+        """
+        return "" if self._signal is None else self._signal.name
+
+    def createContextCursor(self, actions):
+        """
+        method that add a number of actions to the control's context menu.
+        :param actions: List of QAction
+        """
+        self.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+        for act in actions:
+            if isinstance(act, QtGui.QAction):
+                self.addAction(act)
 
     def from_osc_to_spec(self,x):
         return self.axesSpecgram.from_osc_to_spec(x)

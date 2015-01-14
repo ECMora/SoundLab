@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\MainWindow.ui'
+# Form implementation generated from reading ui file 'D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\MainWindow.ui'
 #
-# Created: Sun Jan 11 15:26:11 2015
+# Created: Wed Jan 14 13:08:57 2015
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -18,7 +18,7 @@ class Ui_DuettoMainWindow(object):
     def setupUi(self, DuettoMainWindow):
         DuettoMainWindow.setObjectName(_fromUtf8("DuettoMainWindow"))
         DuettoMainWindow.setWindowModality(QtCore.Qt.ApplicationModal)
-        DuettoMainWindow.resize(653, 411)
+        DuettoMainWindow.resize(805, 493)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -61,7 +61,7 @@ class Ui_DuettoMainWindow(object):
         self.horizontalLayout.addWidget(self.noSignalOpened_lbl)
         DuettoMainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(DuettoMainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 653, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 805, 21))
         self.menubar.setAutoFillBackground(False)
         self.menubar.setStyleSheet(_fromUtf8(""))
         self.menubar.setObjectName(_fromUtf8("menubar"))
@@ -302,8 +302,6 @@ class Ui_DuettoMainWindow(object):
         self.actionPositive_Values.setObjectName(_fromUtf8("actionPositive_Values"))
         self.actionNegative_Values = QtGui.QAction(DuettoMainWindow)
         self.actionNegative_Values.setObjectName(_fromUtf8("actionNegative_Values"))
-        self.actionSignalName = QtGui.QAction(DuettoMainWindow)
-        self.actionSignalName.setObjectName(_fromUtf8("actionSignalName"))
         self.action1_8x = QtGui.QAction(DuettoMainWindow)
         self.action1_8x.setCheckable(True)
         self.action1_8x.setObjectName(_fromUtf8("action1_8x"))
@@ -349,12 +347,14 @@ class Ui_DuettoMainWindow(object):
         self.actionCloseUnmodified = QtGui.QAction(DuettoMainWindow)
         self.actionCloseUnmodified.setIcon(icon3)
         self.actionCloseUnmodified.setObjectName(_fromUtf8("actionCloseUnmodified"))
-        self.actionBrowse = QtGui.QAction(DuettoMainWindow)
-        self.actionBrowse.setIcon(icon2)
-        self.actionBrowse.setObjectName(_fromUtf8("actionBrowse"))
         self.actionSound_Devices = QtGui.QAction(DuettoMainWindow)
         self.actionSound_Devices.setCheckable(False)
         self.actionSound_Devices.setObjectName(_fromUtf8("actionSound_Devices"))
+        self.actionBrowse = QtGui.QAction(DuettoMainWindow)
+        self.actionBrowse.setIcon(icon2)
+        self.actionBrowse.setObjectName(_fromUtf8("actionBrowse"))
+        self.actionOpenInOtherTab = QtGui.QAction(DuettoMainWindow)
+        self.actionOpenInOtherTab.setObjectName(_fromUtf8("actionOpenInOtherTab"))
         self.menuSave_Images.addAction(self.actionOsc_Image)
         self.menuSave_Images.addAction(self.actionSpecgram_Image)
         self.menuSave_Images.addAction(self.actionCombined_Image)
@@ -421,13 +421,14 @@ class Ui_DuettoMainWindow(object):
         self.menuPlay_Speed.addAction(self.action2x)
         self.menuPlay_Speed.addAction(self.action4x)
         self.menuPlay_Speed.addAction(self.action8x)
+        self.menuSound.addAction(self.actionSound_Devices)
+        self.menuSound.addSeparator()
+        self.menuSound.addAction(self.menuPlay_Speed.menuAction())
+        self.menuSound.addSeparator()
         self.menuSound.addAction(self.actionPlay_Sound)
         self.menuSound.addAction(self.actionStop_Sound)
         self.menuSound.addAction(self.actionPause_Sound)
         self.menuSound.addAction(self.actionRecord)
-        self.menuSound.addSeparator()
-        self.menuSound.addAction(self.menuPlay_Speed.menuAction())
-        self.menuSound.addAction(self.actionSound_Devices)
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuEdit.menuAction())
         self.menubar.addAction(self.menuTools.menuAction())
@@ -522,7 +523,6 @@ class Ui_DuettoMainWindow(object):
         self.actionRectangular_Eraser.setText(QtGui.QApplication.translate("DuettoMainWindow", "Rectangular Eraser", None, QtGui.QApplication.UnicodeUTF8))
         self.actionPositive_Values.setText(QtGui.QApplication.translate("DuettoMainWindow", "Positive Values", None, QtGui.QApplication.UnicodeUTF8))
         self.actionNegative_Values.setText(QtGui.QApplication.translate("DuettoMainWindow", "Negative Values", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionSignalName.setText(QtGui.QApplication.translate("DuettoMainWindow", "SignalName", None, QtGui.QApplication.UnicodeUTF8))
         self.action1_8x.setText(QtGui.QApplication.translate("DuettoMainWindow", "1/8x", None, QtGui.QApplication.UnicodeUTF8))
         self.action1_4x.setText(QtGui.QApplication.translate("DuettoMainWindow", "1/4x", None, QtGui.QApplication.UnicodeUTF8))
         self.action1_2x.setText(QtGui.QApplication.translate("DuettoMainWindow", "1/2x", None, QtGui.QApplication.UnicodeUTF8))
@@ -538,11 +538,15 @@ class Ui_DuettoMainWindow(object):
         self.actionSave.setText(QtGui.QApplication.translate("DuettoMainWindow", "Save", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSaveTheme.setText(QtGui.QApplication.translate("DuettoMainWindow", "Save Theme", None, QtGui.QApplication.UnicodeUTF8))
         self.actionCloseAll.setText(QtGui.QApplication.translate("DuettoMainWindow", "Close All", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionCloseOthers.setText(QtGui.QApplication.translate("DuettoMainWindow", "CloseOthers", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionCloseUnmodified.setText(QtGui.QApplication.translate("DuettoMainWindow", "CloseUnmodified", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionBrowse.setText(QtGui.QApplication.translate("DuettoMainWindow", "Browse", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionCloseOthers.setText(QtGui.QApplication.translate("DuettoMainWindow", "Close Others", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionCloseOthers.setToolTip(QtGui.QApplication.translate("DuettoMainWindow", "Close Others", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionCloseUnmodified.setText(QtGui.QApplication.translate("DuettoMainWindow", "Close Unmodified", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionCloseUnmodified.setToolTip(QtGui.QApplication.translate("DuettoMainWindow", "Close Unmodified", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSound_Devices.setText(QtGui.QApplication.translate("DuettoMainWindow", "Sound Devices", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionBrowse.setText(QtGui.QApplication.translate("DuettoMainWindow", "Browse", None, QtGui.QApplication.UnicodeUTF8))
         self.actionBrowse.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Ctrl+B", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionOpenInOtherTab.setText(QtGui.QApplication.translate("DuettoMainWindow", "Open In Other Tab", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionOpenInOtherTab.setToolTip(QtGui.QApplication.translate("DuettoMainWindow", "Open In Other Tab", None, QtGui.QApplication.UnicodeUTF8))
 
 from graphic_interface.widgets.SoundLabToolBar import SoundLabToolBarWidget
 import icons_rc

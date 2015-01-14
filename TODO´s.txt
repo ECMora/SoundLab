@@ -75,11 +75,11 @@ Complexity-2: Small-to-medium code changes
 - (Hiram) Remove labels on axes (Ampl)
 
 
-* (Gabriela) Implement play of files itude and Frequency) Set the values (% and kHz) on the border of the axes
++ (Gabriela) Implement play of files amplitude and Frequency) Set the values (% and kHz) on the border of the axes
 even if they are not possible to play completely by the recoding
 	sampling rate (make a filter) (API)
-* (Gabriela) Allow to select the audio device (input and output) to play/record audio signals (API)
-* (Gabriela) Add to the Sound Menu the sound format action to change the format of record signals
++ (Gabriela) Allow to select the audio device (input and output) to play/record audio signals (API)
++ (Gabriela) Add to the Sound Menu the sound format action to change the format of record signals
   (must use the properties of the selected input sound device)
 
 * Customize the axes on the amount of ticks and the scale used (possibly by context menu) with an dynamic suggested scale

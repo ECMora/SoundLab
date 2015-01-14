@@ -4,6 +4,7 @@ import os
 from PyQt4.QtCore import pyqtSignal, pyqtSlot, Qt
 from PyQt4.QtGui import QAbstractItemView, QFileDialog
 import time
+from __builtin__ import file
 from duetto.audio_signals.AudioSignalPlayer import AudioSignalPlayer
 from duetto.audio_signals import openSignal
 from graphic_interface.windows.ui_python_files.BrowseFilesWindow import Ui_BrowseFilesWindow
@@ -73,6 +74,7 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
         :param row: the row in which would be added the file. If -1 is inserted at the end
         :return:
         """
+        # region Create Items for Table
         # check if the file was already added
         if file_path in self.folderFiles:
             return
@@ -119,6 +121,8 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
 
         # get the file duration
         duration = QtGui.QTableWidgetItem(str(0))
+
+        # endregion
 
         # add the values into the table widget
         for col, value in enumerate([file_name, file_size, creation_date, duration]):
@@ -183,8 +187,6 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
 
         for x in range(self.files_tablewidget.rowCount()):
             self.files_tablewidget.item(x, 0).setCheckState(check_state)
-
-
 
     # endregion
 

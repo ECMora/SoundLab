@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>653</width>
+    <width>805</width>
     <height>493</height>
    </rect>
   </property>
@@ -105,7 +105,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>653</width>
+     <width>805</width>
      <height>21</height>
     </rect>
    </property>
@@ -258,13 +258,14 @@
      <addaction name="action4x"/>
      <addaction name="action8x"/>
     </widget>
+    <addaction name="actionSound_Devices"/>
+    <addaction name="separator"/>
+    <addaction name="menuPlay_Speed"/>
+    <addaction name="separator"/>
     <addaction name="actionPlay_Sound"/>
     <addaction name="actionStop_Sound"/>
     <addaction name="actionPause_Sound"/>
     <addaction name="actionRecord"/>
-    <addaction name="separator"/>
-    <addaction name="menuPlay_Speed"/>
-    <addaction name="actionSound_Devices"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -782,11 +783,6 @@
     <string>Negative Values</string>
    </property>
   </action>
-  <action name="actionSignalName">
-   <property name="text">
-    <string>SignalName</string>
-   </property>
-  </action>
   <action name="action1_8x">
    <property name="checkable">
     <bool>true</bool>
@@ -902,7 +898,10 @@
      <normaloff>:/myappicons/cerrar.png</normaloff>:/myappicons/cerrar.png</iconset>
    </property>
    <property name="text">
-    <string>CloseOthers</string>
+    <string>Close Others</string>
+   </property>
+   <property name="toolTip">
+    <string>Close Others</string>
    </property>
   </action>
   <action name="actionCloseUnmodified">
@@ -911,7 +910,10 @@
      <normaloff>:/myappicons/cerrar.png</normaloff>:/myappicons/cerrar.png</iconset>
    </property>
    <property name="text">
-    <string>CloseUnmodified</string>
+    <string>Close Unmodified</string>
+   </property>
+   <property name="toolTip">
+    <string>Close Unmodified</string>
    </property>
   </action>
   <action name="actionSound_Devices">
@@ -932,6 +934,14 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+B</string>
+   </property>
+  </action>
+  <action name="actionOpenInOtherTab">
+   <property name="text">
+    <string>Open In Other Tab</string>
+   </property>
+   <property name="toolTip">
+    <string>Open In Other Tab</string>
    </property>
   </action>
   <zorder>dock_settings</zorder>

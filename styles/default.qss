@@ -9,8 +9,8 @@ QToolTip
 
 QWidget
 {
-    color: #414141;
-    background-color: #C2C2C2;
+    color: #212121;
+    background-color: #C2C2D2;
 }
 
 QWidget:item:hover
@@ -85,8 +85,9 @@ QWidget:focus
 
 QLineEdit
 {
-    background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #4d4d4d, stop: 0 #646464, stop: 1 #5d5d5d);
+    background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #000, stop: 0 #DDF, stop: 1 #4d4d4d);
     padding: 1px;
+    color:#FFF;
     border-style: solid;
     border: 1px solid #1e1e1e;
     border-radius: 5;

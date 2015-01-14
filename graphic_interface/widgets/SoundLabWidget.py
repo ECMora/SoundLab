@@ -5,12 +5,24 @@ from signal_visualizer_tools.SignalVisualizerTool import SignalVisualizerTool
 
 class SoundLabWidget:
     """
-
+    Widget that encapsulate the logic of a sound lab widget.
+    Provide user interaction through mouse events to the different tools
+    used on the system.
+    Is defined to use as an abstract class.
+    Each sound lab widget implementation is divided into the logic and the
+    gui interaction. the gui interaction is made by a graphic tool and the current class
+    handle it. Provide a way to change the tool and react to the gui events
     """
 
     def __init__(self):
+        # the gui tool that is used on the widget gui interaction
         self.gui_user_tool = None
+
+        # factorization variable for the widgets of the system that
+        # all load an application theme TODO check changes with the use of the workspace
         self.theme = None
+
+    # region Events Handling
 
     def mouseMoveEvent(self, event):
         if self.gui_user_tool is not None:
@@ -39,7 +51,14 @@ class SoundLabWidget:
         if self.gui_user_tool is not None:
             self.gui_user_tool.enable()
 
+    # endregion
+
     def changeTool(self, new_tool_class):
+        """
+        Change the current selected widget tool.
+        :param new_tool_class: The class of the new tool
+        :return:
+        """
         if new_tool_class is None:
             raise Exception("The user visual tool can't be None")
 
@@ -48,7 +67,7 @@ class SoundLabWidget:
             raise Exception("The tool must be of type SignalVisualizerTool")
 
         if self.gui_user_tool is not None:
-            # remove old data and release resources from the tool operation
+            # remove old data and release resources from the old tool operations
             self.gui_user_tool.disable()
 
         self.gui_user_tool = new_tool_class(self)
@@ -56,7 +75,12 @@ class SoundLabWidget:
         self.gui_user_tool.detectedDataChanged.connect(self.guiToolDetectedData)
 
     def guiToolDetectedData(self, data_list):
-        s = " "
+        """
+        Translate the tool detected data into a string.
+        :param data_list: the tool detected data
+        :return: string with the detected data information
+        """
+        detected_data = " "
         decimal_places = self.gui_user_tool.DECIMAL_PLACES
 
         for atr_name,value in data_list:
@@ -64,7 +88,7 @@ class SoundLabWidget:
             # str to concat at front of values strings to make const the amount of
             # chars used on each value
             # 1 char for sign (- or ' ') 3 for numbers
-            negative_padd = " " if value >= 0 else ""
+            negative_padd = " " if value >= -1**(-decimal_places) else ""
             negative_padd += "" if abs(value) >= 100 else (" " if abs(value) >= 10 else "  ")
             try:
                 decimals = value_str[value_str.rindex("."):]
@@ -75,8 +99,12 @@ class SoundLabWidget:
             except Exception as ex:
                 pass
 
-            s += str(atr_name) + ": " + negative_padd + value_str + " "
-        self.toolDataDetected.emit(s)
+            detected_data += str(atr_name) + ": " + negative_padd + value_str + " "
+
+        # raise the detected data as signal
+        # the definition of the signal must be in every descendant widget
+        # (python issues to solve)
+        self.toolDataDetected.emit(detected_data)
 
     def load_Theme(self, theme):
         """

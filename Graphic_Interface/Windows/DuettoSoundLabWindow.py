@@ -31,6 +31,11 @@ from BrowseFilesWindow import BrowseFilesWindow
 
 
 class SoundDevicesDialog(sdDialog.Ui_Dialog,QDialog):
+    """
+    Dialog that allow to select the sound device to play and record
+    the signals. (Select inpuit and output sound devices from the installed on the
+    computer)
+    """
 
     def __init__(self, input, output, inputIndex, outputIndex):
         """
@@ -64,7 +69,6 @@ class SoundDevicesDialog(sdDialog.Ui_Dialog,QDialog):
             self.outputLayout.addWidget(rbutton)
             if dev.index == outputIndex:
                 rbutton.setChecked(True)
-
 
 
 class InsertSilenceDialog(sdialog.Ui_Dialog, QDialog):
@@ -261,7 +265,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     Main window of the application.
     """
 
-    #  SIGNALS
+    #  region SIGNALS
     #  signal raised when a file is drop into the window
     dropchanged = pyqtSignal(QMimeData)
 
@@ -273,7 +277,9 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     # raise the new style path
     styleChanged = pyqtSignal(str)
 
-    #  CONSTANTS
+    # endregion
+
+    #  region CONSTANTS
     #  minimum and maximum sampling rate used on the application
     MIN_SAMPLING_RATE = 1000
     MAX_SAMPLING_RATE = 2000000
@@ -285,6 +291,11 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     #  Width and height of the dock window of visual options
     SETTINGS_WINDOW_WIDTH = 340
     SETTINGS_WINDOW_HEIGHT = 100
+
+    #
+    DECIMAL_PLACES = 2
+
+    # endregion
 
     # region Initialize
 
@@ -316,6 +327,11 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         # the list with all the actions that are depending
         # of at least one open signal. Are disabled if there is no open signal
         self.signalDependingActions = []
+
+        # text edit for the signal name
+        self.signalNameLineEdit = QtGui.QLineEdit(self)
+        self.signalNameLineEdit.textChanged.connect(lambda text: self.signalNameChanged(text))
+        self.signalNameLineEdit.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum))
 
         self.addSignalTab(Synthesizer.generateSilence())
 
@@ -412,7 +428,12 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         playSpeedActionGroup.addAction(self.action8x)
         playSpeedActionGroup.triggered.connect(self.on_playSpeedChanged_triggered)
 
-        self.dHandler = DevicesHandler()
+        self.dHandler = None
+        try:
+            self.dHandler = DevicesHandler()
+
+        except Exception as ex:
+            print(ex.message)
 
         # open a signal if any
         if signal_path == '':
@@ -446,7 +467,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 "<font color='#3333AA'> Ctrl + B</font></li>"
         text += "<li>" + self.tr(u"Synthesize new signals with") + \
                 "<font color='#3333AA'> Ctrl + N</font></li>"
-        text += "<li>" + self.tr(u"Drag and drop files form Explorer") + "</li></ul></div>"
+        text += "<li>" + self.tr(u"Drag and drop files from Explorer") + "</li></ul></div>"
 
         self.noSignalOpened_lbl.setText(text)
         self.noSignalOpened_lbl.setVisible(False)
@@ -461,8 +482,8 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.tabOpenedSignals.tabCloseRequested.connect(self.closeSignalAt)
 
         # add the tab context menu
-        self.tabOpenedSignals.setContextMenuPolicy(QtCore.Qt.CustomContextMenu)
-        actions = [self.actionClose,self.actionCloseAll,self.actionCloseOthers, self.actionCloseUnmodified]
+        self.tabOpenedSignals.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+        actions = [self.actionClose,self.actionCloseAll,self.actionCloseOthers, self.actionCloseUnmodified, self.actionOpenInOtherTab]
         for act in actions:
             self.tabOpenedSignals.addAction(act)
 
@@ -518,7 +539,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                              (u"Rectangular", WindowFunction.Rectangular)]},
                 {u'name': unicode(self.tr(u'FFT overlap')), u'type': u'int', u'value': -1, u'limits': (-1, 99)},
                 {u'name': unicode(self.tr(u'Threshold(dB)')), u'type': u'group', u'children': [
-                    {u'name': unicode(self.tr(u'Min')), u'type': u'float', u'step': 0.1,
+                    {u'name': unicode(self.tr(u'Min')), u'type': u'int', u'step': 1,
                      u'default': self._appSettings['Workspace'].workTheme.spectrogramTheme.histRange[0],
                      u'value': self._appSettings['Workspace'].workTheme.spectrogramTheme.histRange[0]},
                     {u'name': unicode(self.tr(u'Max')), u'type': u'float', u'step': 0.1,
@@ -749,7 +770,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.toolBar.addAction(self.actionSettings)
         self.toolBar.addAction(self.actionOneDimensionalTransformation)
         self.toolBar.addAction(self.actionSegmentation_And_Clasification)
-        self.toolBar.addAction(self.actionSignalName)
+        self.toolBar.addWidget(self.signalNameLineEdit)
 
     def setSignalActionsEnabledState(self, enable_state=True):
         """
@@ -813,12 +834,21 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.widget.load_Theme(self._appSettings['Workspace'].workTheme)
 
         # update the app title, tab text and signal properties label
-        self.setWindowTitle(self.tr(u"duetto-Sound Lab - ") + self.widget.signalName())
-        self.tabOpenedSignals.setTabText(self.tabOpenedSignals.currentIndex(), signal.name)
+        self.signalNameChanged(self.widget.signalName())
         self.updateSignalPropertiesLabel()
 
         # add context menu actions
         self.addWidgetContextMenuActions()
+
+    def signalNameChanged(self, new_name):
+        """
+        Update the window variables dependent of the signal name
+        :param new_name: The new signal name
+        :return:
+        """
+        self.setWindowTitle(self.tr(u"duetto-Sound Lab - ") + new_name)
+        self.tabOpenedSignals.setTabText(self.tabOpenedSignals.currentIndex(), new_name)
+        self.widget.signal.name = new_name
 
     def currentSignalTabChanged(self,tabIndex):
         """
@@ -942,23 +972,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             return ClassificationData()
 
     @pyqtSlot()
-    def on_actionSound_Devices_triggered(self):
-        input = self.dHandler.inputDeviceSelected
-        output = self.dHandler.outputDeviceSelected
-        dialog = SoundDevicesDialog(self.dHandler.inputDevices,self.dHandler.outputDevices,
-                                    self.dHandler.inputDeviceSelected.index, self.dHandler.outputDeviceSelected.index)
-        if dialog.exec_():
-            for dev in self.dHandler.inputDevices:
-                if dialog.grpBoxInput.findChild(QtGui.QRadioButton, dev.name+str(dev.index)).isChecked():
-                    self.dHandler.inputDeviceSelected = dev
-                    break
-            for dev in self.dHandler.outputDevices:
-                if dialog.grpBoxOutput.findChild(QtGui.QRadioButton, dev.name+str(dev.index)).isChecked():
-                    self.dHandler.outputDeviceSelected = dev
-                    break
-
-
-    @pyqtSlot()
     def on_actionSegmentation_And_Clasification_triggered(self):
         """
         Open the signal selected in the segmentation and classification window
@@ -1015,7 +1028,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         if filename:
             self.serializeTheme(filename)
 
-    
     def _updateParamTree(self):
         """
         Updates the values of the param tree to match those of the current workspace. It blocks the param tree signals
@@ -1697,7 +1709,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
                 self._appSettings = {'Workspace': Workspace(),
                                      'RecentFiles': []}
-                self.on_load()
                 return
 
             self._appSettings = settings
@@ -1820,6 +1831,16 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         for win in self.one_dim_windows:
             win.close()
         self.one_dim_windows = []
+
+    @pyqtSlot()
+    def on_actionOpenInOtherTab_triggered(self):
+        """
+        Open the current selected signal on the tab widget into another tab.
+        :return:
+        """
+        signal = self.widget.signal.copy()
+
+        self.addSignalTab(signal)
 
     @pyqtSlot()
     def on_actionBrowse_triggered(self):
@@ -1959,7 +1980,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         :return:
         """
         #  action signal is a place in the tool bar to show the current signal name
-        self.actionSignalName.setText(self.tr(u"Filename: ") + self.widget.signalName())
+        self.signalNameLineEdit.setText(self.widget.signalName())
 
         sr = self.widget.signal.samplingRate
         bit_depth = self.widget.signal.bitDepth
@@ -1970,7 +1991,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                   "\nChannels: " + str(channels) + \
                   "\nDuration(s): " + str(self.widget.signal.duration)
 
-        self.actionSignalName.setToolTip(tooltip)
+        self.signalNameLineEdit.setToolTip(tooltip)
 
     # endregion
 
@@ -2028,6 +2049,22 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     #  region Play, Pause, Stop, Record
     # delegate in the widget the reproduction actions
+    @pyqtSlot()
+    def on_actionSound_Devices_triggered(self):
+        input = self.dHandler.inputDeviceSelected
+        output = self.dHandler.outputDeviceSelected
+        dialog = SoundDevicesDialog(self.dHandler.inputDevices, self.dHandler.outputDevices,
+                                    self.dHandler.inputDeviceSelected.index, self.dHandler.outputDeviceSelected.index)
+        if dialog.exec_():
+            for dev in self.dHandler.inputDevices:
+                if dialog.grpBoxInput.findChild(QtGui.QRadioButton, dev.name + str(dev.index)).isChecked():
+                    self.dHandler.inputDeviceSelected = dev
+                    break
+            for dev in self.dHandler.outputDevices:
+                if dialog.grpBoxOutput.findChild(QtGui.QRadioButton, dev.name + str(dev.index)).isChecked():
+                    self.dHandler.outputDeviceSelected = dev
+                    break
+
     @pyqtSlot()
     def on_actionPlay_Sound_triggered(self):
         self.widget.play(device=self.dHandler.outputDeviceSelected)
@@ -2192,29 +2229,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.one_dim_windows.append(one_dim_window)
 
     #  endregion
-
-    #  region Scroll Bar Range
-    #  TODO comentar e implementar esta parte
-    #  manipulation of the scrool bar to set the range
-    #  of visualization of the signal on the widget
-
-    @pyqtSlot(int, int, int)
-    def on_widget_rangeChanged(self, left, right, total):
-        self.horizontalScrollBar.blockSignals(True)
-        self.horizontalScrollBar.setValue(0)
-        self.horizontalScrollBar.setMinimum(0)
-        self.horizontalScrollBar.setMaximum(total - (right - left))
-        self.horizontalScrollBar.setValue(left)
-        self.horizontalScrollBar.setPageStep(right - left)
-        self.horizontalScrollBar.setSingleStep((right - left) / 8)
-        self.horizontalScrollBar.blockSignals(True)
-        self.horizontalScrollBar.blockSignals(False)
-
-    @pyqtSlot(int)
-    def on_horizontalScrollBar_valueChanged(self, value):        
-        self.widget.changeRange(value,value + self.horizontalScrollBar.pageStep(), emit=False)
-
-    # endregion
 
     def updateStatusBar(self, line):
         """
