@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>653</width>
-    <height>411</height>
+    <width>805</width>
+    <height>493</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -22,6 +22,10 @@
   <property name="windowTitle">
    <string>Duetto Sound Lab</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="resources/icons.qrc">
+    <normaloff>:/myappicons/duetto_logo.png</normaloff>:/myappicons/duetto_logo.png</iconset>
+  </property>
   <property name="autoFillBackground">
    <bool>false</bool>
   </property>
@@ -29,6 +33,9 @@
    <string notr="true"/>
   </property>
   <widget class="QWidget" name="centralwidget">
+   <property name="styleSheet">
+    <string notr="true"/>
+   </property>
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
      <widget class="QTabWidget" name="tabOpenedSignals">
@@ -46,6 +53,51 @@
       </property>
      </widget>
     </item>
+    <item>
+     <widget class="QLabel" name="noSignalOpened_lbl">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>400</width>
+        <height>300</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>400</width>
+        <height>300</height>
+       </size>
+      </property>
+      <property name="font">
+       <font>
+        <pointsize>12</pointsize>
+       </font>
+      </property>
+      <property name="cursor">
+       <cursorShape>ArrowCursor</cursorShape>
+      </property>
+      <property name="styleSheet">
+       <string notr="true"/>
+      </property>
+      <property name="midLineWidth">
+       <number>0</number>
+      </property>
+      <property name="text">
+       <string/>
+      </property>
+      <property name="scaledContents">
+       <bool>false</bool>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menubar">
@@ -53,7 +105,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>653</width>
+     <width>805</width>
      <height>21</height>
     </rect>
    </property>
@@ -66,10 +118,10 @@
    <widget class="QMenu" name="menuFile">
     <property name="geometry">
      <rect>
-      <x>7</x>
-      <y>126</y>
+      <x>17</x>
+      <y>137</y>
       <width>210</width>
-      <height>341</height>
+      <height>363</height>
      </rect>
     </property>
     <property name="autoFillBackground">
@@ -100,6 +152,7 @@
     </widget>
     <addaction name="actionNew"/>
     <addaction name="actionOpen"/>
+    <addaction name="actionBrowse"/>
     <addaction name="menuRecentSignals"/>
     <addaction name="actionSave"/>
     <addaction name="actionSaveAs"/>
@@ -205,13 +258,14 @@
      <addaction name="action4x"/>
      <addaction name="action8x"/>
     </widget>
+    <addaction name="actionSound_Devices"/>
+    <addaction name="separator"/>
+    <addaction name="menuPlay_Speed"/>
+    <addaction name="separator"/>
     <addaction name="actionPlay_Sound"/>
     <addaction name="actionStop_Sound"/>
     <addaction name="actionPause_Sound"/>
     <addaction name="actionRecord"/>
-    <addaction name="separator"/>
-    <addaction name="menuPlay_Speed"/>
-    <addaction name="actionSound_Devices"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -260,7 +314,7 @@
    </attribute>
    <widget class="QWidget" name="osc_settings_contents"/>
   </widget>
-  <widget class="QToolBar" name="toolBar">
+  <widget class="SoundLabToolBarWidget" name="toolBar">
    <property name="windowTitle">
     <string>toolBar</string>
    </property>
@@ -279,35 +333,6 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionNew"/>
-   <addaction name="actionOpen"/>
-   <addaction name="actionSave"/>
-   <addaction name="separator"/>
-   <addaction name="actionCopy"/>
-   <addaction name="actionCut"/>
-   <addaction name="actionPaste"/>
-   <addaction name="actionUndo"/>
-   <addaction name="actionRedo"/>
-   <addaction name="separator"/>
-   <addaction name="actionRecord"/>
-   <addaction name="actionPause_Sound"/>
-   <addaction name="actionPlay_Sound"/>
-   <addaction name="actionStop_Sound"/>
-   <addaction name="separator"/>
-   <addaction name="actionZoomIn"/>
-   <addaction name="actionZoom_out"/>
-   <addaction name="actionZoom_out_entire_file"/>
-   <addaction name="separator"/>
-   <addaction name="actionCombined"/>
-   <addaction name="actionOscilogram"/>
-   <addaction name="actionSpectogram"/>
-   <addaction name="actionOneDimensionalTransformation"/>
-   <addaction name="separator"/>
-   <addaction name="actionSettings"/>
-   <addaction name="actionSegmentation_And_Clasification"/>
-   <addaction name="actionFile_Up"/>
-   <addaction name="actionFile_Down"/>
-   <addaction name="actionSignalName"/>
   </widget>
   <action name="actionOpen">
    <property name="icon">
@@ -758,11 +783,6 @@
     <string>Negative Values</string>
    </property>
   </action>
-  <action name="actionSignalName">
-   <property name="text">
-    <string>SignalName</string>
-   </property>
-  </action>
   <action name="action1_8x">
    <property name="checkable">
     <bool>true</bool>
@@ -846,7 +866,7 @@
     <string>SwitchPlayStatus</string>
    </property>
    <property name="shortcut">
-    <string>M</string>
+    <string>Space</string>
    </property>
   </action>
   <action name="actionSave">
@@ -878,7 +898,10 @@
      <normaloff>:/myappicons/cerrar.png</normaloff>:/myappicons/cerrar.png</iconset>
    </property>
    <property name="text">
-    <string>CloseOthers</string>
+    <string>Close Others</string>
+   </property>
+   <property name="toolTip">
+    <string>Close Others</string>
    </property>
   </action>
   <action name="actionCloseUnmodified">
@@ -887,7 +910,10 @@
      <normaloff>:/myappicons/cerrar.png</normaloff>:/myappicons/cerrar.png</iconset>
    </property>
    <property name="text">
-    <string>CloseUnmodified</string>
+    <string>Close Unmodified</string>
+   </property>
+   <property name="toolTip">
+    <string>Close Unmodified</string>
    </property>
   </action>
   <action name="actionSound_Devices">
@@ -898,8 +924,35 @@
     <string>Sound Devices</string>
    </property>
   </action>
+  <action name="actionBrowse">
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/81.ico</normaloff>:/myappicons/81.ico</iconset>
+   </property>
+   <property name="text">
+    <string>Browse</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+B</string>
+   </property>
+  </action>
+  <action name="actionOpenInOtherTab">
+   <property name="text">
+    <string>Open In Other Tab</string>
+   </property>
+   <property name="toolTip">
+    <string>Open In Other Tab</string>
+   </property>
+  </action>
   <zorder>dock_settings</zorder>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>SoundLabToolBarWidget</class>
+   <extends>QToolBar</extends>
+   <header>graphic_interface.widgets.SoundLabToolBar</header>
+  </customwidget>
+ </customwidgets>
  <resources>
   <include location="resources/icons.qrc"/>
  </resources>
