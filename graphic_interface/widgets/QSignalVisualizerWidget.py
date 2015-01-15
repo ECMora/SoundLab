@@ -180,7 +180,7 @@ class QSignalVisualizerWidget(QWidget):
         :param x2: the end limit of the new visible interval in signal data array indexes
         :return:
         """
-	self.axesOscilogram.changeRange(x1, x2)
+        self.axesOscilogram.changeRange(x1, x2)
         self.mainCursor.min = x1
         self.mainCursor.max = x2
         self.graph(False,False)
@@ -368,22 +368,6 @@ class QSignalVisualizerWidget(QWidget):
         """
         self.signalPlayer.pause()
 
-    @property
-    def outputDevice(self):
-        return self.signalPlayer.outputDevice
-
-    @outputDevice.setter
-    def outputDevice(self, value):
-        self.signalPlayer.outputDevice = value
-
-    @property
-    def inputDevice(self):
-        return self.signalPlayer.inputDevice
-
-    @inputDevice.setter
-    def inputDevice(self, value):
-        self.signalPlayer.inputDevice = value
-
     def addPlayerLine(self, initial_value, end_value):
         """
         create the line to show on widgets osc and spec
@@ -431,6 +415,23 @@ class QSignalVisualizerWidget(QWidget):
     #  endregion
 
     #  region Properties
+
+    @property
+    def outputDevice(self):
+        return self.signalPlayer.outputDevice
+
+    @outputDevice.setter
+    def outputDevice(self, value):
+        self.signalPlayer.outputDevice = value
+
+    @property
+    def inputDevice(self):
+        return self.signalPlayer.inputDevice
+
+    @inputDevice.setter
+    def inputDevice(self, value):
+        self.signalPlayer.inputDevice = value
+
     @property
     def selectedTool(self):
         """
@@ -522,8 +523,6 @@ class QSignalVisualizerWidget(QWidget):
         self.signalPlayer.playing.connect(self.notifyPlayingCursor)
         self.signalPlayer.playingDone.connect(self.removePlayerLine)
 
-        # update scroll bar values
-        self.updateScrollBarValues()
 
         #  the edition object that manages cut and paste options
         self.editionSignalProcessor = EditionSignalProcessor(self._signal)

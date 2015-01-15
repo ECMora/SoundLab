@@ -969,26 +969,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             return ClassificationData()
 
     @pyqtSlot()
-        #TODO Set the current devices radibuttons with True value
-        # defInput = self.widget.inputDevice()
-        # defOutput = self.widget.outputDevice()
-
-        input = DevicesHandler.getInputDevices()
-        output = DevicesHandler.getOutputDevices()
-
-        dialog = SoundDevicesDialog(input,output)
-        if dialog.exec_():
-            for index in range(len(input)):
-                if dialog.grpBoxInput.findChild(QtGui.QRadioButton, str(index)).isChecked():
-                    self.widget.inputDevice = input[index]
-                    break
-            for index in range(len(output)):
-                if dialog.grpBoxOutput.findChild(QtGui.QRadioButton, str(index)).isChecked():
-                    self.widget.outputDevice = output[index]
-                    break
-
-
-    @pyqtSlot()
     def on_actionSegmentation_And_Clasification_triggered(self):
         """
         Open the signal selected in the segmentation and classification window
@@ -2066,20 +2046,25 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     #  region Play, Pause, Stop, Record
     # delegate in the widget the reproduction actions
+
     @pyqtSlot()
     def on_actionSound_Devices_triggered(self):
-        input = self.dHandler.inputDeviceSelected
-        output = self.dHandler.outputDeviceSelected
-        dialog = SoundDevicesDialog(self.dHandler.inputDevices, self.dHandler.outputDevices,
-                                    self.dHandler.inputDeviceSelected.index, self.dHandler.outputDeviceSelected.index)
+        #TODO Set the current devices radibuttons with True value
+        # defInput = self.widget.inputDevice()
+        # defOutput = self.widget.outputDevice()
+
+        input = DevicesHandler.getInputDevices()
+        output = DevicesHandler.getOutputDevices()
+
+        dialog = SoundDevicesDialog(input,output)
         if dialog.exec_():
-            for dev in self.dHandler.inputDevices:
-                if dialog.grpBoxInput.findChild(QtGui.QRadioButton, dev.name + str(dev.index)).isChecked():
-                    self.dHandler.inputDeviceSelected = dev
+            for index in range(len(input)):
+                if dialog.grpBoxInput.findChild(QtGui.QRadioButton, str(index)).isChecked():
+                    self.widget.inputDevice = input[index]
                     break
-            for dev in self.dHandler.outputDevices:
-                if dialog.grpBoxOutput.findChild(QtGui.QRadioButton, dev.name + str(dev.index)).isChecked():
-                    self.dHandler.outputDeviceSelected = dev
+            for index in range(len(output)):
+                if dialog.grpBoxOutput.findChild(QtGui.QRadioButton, str(index)).isChecked():
+                    self.widget.outputDevice = output[index]
                     break
 
     @pyqtSlot()
