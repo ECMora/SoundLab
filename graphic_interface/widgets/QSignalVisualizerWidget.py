@@ -57,7 +57,7 @@ class QSignalVisualizerWidget(QWidget):
 
     # endregion
 
-    def __init__(self, parent=None, **kwargs):
+    def __init__(self, parent=None, signal=None, **kwargs):
         QWidget.__init__(self, parent)
 
         #  !!! THE ORDER OF VARIABLES INITIALIZATION IS RELEVANT !!!
@@ -107,7 +107,8 @@ class QSignalVisualizerWidget(QWidget):
         self.horizontalScrollBar.valueChanged.connect(self.scrollBarRangeChanged)
 
         # current signal to initialize
-        self.signal = Synthesizer.generateSilence()
+        self._signal = None
+        self.signal = signal if signal is not None else Synthesizer.generateSilence(duration=1)
 
         self.setSelectedTool(Tools.ZoomTool)
 
@@ -160,11 +161,15 @@ class QSignalVisualizerWidget(QWidget):
             return
 
         self.horizontalScrollBar.blockSignals(True)
+
+        # ----------------------------------------
         self.horizontalScrollBar.setMinimum(0)
         self.horizontalScrollBar.setMaximum(self.signal.length - (self.mainCursor.max - self.mainCursor.min))
         self.horizontalScrollBar.setValue(self.mainCursor.min)
         self.horizontalScrollBar.setPageStep(self.mainCursor.max - self.mainCursor.min)
         self.horizontalScrollBar.setSingleStep((self.mainCursor.max - self.mainCursor.min) / self.SCROLL_BAR_STEP)
+        # ----------------------------------------
+
         self.horizontalScrollBar.blockSignals(False)
 
     # endregion
@@ -180,10 +185,11 @@ class QSignalVisualizerWidget(QWidget):
         :param x2: the end limit of the new visible interval in signal data array indexes
         :return:
         """
-	self.axesOscilogram.changeRange(x1, x2)
+        self.axesOscilogram.changeRange(x1, x2)
         self.mainCursor.min = x1
         self.mainCursor.max = x2
-        self.graph(False,False)
+        self.updateScrollbar()
+
 
     def updateSpecgram(self, x1, x2):
         """
@@ -288,7 +294,7 @@ class QSignalVisualizerWidget(QWidget):
         Start to play the current signal.
         If the signal is been playing nothing is made.
         """
-        start, end = self.getIndexFromAndTo()
+        start, end = self.selectedRegion
 
         self.addPlayerLine(start, end)
         self.signalPlayer.play(self.signal, start, end, self.playSpeed, device=device)
@@ -503,7 +509,37 @@ class QSignalVisualizerWidget(QWidget):
         #  clean the previous actions to get the initial state with the new signal
         self.undoRedoManager.clear()
 
-        self.graph(False, False)
+        self.updateScrollbar()
+    
+    @property
+    def selectedRegion(self):
+        """
+        Returns the interval of the signal that its
+        currently analyzed.
+        :return: tuple x,y with the start and end of the interval in
+                signal array data  indexes.
+                If zoom tool is active returns the selection made by the tool.
+                the current visualization borders are returned otherwise.
+        """
+        #  get the current visible interval indexes
+        index_from, index_to = self.mainCursor.min, self.mainCursor.max
+
+        #  if selected tool is Zoom get the selection interval indexes
+        axe = self.axesOscilogram if self.visibleOscilogram \
+                                  else self.axesSpecgram if self.visibleSpectrogram \
+                                  else None
+
+        if self.selectedTool == Tools.ZoomTool and axe is not None:
+            zoom_region = axe.gui_user_tool.zoomRegion.getRegion()
+            if zoom_region[0] >= index_from and zoom_region[1] <= index_to:
+                #  get the start of the region
+                index_from = zoom_region[0]
+
+                #  set the max limit if the region borders are different
+                if zoom_region[1] > zoom_region[0]:
+                     index_to = zoom_region[1]
+
+        return int(index_from), int(index_to)
 
     #  endregion
 
@@ -559,31 +595,20 @@ class QSignalVisualizerWidget(QWidget):
     #  endregion
 
     #  region GRAPH
-    def graph(self, updateOscilogram=True, updateSpecgram=True):
+
+    def graph(self):
         """
         Update the two widgets visualizations
         :param updateOscilogram:
         :param updateSpecgram:
         :return:
         """
-
         # update first the spectrogram because is the heaviest computation
-        if updateSpecgram:
-            self.axesSpecgram.graph(indexFrom=self.mainCursor.min, indexTo=self.mainCursor.max)
-
-        if updateOscilogram:
-            self.axesOscilogram.graph(indexFrom=self.mainCursor.min, indexTo=self.mainCursor.max)
-
-        if self.selectedTool == Tools.ZoomTool:
-            # left = self.mainCursor.min
-            # if self.visibleSpectrogram:
-                # self.axesSpecgram.gui_user_tool.zoomRegion.setRegion([left, left])
-
-            if self.visibleOscilogram:
-                self.axesOscilogram.gui_user_tool.setZoomRegionVisible(True)
-                # self.axesOscilogram.gui_user_tool.zoomRegion.setRegion([left, left])
+        self.axesSpecgram.graph(indexFrom=self.mainCursor.min, indexTo=self.mainCursor.max)
+        self.axesOscilogram.graph(indexFrom=self.mainCursor.min, indexTo=self.mainCursor.max)
 
         self.updateScrollbar()
+
     #  endregion
 
     #  region Edition CUT,COPY PASTE
@@ -596,7 +621,7 @@ class QSignalVisualizerWidget(QWidget):
         else the whole inteval of current visualization is used.
         """
         # get the current signal selection interval
-        start, end = self.getIndexFromAndTo()
+        start, end = self.selectedRegion
         self.editionSignalProcessor.cut(start,end)
 
         # connect the action of cut for update
@@ -624,7 +649,7 @@ class QSignalVisualizerWidget(QWidget):
         else the whole inteval of current visualization is used.
         """
         #  get the current signal selection interval
-        start, end = self.getIndexFromAndTo()
+        start, end = self.selectedRegion
         self.undoRedoManager.add(CopyAction(self.signal, start, end))
         self.editionSignalProcessor.copy(start,end)
 
@@ -634,7 +659,7 @@ class QSignalVisualizerWidget(QWidget):
         of a signal stored in clipboard.
         """
         #  get the current signal selection interval
-        start, end = self.getIndexFromAndTo()
+        start, end = self.selectedRegion
 
         self.editionSignalProcessor.paste(start)
 
@@ -656,7 +681,7 @@ class QSignalVisualizerWidget(QWidget):
 
         :return:
         """
-        start, end = self.getIndexFromAndTo()
+        start, end = self.selectedRegion
         self.undoRedoManager.add(ReverseAction(self.signal, start, end))
         self.signalProcessingAction(self.commonSignalProcessor.reverse)
 
@@ -664,35 +689,6 @@ class QSignalVisualizerWidget(QWidget):
         self.undoRedoManager.add(ResamplingAction(self.signal, samplingRate))
         self._signal.resampling(samplingRate)
         self.zoomNone()
-
-    def getIndexFromAndTo(self):
-        """
-        Returns the interval of the signal that its
-        currently analyzed.
-        :return: tuple x,y with the start and end of the interval in
-                signal array data  indexes.
-                If zoom tool is active returns the selection made by the tool.
-                the current visualization borders are returned otherwise.
-        """
-        #  get the current visible interval indexes
-        index_from, index_to = self.mainCursor.min, self.mainCursor.max
-
-        #  if selected tool is Zoom get the selection interval indexes
-        axe = self.axesOscilogram if self.visibleOscilogram \
-                                  else self.axesSpecgram if self.visibleSpectrogram \
-                                  else None
-
-        if self.selectedTool == Tools.ZoomTool and axe is not None:
-            zoom_region = axe.gui_user_tool.zoomRegion.getRegion()
-            if zoom_region[0] >= index_from and zoom_region[1] <= index_to:
-                #  get the start of the region
-                index_from = zoom_region[0]
-
-                #  set the max limit if the region borders are different
-                if zoom_region[1] > zoom_region[0]:
-                     index_to = zoom_region[1]
-
-        return int(index_from), int(index_to)
 
     def signalProcessingAction(self, delegate, *args):
         """
@@ -702,7 +698,7 @@ class QSignalVisualizerWidget(QWidget):
         :param args: delegate arguments
         :return:
         """
-        index_from, index_to = self.getIndexFromAndTo()
+        index_from, index_to = self.selectedRegion
         delegate(index_from, index_to, *args)
         self.graph()
 
@@ -739,7 +735,7 @@ class QSignalVisualizerWidget(QWidget):
         :param ms:
         :return:
         """
-        start, end = self.getIndexFromAndTo()
+        start, end = self.selectedRegion
 
         #  connect the action for update because the undo of the insert action
         #  is cut and cut change the size of the signal
@@ -764,7 +760,7 @@ class QSignalVisualizerWidget(QWidget):
         :param fade:
         :return:
         """
-        start, end = self.getIndexFromAndTo()
+        start, end = self.selectedRegion
 
         self.undoRedoManager.add(
                 ModulateAction(self.signal, start, end, function, fade))
@@ -777,7 +773,7 @@ class QSignalVisualizerWidget(QWidget):
         :param factor:
         :return:
         """
-        start, end = self.getIndexFromAndTo()
+        start, end = self.selectedRegion
         self.undoRedoManager.add(
             NormalizeAction(self.signal, start, end, factor))
         self.signalProcessingAction(self.commonSignalProcessor.normalize, factor)
@@ -788,7 +784,7 @@ class QSignalVisualizerWidget(QWidget):
         :param factor:
         :return:
         """
-        start, end = self.getIndexFromAndTo()
+        start, end = self.selectedRegion
         self.undoRedoManager.add(
             ScaleAction(self.signal, start, end, factor))
         self.signalProcessingAction(self.commonSignalProcessor.scale, factor)
@@ -798,7 +794,7 @@ class QSignalVisualizerWidget(QWidget):
 
         :return:
         """
-        start, end = self.getIndexFromAndTo()
+        start, end = self.selectedRegion
         self.undoRedoManager.add(SilenceAction(self.signal, start, end))
         self.signalProcessingAction(self.commonSignalProcessor.setSilence)
 
@@ -815,8 +811,8 @@ class QSignalVisualizerWidget(QWidget):
             raise Exception("Invalid filter object.")
 
         # get the interval limits
-        start, end = self.getIndexFromAndTo()
-
+        start, end = self.selectedRegion
+        filter_method.signal = self.signal
         self.undoRedoManager.add(FilterAction(self.signal, start, end, filter_method))
 
         # execute the filter and refresh
@@ -829,7 +825,7 @@ class QSignalVisualizerWidget(QWidget):
         :param sign:
         :return:
         """
-        start, end = self.getIndexFromAndTo()
+        start, end = self.selectedRegion
         self.undoRedoManager.add(Absolute_ValuesAction(self.signal, start, end,sign))
         self.signalProcessingAction(self.commonSignalProcessor.absoluteValue,sign)
 
@@ -838,7 +834,7 @@ class QSignalVisualizerWidget(QWidget):
 
         :return:
         """
-        start, end = self.getIndexFromAndTo()
+        start, end = self.selectedRegion
         self.undoRedoManager.add(ChangeSignAction(self.signal, start, end))
         self.signalProcessingAction(self.commonSignalProcessor.changeSign)
 
@@ -879,7 +875,7 @@ class QSignalVisualizerWidget(QWidget):
         :param fname: path to save the signal
         """
         # get the interval limits
-        indexF, index_to = self.getIndexFromAndTo()
+        indexF, index_to = self.selectedRegion
 
         try:
             signal = self.signal.copy(indexF, index_to)

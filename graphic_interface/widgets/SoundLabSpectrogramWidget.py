@@ -179,13 +179,6 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
         # load the workspace and determine if it's necessary to update the widget
         update = self._load_workspace(workspace)
 
-
-
-
-
-
-
-
         # update the widget if needed (showing the same X axis' range as before)
         if update or forceUpdate:
             self.graph(rangeX[0], rangeX[1])
@@ -206,8 +199,6 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
         indexTo = indexTo if (indexTo >= 0 and indexTo > indexFrom) else self.signal.length
 
         SpectrogramWidget.graph(self, indexFrom, indexTo)
-
-        self.repaint()
 
     def from_osc_to_spec(self, coord):
         return self.specgramHandler.from_osc_to_spec(coord)

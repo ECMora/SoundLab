@@ -26,6 +26,8 @@ class SoundLabToolBarWidget(QtGui.QToolBar):
         """
         if actionGroup in self.actions_groups:
             return
+        # add the actions
+        self.changeActionsVisibility(actionGroup,add_action=True)
 
         # set to not exclusive actions groups
         actionGroup.setExclusive(False)
@@ -37,14 +39,15 @@ class SoundLabToolBarWidget(QtGui.QToolBar):
         manager_act.setChecked(True)
 
         # connect to the change of visible state to customize the action group
-        manager_act.toggled.connect(lambda checked_state: self.setActionGroupEnable(
+        manager_act.toggled.connect(lambda checked_state: self.changeActionsVisibility(
                                                          actionGroup, checked_state))
         # add into the toolbar
         self.actions_groups.append(manager_act)
 
-    def setActionGroupEnable(self, actionGroup, add_action=True):
+    def changeActionsVisibility(self, actionGroup, add_action=True):
         """
-        Add and removes the actions that belong to actionGroup
+        Add and removes from the tool bar the actions that belong to actionGroup,
+        changing the visibility of that actions on the toolbar.
         :param actionGroup: the QActionGroup with the actions to add or remove from the toolbar
         :param add_action: If the action must be added into the toolbar. false otherwise.
         :return:

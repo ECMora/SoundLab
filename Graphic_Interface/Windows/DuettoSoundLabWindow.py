@@ -13,7 +13,7 @@ from pyqtgraph.parametertree import Parameter, ParameterTree
 from PyQt4.QtGui import QDialog, QMessageBox, QFileDialog, QActionGroup, QAction
 from PyQt4.QtCore import pyqtSlot, QMimeData, pyqtSignal, QTimer
 from duetto.dimensional_transformations.two_dimensional_transforms.Spectrogram.WindowFunctions import WindowFunction
-from Utils.Utils import folderFiles,saveImage
+from Utils.Utils import folderFiles, saveImage, DECIMAL_PLACES
 from graphic_interface.widgets.QSignalVisualizerWidget import QSignalVisualizerWidget
 from graphic_interface.Settings.WorkTheme import WorkTheme
 from graphic_interface.Settings.Workspace import Workspace
@@ -333,7 +333,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.signalNameLineEdit.textChanged.connect(lambda text: self.signalNameChanged(text))
         self.signalNameLineEdit.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum))
 
-        self.addSignalTab(Synthesizer.generateSilence())
+        self.addSignalTab(Synthesizer.generateSilence(duration=1))
 
         # some initial state configurations
         self.configureSignalsTab()
@@ -435,41 +435,48 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         except Exception as ex:
             print(ex.message)
 
+        # close the signal of the opening
+        self.tabOpenedSignals.removeTab(0)
+
+        # set the values for start with no opened signals
+        self.setNoSignalsOpenState(signals_open=False)
+
         # open a signal if any
-        if signal_path == '':
-            # close the signal of the opening
-            self.tabOpenedSignals.removeTab(0)
-
-            # set the values for start with no opened signals
-
-            self.tabOpenedSignals.setVisible(False)
-            self.noSignalOpened_lbl.setVisible(True)
-            self.setSignalActionsEnabledState(False)
-
-        else:
-            self._open(signal_path)
+        if signal_path != '':
+            self._open(unicode(signal_path))
 
         self.showMaximized()
+        self.on_load_first_time()
 
-        QTimer.singleShot(100, self.on_load_first_time)
+    def setNoSignalsOpenState(self, signals_open):
+        """
+        Configure the app behavior and variables for a no open signal situation.
+        In this case just to show the no signal opened widget and hide the tabbar with signals.
+        :param signals_open: True if there is signals open. False otherwise
+        :return:
+        """
+        # set the tab bar with signals visible and the action
+        # that depend of signals enabled if there is opened signals
+        self.setSignalActionsEnabledState(signals_open)
+        self.tabOpenedSignals.setVisible(signals_open)
+
+        # set visible the label of no opened signals if no signals are opened
+        self.noSignalOpened_lbl.setVisible(not signals_open)
+
+        # set the defaults name for signal on edit and window title
+        if not signals_open:
+            self.signalNameLineEdit.setText("")
+            self.signalNameLineEdit.setToolTip("")
+            self.setWindowTitle(self.tr(u"duetto-Sound Lab"))
 
     def configureNoOpenedWidget(self):
         """
         Configure the no Opened signals widget to show.
         :return:
         """
-        text = "<div><h2 align='left'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;" + \
-                self.tr(u"No signal is open") + "</h2><hr>"
-
-        text += "<ul align='left'><li>" + self.tr(u"Open new signals with") + \
-                "<font color='#3333AA'> Ctrl + O</font></li>"
-        text += "<li>" + self.tr(u"Browse for signals with") + \
-                "<font color='#3333AA'> Ctrl + B</font></li>"
-        text += "<li>" + self.tr(u"Synthesize new signals with") + \
-                "<font color='#3333AA'> Ctrl + N</font></li>"
-        text += "<li>" + self.tr(u"Drag and drop files from Explorer") + "</li></ul></div>"
-
-        self.noSignalOpened_lbl.setText(text)
+        # the widget for no opened signals configuration is just
+        # to set it invisible at starting
+        # when a more complicated logic will be needed put it here
         self.noSignalOpened_lbl.setVisible(False)
 
     def configureSignalsTab(self):
@@ -483,7 +490,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         # add the tab context menu
         self.tabOpenedSignals.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
-        actions = [self.actionClose,self.actionCloseAll,self.actionCloseOthers, self.actionCloseUnmodified, self.actionOpenInOtherTab]
+        actions = [self.actionClose, self.actionCloseAll, self.actionCloseOthers, self.actionCloseUnmodified, self.actionOpenInOtherTab]
         for act in actions:
             self.tabOpenedSignals.addAction(act)
 
@@ -685,92 +692,137 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         # region Add actions groups
         # create the separators for the actions
-        sep1, sep2, sep3, sep4, sep5, sep6, sep7 = [QtGui.QAction(self) for _ in range(7)]
+        sep1, sep2, sep3, sep4, sep5, sep6, sep7,sep8 = [QtGui.QAction(self) for _ in range(8)]
 
-        for sep in [sep1, sep2, sep3, sep4, sep5, sep6, sep7]:
+        for sep in [sep1, sep2, sep3, sep4, sep5, sep6, sep7,sep8]:
             sep.setSeparator(True)
 
-        # open save actions
+        # region open save actions
         open_save_actions = QActionGroup(self)
         open_save_actions_list = [self.actionNew, self.actionOpen, self.actionSave, sep1]
 
-        self.toolBar.addActions(open_save_actions_list)
         for act in open_save_actions_list:
             act.setActionGroup(open_save_actions)
+        # endregion
 
-        # edition actions
+        # region edition actions
         edition_actions = QActionGroup(self)
         edition_actions_list = [self.actionCopy, self.actionPaste, self.actionCut, sep2]
 
-        self.toolBar.addActions(edition_actions_list)
         for act in edition_actions_list:
             act.setActionGroup(edition_actions)
+        # endregion
 
-        # play record actions
+        # region play record actions
         play_record_actions = QActionGroup(self)
         play_record_actions_list = [self.actionPlay_Sound, self.actionPause_Sound, self.actionStop_Sound,
                                     self.actionRecord, sep3]
 
-        self.toolBar.addActions(play_record_actions_list)
         for act in play_record_actions_list:
             act.setActionGroup(play_record_actions)
+        # endregion
 
-        # widgets visibility actions
+        # region widgets visibility actions
         widgets_visibility_actions = QActionGroup(self)
         widgets_visibility_actions_list = [self.actionOscilogram, self.actionSpectogram, self.actionCombined,
                                            sep4]
 
-        self.toolBar.addActions(widgets_visibility_actions_list)
         for act in widgets_visibility_actions_list:
             act.setActionGroup(widgets_visibility_actions)
+        # endregion
 
-        # undo redo actions
+        # region undo redo actions
         undo_redo_actions = QActionGroup(self)
         undo_redo_actions_list = [self.actionUndo, self.actionRedo,sep5]
 
-        self.toolBar.addActions(undo_redo_actions_list)
         for act in undo_redo_actions_list:
             act.setActionGroup(undo_redo_actions)
 
-        # zoom actions
+        # endregion
+
+        # region zoom actions
         zoom_actions = QActionGroup(self)
         zoom_actions_list = [self.actionZoomIn, self.actionZoom_out,
                                   self.actionZoom_out_entire_file,sep6]
 
-        self.toolBar.addActions(zoom_actions_list)
         for act in zoom_actions_list:
             act.setActionGroup(zoom_actions)
 
-        # File up down actions
+        # endregion
+
+        # region File up down actions
         file_updown_actions = QActionGroup(self)
         file_updown_actions_list = [self.actionFile_Up, self.actionFile_Down, sep7]
 
-        self.toolBar.addActions(file_updown_actions_list)
         for act in file_updown_actions_list:
             act.setActionGroup(file_updown_actions)
 
         # endregion
 
+        # region Segmentation and Transformations actions
+        segm_transf_actions = QActionGroup(self)
+        segm_transf_actions_list = [self.actionOneDimensionalTransformation,
+                                   self.actionSegmentation_And_Clasification, sep8]
+
+        for act in segm_transf_actions_list:
+            act.setActionGroup(segm_transf_actions)
+
+        # endregion
+
+        # region Processing actions
+        processing_actions = QActionGroup(self)
+        processing_actions_list = [self.actionPositive_Values,self.actionNegative_Values,self.actionChange_Sign,
+                                   self.action_Reverse, self.actionSilence, self.actionFilter, self.actionSmart_Scale,
+                                   self.actionResampling,self.actionInsert_Silence,self.actionGenerate_White_Noise,self.actionGenerate_Pink_Noise]
+
+        for act in processing_actions_list:
+            act.setActionGroup(processing_actions)
+
+        # endregion
+
+        # region Save Images actions
+        save_images_actions = QActionGroup(self)
+        save_images_actions_list = [self.actionOsc_Image,self.actionSpecgram_Image,
+                                   self.actionCombined_Image]
+
+        for act in save_images_actions_list:
+            act.setActionGroup(save_images_actions)
+        # endregion
+
+        # region Save actions
+        save_actions = QActionGroup(self)
+        save_actions_list = [self.actionSave,self.actionSave_selected_interval_as,
+                                   self.actionSaveAs]
+
+        for act in save_actions_list:
+            act.setActionGroup(save_actions)
+        # endregion
+
+        # endregion
+
         # add the actions to the signalDependingActions list
-        for action_group in [edition_actions,play_record_actions,widgets_visibility_actions,
-                             zoom_actions,undo_redo_actions]:
+        for action_group in [edition_actions, play_record_actions,save_actions,
+                             widgets_visibility_actions,zoom_actions, undo_redo_actions,
+                             segm_transf_actions, save_images_actions,processing_actions]:
 
             self.signalDependingActions.extend(action_group.actions())
 
         # actions groups (action,name of group)
-        actions_groups = [(edition_actions,"Edition"), (open_save_actions, "Open/Save"),
-                          (play_record_actions, "Play/Record"), (zoom_actions, "Zoom"),
-                          (widgets_visibility_actions, "Widgets Visibility"),
-                          (undo_redo_actions, "Undo/Redo"), (file_updown_actions, "File Up/Down")]
+        actions_groups = [(open_save_actions, self.tr(u"Open/Save")),(undo_redo_actions, self.tr(u"Undo/Redo")),
+                          (edition_actions,self.tr(u"Edition")),(play_record_actions, self.tr(u"Play/Record")),
+                          (zoom_actions, self.tr(u"Zoom")),(widgets_visibility_actions, self.tr(u"Widgets Visibility")),
+                          (file_updown_actions, self.tr(u"File Up/Down")), (segm_transf_actions, self.tr(u"Processing"))]
 
         # add to the customizable sound lab toolbar
         for act in actions_groups:
+            #            addActionGroup(actionGroup, name)
             self.toolBar.addActionGroup(act[0], act[1])
 
+        # add other signal depending actions that not belong to any group
         self.toolBar.addAction(self.actionSettings)
-        self.toolBar.addAction(self.actionOneDimensionalTransformation)
-        self.toolBar.addAction(self.actionSegmentation_And_Clasification)
         self.toolBar.addWidget(self.signalNameLineEdit)
+
+        self.signalDependingActions.append(self.signalNameLineEdit)
 
     def setSignalActionsEnabledState(self, enable_state=True):
         """
@@ -798,9 +850,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         # if is the first signal to open close the "No opened signals widget"
         if self.tabOpenedSignals.count() == 1:
-            self.tabOpenedSignals.setVisible(True)
-            self.noSignalOpened_lbl.setVisible(False)
-            self.setSignalActionsEnabledState(True)
+            self.setNoSignalsOpenState(signals_open=True)
 
     def loadSignalOnTab(self, signal, tabIndex=None):
         """
@@ -828,7 +878,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         # connect for data display
         self.widget.toolDataDetected.connect(self.updateStatusBar)
 
-        # refresh and set visible both axes on the new widget
+        # refresh and set the visibility of the axes on the new widget
         self.changeWidgetsVisibility(True, True)
 
         self.widget.load_Theme(self._appSettings['Workspace'].workTheme)
@@ -842,13 +892,15 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     def signalNameChanged(self, new_name):
         """
-        Update the window variables dependent of the signal name
+        Update the window variables dependent of the signal name when a change is made
+        on the text line edit for the signal name.
         :param new_name: The new signal name
         :return:
         """
         self.setWindowTitle(self.tr(u"duetto-Sound Lab - ") + new_name)
         self.tabOpenedSignals.setTabText(self.tabOpenedSignals.currentIndex(), new_name)
-        self.widget.signal.name = new_name
+        if self.widget is not None:
+            self.widget.signal.name = new_name
 
     def currentSignalTabChanged(self,tabIndex):
         """
@@ -891,15 +943,12 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         if index < 0 or index >= self.tabOpenedSignals.count():
             return
 
-        # if close the last opened signal show the widget for no opened signals
-        if self.tabOpenedSignals.count() == 1:
-            self.tabOpenedSignals.setVisible(False)
-            self.noSignalOpened_lbl.setVisible(True)
-            self.setSignalActionsEnabledState(False)
-
-
-        self.save_signal_if_modified()
+        self.save_signal_if_modified(signal_index=index)
         self.tabOpenedSignals.removeTab(index)
+
+        # if close the last opened signal show the widget for no opened signals
+        if self.tabOpenedSignals.count() == 0:
+            self.setNoSignalsOpenState(signals_open=False)
 
     def closeAllTabs(self, exceptIndex=-1):
         """
@@ -982,7 +1031,8 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         signal = self.widget.signal
 
-        indexFrom, indexTo = self.widget.getIndexFromAndTo()
+        indexFrom, indexTo = self.widget.selectedRegion
+
         if indexTo > indexFrom:
             signal = signal.copy(indexFrom, indexTo)
 
@@ -1552,7 +1602,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         #      type_, Fc, Fl, Fu = self.filter_helper()
         #      if type_ != None:
         #          ms = whiteNoiseDialog.insertSpinBox.value()
-        #          start, _ = self.widget.getIndexFromAndTo()
+        #          start, _ = self.widget.selectedRegion
         #          self.widget.undoRedoManager.add(
         #              GeneratePinkNoiseAction(self.widget.signalProcessor.signal, start, ms, type_, Fc, Fl, Fu))
         #          self.widget.insertPinkNoise(ms, type_, Fc, Fl, Fu)
@@ -1611,8 +1661,8 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             elif filterDialogWindow.rButtonBandStop.isChecked():
                 #  get the frequencies of cut (upper and lower)
                 #  for the Band Stop filter
-                freq_cut_lower = filterDialogWindow.spinBoxBandStopFl.value()
-                freq_cut_upper = filterDialogWindow.spinBoxBandStopFu.value()
+                freq_cut_lower = filterDialogWindow.spinBoxBandStopFl.value() * 1000
+                freq_cut_upper = filterDialogWindow.spinBoxBandStopFu.value() * 1000
                 return BandStopFilter(self.widget.signal, freq_cut_lower, freq_cut_upper)
 
                 # None if there is no filter implementation selected
@@ -1695,7 +1745,8 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     def on_load_first_time(self):
         """
-        Method called when the window is first opened. It prompts the user whether to restore the last working session
+        Method called when the window is first opened.
+        It prompts the user whether to restore the last working session
         and initializes stuffs accordingly.
         """
         if os.path.exists('duetto.ini'):
@@ -1741,7 +1792,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         #  save the signal if any opened and changed
         for i in range(self.tabOpenedSignals.count()):
-            self.save_signal_if_modified(signal_index=i)
+            self.save_signal_if_modified(event, signal_index=i)
 
         #  close the window
         self.close()
@@ -1783,17 +1834,17 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         Close the signals that not have been changed
         :return:
         """
-        unmodified_tabsignal_indexes = []
-        for i in range(self.tabOpenedSignals.count()):
-            if self.tabOpenedSignals.widget(i).undoRedoManager.count() == 0:
-                unmodified_tabsignal_indexes.append(i)
 
         # delete the signals at indexes from greater to lower to avoid
         # change index values in the process
-        unmodified_tabsignal_indexes.reverse()
+        for i in range(self.tabOpenedSignals.count()-1, -1, -1):
+            try:
 
-        for index in unmodified_tabsignal_indexes:
-            self.closeSignalAt(index)
+                if self.tabOpenedSignals.widget(i).undoRedoManager.count() == 0:
+                    self.closeSignalAt(i)
+
+            except Exception as ex:
+                print("Error closing signal at index "+str(i) + " " + ex.message)
 
     @pyqtSlot()
     def on_actionNew_triggered(self):
@@ -1825,12 +1876,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                                                 directory=self.last_opened_signal_path,
                                                 filter=self.tr(u"Wave Files") + u"(*.wav);;All Files(*)")
         self._open(unicode(file_name))
-
-        # close the opened windows of one dim processing
-        # and restart the list of windows
-        for win in self.one_dim_windows:
-            win.close()
-        self.one_dim_windows = []
 
     @pyqtSlot()
     def on_actionOpenInOtherTab_triggered(self):
@@ -1876,13 +1921,13 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 # set the variables for folder files management
                 self.last_opened_signal_path = file_path
                 self.getFolderFiles(file_path)
-
                 signal = openSignal(file_path)
-
             except Exception as ex:
                 QMessageBox.warning(QMessageBox(), self.tr(u"Error"),
                                     self.tr(u"Could not load the file.") +
                                     u"\n" + file_path)
+                print(ex.message)
+
 
                 # recover from an open error by opening a default signal
                 signal = Synthesizer.generateSilence(44100, 16, 1)
@@ -1891,6 +1936,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 self.loadSignalOnTab(signal)
             else:
                 self.addSignalTab(signal)
+
 
             self.changeFrequency(0, self.widget.signal.samplingRate / 2000)
             self.changeAmplitude(-100, 100)
@@ -1911,9 +1957,14 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         if widget.undoRedoManager.count() > 0:
             # if any action was made then ask for save the signal
+            buttons_box = QtGui.QMessageBox.Yes | QtGui.QMessageBox.No
+
+            if event is not None:
+                buttons_box = buttons_box | QtGui.QMessageBox.Cancel
+
             mbox = QtGui.QMessageBox(QtGui.QMessageBox.Question, self.tr(u"Save"),
                                      self.tr(u"Do you want to save the signal " + widget.signalName() + u" ?"),
-                                     QtGui.QMessageBox.Yes | QtGui.QMessageBox.No | QtGui.QMessageBox.Cancel, self)
+                                     buttons_box, self)
             result = mbox.exec_()
 
             if result == QtGui.QMessageBox.Yes:
@@ -1989,7 +2040,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         tooltip = "Sampling Rate: " + str(sr) + \
                   "\nBit Depth: " + str(bit_depth) + \
                   "\nChannels: " + str(channels) + \
-                  "\nDuration(s): " + str(self.widget.signal.duration)
+                  "\nDuration(s): " + str(round(self.widget.signal.duration, DECIMAL_PLACES))
 
         self.signalNameLineEdit.setToolTip(tooltip)
 
@@ -2087,6 +2138,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         Change the play status of the signal from play-pause and vice versa
         :return:
         """
+        print("Stwich Play status")
         self.widget.switchPlayStatus()
 
     @pyqtSlot(QAction)
@@ -2096,7 +2148,12 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         :param action: the action to set the speed
         :return:
         """
-        self.widget.stop()
+
+        # stop prevoiusly playing or recording at other speed.
+
+        if self.widget is not None:
+            self.widget.stop()
+
         #  the speed is get form the text of the action (?? it is possible to improve it ??)
         speed = {u'1/8x': 12.5, u'1/4x': 25, u'1/2x': 50,
                  u'1x': 100, u'2x': 200, u'4x': 400, u'8x': 800}[unicode(action.text())]
@@ -2208,7 +2265,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         of the signal in the opened one dimensional windows
         :return:
         """
-        indexFrom, indexTo = self.widget.getIndexFromAndTo()
+        indexFrom, indexTo = self.widget.selectedRegion
         for win in self.one_dim_windows:
             win.graph(indexFrom, indexTo)
 
@@ -2222,7 +2279,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         one_dim_window = OneDimensionalAnalysisWindow(self,self.widget.signal)
         one_dim_window.load_Theme(self.workTheme.oscillogramTheme)
 
-        indexFrom, indexTo = self.widget.getIndexFromAndTo()
+        indexFrom, indexTo = self.widget.selectedRegion
         one_dim_window.graph(indexFrom, indexTo)
 
         #  store the opened one dimensional one_dim_transform windows for handling

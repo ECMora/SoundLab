@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\MainWindow.ui'
+# Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\MainWindow.ui'
 #
-# Created: Wed Jan 14 13:08:57 2015
+# Created: Sat Jan 17 21:11:16 2015
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -46,15 +46,16 @@ class Ui_DuettoMainWindow(object):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.noSignalOpened_lbl.sizePolicy().hasHeightForWidth())
         self.noSignalOpened_lbl.setSizePolicy(sizePolicy)
-        self.noSignalOpened_lbl.setMinimumSize(QtCore.QSize(400, 300))
-        self.noSignalOpened_lbl.setMaximumSize(QtCore.QSize(400, 300))
+        self.noSignalOpened_lbl.setMinimumSize(QtCore.QSize(0, 0))
+        self.noSignalOpened_lbl.setMaximumSize(QtCore.QSize(400, 500))
         font = QtGui.QFont()
-        font.setPointSize(12)
+        font.setFamily(_fromUtf8("MS Sans Serif"))
+        font.setPointSize(14)
+        font.setUnderline(False)
         self.noSignalOpened_lbl.setFont(font)
         self.noSignalOpened_lbl.setCursor(QtGui.QCursor(QtCore.Qt.ArrowCursor))
         self.noSignalOpened_lbl.setStyleSheet(_fromUtf8(""))
         self.noSignalOpened_lbl.setMidLineWidth(0)
-        self.noSignalOpened_lbl.setText(_fromUtf8(""))
         self.noSignalOpened_lbl.setScaledContents(False)
         self.noSignalOpened_lbl.setAlignment(QtCore.Qt.AlignCenter)
         self.noSignalOpened_lbl.setObjectName(_fromUtf8("noSignalOpened_lbl"))
@@ -441,6 +442,13 @@ class Ui_DuettoMainWindow(object):
 
     def retranslateUi(self, DuettoMainWindow):
         DuettoMainWindow.setWindowTitle(QtGui.QApplication.translate("DuettoMainWindow", "Duetto Sound Lab", None, QtGui.QApplication.UnicodeUTF8))
+        self.noSignalOpened_lbl.setText(QtGui.QApplication.translate("DuettoMainWindow", "<div><h2 align=\'left\'> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\n"
+"No signal is open</h2><hr>\n"
+"<ul align=\'left\'>\n"
+"<li>Open new signals with<font color=\'#3333AA\'> Ctrl + O</font></li>\n"
+"<li>Browse for signals with<font color=\'#3333AA\'> Ctrl + B</font></li>\n"
+"<li>Synthesize new signals with<font color=\'#3333AA\'> Ctrl + N</font></li>\n"
+"<li>Drag and drop files from Explorer</li></ul></div>", None, QtGui.QApplication.UnicodeUTF8))
         self.menuFile.setTitle(QtGui.QApplication.translate("DuettoMainWindow", "File", None, QtGui.QApplication.UnicodeUTF8))
         self.menuSave_Images.setTitle(QtGui.QApplication.translate("DuettoMainWindow", "Save Images", None, QtGui.QApplication.UnicodeUTF8))
         self.menuRecentSignals.setTitle(QtGui.QApplication.translate("DuettoMainWindow", "Recent Signals", None, QtGui.QApplication.UnicodeUTF8))

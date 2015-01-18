@@ -4,7 +4,7 @@ import os
 from PyQt4.QtCore import pyqtSignal, pyqtSlot, Qt
 from PyQt4.QtGui import QAbstractItemView, QFileDialog
 import time
-from __builtin__ import file
+from Utils.Utils import DECIMAL_PLACES
 from duetto.audio_signals.AudioSignalPlayer import AudioSignalPlayer
 from duetto.audio_signals import openSignal
 from graphic_interface.windows.ui_python_files.BrowseFilesWindow import Ui_BrowseFilesWindow
@@ -20,10 +20,6 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
     # signal raised when a file is selected by user and must be opened
     # raise the list (list of str with the paths) of selected files to open
     openFiles = pyqtSignal(list)
-
-    # CONSTANTS
-    # tha amount of decimal places to round math operations
-    DECIMAL_PLACES = 2
 
     def __init__(self, parent=None, folderFiles=[]):
         """
@@ -47,7 +43,7 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
         for file_path in folderFiles:
             self.addFile(file_path)
 
-        self.files_tablewidget.resizeColumnsToContents()
+        self.files_tablewidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.selectAll_bttn.setText(self.tr(u"Select All"))
 
     # region Files Handling
@@ -62,7 +58,7 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
         for x in range(self.files_tablewidget.rowCount()):
             # if the row is selected
             if self.files_tablewidget.item(x, 0).checkState() == Qt.Checked:
-                files.append((self.folderFiles[x],x))
+                files.append((self.folderFiles[x], x))
 
         return files
 
@@ -74,7 +70,9 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
         :param row: the row in which would be added the file. If -1 is inserted at the end
         :return:
         """
+
         # region Create Items for Table
+
         # check if the file was already added
         if file_path in self.folderFiles:
             return
@@ -84,7 +82,7 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
             row = self.files_tablewidget.rowCount()
             self.files_tablewidget.setRowCount(row + 1)
 
-        # get the name of the file
+        # region Name of the file
         try:
             name = os.path.basename(unicode(file_path))
         except Exception as ex:
@@ -95,7 +93,9 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
         file_name.setCheckState(Qt.Unchecked)
         file_name.checkState()
 
-        # calculate the size of the file
+        # endregion
+
+        # region Size of the file
         try:
             size = os.path.getsize(file_path)
             sufix = ["Bytes", "Kb", "Mb", "Gb"]
@@ -103,14 +103,16 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
             while size > 1024 and j < len(sufix):
                 size /= 1024.0
                 j += 1
-            size = str(round(size, self.DECIMAL_PLACES))+sufix[j]
+            size = str(round(size, DECIMAL_PLACES))+sufix[j]
 
         except Exception as ex:
             size = "-"
 
         file_size = QtGui.QTableWidgetItem(size)
 
-        # get the creation date
+        # endregion
+
+        # region Creation date
         try:
             date = time.gmtime(os.path.getctime(file_path))
             date = str(time.strftime("%d/%m/%Y",date))
@@ -119,8 +121,26 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
 
         creation_date = QtGui.QTableWidgetItem(date)
 
-        # get the file duration
-        duration = QtGui.QTableWidgetItem(str(0))
+        # endregion
+
+        # region Duration
+        try:
+            duration_seg = openSignal(file_path).duration
+            sufix = [self.tr(u"(seg)"), self.tr(u"(min)"), self.tr(u"(hours)")]
+            j = 0
+            while duration_seg > 60 and j < len(sufix):
+                duration_seg /= 60.0
+                j += 1
+
+            duration_seg = str(round(duration_seg, DECIMAL_PLACES)) + sufix[j]
+
+        except Exception as ex:
+            print(ex.message)
+            duration_seg = "-"
+
+        duration = QtGui.QTableWidgetItem(duration_seg)
+
+        # endregion
 
         # endregion
 
@@ -265,11 +285,13 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
         :return:
         """
         files_selected = [x[0] for x in self.filesSelected()]
+        if len(files_selected) == 0:
+            return
+
         # play the first file
         try:
-            # self.player = AudioSignalPlayer(openSignal(files[0]))
-            # self.player.play()
-            pass
+            self.player = AudioSignalPlayer(openSignal(files_selected[0]))
+            self.player.play()
         except Exception as ex:
             pass
-        print("Play")
+

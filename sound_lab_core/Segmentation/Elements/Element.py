@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+#  -*- coding: utf-8 -*-
 from PyQt4.QtCore import QObject
 
 
@@ -15,18 +15,19 @@ class Element(QObject):
     def __init__(self, signal):
         QObject.__init__(self)
 
-        #the signal in which this elements is defined
+        # the signal in which this elements is defined
         self.signal = signal
 
-        #the optional data interesting for the transform ej name, parameters, etc
-        self.visible = True #visual opions for ploting the element
-        self.visual_text = []  #the visual elements that show text
-        self.visual_locations = []  #the visual elements that show the location of measurement (unused)
-        self.visual_figures = []  #the visual elements that show the elements figures
+        # the optional data interesting for the transform ej name, parameters, etc
+        # visual options for plotting the element
+        self.visible = True
+        self.visual_text = []  # the visual elements that show text
+        self.visual_locations = []  # the visual elements that show the location of measurement (unused)
+        self.visual_figures = []  # the visual elements that show the elements figures
         self.visual_peaksfreqs = []
-        self.actionVisibility = None #accion que cambia la visibilidad de este elemento en el grafico para ponerla en un context menu
+        self.actionVisibility = None # accion que cambia la visibilidad de este elemento en el grafico para ponerla en un context menu
 
-        self.number = 0 # the number of this element for visualization and ordering options
+        self.number = 0 #  the number of this element for visualization and ordering options
 
     def visualwidgets(self):
         """

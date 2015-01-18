@@ -85,11 +85,11 @@ even if they are not possible to play completely by the recoding
 * Customize the axes on the amount of ticks and the scale used (possibly by context menu) with an dynamic suggested scale
 * Addition of Custom Rich Dock Widgets to the duetto API and use them on the windows
 * User manage of the height relation  between the two widgets (osc and spec) when are  both visible
-* Tools bugs when a signal processing action is made (zoom osc disappear)
++ Tools bugs when a signal processing action is made (zoom osc disappear)
 * Fix zoom bug. Mouse move heavy computation
 * Edition operation improvement
 * Resampling
-* Filter
++ Filter
 -----------------------------------------------------------
 
 Complexity-3: Large code changes and/or multiple code files tasks
@@ -108,4 +108,4 @@ Complexity-4: New Code Design and Infrastructure implementation (Somoza's Revisi
 * Design Classification
 * Batch window implementation
 
------------------------------------------------------------
+-------------------------------------------- ---------------

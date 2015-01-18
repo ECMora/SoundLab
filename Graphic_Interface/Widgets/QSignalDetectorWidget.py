@@ -303,7 +303,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         @return: the tuple (x,y) of init and end of the interval deleted.
         If no element is deleted returns None
         """
-        start, end = self.getIndexFromAndTo()
+        start, end = self.selectedRegion()
 
         if end == start or len(self.Elements) == 0:
             return None

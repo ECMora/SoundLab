@@ -161,4 +161,9 @@ class SoundLabOscillogramWidget(SoundLabWidget, OscillogramWidget):
             self._pointsConnectedOnLastUpdate = True
 
         OscillogramWidget.graph(self, indexFrom, indexTo, morekwargs)
+
+        # parent graph clears the widget so the tool must be set to enable again
+        if self.gui_user_tool is not None:
+            self.gui_user_tool.enable()
+
         self.repaint()

@@ -63,19 +63,21 @@
       </property>
       <property name="minimumSize">
        <size>
-        <width>400</width>
-        <height>300</height>
+        <width>0</width>
+        <height>0</height>
        </size>
       </property>
       <property name="maximumSize">
        <size>
         <width>400</width>
-        <height>300</height>
+        <height>500</height>
        </size>
       </property>
       <property name="font">
        <font>
-        <pointsize>12</pointsize>
+        <family>MS Sans Serif</family>
+        <pointsize>14</pointsize>
+        <underline>false</underline>
        </font>
       </property>
       <property name="cursor">
@@ -88,7 +90,13 @@
        <number>0</number>
       </property>
       <property name="text">
-       <string/>
+       <string>&lt;div&gt;&lt;h2 align='left'&gt; &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;
+No signal is open&lt;/h2&gt;&lt;hr&gt;
+&lt;ul align='left'&gt;
+&lt;li&gt;Open new signals with&lt;font color='#3333AA'&gt; Ctrl + O&lt;/font&gt;&lt;/li&gt;
+&lt;li&gt;Browse for signals with&lt;font color='#3333AA'&gt; Ctrl + B&lt;/font&gt;&lt;/li&gt;
+&lt;li&gt;Synthesize new signals with&lt;font color='#3333AA'&gt; Ctrl + N&lt;/font&gt;&lt;/li&gt;
+&lt;li&gt;Drag and drop files from Explorer&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;</string>
       </property>
       <property name="scaledContents">
        <bool>false</bool>
@@ -118,10 +126,10 @@
    <widget class="QMenu" name="menuFile">
     <property name="geometry">
      <rect>
-      <x>17</x>
-      <y>137</y>
+      <x>119</x>
+      <y>154</y>
       <width>210</width>
-      <height>363</height>
+      <height>385</height>
      </rect>
     </property>
     <property name="autoFillBackground">
@@ -153,6 +161,7 @@
     <addaction name="actionNew"/>
     <addaction name="actionOpen"/>
     <addaction name="actionBrowse"/>
+    <addaction name="actionOpen_Selection"/>
     <addaction name="menuRecentSignals"/>
     <addaction name="actionSave"/>
     <addaction name="actionSaveAs"/>
@@ -937,11 +946,24 @@
    </property>
   </action>
   <action name="actionOpenInOtherTab">
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/81.ico</normaloff>:/myappicons/81.ico</iconset>
+   </property>
    <property name="text">
     <string>Open In Other Tab</string>
    </property>
    <property name="toolTip">
     <string>Open In Other Tab</string>
+   </property>
+  </action>
+  <action name="actionOpen_Selection">
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/81.ico</normaloff>:/myappicons/81.ico</iconset>
+   </property>
+   <property name="text">
+    <string>Open Selection</string>
    </property>
   </action>
   <zorder>dock_settings</zorder>

@@ -7,6 +7,7 @@ from PyQt4.QtGui import QFileDialog, QApplication
 
 FLOATING_POINT_EPSILON = 0.01
 
+DECIMAL_PLACES = 2
 
 def saveImage(widget, text=""):
     """

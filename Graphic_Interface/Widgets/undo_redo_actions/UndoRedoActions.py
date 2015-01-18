@@ -263,8 +263,8 @@ class FilterAction(UndoRedoAction):
         self.signal.data[self.start:self.end] = self.losed_signal_data
 
     def redo(self):
-        self.filter_processor.signal = self.signal
         self.filter_processor.filter(self.start, self.end)
+
 
 
 class ResamplingAction(UndoRedoAction):
