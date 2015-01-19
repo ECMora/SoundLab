@@ -490,7 +490,9 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         # add the tab context menu
         self.tabOpenedSignals.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
-        actions = [self.actionClose, self.actionCloseAll, self.actionCloseOthers, self.actionCloseUnmodified, self.actionOpenInOtherTab]
+        actions = [self.actionClose, self.actionCloseAll, self.actionCloseOthers,
+                   self.actionCloseUnmodified, self.actionOpenInOtherTab,
+                   self.actionOpen_Selection]
         for act in actions:
             self.tabOpenedSignals.addAction(act)
 
@@ -792,16 +794,25 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         # region Save actions
         save_actions = QActionGroup(self)
         save_actions_list = [self.actionSave,self.actionSave_selected_interval_as,
-                                   self.actionSaveAs]
+                             self.actionOpen_Selection, self.actionSaveAs]
 
         for act in save_actions_list:
             act.setActionGroup(save_actions)
         # endregion
 
+        # region Tools actions
+        tools_actions = QActionGroup(self)
+        tools_actions_list = [self.actionZoom_Cursor,self.actionPointer_Cursor,
+                              self.actionRectangular_Cursor,self.actionRectangular_Eraser]
+
+        for act in tools_actions_list:
+            act.setActionGroup(tools_actions)
+        # endregion
+
         # endregion
 
         # add the actions to the signalDependingActions list
-        for action_group in [edition_actions, play_record_actions,save_actions,
+        for action_group in [edition_actions, play_record_actions,save_actions, tools_actions,
                              widgets_visibility_actions,zoom_actions, undo_redo_actions,
                              segm_transf_actions, save_images_actions,processing_actions]:
 
@@ -2020,6 +2031,20 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                                                         widget.signalName(), u"*.wav"))
         if file_name:
             widget.saveSelectedSectionAsSignal(file_name)
+
+
+    @pyqtSlot()
+    def on_actionOpen_Selection_triggered(self, signal_index=None):
+        """
+        Open the signal currently visible (or selected) into a new tab
+        :param signal_index: The index of the signal tab to open on a new tab
+        :return:
+        """
+        signal_index = self.tabOpenedSignals.currentIndex() if signal_index is None else signal_index
+        widget = self.tabOpenedSignals.widget(signal_index)
+
+        indexFrom, indexTo = self.widget.selectedRegion
+        self.addSignalTab(widget.signal.copy(indexFrom, indexTo))
 
     # endregion
 

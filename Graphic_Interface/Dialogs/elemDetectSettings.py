@@ -16,12 +16,9 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         self.setupUi(self)
 
         if parent is not None:
-            self.widget.specgramSettings.NFFT = parent.widget.specgramSettings.NFFT
-            self.widget.specgramSettings.overlap = parent.widget.specgramSettings.overlap
-            self.widget.specgramSettings.window = parent.widget.specgramSettings.window
-            self.widget.signalProcessor.signal = parent.widget.signalProcessor.signal
-        else:
-            self.widget.specgramSettings.overlap = 50
+            self.widget.axesSpecgram
+            self.widget.signal = parent.widget.signal
+
 
         self.detectortypeData = [DetectionType.LocalMax,
                              DetectionType.IntervalRms,DetectionType.IntervalMaxMedia,
@@ -30,7 +27,6 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
                              DetectionType.Envelope_Rms]
 
         self.detectionSettings = DetectionSettings(DetectionType.Envelope_Abs_Decay_Averaged,AutomaticThresholdType.Global_MaxMean)
-        self.widget.setSelectedTool("OscilogramThreshold")
 
         self.ParamTree = paramTree
         self.ParamTree.param(unicode(self.tr(u'Temporal Detection Settings'))).sigTreeStateChanged.connect(self.detect)
@@ -51,28 +47,20 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         lay1.addWidget(self.parameterTree)
 
         self.osc_settings_contents.setLayout(lay1)
-        #self.dock_settings.setVisible(False)
+        # self.dock_settings.setVisible(False)
         self.dock_settings.setFixedWidth(350)
 
         self.widget.visibleSpectrogram = False
         self.widget.visibleOscilogram = True
-        self.widget.setEnvelopeVisibility(True)
 
-        self.widget.signalProcessor.signal = self.widget.signalProcessor.signal.smallSignal()
-        if self.widget.signalProcessor.signal is None:
+
+        self.widget.signal = self.widget.signal.smallSignal()
+        if self.widget.signal is None:
             self.widget.open("Utils\\Didactic Signals\\recognition.wav")
-        else:
-            self.widget.mainCursor.min,self.widget.mainCursor.max = 0,len(self.widget.signalProcessor.signal.data)
 
+        # self.widget.axesOscilogram.threshold.sigPositionChangeFinished.connect(self.updateThreshold)
+        # self.widget.axesOscilogram.threshold.setBounds((-2**(self.widget.signalProcessor.signal.bitDepth-1),2**(self.widget.signalProcessor.signal.bitDepth-1)))
 
-
-        self.widget.axesOscilogram.setVisibleThreshold(True)
-
-        self.widget.axesOscilogram.threshold.sigPositionChangeFinished.connect(self.updateThreshold)
-        self.widget.axesOscilogram.threshold.setBounds((-2**(self.widget.signalProcessor.signal.bitDepth-1),2**(self.widget.signalProcessor.signal.bitDepth-1)))
-
-        self.widget.histogram.setImageItem(self.widget.axesSpecgram.imageItem)
-        self.widget.computeSpecgramSettings()
         self.detect()
 
     def changeDetectionMethod(self,paramTree,changes):
