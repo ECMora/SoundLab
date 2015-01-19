@@ -24,7 +24,6 @@ Complexity-1: No new-code activity
 
 + Sound Lab window and project rename to "duetto SoundLab"
 
-
 -----------------------------------------------------------
 
 Complexity-2: Small-to-medium code changes

@@ -32,16 +32,6 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         # detector for one dimensional detection
         self.elements_detector = OneDimensionalElementsDetector()
 
-        # region Envelope curve visualization
-        # curve to display envelope when detection method is envelope
-        self.envelopeCurve = pg.PlotCurveItem(np.array([0]), pen=pg.mkPen("CC3", width=1),
-                                              shadowPen=pg.mkPen(QtGui.QColor(255, 0, 0), width=3))
-
-        # factor to expand the envelope for best visualization
-        self.envelopeFactor = 2
-
-        # endregion
-
         # visibility of all detected elements.
         # is used when they are displayed
         self.visibleElements = True
@@ -51,9 +41,6 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         self.Elements = []
 
         QSignalVisualizerWidget.__init__(self, parent)
-
-        # add an extra item to display envelope in oscilogram graph
-        self.axesOscilogram.addItem(self.envelopeCurve)
 
     # region Elements
     def detectElements(self, threshold=20, decay=1, minSize=0, detectionsettings=None, softfactor=5, merge_factor=50,
@@ -95,16 +82,6 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
                                       findSpectralSublements=findSpectralSublements,
                                       specgramSettings=self.specgramSettings)
 
-        if detectionsettings is None or \
-                        detectionsettings.detectiontype == DetectionType.Envelope_Abs_Decay_Averaged or \
-                        detectionsettings.detectiontype == DetectionType.Envelope_Rms:
-
-            self.envelopeCurve.setData(self.getScaledEnvelope())
-            self.setEnvelopeVisibility(True)
-            self.axesOscilogram.threshold.setValue(self.elements_detector.getThreshold())
-
-        else:
-            self.setEnvelopeVisibility(False)
 
         # get the elements detected by the detector
         for index, c in enumerate(self.elements_detector.elements):
@@ -332,46 +309,6 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
     # endregion
 
-    # region Envelope Visualization
-
-    def setEnvelopeVisibility(self, visibility):
-        """
-        Method that change the visibility of the envelope curve
-        :param visibility: visibility of the envelope curve
-        """
-        envelope_in_axes = self.envelopeCurve in self.axesOscilogram.items()
-
-        if not envelope_in_axes and visibility:
-            # the curve must be set to visible
-            self.axesOscilogram.addItem(self.envelopeCurve)
-
-        elif envelope_in_axes and not visibility:
-            # the curve must be set to invisible
-            self.axesOscilogram.removeItem(self.envelopeCurve)
-
-        self.axesOscilogram.update()
-
-    def getScaledEnvelope(self):
-        """
-        Return the array of the envelope curve scaled by the envelope factor for display.
-        :return: scaled envelope array
-        """
-        self.envelopeFactor = 2
-        return self.envelopeFactor * self.elements_detector.envelope - \
-                    (self.signal.maximumValue - self.signal.minimumValue) / 2
-
-    # endregion
-
-    def load_Theme(self, theme):
-        """
-        this method implements the  way in which the widget load the theme
-        """
-        QSignalVisualizerWidget.load_Theme(self, theme)
-
-        # update values for envelope display
-        self.envelopeCurve.setPen(pg.mkPen(theme.oscillogramTheme.plot_color, width=1))
-        self.envelopeCurve.setShadowPen(pg.mkPen(QtGui.QColor(255, 0, 0), width=3))
-
     def graph(self):
         """
         Refresh the widgets visual elements and graphs
@@ -384,4 +321,3 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
         if self.visibleElements:
             self.drawElements()
-

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+#  -*- coding: utf-8 -*-
 from math import  log10
 
 from PyQt4.QtGui import QFont
@@ -20,27 +20,26 @@ class SpectralMeasurementLocation:
         [False,  QtGui.QColor(0, 0, 255, 255)],
         [False, QtGui.QColor(255,255,255, 255)],
         [False,  QtGui.QColor(255, 255, 255, 255)]]
-    #(Active computation, color)
+    # (Active computation, color)
 
 
 class OneDimensionalElement(Element):
     """
     Element defined in one-dimensional transform of a signal.
     """
-    #SIGNALS
-    # called when the element is clicked
-    # raise the index of the element (number)
+    # SIGNALS
+    #  called when the element is clicked
+    #  raise the index of the element (number)
     elementClicked = QtCore.Signal(int)
 
-    #CONSTANTS
-    # decimal places to round the measurements
+    # CONSTANTS
+    #  decimal places to round the measurements
     DECIMAL_PLACES = 4
 
     def __init__(self, signal, indexFrom, indexTo):
         Element.__init__(self, signal)
-        self.indexFrom =  indexFrom #index of start of the element
+        self.indexFrom =  indexFrom # index of start of the element
         self.indexTo = indexTo
-
 
 
 class OscilogramElement(OneDimensionalElement):
@@ -63,7 +62,7 @@ class OscilogramElement(OneDimensionalElement):
         @return:
         """
         OneDimensionalElement.__init__(self,signal,indexFrom,indexTo)
-        #the visible text for
+        # the visible text for
         text = pg.TextItem(str(number),color=(255,255,255),anchor=(0.5,0.5))
         text.setPos(self.indexFrom/2.0+self.indexTo/2.0, 0.75*2**(signal.bitDepth-1))
 
@@ -76,11 +75,11 @@ class OscilogramElement(OneDimensionalElement):
         self.lr = pg.LinearRegionItem([self.indexFrom,self.indexTo], movable=False,brush=(pg.mkBrush(self.color)))
         self.twoDimensionalElements = []
 
-        #the memoize pattern implemented to compute parameters functions
+        # the memoize pattern implemented to compute parameters functions
         self.parameters = dict(StartToMax=None, peekToPeek=None, rms=None, minFreq=dict(), maxFreq=dict(),
                                average=dict(),peakFreq=dict(),peaksAbove=dict(),peakAmplitude=dict(),bandwidth=dict())
 
-        #a tooltip for the element's easy information access
+        # a tooltip for the element's easy information access
         tooltip = "Element: "+str(self.number)+"\nStart Time: "+ str(self.startTime()) + "s\n" \
                   + "End Time:"+ str(self.endTime()) + "s\n"\
                   + "RMS: "+ str(self.rms()) + "\n"\
@@ -89,48 +88,48 @@ class OscilogramElement(OneDimensionalElement):
 
         self.lr.mouseClickEvent = self.mouseClickEvent
 
-        #update the visual representation
-        self.visual_figures.append([self.lr,True]) #item visibility
+        # update the visual representation
+        self.visual_figures.append([self.lr,True]) # item visibility
         self.visual_text.append([text,True])
 
-        #region location
+        # region location
         if location is not None:
             self.measurementLocation = location
-            #width = (indexTo-indexFrom)/5
-            #height = (2**signal.bitDepth)/5
-            #ypos = 2**signal.bitDepth
-            #xpos = indexTo-indexFrom
-            #ystart = -2**(signal.bitDepth-1)
-            #poner tooltips
-            #if(self.measurementLocation.MEDITIONS[self.measurementLocation.START][0]):
-            #    start = QtGui.QGraphicsRectItem(QtCore.QRectF(indexFrom+ xpos*0,ystart + ypos*0,   width,    height))
-            #    start.setBrush(QtGui.QBrush(self.measurementLocation.MEDITIONS[self.measurementLocation.START][1]))
-            #    start.setToolTip("Element: "+ str(self.number) +"\nStart Mesurement Location")
-            #    self.visual_locations.append([start,True])
-            #if(self.measurementLocation.MEDITIONS[self.measurementLocation.CENTER][0]):
-            #    center = QtGui.QGraphicsRectItem(QtCore.QRectF(indexFrom+ xpos*0.5- width/2,ystart +ypos*0.5 -height/2,    width,    height))
-            #    center.setBrush(QtGui.QBrush(self.measurementLocation.MEDITIONS[self.measurementLocation.CENTER][1]))
-            #    center.setToolTip("Element:"+str(self.number) +"\nCenter Mesurement Location")
-            #    self.visual_locations.append([center,True])
-            #if(self.measurementLocation.MEDITIONS[self.measurementLocation.END][0]):
-            #    end = QtGui.QGraphicsRectItem(QtCore.QRectF(indexFrom+ xpos*1- width,ystart+ypos*1- height,    width,    height))
-            #    end.setBrush(QtGui.QBrush(self.measurementLocation.MEDITIONS[self.measurementLocation.END][1]))
-            #    end.setToolTip("Element:"+str(self.number) +"\nEnd Mesurement Location")
-            #    self.visual_locations.append([end,True])
-            #if(self.measurementLocation.MEDITIONS[self.measurementLocation.QUARTILE25][0]):
-            #    quartile1 = QtGui.QGraphicsRectItem(QtCore.QRectF(indexFrom+ xpos*0.25 -width/2,ystart+ypos*0.25 -height/2,width,    height))
-            #    quartile1.setBrush(QtGui.QBrush(self.measurementLocation.MEDITIONS[self.measurementLocation.QUARTILE25][1]))
-            #    quartile1.setToolTip("Element:"+str(self.number) +"\nQuartile 25% Mesurement Location")
-            #    self.visual_locations.append([quartile1,True])
-            #if(self.measurementLocation.MEDITIONS[self.measurementLocation.QUARTILE75][0]):
-            #    quartile3 = QtGui.QGraphicsRectItem(QtCore.QRectF(indexFrom+ xpos*0.75- width/2,ystart+ypos*0.75-height/2, width,    height))
-            #    quartile3.setBrush(QtGui.QBrush(self.measurementLocation.MEDITIONS[self.measurementLocation.QUARTILE75][1]))
-            #    quartile3.setToolTip("Element:"+str(self.number) +"\nQuartile 75% Mesurement Location")
-            #    self.visual_locations.append([quartile3,True])
+            # width = (indexTo-indexFrom)/5
+            # height = (2**signal.bitDepth)/5
+            # ypos = 2**signal.bitDepth
+            # xpos = indexTo-indexFrom
+            # ystart = -2**(signal.bitDepth-1)
+            # poner tooltips
+            # if(self.measurementLocation.MEDITIONS[self.measurementLocation.START][0]):
+            #     start = QtGui.QGraphicsRectItem(QtCore.QRectF(indexFrom+ xpos*0,ystart + ypos*0,   width,    height))
+            #     start.setBrush(QtGui.QBrush(self.measurementLocation.MEDITIONS[self.measurementLocation.START][1]))
+            #     start.setToolTip("Element: "+ str(self.number) +"\nStart Mesurement Location")
+            #     self.visual_locations.append([start,True])
+            # if(self.measurementLocation.MEDITIONS[self.measurementLocation.CENTER][0]):
+            #     center = QtGui.QGraphicsRectItem(QtCore.QRectF(indexFrom+ xpos*0.5- width/2,ystart +ypos*0.5 -height/2,    width,    height))
+            #     center.setBrush(QtGui.QBrush(self.measurementLocation.MEDITIONS[self.measurementLocation.CENTER][1]))
+            #     center.setToolTip("Element:"+str(self.number) +"\nCenter Mesurement Location")
+            #     self.visual_locations.append([center,True])
+            # if(self.measurementLocation.MEDITIONS[self.measurementLocation.END][0]):
+            #     end = QtGui.QGraphicsRectItem(QtCore.QRectF(indexFrom+ xpos*1- width,ystart+ypos*1- height,    width,    height))
+            #     end.setBrush(QtGui.QBrush(self.measurementLocation.MEDITIONS[self.measurementLocation.END][1]))
+            #     end.setToolTip("Element:"+str(self.number) +"\nEnd Mesurement Location")
+            #     self.visual_locations.append([end,True])
+            # if(self.measurementLocation.MEDITIONS[self.measurementLocation.QUARTILE25][0]):
+            #     quartile1 = QtGui.QGraphicsRectItem(QtCore.QRectF(indexFrom+ xpos*0.25 -width/2,ystart+ypos*0.25 -height/2,width,    height))
+            #     quartile1.setBrush(QtGui.QBrush(self.measurementLocation.MEDITIONS[self.measurementLocation.QUARTILE25][1]))
+            #     quartile1.setToolTip("Element:"+str(self.number) +"\nQuartile 25% Mesurement Location")
+            #     self.visual_locations.append([quartile1,True])
+            # if(self.measurementLocation.MEDITIONS[self.measurementLocation.QUARTILE75][0]):
+            #     quartile3 = QtGui.QGraphicsRectItem(QtCore.QRectF(indexFrom+ xpos*0.75- width/2,ystart+ypos*0.75-height/2, width,    height))
+            #     quartile3.setBrush(QtGui.QBrush(self.measurementLocation.MEDITIONS[self.measurementLocation.QUARTILE75][1]))
+            #     quartile3.setToolTip("Element:"+str(self.number) +"\nQuartile 75% Mesurement Location")
+            #     self.visual_locations.append([quartile3,True])
         else:
             self.measurementLocation = SpectralMeasurementLocation()
 
-        #endregion
+        # endregion
 
         if specgramSettings is None:
             raise Exception("None parameter")
@@ -138,10 +137,10 @@ class OscilogramElement(OneDimensionalElement):
         self.specgramSettings = specgramSettings
 
         if self.specgramSettings.Pxx != [] and self.specgramSettings.bins != [] and self.specgramSettings.freqs != []:
-            #spec_resolution, temp_resolution = signal.samplingRate/2.0*len(freqs),bins[1]-bins[0]
+            # spec_resolution, temp_resolution = signal.samplingRate/2.0*len(freqs),bins[1]-bins[0]
             spec_resolution, temp_resolution = 1000.0/self.specgramSettings.freqs[1],(self.specgramSettings.bins[1]-self.specgramSettings.bins[0])*1000.0
 
-            #minsize came with the hz, sec of min size elements and its translated to index values in pxx for comparations
+            # minsize came with the hz, sec of min size elements and its translated to index values in pxx for comparations
             minsize_spectral = (max(1,int(minsize_spectral[0]*spec_resolution)),max(1,int(minsize_spectral[1]*temp_resolution)))
 
             sr = signal.samplingRate*1.0
@@ -178,9 +177,9 @@ class OscilogramElement(OneDimensionalElement):
         for elem in detector.elements:
             self.twoDimensionalElements.append(elem)
 
-    #region Oscilogram parameter measurement
+    # region Oscilogram parameter measurement
     def startTime(self):
-        #the start time in s
+        # the start time in s
         return round(self.indexFrom*1.0/self.signal.samplingRate,self.DECIMAL_PLACES)
 
     def endTime(self):
@@ -224,9 +223,9 @@ class OscilogramElement(OneDimensionalElement):
         s = len(self.twoDimensionalElements)
         return s-1 if s > 0 else s
 
-    #endregion
+    # endregion
 
-    #region Spectral Parameter Measurement
+    # region Spectral Parameter Measurement
     def peakFreqAverage(self):
         index = 1
         if "peak" not in self.parameters["average"]:
@@ -235,7 +234,7 @@ class OscilogramElement(OneDimensionalElement):
             self.parameters["average"]["peak"] = int(freqs[index] - freqs[index]%10)
 
         if len(self.twoDimensionalElements) > 0 and not ("peak","visual") in self.parameters["average"]:
-            ## Define positions of nodes
+            # #  Define positions of nodes
             pos = np.array([
                 [self.indexFromInPxx,index],
                 [self.indexToInPxx, index]
@@ -261,7 +260,7 @@ class OscilogramElement(OneDimensionalElement):
                 self.parameters["average"]["max"] = (maxf,maxIndex)
 
             if len(self.twoDimensionalElements) > 0 and not ("max","visual") in self.parameters["average"]:
-                ## Define visual positions of node
+                # #  Define visual positions of node
                 pos = np.array([
                     [self.indexFromInPxx,self.parameters["average"]["max"][1]],
                     [self.indexToInPxx, self.parameters["average"]["max"][1]]
@@ -284,7 +283,7 @@ class OscilogramElement(OneDimensionalElement):
                 self.parameters["average"]["min"] = (minf,minIndex)
                 self.parameters["average"]["max"] = (maxf,maxIndex)
             if len(self.twoDimensionalElements) > 0 and not ("min","visual") in self.parameters["average"]:
-                ## Define positions of nodes
+                # #  Define positions of nodes
                 pos = np.array([
                     [self.indexFromInPxx,self.parameters["average"]["min"][1]],
                     [self.indexToInPxx, self.parameters["average"]["min"][1]]
@@ -312,9 +311,9 @@ class OscilogramElement(OneDimensionalElement):
         if location == self.measurementLocation.QUARTILE75:
             return 3*size/4
 
-    #The following methods measure properties that needs aditional parameters for its calculation
-    #dict are a dictionary with the aditional data
-    #
+    # The following methods measure properties that needs aditional parameters for its calculation
+    # dict are a dictionary with the aditional data
+    # 
     def peak_f_a(self,index):
         """
         returns the peak frecuency and amplitude in db in the index location
@@ -341,7 +340,7 @@ class OscilogramElement(OneDimensionalElement):
                 self.parameters["peakFreq"][index],self.parameters["peakAmplitude"][index] = peak,peakamplitude
             return self.parameters["peakFreq"][index]
         return 0
-        # return "Invalid Params"
+        #  return "Invalid Params"
 
     def peakAmplitude(self,dictionary):
         if "location" in dictionary:
@@ -351,7 +350,7 @@ class OscilogramElement(OneDimensionalElement):
                 peak,freq_index,peakamplitude = self.peak_f_a(index)
                 self.parameters["peakFreq"][index],self.parameters["peakAmplitude"][index] = peak,peakamplitude
             return self.parameters["peakAmplitude"][index]
-        # return "Invalid Params"
+        #  return "Invalid Params"
         return 0
 
     def freq_min_max_band_peaksAbove(self,index,threshold, peaksThreshold,array=None):
@@ -392,14 +391,14 @@ class OscilogramElement(OneDimensionalElement):
                 self.parameters["peaksAbove"][(index,peakthreshold)] = peaks
 
             if len(self.twoDimensionalElements) > 0 and not (index,"visual") in self.parameters["minFreq"]:
-                ## Define positions of nodes
+                # #  Define positions of nodes
                 pos = np.array([[self.indexFromInPxx + index,self.parameters["minFreq"][(index,threshold)][1]]])
                 self.parameters["minFreq"][(index,"visual")] = True
                 self.twoDimensionalElements[0].addVisualGraph(pos,np.array([]),dict(size=min(self.parameters["maxFreq"][(index,threshold)][1]-self.parameters["minFreq"][(index,threshold)][1],2), symbol='d', pxMode=False))
 
 
             return self.parameters["minFreq"][(index,threshold)][0]
-        # return "Invalid Params"
+        #  return "Invalid Params"
         return 0
 
     def maxFreq(self,dictionary):
@@ -417,7 +416,7 @@ class OscilogramElement(OneDimensionalElement):
 
             if len(self.twoDimensionalElements) > 0 and not  (index,"visual") in self.parameters["maxFreq"]:
 
-                ## Define positions of nodes
+                # #  Define positions of nodes
                 pos = np.array([
                     [self.indexFromInPxx + index, self.parameters["maxFreq"][(index,threshold)][1]]
                 ])
@@ -426,7 +425,7 @@ class OscilogramElement(OneDimensionalElement):
 
             return self.parameters["maxFreq"][(index,threshold)][0]
 
-        # return "Invalid Params"
+        #  return "Invalid Params"
         return 0
 
     def bandwidth(self,dictionary):
@@ -443,7 +442,7 @@ class OscilogramElement(OneDimensionalElement):
                 self.parameters["peaksAbove"][(index,peakthreshold)] = peaks
 
             if len(self.twoDimensionalElements) > 0 and not (index,"visual") in self.parameters["bandwidth"]:
-                ## Define positions of nodes
+                # #  Define positions of nodes
                 pos = np.array([
                     [self.indexFromInPxx + index, self.parameters["bandwidth"][(index,threshold)][1]],
                     [self.indexFromInPxx + index, self.parameters["bandwidth"][(index,threshold)][2]]
@@ -456,7 +455,7 @@ class OscilogramElement(OneDimensionalElement):
             return self.parameters["bandwidth"][(index,threshold)][0]
 
         return 0
-        # return "Invalid Params"
+        #  return "Invalid Params"
 
     def peaksAbove(self,dictionary):
         if "location" in dictionary and "Threshold (db)" in dictionary:
@@ -469,9 +468,9 @@ class OscilogramElement(OneDimensionalElement):
                 self.parameters["bandwidth"][(index,threshold)],self.parameters["peaksAbove"][(index,peakthreshold)] = self.freq_min_max_band_peaksAbove(index,threshold,peakthreshold)
             return self.parameters["peaksAbove"][(index,peakthreshold)]
         return 0
-        # return "Invalid Params"
+        #  return "Invalid Params"
 
-    #endregion
+    # endregion
 
     def mouseClickEvent(self, event):
         """

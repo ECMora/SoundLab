@@ -614,26 +614,6 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     # endregion
 
-    # region Widget Scroll Bar
-
-    @QtCore.pyqtSlot(int, int, int)
-    def on_widget_rangeChanged(self, left, right, total):
-        self.horizontalScrollBar.blockSignals(True)
-        self.horizontalScrollBar.setValue(0)
-        self.horizontalScrollBar.setMinimum(0)
-        self.horizontalScrollBar.setMaximum(total - (right - left))
-        self.horizontalScrollBar.setValue(left)
-        self.horizontalScrollBar.setPageStep(right - left)
-        self.horizontalScrollBar.setSingleStep((right - left) / 16)
-        self.horizontalScrollBar.blockSignals(True)
-        self.horizontalScrollBar.blockSignals(False)
-
-    @QtCore.pyqtSlot(int)
-    def on_horizontalScrollBar_valueChanged(self, value):
-        self.widget.changeRange(value, value + self.horizontalScrollBar.pageStep(), emit=False)
-
-    # endregion
-
     # region Two Dimensional Graphs
 
     @pyqtSlot()
@@ -926,7 +906,6 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.actionSpectral_Numbers.setEnabled(visibility)
         self.actionSub_Elements_Peaks.setEnabled(visibility)
 
-
     # endregion
 
     # region Graphs Images
@@ -979,24 +958,24 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
     @pyqtSlot()
     def on_actionMeditions_triggered(self, name="", table=None):
         """
-        Save the meditions made by the window to the elements detectde into disc.
-        :param name:
-        :param table:
+        Save to disc the measurement made by the window to the elements detected.
+        :param name: The name of the file to save the data
+        :param table: The table with the parameter to save into excel
         :return:
         """
+        # get the file name to save the data into.
         if name != "":
             fname = name
         else:
-            if not self.widget.signal.opened():
-                return
             fname = unicode(QFileDialog.getSaveFileName(self, self.tr(u"Save meditions as excel file"),
                                                         self.widget.signalName() + ".xls", "*.xls"))
+        # save the data of table
         if fname:
+            # the excel book to save data
             wb = xlwt.Workbook()
-            a = unicode(self.tr(u"Elements Meditions"))
-            ws = wb.add_sheet(a)
+            ws = wb.add_sheet(unicode(self.tr(u"Elements Meditions")))
+
             self.writedata(ws, table)
-            # add spectral meditions
             wb.save(fname)
 
     @pyqtSlot()
@@ -1007,6 +986,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         measurement, select a folder of imput audio files and a folder for the output meditions.
         """
         thread = QtCore.QThread(self)
+
         # implementation of batch on a diferent thread to
         # keep user interaction responsive.
         class worker(QtCore.QObject):
@@ -1208,8 +1188,12 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.lineeditFilePath.setText(inputfolder)
 
     def selectOutputFolder(self):
-        outputfolder = QFileDialog.getExistingDirectory()
-        self.lineEditOutputFolder.setText(outputfolder)
+        """
+        Select a valid folder in the file system to save the batch result data.
+        :return:
+        """
+        output_folder = QFileDialog.getExistingDirectory()
+        self.lineEditOutputFolder.setText(output_folder)
 
     def writedata(self, ws, tableParameter=None):
         """
@@ -1217,7 +1201,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         :param ws:WorkSheet object from xwlt module for interacts with excell files.
         :param tableParameter: QTableWidget with the information of the data to save.
         """
-        if (tableParameter is None):
+        if tableParameter is None:
             tableParameter = self.tableParameterOscilogram
 
         # write the data of the meditions into the stylesheet of excell ws
@@ -1225,22 +1209,24 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         stylebody = xlwt.easyxf('font: name Times New Roman, color-index black, height 220', num_format_str='# ,# # 0.00')
         stylecopyrigth = xlwt.easyxf('font: name Arial, color-index pale_blue, height 250, italic on',
                                      num_format_str='# ,# # 0.00')
-        # set headers
+
+        # write headers into the document
         headers = [str(tableParameter.takeHorizontalHeaderItem(pos).text()) for pos in
                    range(tableParameter.columnCount())]
 
         for index, header in enumerate(headers):
             ws.write(0, index, header, styleheader)
 
+        # write data into the document
         for i in range(1, tableParameter.model().rowCount() + 1):
             for j in range(tableParameter.model().columnCount()):
                 if tableParameter.item(i - 1, j):
                     ws.write(i, j, str(tableParameter.item(i - 1, j).data(Qt.DisplayRole).toString()), stylebody)
                 else:
                     ws.write(i, j, unicode(self.tr(u"No Identified")), stylebody)
-        # write data
+
         # ws object must be part of a Woorkbook that would be saved later
-        ws.write(tableParameter.model().rowCount() + 3, 0, unicode(self.tr(u"Duetto Sound Lab Oscilogram Meditions")),
+        ws.write(tableParameter.model().rowCount() + 3, 0, unicode(self.tr(u"duetto-Sound Lab")),
                  stylecopyrigth)
 
     # endregion
@@ -1289,7 +1275,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
             self.widget.stop()
 
             result = mbox.exec_()
-            # get the user desition
+            # get the user decision
             if result == QtGui.QMessageBox.Cancel:
                 # cancel the close
                 event.ignore()

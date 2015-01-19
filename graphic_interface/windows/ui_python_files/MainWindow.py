@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\MainWindow.ui'
+# Form implementation generated from reading ui file 'D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\MainWindow.ui'
 #
-# Created: Sat Jan 17 21:11:16 2015
+# Created: Mon Jan 19 14:45:37 2015
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -18,7 +18,7 @@ class Ui_DuettoMainWindow(object):
     def setupUi(self, DuettoMainWindow):
         DuettoMainWindow.setObjectName(_fromUtf8("DuettoMainWindow"))
         DuettoMainWindow.setWindowModality(QtCore.Qt.ApplicationModal)
-        DuettoMainWindow.resize(805, 493)
+        DuettoMainWindow.resize(752, 493)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -62,12 +62,12 @@ class Ui_DuettoMainWindow(object):
         self.horizontalLayout.addWidget(self.noSignalOpened_lbl)
         DuettoMainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(DuettoMainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 805, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 752, 21))
         self.menubar.setAutoFillBackground(False)
         self.menubar.setStyleSheet(_fromUtf8(""))
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuFile = QtGui.QMenu(self.menubar)
-        self.menuFile.setGeometry(QtCore.QRect(17, 137, 210, 363))
+        self.menuFile.setGeometry(QtCore.QRect(119, 154, 210, 385))
         self.menuFile.setAutoFillBackground(False)
         self.menuFile.setStyleSheet(_fromUtf8(""))
         self.menuFile.setTearOffEnabled(False)
@@ -355,7 +355,11 @@ class Ui_DuettoMainWindow(object):
         self.actionBrowse.setIcon(icon2)
         self.actionBrowse.setObjectName(_fromUtf8("actionBrowse"))
         self.actionOpenInOtherTab = QtGui.QAction(DuettoMainWindow)
+        self.actionOpenInOtherTab.setIcon(icon2)
         self.actionOpenInOtherTab.setObjectName(_fromUtf8("actionOpenInOtherTab"))
+        self.actionOpen_Selection = QtGui.QAction(DuettoMainWindow)
+        self.actionOpen_Selection.setIcon(icon2)
+        self.actionOpen_Selection.setObjectName(_fromUtf8("actionOpen_Selection"))
         self.menuSave_Images.addAction(self.actionOsc_Image)
         self.menuSave_Images.addAction(self.actionSpecgram_Image)
         self.menuSave_Images.addAction(self.actionCombined_Image)
@@ -363,6 +367,7 @@ class Ui_DuettoMainWindow(object):
         self.menuFile.addAction(self.actionNew)
         self.menuFile.addAction(self.actionOpen)
         self.menuFile.addAction(self.actionBrowse)
+        self.menuFile.addAction(self.actionOpen_Selection)
         self.menuFile.addAction(self.menuRecentSignals.menuAction())
         self.menuFile.addAction(self.actionSave)
         self.menuFile.addAction(self.actionSaveAs)
@@ -555,6 +560,7 @@ class Ui_DuettoMainWindow(object):
         self.actionBrowse.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Ctrl+B", None, QtGui.QApplication.UnicodeUTF8))
         self.actionOpenInOtherTab.setText(QtGui.QApplication.translate("DuettoMainWindow", "Open In Other Tab", None, QtGui.QApplication.UnicodeUTF8))
         self.actionOpenInOtherTab.setToolTip(QtGui.QApplication.translate("DuettoMainWindow", "Open In Other Tab", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionOpen_Selection.setText(QtGui.QApplication.translate("DuettoMainWindow", "Open Selection", None, QtGui.QApplication.UnicodeUTF8))
 
 from graphic_interface.widgets.SoundLabToolBar import SoundLabToolBarWidget
 import icons_rc

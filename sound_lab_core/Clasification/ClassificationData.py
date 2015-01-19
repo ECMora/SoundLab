@@ -10,13 +10,16 @@ class ClassificationData(QObject):
     """
     #SIGNALS
 
-    #Signal raised when a new category was added.  str --> name of new category
+    # Signal raised when a new category was added.
+    # raises str --> name of new category
     categoryAdded = pyqtSignal(str)
 
-    #Signal raised when a new value was added into a category. str,str --> category,value
+    # Signal raised when a new value was added into a category.
+    # raise a tuple (str,str) --> category,value
     valueAdded = pyqtSignal(str, str)
 
-    #Signal raised when a value is removed from a category. str,str --> category,value
+    # Signal raised when a value is removed from a category.
+    # raise a tuple (str,str) --> category,value
     valueRemoved = pyqtSignal(str, str)
 
     def __init__(self,trainingData = None,categories=None):
@@ -97,8 +100,10 @@ class ClassificationData(QObject):
         if not isinstance(vector,ClassificationVector):
             raise Exception("Invalid Arguments")
         self.data.append(vector)
+
         if not vector.category in self.categories:
             self.categories[vector.category] = [vector.value]
+
         elif not vector.value in self.categories[vector.category]:
             self.categories[vector.category].append(vector.value)
 
@@ -111,6 +116,7 @@ class ClassificationVector:
         """
         if not isinstance(data,dict):
             raise Exception("Invalid Arguments")
+
         self.data = data
         self.category = category
         self.value = value
