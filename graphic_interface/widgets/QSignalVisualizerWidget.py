@@ -293,6 +293,8 @@ class QSignalVisualizerWidget(QWidget):
         """
         Start to play the current signal.
         If the signal is been playing nothing is made.
+        :raise: UnavailableAudioDeviceException if play fails because the selected
+        Audio Device is unavailable.
         """
         start, end = self.selectedRegion
         
@@ -345,6 +347,8 @@ class QSignalVisualizerWidget(QWidget):
         """
         Start to record a new signal.
         If the signal is been playing nothing is made.
+        :raise: UnavailableAudioDeviceException if play fails because the selected
+        Audio Device is unavailable.
         """
         if newSignal:
             self.signal = AudioSignal(self.signal.samplingRate,self.signal.bitDepth,self.signal.channelCount)
@@ -424,10 +428,17 @@ class QSignalVisualizerWidget(QWidget):
 
     @property
     def outputDevice(self):
+        """
+        :return: The selected output audio device to record signals
+        """
         return self.signalPlayer.outputDevice
 
     @outputDevice.setter
     def outputDevice(self, value):
+        """
+        Set the new selected output audio device to record signals
+        :param value: the new output audioDevice
+        """
         self.signalPlayer.outputDevice = value
 
     @property
@@ -515,17 +526,11 @@ class QSignalVisualizerWidget(QWidget):
         output = None
         #  update the variables that manage the signal
         #  the audio signal handler to play options
-        if self.signalPlayer is not None:
-
-            input = self.signalPlayer.inputDevice
-            output = self.signalPlayer.outputDevice
-
-            if self.signalPlayer.playStatus == self.signalPlayer.RECORDING or\
-                self.signalPlayer.playStatus == self.signalPlayer.PLAYING:
+        if self.signalPlayer is not None and (self.signalPlayer.playStatus == self.signalPlayer.RECORDING \
+          or self.signalPlayer.playStatus == self.signalPlayer.PLAYING):
                 self.stop()
 
-
-        self.signalPlayer = AudioSignalPlayer(self._signal, inputDevice=input, outputDevice=output)
+        self.signalPlayer = AudioSignalPlayer(self._signal)
         self.signalPlayer.playing.connect(self.notifyPlayingCursor)
         self.signalPlayer.playingDone.connect(self.removePlayerLine)
 

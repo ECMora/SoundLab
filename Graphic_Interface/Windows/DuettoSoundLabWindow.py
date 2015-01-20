@@ -36,6 +36,15 @@ class SoundDevicesDialog(sdDialog.Ui_Dialog,QDialog):
     the signals. (Select inpuit and output sound devices from the installed on the
     computer)
     """
+    # CONSTANTS
+    # the static dictionary that memorize the dialog
+    # element values during the application execution
+    # region dialog elements values
+
+    dialogValues = {}
+    # endregion
+
+    # region Initialize
 
     def __init__(self, input, output):
         """
@@ -50,22 +59,63 @@ class SoundDevicesDialog(sdDialog.Ui_Dialog,QDialog):
         self.outputLayout = QtGui.QGridLayout(self.grpBoxOutput)
         self.outputLayout.setObjectName("gridOutputLayout")
 
+        self.loadInputDevices(input)
+        self.loadOutputDevices(output)
 
+    def loadInputDevices(self,input):
+        """
+
+        :return:
+        """
         for index in range(len(input)):
-
             dev = input[index]
             rbutton = QtGui.QRadioButton(self.grpBoxInput)
             rbutton.setObjectName(str(index))
-            rbutton.setText(dev.name + " " + str(dev.defaultSamplingRate * 1./1000) + " kHz " + str(dev.maxChannels) + " channels." )
+            rbutton.setText(dev.name + " " + str(dev.defaultSamplingRate * 1. / 1000) + " kHz " + str(
+                dev.maxChannels) + " channels.")
             self.inputLayout.addWidget(rbutton)
 
-        for index in range(len(output)):
+    def loadOutputDevices(self,output):
+        """
 
+        :return:
+        """
+        for index in range(len(output)):
             dev = output[index]
             rbutton = QtGui.QRadioButton(self.grpBoxOutput)
             rbutton.setObjectName(str(index))
-            rbutton.setText(dev.name + " " + str(dev.defaultSamplingRate * 1./1000) + " kHz " + str(dev.maxChannels) + " channels." )
+            rbutton.setText(dev.name + " " + str(dev.defaultSamplingRate * 1. / 1000) + " kHz " + str(
+                dev.maxChannels) + " channels.")
             self.outputLayout.addWidget(rbutton)
+
+    # endregion
+
+    # region memoization of selected previous values
+
+    def load_values(self):
+        """
+        Load into the dialog elements the previously
+        or default values.
+        """
+        pass
+
+    def save_values(self):
+        """
+        Load into the dialog elements the previously
+        or default values.
+        """
+
+        pass
+
+    # endregion
+
+    @property
+    def inputDeviceIndex(self):
+        pass
+
+    @property
+    def outputDeviceIndex(self):
+        pass
 
 
 class InsertSilenceDialog(sdialog.Ui_Dialog, QDialog):
@@ -425,12 +475,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         playSpeedActionGroup.addAction(self.action8x)
         playSpeedActionGroup.triggered.connect(self.on_playSpeedChanged_triggered)
 
-        self.dHandler = None
-        try:
-            self.dHandler = DevicesHandler()
-
-        except Exception as ex:
-            print(ex.message)
 
         # close the signal of the opening
         self.tabOpenedSignals.removeTab(0)
@@ -2125,22 +2169,23 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     @pyqtSlot()
     def on_actionSound_Devices_triggered(self):
-        #TODO Set the current devices radibuttons with True value
-        # defInput = self.widget.inputDevice()
-        # defOutput = self.widget.outputDevice()
+        """
+        Open a dialog to select the audio devices for input and output
+        :return:
+        """
+        # active devices
+        input_devices = DevicesHandler.getInputDevices()
+        output_devices = DevicesHandler.getOutputDevices()
 
-        input = DevicesHandler.getInputDevices()
-        output = DevicesHandler.getOutputDevices()
+        dialog = SoundDevicesDialog(input_devices, output_devices)
 
-        dialog = SoundDevicesDialog(input,output)
         if dialog.exec_():
-            for index in range(len(input)):
-                if dialog.grpBoxInput.findChild(QtGui.QRadioButton, str(index)).isChecked():
-                    self.widget.inputDevice = input[index]
-                    break
-            for index in range(len(output)):
+            self.widget.inputDevice = input_devices[dialog.inputDeviceIndex]
+
+
+            for index in range(len(output_devices)):
                 if dialog.grpBoxOutput.findChild(QtGui.QRadioButton, str(index)).isChecked():
-                    self.widget.outputDevice = output[index]
+                    self.widget.outputDevice = output_devices[index]
                     break
 
     @pyqtSlot()
