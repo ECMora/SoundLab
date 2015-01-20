@@ -68,9 +68,9 @@ Complexity-2: Small-to-medium code changes
 
 * (Hiram) Add margins to the widgets for best visualization (API)
 * (Hiram) Fix histogram bug when the histogram line values are not visible (API)
-* (Hiram) Set fixed the histogram x axis (API)
-* (Hiram) Set labels into the histogram minimum and maximum thresholds (API)
-* (Hiram) Check spectrogram coordinate calculation
++ (Hiram) Set fixed the histogram x axis (API)
++ (Hiram) Set labels into the histogram minimum and maximum thresholds (API)
++ (Hiram) Check spectrogram coordinate calculation
 - (Hiram) Remove labels on axes (Ampl)
 
 

@@ -2,7 +2,6 @@
 import os
 import pickle
 from duetto.audio_signals import AudioSignal, openSignal
-from duetto.sound_devices.Device import Device
 from duetto.sound_devices.DevicesHandler import DevicesHandler
 from PyQt4 import QtGui,QtCore
 from duetto.audio_signals.Synthesizer import Synthesizer
@@ -41,54 +40,35 @@ class SoundDevicesDialog(sdDialog.Ui_Dialog,QDialog):
     # element values during the application execution
     # region dialog elements values
 
-    dialogValues = {}
+    dialogValues = {'input_selected_index':0,
+                    'output_selected_index':0}
     # endregion
 
-    # region Initialize
-
-    def __init__(self, input, output):
+    def __init__(self):
         """
         Initialize the dialogs elements with their last value
         """
         QDialog.__init__(self)
         self.setupUi(self)
 
-        self.inputLayout = QtGui.QGridLayout(self.grpBoxInput)
-        self.inputLayout.setObjectName("gridInputLayout")
+        # active devices
+        self.input_devices = DevicesHandler.getInputDevices()
+        self.output_devices = DevicesHandler.getOutputDevices()
 
-        self.outputLayout = QtGui.QGridLayout(self.grpBoxOutput)
-        self.outputLayout.setObjectName("gridOutputLayout")
+        self.inputDevice_cbox.currentIndexChanged.connect(
+            lambda i: self.inputDevice_lbl.setText(self.inputDevice_cbox.itemText(i)))
 
-        self.loadInputDevices(input)
-        self.loadOutputDevices(output)
+        self.outputDevice_cbox.currentIndexChanged.connect(
+            lambda j: self.outputDevice_lbl.setText(self.outputDevice_cbox.itemText(j)))
 
-    def loadInputDevices(self,input):
-        """
+        for index, device in enumerate(self.input_devices):
+            self.inputDevice_cbox.addItem(unicode(device))
 
-        :return:
-        """
-        for index in range(len(input)):
-            dev = input[index]
-            rbutton = QtGui.QRadioButton(self.grpBoxInput)
-            rbutton.setObjectName(str(index))
-            rbutton.setText(dev.name + " " + str(dev.defaultSamplingRate * 1. / 1000) + " kHz " + str(
-                dev.maxChannels) + " channels.")
-            self.inputLayout.addWidget(rbutton)
+        for index, device in enumerate(self.output_devices):
+            self.outputDevice_cbox.addItem(unicode(device))
 
-    def loadOutputDevices(self,output):
-        """
-
-        :return:
-        """
-        for index in range(len(output)):
-            dev = output[index]
-            rbutton = QtGui.QRadioButton(self.grpBoxOutput)
-            rbutton.setObjectName(str(index))
-            rbutton.setText(dev.name + " " + str(dev.defaultSamplingRate * 1. / 1000) + " kHz " + str(
-                dev.maxChannels) + " channels.")
-            self.outputLayout.addWidget(rbutton)
-
-    # endregion
+        self.load_values()
+        self.btonaceptar.clicked.connect(self.save_values)
 
     # region memoization of selected previous values
 
@@ -97,25 +77,32 @@ class SoundDevicesDialog(sdDialog.Ui_Dialog,QDialog):
         Load into the dialog elements the previously
         or default values.
         """
-        pass
+        if self.inputDevice_cbox.count() > 0:
+            self.inputDevice_cbox.setCurrentIndex(self.dialogValues['input_selected_index'])
+
+        if self.outputDevice_cbox.count() > 0:
+            self.outputDevice_cbox.setCurrentIndex(self.dialogValues['output_selected_index'])
 
     def save_values(self):
         """
         Load into the dialog elements the previously
         or default values.
         """
+        if self.inputDevice_cbox.count() > 0:
+            self.dialogValues['input_selected_index'] = self.inputDevice_cbox.currentIndex()
 
-        pass
+        if self.outputDevice_cbox.count() > 0:
+            self.dialogValues['output_selected_index'] = self.outputDevice_cbox.currentIndex()
 
     # endregion
 
     @property
-    def inputDeviceIndex(self):
-        pass
+    def inputDevice(self):
+        return self.input_devices[self.inputDevice_cbox.currentIndex()]
 
     @property
-    def outputDeviceIndex(self):
-        pass
+    def outputDevice(self):
+        return self.output_devices[self.outputDevice_cbox.currentIndex()]
 
 
 class InsertSilenceDialog(sdialog.Ui_Dialog, QDialog):
@@ -2173,24 +2160,35 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         Open a dialog to select the audio devices for input and output
         :return:
         """
-        # active devices
-        input_devices = DevicesHandler.getInputDevices()
-        output_devices = DevicesHandler.getOutputDevices()
-
-        dialog = SoundDevicesDialog(input_devices, output_devices)
+        dialog = SoundDevicesDialog()
 
         if dialog.exec_():
-            self.widget.inputDevice = input_devices[dialog.inputDeviceIndex]
+            error_message = u""
+            try:
+                self.widget.inputDevice = dialog.inputDevice
 
+            except Exception as input_ex:
+                error_message += u"There is no selected audio input device or the selected is unavailable" +"\n"
 
-            for index in range(len(output_devices)):
-                if dialog.grpBoxOutput.findChild(QtGui.QRadioButton, str(index)).isChecked():
-                    self.widget.outputDevice = output_devices[index]
-                    break
+            try:
+                self.widget.outputDevice = dialog.outputDevice
+
+            except Exception as output_ex:
+                error_message += u"There is no selected audio output device or the selected is unavailable"
+
+            if len(error_message) > 0:
+                QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
+                                      self.tr(error_message))
 
     @pyqtSlot()
     def on_actionPlay_Sound_triggered(self):
-        self.widget.play()
+        try:
+            self.widget.play()
+
+        except Exception as ex:
+            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
+                                      self.tr(u"There is no selected audio input "
+                                              u"device or the selected is unavailable"))
 
     @pyqtSlot()
     def on_actionStop_Sound_triggered(self):
@@ -2198,7 +2196,14 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     @pyqtSlot()
     def on_actionRecord_triggered(self):
-        self.widget.record()
+        try:
+            self.widget.record()
+
+        except Exception as ex:
+            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
+                                      self.tr(u"There is no selected audio output "
+                                              u"device or the selected is unavailable"))
+
 
     @pyqtSlot()
     def on_actionPause_Sound_triggered(self):
