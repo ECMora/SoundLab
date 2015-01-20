@@ -289,15 +289,15 @@ class QSignalVisualizerWidget(QWidget):
 
     #  region Sound
     #  manages the reproduction of the signal
-    def play(self, device=None):
+    def play(self):
         """
         Start to play the current signal.
         If the signal is been playing nothing is made.
         """
         start, end = self.selectedRegion
-
+        
         self.addPlayerLine(start, end)
-        self.signalPlayer.play(self.signal, start, end, self.playSpeed, device=device)
+        self.signalPlayer.play(start, end, self.playSpeed)
 
     def switchPlayStatus(self):
         """
@@ -341,7 +341,7 @@ class QSignalVisualizerWidget(QWidget):
             #  draw the current recorded interval
             self.axesOscilogram.graph(self.mainCursor.min)
 
-    def record(self, newSignal=True, device=None):
+    def record(self, newSignal=True):
         """
         Start to record a new signal.
         If the signal is been playing nothing is made.
@@ -352,7 +352,7 @@ class QSignalVisualizerWidget(QWidget):
         #   case of any IO device exception occurs then
         #  we just stop recording immediately.
         try:
-            self.signalPlayer.record(self.signal,device=device)
+            self.signalPlayer.record()
         except:
              self.stop()
 
@@ -421,6 +421,23 @@ class QSignalVisualizerWidget(QWidget):
     #  endregion
 
     #  region Properties
+
+    @property
+    def outputDevice(self):
+        return self.signalPlayer.outputDevice
+
+    @outputDevice.setter
+    def outputDevice(self, value):
+        self.signalPlayer.outputDevice = value
+
+    @property
+    def inputDevice(self):
+        return self.signalPlayer.inputDevice
+
+    @inputDevice.setter
+    def inputDevice(self, value):
+        self.signalPlayer.inputDevice = value
+
     @property
     def selectedTool(self):
         """
@@ -494,13 +511,24 @@ class QSignalVisualizerWidget(QWidget):
         # update the zoom regions limit sif zoom tool is selected
         self.updateZoomRegionsLimits()
 
+        input = None
+        output = None
         #  update the variables that manage the signal
         #  the audio signal handler to play options
-        if self.signalPlayer is not None and \
-           (self.signalPlayer.playStatus == self.signalPlayer.RECORDING or
-            self.signalPlayer.playStatus == self.signalPlayer.PLAYING):
+        if self.signalPlayer is not None:
 
-            self.stop()
+            input = self.signalPlayer.inputDevice
+            output = self.signalPlayer.outputDevice
+
+            if self.signalPlayer.playStatus == self.signalPlayer.RECORDING or\
+                self.signalPlayer.playStatus == self.signalPlayer.PLAYING:
+                self.stop()
+
+
+        self.signalPlayer = AudioSignalPlayer(self._signal, inputDevice=input, outputDevice=output)
+        self.signalPlayer.playing.connect(self.notifyPlayingCursor)
+        self.signalPlayer.playingDone.connect(self.removePlayerLine)
+
 
         #  the edition object that manages cut and paste options
         self.editionSignalProcessor = EditionSignalProcessor(self._signal)
