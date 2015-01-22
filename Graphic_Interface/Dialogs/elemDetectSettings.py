@@ -7,7 +7,7 @@ from PyQt4.QtGui import QDialog
 from pyqtgraph.parametertree import ParameterTree
 
 from sound_lab_core.Segmentation.Detectors.OneDimensional.OneDimensionalElementsDetector import DetectionSettings, DetectionType,AutomaticThresholdType
-from graphic_interface.dialogs.ui_elemDetectSettings import Ui_Dialog
+from graphic_interface.windows.ui_python_files.ui_elemDetectSettings import Ui_Dialog
 
 
 class ElemDetectSettingsDialog(QDialog, Ui_Dialog):

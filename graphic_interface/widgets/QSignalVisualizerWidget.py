@@ -323,6 +323,8 @@ class QSignalVisualizerWidget(QWidget):
         #  if the previous status was RECORDING then we have
         #  to stop the timer and draw the new signal on both controls.
         if prevStatus == self.signalPlayer.RECORDING:
+            self.axesSpecgram.setRecordMode(False)
+
             self._recordTimer.stop()
             self.visibleOscilogram = True
             self.visibleSpectrogram = True
@@ -357,10 +359,15 @@ class QSignalVisualizerWidget(QWidget):
         #  we just stop recording immediately.
         try:
             self.signalPlayer.record()
-        except:
-             self.stop()
+            self.axesSpecgram.setRecordMode(True)
+        except Exception as ex:
+            self.stop()
+            self.signal = Synthesizer.generateSilence(samplingRate=self.signal.samplingRate,
+                                                       bitDepth=self.signal.bitDepth,duration=1)
+            self.graph()
+            raise ex
 
-        #  set only the oscillogram vsible while recording
+        #  set only the oscillogram visible while recording
         self.visibleOscilogram = True
         self.visibleSpectrogram = False
 
@@ -369,7 +376,7 @@ class QSignalVisualizerWidget(QWidget):
 
         #  starting the update record timer
         self._recordTimer.start(updateTime)
-        #  self.createPlayerLine(self.mainCursor.min)
+        #  self.createPlayerLine(self.mainCursor.minThresholdLa  bel)
 
     def pause(self):
         """
@@ -465,6 +472,14 @@ class QSignalVisualizerWidget(QWidget):
         :return:
         """
         return self.__signalFilePath
+
+    @signalFilePath.setter
+    def signalFilePath(self, value):
+        """
+        Set the signal file path to save and read the signals from files.
+        :return:
+        """
+        self.__signalFilePath = value
 
     @property
     def visibleOscilogram(self):
@@ -568,12 +583,21 @@ class QSignalVisualizerWidget(QWidget):
                 #  get the start of the region
                 index_from = zoom_region[0]
 
-                #  set the max limit if the region borders are different
+                #  set the maxThresholdLabel limit if the region borders are different
                 if zoom_region[1] > zoom_region[0]:
                      index_to = zoom_region[1]
 
         return int(index_from), int(index_to)
 
+    @property
+    def histogram(self):
+        """
+        Histogram widget with the values of the spectrogram image.
+        interacts with the spectrogram image graph to change its color,
+        threshold etc.
+        :return:
+        """
+        return self.axesSpecgram.histogram
     #  endregion
 
     #  region Zoom in,out, none
@@ -602,13 +626,13 @@ class QSignalVisualizerWidget(QWidget):
         """
         interval_size_added = (self.mainCursor.max - self.mainCursor.min) / self.ZOOM_STEP
 
-        # update the max interval limit
+        # update the maxThresholdLabel interval limit
         if (self.mainCursor.max + interval_size_added) < len(self.signal):
             self.mainCursor.max += interval_size_added
         else:
             self.mainCursor.max = len(self.signal)
 
-        #  update the min interval limit
+        #  update the minThresholdLabel interval limit
         if self.mainCursor.min - interval_size_added >= 0:
             self.mainCursor.min -= interval_size_added
         else:

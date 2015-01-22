@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\SoundDevicesDialog.ui'
+# Form implementation generated from reading ui file 'D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\SoundDevicesDialog.ui'
 #
-# Created: Tue Jan 20 21:37:57 2015
+# Created: Thu Jan 22 11:34:35 2015
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -65,7 +65,7 @@ class Ui_Dialog(object):
         self.btonaceptar.setText(QtGui.QApplication.translate("Dialog", "Aceptar", None, QtGui.QApplication.UnicodeUTF8))
         self.btoncancelar.setText(QtGui.QApplication.translate("Dialog", "Cancelar", None, QtGui.QApplication.UnicodeUTF8))
         self.grpBoxInput.setTitle(QtGui.QApplication.translate("Dialog", "Input", None, QtGui.QApplication.UnicodeUTF8))
-        self.inputDevice_lbl.setText(QtGui.QApplication.translate("Dialog", "TextLabel", None, QtGui.QApplication.UnicodeUTF8))
+        self.inputDevice_lbl.setText(QtGui.QApplication.translate("Dialog", "No input audio device selected.", None, QtGui.QApplication.UnicodeUTF8))
         self.grpBoxOutput.setTitle(QtGui.QApplication.translate("Dialog", "Output", None, QtGui.QApplication.UnicodeUTF8))
-        self.outputDevice_lbl.setText(QtGui.QApplication.translate("Dialog", "TextLabel", None, QtGui.QApplication.UnicodeUTF8))
+        self.outputDevice_lbl.setText(QtGui.QApplication.translate("Dialog", "No output audio device selected.", None, QtGui.QApplication.UnicodeUTF8))
 

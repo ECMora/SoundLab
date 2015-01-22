@@ -1,300 +1,34 @@
 #  -*- coding: utf-8 -*-
 import os
 import pickle
+
+from PyQt4 import QtGui, QtCore
+from pyqtgraph.parametertree.parameterTypes import ListParameter
+from pyqtgraph.parametertree import Parameter, ParameterTree
+from PyQt4.QtGui import QMessageBox, QFileDialog, QActionGroup, QAction
+from PyQt4.QtCore import pyqtSlot, QMimeData, pyqtSignal
+
 from duetto.audio_signals import AudioSignal, openSignal
-from duetto.sound_devices.DevicesHandler import DevicesHandler
-from PyQt4 import QtGui,QtCore
 from duetto.audio_signals.Synthesizer import Synthesizer
 from duetto.signal_processing.filter_signal_processors.frequency_domain_filters import BandPassFilter, HighPassFilter, \
     BandStopFilter, LowPassFilter
-from pyqtgraph.parametertree.parameterTypes import ListParameter
-from pyqtgraph.parametertree import Parameter, ParameterTree
-from PyQt4.QtGui import QDialog, QMessageBox, QFileDialog, QActionGroup, QAction
-from PyQt4.QtCore import pyqtSlot, QMimeData, pyqtSignal, QTimer
 from duetto.dimensional_transformations.two_dimensional_transforms.Spectrogram.WindowFunctions import WindowFunction
 from Utils.Utils import folderFiles, saveImage, DECIMAL_PLACES
 from graphic_interface.widgets.QSignalVisualizerWidget import QSignalVisualizerWidget
 from graphic_interface.Settings.WorkTheme import WorkTheme
 from graphic_interface.Settings.Workspace import Workspace
 from graphic_interface.windows.ParameterList import DuettoListParameterItem
-
-from graphic_interface.dialogs.NewFileDialog import NewFileDialog
 from graphic_interface.windows.OneDimensionalAnalysisWindow import OneDimensionalAnalysisWindow
 from SegmentationAndClasificationWindow import SegmentationAndClasificationWindow
 from ui_python_files.MainWindow import Ui_DuettoMainWindow
-from graphic_interface.dialogs import InsertSilenceDialog as sdialog, FilterOptionsDialog as filterdg, \
-    ChangeVolumeDialog as cvdialog, SoundDevicesDialog as sdDialog
+from graphic_interface.dialogs import *
 from sound_lab_core.Clasification.ClassificationData import ClassificationData
 from graphic_interface.widgets.signal_visualizer_tools.SignalVisualizerTool import Tools
 from BrowseFilesWindow import BrowseFilesWindow
 
 
-class SoundDevicesDialog(sdDialog.Ui_Dialog,QDialog):
-    """
-    Dialog that allow to select the sound device to play and record
-    the signals. (Select inpuit and output sound devices from the installed on the
-    computer)
-    """
-    # CONSTANTS
-    # the static dictionary that memorize the dialog
-    # element values during the application execution
-    # region dialog elements values
-
-    dialogValues = {'input_selected_index':0,
-                    'output_selected_index':0}
-    # endregion
-
-    def __init__(self):
-        """
-        Initialize the dialogs elements with their last value
-        """
-        QDialog.__init__(self)
-        self.setupUi(self)
-
-        # active devices
-        self.input_devices = DevicesHandler.getInputDevices()
-        self.output_devices = DevicesHandler.getOutputDevices()
-
-        self.inputDevice_cbox.currentIndexChanged.connect(
-            lambda i: self.inputDevice_lbl.setText(self.inputDevice_cbox.itemText(i)))
-
-        self.outputDevice_cbox.currentIndexChanged.connect(
-            lambda j: self.outputDevice_lbl.setText(self.outputDevice_cbox.itemText(j)))
-
-        for index, device in enumerate(self.input_devices):
-            self.inputDevice_cbox.addItem(unicode(device))
-
-        for index, device in enumerate(self.output_devices):
-            self.outputDevice_cbox.addItem(unicode(device))
-
-        self.load_values()
-        self.btonaceptar.clicked.connect(self.save_values)
-
-    # region memoization of selected previous values
-
-    def load_values(self):
-        """
-        Load into the dialog elements the previously
-        or default values.
-        """
-        if self.inputDevice_cbox.count() > 0:
-            self.inputDevice_cbox.setCurrentIndex(self.dialogValues['input_selected_index'])
-
-        if self.outputDevice_cbox.count() > 0:
-            self.outputDevice_cbox.setCurrentIndex(self.dialogValues['output_selected_index'])
-
-    def save_values(self):
-        """
-        Load into the dialog elements the previously
-        or default values.
-        """
-        if self.inputDevice_cbox.count() > 0:
-            self.dialogValues['input_selected_index'] = self.inputDevice_cbox.currentIndex()
-
-        if self.outputDevice_cbox.count() > 0:
-            self.dialogValues['output_selected_index'] = self.outputDevice_cbox.currentIndex()
-
-    # endregion
-
-    @property
-    def inputDevice(self):
-        return self.input_devices[self.inputDevice_cbox.currentIndex()]
-
-    @property
-    def outputDevice(self):
-        return self.output_devices[self.outputDevice_cbox.currentIndex()]
-
-
-class InsertSilenceDialog(sdialog.Ui_Dialog, QDialog):
-    """
-    Dialog to select a duration for a signal insertion.
-    """
-
-    # CONSTANTS
-    # the static dictionary that memorize the dialog
-    # element values during the application execution
-    # region dialog elements values
-
-    dialogValues = {
-        "insertSpinBox": 5000
-    }
-    # endregion
-
-    def __init__(self):
-        """
-        Initialize the dialogs elements with their last value
-        """
-        QDialog.__init__(self)
-        self.setupUi(self)
-
-        # load the previous selected values for the dialog or the defaults ones
-        self.load_values()
-        self.btonaceptar.clicked.connect(self.save_values)
-
-    def load_values(self):
-        """
-        Load into the dialog elements the previously
-        or default values.
-        """
-
-        # set the values of the selected filter type on radio buttons
-        self.insertSpinBox.setValue(self.dialogValues["insertSpinBox"])
-
-    def save_values(self):
-        """
-        Load into the dialog elements the previously
-        or default values.
-        """
-
-        # set the values of the selected amplitude modulation type on radio buttons
-        self.dialogValues["insertSpinBox"] = self.insertSpinBox.value()
-
-
-class ChangeVolumeDialog(cvdialog.Ui_Dialog, QDialog):
-    """
-    Dialog to select a time-amplitude modulation.
-    """
-
-    # CONSTANTS
-    # the static dictionary that memorize the dialog
-    # element values during the application execution
-
-    # region dialog elements values
-
-    dialogValues = {
-        "rbuttonConst": True,
-        "rbuttonFadeIn": False,
-        "rbuttonFadeOut": False,
-        "rbuttonNormalize": False,
-        "spinboxConstValue": 1.00,
-        "spinboxNormalizePercent": 50.00,
-        "cboxModulationType": 0
-    }
-    # endregion
-
-    def __init__(self):
-        """
-        Initialize the dialogs elements with their last value
-        """
-        QDialog.__init__(self)
-        self.setupUi(self)
-
-        # load the previous selected values for the dialog or the defaults ones
-        self.load_values()
-        self.buttonBox.accepted.connect(self.save_values)
-
-    def load_values(self):
-        """
-        Load into the dialog elements the previously
-        or default values.
-        """
-
-        # set the values of the selected filter type on radio buttons
-        self.rbuttonConst.setChecked(self.dialogValues["rbuttonConst"])
-        self.rbuttonFadeIn.setChecked(self.dialogValues["rbuttonFadeIn"])
-        self.rbuttonFadeOut.setChecked(self.dialogValues["rbuttonFadeOut"])
-        self.rbuttonNormalize.setChecked(self.dialogValues["rbuttonNormalize"])
-
-        # set the values of every spin box with the previous or default selection
-        self.spinboxConstValue.setValue(self.dialogValues["spinboxConstValue"])
-        self.spinboxNormalizePercent.setValue(self.dialogValues["spinboxNormalizePercent"])
-        self.cboxModulationType.setCurrentIndex(self.dialogValues["cboxModulationType"])
-
-    def save_values(self):
-        """
-        Load into the dialog elements the previously
-        or default values.
-        """
-
-        # set the values of the selected amplitude modulation type on radio buttons
-        self.dialogValues["rbuttonConst"] = self.rbuttonConst.isChecked()
-        self.dialogValues["rbuttonFadeIn"] = self.rbuttonFadeIn.isChecked()
-        self.dialogValues["rbuttonFadeOut"] = self.rbuttonFadeOut.isChecked()
-        self.dialogValues["rbuttonNormalize"] = self.rbuttonNormalize.isChecked()
-
-        # set the values of the selected amplitude modulation
-        self.dialogValues["spinboxConstValue"] = self.spinboxConstValue.value()
-        self.dialogValues["spinboxNormalizePercent"] = self.spinboxNormalizePercent.value()
-        self.dialogValues["cboxModulationType"] = self.cboxModulationType.currentIndex()
-
-
-class FilterDialog(filterdg.Ui_Dialog, QDialog):
-    """
-    Dialog to select a filter.
-    """
-
-    # CONSTANTS
-    # the static dictionary that memorize the dialog
-    # element values during the application execution
-
-    # region dialog elements values
-    dialogValues = {
-        "rButtonLowPass": True,
-        "rButtonHighPass": False,
-        "rButtonBandPass": False,
-        "rButtonBandStop": False,
-        "spinBoxLowPass": 0.00,
-        "spinBoxHighPass": 0.00,
-        "spinBoxBandStopFu": 0.00,
-        "spinBoxBandStopFl": 0.00,
-        "spinBoxBandPassFl": 0.00,
-        "spinBoxBandPassFu": 0.00
-    }
-    # endregion
-
-    def __init__(self):
-        """
-        Initialize the dialogs elements with their last value
-        """
-        QDialog.__init__(self)
-        self.setupUi(self)
-
-        # load the previous selected values for the dialog or the defaults ones
-        self.load_values()
-        self.btonaceptar.clicked.connect(self.save_values)
-
-    def load_values(self):
-        """
-        Load into the dialog elements the previously
-        or default values.
-        """
-
-        # set the values of the selected filter type on radio buttons
-        self.rButtonLowPass.setChecked(self.dialogValues["rButtonLowPass"])
-        self.rButtonHighPass.setChecked(self.dialogValues["rButtonHighPass"])
-        self.rButtonBandStop.setChecked(self.dialogValues["rButtonBandStop"])
-        self.rButtonBandPass.setChecked(self.dialogValues["rButtonBandPass"])
-
-        # set the values of every spin box with the kHz of frequency selection
-        self.spinBoxLowPass.setValue(self.dialogValues["spinBoxLowPass"])
-        self.spinBoxHighPass.setValue(self.dialogValues["spinBoxHighPass"])
-        self.spinBoxBandStopFu.setValue(self.dialogValues["spinBoxBandStopFu"])
-        self.spinBoxBandStopFl.setValue(self.dialogValues["spinBoxBandStopFl"])
-        self.spinBoxBandPassFl.setValue(self.dialogValues["spinBoxBandPassFl"])
-        self.spinBoxBandPassFu.setValue(self.dialogValues["spinBoxBandPassFu"])
-
-    def save_values(self):
-        """
-        Load into the dialog elements the previously
-        or default values.
-        """
-
-        # save the values of the selected filter type on radio buttons
-        self.dialogValues["rButtonLowPass"] = self.rButtonLowPass.isChecked()
-        self.dialogValues["rButtonHighPass"] = self.rButtonHighPass.isChecked()
-        self.dialogValues["rButtonBandStop"] = self.rButtonBandStop.isChecked()
-        self.dialogValues["rButtonBandPass"] = self.rButtonBandPass.isChecked()
-
-        # save the values of the spin box with the frequencies
-        self.dialogValues["spinBoxLowPass"] = self.spinBoxLowPass.value()
-        self.dialogValues["spinBoxHighPass"] = self.spinBoxHighPass.value()
-        self.dialogValues["spinBoxBandStopFu"] = self.spinBoxBandStopFu.value()
-        self.dialogValues["spinBoxBandStopFl"] = self.spinBoxBandStopFl.value()
-        self.dialogValues["spinBoxBandPassFl"] = self.spinBoxBandPassFl.value()
-        self.dialogValues["spinBoxBandPassFu"] = self.spinBoxBandPassFu.value()
-
-
 class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
+
     """
     Main window of the application.
     """
@@ -318,14 +52,15 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     MIN_SAMPLING_RATE = 1000
     MAX_SAMPLING_RATE = 2000000
 
-    # the max duration of signal that is possible to process
+    # the maxThresholdLabel duration of signal that is possible to process
     # with the segmentation and classification window (in seconds)
     MAX_SIGNAL_DURATION_ALLOWED = 60
 
     #  Width and height of the dock window of visual options
     SETTINGS_WINDOW_WIDTH = 340
     SETTINGS_WINDOW_HEIGHT = 100
-
+    # name of the file with the workspace information on folder Utils
+    WORK_SPACE_FILE_NAME = "soundlab.ini"
     #
     DECIMAL_PLACES = 2
 
@@ -344,19 +79,21 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         # the recent files list contains the latest ones in the end (it should
         # probably be reversed for display)
-        self._appSettings = {'Workspace': Workspace(), 'RecentFiles': []}
         
         #  theme for the visual options
-        theme_path = os.path.join("Utils", "Themes", "default.dth")
+        workspace_path = os.path.join("Utils",self.WORK_SPACE_FILE_NAME)
 
         try:
-            self._appSettings['Workspace'].workTheme = self.deSerializeTheme(theme_path)
+            self.workSpace = self.deSerialize(workspace_path)
+            if not isinstance(self.workSpace, Workspace):
+                raise Exception()
 
         except Exception as e:
-            self._appSettings['Workspace'].workTheme = WorkTheme()
-            QMessageBox.warning(self, 'Error loading theme',
-                                'An error occurred while loading the theme. A default theme will be loaded instead.\n' +
-                                'Error: ' + str(e))
+            self.workSpace = Workspace()
+            QMessageBox.warning(self, self.tr(u'Error loading theme'),
+            self.tr(u'An error occurred while loading the theme. A default theme will be loaded instead.'))
+
+        self.loadRecentFiles()
 
         # the list with all the actions that are depending
         # of at least one open signal. Are disabled if there is no open signal
@@ -366,8 +103,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.signalNameLineEdit = QtGui.QLineEdit(self)
         self.signalNameLineEdit.textChanged.connect(lambda text: self.signalNameChanged(text))
         self.signalNameLineEdit.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum))
-
-        self.addSignalTab(Synthesizer.generateSilence(duration=1))
 
         # some initial state configurations
         self.configureSignalsTab()
@@ -383,28 +118,8 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         # get all the languages translations that are in the static folder for languagues ("I18n\")
         app_languagues = folderFiles("I18n", extensions=[".qm"])
 
-        #  get the histogram object of the spectrogram widget.
-        #  this histogram would be visualized outside the spectrogram widget for best
-        #  user interaction
-        self.hist = self.widget.axesSpecgram.histogram
-        self.hist.setFixedWidth(self.SETTINGS_WINDOW_WIDTH)
-        self.hist.setFixedHeight(self.SETTINGS_WINDOW_HEIGHT)
-        self.hist.item.gradient.restoreState(self.workTheme.spectrogramTheme.colorBarState)
-        self.hist.item.region.setRegion(self.workTheme.spectrogramTheme.histRange)
-        self.hist.item.region.sigRegionChanged.connect(self.updateRegionTheme)
-        self.hist.item.gradient.sigGradientChanged.connect(self.histogramGradientChanged)
-
-        #  the path to the last opened file signal used to
-        #  give higher user friendly interaction on file search
-        self.last_opened_signal_path = ''
-
-        #  get the status bar to show messages to the user
-        self.statusbar = self.statusBar()
-        self.statusbar.setSizeGripEnabled(False)
-        self.statusbar.showMessage(self.tr(u"Welcome to duetto-Sound Lab"), 5000)
-
-        #  user interface to manipulate several visual parameters
-        #  and display options of the application theme.
+        # user interface to manipulate several visual parameters
+        # and display options of the application theme.
         #  Is used a parameter tree to present to the user the visual options
 
         #  region Parameter Tree definition
@@ -422,15 +137,28 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         #  endregion
 
+        self.addSignalTab(Synthesizer.generateSilence(duration=1))
+
+        #  get the histogram object of the spectrogram widget.
+        #  this histogram would be visualized outside the spectrogram widget for best
+        #  user interaction
+        self.updateHistogram()
+
+        #  the path to the last opened file signal used to
+        #  give higher user friendly interaction on file search
+        self.last_opened_signal_path = ''
+
+        #  get the status bar to show messages to the user
+        self.statusbar = self.statusBar()
+        self.statusbar.setSizeGripEnabled(False)
+        self.statusbar.showMessage(self.tr(u"Welcome to duetto-Sound Lab"), 5000)
+
         #  set the vertical layout of the visual options window with the
         #  param tree and the histogram color bar
         layout = QtGui.QVBoxLayout()
         layout.setMargin(0)
         layout.addWidget(parameterTree)
         layout.addWidget(self.hist)
-
-        self.hist.item.gradient.restoreState(self.workTheme.spectrogramTheme.colorBarState)
-        self.hist.item.region.setRegion(self.workTheme.spectrogramTheme.histRange)
 
         self.osc_settings_contents.setLayout(layout)
         self.dock_settings.setVisible(False)
@@ -451,30 +179,38 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         #  accept drops to open signals by drop
         self.setAcceptDrops(True)
 
-        #  set the action group to change the play speed of the opened signal
-        playSpeedActionGroup = QActionGroup(self)
-        playSpeedActionGroup.addAction(self.action1_8x)
-        playSpeedActionGroup.addAction(self.action1_4x)
-        playSpeedActionGroup.addAction(self.action1_2x)
-        playSpeedActionGroup.addAction(self.action1x)
-        playSpeedActionGroup.addAction(self.action2x)
-        playSpeedActionGroup.addAction(self.action4x)
-        playSpeedActionGroup.addAction(self.action8x)
-        playSpeedActionGroup.triggered.connect(self.on_playSpeedChanged_triggered)
-
-
         # close the signal of the opening
         self.tabOpenedSignals.removeTab(0)
 
         # set the values for start with no opened signals
         self.setNoSignalsOpenState(signals_open=False)
 
+        # if previous files open then ask to open
+        if len(self.workSpace.openedFiles) > 0:
+            buttons_box = QtGui.QMessageBox.Yes | QtGui.QMessageBox.No
+            mbox = QtGui.QMessageBox(QtGui.QMessageBox.Question, self.tr(u"soundLab"),
+                                     self.tr(u"Do you want to open the last opened files?"),
+                                     buttons_box, self)
+            result = mbox.exec_()
+
+            if result == QtGui.QMessageBox.Yes:
+                for file_path in self.workSpace.openedFiles:
+                    self._open(file_path)
+            else:
+                self.workSpace.clearOpenedFiles()
+
+        # update the app options from workspace
+        # language, style and tabs
+        self.languageChanged.emit(self.workSpace.language)
+        self.styleChanged.emit(self.workSpace.style)
+        self.tabOpenedSignals.setTabPosition(int(self.workSpace.tabPosition))
+        self.tabOpenedSignals.setTabShape(int(self.workSpace.tabShape))
+
         # open a signal if any
         if signal_path != '':
             self._open(unicode(signal_path))
 
         self.showMaximized()
-        self.on_load_first_time()
 
     def setNoSignalsOpenState(self, signals_open):
         """
@@ -539,21 +275,21 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 ]},
 
                 {u'name': unicode(self.tr(u'Grid')), u'type': u'group', u'children': [
-                    {u'name': u'X', u'type': u'bool', u'default': self._appSettings['Workspace'].workTheme.oscillogramTheme.gridX,
-                     u'value': self._appSettings['Workspace'].workTheme.oscillogramTheme.gridX},
-                    {u'name': u'Y', u'type': u'bool', u'default': self._appSettings['Workspace'].workTheme.oscillogramTheme.gridY,
-                     u'value': self._appSettings['Workspace'].workTheme.oscillogramTheme.gridY},
+                    {u'name': u'X', u'type': u'bool', u'default': self.workSpace.workTheme.oscillogramTheme.gridX,
+                     u'value': self.workSpace.workTheme.oscillogramTheme.gridX},
+                    {u'name': u'Y', u'type': u'bool', u'default': self.workSpace.workTheme.oscillogramTheme.gridY,
+                     u'value': self.workSpace.workTheme.oscillogramTheme.gridY},
 
                 ]},
                 {u'name': unicode(self.tr(u'Background color')), u'type': u'color',
-                 u'value': self._appSettings['Workspace'].workTheme.oscillogramTheme.background_color,
-                 u'default': self._appSettings['Workspace'].workTheme.oscillogramTheme.background_color},
+                 u'value': self.workSpace.workTheme.oscillogramTheme.background_color,
+                 u'default': self.workSpace.workTheme.oscillogramTheme.background_color},
                 {u'name': unicode(self.tr(u'Plot color')), u'type': u'color',
-                 u'value': self._appSettings['Workspace'].workTheme.oscillogramTheme.plot_color,
-                 u'default': self._appSettings['Workspace'].workTheme.oscillogramTheme.plot_color},
+                 u'value': self.workSpace.workTheme.oscillogramTheme.plot_color,
+                 u'default': self.workSpace.workTheme.oscillogramTheme.plot_color},
                 {u'name': unicode(self.tr(u'Connect Points')), u'type': u'bool',
-                 u'default': self._appSettings['Workspace'].workTheme.oscillogramTheme.connectPoints,
-                 u'value': self._appSettings['Workspace'].workTheme.oscillogramTheme.connectPoints},
+                 u'default': self.workSpace.workTheme.oscillogramTheme.connectPoints,
+                 u'value': self.workSpace.workTheme.oscillogramTheme.connectPoints},
             ]},
 
             {u'name': unicode(self.tr(u'Spectrogram Settings')), u'type': u'group', u'children': [
@@ -577,22 +313,22 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 {u'name': unicode(self.tr(u'FFT overlap')), u'type': u'int', u'value': -1, u'limits': (-1, 99)},
                 {u'name': unicode(self.tr(u'Threshold(dB)')), u'type': u'group', u'children': [
                     {u'name': unicode(self.tr(u'Min')), u'type': u'int', u'step': 1,
-                     u'default': self._appSettings['Workspace'].workTheme.spectrogramTheme.histRange[0],
-                     u'value': self._appSettings['Workspace'].workTheme.spectrogramTheme.histRange[0]},
+                     u'default': self.workSpace.workTheme.spectrogramTheme.histRange[0],
+                     u'value': self.workSpace.workTheme.spectrogramTheme.histRange[0]},
                     {u'name': unicode(self.tr(u'Max')), u'type': u'float', u'step': 0.1,
-                     u'default': self._appSettings['Workspace'].workTheme.spectrogramTheme.histRange[1],
-                     u'value': self._appSettings['Workspace'].workTheme.spectrogramTheme.histRange[1]},
+                     u'default': self.workSpace.workTheme.spectrogramTheme.histRange[1],
+                     u'value': self.workSpace.workTheme.spectrogramTheme.histRange[1]},
                 ]},
                 {u'name': unicode(self.tr(u'Grid')), u'type': u'group', u'children': [
-                    {u'name': u'X', u'type': u'bool', u'default': self._appSettings['Workspace'].workTheme.spectrogramTheme.gridX,
-                     u'value': self._appSettings['Workspace'].workTheme.spectrogramTheme.gridX},
-                    {u'name': u'Y', u'type': u'bool', u'default': self._appSettings['Workspace'].workTheme.spectrogramTheme.gridY,
-                     u'value': self._appSettings['Workspace'].workTheme.spectrogramTheme.gridY},
+                    {u'name': u'X', u'type': u'bool', u'default': self.workSpace.workTheme.spectrogramTheme.gridX,
+                     u'value': self.workSpace.workTheme.spectrogramTheme.gridX},
+                    {u'name': u'Y', u'type': u'bool', u'default': self.workSpace.workTheme.spectrogramTheme.gridY,
+                     u'value': self.workSpace.workTheme.spectrogramTheme.gridY},
 
                 ]},
                 {u'name': unicode(self.tr(u'Background color')), u'type': u'color',
-                 u'value': self._appSettings['Workspace'].workTheme.spectrogramTheme.background_color,
-                 u'default': self._appSettings['Workspace'].workTheme.spectrogramTheme.background_color},
+                 u'value': self.workSpace.workTheme.spectrogramTheme.background_color,
+                 u'default': self.workSpace.workTheme.spectrogramTheme.background_color},
             ]},
             {u'name': unicode(self.tr(u'Themes')), u'type': u'group', u'children': [
                 {u'name': unicode(self.tr(u'Theme Selected')), u'type': u'list',
@@ -620,16 +356,16 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             },
             {u'name': unicode(self.tr(u'Tabs')), u'type': u'group', u'children': [
                 {u'name': unicode(self.tr(u'Tab Position')), u'type': u'list',
-                 u'value': QtGui.QTabWidget.North,
-                 u'default': QtGui.QTabWidget.North,
+                 u'value': self.workSpace.tabPosition,
+                 u'default': self.workSpace.tabPosition,
                  u'values': [(u'North', QtGui.QTabWidget.North),
                              (u"South", QtGui.QTabWidget.South),
                              (u"West", QtGui.QTabWidget.West),
                              (u"East", QtGui.QTabWidget.East)
                             ]},
                 {u'name': unicode(self.tr(u'Tab Shape')), u'type': u'list',
-                 u'value': QtGui.QTabWidget.Rounded,
-                 u'default': QtGui.QTabWidget.Triangular,
+                 u'value': self.workSpace.tabShape,
+                 u'default': self.workSpace.tabShape,
                  u'values': [(u'Rounded', QtGui.QTabWidget.Rounded),
                              (u"Triangular", QtGui.QTabWidget.Triangular)
                  ]}
@@ -638,20 +374,20 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             {u'name': unicode(self.tr(u'Detection Visual Settings')), u'type': u'group', u'children': [
                 {u'name': unicode(self.tr(u'Measurement Location')), u'type': u'group', u'children': [
                     {u'name': unicode(self.tr(u'Start')), u'type': u'color',
-                     u'value': self._appSettings['Workspace'].workTheme.detectionTheme.startColor,
-                     u'default': self._appSettings['Workspace'].workTheme.detectionTheme.startColor},
+                     u'value': self.workSpace.workTheme.detectionTheme.startColor,
+                     u'default': self.workSpace.workTheme.detectionTheme.startColor},
                     {u'name': unicode(self.tr(u'Quartile25')), u'type': u'color',
-                     u'value': self._appSettings['Workspace'].workTheme.detectionTheme.quart1Color,
-                     u'default': self._appSettings['Workspace'].workTheme.detectionTheme.quart1Color},
+                     u'value': self.workSpace.workTheme.detectionTheme.quart1Color,
+                     u'default': self.workSpace.workTheme.detectionTheme.quart1Color},
                     {u'name': unicode(self.tr(u'Center')), u'type': u'color',
-                     u'value': self._appSettings['Workspace'].workTheme.detectionTheme.centerColor,
-                     u'default': self._appSettings['Workspace'].workTheme.detectionTheme.centerColor},
+                     u'value': self.workSpace.workTheme.detectionTheme.centerColor,
+                     u'default': self.workSpace.workTheme.detectionTheme.centerColor},
                     {u'name': unicode(self.tr(u'Quartile75')), u'type': u'color',
-                     u'value': self._appSettings['Workspace'].workTheme.detectionTheme.quart2Color,
-                     u'default': self._appSettings['Workspace'].workTheme.detectionTheme.quart2Color},
+                     u'value': self.workSpace.workTheme.detectionTheme.quart2Color,
+                     u'default': self.workSpace.workTheme.detectionTheme.quart2Color},
                     {u'name': unicode(self.tr(u'End')), u'type': u'color',
-                     u'value': self._appSettings['Workspace'].workTheme.detectionTheme.endColor,
-                     u'default': self._appSettings['Workspace'].workTheme.detectionTheme.endColor},
+                     u'value': self.workSpace.workTheme.detectionTheme.endColor,
+                     u'default': self.workSpace.workTheme.detectionTheme.endColor},
                 ]}]}
 
         ]
@@ -837,12 +573,24 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             act.setActionGroup(tools_actions)
         # endregion
 
+        # region Play Speed actions
+        # set the action group to change the play speed of the opened signal
+        play_speed_actions = QActionGroup(self)
+        play_speed_actions_list = [self.action1_8x, self.action1_4x, self.action1_2x,
+                                   self.action1x, self.action2x, self.action4x, self.action8x]
+
+        for act in play_speed_actions_list:
+            act.setActionGroup(play_speed_actions)
+
+        play_speed_actions.triggered.connect(self.on_playSpeedChanged_triggered)
+        # endregion
+
         # endregion
 
         # add the actions to the signalDependingActions list
         for action_group in [edition_actions, play_record_actions,save_actions, tools_actions,
                              widgets_visibility_actions,zoom_actions, undo_redo_actions,
-                             segm_transf_actions, save_images_actions,processing_actions]:
+                             segm_transf_actions, save_images_actions,processing_actions, play_speed_actions]:
 
             self.signalDependingActions.extend(action_group.actions())
 
@@ -877,6 +625,21 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     # region TAB Multiple Files Handling
 
+    def updateHistogram(self):
+        """
+        Update the histogram from the spectrogram
+        widget of the signal visualizer.
+        :return:
+        """
+        self.hist = self.widget.histogram
+        self.hist.setFixedWidth(self.SETTINGS_WINDOW_WIDTH)
+        self.hist.setFixedHeight(self.SETTINGS_WINDOW_HEIGHT)
+        self.hist.region.sigRegionChanged.connect(self.updateRegionTheme)
+        self.hist.gradient.sigGradientChanged.connect(self.histogramGradientChanged)
+
+        self.hist.restoreState(self.workSpace.workTheme.spectrogramTheme.colorBarState)
+        self.hist.setRegion(self.workSpace.workTheme.spectrogramTheme.histRange)
+
     def addSignalTab(self, signal):
         """
         Add a tab to open a new signal
@@ -909,10 +672,14 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 self.tabOpenedSignals.setCurrentIndex(tabIndex)
 
         self.widget.signal = signal
-        self.widget.graph()
 
         # connect the histogram
-        self.hist = self.widget.axesSpecgram.histogram
+        self.hist = self.widget.histogram
+
+        self.changeAmplitude(-100, 100)
+        self.changeFrequency(0, signal.samplingRate/2000.0)
+
+        self.widget.graph()
 
         # connect for data display
         self.widget.toolDataDetected.connect(self.updateStatusBar)
@@ -920,7 +687,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         # refresh and set the visibility of the axes on the new widget
         self.changeWidgetsVisibility(True, True)
 
-        self.widget.load_Theme(self._appSettings['Workspace'].workTheme)
+        self.widget.load_Theme(self.workSpace.workTheme)
 
         # update the app title, tab text and signal properties label
         self.signalNameChanged(self.widget.signalName())
@@ -969,8 +736,10 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         elif tool == Tools.RectangularZoomTool:
             self.actionRectangular_Cursor.setChecked(True)
 
+        self.updateHistogram()
+
         # update the theme on the new selected widget
-        self.widget.load_Theme(self.workTheme)
+        self.widget.load_Theme(self.workSpace.workTheme)
         self.widget.graph()
 
     def closeSignalAt(self, index):
@@ -983,6 +752,10 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             return
 
         self.save_signal_if_modified(signal_index=index)
+
+        # remove the opened signal from workspace opened files
+        self.workSpace.setClosedFile(self.tabOpenedSignals.widget(index).signalFilePath)
+
         self.tabOpenedSignals.removeTab(index)
 
         # if close the last opened signal show the widget for no opened signals
@@ -1014,14 +787,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             return None
 
         return self.tabOpenedSignals.currentWidget()
-
-    @property
-    def workTheme(self):
-        """
-        Gets the current working theme selected
-        :return:
-        """
-        return self._appSettings['Workspace'].workTheme
 
     # endregion
 
@@ -1076,7 +841,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             signal = signal.copy(indexFrom, indexTo)
 
         # check if the signal can be analyzed acording to its
-        # duration and the max duration signal allowed
+        # duration and the maxThresholdLabel duration signal allowed
         if signal.duration > self.MAX_SIGNAL_DURATION_ALLOWED:
             QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
                                       self.tr(u"The signal is larger than the maximum duration allowed.") + " \n" +
@@ -1087,7 +852,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                                                        classifcationSettings=self.classificationData)
 
         # load the theme and clear the undo redo actions in the current window.
-        segWindow.load_Theme(self.workTheme)
+        segWindow.load_Theme(self.workSpace.workTheme)
         self.widget.undoRedoManager.clear()
 
     #  endregion
@@ -1104,7 +869,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         theme_path = os.path.join("Utils", "Themes", selected_theme + ".dth")
 
-        self.serializeTheme(theme_path)
+        self.serialize(theme_path)
 
     @pyqtSlot()
     def on_actionSaveThemeAs_triggered(self):
@@ -1115,7 +880,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                                                directory=os.path.join(u"Utils", u"Themes"),
                                                filter=self.tr(u"duetto Theme Files") + u"(*.dth);;All Files (*)")
         if filename:
-            self.serializeTheme(filename)
+            self.serialize(filename)
 
     def _updateParamTree(self):
         """
@@ -1127,92 +892,92 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.ParamTree.param(unicode(self.tr(u'Oscillogram Settings')))\
             .param(unicode(self.tr(u'Amplitude(%)')))\
             .param(unicode(self.tr(u'Min')))\
-            .setValue(int(self._appSettings['Workspace'].oscillogramWorkspace.minY * 100))
+            .setValue(int(self.workSpace.oscillogramWorkspace.minY * 100))
         self.ParamTree.param(unicode(self.tr(u'Oscillogram Settings')))\
             .param(unicode(self.tr(u'Amplitude(%)')))\
             .param(unicode(self.tr(u'Max')))\
-            .setValue(int(self._appSettings['Workspace'].oscillogramWorkspace.maxY * 100))
+            .setValue(int(self.workSpace.oscillogramWorkspace.maxY * 100))
 
         self.ParamTree.param(unicode(self.tr(u'Oscillogram Settings')))\
             .param(unicode(self.tr(u'Grid')))\
             .param(unicode(self.tr(u'X')))\
-            .setValue(self._appSettings['Workspace'].oscillogramWorkspace.theme.gridX)
+            .setValue(self.workSpace.oscillogramWorkspace.theme.gridX)
         self.ParamTree.param(unicode(self.tr(u'Oscillogram Settings')))\
             .param(unicode(self.tr(u'Grid')))\
             .param(unicode(self.tr(u'Y')))\
-            .setValue(self._appSettings['Workspace'].oscillogramWorkspace.theme.gridY)
+            .setValue(self.workSpace.oscillogramWorkspace.theme.gridY)
 
         self.ParamTree.param(unicode(self.tr(u'Oscillogram Settings')))\
             .param(unicode(self.tr(u'Background color')))\
-            .setValue(self._appSettings['Workspace'].oscillogramWorkspace.theme.background_color)
+            .setValue(self.workSpace.oscillogramWorkspace.theme.background_color)
         self.ParamTree.param(unicode(self.tr(u'Oscillogram Settings')))\
             .param(unicode(self.tr(u'Plot color')))\
-            .setValue(self._appSettings['Workspace'].oscillogramWorkspace.theme.plot_color)
+            .setValue(self.workSpace.oscillogramWorkspace.theme.plot_color)
         self.ParamTree.param(unicode(self.tr(u'Oscillogram Settings')))\
             .param(unicode(self.tr(u'Connect Points')))\
-            .setValue(self._appSettings['Workspace'].oscillogramWorkspace.theme.connectPoints)
+            .setValue(self.workSpace.oscillogramWorkspace.theme.connectPoints)
 
         self.ParamTree.param(unicode(self.tr(u'Spectrogram Settings')))\
             .param(unicode(self.tr(u'Frequency(kHz)')))\
             .param(unicode(self.tr(u'Min')))\
-            .setValue(self._appSettings['Workspace'].spectrogramWorkspace.minY / 1000.0)
+            .setValue(self.workSpace.spectrogramWorkspace.minY / 1000.0)
         self.ParamTree.param(unicode(self.tr(u'Spectrogram Settings')))\
             .param(unicode(self.tr(u'Frequency(kHz)')))\
             .param(unicode(self.tr(u'Max')))\
-            .setValue(self._appSettings['Workspace'].spectrogramWorkspace.maxY / 1000.0)
+            .setValue(self.workSpace.spectrogramWorkspace.maxY / 1000.0)
 
         self.ParamTree.param(unicode(self.tr(u'Spectrogram Settings')))\
             .param(unicode(self.tr(u'FFT size')))\
-            .setValue(self._appSettings['Workspace'].spectrogramWorkspace.FFTSize)
+            .setValue(self.workSpace.spectrogramWorkspace.FFTSize)
         self.ParamTree.param(unicode(self.tr(u'Spectrogram Settings')))\
             .param(unicode(self.tr(u'FFT window')))\
-            .setValue(self._appSettings['Workspace'].spectrogramWorkspace.FFTWindow)
+            .setValue(self.workSpace.spectrogramWorkspace.FFTWindow)
         self.ParamTree.param(unicode(self.tr(u'Spectrogram Settings')))\
             .param(unicode(self.tr(u'FFT overlap')))\
-            .setValue(self._appSettings['Workspace'].spectrogramWorkspace.FFTOverlap)
+            .setValue(self.workSpace.spectrogramWorkspace.FFTOverlap)
 
         self.ParamTree.param(unicode(self.tr(u'Spectrogram Settings')))\
             .param(unicode(self.tr(u'Threshold(dB)')))\
             .param(unicode(self.tr(u'Min')))\
-            .setValue(self._appSettings['Workspace'].spectrogramWorkspace.theme.histRange[0])
+            .setValue(self.workSpace.spectrogramWorkspace.theme.histRange[0])
         self.ParamTree.param(unicode(self.tr(u'Spectrogram Settings')))\
             .param(unicode(self.tr(u'Threshold(dB)')))\
             .param(unicode(self.tr(u'Max')))\
-            .setValue(self._appSettings['Workspace'].spectrogramWorkspace.theme.histRange[1])
+            .setValue(self.workSpace.spectrogramWorkspace.theme.histRange[1])
 
         self.ParamTree.param(unicode(self.tr(u'Spectrogram Settings')))\
             .param(unicode(self.tr(u'Grid')))\
             .param(unicode(self.tr(u'X')))\
-            .setValue(self._appSettings['Workspace'].spectrogramWorkspace.theme.gridX)
+            .setValue(self.workSpace.spectrogramWorkspace.theme.gridX)
         self.ParamTree.param(unicode(self.tr(u'Spectrogram Settings')))\
             .param(unicode(self.tr(u'Grid')))\
             .param(unicode(self.tr(u'Y')))\
-            .setValue(self._appSettings['Workspace'].spectrogramWorkspace.theme.gridY)
+            .setValue(self.workSpace.spectrogramWorkspace.theme.gridY)
 
         self.ParamTree.param(unicode(self.tr(u'Spectrogram Settings')))\
             .param(unicode(self.tr(u'Background color')))\
-            .setValue(self._appSettings['Workspace'].spectrogramWorkspace.theme.background_color)
+            .setValue(self.workSpace.spectrogramWorkspace.theme.background_color)
 
         self.ParamTree.param(unicode(self.tr(u'Detection Visual Settings')))\
             .param(unicode(self.tr(u'Measurement Location')))\
             .param(unicode(self.tr(u'Start')))\
-            .setValue(self._appSettings['Workspace'].detectionWorkspace.theme.startColor)
+            .setValue(self.workSpace.detectionWorkspace.theme.startColor)
         self.ParamTree.param(unicode(self.tr(u'Detection Visual Settings')))\
             .param(unicode(self.tr(u'Measurement Location')))\
             .param(unicode(self.tr(u'Quartile25')))\
-            .setValue(self._appSettings['Workspace'].detectionWorkspace.theme.quart1Color)
+            .setValue(self.workSpace.detectionWorkspace.theme.quart1Color)
         self.ParamTree.param(unicode(self.tr(u'Detection Visual Settings')))\
             .param(unicode(self.tr(u'Measurement Location')))\
             .param(unicode(self.tr(u'Center')))\
-            .setValue(self._appSettings['Workspace'].detectionWorkspace.theme.centerColor)
+            .setValue(self.workSpace.detectionWorkspace.theme.centerColor)
         self.ParamTree.param(unicode(self.tr(u'Detection Visual Settings')))\
             .param(unicode(self.tr(u'Measurement Location')))\
             .param(unicode(self.tr(u'Quartile75')))\
-            .setValue(self._appSettings['Workspace'].detectionWorkspace.theme.quart2Color)
+            .setValue(self.workSpace.detectionWorkspace.theme.quart2Color)
         self.ParamTree.param(unicode(self.tr(u'Detection Visual Settings')))\
             .param(unicode(self.tr(u'Measurement Location')))\
             .param(unicode(self.tr(u'End')))\
-            .setValue(self._appSettings['Workspace'].detectionWorkspace.theme.endColor)
+            .setValue(self.workSpace.detectionWorkspace.theme.endColor)
 
         self.ParamTree.blockSignals(False)
         
@@ -1224,7 +989,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         """
         assert isinstance(theme, WorkTheme)
         #  change the current theme
-        self._appSettings['Workspace'].workTheme = theme
+        self.workSpace.workTheme = theme
 
         #  update the theme in the widget
         self.widget.load_Theme(theme)
@@ -1242,30 +1007,19 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                                                filter=self.tr(u"duetto Theme Files") + u" (*.dth);;All Files (*)")
         if filename and os.path.exists(filename):
             try:
-                theme = self.deSerializeTheme(filename)
+                theme = self.deSerialize(filename)
                 self.updateTheme(theme)
             except Exception as ex:
                 raise ex
-
-    def deSerializeTheme(self, filename):
-        """
-        Deserialize a theme from a file.
-        :param filename: the path to the file where the theme is saved
-        :return: the instance of WorkTheme serialized into the file
-        """
-        assert filename, 'Invalid file path.'
-        assert os.path.exists(filename), 'File does not exist.'
-
-        with open(filename, 'r') as f:
-            return pickle.load(f)
 
     def updateRegionTheme(self):
         """
         Updates the variables in the param tree and the work theme that represent the region of the histogram.
         """
-        reg = self.hist.item.region.getRegion()
-        # we only need to set the values to the param tree and it automatically calls the change method and does
-        # everything else
+        reg = self.hist.region.getRegion()
+        print(reg)
+        # we only need to set the values to the param tree
+        # and it automatically calls the change method and does everything else
         self.ParamTree.param(unicode(self.tr(u'Spectrogram Settings'))).param(
             unicode(self.tr(u'Threshold(dB)'))).param(unicode(self.tr(u'Min'))).setValue(reg[0])
         self.ParamTree.param(unicode(self.tr(u'Spectrogram Settings'))).param(
@@ -1276,21 +1030,34 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         Updates the variables in the work theme that represent the gradient colors of the histogram.
         """
         # as the histogram is connected to the
-        self._appSettings['Workspace'].spectrogramWorkspace.theme.colorBarState = gradient.saveState()
+        self.workSpace.spectrogramWorkspace.theme.colorBarState = gradient.saveState()
 
-    def serializeTheme(self, filename):
+    def deSerialize(self, filename):
+        """
+        Deserialize a theme from a file.
+        :param filename: the path to the file where the theme is saved
+        :return: the instance of WorkTheme serialized into the file
+        """
+        if not os.path.exists(filename):
+            raise Exception('File does not exist.')
+
+        with open(filename, 'r') as f:
+            return pickle.load(f)
+
+    def serialize(self, filename,serializable_object=None):
         """
         Serialize a theme to a file.
         :param filename: the path to the file for the theme storage.
+        :param object: the object to serialize. None if serialize the worktheme
         """
         assert filename, 'Invalid file path.'
-        #  get the histogram region and colorbar values
-        #  self.workTheme.histRange = self.hist.item.region.getRegion()
-        #  self.workTheme.colorBarState = self.hist.item.gradient.saveState()
+
+        if serializable_object is None:
+            serializable_object = self.workSpace.workTheme
 
         #  save theme to disc
         with open(filename, 'w') as f:
-            pickle.dump(self._appSettings['Workspace'].workTheme, f)
+            pickle.dump(serializable_object, f)
 
     def change(self, param, changes):
         """
@@ -1308,15 +1075,15 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
             if childName == unicode(self.tr(u'Spectrogram Settings')) + u"." + \
                     unicode(self.tr(u'FFT size')):
-                self._appSettings['Workspace'].spectrogramWorkspace.FFTSize = data
+                self.workSpace.spectrogramWorkspace.FFTSize = data
 
             elif childName == unicode(self.tr(u'Spectrogram Settings')) + u"." + \
                     unicode(self.tr(u'Grid')) + u"." + unicode(self.tr(u'X')):
-                self._appSettings['Workspace'].spectrogramWorkspace.theme.gridX = data
+                self.workSpace.spectrogramWorkspace.theme.gridX = data
 
             elif childName == unicode(self.tr(u'Spectrogram Settings')) + u"." + \
                     unicode(self.tr(u'Grid')) + u"." + unicode(self.tr(u'Y')):
-                self._appSettings['Workspace'].spectrogramWorkspace.theme.gridY = data
+                self.workSpace.spectrogramWorkspace.theme.gridY = data
 
             elif childName == unicode(self.tr(u'Spectrogram Settings')) + u"." + \
                     unicode(self.tr(u'Threshold(dB)')) + u"." + unicode(self.tr(u'Min')):
@@ -1327,7 +1094,9 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                     # self.ParamTree.param(unicode(self.tr(u'Spectrogram Settings'))).param(
                     #     unicode(self.tr(u'Threshold(dB)'))).param(unicode(self.tr(u'Min'))).show()
                     # return
-                self._appSettings['Workspace'].spectrogramWorkspace.theme.histRange = data, self.hist.item.region.getRegion()[1]
+                max_threshold = self.hist.region.getRegion()[1]
+                self.workSpace.spectrogramWorkspace.theme.histRange = data, max_threshold
+                self.hist.setRegion((data, max_threshold))
 
             elif childName == unicode(self.tr(u'Spectrogram Settings')) + u"." + \
                     unicode(self.tr(u'Threshold(dB)')) + u"." + unicode(self.tr(u'Max')):
@@ -1338,96 +1107,102 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                     # self.ParamTree.param(unicode(self.tr(u'Spectrogram Settings'))).param(
                     #     unicode(self.tr(u'Threshold(dB)'))).param(unicode(self.tr(u'Max'))).setValue()
                     # return
-                self._appSettings['Workspace'].spectrogramWorkspace.theme.histRange = self.hist.item.region.getRegion()[0], data
+                self.workSpace.spectrogramWorkspace.theme.histRange = self.hist.region.getRegion()[0], data
 
             elif childName == unicode(self.tr(u'Spectrogram Settings')) + u"." + \
                     unicode(self.tr(u'FFT window')):
-                self._appSettings['Workspace'].spectrogramWorkspace.FFTWindow = data
+                self.workSpace.spectrogramWorkspace.FFTWindow = data
 
             elif childName == unicode(self.tr(u'Spectrogram Settings')) + u"." + \
                     unicode(self.tr(u'Background color')):
-                self._appSettings['Workspace'].spectrogramWorkspace.theme.background_color = data
+                self.workSpace.spectrogramWorkspace.theme.background_color = data
             elif childName == unicode(self.tr(u'Spectrogram Settings')) + u"." + \
                     unicode(self.tr(u'Frequency(kHz)')) + u"." + \
                     unicode(self.tr(u'Min')):
-                self._appSettings['Workspace'].spectrogramWorkspace.minY = data * 1000
+                self.workSpace.spectrogramWorkspace.minY = data * 1000
 
             elif childName == unicode(self.tr(u'Spectrogram Settings')) + u"." + \
                     unicode(self.tr(u'Frequency(kHz)')) + u"." + \
                     unicode(self.tr(u'Max')):
-                self._appSettings['Workspace'].spectrogramWorkspace.maxY = data * 1000
+                self.workSpace.spectrogramWorkspace.maxY = data * 1000
 
             elif childName == unicode(self.tr(u'Spectrogram Settings')) + u"." + \
                     unicode(self.tr(u'FFT overlap')):
-                self._appSettings['Workspace'].spectrogramWorkspace.FFTOverlap = data / 100.0
+                self.workSpace.spectrogramWorkspace.FFTOverlap = data / 100.0
 
             elif childName == unicode(self.tr(u'Oscillogram Settings')) + u"." + \
                     unicode(self.tr(u'Background color')):
-                self._appSettings['Workspace'].oscillogramWorkspace.theme.background_color = data
+                self.workSpace.oscillogramWorkspace.theme.background_color = data
 
             elif childName == unicode(self.tr(u'Oscillogram Settings')) + u"." + \
                     unicode(self.tr(u'Grid')) + u"." + \
                     unicode(self.tr(u'X')):
-                self._appSettings['Workspace'].oscillogramWorkspace.theme.gridX = data
+                self.workSpace.oscillogramWorkspace.theme.gridX = data
 
             elif childName == unicode(self.tr(u'Oscillogram Settings')) + u"." + \
                     unicode(self.tr(u'Grid')) + u"." + \
                     unicode(self.tr(u'Y')):
-                self._appSettings['Workspace'].oscillogramWorkspace.theme.gridY = data
+                self.workSpace.oscillogramWorkspace.theme.gridY = data
 
             elif childName == unicode(self.tr(u'Oscillogram Settings')) + u"." + \
                     unicode(self.tr(u'Plot color')):
-                self._appSettings['Workspace'].oscillogramWorkspace.theme.plot_color = data
+                self.workSpace.oscillogramWorkspace.theme.plot_color = data
 
             elif childName == unicode(self.tr(u'Oscillogram Settings')) + u"." + \
                     unicode(self.tr(u'Amplitude(%)')) + u"." + \
                     unicode(self.tr(u'Min')):
-                self._appSettings['Workspace'].oscillogramWorkspace.minY = data / 100.0
+                self.workSpace.oscillogramWorkspace.minY = data / 100.0
 
             elif childName == unicode(self.tr(u'Oscillogram Settings')) + u"." + \
                     unicode(self.tr(u'Amplitude(%)')) + u"." + \
                     unicode(self.tr(u'Max')):
-                self._appSettings['Workspace'].oscillogramWorkspace.maxY = data / 100.0
+                self.workSpace.oscillogramWorkspace.maxY = data / 100.0
 
             elif childName == unicode(self.tr(u'Oscillogram Settings')) + u"." + \
                     unicode(self.tr(u'Connect Points')):
-                self._appSettings['Workspace'].oscillogramWorkspace.theme.connectPoints = data
+                self.workSpace.oscillogramWorkspace.theme.connectPoints = data
 
             elif childName == unicode(self.tr(u'Themes')) + u"." + \
                     unicode(self.tr(u'Theme Selected')):
                 try:
-                    self.updateTheme(self.deSerializeTheme(data))
+                    self.updateTheme(self.deSerialize(data))
                     return
                 except Exception as e:
                     QMessageBox.warning(self, 'Error loading theme',
                                         'An error occurred while loading the theme.\nError:\n' + str(e))
             elif childName == unicode(self.tr(u'Style')) + u"." + \
                     unicode(self.tr(u'Style Selected')):
+                self.workSpace.style = data
                 self.styleChanged.emit(data)
 
             elif childName == unicode(self.tr(u'Language')) + u"." + \
                     unicode(self.tr(u'Language Selected')):
+                self.workSpace.language = data
                 self.languageChanged.emit(data)
 
             elif childName == unicode(self.tr(u'Tabs')) + u"." + \
                     unicode(self.tr(u'Tab Position')):
                 self.tabOpenedSignals.setTabPosition(data)
+                self.workSpace.tabPosition = data
 
             elif childName == unicode(self.tr(u'Tabs')) + u"." + \
                               unicode(self.tr(u'Tab Shape')):
                 self.tabOpenedSignals.setTabShape(data)
+                self.workSpace.tabShape = data
 
-        self.widget.load_workspace(self._appSettings['Workspace'])
+        # if opened signals
+        if self.widget:
+            self.widget.load_workspace(self.workSpace)
 
     def changeFrequency(self, min, max):
         """
-        Method that update the max and min frequency
+        Method that update the maxThresholdLabel and minThresholdLabel frequency
         that is showed on the theme visual options for spectrogram.
         This method is used when the widget's signal change and must be
         updated with the new signal frequency range. Is also called when the widget change
         the visible range fo frequencies by a tool intercation or programatically.
-        :param min: min frequecny in Khz
-        :param max: max frequency in Khz
+        :param min: minThresholdLabel frequecny in Khz
+        :param max: maxThresholdLabel frequency in Khz
         :return:
         """
         self.ParamTree.param(unicode(self.tr(u'Spectrogram Settings'))).param(
@@ -1439,13 +1214,13 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     def changeAmplitude(self, min, max):
         """
-        Method that update the max and min amplitude
+        Method that update the maxThresholdLabel and minThresholdLabel amplitude
         that is showed on the theme visual options for oscilogram.
         This method is used when the widget's signal change and must be
         updated with the new signal range. Is also called when the widget change
         the visible range by a tool intercation or programatically.
-        :param min: min amplitude in % of maxmimum value allowed by the signal bit depth
-        :param max: max amplitude in % of maxmimum value allowed by the signal bit depth
+        :param min: minThresholdLabel amplitude in % of maxmimum value allowed by the signal bit depth
+        :param max: maxThresholdLabel amplitude in % of maxmimum value allowed by the signal bit depth
         :return:
         """
         self.ParamTree.param(unicode(self.tr(u'Oscillogram Settings'))).param(unicode(self.tr(u'Amplitude(%)'))).param(
@@ -1780,43 +1555,34 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     # endregion
 
+    # region WorkSpace
+
+    def loadRecentFiles(self):
+        """
+        Load the recent files actions to the open actions on file menu
+        :return:
+        """
+        self.menuRecentSignals.clear()
+
+        # a max of 50 char text label for the action
+        action_text = lambda file_path: file_path if \
+                                       len(file_path) < 50 else \
+                                       file_path[0:27] + "..." + file_path[-20:]
+
+        action_labels = [action_text(x) for x in self.workSpace.recentFiles]
+
+        actions = [QAction(self) for _ in action_labels]
+
+        for i in range(len(actions)):
+            actions[i].setText(action_labels[i])
+            actions[i].setData(self.workSpace.recentFiles[i])
+            actions[i].triggered.connect(lambda : self._open(actions[i].data().toString()))
+
+        self.menuRecentSignals.addActions(actions)
+
+    # endregion
+
     #  region Open, Close and Save
-
-    def on_load_first_time(self):
-        """
-        Method called when the window is first opened.
-        It prompts the user whether to restore the last working session
-        and initializes stuffs accordingly.
-        """
-        if os.path.exists('duetto.ini'):
-            try:
-                with open('duetto.ini', 'r') as f:
-                    settings = pickle.load(f)
-            except:
-                QMessageBox.warning(self, self.tr(u'Error loading application settings.'),
-                                    self.tr(u'An error occurred when loading some application settings. Default '
-                                            u'settings will be applied but some information might have been lost.'))
-
-                self._appSettings = {'Workspace': Workspace(),
-                                     'RecentFiles': []}
-                return
-
-            self._appSettings = settings
-
-            answer = QMessageBox.question(self, self.tr(u'Restore workspace?'),
-                                          self.tr(u'Do you wish to restore the state of the last work session?'),
-                                          QMessageBox.Yes | QMessageBox.No)
-            if answer == QMessageBox.Yes:
-                try:
-                    self._open(self._appSettings['Workspace'].openedFile)
-                except:
-                    QMessageBox.warning(self, self.tr(u'Error restoring workspace.'),
-                                        self.tr(u'An error occurred when restoring the workspace. The default state '
-                                                u'will be loaded instead.'))
-                else:
-                    return
-
-            self._appSettings['Workspace'] = Workspace()
 
     @pyqtSlot()
     def on_actionExit_triggered(self):
@@ -1832,6 +1598,10 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         #  save the signal if any opened and changed
         for i in range(self.tabOpenedSignals.count()):
             self.save_signal_if_modified(event, signal_index=i)
+
+        # save the workspace options
+        workspace_path = os.path.join("Utils", self.WORK_SPACE_FILE_NAME)
+        self.serialize(workspace_path, self.workSpace)
 
         #  close the window
         self.close()
@@ -1914,6 +1684,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         file_name = QFileDialog.getOpenFileName(self, self.tr(u"Select a file to open"),
                                                 directory=self.last_opened_signal_path,
                                                 filter=self.tr(u"Wave Files") + u"(*.wav);;All Files(*)")
+
         self._open(unicode(file_name))
 
     @pyqtSlot()
@@ -1976,6 +1747,13 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             else:
                 self.addSignalTab(signal)
 
+            # update the signal file of every widget
+            self.widget.signalFilePath = file_path
+
+            # add the file name to the workspace recent opened file list
+            if file_path not in self.workSpace.recentFiles:
+                self.workSpace.addOpenedFile(file_path)
+                self.loadRecentFiles()
 
             self.changeFrequency(0, self.widget.signal.samplingRate / 2000)
             self.changeAmplitude(-100, 100)
@@ -2197,13 +1975,15 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     @pyqtSlot()
     def on_actionRecord_triggered(self):
         try:
+            # to avoid changes on the theme during recording
+            self.dock_settings.setVisible(False)
+
             self.widget.record()
 
         except Exception as ex:
             QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
                                       self.tr(u"There is no selected audio output "
                                               u"device or the selected is unavailable"))
-
 
     @pyqtSlot()
     def on_actionPause_Sound_triggered(self):
@@ -2354,7 +2134,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         """
 
         one_dim_window = OneDimensionalAnalysisWindow(self,self.widget.signal)
-        one_dim_window.load_Theme(self.workTheme.oscillogramTheme)
+        one_dim_window.load_Theme(self.workSpace.workTheme.oscillogramTheme)
 
         indexFrom, indexTo = self.widget.selectedRegion
         one_dim_window.graph(indexFrom, indexTo)

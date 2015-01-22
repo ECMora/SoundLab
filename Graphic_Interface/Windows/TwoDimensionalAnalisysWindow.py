@@ -9,7 +9,7 @@ import pyqtgraph as pg
 from PyQt4 import QtGui, QtCore
 
 from graphic_interface.dialogs.EditCategoriesDialog import EditCategoriesDialog
-import graphic_interface.dialogs.EditCategoriesDialogUI as editCateg
+import graphic_interface.windows.ui_python_files.EditCategoriesDialogUI as editCateg
 from graphic_interface.widgets.EditCategoriesWidget import EditCategoriesWidget
 from graphic_interface.windows.ui_python_files.Two_Dimensional_AnalisysWindowUI import Ui_TwoDimensionalWindow
 

@@ -51,7 +51,7 @@ class OscilogramElement(OneDimensionalElement):
         @param indexTo: End time of the element in the signal
         @param number: The number of this element in the list of detected elements in signal
         @param threshold_spectral: The threshold spectral for detection of two dimensional elements
-        @param minsize_spectral: The spectral min size of two dimensional elements detection
+        @param minsize_spectral: The spectral minThresholdLabel size of two dimensional elements detection
         @param location:
         @param findSpectralSublements: If this element should perform the search of sub elements
         @param specgramSettings: Settings of specgram computation
@@ -140,7 +140,7 @@ class OscilogramElement(OneDimensionalElement):
             # spec_resolution, temp_resolution = signal.samplingRate/2.0*len(freqs),bins[1]-bins[0]
             spec_resolution, temp_resolution = 1000.0/self.specgramSettings.freqs[1],(self.specgramSettings.bins[1]-self.specgramSettings.bins[0])*1000.0
 
-            # minsize came with the hz, sec of min size elements and its translated to index values in pxx for comparations
+            # minsize came with the hz, sec of minThresholdLabel size elements and its translated to index values in pxx for comparations
             minsize_spectral = (max(1,int(minsize_spectral[0]*spec_resolution)),max(1,int(minsize_spectral[1]*temp_resolution)))
 
             sr = signal.samplingRate*1.0
@@ -252,24 +252,24 @@ class OscilogramElement(OneDimensionalElement):
             minIndex = 1
             maxIndex = 1
             maxf,minf=0,0
-            if "max" not in self.parameters["average"]:
+            if "maxThresholdLabel" not in self.parameters["average"]:
                 Pxx , freqs = mlab.psd(self.signal.data[self.indexFrom:self.indexTo],Fs= self.signal.samplingRate,NFFT=self.specgramSettings.NFFT,window=self.specgramSettings.window,noverlap=self.specgramSettings.overlap,scale_by_freq=False)
                 Pxx , freqs = mlab.psd(self.signal.data[self.indexFrom:self.indexTo],Fs= self.signal.samplingRate,NFFT=self.specgramSettings.NFFT,window=self.specgramSettings.window,noverlap=self.specgramSettings.overlap,scale_by_freq=False)
                 minf,minIndex,maxf, maxIndex, _, __ = self.freq_min_max_band_peaksAbove(0,threshold,threshold,Pxx)
-                self.parameters["average"]["min"] = (minf,minIndex)
-                self.parameters["average"]["max"] = (maxf,maxIndex)
+                self.parameters["average"]["minThresholdLabel"] = (minf,minIndex)
+                self.parameters["average"]["maxThresholdLabel"] = (maxf,maxIndex)
 
-            if len(self.twoDimensionalElements) > 0 and not ("max","visual") in self.parameters["average"]:
+            if len(self.twoDimensionalElements) > 0 and not ("maxThresholdLabel","visual") in self.parameters["average"]:
                 # #  Define visual positions of node
                 pos = np.array([
-                    [self.indexFromInPxx,self.parameters["average"]["max"][1]],
-                    [self.indexToInPxx, self.parameters["average"]["max"][1]]
+                    [self.indexFromInPxx,self.parameters["average"]["maxThresholdLabel"][1]],
+                    [self.indexToInPxx, self.parameters["average"]["maxThresholdLabel"][1]]
                 ])
                 adj = np.array([[0,1]])
-                self.parameters["average"][("max","visual")] = True
+                self.parameters["average"][("maxThresholdLabel","visual")] = True
                 self.twoDimensionalElements[0].addVisualGraph(pos,adj,dict(size=2, symbol='o', pxMode=False))
 
-            return self.parameters["average"]["max"][0]
+            return self.parameters["average"]["maxThresholdLabel"][0]
 
     def minFreqAverage(self,dictionary):
         if "Threshold (db)" in dictionary:
@@ -277,21 +277,21 @@ class OscilogramElement(OneDimensionalElement):
             minIndex = 1
             maxIndex = 1
             maxf,minf=0,0
-            if "min" not in self.parameters["average"]:
+            if "minThresholdLabel" not in self.parameters["average"]:
                 Pxx , freqs = mlab.psd(self.signal.data[self.indexFrom:self.indexTo],Fs= self.signal.samplingRate,NFFT=self.specgramSettings.NFFT,window=self.specgramSettings.window,noverlap=self.specgramSettings.overlap,scale_by_freq=False)
                 minf,minIndex,maxf, maxIndex, _, __ = self.freq_min_max_band_peaksAbove(0,threshold,threshold,Pxx)
-                self.parameters["average"]["min"] = (minf,minIndex)
-                self.parameters["average"]["max"] = (maxf,maxIndex)
-            if len(self.twoDimensionalElements) > 0 and not ("min","visual") in self.parameters["average"]:
+                self.parameters["average"]["minThresholdLabel"] = (minf,minIndex)
+                self.parameters["average"]["maxThresholdLabel"] = (maxf,maxIndex)
+            if len(self.twoDimensionalElements) > 0 and not ("minThresholdLabel","visual") in self.parameters["average"]:
                 # #  Define positions of nodes
                 pos = np.array([
-                    [self.indexFromInPxx,self.parameters["average"]["min"][1]],
-                    [self.indexToInPxx, self.parameters["average"]["min"][1]]
+                    [self.indexFromInPxx,self.parameters["average"]["minThresholdLabel"][1]],
+                    [self.indexToInPxx, self.parameters["average"]["minThresholdLabel"][1]]
                 ])
                 adj = np.array([[0,1]])
-                self.parameters["average"][("min","visual")] = True
+                self.parameters["average"][("minThresholdLabel","visual")] = True
                 self.twoDimensionalElements[0].addVisualGraph(pos,adj,dict(size=2, symbol='o', pxMode=False))
-            return self.parameters["average"]["min"][0]
+            return self.parameters["average"]["minThresholdLabel"][0]
 
 
     def getMatrixIndexFromLocation(self,location):
@@ -355,7 +355,7 @@ class OscilogramElement(OneDimensionalElement):
 
     def freq_min_max_band_peaksAbove(self,index,threshold, peaksThreshold,array=None):
         """
-        returns the min freq with its index , the max freq with its index, the band width and the peaks above the threshold
+        returns the minThresholdLabel freq with its index , the maxThresholdLabel freq with its index, the band width and the peaks above the threshold
         index is the location in the spectrogram matrix of the medition
         if arr is not None the meditions are made in arr an not in matrix[:,index]
         """

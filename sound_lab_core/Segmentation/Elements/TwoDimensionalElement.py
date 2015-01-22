@@ -52,8 +52,8 @@ class SpecgramElement(TwoDimensionalElement):
             self.measurementLocation = location
             #width = (self.timeEndIndex-self.timeStartIndex)/5
             #height = (self.freqEndIndex-self.freqStartIndex)/5
-            #width = min(self.timeEndIndex-self.timeStartIndex,max(4,(self.timeEndIndex-self.timeStartIndex)/5))
-            #height = min(max(4,(self.freqEndIndex-self.freqStartIndex)/5),self.freqEndIndex-self.freqStartIndex)
+            #width = minThresholdLabel(self.timeEndIndex-self.timeStartIndex,maxThresholdLabel(4,(self.timeEndIndex-self.timeStartIndex)/5))
+            #height = minThresholdLabel(maxThresholdLabel(4,(self.freqEndIndex-self.freqStartIndex)/5),self.freqEndIndex-self.freqStartIndex)
             #ypos = self.freqEndIndex-self.freqStartIndex
             #xpos =  self.timeEndIndex-self.timeStartIndex
             ##poner tooltips

@@ -1,3 +1,4 @@
+from PyQt4.QtGui import QTabWidget
 from duetto.dimensional_transformations.two_dimensional_transforms.Spectrogram.WindowFunctions import WindowFunction
 from graphic_interface.Settings.WorkTheme import WorkTheme, OscillogramTheme, SpectrogramTheme, OneDimensionalTheme, \
     DetectionTheme
@@ -81,13 +82,57 @@ class DetectionWorkspace(object):
 
 
 class Workspace(object):
+    """
+
+    """
+    # CONSTANTS
+    LAST_OPENED_FILES_AMOUNT = 5
+
     def __init__(self, oscillogramWorkspace=None, spectrogramWorkspace=None, oneDimensionalWorkspace=None,
-                 detectionWorkspace=None, openedFile=None):
+                 detectionWorkspace=None, openedFiles=None):
         self.oscillogramWorkspace = oscillogramWorkspace if oscillogramWorkspace else OscillogramWorkspace()
         self.spectrogramWorkspace = spectrogramWorkspace if spectrogramWorkspace else SpectrogramWorkspace()
         self.oneDimensionalWorkspace = oneDimensionalWorkspace if oneDimensionalWorkspace else OneDimensionalWorkspace()
         self.detectionWorkspace = detectionWorkspace if detectionWorkspace else DetectionWorkspace()
-        self.openedFile = openedFile
+        self.openedFiles = [] if openedFiles is None else openedFiles
+        self.recentFiles = []
+        self.language = ""
+        self.style = ""
+        self.tabPosition = QTabWidget.North
+        self.tabShape = QTabWidget.Rounded
+
+    def clearOpenedFiles(self):
+        """
+        Clears the last opened files
+        :return:
+        """
+        self.openedFiles = []
+
+    def setClosedFile(self,file_path):
+        """
+        Update the state of the signal at file_path to close by the application
+        If the signal at file_path was previously opened the removes it from
+        the list of opened files, otherwise nothing is do it.
+        :param file_path: the signal path previously open.
+        :return:
+        """
+        if file_path in self.openedFiles:
+            self.openedFiles.remove(file_path)
+
+
+    def addOpenedFile(self, filepath):
+        """
+        Add a file path to the list of last opened files
+        :param filepath:
+        :return:
+        """
+        self.openedFiles.append(filepath)
+
+        if len(self.recentFiles) < self.LAST_OPENED_FILES_AMOUNT:
+            self.recentFiles.append(filepath)
+        else:
+            self.recentFiles.append(filepath)
+            self.recentFiles.pop(0)
 
     def copy(self):
         return Workspace(self.oscillogramWorkspace.copy(), self.spectrogramWorkspace.copy(),

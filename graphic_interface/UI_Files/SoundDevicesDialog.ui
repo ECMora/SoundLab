@@ -58,7 +58,7 @@
       <item>
        <widget class="QLabel" name="inputDevice_lbl">
         <property name="text">
-         <string>TextLabel</string>
+         <string>No input audio device selected.</string>
         </property>
        </widget>
       </item>
@@ -77,7 +77,7 @@
       <item>
        <widget class="QLabel" name="outputDevice_lbl">
         <property name="text">
-         <string>TextLabel</string>
+         <string>No output audio device selected.</string>
         </property>
        </widget>
       </item>

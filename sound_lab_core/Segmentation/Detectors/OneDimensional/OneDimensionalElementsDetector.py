@@ -41,11 +41,11 @@ class OneDimensionalElementsDetector(ElementsDetector):
     def detect(self,signal, indexFrom=0, indexTo=-1,detectionsettings=None, threshold=0, decay=1,minSize=1.0,softfactor = 5,merge_factor=50,secondThreshold=0,
                threshold_spectral=95, minsize_spectral=(0, 0),location = None,progress=None,findSpectralSublements = False,specgramSettings=None):
         """
-        decay in ms to prevent locals falls, should be as long as the min size of the separation between
+        decay in ms to prevent locals falls, should be as long as the minThresholdLabel size of the separation between
         elements
         softfactor points to make a moving average in data
         merge_factor in %
-        threshold in dB from the max value
+        threshold in dB from the maxThresholdLabel value
         """
         if detectionsettings is not None:
             self.detectionsettings = detectionsettings
@@ -131,7 +131,7 @@ class OneDimensionalElementsDetector(ElementsDetector):
 
     def localMax(self,data,threshold=0,positives = None):
         """
-        identify the local  (positives or not) max that are above threshold
+        identify the local  (positives or not) maxThresholdLabel that are above threshold
        """
         indexes = []
         values = []
@@ -186,7 +186,7 @@ class OneDimensionalElementsDetector(ElementsDetector):
     def envelope_detector(self,envelope_method, data,threshold=0, minSize=1, decay=1, softfactor=10, merge_factor=0,secondThreshold=0):
         """
         data is a numpy array
-        minSize is the min amplitude of an element
+        minSize is the minThresholdLabel amplitude of an element
         merge_factor is the % of separation between 2 elements that is assumed as one (merge the 2 into one)
         """
         if envelope_method == DetectionType.Envelope_Abs_Decay_Averaged:
@@ -222,7 +222,7 @@ class OneDimensionalElementsDetector(ElementsDetector):
 
     def abs_decay_averaged_envelope(self,data, decay=1,softfactor=6,progress= None,position= (5,15),type="sin"):
         """
-        decay is the min number of samples in data that separates two elements
+        decay is the minThresholdLabel number of samples in data that separates two elements
         """
         progress_interval = position[1]-position[0]
         if progress is not None:
@@ -419,7 +419,7 @@ class OneDimensionalElementsDetector(ElementsDetector):
 
     def local_max_percent_detector(self,data,threshold,minSize,merge_factor,end_size_element_size_relation=90):
         """
-        the intervals that has a proportion of ots max above threshold
+        the intervals that has a proportion of ots maxThresholdLabel above threshold
         """
         indexes,vals = self.localMax(data)
         global_proportion = where(vals >=threshold)[0].size*1.0/vals.size

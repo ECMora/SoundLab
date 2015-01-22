@@ -49,6 +49,10 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
 
         self.changeTool(SpectrogramZoomTool)
 
+        # the object to compute spectrogram on record mode
+        self.recordModeSpectrogram = Spectrogram(NFFT=128, overlap=0)
+        self.activeRecordMode = False
+
         self.workspace = None
         self._load_workspace(SpectrogramWorkspace())
 
@@ -80,17 +84,25 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
         self.changeRange(x1, x2, y1, y2)
         self.rangeChanged.emit(x1, x2)
 
+    def setRecordMode(self, record_mode_active=True):
+        """
+        Set the widget prepared for the record process.
+        Set default high speed increase values for the spectrogram calculation
+        :param record_mode_active: The state of the record mode
+        :return:
+        """
+        if record_mode_active != self.activeRecordMode:
+            spectrogram_handler = self.specgramHandler
+            self.specgramHandler = self.recordModeSpectrogram
+            sel
+            self.activeRecordMode = not self.activeRecordMode
+
     # region Theme and Workspace
     # TODO Improve and refactor the theme code. must keep simplicity and minimality
     def _load_theme(self, theme, keepCopy=True):
         update = False
 
         noTheme = self.workspace is None or (not hasattr(self.workspace, 'theme')) or self.workspace.theme is None
-
-
-
-
-
 
         # set background color
         if noTheme or self.workspace.theme.background_color != theme.background_color:

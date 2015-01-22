@@ -41,7 +41,7 @@ class TwoDimensionalElementsDetector(ElementsDetector):
 
     def _islandDelete(self, r, c, element_number):
         #deletes a boolean island in map with earth in the i, j position
-        #returns a tuple with the min row ,max row, min column, max column coordinates of the bool island
+        #returns a tuple with the minThresholdLabel row ,maxThresholdLabel row, minThresholdLabel column, maxThresholdLabel column coordinates of the bool island
         result = r, r, c, c
         q = deque()
         q.append((r, c))

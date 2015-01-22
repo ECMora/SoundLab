@@ -1,23 +1,20 @@
 class OscillogramTheme:
-    def __init__(self, background_color="000", plot_color="CC3", gridX=True, gridY=True, connectPoints=True):  # , minY=-100, maxY=100):
+    def __init__(self, background_color="000", plot_color="CC3", gridX=True, gridY=True, connectPoints=True):
         self.background_color = background_color
         self.plot_color = plot_color
         self.gridX = gridX
         self.gridY = gridY
-        # self.minY = minY
-        # self.maxY = maxY
         self.connectPoints = connectPoints
 
     def copy(self):
-        return OscillogramTheme(self.background_color, self.plot_color, self.gridX, self.gridY, self.connectPoints)
+        return OscillogramTheme(self.background_color, self.plot_color,
+                                self.gridX, self.gridY, self.connectPoints)
 
 
 class SpectrogramTheme:
-    def __init__(self, background_color="000", gridX=True, gridY=True, colorbar=None, histRange=(-40, 0)):  # ,minY=0, maxY=22,
+    def __init__(self, background_color="000", gridX=True, gridY=True, colorbar=None, histRange=(-40, 0)):
         self.gridX = gridX
         self.gridY = gridY
-        # self.minY = minY
-        # self.maxY = maxY
         self.background_color = background_color
         self.colorBarState = colorbar if colorbar is not None else {
             'ticks': [(0.3333, (185, 0, 0, 255)), (0.6666, (255, 220, 0, 255)), (1, (255, 255, 255, 255)),
@@ -64,5 +61,5 @@ class WorkTheme:
         self.detectionTheme = detectionTheme if detectionTheme is not None else DetectionTheme()
 
     def copy(self):
-        return WorkTheme(self.oscillogramTheme.copy(), self.spectrogramTheme.copy(), self.oneDimensionalTheme.copy(),
-                         self.detectionTheme.copy())
+        return WorkTheme(self.oscillogramTheme.copy(), self.spectrogramTheme.copy(),
+                         self.oneDimensionalTheme.copy(), self.detectionTheme.copy())

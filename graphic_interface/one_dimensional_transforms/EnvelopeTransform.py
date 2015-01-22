@@ -79,7 +79,7 @@ class Envelope(OneDimensionalTransform):
 
     def abs_decay_averaged_envelope(self, data, decay=1, softfactor=6, type="sin"):
             """
-            decay is the min number of samples in data that separates two elements
+            decay is the minThresholdLabel number of samples in data that separates two elements
             """
 
             rectified = np.array(abs(data))

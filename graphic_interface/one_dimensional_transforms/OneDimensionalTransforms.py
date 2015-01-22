@@ -262,7 +262,7 @@ class Envelope(OneDimensionalFunction):
 
     def abs_decay_averaged_envelope(self,data, decay=1,softfactor=6,progress= None,position= (5,15),type="sin"):
         """
-        decay is the min number of samples in data that separates two elements
+        decay is the minThresholdLabel number of samples in data that separates two elements
         """
         progress_interval = position[1]-position[0]
         if progress is not None:

@@ -55,7 +55,7 @@ class TwoDPlotWidget(pg.PlotWidget):
         """
         point = self.getPlotItem().getViewBox().mapSceneToView(QtCore.QPointF(ev.x(),ev.y()))
         x, y = point.x(), point.y()
-        #self.oldX,self.oldY, x, y = min(self.oldX,x),min(self.oldY,y),max(self.oldX,x),max(self.oldY,y)
+        #self.oldX,self.oldY, x, y = minThresholdLabel(self.oldX,x),minThresholdLabel(self.oldY,y),maxThresholdLabel(self.oldX,x),maxThresholdLabel(self.oldY,y)
         self.ElementSelectionRect.setRect(self.lastPoint.x(),self.lastPoint.y(),x-self.lastPoint.x(),y - self.lastPoint.y())
 
     def mouseReleaseEvent(self, ev):

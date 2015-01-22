@@ -10,6 +10,7 @@ import xlwt
 import numpy as np
 from PyQt4.QtGui import QFileDialog, QAbstractItemView, QWidget
 from pyqtgraph.parametertree import Parameter
+
 from duetto.audio_signals.AudioSignal import AudioSignal
 from Utils.Utils import saveImage
 from graphic_interface.widgets.signal_visualizer_tools.SignalVisualizerTool import Tools
@@ -23,7 +24,7 @@ from sound_lab_core.Segmentation.Elements.OneDimensionalElement import SpectralM
 from ..dialogs.elemDetectSettings import ElemDetectSettingsDialog
 from graphic_interface.windows.TwoDimensionalAnalisysWindow import TwoDimensionalAnalisysWindow
 from graphic_interface.windows.ui_python_files.SegmentationAndClasificationWindowUI import Ui_MainWindow
-import graphic_interface.dialogs.EditCategoriesDialogUI as editCateg
+import graphic_interface.windows.ui_python_files.EditCategoriesDialogUI as editCateg
 from graphic_interface.dialogs.EditCategoriesDialog import EditCategoriesDialog
 from graphic_interface.widgets.EditCategoriesWidget import EditCategoriesWidget
 

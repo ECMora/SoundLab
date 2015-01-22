@@ -126,7 +126,7 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
         # region Duration
         try:
             duration_seg = openSignal(file_path).duration
-            sufix = [self.tr(u"(seg)"), self.tr(u"(min)"), self.tr(u"(hours)")]
+            sufix = [self.tr(u"(seg)"), self.tr(u"(minThresholdLabel)"), self.tr(u"(hours)")]
             j = 0
             while duration_seg > 60 and j < len(sufix):
                 duration_seg /= 60.0
