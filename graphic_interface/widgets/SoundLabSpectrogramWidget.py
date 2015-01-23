@@ -195,14 +195,14 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
         if update or forceUpdate:
             self.graph(rangeX[0], rangeX[1])
 
-
         # set the y axis' range (must be made after the spectrogram is computed)
         minY = self.specgramHandler.get_freq_index(workspace.minY)
         maxY = self.specgramHandler.get_freq_index(workspace.maxY)
         self.viewBox.setYRange(minY, maxY, padding=0, update=True)
+
         # I had to do the following to make the spectrogram update right after changing minY or maxY
-        self.histogram.item.region.lineMoved()
-        self.histogram.item.region.lineMoveFinished()
+        self.histogram.region.lineMoved()
+        self.histogram.region.lineMoveFinished()
 
     # endregion
 

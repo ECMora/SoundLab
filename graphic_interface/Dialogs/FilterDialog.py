@@ -26,7 +26,7 @@ class FilterDialog(filterdg.Ui_Dialog, QDialog):
     }
     # endregion
 
-    def __init__(self):
+    def __init__(self, signalSamplingRate=None):
         """
         Initialize the dialogs elements with their last value
         """
@@ -36,6 +36,23 @@ class FilterDialog(filterdg.Ui_Dialog, QDialog):
         # load the previous selected values for the dialog or the defaults ones
         self.load_values()
         self.btonaceptar.clicked.connect(self.save_values)
+
+        # set the limits of the possible selectable frequencies to valid ranges
+        self.spinBoxBandPassFl.valueChanged.connect(lambda value: self.spinBoxBandPassFu.setMinimum(value))
+        self.spinBoxBandPassFu.valueChanged.connect(lambda value: self.spinBoxBandPassFl.setMaximum(value))
+
+        self.spinBoxBandStopFl.valueChanged.connect(lambda value: self.spinBoxBandStopFu.setMinimum(value))
+        self.spinBoxBandStopFu.valueChanged.connect(lambda value: self.spinBoxBandStopFl.setMaximum(value))
+
+        if signalSamplingRate is not None:
+            # max freq in kHz
+            max_freq = signalSamplingRate / 2000.0
+
+            self.spinBoxBandPassFu.setMaximum(max_freq)
+            self.spinBoxBandStopFu.setMaximum(max_freq)
+            self.spinBoxHighPass.setMaximum(max_freq)
+            self.spinBoxLowPass.setMaximum(max_freq)
+
 
     def load_values(self):
         """

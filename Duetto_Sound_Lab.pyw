@@ -70,6 +70,8 @@ def loadLanguageTranslations(qApp=None, translation_file=None):
             translator = QTranslator()
             if translator.load(translation_file):
                 qApp.installTranslator(translator)
+                print("Translation changed " + str(translation_file))
+
             return
         else:
             locale = QLocale.system().name()
@@ -101,7 +103,7 @@ if __name__ == '__main__':
 
     dmw = DuettoSoundLabWindow(signal_path=args)
 
-    dmw.languageChanged.connect(lambda data: loadLanguageTranslations(app,data))
+    dmw.languageChanged.connect(lambda data: loadLanguageTranslations(app, data))
     dmw.styleChanged.connect(lambda data: loadAppStyle(app, data))
 
 

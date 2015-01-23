@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\FilterOptionsDialog.ui'
+# Form implementation generated from reading ui file 'D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\FilterOptionsDialog.ui'
 #
-# Created: Sat Jan 03 22:32:49 2015
+# Created: Fri Jan 23 13:24:23 2015
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -105,7 +105,7 @@ class Ui_Dialog(object):
         self.gridLayout.addWidget(self.label_10, 1, 1, 1, 1)
         self.spinBoxLowPass = QtGui.QDoubleSpinBox(self.groupBox)
         self.spinBoxLowPass.setMinimumSize(QtCore.QSize(80, 0))
-        self.spinBoxLowPass.setMaximum(2500.0)
+        self.spinBoxLowPass.setMaximum(300.0)
         self.spinBoxLowPass.setSingleStep(0.1)
         self.spinBoxLowPass.setObjectName(_fromUtf8("spinBoxLowPass"))
         self.gridLayout.addWidget(self.spinBoxLowPass, 0, 2, 1, 1)
@@ -120,31 +120,31 @@ class Ui_Dialog(object):
         self.gridLayout.addWidget(self.label_12, 3, 1, 1, 1)
         self.spinBoxHighPass = QtGui.QDoubleSpinBox(self.groupBox)
         self.spinBoxHighPass.setMinimumSize(QtCore.QSize(80, 0))
-        self.spinBoxHighPass.setMaximum(2500.0)
+        self.spinBoxHighPass.setMaximum(300.0)
         self.spinBoxHighPass.setSingleStep(0.1)
         self.spinBoxHighPass.setObjectName(_fromUtf8("spinBoxHighPass"))
         self.gridLayout.addWidget(self.spinBoxHighPass, 1, 2, 1, 1)
         self.spinBoxBandPassFl = QtGui.QDoubleSpinBox(self.groupBox)
         self.spinBoxBandPassFl.setMinimumSize(QtCore.QSize(80, 0))
-        self.spinBoxBandPassFl.setMaximum(2500.0)
+        self.spinBoxBandPassFl.setMaximum(300.0)
         self.spinBoxBandPassFl.setSingleStep(0.1)
         self.spinBoxBandPassFl.setObjectName(_fromUtf8("spinBoxBandPassFl"))
         self.gridLayout.addWidget(self.spinBoxBandPassFl, 2, 2, 1, 1)
         self.spinBoxBandPassFu = QtGui.QDoubleSpinBox(self.groupBox)
         self.spinBoxBandPassFu.setMinimumSize(QtCore.QSize(80, 0))
-        self.spinBoxBandPassFu.setMaximum(2500.0)
+        self.spinBoxBandPassFu.setMaximum(300.0)
         self.spinBoxBandPassFu.setSingleStep(0.1)
         self.spinBoxBandPassFu.setObjectName(_fromUtf8("spinBoxBandPassFu"))
         self.gridLayout.addWidget(self.spinBoxBandPassFu, 3, 2, 1, 1)
         self.spinBoxBandStopFl = QtGui.QDoubleSpinBox(self.groupBox)
         self.spinBoxBandStopFl.setMinimumSize(QtCore.QSize(80, 0))
-        self.spinBoxBandStopFl.setMaximum(2500.0)
+        self.spinBoxBandStopFl.setMaximum(300.0)
         self.spinBoxBandStopFl.setSingleStep(0.1)
         self.spinBoxBandStopFl.setObjectName(_fromUtf8("spinBoxBandStopFl"))
         self.gridLayout.addWidget(self.spinBoxBandStopFl, 4, 2, 1, 1)
         self.spinBoxBandStopFu = QtGui.QDoubleSpinBox(self.groupBox)
         self.spinBoxBandStopFu.setMinimumSize(QtCore.QSize(80, 0))
-        self.spinBoxBandStopFu.setMaximum(2500.0)
+        self.spinBoxBandStopFu.setMaximum(300.0)
         self.spinBoxBandStopFu.setSingleStep(0.1)
         self.spinBoxBandStopFu.setObjectName(_fromUtf8("spinBoxBandStopFu"))
         self.gridLayout.addWidget(self.spinBoxBandStopFu, 5, 2, 1, 1)

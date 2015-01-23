@@ -27,12 +27,14 @@ QWidget:item:selected
 QMenuBar::item
 {
     background: transparent;
+    
 }
 
 QMenuBar::item:selected
 {
     background: transparent;
     border: 1px solid #ffaa00;
+    color:#FFF;
 }
 
 QMenuBar::item:pressed
@@ -59,7 +61,7 @@ QMenu
 QMenu::item
 {
     padding: 2px 20px 2px 20px;
-    color: #FFF;
+    color: #333;
 }
 
 QMenu::item:selected
@@ -69,8 +71,8 @@ QMenu::item:selected
 
 QWidget:disabled
 {
-    color: #404040;
-    background-color: #323232;
+    color: #000;
+    background-color: #C2C2D2;
 }
 
 QAbstractItemView
@@ -290,6 +292,11 @@ QCheckBox:disabled
 color: #414141;
 }
 
+QDockWidget
+{
+    background-color: #FFF
+}
+
 QDockWidget::title
 {
     text-align: center;
@@ -425,7 +432,7 @@ QRadioButton::indicator:checked, QRadioButton::indicator:unchecked{
     border-radius: 6px;
 }
 
-QRadioButton::indicator:checked
+QRadioButton::indicator:checked,QCheckBox::indicator:checked
 {
     background-color: qradialgradient(
         cx: 0.5, cy: 0.5,
@@ -439,9 +446,9 @@ QRadioButton::indicator:checked
 QCheckBox::indicator{
     color: #b1b1b1;
     background-color: #323232;
-    border: 1px solid #b1b1b1;
-    width: 9px;
-    height: 9px;
+    
+    width: 11px;
+    height: 11px;
 }
 
 QRadioButton::indicator
@@ -449,14 +456,14 @@ QRadioButton::indicator
     border-radius: 6px;
 }
 
-QRadioButton::indicator:hover, QCheckBox::indicator:hover
+QRadioButton::indicator:hover
 {
     border: 1px solid #ffaa00;
 }
 
 QCheckBox::indicator:checked
 {
-   /* image:url(:/images/checkbox.png);*/
+
 }
 
 QCheckBox::indicator:disabled, QRadioButton::indicator:disabled
