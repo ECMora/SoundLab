@@ -307,7 +307,7 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
     </size>
    </property>
    <property name="styleSheet">
-    <string notr="true"/>
+    <string notr="true">background-color: rgb(255, 255, 255);</string>
    </property>
    <property name="floating">
     <bool>false</bool>

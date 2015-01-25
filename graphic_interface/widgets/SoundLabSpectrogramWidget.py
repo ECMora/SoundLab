@@ -28,9 +28,8 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
     # endregion
 
     # region CONSTANTS
-
-    # Value of the axis lines opacity
-    AXIS_LINES_OPACITY = 255
+    # the opacity if the grid lines on x and y axis
+    GRID_LINE_OPACITY = 150
 
     # endregion
 
@@ -38,7 +37,7 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
         SpectrogramWidget.__init__(self)
         SoundLabWidget.__init__(self)
 
-        # parche para capturar los eventos visuales del control
+        # region parche para capturar los eventos visuales del control
         # TODO averiguar por que razon no se envian los eventos correctamente al widget
         self.graphics_view.mouseMoveEvent = self.mouseMoveEvent
         self.graphics_view.mouseReleaseEvent = self.mouseReleaseEvent
@@ -46,19 +45,18 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
         self.graphics_view.mousePressEvent = self.mousePressEvent
         self.graphics_view.leaveEvent = self.leaveEvent
         self.graphics_view.enterEvent = self.enterEvent
+        # endregion
 
         self.changeTool(SpectrogramZoomTool)
 
         # the object to compute spectrogram on record mode
-        self.recordModeSpectrogram = Spectrogram(NFFT=128, overlap=0)
+        self.recordModeSpectrogram = Spectrogram(NFFT=256, overlap=0)
         self.activeRecordMode = False
 
-        self.workspace = None
-        self._load_workspace(SpectrogramWorkspace())
+        self.workspace = SpectrogramWorkspace()
 
-        self.minY = 0
-        self.maxY = 256
 
+    # region Tools interaction Implementation
     def changeTool(self, new_tool_class):
         SoundLabWidget.changeTool(self,new_tool_class)
         if self.gui_user_tool is not None:
@@ -83,6 +81,7 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
     def changeRangeSignal(self, x1, x2, y1, y2):
         self.changeRange(x1, x2, y1, y2)
         self.rangeChanged.emit(x1, x2)
+    # endregion
 
     def setRecordMode(self, record_mode_active=True):
         """
@@ -92,89 +91,51 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
         :return:
         """
         if record_mode_active != self.activeRecordMode:
+            # if start record mode get the signal
+            if not self.activeRecordMode:
+                self.recordModeSpectrogram.signal = self.specgramHandler.signal
+
             spectrogram_handler = self.specgramHandler
             self.specgramHandler = self.recordModeSpectrogram
-            sel
+            self.recordModeSpectrogram = spectrogram_handler
+
             self.activeRecordMode = not self.activeRecordMode
 
     # region Theme and Workspace
-    # TODO Improve and refactor the theme code. must keep simplicity and minimality
-    def _load_theme(self, theme, keepCopy=True):
+
+    def load_theme(self, theme):
+        """
+        Load the visual components of the workspace
+        :param theme:
+        :return:
+        """
         update = False
 
-        noTheme = self.workspace is None or (not hasattr(self.workspace, 'theme')) or self.workspace.theme is None
-
         # set background color
-        if noTheme or self.workspace.theme.background_color != theme.background_color:
+        if self.workspace.theme.background_color != theme.background_color:
             self.graphics_view.setBackground(theme.background_color)
 
         # set grid lines
-        if noTheme or self.workspace.theme.gridX != theme.gridX:
-            self.xAxis.setGrid(88 if theme.gridX else 0)
-        if noTheme or self.workspace.theme.gridY != theme.gridY:
-            self.yAxis.setGrid(88 if theme.gridY else 0)
+        if self.workspace.theme.gridX != theme.gridX:
+            self.xAxis.setGrid(self.GRID_LINE_OPACITY if theme.gridX else 0)
 
-        # set the state of the histogram and make it note the change so it automatically refreshes the spectrogram
+        if self.workspace.theme.gridY != theme.gridY:
+            self.yAxis.setGrid(self.GRID_LINE_OPACITY if theme.gridY else 0)
+
+        # set the state of the histogram and make it note
+        # the change so it automatically refreshes the spectrogram
         refrHist = False
-        if noTheme or self.workspace.theme.colorBarState != theme.colorBarState:
-            self.histogram.item.gradient.restoreState(theme.colorBarState)
+
+        if self.workspace.theme.colorBarState != theme.colorBarState:
+            self.histogram.gradient.restoreState(theme.colorBarState)
             refrHist = True
-        if noTheme or self.workspace.theme.histRange != theme.histRange:
-            self.histogram.item.region.setRegion(theme.histRange)
+        if self.workspace.theme.histRange != theme.histRange:
+            self.histogram.region.setRegion(theme.histRange)
             refrHist = True
+
         if refrHist:
-            self.histogram.item.region.lineMoved()
-            self.histogram.item.region.lineMoveFinished()
-
-        if keepCopy:
-            if self.workspace is None:
-                self.workspace = SpectrogramWorkspace()
-            self.workspace.theme = theme.copy()
-
-        # returns whether it's necessary to update the widget
-        return update
-
-    def load_Theme(self, theme):
-        """
-        Loads a theme and updates the view according with it.
-        :param theme: an instance of SpectrogramTheme, the part of the WorkTheme concerning the spectrogram.
-        """
-        # load the theme and determine if it's necessary to update the widget
-        update = self._load_theme(theme)
-
-        # update the widget if needed
-        if update:
-            rangeX = self.viewBox.viewRange()[0]
-            rangeX = self.specgramHandler.from_spec_to_osc(rangeX[0]), self.specgramHandler.from_spec_to_osc(rangeX[1])
-            self.graph(rangeX[0], rangeX[1])
-
-    def _load_workspace(self, workspace):
-        update = False
-        noWorkspace = not hasattr(self, 'workspace') or self.workspace is None
-
-        # set the FFT size (must also reset the overlap)
-        if noWorkspace or self.workspace.FFTSize != workspace.FFTSize:
-            self.specgramHandler.NFFT = workspace.FFTSize
-            update = True
-
-        # set the FFT window
-        if noWorkspace or self.workspace.FFTWindow != workspace.FFTWindow:
-            self.specgramHandler.window = workspace.FFTWindow
-            update = True
-
-        # set the FFT overlap (it must be set if the overlap or the FFT size are changed)
-        if noWorkspace or self.workspace.FFTOverlap != workspace.FFTOverlap or self.workspace.FFTSize != workspace.FFTSize:
-            if workspace.FFTOverlap >= 0:
-                self.specgramHandler.set_overlap_ratio(workspace.FFTOverlap)
-            else:
-                self.specgramHandler.overlap = workspace.FFTSize - 1
-            update = True
-
-        # load the theme
-        update = self._load_theme(workspace.theme, keepCopy=False) or update
-
-        # keep a copy of the workspace
-        self.workspace = workspace.copy()
+            self.histogram.region.lineMoved()
+            self.histogram.region.lineMoveFinished()
 
         # returns whether it's necessary to update the widget
         return update
@@ -189,7 +150,33 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
         rangeX = self.specgramHandler.from_spec_to_osc(rangeX[0]), self.specgramHandler.from_spec_to_osc(rangeX[1])
 
         # load the workspace and determine if it's necessary to update the widget
-        update = self._load_workspace(workspace)
+        update = False
+
+        if not self.activeRecordMode:
+            # set the FFT size (must also reset the overlap)
+            if self.workspace.FFTSize != workspace.FFTSize:
+                self.specgramHandler.NFFT = workspace.FFTSize
+                update = True
+
+            # set the FFT window
+            if self.workspace.FFTWindow != workspace.FFTWindow:
+                self.specgramHandler.window = workspace.FFTWindow
+                update = True
+
+            # set the FFT overlap (it must be set if the overlap or the FFT size are changed)
+            if self.workspace.FFTOverlap != workspace.FFTOverlap or self.workspace.FFTSize != workspace.FFTSize:
+                if workspace.FFTOverlap >= 0:
+                    self.specgramHandler.set_overlap_ratio(workspace.FFTOverlap)
+                else:
+                    self.specgramHandler.overlap = workspace.FFTSize / 2
+
+                update = True
+
+        # load the theme
+        update = self.load_theme(workspace.theme) or update
+
+        # keep a copy of the workspace
+        self.workspace = workspace.copy()
 
         # update the widget if needed (showing the same X axis' range as before)
         if update or forceUpdate:
@@ -198,11 +185,9 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
         # set the y axis' range (must be made after the spectrogram is computed)
         minY = self.specgramHandler.get_freq_index(workspace.minY)
         maxY = self.specgramHandler.get_freq_index(workspace.maxY)
-        self.viewBox.setYRange(minY, maxY, padding=0, update=True)
 
-        # I had to do the following to make the spectrogram update right after changing minY or maxY
-        self.histogram.region.lineMoved()
-        self.histogram.region.lineMoveFinished()
+        # todo update the yaxis
+        self.viewBox.setYRange(minY, maxY, padding=0, update=True)
 
     # endregion
 

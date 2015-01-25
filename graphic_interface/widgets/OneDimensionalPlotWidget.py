@@ -17,9 +17,9 @@ class OneDimPlotWidget(SoundLabOscillogramWidget):
 
         SoundLabOscillogramWidget.__init__(self, **kargs)
 
-    def load_Theme(self, theme):
-        SoundLabOscillogramWidget.load_Theme(self,theme)
-        self.plot_color = theme.plot_color
+    def load_workspace(self, workspace, forceUpdate=False):
+        SoundLabOscillogramWidget.load_workspace(self,workspace,forceUpdate)
+        self.plot_color = workspace.theme.plot_color
 
     # region Property Transform
     # the signal and the one_dim_transform update is made on the window

@@ -16,7 +16,7 @@ _winFuncs_inv = {value: key for key, value in _winFuncs.iteritems()}
 
 
 class OscillogramWorkspace(object):
-    def __init__(self, minY=-1.0, maxY=1.0, theme=None):
+    def __init__(self, minY=-100.0, maxY=100.0, theme=None):
         """
 
         :param minY: between -1 and 0

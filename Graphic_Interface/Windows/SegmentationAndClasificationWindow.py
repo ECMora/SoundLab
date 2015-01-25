@@ -812,17 +812,12 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     # region Theme
 
-    def load_Theme(self, theme):
+    def load_workspace(self, workspace):
         """
-        Method that loads the theme to update visual options from main window.
-        :param theme:
+        Method that loads the workspace to update visual options from main window.
+        :param workspace:
         """
-        # store the theme for use it
-        # in the windows of two dim and
-        # in the detection dialog
-        self.theme = theme
-
-        self.widget.load_Theme(theme)
+        self.widget.load_workspace(workspace)
 
     # endregion
 

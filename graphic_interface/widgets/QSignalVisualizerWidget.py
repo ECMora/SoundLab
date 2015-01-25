@@ -139,6 +139,8 @@ class QSignalVisualizerWidget(QWidget):
         # signal file path to save and read the signals from files. None if signal was not loaded from file
         self.__signalFilePath = None
 
+        self.workSpace = None
+
     # region Scroll Bar
 
     def scrollBarRangeChanged(self, start):
@@ -190,7 +192,6 @@ class QSignalVisualizerWidget(QWidget):
         self.mainCursor.max = x2
         self.updateScrollbar()
 
-
     def updateSpecgram(self, x1, x2):
         """
         Update the visible range of the
@@ -203,6 +204,7 @@ class QSignalVisualizerWidget(QWidget):
         self.axesSpecgram.changeRange(x1,x2)
         self.mainCursor.min = x1
         self.mainCursor.max = x2
+        self.updateScrollbar()
 
     # endregion
 
@@ -339,11 +341,11 @@ class QSignalVisualizerWidget(QWidget):
         self.signalPlayer.readFromStream()
         # update the current view interval of the recording signal
         if len(self.signal) > 0:
-            self.mainCursor.max = len(self.signal.data)
-            self.mainCursor.min = max(0,
-                                      len(self.signal.data) - 3 * self.signal.samplingRate)
-            #  draw the current recorded interval
-            self.axesOscilogram.graph(self.mainCursor.min)
+            self.mainCursor.max = self.signal.length
+
+            # draw the last signal second
+            self.mainCursor.min = max(0, self.signal.length - self.signal.samplingRate)
+            self.graph()
 
     def record(self, newSignal=True):
         """
@@ -358,20 +360,17 @@ class QSignalVisualizerWidget(QWidget):
         #   case of any IO device exception occurs then
         #  we just stop recording immediately.
         try:
-            self.signalPlayer.record()
             self.axesSpecgram.setRecordMode(True)
+            self.signalPlayer.record()
         except Exception as ex:
             self.stop()
             self.signal = Synthesizer.generateSilence(samplingRate=self.signal.samplingRate,
-                                                       bitDepth=self.signal.bitDepth,duration=1)
+                                                       bitDepth=self.signal.bitDepth, duration=1)
             self.graph()
+            print(ex.message)
             raise ex
 
-        #  set only the oscillogram visible while recording
-        self.visibleOscilogram = True
-        self.visibleSpectrogram = False
-
-        #  update oscillogram time interval for drawing the recorded section
+        #  update oscillogram time (ms) interval for drawing the recorded section
         updateTime = 15
 
         #  starting the update record timer
@@ -433,15 +432,17 @@ class QSignalVisualizerWidget(QWidget):
 
     #  region Properties
 
+    # region Audio Devices
+
     @property
-    def outputDevice(self):
+    def audioOutputDevice(self):
         """
         :return: The selected output audio device to record signals
         """
         return self.signalPlayer.outputDevice
 
-    @outputDevice.setter
-    def outputDevice(self, value):
+    @audioOutputDevice.setter
+    def audioOutputDevice(self, value):
         """
         Set the new selected output audio device to record signals
         :param value: the new output audioDevice
@@ -449,12 +450,13 @@ class QSignalVisualizerWidget(QWidget):
         self.signalPlayer.outputDevice = value
 
     @property
-    def inputDevice(self):
+    def audioInputDevice(self):
         return self.signalPlayer.inputDevice
 
-    @inputDevice.setter
-    def inputDevice(self, value):
+    @audioInputDevice.setter
+    def audioInputDevice(self, value):
         self.signalPlayer.inputDevice = value
+    # endregion
 
     @property
     def selectedTool(self):
@@ -943,25 +945,17 @@ class QSignalVisualizerWidget(QWidget):
 
     #  endregion
 
-    # region Theme and WorkSpace
-
-    def load_Theme(self, theme):
-        """
-        this method implements the  way in which the control loads the theme
-        all the visual options are updated here.
-        The method delegates in each control (oscillogram and spectrogram plot widgets)
-        the implementation of its respective visual updates.
-        """
-        self.axesOscilogram.load_Theme(theme.oscillogramTheme)
-        self.axesSpecgram.load_Theme(theme.spectrogramTheme)
+    # region WorkSpace
 
     def load_workspace(self, workspace, forceUpdate=False):
         """
-        Loads a workspace containing all the settings of the oscillogram and spectrogram (amongst others) and updates as
+        Loads a workspace containing all the settings of the oscillogram and spectrogram
+        (amongst others) and updates as
         needed
         :param workspace: the workspace to load
         :param forceUpdate: whether to update even if there were no changes to the workspace
         """
+        self.workSpace = workspace.copy()
         self.axesOscilogram.load_workspace(workspace.oscillogramWorkspace, forceUpdate)
         self.axesSpecgram.load_workspace(workspace.spectrogramWorkspace, forceUpdate)
 

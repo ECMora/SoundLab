@@ -106,9 +106,10 @@ class SoundLabWidget:
         # (python issues to solve)
         self.toolDataDetected.emit(detected_data)
 
-    def load_Theme(self, theme):
+    def load_workspace(self, workspace, forceUpdate=False):
         """
-        Loads a visual theme and applies changes. Repaints the widget if necessary.
-        :param theme: an instance of the theme class for this widget, the theme to load
+        Loads a workspace with visual and processing parameter settings.
+        Applies those changes to the widget. Repaints the widget if necessary.
+        :param workspace: an instance of the workspace class for this widget
         """
         pass

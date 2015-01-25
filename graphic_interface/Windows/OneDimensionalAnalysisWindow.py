@@ -33,13 +33,13 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
         # Parameter Tree Settings
         self.__createParameterTree()
 
-    def load_Theme(self, theme):
+    def load_workspace(self, workspace):
         """
         Load the supplied theme into the widget inside.
         :param theme: The theme with the visual options
         :return:
         """
-        self.widget.load_Theme(theme)
+        self.widget.load_workspace(workspace)
 
     # region Properties Signal
     @property

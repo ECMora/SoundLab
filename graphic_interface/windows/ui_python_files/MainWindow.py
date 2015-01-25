@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\MainWindow.ui'
+# Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\MainWindow.ui'
 #
-# Created: Mon Jan 19 14:45:37 2015
+# Created: Sun Jan 25 14:01:09 2015
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -108,7 +108,7 @@ class Ui_DuettoMainWindow(object):
         self.dock_settings.setSizePolicy(sizePolicy)
         self.dock_settings.setMinimumSize(QtCore.QSize(250, 40))
         self.dock_settings.setMaximumSize(QtCore.QSize(250, 524287))
-        self.dock_settings.setStyleSheet(_fromUtf8(""))
+        self.dock_settings.setStyleSheet(_fromUtf8("background-color: rgb(255, 255, 255);"))
         self.dock_settings.setFloating(False)
         self.dock_settings.setFeatures(QtGui.QDockWidget.AllDockWidgetFeatures)
         self.dock_settings.setObjectName(_fromUtf8("dock_settings"))

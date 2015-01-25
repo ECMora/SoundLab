@@ -28,17 +28,19 @@ class SoundLabOscillogramWidget(SoundLabWidget, OscillogramWidget):
 
     # endregion
 
+    # CONSTANTS
+    # the opacity if the grid lines on x and y axis
+    GRID_LINE_OPACITY = 150
+
     def __init__(self):
         OscillogramWidget.__init__(self)
         SoundLabWidget.__init__(self)
         self.changeTool(ZoomTool)
 
-        self.minY = self.signal.minimumValue if self.signal is not None else -2**16
-        self.maxY = self.signal.maximumValue if self.signal is not None else 2**16
-
         self.workspace = OscillogramWorkspace()
         self._pointsConnectedOnLastUpdate = False
 
+    # region Tools interaction Implementation
     def changeTool(self, new_tool_class):
         SoundLabWidget.changeTool(self, new_tool_class)
         if self.gui_user_tool is not None:
@@ -77,69 +79,50 @@ class SoundLabOscillogramWidget(SoundLabWidget, OscillogramWidget):
         """
         self.changeRange(x1, x2, y1, y2)
         self.rangeChanged.emit(x1, x2)
+    # endregion
 
-    # region Theme and Workspace
-    # TODO Improve and refactor the theme code. must keep simplicity and minimality
-
-    def _load_theme(self, theme):
-        update = False
-        # set background color
-        if self.workspace.theme.background_color != theme.background_color:
-            self.setBackground(theme.background_color)
-
-        # set grid lines
-        if self.workspace.theme.gridX != theme.gridX or self.workspace.theme.gridY != theme.gridY:
-            self.getPlotItem().showGrid(theme.gridX, theme.gridY)
-
-        # set the color of the plot lines; the lines will be redrawn later if the color changed
-        if self.plotLine:
-            if self._pointsConnectedOnLastUpdate:
-                self.plotLine.setPen(theme.plot_color)
-            else:
-                self.plotLine.setSymbolPen(theme.plot_color)
-
-        if self.workspace.theme is None or self.workspace.theme.connectPoints != theme.connectPoints:
-            update = True
-
-        # keep a copy of the theme
-        self.workspace.theme = theme.copy()
-
-        # returns whether it's necessary to update the widget
-        return update
-
-    def load_Theme(self, theme):
-        """
-        Loads a theme and updates the view according with it.
-        :param theme: an instance of OscillogramTheme, the part of the WorkTheme concerning the oscillogram.
-        """
-        # load the theme and determine if it's necessary to update the widget
-        update = self._load_theme(theme)
-
-        # update the widget if needed
-        if update:
-            rangeX = self.getPlotItem().getViewBox().viewRange()[0]
-            self.graph(rangeX[0], rangeX[1])
+    # region Workspace
 
     def load_workspace(self, workspace, forceUpdate=False):
         """
         Loads a workspace and updates the view according with it.
         :param workspace: an instance of OscillogramWorkspace, the part of the Workspace concerning the oscillogram
         """
-        update = False
-
         # set the y axis' range
-        minY = -workspace.minY * self.signal.minimumValue
-        maxY = workspace.maxY * self.signal.maximumValue
-        self.setRange(yRange=(minY, maxY), padding=0, update=True)
+        if self.workspace.maxY != workspace.maxY or \
+                        self.workspace.minY != workspace.minY:
 
-        # load the theme
-        update = self._load_theme(workspace.theme) or update
+            minY = -workspace.minY  * self.signal.minimumValue / 100.0
+            maxY = workspace.maxY * self.signal.maximumValue / 100.0
+            print(minY, maxY)
+            # todo update the y axis labels
+            self.setRange(yRange=(minY, maxY), padding=0, update=True)
+
+        # set background color
+        if self.workspace.theme.background_color != workspace.theme.background_color:
+            self.setBackground(workspace.theme.background_color)
+
+        # set grid lines
+        if self.workspace.theme.gridX != workspace.theme.gridX:
+            self.xAxis.setGrid(self.GRID_LINE_OPACITY if workspace.theme.gridX else 0)
+
+        if self.workspace.theme.gridY != workspace.theme.gridY:
+            self.yAxis.setGrid(self.GRID_LINE_OPACITY if workspace.theme.gridY else 0)
+
+        # set the color of the plot lines; the lines will be redrawn later if the color changed
+        if self.plotLine:
+            if self._pointsConnectedOnLastUpdate:
+                self.plotLine.setPen(workspace.theme.plot_color)
+            else:
+                self.plotLine.setSymbolPen(workspace.theme.plot_color)
+
+        # update the widget if needed
+        update = forceUpdate or self.workspace.theme.connectPoints != workspace.theme.connectPoints
 
         # keep a copy of the workspace
         self.workspace = workspace.copy()
 
-        # update the widget if needed
-        if update or forceUpdate:
+        if update:
             rangeX = self.getPlotItem().getViewBox().viewRange()[0]
             self.graph(rangeX[0], rangeX[1])
 
