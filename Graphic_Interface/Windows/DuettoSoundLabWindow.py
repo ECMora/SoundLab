@@ -61,8 +61,14 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     SETTINGS_WINDOW_HEIGHT = 100
     # name of the file with the workspace information on folder Utils
     WORK_SPACE_FILE_NAME = "soundlab.ini"
-    #
+
+    # The decimal places to round visible data to the user
     DECIMAL_PLACES = 2
+
+    # The max number of chars of a recent file signal path
+    # will be showed to the user on the recent files submenu
+    MAX_RECENT_FILES_ACTION_TEXT_LENGTH = 50
+
 
     # endregion
 
@@ -614,6 +620,12 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         play_speed_actions.triggered.connect(self.on_playSpeedChanged_triggered)
         # endregion
 
+        # region Action Settings
+
+        settings_actions = QActionGroup(self)
+        self.actionSettings.setActionGroup(settings_actions)
+
+        # endregion
         # endregion
 
         # add the actions to the signalDependingActions list
@@ -627,17 +639,17 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         actions_groups = [(open_save_actions, self.tr(u"Open/Save")),(undo_redo_actions, self.tr(u"Undo/Redo")),
                           (edition_actions,self.tr(u"Edition")),(play_record_actions, self.tr(u"Play/Record")),
                           (zoom_actions, self.tr(u"Zoom")),(widgets_visibility_actions, self.tr(u"Widgets Visibility")),
-                          (file_updown_actions, self.tr(u"File Up/Down")), (segm_transf_actions, self.tr(u"Processing"))]
+                          (file_updown_actions, self.tr(u"File Up/Down")), (segm_transf_actions, self.tr(u"Processing")),
+                          (settings_actions, self.tr(u"Settings"))]
+
+        # first add the label for signal name that always wil be visible as an option
+        # not like the other groups of actions that the user could customize
+        self.toolBar.addWidget(self.signalNameLineEdit)
 
         # add to the customizable sound lab toolbar
         for act in actions_groups:
             #            addActionGroup(actionGroup, name)
             self.toolBar.addActionGroup(act[0], act[1])
-
-        # add other signal depending actions that not belong to any group
-
-        self.toolBar.addAction(self.actionSettings)
-        self.toolBar.addWidget(self.signalNameLineEdit)
 
         self.signalDependingActions.append(self.signalNameLineEdit)
 
@@ -1059,13 +1071,13 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
             elif childName == unicode(self.tr(u'Tabs')) + u"." + \
                     unicode(self.tr(u'Tab Position')):
-                self.tabOpenedSignals.setTabPosition(data)
-                self.workSpace.tabPosition = data
+                self.tabOpenedSignals.setTabPosition(int(data))
+                self.workSpace.tabPosition = int(data)
 
             elif childName == unicode(self.tr(u'Tabs')) + u"." + \
                               unicode(self.tr(u'Tab Shape')):
-                self.tabOpenedSignals.setTabShape(data)
-                self.workSpace.tabShape = data
+                self.tabOpenedSignals.setTabShape(int(data))
+                self.workSpace.tabShape = int(data)
 
         # if opened signals
         if self.widget is not None:
@@ -1609,24 +1621,42 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     def loadRecentFiles(self):
         """
-        Load the recent files actions to the open actions on file menu
+        Load the recent files actions as open signal actions on Recent Files
+        submenu.
         :return:
         """
         self.menuRecentSignals.clear()
 
-        # a max of 50 char text label for the action
+        # a max of MAX_RECENT_FILES_ACTION_TEXT_LENGTH char text label for the action
         action_text = lambda file_path: file_path if \
-                                       len(file_path) < 50 else \
-                                       file_path[0:27] + "..." + file_path[-20:]
+                                       len(file_path) < self.MAX_RECENT_FILES_ACTION_TEXT_LENGTH else \
+                                       file_path[0:self.MAX_RECENT_FILES_ACTION_TEXT_LENGTH/2] + \
+                                       "..." + file_path[-self.MAX_RECENT_FILES_ACTION_TEXT_LENGTH/2:]
 
-        action_labels = [action_text(x) for x in self.workSpace.recentFiles]
+        actions = [QAction(action_text(x), self) for x in self.workSpace.recentFiles]
 
-        actions = [QAction(self) for _ in action_labels]
+        # set manually the actions for each recent file action (issues when use a for and
+        # update the lambda function, keep reference to the same value for all the actions)
 
-        for i in range(len(actions)):
-            actions[i].setText(action_labels[i])
-            actions[i].setData(self.workSpace.recentFiles[i])
-            actions[i].triggered.connect(lambda : self._open(actions[i].data().toString()))
+        if len(actions) >= 1:
+            actions[0].setData(self.workSpace.recentFiles[0])
+            actions[0].triggered.connect(lambda : self._open(actions[0].data().toString()))
+
+        if len(actions) >= 2:
+            actions[1].setData(self.workSpace.recentFiles[1])
+            actions[1].triggered.connect(lambda : self._open(actions[1].data().toString()))
+
+        if len(actions) >= 3:
+            actions[2].setData(self.workSpace.recentFiles[2])
+            actions[2].triggered.connect(lambda : self._open(actions[2].data().toString()))
+
+        if len(actions) >= 4:
+            actions[3].setData(self.workSpace.recentFiles[3])
+            actions[3].triggered.connect(lambda : self._open(actions[3].data().toString()))
+
+        if len(actions) >= 5:
+            actions[4].setData(self.workSpace.recentFiles[4])
+            actions[4].triggered.connect(lambda : self._open(actions[4].data().toString()))
 
         self.menuRecentSignals.addActions(actions)
 
@@ -1662,10 +1692,13 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         :return:
         """
         signal_index = self.tabOpenedSignals.currentIndex() if signal_index is None else signal_index
-        # save the signal if any change
-        self.save_signal_if_modified(signal_index)
 
-        self.closeSignalAt(signal_index)
+        # if there is a tab opened
+        if signal_index >= 0:
+            # save the signal if any change
+            self.save_signal_if_modified(signal_index)
+
+            self.closeSignalAt(signal_index)
 
     @pyqtSlot()
     def on_actionCloseAll_triggered(self):
@@ -2176,14 +2209,13 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             win.graph(indexFrom, indexTo)
 
     @pyqtSlot()
-    def on_actionPower_Spectrum_triggered(self):
+    def on_actionOneDimensionalTransformation_triggered(self):
         """
         Create a one dimensional one_dim_transform window and show it.
         :return:
         """
-
         one_dim_window = OneDimensionalAnalysisWindow(self,self.widget.signal)
-        one_dim_window.load_Theme(self.workSpace.workTheme.oscillogramTheme)
+        one_dim_window.load_workspace(self.workSpace)
 
         indexFrom, indexTo = self.widget.selectedRegion
         one_dim_window.graph(indexFrom, indexTo)

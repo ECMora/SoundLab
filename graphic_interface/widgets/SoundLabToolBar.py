@@ -31,31 +31,9 @@ class SoundLabToolBarWidget(QtGui.QToolBar):
         # list of GroupActionManager
         self.actions_groups = []
 
-        # the list of actions that always would be visible and do not
-        # belong to any group
-        self.singleActions = []
-
-        # the list of widgets that always would be visible and do not
-        # belong to any group list of tuple (widget, widget action on toolbar)
-        self.singleWidgets = []
-
         # manage internally the context menu
         # to show actions groups options
         self.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
-
-    def addAction(self, action):
-        if action not in self.singleActions:
-            self.singleActions.append(action)
-
-        QtGui.QToolBar.addAction(self,action)
-
-    def addWidget(self, widget):
-        if widget in [x[0] for x in self.singleWidgets]:
-            return
-
-        widget_action = QtGui.QToolBar.addWidget(self, widget)
-
-        self.singleWidgets.append((widget, widget_action))
 
     def addActionGroup(self, actionGroup, name=""):
         """
@@ -74,17 +52,14 @@ class SoundLabToolBarWidget(QtGui.QToolBar):
         manager_act = QtGui.QAction(name, self)
         manager_act.setCheckable(True)
 
-        # actions visible by default
-        manager_act.setChecked(True)
+        # add into the toolbar
+        self.actions_groups.append(GroupActionManager(manager_act,actionGroup))
 
         # connect to the change of visible state to customize the action group
         manager_act.toggled.connect(lambda checked_state: self.changeActionsVisibility(
                                                          actionGroup, checked_state))
-        # add into the toolbar
-        self.actions_groups.append(GroupActionManager(manager_act,actionGroup))
-
-        # add the actions
-        self.changeActionsVisibility(actionGroup, add_action=True)
+        # actions visible by default
+        manager_act.setChecked(True)
 
     def changeActionsVisibility(self, actionGroup, add_action=True):
         """
@@ -99,17 +74,17 @@ class SoundLabToolBarWidget(QtGui.QToolBar):
                 self.removeAction(action)
             return
 
-        self.clear()
+        # remove to maintain the order of the actions
+        for action_manager in self.actions_groups:
+            for act in action_manager.actionGroup.actions():
+                self.removeAction(act)
 
-        for action_group in [x.actionGroup for x in self.actions_groups if x.actionManager.isChecked()]:
+        active_actions_groups = [x.actionGroup for x in self.actions_groups if x.actionManager.isChecked()]
+
+        # add the actions
+        for action_group in active_actions_groups:
             for act in action_group.actions():
                 self.addAction(act)
-
-        for single_action in self.singleActions:
-            self.addAction(single_action)
-
-        for single_widget_action in [x[1] for x in self.singleWidgets]:
-            single_widget_action.setVisible(True)
 
     def contextMenuEvent(self, QContextMenuEvent):
         """

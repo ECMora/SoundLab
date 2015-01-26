@@ -25,8 +25,6 @@ class OneDimensionalTransform(QObject):
         # the parameter tree widget with the options
         self._parameterTree = self._getParameterTree()
 
-
-
         self._signal = signal
 
     def _getParameterTree(self):

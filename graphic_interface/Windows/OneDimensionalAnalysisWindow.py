@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from PyQt4 import QtGui
-from duetto.audio_signals.AudioSignal import AudioSignal
 from graphic_interface.windows.ui_python_files.one_dim_transforms_window import Ui_OneDimensionalWindow
 from graphic_interface.one_dimensional_transforms import *
 
