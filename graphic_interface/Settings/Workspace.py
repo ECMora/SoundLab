@@ -101,6 +101,15 @@ class Workspace(object):
         self.tabPosition = QTabWidget.North
         self.tabShape = QTabWidget.Rounded
 
+    @property
+    def lastOpenedFile(self):
+        """
+        :return: the last opened file path if any.
+        """
+        # use the recent files to save the state of last opened file
+        # after application closed and start again
+        return self.recentFiles[-1] if len(self.recentFiles) > 0 else ""
+
     def clearOpenedFiles(self):
         """
         Clears the last opened files
@@ -119,14 +128,14 @@ class Workspace(object):
         if file_path in self.openedFiles:
             self.openedFiles.remove(file_path)
 
-
     def addOpenedFile(self, filepath):
         """
         Add a file path to the list of last opened files
         :param filepath:
         :return:
         """
-        self.openedFiles.append(filepath)
+        if filepath not in self.openedFiles:
+            self.openedFiles.append(filepath)
 
         if len(self.recentFiles) < self.LAST_OPENED_FILES_AMOUNT:
             self.recentFiles.append(filepath)

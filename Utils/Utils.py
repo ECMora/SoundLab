@@ -1,13 +1,45 @@
 # -*- coding: utf-8 -*-
 import os
+import pickle
 from PyQt4 import QtGui
-from PyQt4.QtCore import QLocale, QFile, QIODevice, QString
-from PyQt4.QtCore import QTranslator
-from PyQt4.QtGui import QFileDialog, QApplication
+from PyQt4.QtGui import QFileDialog
 
 FLOATING_POINT_EPSILON = 0.01
 
 DECIMAL_PLACES = 2
+
+
+def deSerialize(filename):
+        """
+        Deserialize an object from a file.
+        :param filename: the path to the file where the object is saved
+        :return: the instance of tyhe serialized object in the file
+        """
+        if not os.path.exists(filename):
+            raise Exception('File does not exist.')
+
+        with open(filename, 'r') as f:
+            return pickle.load(f)
+
+
+def serialize(filename, serializable_object):
+        """
+        Serialize an obeject to a file.
+        :param filename: the path to the file for the object storage.
+        :param object: the object to serialize.
+        """
+        if not (filename and os.path.exists(filename)):
+            raise Exception("Invalid Path to save the Theme.")
+
+        try:
+
+            data_file = open(filename, 'wb')
+            pickle.dump(serializable_object, data_file)
+            data_file.close()
+
+        except Exception as ex:
+            print(ex.message)
+
 
 def saveImage(widget, text=""):
     """
@@ -41,7 +73,7 @@ def folderFiles(folder, extensions=None):
     # walk for the folder file system tree
     for root, dirs, filenames in os.walk(folder):
         for f in filenames:
-            if any([f.endswith(x) for x in extensions]):
+            if any([str(f).endswith(x) for x in extensions]):
                 # if file extension is admissible
                 files.append(unicode(root + "/" + f))
 

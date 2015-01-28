@@ -956,6 +956,9 @@ class QSignalVisualizerWidget(QWidget):
         :param forceUpdate: whether to update even if there were no changes to the workspace
         """
         self.workSpace = workspace.copy()
+        print(self.workSpace.spectrogramWorkspace.minY)
+        print(self.workSpace.spectrogramWorkspace.maxY)
+        print("0000")
         self.axesOscilogram.load_workspace(workspace.oscillogramWorkspace, forceUpdate)
         self.axesSpecgram.load_workspace(workspace.spectrogramWorkspace, forceUpdate)
 
