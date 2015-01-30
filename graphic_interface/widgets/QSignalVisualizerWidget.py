@@ -12,6 +12,7 @@ from SoundLabOscillogramWidget import SoundLabOscillogramWidget
 from SoundLabSpectrogramWidget import SoundLabSpectrogramWidget
 from duetto.audio_signals.audio_signals_stream_readers.FileManager import FileManager
 from duetto.signal_processing.filter_signal_processors.FilterSignalProcessor import FilterSignalProcessor
+from graphic_interface.Settings.Workspace import Workspace
 from graphic_interface.widgets.signal_visualizer_tools.SignalVisualizerTool import Tools
 from graphic_interface.widgets.signal_visualizer_tools.NoTool import NoTool
 from graphic_interface.widgets.signal_visualizer_tools.OscilogramTools.ZoomTool import ZoomTool as OscilogramZoomTool
@@ -139,7 +140,8 @@ class QSignalVisualizerWidget(QWidget):
         # signal file path to save and read the signals from files. None if signal was not loaded from file
         self.__signalFilePath = None
 
-        self.workSpace = None
+        self.workSpace = Workspace()
+        self.load_workspace(self.workSpace)
 
     # region Scroll Bar
 
@@ -956,9 +958,6 @@ class QSignalVisualizerWidget(QWidget):
         :param forceUpdate: whether to update even if there were no changes to the workspace
         """
         self.workSpace = workspace.copy()
-        print(self.workSpace.spectrogramWorkspace.minY)
-        print(self.workSpace.spectrogramWorkspace.maxY)
-        print("0000")
         self.axesOscilogram.load_workspace(workspace.oscillogramWorkspace, forceUpdate)
         self.axesSpecgram.load_workspace(workspace.spectrogramWorkspace, forceUpdate)
 

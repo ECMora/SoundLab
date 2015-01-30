@@ -3,6 +3,8 @@ from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 import os, hashlib
 import sys
+from Utils.Utils import deSerialize, WORK_SPACE_FILE_NAME
+from graphic_interface.Settings.Workspace import Workspace
 from graphic_interface.windows.DuettoSoundLabWindow import DuettoSoundLabWindow
 from graphic_interface.windows.PresentationSlogan.presentation import Ui_MainWindow
 
@@ -70,7 +72,6 @@ def loadLanguageTranslations(qApp=None, translation_file=None):
             translator = QTranslator()
             if translator.load(translation_file):
                 qApp.installTranslator(translator)
-                print("Translation changed " + str(translation_file))
 
             return
         else:
@@ -94,18 +95,26 @@ if __name__ == '__main__':
 
     args = sys.argv[1] if len(sys.argv) > 1 else ''
 
-    loadAppStyle(app, "styles\\default.qss")
-
     # load defaults locale
     loadLanguageTranslations(app)
-    loadLanguageTranslations(app,"I18n\\qt_es.qm")
 
+    workspace_path = os.path.join("Utils", WORK_SPACE_FILE_NAME)
+    workSpace = None
 
-    dmw = DuettoSoundLabWindow(signal_path=args)
+    if os.path.exists(workspace_path):
+        workSpace = deSerialize(workspace_path)
+
+        if isinstance(workSpace, Workspace):
+
+            loadLanguageTranslations(app, workSpace.language)
+            loadAppStyle(app, workSpace.style)
+        else:
+            workSpace = None
+
+    dmw = DuettoSoundLabWindow(signal_path=args, workSpace=workSpace)
 
     dmw.languageChanged.connect(lambda data: loadLanguageTranslations(app, data))
     dmw.styleChanged.connect(lambda data: loadAppStyle(app, data))
-
 
     # region Start Splash Screen Window
     # path = os.path.join(os.path.join("Utils", "PresentationVideo"), "duettoinit.mp4")

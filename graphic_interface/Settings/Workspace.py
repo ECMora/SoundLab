@@ -33,7 +33,7 @@ class OscillogramWorkspace(object):
 
 
 class SpectrogramWorkspace(object):
-    def __init__(self, minY=0, maxY=22050, FFTSize=512, FFTWindow=WindowFunction.Hanning, FFTOverlap=-1,
+    def __init__(self, minY=0, maxY=-1, FFTSize=512, FFTWindow=WindowFunction.Hanning, FFTOverlap=-1,
                  theme=None):
         """
 
@@ -96,10 +96,11 @@ class Workspace(object):
         self.detectionWorkspace = detectionWorkspace if detectionWorkspace else DetectionWorkspace()
         self.openedFiles = [] if openedFiles is None else openedFiles
         self.recentFiles = []
-        self.language = ""
-        self.style = ""
-        self.tabPosition = QTabWidget.North
-        self.tabShape = QTabWidget.Rounded
+        self.language = u""
+        self.theme_file = u""
+        self.style = u""
+        self.tabPosition = int(QTabWidget.North)
+        self.tabShape = int(QTabWidget.Rounded)
 
     @property
     def lastOpenedFile(self):

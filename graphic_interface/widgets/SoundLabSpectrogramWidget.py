@@ -54,6 +54,7 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
         self.activeRecordMode = False
 
         self.workspace = SpectrogramWorkspace()
+        self.minY, self.maxY = 0,0
 
 
     # region Tools interaction Implementation
@@ -175,19 +176,30 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
         # load the theme
         update = self.load_theme(workspace.theme) or update
 
-        # keep a copy of the workspace
+        # keep a reference of the workspace
         self.workspace = workspace.copy()
+
+        if self.workspace.maxY < 0 or self.workspace.maxY > self.signal.samplingRate / 2.0:
+            self.workspace.maxY = self.signal.samplingRate / 2.0
+
+        self.workspace.minY = min(self.workspace.minY, self.signal.samplingRate / 2.0)
+
 
         # update the widget if needed (showing the same X axis' range as before)
         if update or forceUpdate:
             self.graph(rangeX[0], rangeX[1])
 
         # set the y axis' range (must be made after the spectrogram is computed)
-        minY = self.specgramHandler.get_freq_index(workspace.minY)
-        maxY = self.specgramHandler.get_freq_index(workspace.maxY)
 
+        minY = self.specgramHandler.get_freq_index(self.workspace.minY)
+        maxY = self.specgramHandler.get_freq_index(self.workspace.maxY)
+
+        self.minY = 0 if minY == -1 else minY
+        self.maxY = 0 if maxY == -1 else maxY
+        print("specgram " + str((self.workspace.maxY, self.workspace.minY,self.minY,self.maxY)))
         # todo update the yaxis
-        self.viewBox.setYRange(minY, maxY, padding=0, update=True)
+        if self.minY != 0 and self.maxY != 0:
+            self.viewBox.setYRange(self.minY, self.maxY, padding=0, update=True)
 
     # endregion
 

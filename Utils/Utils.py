@@ -9,6 +9,9 @@ FLOATING_POINT_EPSILON = 0.01
 DECIMAL_PLACES = 2
 
 
+WORK_SPACE_FILE_NAME = "soundlab.ini"
+
+
 def deSerialize(filename):
         """
         Deserialize an object from a file.
@@ -28,8 +31,8 @@ def serialize(filename, serializable_object):
         :param filename: the path to the file for the object storage.
         :param object: the object to serialize.
         """
-        if not (filename and os.path.exists(filename)):
-            raise Exception("Invalid Path to save the Theme.")
+        if not filename:
+            raise Exception("Invalid Path " + filename + " to save the object.")
 
         try:
 
