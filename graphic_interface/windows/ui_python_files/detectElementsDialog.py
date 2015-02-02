@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'ui_elemDetectSettings.ui'
+# Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\detectElementsDialog.ui'
 #
-# Created: Wed Jul 16 16:49:36 2014
+# Created: Mon Feb 02 21:41:15 2015
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -18,16 +18,15 @@ class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName(_fromUtf8("Dialog"))
         Dialog.setWindowModality(QtCore.Qt.WindowModal)
-        Dialog.resize(1100, 660)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Fixed, QtGui.QSizePolicy.Fixed)
+        Dialog.resize(737, 492)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(Dialog.sizePolicy().hasHeightForWidth())
         Dialog.setSizePolicy(sizePolicy)
-        Dialog.setMinimumSize(QtCore.QSize(1100, 660))
+        Dialog.setMinimumSize(QtCore.QSize(0, 0))
         Dialog.setMaximumSize(QtCore.QSize(1100, 664))
-        Dialog.setStyleSheet(_fromUtf8("background-color: qlineargradient(spread:pad, x1:0.006, y1:0.017, x2:0.886, y2:0.892045, stop:0.0340909 rgba(94, 116, 236, 255), stop:1 rgba(255, 255, 255, 255));\n"
-"font: 75 10pt \"MS Shell Dlg 2\";"))
+        Dialog.setStyleSheet(_fromUtf8(""))
         Dialog.setModal(False)
         self.gridLayout_3 = QtGui.QGridLayout(Dialog)
         self.gridLayout_3.setObjectName(_fromUtf8("gridLayout_3"))
@@ -61,9 +60,7 @@ class Ui_Dialog(object):
         self.dock_settings.setWidget(self.osc_settings_contents)
         self.gridLayout_3.addWidget(self.dock_settings, 0, 1, 1, 1)
         self.buttonBox = QtGui.QDialogButtonBox(Dialog)
-        self.buttonBox.setStyleSheet(_fromUtf8("font: 75 11pt \"MS Shell Dlg 2\";\n"
-"background-color: rgb(8, 100, 180);\n"
-"color: rgb(255, 255, 255);"))
+        self.buttonBox.setStyleSheet(_fromUtf8(""))
         self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
         self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
         self.buttonBox.setCenterButtons(False)
@@ -80,3 +77,4 @@ class Ui_Dialog(object):
         self.widget.setToolTip(QtGui.QApplication.translate("Dialog", "<html><head/><body><p>Signal to learn about algorithm parameters</p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
 
 from graphic_interface.widgets.QSignalDetectorWidget import QSignalDetectorWidget
+import icons_rc

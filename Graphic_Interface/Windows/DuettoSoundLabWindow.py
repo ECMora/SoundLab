@@ -12,7 +12,6 @@ from duetto.dimensional_transformations.two_dimensional_transforms.Spectrogram.W
 from Utils.Utils import *
 from graphic_interface.widgets.QSignalVisualizerWidget import QSignalVisualizerWidget
 from graphic_interface.Settings.WorkTheme import WorkTheme
-from graphic_interface.Settings.Workspace import Workspace
 from graphic_interface.windows.ParameterList import DuettoListParameterItem
 from graphic_interface.windows.OneDimensionalAnalysisWindow import OneDimensionalAnalysisWindow
 from SegmentationAndClasificationWindow import SegmentationAndClasificationWindow
@@ -20,9 +19,10 @@ from ui_python_files.MainWindow import Ui_DuettoMainWindow
 from graphic_interface.dialogs import *
 from graphic_interface.widgets.signal_visualizer_tools.SignalVisualizerTool import Tools
 from BrowseFilesWindow import BrowseFilesWindow
+from SoundLabWindow import SoundLabWindow
 
 
-class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
+class DuettoSoundLabWindow(SoundLabWindow, Ui_DuettoMainWindow):
     """
     Main window of the application.
     """
@@ -72,18 +72,13 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         :param signal_path: Optional Signal path to open
         :return:
         """
-        super(DuettoSoundLabWindow, self).__init__(parent)
+        SoundLabWindow.__init__(self,parent)
         self.setupUi(self)
 
         # the histogram of the signal spectrogram
         self.histogram = None
 
-        if workSpace is None:
-            self.workSpace = Workspace()
-            QMessageBox.warning(self, self.tr(u'Error loading theme'),
-                                self.tr(u'An error occurred while loading the theme. \n '
-                                        u'A default theme will be loaded instead.'))
-        else:
+        if workSpace is not None:
             self.workSpace = workSpace
 
         self.loadRecentFiles()
@@ -92,17 +87,10 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         # of at least one open signal. Are disabled if there is no open signal
         self.signalDependingActions = []
 
-        # text edit for the signal name
-        self.signalNameLineEdit = QtGui.QLineEdit(self)
-        self.signalNameLineEdit.textChanged.connect(lambda text: self.signalNameChanged(text))
-        self.signalNameLineEdit.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum))
-        self.signalPropertiesTextLabel = QtGui.QLabel(self)
-        self.signalPropertiesTextLabel.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum))
-
         # some initial state configurations
         self.configureSignalsTab()
         self.configureNoOpenedWidget()
-        self.configureActionsGroups()
+        self.configureToolBarActionsGroups()
 
         # get all the themes that are in the static folder for themes ("Utils\Themes\")
         app_themes = folderFiles(os.path.join("Utils", "Themes"), extensions=[".dth"])
@@ -133,11 +121,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         #  endregion
 
         self.addSignalTab(Synthesizer.generateSilence(duration=1))
-
-        #  get the status bar to show messages to the user
-        self.statusbar = self.statusBar()
-        self.statusbar.setSizeGripEnabled(False)
-        self.statusbar.showMessage(self.tr(u"Welcome to duetto-Sound Lab"), 5000)
 
         self.dock_settings.setVisible(False)
         self.dock_settings.setFixedWidth(self.SETTINGS_WINDOW_WIDTH)
@@ -470,18 +453,16 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         ])
         # endregion
 
-    def configureActionsGroups(self):
+    def configureToolBarActionsGroups(self):
         """
-        Configure the actions into groups for best visualization and
-        user configuration.
         :return:
         """
 
         # region Add actions groups
         # create the separators for the actions
-        sep1, sep2, sep3, sep4, sep5, sep6, sep7, sep8, sep9 = [QtGui.QAction(self) for _ in range(9)]
+        sep1, sep2, sep3, sep4, sep5, sep6, sep7, sep8 = [QtGui.QAction(self) for _ in range(8)]
 
-        for sep in [sep1, sep2, sep3, sep4, sep5, sep6, sep7, sep8, sep9]:
+        for sep in [sep1, sep2, sep3, sep4, sep5, sep6, sep7, sep8]:
             sep.setSeparator(True)
 
         # region open save actions
@@ -629,7 +610,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         # add the actions to the toolbar
         # actions groups (action,name of group)
         actions_groups = [(open_save_actions, self.tr(u"Open/Save")),(undo_redo_actions, self.tr(u"Undo/Redo")),
-                          (edition_actions,self.tr(u"Edition")),(play_record_actions, self.tr(u"Play/Record")),
+                          (edition_actions,self.tr(u"Edition")), (play_record_actions, self.tr(u"Play/Record")),
                           (zoom_actions, self.tr(u"Zoom")),(widgets_visibility_actions, self.tr(u"Widgets Visibility")),
                           (file_updown_actions, self.tr(u"File Up/Down")), (segm_transf_actions, self.tr(u"Processing")),
                           (settings_actions, self.tr(u"Settings"))]
@@ -639,12 +620,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             #            addActionGroup(actionGroup, name)
             self.toolBar.addActionGroup(act[0], act[1])
 
-        # add the label for signal name (and edit line) that always wil be visible as an option
-        # not like the other groups of actions that the user could customize visibility
-        self.toolBar.addWidget(self.signalNameLineEdit)
-        self.toolBar.addAction(sep9)
-        self.toolBar.addWidget(self.signalPropertiesTextLabel)
-
+        SoundLabWindow.configureToolBarActionsGroups(self)
 
     def setSignalActionsEnabledState(self, enable_state=True):
         """
@@ -657,6 +633,17 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             action.setEnabled(enable_state)
 
     # endregion
+
+    @property
+    def widget(self):
+        """
+        Gets the current widget selected or None if no signal is opened
+        :return:
+        """
+        if self.tabOpenedSignals.count() == 0:
+            return None
+
+        return self.tabOpenedSignals.currentWidget()
 
     # region TAB Multiple Files Handling
 
@@ -792,21 +779,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     # endregion
 
-    # region Properties
-
-    @property
-    def widget(self):
-        """
-        Gets the current widget selected or None if no signal is opened
-        :return:
-        """
-        if self.tabOpenedSignals.count() == 0:
-            return None
-
-        return self.tabOpenedSignals.currentWidget()
-
-    # endregion
-
     #  region Segmentation And Clasification
 
     @pyqtSlot()
@@ -836,7 +808,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         segWindow = SegmentationAndClasificationWindow(parent=self, signal=signal)
 
         # load the theme and clear the undo redo actions in the current window.
-        segWindow.load_Theme(self.workSpace.workTheme)
+        segWindow.load_workspace(self.workSpace)
         self.widget.undoRedoManager.clear()
 
     #  endregion
@@ -1260,57 +1232,19 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     #  endregion
 
-    #  region Widget Tools
-    @pyqtSlot()
-    def on_actionZoom_Cursor_triggered(self):
-        """
-        Select the Zoom Tool as current working tool in the widget
-        :return:
-        """
-        self.deselectToolsActions()
-        self.actionZoom_Cursor.setChecked(True)
-        self.widget.setSelectedTool(Tools.ZoomTool)
+    #  region Signal Processing Methods
+
+    #  region Undo Redo
 
     @pyqtSlot()
-    def on_actionRectangular_Cursor_triggered(self):
-        """
-        Select the Rectangular Cursor as current working tool in the widget
-        :return:
-        """
-        self.deselectToolsActions()
-        self.actionRectangular_Cursor.setChecked(True)
-        self.widget.setSelectedTool(Tools.RectangularZoomTool)
+    def on_actionUndo_triggered(self):
+        self.widget.undo()
 
     @pyqtSlot()
-    def on_actionRectangular_Eraser_triggered(self):
-        """
-        Select the Rectangular Eraser as current working tool in the widget
-        :return:
-        """
-        self.deselectToolsActions()
-        self.actionRectangular_Eraser.setChecked(True)
-        self.widget.setSelectedTool(Tools.RectangularEraser)
+    def on_actionRedo_triggered(self):
+        self.widget.redo()
 
-    @pyqtSlot()
-    def on_actionPointer_Cursor_triggered(self):
-        """
-        Select the Pointer Cursor as current working tool in the widget
-        :return:
-        """
-        self.deselectToolsActions()
-        self.actionPointer_Cursor.setChecked(True)
-        self.widget.setSelectedTool(Tools.PointerTool)
-
-    def deselectToolsActions(self):
-        """
-        Change the checked status of all the actions tools to False
-        """
-        self.actionZoom_Cursor.setChecked(False)
-        self.actionRectangular_Cursor.setChecked(False)
-        self.actionRectangular_Eraser.setChecked(False)
-        self.actionPointer_Cursor.setChecked(False)
-
-    #  endregion
+    # endregion
 
     #  region Cut, Copy, Paste
     @pyqtSlot()
@@ -1326,20 +1260,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.widget.paste()
 
     #  endregion
-
-    #  region Undo Redo
-
-    @pyqtSlot()
-    def on_actionUndo_triggered(self):
-        self.widget.undo()
-
-    @pyqtSlot()
-    def on_actionRedo_triggered(self):
-        self.widget.redo()
-
-    # endregion
-
-    #  region Signal Processing Methods
 
     @pyqtSlot()
     def on_actionPositive_Values_triggered(self):
@@ -1531,64 +1451,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                                         self.MAX_SAMPLING_RATE))
 
     # endregion
-
-    #  region Zoom IN, OUT, NONE
-    # delegate the task of zoom in, out and none
-    # in the widget operations
-    @pyqtSlot()
-    def on_actionZoomIn_triggered(self):
-        self.widget.zoomIn()
-
-    @pyqtSlot()
-    def on_actionZoom_out_triggered(self):
-        self.widget.zoomOut()
-
-    @pyqtSlot()
-    def on_actionZoom_out_entire_file_triggered(self):
-        self.widget.zoomNone()
-
-    # endregion
-
-    def loadRecentFiles(self):
-        """
-        Load the recent files actions as open signal actions on Recent Files
-        submenu.
-        :return:
-        """
-        self.menuRecentSignals.clear()
-
-        # a max of MAX_RECENT_FILES_ACTION_TEXT_LENGTH char text label for the action
-        action_text = lambda file_path: file_path if \
-                                       len(file_path) < self.MAX_RECENT_FILES_ACTION_TEXT_LENGTH else \
-                                       file_path[0:self.MAX_RECENT_FILES_ACTION_TEXT_LENGTH/2] + \
-                                       "..." + file_path[-self.MAX_RECENT_FILES_ACTION_TEXT_LENGTH/2:]
-
-        actions = [QAction(action_text(x), self) for x in self.workSpace.recentFiles]
-
-        # set manually the actions for each recent file action (issues when use a for and
-        # update the lambda function, keep reference to the same value for all the actions)
-
-        if len(actions) >= 1:
-            actions[0].setData(self.workSpace.recentFiles[0])
-            actions[0].triggered.connect(lambda : self._open(actions[0].data().toString()))
-
-        if len(actions) >= 2:
-            actions[1].setData(self.workSpace.recentFiles[1])
-            actions[1].triggered.connect(lambda : self._open(actions[1].data().toString()))
-
-        if len(actions) >= 3:
-            actions[2].setData(self.workSpace.recentFiles[2])
-            actions[2].triggered.connect(lambda : self._open(actions[2].data().toString()))
-
-        if len(actions) >= 4:
-            actions[3].setData(self.workSpace.recentFiles[3])
-            actions[3].triggered.connect(lambda : self._open(actions[3].data().toString()))
-
-        if len(actions) >= 5:
-            actions[4].setData(self.workSpace.recentFiles[4])
-            actions[4].triggered.connect(lambda : self._open(actions[4].data().toString()))
-
-        self.menuRecentSignals.addActions(actions)
 
     #  region Open, Close and Save
 
@@ -2005,8 +1867,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     # endregion
 
-    #  region Play, Pause, Stop, Record
-    # delegate in the widget the reproduction actions
+    # region Sound
 
     @pyqtSlot()
     def on_actionSound_Devices_triggered(self):
@@ -2034,44 +1895,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
                                       self.tr(error_message))
 
-    @pyqtSlot()
-    def on_actionPlay_Sound_triggered(self):
-        try:
-            self.widget.play()
-
-        except Exception as ex:
-            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
-                                      self.tr(u"There is no selected audio input "
-                                              u"device or the selected is unavailable"))
-
-    @pyqtSlot()
-    def on_actionStop_Sound_triggered(self):
-        self.widget.stop()
-
-    @pyqtSlot()
-    def on_actionRecord_triggered(self):
-        try:
-            # to avoid changes on the theme during recording
-            self.dock_settings.setVisible(False)
-
-            self.widget.record()
-
-        except Exception as ex:
-            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
-                                      self.tr(u"There is no selected audio output "
-                                              u"device or the selected is unavailable"))
-
-    @pyqtSlot()
-    def on_actionPause_Sound_triggered(self):
-        self.widget.pause()
-
-    def switchPlayStatus(self):
-        """
-        Change the play status of the signal from play-pause and vice versa
-        :return:
-        """
-        self.widget.switchPlayStatus()
-
     @pyqtSlot(QAction)
     def on_playSpeedChanged_triggered(self, action):
         """
@@ -2092,102 +1915,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.widget.playSpeed = speed
 
     # endregion
-
-    #  region Widgets And Window Visibility
-
-    @pyqtSlot()
-    def on_actionFull_Screen_triggered(self):
-        """
-        Action that switch the window visualization state between
-        Full Screen and Normal
-        :return:
-        """
-        if self.actionFull_Screen.isChecked():
-            self.showFullScreen()
-        else:
-            self.showNormal()
-
-    @pyqtSlot()
-    def on_actionCombined_triggered(self):
-        """
-        Shows both axes visualization oscilogram and spectrogram.
-        :return:
-        """
-        self.changeWidgetsVisibility(True, True)
-
-    @pyqtSlot()
-    def on_actionSpectogram_triggered(self):
-        """
-        Shows the spectrogram visualization graph only.
-        :return:
-        """
-        self.changeWidgetsVisibility(False, True)
-
-    @pyqtSlot()
-    def on_actionOscilogram_triggered(self):
-        """
-        Shows the oscilogram visualization graph only.
-        :return:
-        """
-        self.changeWidgetsVisibility(True, False)
-
-    def changeWidgetsVisibility(self, visibleOscilogram=True, visibleSpectrogram=True):
-        """
-        Method that change the visibility of the widgets
-        oscilogram and spectrogram on the main widget
-        :param visibleOscilogram:  Visibility of the oscilogram
-        :param visibleSpectrogram: Visibility of the spectrogram
-        :return:
-        """
-        self.widget.visibleOscilogram = visibleOscilogram
-        self.widget.visibleSpectrogram = visibleSpectrogram
-        self.widget.graph()
-
-    # endregion
-
-    #  region Save widgets Image
-
-    @pyqtSlot()
-    def on_actionOsc_Image_triggered(self):
-        """
-        Save to disc the image of the oscilogram graph.
-        :return:
-        """
-        if self.widget.visibleOscilogram:
-            saveImage(self.widget.axesOscilogram, self.tr(u"oscilogram"))
-        else:
-            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
-                                      self.tr(u"The Oscilogram plot widget is not visible.") + u"\n" + self.tr(
-                                          u"You should see the data that you are going to save."))
-
-    @pyqtSlot()
-    def on_actionSpecgram_Image_triggered(self):
-        """
-        Save to disc the image of the spectrogram graph.
-        :return:
-        """
-        if self.widget.visibleSpectrogram:
-            saveImage(self.widget.axesSpecgram, self.tr(u"specgram"))
-        else:
-            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
-                                      self.tr(u"The Espectrogram plot widget is not visible.") + " \n" + self.tr(
-                                          u"You should see the data that you are going to save."))
-
-    @pyqtSlot()
-    def on_actionCombined_Image_triggered(self):
-        """
-        Save to disc the image of the both (oscilogram and spectrogram)
-        visualization graphs.
-        :return:
-        """
-        if self.widget.visibleOscilogram and self.widget.visibleSpectrogram:
-            saveImage(self.widget, self.tr(u"graph"))
-        else:
-            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
-                                      self.tr(u"One of the plot widgets is not visible.") + " \n" + self.tr(
-                                          u"You should see the data that you are going to save."))
-
-    #  endregion
 
     #  region One dimensional Transforms
     def updateOneDimWindow(self):
@@ -2217,13 +1944,46 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     #  endregion
 
-    def updateStatusBar(self, line):
+    def loadRecentFiles(self):
         """
-        Update the status bar window message.
-        :param line: The (string) to show as message
-        :return: None
+        Load the recent files actions as open signal actions on Recent Files
+        submenu.
+        :return:
         """
-        self.statusbar.showMessage(line)
+        self.menuRecentSignals.clear()
+
+        # a max of MAX_RECENT_FILES_ACTION_TEXT_LENGTH char text label for the action
+        action_text = lambda file_path: file_path if \
+                                       len(file_path) < self.MAX_RECENT_FILES_ACTION_TEXT_LENGTH else \
+                                       file_path[0:self.MAX_RECENT_FILES_ACTION_TEXT_LENGTH/2] + \
+                                       "..." + file_path[-self.MAX_RECENT_FILES_ACTION_TEXT_LENGTH/2:]
+
+        actions = [QAction(action_text(x), self) for x in self.workSpace.recentFiles]
+
+        # set manually the actions for each recent file action (issues when use a for and
+        # update the lambda function, keep reference to the same value for all the actions)
+
+        if len(actions) >= 1:
+            actions[0].setData(self.workSpace.recentFiles[0])
+            actions[0].triggered.connect(lambda : self._open(actions[0].data().toString()))
+
+        if len(actions) >= 2:
+            actions[1].setData(self.workSpace.recentFiles[1])
+            actions[1].triggered.connect(lambda : self._open(actions[1].data().toString()))
+
+        if len(actions) >= 3:
+            actions[2].setData(self.workSpace.recentFiles[2])
+            actions[2].triggered.connect(lambda : self._open(actions[2].data().toString()))
+
+        if len(actions) >= 4:
+            actions[3].setData(self.workSpace.recentFiles[3])
+            actions[3].triggered.connect(lambda : self._open(actions[3].data().toString()))
+
+        if len(actions) >= 5:
+            actions[4].setData(self.workSpace.recentFiles[4])
+            actions[4].triggered.connect(lambda : self._open(actions[4].data().toString()))
+
+        self.menuRecentSignals.addActions(actions)
 
     @pyqtSlot()
     def on_actionSettings_triggered(self):

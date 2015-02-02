@@ -9,20 +9,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1100</width>
-    <height>660</height>
+    <width>737</width>
+    <height>492</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
   <property name="minimumSize">
    <size>
-    <width>1100</width>
-    <height>660</height>
+    <width>0</width>
+    <height>0</height>
    </size>
   </property>
   <property name="maximumSize">
@@ -35,8 +35,7 @@
    <string>Detection Settings</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color: qlineargradient(spread:pad, x1:0.006, y1:0.017, x2:0.886, y2:0.892045, stop:0.0340909 rgba(94, 116, 236, 255), stop:1 rgba(255, 255, 255, 255));
-font: 75 10pt &quot;MS Shell Dlg 2&quot;;</string>
+   <string notr="true"/>
   </property>
   <property name="modal">
    <bool>false</bool>
@@ -101,9 +100,7 @@ font: 75 10pt &quot;MS Shell Dlg 2&quot;;</string>
    <item row="1" column="0" colspan="2">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="styleSheet">
-      <string notr="true">font: 75 11pt &quot;MS Shell Dlg 2&quot;;
-background-color: rgb(8, 100, 180);
-color: rgb(255, 255, 255);</string>
+      <string notr="true"/>
      </property>
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -122,7 +119,7 @@ color: rgb(255, 255, 255);</string>
   <customwidget>
    <class>QSignalDetectorWidget</class>
    <extends>QWidget</extends>
-   <header>Graphic_Interface.Widgets.QSignalDetectorWidget.h</header>
+   <header>graphic_interface.widgets.QSignalDetectorWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

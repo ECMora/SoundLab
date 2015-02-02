@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
 import os
 import pickle
+from numpy import argmax
 from PyQt4 import QtGui
 from PyQt4.QtGui import QFileDialog
+from duetto.audio_signals.Synthesizer import Synthesizer
+import random
 
 FLOATING_POINT_EPSILON = 0.01
 
@@ -82,3 +85,34 @@ def folderFiles(folder, extensions=None):
                 files.append(unicode(root + "/" + f))
 
     return files
+
+
+def smallSignal(signal, duration_ms=100):
+    """
+    computes and return (through an heuristic) an small signal
+    that represent the current one. The small signal has less than 100ms of duration
+    and is provided as a way of search characteristics of the whole signal.
+    Must be "as similar as possible to the complete signal".
+    :param duration_ms: The duration of the smal signal to genrate from the supplied one in ms
+    :return: Audio signal.
+    """
+    return signal
+
+    if signal.duration < duration_ms / 1000.0:
+        return signal
+
+    # small signal
+    small_signal = Synthesizer.generateSilence(samplingRate=signal.samplingRate, bitDepth=signal.bitDepth, duration=duration_ms)
+
+    # garantize that the mas amplitude interval is in the small signal
+    index_max_amp = argmax(signal.data)
+
+    ms = signal.samplingRate / 1000.0
+
+    index_from = max(0, index_max_amp - duration_ms * ms / 2)
+    index_to   = min(small_signal.length, index_max_amp + duration_ms * ms / 2)
+
+    print(index_from,index_to,index_max_amp)
+    small_signal.data[0: index_to-index_from] = signal.data[index_from:index_to]
+
+    return small_signal

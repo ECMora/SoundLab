@@ -27,9 +27,10 @@ from graphic_interface.windows.ui_python_files.SegmentationAndClasificationWindo
 import graphic_interface.windows.ui_python_files.EditCategoriesDialogUI as editCateg
 from graphic_interface.dialogs.EditCategoriesDialog import EditCategoriesDialog
 from graphic_interface.widgets.EditCategoriesWidget import EditCategoriesWidget
+from SoundLabWindow import SoundLabWindow
 
 
-class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
+class SegmentationAndClasificationWindow(SoundLabWindow, Ui_MainWindow):
     """
     Window that process the segmentation and classification of a signal
     Contains a QSignalDetectorWidget that wrapper several functionalities
@@ -48,18 +49,17 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     # region Initialize
 
-    def __init__(self, parent, signal, classifcationSettings):
+    def __init__(self, parent, signal):
         """
         Create a the window of segmentation and clasiffication.
         :param parent: the parent widget if any
         :param signal: the signal to visualize for segmentation and clasiffication
-        :param classifcationSettings: the classification settings if any
-         was previously saved by thje user
         :return:
         """
         # set the visual variables and methods from ancesters
-        super(QtGui.QMainWindow, self).__init__(parent)
+        SoundLabWindow.__init__(self, parent)
         self.setupUi(self)
+
 
         # check the parameters
         if signal is None or not isinstance(signal, AudioSignal):
@@ -217,7 +217,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.windowProgressDetection = QtGui.QProgressBar(self.widget)
 
         # set the name of the signal to the visible label
-        self.actionSignalName.setText(self.widget.signalName())
+        self.actionSignalName.setText(self.widget.signalName)
 
         # array of windows with two dimensional graphs.
         # Are stored for a similar behavior to the one dimensional
@@ -229,7 +229,7 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
 
         # set the connections for the classification data to
         # update when is added, changed or deleted a value or category
-        self.classificationData = classifcationSettings if classifcationSettings is not None else ClassificationData()
+        self.classificationData = ClassificationData()
         self.classificationData.valueAdded.connect(self.classificationCategoryValueAdded)
         self.classificationData.valueRemoved.connect(self.classificationCategoryValueRemove)
         self.classificationData.categoryAdded.connect(self.classificationCategoryAdded)
@@ -293,6 +293,12 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
                 self.actionSpecgram_Image,
                 self.actionCombined_Image])
         # endregion
+
+    def configureToolBarActionsGroups(self):
+        """
+        :return:
+        """
+        SoundLabWindow.configureToolBarActionsGroups(self)
 
     # endregion
 
@@ -390,8 +396,8 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         """
         # TODO check if is possible to merge the code in this method and the batch.
         # TODO common factor code
-        elementsDetectorDialog = ElemDetectSettingsDialog(parent=self, paramTree=self.ParamTree)
-        elementsDetectorDialog.load_Theme(self.theme)
+        elementsDetectorDialog = ElemDetectSettingsDialog(parent=self, paramTree=self.ParamTree, signal=self.widget.signal)
+        elementsDetectorDialog.load_workspace(self.workSpace)
 
         # deselect the elements on the widget
         self.widget.deselectElement()
@@ -669,57 +675,6 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     # endregion
 
-    # region Tools
-    @pyqtSlot()
-    def on_actionZoom_Cursor_triggered(self):
-        """
-        Select the Zoom Tool as current working tool in the widget
-        :return:
-        """
-        self.deselectToolsActions()
-        self.actionZoom_Cursor.setChecked(True)
-        self.widget.setSelectedTool(Tools.ZoomTool)
-
-    @pyqtSlot()
-    def on_actionRectangular_Cursor_triggered(self):
-        """
-        Select the Rectangular Cursor as current working tool in the widget
-        :return:
-        """
-        self.deselectToolsActions()
-        self.actionRectangular_Cursor.setChecked(True)
-        self.widget.setSelectedTool(Tools.RectangularZoomTool)
-
-    @pyqtSlot()
-    def on_actionRectangular_Eraser_triggered(self):
-        """
-        Select the Rectangular Eraser as current working tool in the widget
-        :return:
-        """
-        self.deselectToolsActions()
-        self.actionRectangular_Eraser.setChecked(True)
-        self.widget.setSelectedTool(Tools.RectangularEraser)
-
-    @pyqtSlot()
-    def on_actionPointer_Cursor_triggered(self):
-        """
-        Select the Pointer Cursor as current working tool in the widget
-        :return:
-        """
-        self.deselectToolsActions()
-        self.actionPointer_Cursor.setChecked(True)
-        self.widget.setSelectedTool(Tools.PointerTool)
-
-    def deselectToolsActions(self):
-        """
-        Change the checked status of all the actions tools to False
-        """
-        self.actionZoom_Cursor.setChecked(False)
-        self.actionRectangular_Cursor.setChecked(False)
-        self.actionRectangular_Eraser.setChecked(False)
-        self.actionPointer_Cursor.setChecked(False)
-    # endregion
-
     # region Threshold
     # group of method that handles the visibility
     # of the trheshold in the oscilogram widget
@@ -810,13 +765,14 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     # endregion
 
-    # region Theme
+    # region WorkSpace
 
     def load_workspace(self, workspace):
         """
         Method that loads the workspace to update visual options from main window.
         :param workspace:
         """
+        self.workSpace = workspace
         self.widget.load_workspace(workspace)
 
     # endregion
@@ -901,49 +857,6 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.actionSpectral_Figures.setEnabled(visibility)
         self.actionSpectral_Numbers.setEnabled(visibility)
         self.actionSub_Elements_Peaks.setEnabled(visibility)
-
-    # endregion
-
-    # region Graphs Images
-    # Methods taht allows to save images from a gui widget
-    # use a screenshot of the control. This mean that the control has to be visible
-    # for take a picture of it.
-    @pyqtSlot()
-    def on_actionOsgram_Image_triggered(self):
-        """
-        Save the Oscilogram widget graph as image
-        """
-        if self.widget.visibleOscilogram:
-            saveImage(self.widget.axesOscilogram, self.tr(u"oscilogram"))
-        else:
-            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
-                                      self.tr(u"The Oscilogram plot widget is not visible.") + u" \n" + self.tr(
-                                          u"You should see the data that you are going to save."))
-
-    @pyqtSlot()
-    def on_actionCombined_Image_triggered(self):
-        """
-        Save as one image the two controls that visualize the signal
-        Oscilogram and Spectrogram.
-        """
-        if self.widget.visibleOscilogram and self.widget.visibleSpectrogram:
-            saveImage(self.widget, self.tr(u"graph"))
-        else:
-            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
-                                      self.tr(u"One of the plot widgets is not visible") + u" \n" + self.tr(
-                                          u"You should see the data that you are going to save."))
-
-    @pyqtSlot()
-    def on_actionSpecgram_Image_triggered(self):
-        """
-        Save the Spectrogram widget graph as image
-        """
-        if self.widget.visibleSpectrogram:
-            saveImage(self.widget.axesSpecgram, self.tr(u"specgram"))
-        else:
-            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
-                                      self.tr(u"The Espectrogram plot widget is not visible.") + u" \n" + self.tr(
-                                          u"You should see the data that you are going to save."))
 
     # endregion
 
@@ -1227,22 +1140,6 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     # endregion
 
-    # region Zoom
-    # delegate in the widget the zoom interaction with the signal
-    @QtCore.pyqtSlot()
-    def on_actionZoomIn_triggered(self):
-        self.widget.zoomIn()
-
-    @QtCore.pyqtSlot()
-    def on_actionZoom_out_triggered(self):
-        self.widget.zoomOut()
-
-    @QtCore.pyqtSlot()
-    def on_actionZoom_out_entire_file_triggered(self):
-        self.widget.zoomNone()
-
-    # endregion
-
     # region Close and Exit
 
     @pyqtSlot()
@@ -1369,62 +1266,6 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     # endregion
 
-    # region widgets Visibility
-    @QtCore.pyqtSlot()
-    def on_actionCombined_triggered(self):
-        """
-        Shows both axes visualization oscilogram and spectrogram.
-        :return:
-        """
-        self.changeWidgetsVisibility(True, True)
-
-    @QtCore.pyqtSlot()
-    def on_actionSpectogram_triggered(self):
-        """
-        Shows the spectrogram visualization graph only.
-        :return:
-        """
-        self.changeWidgetsVisibility(False, True)
-
-    @QtCore.pyqtSlot()
-    def on_actionOscilogram_triggered(self):
-        """
-        Shows the oscilogram visualization graph only.
-        :return:
-        """
-        self.changeWidgetsVisibility(True, False)
-
-    def changeWidgetsVisibility(self, visibleOscilogram=True, visibleSpectrogram=True):
-        """
-        Method that change the visibility of the widgets
-        oscilogram and spectrogram on the main widget
-        :param visibleOscilogram:  Visibility of the oscilogram
-        :param visibleSpectrogram: Visibility of the spectrogram
-        :return:
-        """
-        self.widget.visibleOscilogram = visibleOscilogram
-        self.widget.visibleSpectrogram = visibleSpectrogram
-        self.widget.graph()
-
-    # endregion
-
-    # region Sound
-    # delegate the reproduction options in the widget
-
-    @QtCore.pyqtSlot()
-    def on_actionPlay_Sound_triggered(self):
-        self.widget.play()
-
-    @QtCore.pyqtSlot()
-    def on_actionStop_Sound_triggered(self):
-        self.widget.stop()
-
-    @QtCore.pyqtSlot()
-    def on_actionPause_Sound_triggered(self):
-        self.widget.pause()
-
-    # endregion
-
     @pyqtSlot()
     def on_actionFull_Screen_triggered(self):
         """
@@ -1434,11 +1275,3 @@ class SegmentationAndClasificationWindow(QtGui.QMainWindow, Ui_MainWindow):
             self.showFullScreen()
         else:
             self.showNormal()
-
-    def updateStatusBar(self, line):
-        """
-        Set a new message in the status bar of the window.
-        :param line: string with the line to show in the status bar
-        """
-        self.statusbar.showMessage(line)
-

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+#  -*- coding: utf-8 -*-
 from numpy import *
 import matplotlib.mlab as mlab
 
@@ -29,7 +29,7 @@ class DetectionSettings:
 
 
 class OneDimensionalElementsDetector(ElementsDetector):
-    #progress = pyqtSignal(int)
+    # progress = pyqtSignal(int)
 
     def __init__(self,progress=None):
         ElementsDetector.__init__(self)
@@ -60,13 +60,13 @@ class OneDimensionalElementsDetector(ElementsDetector):
             return
         if indexTo == -1:
             indexTo = len(signal.data)
-        decay = int(decay*signal.samplingRate/1000)  #salto para evitar caidas locales
-        if abs(threshold) < 0.01:  # to prevent numeric errors
+        decay = int(decay*signal.samplingRate/1000)  # salto para evitar caidas locales
+        if abs(threshold) < 0.01:  #  to prevent numeric errors
             self.computeThreshold(signal.data[indexFrom : indexTo],method=AutomaticThresholdType.Global_MaxMean)
             threshold = self.getThreshold(0)
         else:
-            #translate the threshold from dB scale to V value
-            #maxThreshold is 60 when you simplify --> 20*log10((2**signal.bitDepth)*1000.0/(2**signal.bitDepth))
+            # translate the threshold from dB scale to V value
+            # maxThreshold is 60 when you simplify --> 20*log10((2**signal.bitDepth)*1000.0/(2**signal.bitDepth))
             if self.detectionsettings.automaticthresholdtype == AutomaticThresholdType.UserDefined:
                 threshold = (10.0**((60-threshold)/20.0))*(2**signal.bitDepth)/1000.0
                 self.threshold= [threshold]
@@ -76,8 +76,8 @@ class OneDimensionalElementsDetector(ElementsDetector):
             threshold = self.getThreshold(0)
         if secondThreshold > 0:
             secondThreshold = (10.0**((60-secondThreshold)/20.0))*(2**signal.bitDepth)/1000.0
-        #if merge_factor != 0:
-        #    merge_factor = merge_factor*signal.samplingRate/1000.0
+        # if merge_factor != 0:
+        #     merge_factor = merge_factor*signal.samplingRate/1000.0
         if minSize != 0:
             minSize = minSize*signal.samplingRate/1000.0
             minSize = int(minSize)
@@ -93,7 +93,7 @@ class OneDimensionalElementsDetector(ElementsDetector):
             elems = self.envelope_detector(self.detectionsettings.detectiontype,signal.data[indexFrom : indexTo],threshold, minSize=minSize,
                                        decay=decay, softfactor=softfactor, merge_factor=merge_factor,secondThreshold=secondThreshold)
 
-        #points
+        # points
         elif self.detectionsettings.detectiontype == DetectionType.LocalMax:
              elems = self.local_naive_max_detector(signal.data[indexFrom : indexTo],threshold,minSize,merge_factor)
 
@@ -103,7 +103,7 @@ class OneDimensionalElementsDetector(ElementsDetector):
         elif self.detectionsettings.detectiontype == DetectionType.LocalMaxProportion:
             elems = self.local_max_percent_detector(signal.data[indexFrom : indexTo],threshold,minSize,merge_factor)
 
-        #intervals
+        # intervals
         elif self.detectionsettings.detectiontype == DetectionType.IntervalRms:
             elems = self.interval_rms_detector(signal.data[indexFrom : indexTo],threshold,minSize,merge_factor)
 
@@ -124,34 +124,12 @@ class OneDimensionalElementsDetector(ElementsDetector):
             self.elements[i] = OscilogramElement(signal,c[0], c[1],number=i+1,threshold_spectral= threshold_spectral,
                                                                minsize_spectral=minsize_spectral,location=location,findSpectralSublements = findSpectralSublements,
                                                                specgramSettings=specgramSettings,trim_threshold=trim_threshold)
-            #descartar elemento si no posee informacion espectral suficiente
+            # descartar elemento si no posee informacion espectral suficiente
             if progress is not None and i % progress_size == 0:
                 self.progress(40 + (i/progress_size)*stepsize)
         return self.elements
 
-    def localMax(self,data,threshold=0,positives = None):
-        """
-        identify the local  (positives or not) maxThresholdLabel that are above threshold
-       """
-        indexes = []
-        values = []
-        data = array(data)
-
-        if positives is not None and positives:
-            data = where(data >= threshold,data,0)
-        elif positives is not None:
-            data = where(data < -threshold,data,0)
-
-        data = abs(data)
-
-        for i in range(1,data.size-1):
-            if (data[i] > data[i - 1] and data[i] > data[i + 1]) or (data[i] == data[i - 1] == data[i + 1]):
-                indexes.append(i)
-                values.append(data[i])
-
-        return array(indexes),array(values)
-
-    #Detectors
+    # Detectors
     def computeThreshold(self,data,total=True,method=AutomaticThresholdType.Global_MaxMean_Half_Sdv,overlap=0):
         """
         total or local
@@ -174,14 +152,13 @@ class OneDimensionalElementsDetector(ElementsDetector):
         else:
             pass
 
-
     def getThreshold(self,i=0):
         if len(self.threshold) == 1:
             return self.threshold[0]
 
         return 0
 
-    #Envelopes
+    # region Envelope Methods
 
     def envelope_detector(self,envelope_method, data,threshold=0, minSize=1, decay=1, softfactor=10, merge_factor=0,secondThreshold=0):
         """
@@ -240,7 +217,7 @@ class OneDimensionalElementsDetector(ElementsDetector):
             if fall_init is not None:
                 value = rectified[fall_init]
                 if type=="lineal":
-                    value -= rectified[fall_init]*(i-fall_init)/decay #lineal
+                    value -= rectified[fall_init]*(i-fall_init)/decay # lineal
                 elif type=="sin":
                     value = rectified[fall_init]*sin(((i-fall_init)*1.0*pi)/(decay*2)+pi/2)
                 elif type=="cuadratic":
@@ -285,8 +262,13 @@ class OneDimensionalElementsDetector(ElementsDetector):
     def envelope_frecuency_increased_detector(self):
         pass
 
-    #Amplitude
-    #Intervals
+    # endregion
+
+    # region Amplitude Methods
+    # endregion
+
+    # region Interval Methods
+
     def interval_rms_detector(self,data,threshold,minSize,merge_factor):
         def function(d):
             ind,vals = self.localMax(d)
@@ -355,7 +337,9 @@ class OneDimensionalElementsDetector(ElementsDetector):
             return x
         return self.interval_detector(data,_threshold,minSize,merge_factor,function)
 
-    #Point to Point
+    # endregion
+
+    # region Point to Point Methods
 
     def local_naive_max_detector(self,data,threshold,minSize,merge_factor):
         indexes,vals = self.localMax(data)
@@ -469,24 +453,26 @@ class OneDimensionalElementsDetector(ElementsDetector):
 
         return [c for c in intervals if (c[1]-c[0]) > minSize]
 
-    #Pure Frecuency
-    #Intervals
+    # endregion
+
+    # region Interval Methods
+
     def intervals_frecuency_bands_distribution_detector(self,data,threshold,minSize,merge_factor):
         """
         frecuencies highly defined
         """
-        #ind,vals = self.localMax(data)
-        #vals = diff(vals)
-        #_threshold = vals.var()
-        #def function(d):
-        #    ind,vals = self.localMax(d)
-        #    freqs = diff(ind)
-        #    v = var(freqs)
-        #    sorted_diff = sort(freqs)
-        #
-        #    return v if mean(vals) > threshold else _threshold
-        #
-        #return self.interval_detector(data,_threshold,minSize,merge_factor,function,comparer_greater_threshold=False)
+        # ind,vals = self.localMax(data)
+        # vals = diff(vals)
+        # _threshold = vals.var()
+        # def function(d):
+        #     ind,vals = self.localMax(d)
+        #     freqs = diff(ind)
+        #     v = var(freqs)
+        #     sorted_diff = sort(freqs)
+        # 
+        #     return v if mean(vals) > threshold else _threshold
+        # 
+        # return self.interval_detector(data,_threshold,minSize,merge_factor,function,comparer_greater_threshold=False)
         pass
 
     def intervals_frecuency_distribution_detector(self,data,threshold,minSize,merge_factor):
@@ -502,3 +488,27 @@ class OneDimensionalElementsDetector(ElementsDetector):
             return var(diff(ind)) if mean(vals) > threshold else _threshold
 
         return self.interval_detector(data,_threshold,minSize,merge_factor,function,comparer_greater_threshold=False)
+
+    # endregion
+
+    def localMax(self,data,threshold=0,positives = None):
+        """
+        identify the local  (positives or not) maxThresholdLabel that are above threshold
+       """
+        indexes = []
+        values = []
+        data = array(data)
+
+        if positives is not None and positives:
+            data = where(data >= threshold,data,0)
+        elif positives is not None:
+            data = where(data < -threshold,data,0)
+
+        data = abs(data)
+
+        for i in range(1,data.size-1):
+            if (data[i] > data[i - 1] and data[i] > data[i + 1]) or (data[i] == data[i - 1] == data[i + 1]):
+                indexes.append(i)
+                values.append(data[i])
+
+        return array(indexes),array(values)

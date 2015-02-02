@@ -1,6 +1,5 @@
 from ChangeVolumeDialog import ChangeVolumeDialog
 from EditCategoriesDialog import EditCategoriesDialog
-from elemDetectSettings import ElemDetectSettingsDialog
 from FilterDialog import FilterDialog
 from InsertSilenceDialog import InsertSilenceDialog
 from NewFileDialog import NewFileDialog

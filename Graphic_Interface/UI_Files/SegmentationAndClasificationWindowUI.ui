@@ -56,7 +56,7 @@
    </layout>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <widget class="QToolBar" name="toolBar">
+  <widget class="SoundLabToolBarWidget" name="toolBar">
    <property name="maximumSize">
     <size>
      <width>16777215</width>
@@ -614,6 +614,11 @@
    <class>TableWidget</class>
    <extends>QTableWidget</extends>
    <header>pyqtgraph.h</header>
+  </customwidget>
+  <customwidget>
+   <class>SoundLabToolBarWidget</class>
+   <extends>QToolBar</extends>
+   <header>graphic_interface.widgets.SoundLabToolBar</header>
   </customwidget>
  </customwidgets>
  <resources>

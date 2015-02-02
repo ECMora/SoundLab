@@ -4,8 +4,7 @@ import numpy as np
 
 from sound_lab_core.Segmentation.Elements.Element import Element
 from QSignalVisualizerWidget import QSignalVisualizerWidget
-from sound_lab_core.Segmentation.Detectors.OneDimensional.OneDimensionalElementsDetector import \
-    DetectionType, OneDimensionalElementsDetector
+from sound_lab_core.Segmentation.Detectors.OneDimensional.OneDimensionalElementsDetector import OneDimensionalElementsDetector
 
 
 class QSignalDetectorWidget(QSignalVisualizerWidget):
@@ -43,44 +42,25 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         QSignalVisualizerWidget.__init__(self, parent)
 
     # region Elements
-    def detectElements(self, threshold=20, decay=1, minSize=0, detectionsettings=None, softfactor=5, merge_factor=50,
-                       threshold2=0, threshold_spectral=95, pxx=[], freqs=[], bins=[], minsize_spectral=(0, 0),
+    def detectElements(self, threshold=20, decay=1, minSize=0, detectionsettings=None,
+                       softfactor=5, merge_factor=50,
+                       threshold2=0, threshold_spectral=95, minsize_spectral=(0, 0),
                        location=None, progress=None, findSpectralSublements=True):
         """
         Detect elements in the signal using the parameters.
         Just performs the detection.
         To visualize all the elements has to call drawElements after detection
-        @param threshold:
-        @param decay:
-        @param minSize:
-        @param detectionsettings:
-        @param softfactor:
-        @param merge_factor:
-        @param threshold2:
-        @param threshold_spectral:
-        @param pxx:
-        @param freqs:
-        @param bins:
-        @param minsize_spectral:
-        @param location:
-        @param progress:
-        @param findSpectralSublements:
         """
         self.clearDetection()
 
-        a, b = self.mainCursor.min, self.mainCursor.max
+        self.mainCursor.min, self.mainCursor.max = 0, self.signal.length
 
-        self.mainCursor.min, self.mainCursor.max = 0, len(self.signalProcessor.signal.data)
-
-        self.computeSpecgramSettings()
-
-        self.elements_detector.detect(self.signalProcessor.signal, 0, len(self.signalProcessor.signal.data),
+        self.elements_detector.detect(self.signal, 0, self.signal.length,
                                       threshold=threshold, detectionsettings=detectionsettings, decay=decay,
                                       minSize=minSize, softfactor=softfactor, merge_factor=merge_factor,
                                       secondThreshold=threshold2, threshold_spectral=threshold_spectral,
                                       minsize_spectral=minsize_spectral, location=location, progress=progress,
-                                      findSpectralSublements=findSpectralSublements,
-                                      specgramSettings=self.specgramSettings)
+                                      findSpectralSublements=findSpectralSublements)
 
 
         # get the elements detected by the detector
@@ -88,10 +68,6 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
             self.Elements.append(c)
             # connect the click event of an element with the signal of the widget
             c.elementClicked.connect(lambda: self.elementClicked.emit(index))
-
-        if a != self.mainCursor.min or b != self.mainCursor.max:
-            self.zoomCursor.min, self.zoomCursor.max = a, b
-            self.zoomIn()
 
     def changeElementsVisibility(self, visible, element_type=Element.Figures, oscilogramItems=True):
         """
@@ -121,18 +97,6 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
                     x[1] = visible
         self.drawElements()
 
-    def shiftElementsVisualObjects(self):
-        """
-        Shifts left or right (if n is negative or positive respectively) all the detected elements's
-        visual objects. That means all the visual representation in specgram widget visualization.
-        This is necessary because the specgram is recomputed in every new piece(window) of analysis\
-        for efficiency.
-        @param   : the index coordinates to shift all the elements in the specgram widget
-        """
-        for x in self.Elements:
-            for elem in x.twoDimensionalElements:
-                elem.shift(lambda x: self._from_osc_to_spec(self._from_spec_to_osc(x)))
-
     def drawElements(self, oscilogramItems=None):
         """
         Add to the visual gui widgets the visible elements of the detected segments
@@ -156,21 +120,22 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
                         self.axesOscilogram.removeItem(item)
             self.axesOscilogram.update()
 
-        if self.visibleSpectrogram and spec:
-            for i in range(len(self.Elements)):
-                for j in range(len(self.Elements[i].twoDimensionalElements)):
-                    if self.Elements[i].twoDimensionalElements[j].visible:
-                        for item, visible in self.Elements[i].twoDimensionalElements[j].visualwidgets():
-                            if not visible:
-                                self.axesSpecgram.viewBox.removeItem(item)
-                            else:
-                                if item not in self.axesSpecgram.viewBox.childItems() and visible:
-                                    self.axesSpecgram.viewBox.addItem(item)
-                    else:
-                        for item, visible in self.Elements[i].twoDimensionalElements[j].visualwidgets():
-                            self.axesSpecgram.viewBox.removeItem(item)
-
-            self.axesSpecgram.update()
+        # do not update the specgram elements until better design
+        # if self.visibleSpectrogram and spec:
+        #     for i in range(len(self.Elements)):
+        #         for j in range(len(self.Elements[i].twoDimensionalElements)):
+        #             if self.Elements[i].twoDimensionalElements[j].visible:
+        #                 for item, visible in self.Elements[i].twoDimensionalElements[j].visualwidgets():
+        #                     if not visible:
+        #                         self.axesSpecgram.viewBox.removeItem(item)
+        #                     else:
+        #                         if item not in self.axesSpecgram.viewBox.childItems() and visible:
+        #                             self.axesSpecgram.viewBox.addItem(item)
+        #             else:
+        #                 for item, visible in self.Elements[i].twoDimensionalElements[j].visualwidgets():
+        #                     self.axesSpecgram.viewBox.removeItem(item)
+        #
+        #     self.axesSpecgram.update()
 
     def removeVisualElements(self, oscilogram=True, specgram=True, elements=None):
         """
