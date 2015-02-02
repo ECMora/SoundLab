@@ -111,6 +111,28 @@ class UndoRedoAction(QObject):
         pass
 
 
+class SignalNameChangeAction(UndoRedoAction):
+
+    # signal raised when the name of the signal is changed by code
+    # raise the new name
+    signalNameChanged = pyqtSignal(str)
+
+    def __init__(self, signal, new_name):
+        UndoRedoAction.__init__(self)
+        self.signal = signal
+        self.old_name = self.signal.name
+        self.new_name = new_name
+
+    def undo(self):
+        self.signal.name = self.old_name
+        self.signalNameChanged.emit(self.signal.name)
+
+    def redo(self):
+        self.signal.name = self.new_name
+        self.signalNameChanged.emit(self.signal.name)
+
+
+
 class ReverseAction(UndoRedoAction):
     def __init__(self, signal, start, end):
         UndoRedoAction.__init__(self)

@@ -74,7 +74,7 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
         # region Create Items for Table
 
         # check if the file was already added
-        if file_path in self.folderFiles:
+        if str(file_path) in self.folderFiles:
             return
 
         # get the row to insert at the file

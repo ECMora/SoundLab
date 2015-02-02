@@ -90,13 +90,14 @@ class SoundLabOscillogramWidget(SoundLabWidget, OscillogramWidget):
         """
         # set the y axis' range
         if self.workspace.maxY != workspace.maxY or \
-                        self.workspace.minY != workspace.minY:
+           self.workspace.minY != workspace.minY:
 
-            minY = -workspace.minY  * self.signal.minimumValue / 100.0
+            minY = -workspace.minY * self.signal.minimumValue / 100.0
             maxY = workspace.maxY * self.signal.maximumValue / 100.0
-            print(minY, maxY)
-            # todo update the y axis labels
+
             self.setRange(yRange=(minY, maxY), padding=0, update=True)
+            self.yAxis.setRange(minY, maxY)
+
 
         # set background color
         if self.workspace.theme.background_color != workspace.theme.background_color:
@@ -130,8 +131,7 @@ class SoundLabOscillogramWidget(SoundLabWidget, OscillogramWidget):
 
     def graph(self, indexFrom=0, indexTo=-1, morekwargs=None):
         morekwargs = dict()
-        points = indexTo - indexFrom
-        points = points if points > 0 else self.signal.length
+        points = indexTo - indexFrom if indexTo - indexFrom > 0 else self.signal.length
 
         if not self.workspace.theme.connectPoints and points < self.getPlotItem().getViewBox().width():
             morekwargs['symbol'] = 's'
@@ -149,4 +149,3 @@ class SoundLabOscillogramWidget(SoundLabWidget, OscillogramWidget):
         if self.gui_user_tool is not None:
             self.gui_user_tool.enable()
 
-        self.repaint()

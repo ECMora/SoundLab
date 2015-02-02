@@ -54,10 +54,9 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
         self.activeRecordMode = False
 
         self.workspace = SpectrogramWorkspace()
-        self.minY, self.maxY = 0,0
-
 
     # region Tools interaction Implementation
+
     def changeTool(self, new_tool_class):
         SoundLabWidget.changeTool(self,new_tool_class)
         if self.gui_user_tool is not None:
@@ -144,15 +143,18 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
     def load_workspace(self, workspace, forceUpdate=False):
         """
         Loads a workspace and updates the view according with it.
-        :param workspace: an instance of SpectrogramWorkspace, the part of the Workspace concerning the spectrogram
+        :param workspace: an instance of SpectrogramWorkspace,
+        the part of the Workspace concerning the spectrogram
         """
         # get the current visualizing range (X axis)
         rangeX = self.viewBox.viewRange()[0]
-        rangeX = self.specgramHandler.from_spec_to_osc(rangeX[0]), self.specgramHandler.from_spec_to_osc(rangeX[1])
+        rangeX = self.specgramHandler.from_spec_to_osc(rangeX[0]), \
+                 self.specgramHandler.from_spec_to_osc(rangeX[1])
 
         # load the workspace and determine if it's necessary to update the widget
         update = False
 
+        # update FFT Size, Window and overlap
         if not self.activeRecordMode:
             # set the FFT size (must also reset the overlap)
             if self.workspace.FFTSize != workspace.FFTSize:
@@ -169,14 +171,14 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
                 if workspace.FFTOverlap >= 0:
                     self.specgramHandler.set_overlap_ratio(workspace.FFTOverlap)
                 else:
-                    self.specgramHandler.overlap = workspace.FFTSize / 2
+                    self.specgramHandler.overlap = workspace.FFTSize - 1
 
                 update = True
 
         # load the theme
         update = self.load_theme(workspace.theme) or update
 
-        # keep a reference of the workspace
+        # get a copy of the workspace
         self.workspace = workspace.copy()
 
         if self.workspace.maxY < 0 or self.workspace.maxY > self.signal.samplingRate / 2.0:
@@ -184,22 +186,20 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
 
         self.workspace.minY = min(self.workspace.minY, self.signal.samplingRate / 2.0)
 
-
         # update the widget if needed (showing the same X axis' range as before)
         if update or forceUpdate:
             self.graph(rangeX[0], rangeX[1])
 
-        # set the y axis' range (must be made after the spectrogram is computed)
+        # set the y axis' range
+        # !!!!!(MUST BE MADE AFTER THE SPECTROGRAM IS COMPUTED BECAUSE THE SPEC MATRIX CHANGE)!!!!!
+        minY_index = self.specgramHandler.get_freq_index(self.workspace.minY)
+        maxY_index = self.specgramHandler.get_freq_index(self.workspace.maxY)
 
-        minY = self.specgramHandler.get_freq_index(self.workspace.minY)
-        maxY = self.specgramHandler.get_freq_index(self.workspace.maxY)
+        minY = 0 if minY_index == -1 else minY_index
+        maxY = 0 if maxY_index == -1 else maxY_index
+        self.viewBox.setYRange(minY, maxY, padding=0, update=True)
+        self.yAxis.setRange(minY, maxY)
 
-        self.minY = 0 if minY == -1 else minY
-        self.maxY = 0 if maxY == -1 else maxY
-        print("specgram " + str((self.workspace.maxY, self.workspace.minY,self.minY,self.maxY)))
-        # todo update the yaxis
-        if self.minY != 0 and self.maxY != 0:
-            self.viewBox.setYRange(self.minY, self.maxY, padding=0, update=True)
 
     # endregion
 

@@ -33,7 +33,7 @@ class OscillogramWorkspace(object):
 
 
 class SpectrogramWorkspace(object):
-    def __init__(self, minY=0, maxY=-1, FFTSize=512, FFTWindow=WindowFunction.Hanning, FFTOverlap=-1,
+    def __init__(self, minY=0, maxY=22050, FFTSize=512, FFTWindow=WindowFunction.Hanning, FFTOverlap=-1,
                  theme=None):
         """
 
@@ -118,7 +118,7 @@ class Workspace(object):
         """
         self.openedFiles = []
 
-    def setClosedFile(self,file_path):
+    def setClosedFile(self, file_path):
         """
         Update the state of the signal at file_path to close by the application
         If the signal at file_path was previously opened the removes it from
@@ -126,6 +126,7 @@ class Workspace(object):
         :param file_path: the signal path previously open.
         :return:
         """
+        file_path = str(file_path)
         if file_path in self.openedFiles:
             self.openedFiles.remove(file_path)
 
@@ -135,13 +136,15 @@ class Workspace(object):
         :param filepath:
         :return:
         """
+        filepath = str(filepath)
+
         if filepath not in self.openedFiles:
             self.openedFiles.append(filepath)
 
         if len(self.recentFiles) < self.LAST_OPENED_FILES_AMOUNT:
-            self.recentFiles.append(filepath)
+            self.recentFiles.append(str(filepath))
         else:
-            self.recentFiles.append(filepath)
+            self.recentFiles.append(str(filepath))
             self.recentFiles.pop(0)
 
     def copy(self):

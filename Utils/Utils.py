@@ -6,6 +6,7 @@ from PyQt4.QtGui import QFileDialog
 
 FLOATING_POINT_EPSILON = 0.01
 
+
 DECIMAL_PLACES = 2
 
 
@@ -56,7 +57,7 @@ def saveImage(widget, text=""):
     fname = unicode(QFileDialog.getSaveFileName(parent, u"Save " + text + u" as an Image ",
                                                 u"-" + text + u"-Duetto-Image", u"*.jpg"))
     if fname:
-        #save as image
+        # save as image
         image = QtGui.QPixmap.grabWindow(widget.winId())
         image.save(fname, u'jpg')
 

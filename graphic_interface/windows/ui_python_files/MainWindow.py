@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\MainWindow.ui'
 #
-# Created: Sun Jan 25 14:01:09 2015
+# Created: Sun Feb 01 11:40:02 2015
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -18,7 +18,7 @@ class Ui_DuettoMainWindow(object):
     def setupUi(self, DuettoMainWindow):
         DuettoMainWindow.setObjectName(_fromUtf8("DuettoMainWindow"))
         DuettoMainWindow.setWindowModality(QtCore.Qt.ApplicationModal)
-        DuettoMainWindow.resize(752, 493)
+        DuettoMainWindow.resize(752, 521)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -332,8 +332,6 @@ class Ui_DuettoMainWindow(object):
         self.actionSave_selected_interval_as.setObjectName(_fromUtf8("actionSave_selected_interval_as"))
         self.actionClose = QtGui.QAction(DuettoMainWindow)
         self.actionClose.setObjectName(_fromUtf8("actionClose"))
-        self.actionSwitchPlayStatus = QtGui.QAction(DuettoMainWindow)
-        self.actionSwitchPlayStatus.setObjectName(_fromUtf8("actionSwitchPlayStatus"))
         self.actionSave = QtGui.QAction(DuettoMainWindow)
         self.actionSave.setIcon(icon15)
         self.actionSave.setObjectName(_fromUtf8("actionSave"))
@@ -360,6 +358,8 @@ class Ui_DuettoMainWindow(object):
         self.actionOpen_Selection = QtGui.QAction(DuettoMainWindow)
         self.actionOpen_Selection.setIcon(icon2)
         self.actionOpen_Selection.setObjectName(_fromUtf8("actionOpen_Selection"))
+        self.actionSwitchPlayStatus = QtGui.QAction(DuettoMainWindow)
+        self.actionSwitchPlayStatus.setObjectName(_fromUtf8("actionSwitchPlayStatus"))
         self.menuSave_Images.addAction(self.actionOsc_Image)
         self.menuSave_Images.addAction(self.actionSpecgram_Image)
         self.menuSave_Images.addAction(self.actionCombined_Image)
@@ -443,6 +443,7 @@ class Ui_DuettoMainWindow(object):
 
         self.retranslateUi(DuettoMainWindow)
         self.tabOpenedSignals.setCurrentIndex(-1)
+        QtCore.QObject.connect(self.actionSwitchPlayStatus, QtCore.SIGNAL(_fromUtf8("triggered()")), DuettoMainWindow.switchPlayStatus)
         QtCore.QMetaObject.connectSlotsByName(DuettoMainWindow)
 
     def retranslateUi(self, DuettoMainWindow):
@@ -546,8 +547,6 @@ class Ui_DuettoMainWindow(object):
         self.actionChange_Sign.setText(QtGui.QApplication.translate("DuettoMainWindow", "Change Sign", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSave_selected_interval_as.setText(QtGui.QApplication.translate("DuettoMainWindow", "Save selected interval as...", None, QtGui.QApplication.UnicodeUTF8))
         self.actionClose.setText(QtGui.QApplication.translate("DuettoMainWindow", "Close", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionSwitchPlayStatus.setText(QtGui.QApplication.translate("DuettoMainWindow", "SwitchPlayStatus", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionSwitchPlayStatus.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Space", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSave.setText(QtGui.QApplication.translate("DuettoMainWindow", "Save", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSaveTheme.setText(QtGui.QApplication.translate("DuettoMainWindow", "Save Theme", None, QtGui.QApplication.UnicodeUTF8))
         self.actionCloseAll.setText(QtGui.QApplication.translate("DuettoMainWindow", "Close All", None, QtGui.QApplication.UnicodeUTF8))
@@ -561,6 +560,8 @@ class Ui_DuettoMainWindow(object):
         self.actionOpenInOtherTab.setText(QtGui.QApplication.translate("DuettoMainWindow", "Open In Other Tab", None, QtGui.QApplication.UnicodeUTF8))
         self.actionOpenInOtherTab.setToolTip(QtGui.QApplication.translate("DuettoMainWindow", "Open In Other Tab", None, QtGui.QApplication.UnicodeUTF8))
         self.actionOpen_Selection.setText(QtGui.QApplication.translate("DuettoMainWindow", "Open Selection", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSwitchPlayStatus.setText(QtGui.QApplication.translate("DuettoMainWindow", "switchPlayStatus", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSwitchPlayStatus.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Space", None, QtGui.QApplication.UnicodeUTF8))
 
 from graphic_interface.widgets.SoundLabToolBar import SoundLabToolBarWidget
 import icons_rc

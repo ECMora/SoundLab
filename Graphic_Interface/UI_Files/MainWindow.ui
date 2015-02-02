@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>752</width>
-    <height>493</height>
+    <height>521</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -870,14 +870,6 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
     <string>Close</string>
    </property>
   </action>
-  <action name="actionSwitchPlayStatus">
-   <property name="text">
-    <string>SwitchPlayStatus</string>
-   </property>
-   <property name="shortcut">
-    <string>Space</string>
-   </property>
-  </action>
   <action name="actionSave">
    <property name="icon">
     <iconset resource="resources/icons.qrc">
@@ -966,6 +958,14 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
     <string>Open Selection</string>
    </property>
   </action>
+  <action name="actionSwitchPlayStatus">
+   <property name="text">
+    <string>switchPlayStatus</string>
+   </property>
+   <property name="shortcut">
+    <string>Space</string>
+   </property>
+  </action>
   <zorder>dock_settings</zorder>
  </widget>
  <customwidgets>
@@ -978,5 +978,25 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
  <resources>
   <include location="resources/icons.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>actionSwitchPlayStatus</sender>
+   <signal>triggered()</signal>
+   <receiver>DuettoMainWindow</receiver>
+   <slot>switchPlayStatus()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>375</x>
+     <y>246</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>switchPlayStatus()</slot>
+ </slots>
 </ui>
