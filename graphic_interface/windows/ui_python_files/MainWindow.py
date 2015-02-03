@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\MainWindow.ui'
+# Form implementation generated from reading ui file 'D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\MainWindow.ui'
 #
-# Created: Sun Feb 01 11:40:02 2015
+# Created: Tue Feb 03 15:03:31 2015
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -360,6 +360,8 @@ class Ui_DuettoMainWindow(object):
         self.actionOpen_Selection.setObjectName(_fromUtf8("actionOpen_Selection"))
         self.actionSwitchPlayStatus = QtGui.QAction(DuettoMainWindow)
         self.actionSwitchPlayStatus.setObjectName(_fromUtf8("actionSwitchPlayStatus"))
+        self.actionBatchProcessing = QtGui.QAction(DuettoMainWindow)
+        self.actionBatchProcessing.setObjectName(_fromUtf8("actionBatchProcessing"))
         self.menuSave_Images.addAction(self.actionOsc_Image)
         self.menuSave_Images.addAction(self.actionSpecgram_Image)
         self.menuSave_Images.addAction(self.actionCombined_Image)
@@ -417,6 +419,7 @@ class Ui_DuettoMainWindow(object):
         self.menuView.addAction(self.actionSpectogram)
         self.menuView.addAction(self.actionCombined)
         self.menuView.addAction(self.actionOneDimensionalTransformation)
+        self.menuView.addAction(self.actionBatchProcessing)
         self.menuView.addSeparator()
         self.menuView.addAction(self.actionSettings)
         self.menuView.addAction(self.actionSegmentation_And_Clasification)
@@ -562,6 +565,7 @@ class Ui_DuettoMainWindow(object):
         self.actionOpen_Selection.setText(QtGui.QApplication.translate("DuettoMainWindow", "Open Selection", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSwitchPlayStatus.setText(QtGui.QApplication.translate("DuettoMainWindow", "switchPlayStatus", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSwitchPlayStatus.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Space", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionBatchProcessing.setText(QtGui.QApplication.translate("DuettoMainWindow", "Batch Processing", None, QtGui.QApplication.UnicodeUTF8))
 
 from graphic_interface.widgets.SoundLabToolBar import SoundLabToolBarWidget
 import icons_rc

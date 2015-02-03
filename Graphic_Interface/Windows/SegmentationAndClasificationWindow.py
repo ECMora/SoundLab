@@ -8,17 +8,10 @@ from PyQt4 import QtGui
 from matplotlib import mlab
 import xlwt
 import numpy as np
-from PyQt4.QtGui import QFileDialog, QAbstractItemView, QWidget
+from PyQt4.QtGui import QFileDialog, QAbstractItemView, QWidget, QActionGroup
 from pyqtgraph.parametertree import Parameter
-
 from duetto.audio_signals.AudioSignal import AudioSignal
-from Utils.Utils import saveImage
-from graphic_interface.widgets.signal_visualizer_tools.SignalVisualizerTool import Tools
 from sound_lab_core.Clasification.ClassificationData import ClassificationData
-from sound_lab_core.Segmentation.Detectors.OneDimensional.OneDimensionalElementsDetector import \
-    DetectionType, AutomaticThresholdType, DetectionSettings
-from sound_lab_core.Segmentation.Detectors.OneDimensional.OneDimensionalElementsDetector import \
-    OneDimensionalElementsDetector
 from sound_lab_core.Segmentation.Elements.Element import Element
 from sound_lab_core.Segmentation.Elements.OneDimensionalElement import SpectralMeasurementLocation
 from ..dialogs.elemDetectSettings import ElemDetectSettingsDialog
@@ -60,10 +53,17 @@ class SegmentationAndClasificationWindow(SoundLabWindow, Ui_MainWindow):
         SoundLabWindow.__init__(self, parent)
         self.setupUi(self)
 
-
         # check the parameters
         if signal is None or not isinstance(signal, AudioSignal):
             raise Exception("The signal to analyze must be of type AudioSignal")
+
+        self.configureToolBarActionsGroups()
+
+        # the segmentation window do not allow record or signal name edition
+        self.updateSignalPropertiesLabel(signal)
+        self.signalNameLineEdit.setReadOnly(True)
+
+        self.actionRecord.setEnabled(False)
 
         # set the signal to the widget
         self.widget.signal = signal
@@ -79,9 +79,6 @@ class SegmentationAndClasificationWindow(SoundLabWindow, Ui_MainWindow):
         self.tableParameterOscilogram.setSelectionBehavior(QAbstractItemView.SelectRows)
 
         self.show()
-
-        self.algorithmDetectorSettings = DetectionSettings(DetectionType.Envelope_Abs_Decay_Averaged,
-                                                           AutomaticThresholdType.Global_MaxMean)
 
         self.spectralMeasurementLocation = SpectralMeasurementLocation()
 
@@ -105,13 +102,8 @@ class SegmentationAndClasificationWindow(SoundLabWindow, Ui_MainWindow):
         # spectral meditions are measured on spectrogram
         params = [{u'name': unicode(self.tr(u'Temporal Detection Settings')), u'type': u'group', u'children': [
             {u'name': unicode(self.tr(u'Detection Method')), u'type': u'list',
-             u'default': DetectionType.Envelope_Abs_Decay_Averaged, u'values':
-                [(unicode(self.tr(u'Local Max')), DetectionType.LocalMax),
-                 (unicode(self.tr(u'Interval Rms')), DetectionType.IntervalRms),
-                 (unicode(self.tr(u'Interval Max Media')), DetectionType.IntervalMaxMedia),
-                 (unicode(self.tr(u'Interval Max Proportion')), DetectionType.IntervalMaxProportion),
-                 (unicode(self.tr(u'Envelope Abs Decay Averaged')), DetectionType.Envelope_Abs_Decay_Averaged),
-                 (unicode(self.tr(u'Envelope Rms')), DetectionType.Envelope_Rms)]},
+             u'default': 0, u'values':
+                [(unicode(self.tr(u'Envelope')), 0)]},
             {u'name': unicode(self.tr(u'Threshold (db)')), u'type': u'float', u'value': -40.00, u'step': 1},
             {u'name': unicode(self.tr(u'Auto')), u'type': u'bool', u'default': True, u'value': True},
             {u'name': unicode(self.tr(u'Min Size (ms)')), u'type': u'float', u'value': 2.00, u'step': 1},
@@ -289,7 +281,7 @@ class SegmentationAndClasificationWindow(SoundLabWindow, Ui_MainWindow):
                 separator4,
 
                 # widgets images
-                self.actionOsgram_Image,
+                self.actionOsc_Image,
                 self.actionSpecgram_Image,
                 self.actionCombined_Image])
         # endregion
@@ -298,6 +290,24 @@ class SegmentationAndClasificationWindow(SoundLabWindow, Ui_MainWindow):
         """
         :return:
         """
+        sep = QtGui.QAction(self)
+        sep.setSeparator(True)
+
+        # region Segmentation and Transformations actions
+        segm_transf_actions = QActionGroup(self)
+        segm_transf_actions_list = [self.actionDetection, self.actionTwo_Dimensional_Graphs,
+                                    self.actionDelete_Selected_Elements,
+                                    self.actionDeselect_Elements, sep]
+
+        for act in segm_transf_actions_list:
+            act.setActionGroup(segm_transf_actions)
+
+        # endregion
+
+        # add to the customizable sound lab toolbar first than the default actions
+        #            addActionGroup(actionGroup, name)
+        self.toolBar.addActionGroup(segm_transf_actions, u"Segments")
+
         SoundLabWindow.configureToolBarActionsGroups(self)
 
     # endregion
@@ -322,7 +332,6 @@ class SegmentationAndClasificationWindow(SoundLabWindow, Ui_MainWindow):
             unicode(self.tr(u'Temporal Detection Settings'))).param(unicode(self.tr(u'Soft Factor'))).value()
         self.detectionSettings["Decay"] = self.ParamTree.param(unicode(self.tr(u'Temporal Detection Settings'))).param(
             unicode(self.tr(u'Decay (ms)'))).value()
-        self.algorithmDetectorSettings = elementsDetectorDialog.detectionSettings
 
         # spectral
         self.detectionSettings["ThresholdSpectral"] = self.ParamTree.param(
@@ -359,6 +368,9 @@ class SegmentationAndClasificationWindow(SoundLabWindow, Ui_MainWindow):
         self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.QUARTILE75][
             0] = self.ParamTree.param(unicode(self.tr(u'Measurement Location'))).param(
             unicode(self.tr(u'Quartile 75'))).value()
+
+        # detector
+        self.widget.detector = elementsDetectorDialog.detector
 
     def updateDetectionProgressBar(self, x):
         """
@@ -405,27 +417,12 @@ class SegmentationAndClasificationWindow(SoundLabWindow, Ui_MainWindow):
             if elementsDetectorDialog.exec_():
                 self.getSettings(elementsDetectorDialog)
 
-                self.actionView_Threshold.setChecked(True)
                 paramsTomeasure = self.getParameters()
 
                 self.__showProgressBar()
 
                 # execute the detection
-                self.widget.detectElements(threshold=abs(self.detectionSettings["Threshold"]),
-                                           detectionsettings=self.algorithmDetectorSettings,
-                                           decay=self.detectionSettings["Decay"],
-                                           minSize=self.detectionSettings["MinSize"],
-                                           softfactor=self.detectionSettings["SoftFactor"],
-                                           merge_factor=self.detectionSettings["MergeFactor"],
-                                           threshold2=abs(self.detectionSettings["Threshold2"]),
-                                           threshold_spectral=self.detectionSettings["ThresholdSpectral"],
-                                           minsize_spectral=(self.detectionSettings["minSizeFreqSpectral"],
-                                                             self.detectionSettings["minSizeTimeSpectral"]),
-                                           location=self.spectralMeasurementLocation,
-                                           progress=self.updateDetectionProgressBar,
-                                           findSpectralSublements=self.ParamTree.param(
-                                               unicode(self.tr(u'Spectral Detection Settings'))).param(
-                                               unicode(self.tr(u'Detect Spectral Subelements'))).value())
+                self.widget.detectElements()
 
                 # clasification data update TODO improve comments and implementation
                 validcategories = [k for k in self.classificationData.categories.keys() if
@@ -887,27 +884,6 @@ class SegmentationAndClasificationWindow(SoundLabWindow, Ui_MainWindow):
             self.writedata(ws, table)
             wb.save(fname)
 
-    @pyqtSlot()
-    def startBatchProcess(self):
-        """
-        Start a batch processing of signals with the configured parameters
-        User must configure the settings for detection&classification and parameter
-        measurement, select a folder of imput audio files and a folder for the output meditions.
-        """
-        thread = QtCore.QThread(self)
-
-        # implementation of batch on a diferent thread to
-        # keep user interaction responsive.
-        class worker(QtCore.QObject):
-            def __init__(self, worker):
-                QtCore.QObject.__init__(self)
-                self.work = worker
-
-        processworker = worker(self.batch)
-        thread.started.connect(processworker.work)
-        processworker.moveToThread(thread)
-        thread.start()
-
     def getSpectralData(self, signal, specgramSettings):
         """
         returns the spectral data pxx,bins and freqs of spectrogram
@@ -916,193 +892,6 @@ class SegmentationAndClasificationWindow(SoundLabWindow, Ui_MainWindow):
         return mlab.specgram(signal.data, specgramSettings.NFFT, Fs=signal.samplingRate,
                              detrend=mlab.detrend_none, window=specgramSettings.window, noverlap=overlap,
                              sides="onesided")
-
-    def batch(self):
-        """
-        Method that performs the batch procesing
-        :return:
-        """
-
-        # TODO create a batch processing window
-        # get the input audio files folder
-        # and the output meditions folder
-        directoryinput = str(self.lineeditFilePath.text())
-        directoryoutput = str(self.lineEditOutputFolder.text())
-
-        # validate the folders
-        if not os.path.isdir(directoryinput):
-            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
-                                      self.tr(u"The input path is not a directory."))
-            return
-        if not os.path.isdir(directoryoutput):
-            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
-                                      self.tr(u"The output path is not a directory."))
-            return
-
-        sounds = []  # the audio files tgo process
-        raiz = ""
-
-        # listing all files in directoryinput folder
-        # TODO change by the method of UTILS
-        for root, dirs, files in os.walk(directoryinput):
-            raiz = root if raiz == "" else raiz
-            for f in files:
-                # get all the files to process
-                sounds.append(os.path.join(root, f))
-
-        # updating the progress bar
-        self.progressBarProcesed.setValue(0)
-
-        # the number of files processed for use in the progres bar update
-        files_processed = 0
-        if self.rbttnDetection.isChecked():
-            detector = OneDimensionalElementsDetector()
-
-            # if the meditions has to export as single file
-            singlefile = self.cbxSingleFile.isChecked()
-
-            if singlefile:
-                wb = xlwt.Workbook()
-
-            for filename in sounds:
-                try:
-                    # process every file
-                    signalProcessor = SignalProcessor()
-                    signalProcessor.signal = WavFileSignal(filename)
-                    # send a message for the user
-                    self.listwidgetProgress.addItem(self.tr(u"Processing") + u" " + signalProcessor.signal.name)
-
-                    table = QtGui.QTableWidget()
-                    spSettngs = SpecgramSettings(self.widget.specgramSettings.NFFT,
-                                                 self.widget.specgramSettings.overlap,
-                                                 self.widget.specgramSettings.window)
-
-                    # get the detection parameters
-                    spSettngs.Pxx, spSettngs.freqs, spSettngs.bins = self.getSpectralData(signalProcessor.signal,
-                                                                                          self.widget.specgramSettings)
-
-                    # detect
-                    detector.detect(signalProcessor.signal, 0, len(signalProcessor.signal.data),
-                                    threshold=abs(self.detectionSettings["Threshold"]),
-                                    decay=self.detectionSettings["Decay"], minSize=self.detectionSettings["MinSize"],
-                                    softfactor=self.detectionSettings["SoftFactor"],
-                                    merge_factor=self.detectionSettings["MergeFactor"],
-                                    secondThreshold=abs(self.detectionSettings["Threshold2"]),
-                                    specgramSettings=spSettngs,
-                                    detectionsettings=self.algorithmDetectorSettings,
-                                    threshold_spectral=self.detectionSettings["ThresholdSpectral"],
-                                    minsize_spectral=(self.detectionSettings["minSizeFreqSpectral"],
-                                                      self.detectionSettings["minSizeTimeSpectral"]),
-                                    location=self.spectralMeasurementLocation,
-                                    findSpectralSublements=False)
-
-                    # get parameters to measure
-                    paramsTomeasure = self.getParameters()
-                    table.setRowCount(detector.elementCount())
-
-                    # get the clasification data
-                    validcategories = [k for k in self.classificationData.categories.keys() if
-                                       len(self.classificationData.getvalues(k)) > 0]
-                    self.elementsClasificationTableData = [[[k, self.tr(u"No Identified")] for k in validcategories] for
-                                                           _ in range(table.rowCount())]
-
-                    table.setColumnCount(len(paramsTomeasure) + len(validcategories))
-                    self.columnNames = [label[0] for label in paramsTomeasure]
-
-                    # set the name of columns
-                    table.setHorizontalHeaderLabels(self.columnNames + validcategories)
-                    table.resizeColumnsToContents()
-
-                    self.listwidgetProgress.addItem(self.tr(u"Save data of ") + signalProcessor.signal.name)
-
-                    # measure parameters
-                    for i, element in enumerate(detector.elements):
-                        for j, prop in enumerate(paramsTomeasure):
-                            dictionary = dict(prop[2] if prop[2] is not None else [])
-                            # save the meditions into the table field
-                            item = QtGui.QTableWidgetItem(str(prop[1](element, dictionary)))
-                            item.setBackgroundColor(
-                                self.TABLE_ROW_COLOR_ODD if i % 2 == 0 else self.TABLE_ROW_COLOR_EVEN)
-                            table.setItem(i, j, item)
-
-                        for c in range(len(validcategories)):
-                            try:
-                                val = self.elementsClasificationTableData[i][c][1]
-                                item = QtGui.QTableWidgetItem(unicode(val))
-                                item.setBackgroundColor(
-                                    self.TABLE_ROW_COLOR_ODD if i % 2 == 0 else self.TABLE_ROW_COLOR_EVEN)
-                            except Exception as e:
-                                item = QtGui.QTableWidgetItem(0)  # "Error"+e.message)
-                            table.setItem(i, c + len(paramsTomeasure), item)
-
-                    if singlefile:
-                        # save meditions as new sheet in same file
-                        ws = wb.add_sheet(signalProcessor.signal.name)
-                        self.writedata(ws, table)
-                    else:
-                        # save meditions as new file
-                        self.on_actionMeditions_triggered(
-                            os.path.join(directoryoutput, signalProcessor.signal.name + ".xls"), table)
-
-                    # update progress
-                    self.listwidgetProgress.addItem(signalProcessor.signal.name + u" " + self.tr(u"has been files_processed"))
-                    self.listwidgetProgress.update()
-                    files_processed += 1
-                except Exception as e:
-                    self.listwidgetProgress.addItem(self.tr(u"Some problem found while processing") + u" " + e.message)
-                self.progressBarProcesed.setValue(round(100.0 * (files_processed) / len(sounds)))
-                self.progressBarProcesed.update()
-
-                if singlefile:
-                    wb.save(os.path.join(directoryoutput, self.tr(u"Duetto Sound Lab Meditions") + u".xls"))
-                    # TODO open file after save
-
-        if self.rbttnSplitFile.isChecked():
-            save = WavFileSignal()
-            for filename in sounds:
-                try:
-                    signal = WavFileSignal(filename)
-                    self.listwidgetProgress.addItem(self.tr(u"Processing") + u" " + signal.name)
-                    save.channels = signal.channels
-                    save.bitDepth = signal.bitDepth
-                    save.samplingRate = signal.samplingRate
-                    sr = signal.samplingRate
-                    pieceSize = self.spboxSplitTime.value() * sr
-                    pieces = len(signal.data) / pieceSize
-                    left = len(signal.data) % pieceSize
-                    if (pieces >= 1):
-                        for i in range(pieces):
-                            save.data = signal.data[i * pieceSize:(i + 1) * pieceSize]
-                            save.save(os.path.join(directoryoutput, str(i + 1) + "-" + signal.name))
-                    if left > 0:
-                        save.data = signal.data[len(signal.data) - left:]
-                        save.save(os.path.join(directoryoutput, str(pieces + 1) + "-" + signal.name))
-                    files_processed += 1
-                    self.progressBarProcesed.setValue(100.0 * files_processed / len(sounds))
-                    self.listwidgetProgress.addItem(signal.name + u" " + self.tr(u"has been files_processed"))
-                    self.progressBarProcesed.update()
-                    self.listwidgetProgress.update()
-                except:
-                    print(self.tr(u"some split problems"))
-        self.progressBarProcesed.setValue(100)
-
-    def selectInputFolder(self):
-        """
-        Select a valid folder in the file system..
-        :return:
-        """
-        inputfolder = QFileDialog.getExistingDirectory()
-
-        # update the line edit with the name of
-        self.lineeditFilePath.setText(inputfolder)
-
-    def selectOutputFolder(self):
-        """
-        Select a valid folder in the file system to save the batch result data.
-        :return:
-        """
-        output_folder = QFileDialog.getExistingDirectory()
-        self.lineEditOutputFolder.setText(output_folder)
 
     def writedata(self, ws, tableParameter=None):
         """

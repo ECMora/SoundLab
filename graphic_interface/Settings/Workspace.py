@@ -96,9 +96,14 @@ class Workspace(object):
         self.detectionWorkspace = detectionWorkspace if detectionWorkspace else DetectionWorkspace()
         self.openedFiles = [] if openedFiles is None else openedFiles
         self.recentFiles = []
+
         self.language = u""
         self.theme_file = u""
         self.style = u""
+
+        self.visibleOscilogram = True
+        self.visibleSpectrogram = True
+
         self.tabPosition = int(QTabWidget.North)
         self.tabShape = int(QTabWidget.Rounded)
 

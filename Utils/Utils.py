@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 import os
 import pickle
+from math import log10
 from numpy import argmax
 from PyQt4 import QtGui
 from PyQt4.QtGui import QFileDialog
 from duetto.audio_signals.Synthesizer import Synthesizer
-import random
 
 FLOATING_POINT_EPSILON = 0.01
 
@@ -116,3 +116,12 @@ def smallSignal(signal, duration_ms=100):
     small_signal.data[0: index_to-index_from] = signal.data[index_from:index_to]
 
     return small_signal
+
+
+def toDB(value=0, min_value=1, max_value=1):
+    return -60 + int(20 * log10(abs(value + max_value * 1000.0 / min_value)))
+
+
+def fromdB(value_dB=0, min_value=1, max_value=1):
+    return round((10.0 ** ((60 + value_dB) / 20.0)) * max_value / 1000.0, 0) - min_value
+

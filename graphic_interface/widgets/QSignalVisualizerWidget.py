@@ -271,6 +271,7 @@ class QSignalVisualizerWidget(QWidget):
 
 
 #  region Undo Redo
+
     def undo(self):
         """
         Undo the last signal processing action.
@@ -693,6 +694,9 @@ class QSignalVisualizerWidget(QWidget):
         self.axesOscilogram.graph(indexFrom=self.mainCursor.min, indexTo=self.mainCursor.max)
 
         self.updateScrollbar()
+
+        if self.selectedTool == Tools.ZoomTool:
+            self.updateZoomRegion(oscilogram_update=True)
 
     #  endregion
 

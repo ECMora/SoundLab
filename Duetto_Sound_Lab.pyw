@@ -5,7 +5,7 @@ import os, hashlib
 import sys
 from Utils.Utils import deSerialize, WORK_SPACE_FILE_NAME
 from graphic_interface.Settings.Workspace import Workspace
-from graphic_interface.windows.DuettoSoundLabWindow import DuettoSoundLabWindow
+from graphic_interface.windows.SoundLabMainWindow import SoundLabMainWindow
 from graphic_interface.windows.PresentationSlogan.presentation import Ui_MainWindow
 
 invalid_license_message = " Valid duetto Sound Lab license is missing or trial period is over.\n" + " If you have a valid license try to open the application again, otherwise" + " contact duetto support team."
@@ -120,7 +120,7 @@ if __name__ == '__main__':
         else:
             workSpace = None
 
-    dmw = DuettoSoundLabWindow(signal_path=args, workSpace=workSpace)
+    dmw = SoundLabMainWindow(signal_path=args, workSpace=workSpace)
 
     # dmw.languageChanged.connect(lambda data: loadLanguageTranslations(app, data))
     dmw.styleChanged.connect(lambda data: loadAppStyle(app, data))

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\SegmentationAndClasificationWindowUI.ui'
+# Form implementation generated from reading ui file 'D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\SegmentationAndClasificationWindowUI.ui'
 #
-# Created: Mon Feb 02 22:39:20 2015
+# Created: Tue Feb 03 10:36:31 2015
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -188,11 +188,11 @@ class Ui_MainWindow(object):
         self.actionElements_Peaks = QtGui.QAction(MainWindow)
         self.actionElements_Peaks.setCheckable(True)
         self.actionElements_Peaks.setObjectName(_fromUtf8("actionElements_Peaks"))
-        self.actionOsgram_Image = QtGui.QAction(MainWindow)
+        self.actionOsc_Image = QtGui.QAction(MainWindow)
         icon15 = QtGui.QIcon()
         icon15.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/Camera.ico")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionOsgram_Image.setIcon(icon15)
-        self.actionOsgram_Image.setObjectName(_fromUtf8("actionOsgram_Image"))
+        self.actionOsc_Image.setIcon(icon15)
+        self.actionOsc_Image.setObjectName(_fromUtf8("actionOsc_Image"))
         self.actionSpecgram_Image = QtGui.QAction(MainWindow)
         self.actionSpecgram_Image.setIcon(icon15)
         self.actionSpecgram_Image.setObjectName(_fromUtf8("actionSpecgram_Image"))
@@ -252,32 +252,17 @@ class Ui_MainWindow(object):
         self.actionTraining_Mode.setObjectName(_fromUtf8("actionTraining_Mode"))
         self.actionClassification_Settings = QtGui.QAction(MainWindow)
         icon22 = QtGui.QIcon()
-        icon22.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/categories.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon22.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/ColorSync Utility.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionClassification_Settings.setIcon(icon22)
         self.actionClassification_Settings.setObjectName(_fromUtf8("actionClassification_Settings"))
         self.actionMethod = QtGui.QAction(MainWindow)
         self.actionMethod.setObjectName(_fromUtf8("actionMethod"))
-        self.toolBar.addAction(self.actionDetection)
-        self.toolBar.addAction(self.actionTwo_Dimensional_Graphs)
-        self.toolBar.addAction(self.actionDelete_Selected_Elements)
-        self.toolBar.addAction(self.actionDeselect_Elements)
-        self.toolBar.addSeparator()
+        self.actionRecord = QtGui.QAction(MainWindow)
+        icon23 = QtGui.QIcon()
+        icon23.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/record_26x26.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionRecord.setIcon(icon23)
+        self.actionRecord.setObjectName(_fromUtf8("actionRecord"))
         self.toolBar.addAction(self.actionClassification_Settings)
-        self.toolBar.addSeparator()
-        self.toolBar.addAction(self.actionZoomIn)
-        self.toolBar.addAction(self.actionZoom_out)
-        self.toolBar.addAction(self.actionZoom_out_entire_file)
-        self.toolBar.addSeparator()
-        self.toolBar.addAction(self.actionPlay_Sound)
-        self.toolBar.addAction(self.actionPause_Sound)
-        self.toolBar.addAction(self.actionStop_Sound)
-        self.toolBar.addSeparator()
-        self.toolBar.addAction(self.actionFull_Screen)
-        self.toolBar.addAction(self.actionCombined)
-        self.toolBar.addAction(self.actionOscilogram)
-        self.toolBar.addAction(self.actionSpectogram)
-        self.toolBar.addSeparator()
-        self.toolBar.addAction(self.actionSignalName)
         self.menuPeak_Frecuencies.addAction(self.actionElements_Peaks)
         self.menuPeak_Frecuencies.addAction(self.actionSub_Elements_Peaks)
         self.menuParameters.addAction(self.actionView_Parameters)
@@ -299,7 +284,7 @@ class Ui_MainWindow(object):
         self.menuTools.addAction(self.actionZoom_out_entire_file)
         self.menuTools.addAction(self.actionFull_Screen)
         self.menuTools.addSeparator()
-        self.menuTools.addAction(self.actionOsgram_Image)
+        self.menuTools.addAction(self.actionOsc_Image)
         self.menuTools.addAction(self.actionSpecgram_Image)
         self.menuTools.addAction(self.actionCombined_Image)
         self.menuTools.addSeparator()
@@ -361,7 +346,7 @@ class Ui_MainWindow(object):
         self.actionSpectral_Numbers.setText(QtGui.QApplication.translate("MainWindow", "Spectral Numbers", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSub_Elements_Peaks.setText(QtGui.QApplication.translate("MainWindow", "Sub Elements Peaks", None, QtGui.QApplication.UnicodeUTF8))
         self.actionElements_Peaks.setText(QtGui.QApplication.translate("MainWindow", "Elements Peaks", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionOsgram_Image.setText(QtGui.QApplication.translate("MainWindow", "Osgram Image", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionOsc_Image.setText(QtGui.QApplication.translate("MainWindow", "Osgram Image", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSpecgram_Image.setText(QtGui.QApplication.translate("MainWindow", "Specgram Image", None, QtGui.QApplication.UnicodeUTF8))
         self.actionTemporal_Figures.setText(QtGui.QApplication.translate("MainWindow", "Temporal Figures", None, QtGui.QApplication.UnicodeUTF8))
         self.actionCombined_Image.setText(QtGui.QApplication.translate("MainWindow", "Combined Image", None, QtGui.QApplication.UnicodeUTF8))
@@ -379,6 +364,7 @@ class Ui_MainWindow(object):
         self.actionTraining_Mode.setText(QtGui.QApplication.translate("MainWindow", "Training Mode", None, QtGui.QApplication.UnicodeUTF8))
         self.actionClassification_Settings.setText(QtGui.QApplication.translate("MainWindow", "Edit Categories", None, QtGui.QApplication.UnicodeUTF8))
         self.actionMethod.setText(QtGui.QApplication.translate("MainWindow", "Method", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionRecord.setText(QtGui.QApplication.translate("MainWindow", "Record", None, QtGui.QApplication.UnicodeUTF8))
 
 from graphic_interface.widgets.SoundLabToolBar import SoundLabToolBarWidget
 from pyqtgraph import TableWidget

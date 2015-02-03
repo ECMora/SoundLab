@@ -81,27 +81,7 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionDetection"/>
-   <addaction name="actionTwo_Dimensional_Graphs"/>
-   <addaction name="actionDelete_Selected_Elements"/>
-   <addaction name="actionDeselect_Elements"/>
-   <addaction name="separator"/>
    <addaction name="actionClassification_Settings"/>
-   <addaction name="separator"/>
-   <addaction name="actionZoomIn"/>
-   <addaction name="actionZoom_out"/>
-   <addaction name="actionZoom_out_entire_file"/>
-   <addaction name="separator"/>
-   <addaction name="actionPlay_Sound"/>
-   <addaction name="actionPause_Sound"/>
-   <addaction name="actionStop_Sound"/>
-   <addaction name="separator"/>
-   <addaction name="actionFull_Screen"/>
-   <addaction name="actionCombined"/>
-   <addaction name="actionOscilogram"/>
-   <addaction name="actionSpectogram"/>
-   <addaction name="separator"/>
-   <addaction name="actionSignalName"/>
   </widget>
   <widget class="QDockWidget" name="dockWidgetParameterTableOscilogram">
    <property name="styleSheet">
@@ -174,7 +154,7 @@
     <addaction name="actionZoom_out_entire_file"/>
     <addaction name="actionFull_Screen"/>
     <addaction name="separator"/>
-    <addaction name="actionOsgram_Image"/>
+    <addaction name="actionOsc_Image"/>
     <addaction name="actionSpecgram_Image"/>
     <addaction name="actionCombined_Image"/>
     <addaction name="separator"/>
@@ -447,7 +427,7 @@
     <string>Elements Peaks</string>
    </property>
   </action>
-  <action name="actionOsgram_Image">
+  <action name="actionOsc_Image">
    <property name="icon">
     <iconset resource="resources/icons.qrc">
      <normaloff>:/myappicons/Camera.ico</normaloff>:/myappicons/Camera.ico</iconset>
@@ -589,8 +569,8 @@
   </action>
   <action name="actionClassification_Settings">
    <property name="icon">
-    <iconset>
-     <normaloff>:/myappicons/categories.png</normaloff>:/myappicons/categories.png</iconset>
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/ColorSync Utility.png</normaloff>:/myappicons/ColorSync Utility.png</iconset>
    </property>
    <property name="text">
     <string>Edit Categories</string>
@@ -599,6 +579,15 @@
   <action name="actionMethod">
    <property name="text">
     <string>Method</string>
+   </property>
+  </action>
+  <action name="actionRecord">
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/record_26x26.png</normaloff>:/myappicons/record_26x26.png</iconset>
+   </property>
+   <property name="text">
+    <string>Record</string>
    </property>
   </action>
   <zorder>dockWidgetParameterTableOscilogram</zorder>

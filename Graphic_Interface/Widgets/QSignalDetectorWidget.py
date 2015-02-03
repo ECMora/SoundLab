@@ -28,9 +28,6 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
         self.specSelectionRegion = pg.LinearRegionItem([0, 0], movable=False, brush=self.SELECTED_ELEMENT_BRUSH)
 
-        # detector for one dimensional detection
-        self.elements_detector = OneDimensionalElementsDetector()
-
         # visibility of all detected elements.
         # is used when they are displayed
         self.visibleElements = True
@@ -41,30 +38,33 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
         QSignalVisualizerWidget.__init__(self, parent)
 
+        # detector for one dimensional detection
+        self._detector = None
+
+    @property
+    def detector(self):
+        return self._detector
+
+    @detector.setter
+    def detector(self, value):
+        self._detector = value
+
     # region Elements
-    def detectElements(self, threshold=20, decay=1, minSize=0, detectionsettings=None,
-                       softfactor=5, merge_factor=50,
-                       threshold2=0, threshold_spectral=95, minsize_spectral=(0, 0),
-                       location=None, progress=None, findSpectralSublements=True):
+    def detectElements(self):
         """
         Detect elements in the signal using the parameters.
         Just performs the detection.
         To visualize all the elements has to call drawElements after detection
         """
+        if self.detector is None:
+            return
+
         self.clearDetection()
 
-        self.mainCursor.min, self.mainCursor.max = 0, self.signal.length
-
-        self.elements_detector.detect(self.signal, 0, self.signal.length,
-                                      threshold=threshold, detectionsettings=detectionsettings, decay=decay,
-                                      minSize=minSize, softfactor=softfactor, merge_factor=merge_factor,
-                                      secondThreshold=threshold2, threshold_spectral=threshold_spectral,
-                                      minsize_spectral=minsize_spectral, location=location, progress=progress,
-                                      findSpectralSublements=findSpectralSublements)
-
+        self.detector.detect()
 
         # get the elements detected by the detector
-        for index, c in enumerate(self.elements_detector.elements):
+        for index, c in enumerate(self.detector.elements):
             self.Elements.append(c)
             # connect the click event of an element with the signal of the widget
             c.elementClicked.connect(lambda: self.elementClicked.emit(index))

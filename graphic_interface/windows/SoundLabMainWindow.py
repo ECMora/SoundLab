@@ -12,6 +12,7 @@ from duetto.dimensional_transformations.two_dimensional_transforms.Spectrogram.W
 from Utils.Utils import *
 from graphic_interface.widgets.QSignalVisualizerWidget import QSignalVisualizerWidget
 from graphic_interface.Settings.WorkTheme import WorkTheme
+from graphic_interface.windows.BatchWindow import BatchWindow
 from graphic_interface.windows.ParameterList import DuettoListParameterItem
 from graphic_interface.windows.OneDimensionalAnalysisWindow import OneDimensionalAnalysisWindow
 from SegmentationAndClasificationWindow import SegmentationAndClasificationWindow
@@ -22,7 +23,7 @@ from BrowseFilesWindow import BrowseFilesWindow
 from SoundLabWindow import SoundLabWindow
 
 
-class DuettoSoundLabWindow(SoundLabWindow, Ui_DuettoMainWindow):
+class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
     """
     Main window of the application.
     """
@@ -54,13 +55,9 @@ class DuettoSoundLabWindow(SoundLabWindow, Ui_DuettoMainWindow):
     SETTINGS_WINDOW_WIDTH = 340
     SETTINGS_WINDOW_HEIGHT = 100
 
-    # The decimal places to round visible data to the user
-    DECIMAL_PLACES = 2
-
     # The max number of chars of a recent file signal path
     # will be showed to the user on the recent files submenu
     MAX_RECENT_FILES_ACTION_TEXT_LENGTH = 50
-
 
     # endregion
 
@@ -88,6 +85,7 @@ class DuettoSoundLabWindow(SoundLabWindow, Ui_DuettoMainWindow):
         self.signalDependingActions = []
 
         # some initial state configurations
+        self.signalNameLineEdit.textChanged.connect(lambda text: self.signalNameChanged(text))
         self.configureSignalsTab()
         self.configureNoOpenedWidget()
         self.configureToolBarActionsGroups()
@@ -208,6 +206,10 @@ class DuettoSoundLabWindow(SoundLabWindow, Ui_DuettoMainWindow):
             if result == QtGui.QMessageBox.Yes:
                 for file_path in self.workSpace.openedFiles:
                     self._open(file_path)
+                    # restore if any the widgets visibility
+                    self.changeWidgetsVisibility(self.workSpace.visibleOscilogram,
+                                                 self.workSpace.visibleSpectrogram)
+
             else:
                 # clear the previous session state
                 self.workSpace.clearOpenedFiles()
@@ -481,40 +483,12 @@ class DuettoSoundLabWindow(SoundLabWindow, Ui_DuettoMainWindow):
             act.setActionGroup(edition_actions)
         # endregion
 
-        # region play record actions
-        play_record_actions = QActionGroup(self)
-        play_record_actions_list = [self.actionPlay_Sound, self.actionPause_Sound, self.actionStop_Sound,
-                                    self.actionRecord, sep3]
-
-        for act in play_record_actions_list:
-            act.setActionGroup(play_record_actions)
-        # endregion
-
-        # region widgets visibility actions
-        widgets_visibility_actions = QActionGroup(self)
-        widgets_visibility_actions_list = [self.actionOscilogram, self.actionSpectogram, self.actionCombined,
-                                           sep4]
-
-        for act in widgets_visibility_actions_list:
-            act.setActionGroup(widgets_visibility_actions)
-        # endregion
-
         # region undo redo actions
         undo_redo_actions = QActionGroup(self)
         undo_redo_actions_list = [self.actionUndo, self.actionRedo,sep5]
 
         for act in undo_redo_actions_list:
             act.setActionGroup(undo_redo_actions)
-
-        # endregion
-
-        # region zoom actions
-        zoom_actions = QActionGroup(self)
-        zoom_actions_list = [self.actionZoomIn, self.actionZoom_out,
-                                  self.actionZoom_out_entire_file,sep6]
-
-        for act in zoom_actions_list:
-            act.setActionGroup(zoom_actions)
 
         # endregion
 
@@ -548,15 +522,6 @@ class DuettoSoundLabWindow(SoundLabWindow, Ui_DuettoMainWindow):
 
         # endregion
 
-        # region Save Images actions
-        save_images_actions = QActionGroup(self)
-        save_images_actions_list = [self.actionOsc_Image,self.actionSpecgram_Image,
-                                   self.actionCombined_Image]
-
-        for act in save_images_actions_list:
-            act.setActionGroup(save_images_actions)
-        # endregion
-
         # region Save actions
         save_actions = QActionGroup(self)
         save_actions_list = [self.actionSave,self.actionSave_selected_interval_as,
@@ -564,15 +529,6 @@ class DuettoSoundLabWindow(SoundLabWindow, Ui_DuettoMainWindow):
 
         for act in save_actions_list:
             act.setActionGroup(save_actions)
-        # endregion
-
-        # region Tools actions
-        tools_actions = QActionGroup(self)
-        tools_actions_list = [self.actionZoom_Cursor,self.actionPointer_Cursor,
-                              self.actionRectangular_Cursor,self.actionRectangular_Eraser]
-
-        for act in tools_actions_list:
-            act.setActionGroup(tools_actions)
         # endregion
 
         # region Play Speed actions
@@ -595,13 +551,6 @@ class DuettoSoundLabWindow(SoundLabWindow, Ui_DuettoMainWindow):
         # endregion
         # endregion
 
-        # add the actions to the signalDependingActions list
-        for action_group in [edition_actions, play_record_actions,save_actions, tools_actions,
-                             widgets_visibility_actions,zoom_actions, undo_redo_actions,
-                             segm_transf_actions, save_images_actions,processing_actions, play_speed_actions]:
-
-            self.signalDependingActions.extend(action_group.actions())
-
         # add the widget as an action because the behoavior of the list
         # is to disable the elements on it when there is no open signals and enable otherwise
         self.signalDependingActions.append(self.signalNameLineEdit)
@@ -610,17 +559,22 @@ class DuettoSoundLabWindow(SoundLabWindow, Ui_DuettoMainWindow):
         # add the actions to the toolbar
         # actions groups (action,name of group)
         actions_groups = [(open_save_actions, self.tr(u"Open/Save")),(undo_redo_actions, self.tr(u"Undo/Redo")),
-                          (edition_actions,self.tr(u"Edition")), (play_record_actions, self.tr(u"Play/Record")),
-                          (zoom_actions, self.tr(u"Zoom")),(widgets_visibility_actions, self.tr(u"Widgets Visibility")),
-                          (file_updown_actions, self.tr(u"File Up/Down")), (segm_transf_actions, self.tr(u"Processing")),
+                          (edition_actions,self.tr(u"Edition")), (file_updown_actions, self.tr(u"File Up/Down")),
+                          (segm_transf_actions, self.tr(u"Processing")),
                           (settings_actions, self.tr(u"Settings"))]
 
-        # add to the customizable sound lab toolbar
+        # add to the customizable sound lab toolbar first than the default actions
         for act in actions_groups:
             #            addActionGroup(actionGroup, name)
             self.toolBar.addActionGroup(act[0], act[1])
 
         SoundLabWindow.configureToolBarActionsGroups(self)
+
+        # add the actions to the signalDependingActions list
+        for action_group in [edition_actions, self.play_record_actions, save_actions, self.tools_actions,
+                             self.widgets_visibility_actions, self.zoom_actions, undo_redo_actions,
+                             segm_transf_actions, self.save_images_actions, processing_actions, play_speed_actions]:
+            self.signalDependingActions.extend(action_group.actions())
 
     def setSignalActionsEnabledState(self, enable_state=True):
         """
@@ -682,15 +636,12 @@ class DuettoSoundLabWindow(SoundLabWindow, Ui_DuettoMainWindow):
         self.workSpace.setClosedFile(self.widget.signalFilePath)
         self.widget.signal = signal
 
-        self.widget.signalNameChanged.connect(self.updateSignalPropertiesLabel)
+        self.widget.signalNameChanged.connect(lambda: self.updateSignalPropertiesLabel(self.widget.signal))
 
         self.setUniqueSignalName(self.widget.signal)
 
         # connect for data display
         self.widget.toolDataDetected.connect(self.updateStatusBar)
-
-        # refresh and set the visibility of the axes on the new widget
-        self.changeWidgetsVisibility(True, True)
 
         # add context menu actions
         self.addWidgetContextMenuActions()
@@ -704,7 +655,7 @@ class DuettoSoundLabWindow(SoundLabWindow, Ui_DuettoMainWindow):
         """
         # update the app title, tab text and signal properties label
         self.signalNameChanged(self.widget.signalName)
-        self.updateSignalPropertiesLabel()
+        self.updateSignalPropertiesLabel(self.widget.signal)
 
         # connect the histogram
         self.updateHistogramWidget()
@@ -1233,33 +1184,10 @@ class DuettoSoundLabWindow(SoundLabWindow, Ui_DuettoMainWindow):
     #  endregion
 
     #  region Signal Processing Methods
-
-    #  region Undo Redo
-
     @pyqtSlot()
-    def on_actionUndo_triggered(self):
-        self.widget.undo()
-
-    @pyqtSlot()
-    def on_actionRedo_triggered(self):
-        self.widget.redo()
-
-    # endregion
-
-    #  region Cut, Copy, Paste
-    @pyqtSlot()
-    def on_actionCut_triggered(self):
-        self.widget.cut()
-
-    @pyqtSlot()
-    def on_actionCopy_triggered(self):
-        self.widget.copy()
-
-    @pyqtSlot()
-    def on_actionPaste_triggered(self):
-        self.widget.paste()
-
-    #  endregion
+    def on_actionBatchProcessing_triggered(self):
+        batch_wnd = BatchWindow(self)
+        batch_wnd.show()
 
     @pyqtSlot()
     def on_actionPositive_Values_triggered(self):
@@ -1739,27 +1667,6 @@ class DuettoSoundLabWindow(SoundLabWindow, Ui_DuettoMainWindow):
             # asumes the state of syntetized to save in other file
             self.workSpace.setClosedFile(self.widget.signalFilePath)
             self.widget.signalFilePath = None
-
-    def updateSignalPropertiesLabel(self):
-        """
-        Updates the text of the current signal properties in toolbar.
-        :return:
-        """
-        #  action signal is a place in the tool bar to show the current signal name
-        self.signalNameLineEdit.setText(self.widget.signalName)
-
-        sr = self.widget.signal.samplingRate
-        bit_depth = self.widget.signal.bitDepth
-        channels = self.widget.signal.channelCount
-
-        properties = u"    " +\
-                  u" <b>" + self.tr(u"Sampling Rate: ") + u"</b>" + unicode(sr) + u"  " + \
-                  u" <b>" + self.tr(u"Bit Depth: ") + u"</b>" + unicode(bit_depth) + u"  " + \
-                  u" <b>" + self.tr(u"Channels: ") + u"</b>" + unicode(channels) + u"  " +\
-                  u" <b>" + self.tr(u"Duration(s): ") + u"</b>" + unicode(round(self.widget.signal.duration, DECIMAL_PLACES)) +\
-                  u"    "
-
-        self.signalPropertiesTextLabel.setText(properties)
 
     def setUniqueSignalName(self, signal):
         """

@@ -1,12 +1,10 @@
 #  -*- coding: utf-8 -*-
-from math import  log10
-
+from math import log10
 from PyQt4.QtGui import QFont
 from matplotlib import mlab
 import numpy as np
 import pyqtgraph as pg
 from PyQt4 import QtGui, QtCore
-
 from sound_lab_core.Segmentation.Detectors.TwoDimensional.TwoDimensionalElementsDetector import TwoDimensionalElementsDetector
 from sound_lab_core.Segmentation.Elements.TwoDimensionalElement import SpecgramElement
 from sound_lab_core.Segmentation.Elements.Element import Element
@@ -36,23 +34,21 @@ class OneDimensionalElement(Element):
     #  decimal places to round the measurements
     DECIMAL_PLACES = 4
 
+    # different colors for the even and odds rows in the parameter table and segment colors.
+    COLOR_ODD = QtGui.QColor(0, 0, 255, 100)
+    COLOR_EVEN = QtGui.QColor(0, 255, 0, 100)
+
     def __init__(self, signal, indexFrom, indexTo):
         Element.__init__(self, signal)
-        self.indexFrom =  indexFrom # index of start of the element
+        self.indexFrom = indexFrom
         self.indexTo = indexTo
 
 
 class OscilogramElement(OneDimensionalElement):
 
-    def __init__(self, signal, indexFrom, indexTo,number=0,threshold_spectral=0, minsize_spectral=(0,0), location = None,findSpectralSublements = True,specgramSettings = None,trim_threshold=0):
+    def __init__(self, signal, indexFrom, indexTo, number=0):
         """
         @param signal: The signal in wich is defined this element
-        @param indexFrom: Start time of the element in the signal
-        @param indexTo: End time of the element in the signal
-        @param number: The number of this element in the list of detected elements in signal
-        @param threshold_spectral: The threshold spectral for detection of two dimensional elements
-        @param minsize_spectral: The spectral minThresholdLabel size of two dimensional elements detection
-        @param location:
         @param findSpectralSublements: If this element should perform the search of sub elements
         @param specgramSettings: Settings of specgram computation
         @param trim_threshold: Threshold to select the section of specgram corresponding
@@ -61,10 +57,10 @@ class OscilogramElement(OneDimensionalElement):
         until the energy increases this trim_threshold.
         @return:
         """
-        OneDimensionalElement.__init__(self,signal,indexFrom,indexTo)
-        # the visible text for
-        text = pg.TextItem(str(number),color=(255,255,255),anchor=(0.5,0.5))
-        text.setPos(self.indexFrom/2.0+self.indexTo/2.0, 0.75*2**(signal.bitDepth-1))
+        OneDimensionalElement.__init__(self, signal, indexFrom, indexTo)
+        # the visible text for number
+        text = pg.TextItem(str(number), color=(255,255,255),anchor=(0.5,0.5))
+        text.setPos(self.indexFrom/2.0 + self.indexTo/2.0, 0.75*2**(signal.bitDepth-1))
 
         font = QFont()
         font.setPointSize(13)
@@ -92,45 +88,11 @@ class OscilogramElement(OneDimensionalElement):
         self.visual_figures.append([self.lr,True]) # item visibility
         self.visual_text.append([text,True])
 
-        # region location
-        if location is not None:
-            self.measurementLocation = location
-            # width = (indexTo-indexFrom)/5
-            # height = (2**signal.bitDepth)/5
-            # ypos = 2**signal.bitDepth
-            # xpos = indexTo-indexFrom
-            # ystart = -2**(signal.bitDepth-1)
-            # poner tooltips
-            # if(self.measurementLocation.MEDITIONS[self.measurementLocation.START][0]):
-            #     start = QtGui.QGraphicsRectItem(QtCore.QRectF(indexFrom+ xpos*0,ystart + ypos*0,   width,    height))
-            #     start.setBrush(QtGui.QBrush(self.measurementLocation.MEDITIONS[self.measurementLocation.START][1]))
-            #     start.setToolTip("Element: "+ str(self.number) +"\nStart Mesurement Location")
-            #     self.visual_locations.append([start,True])
-            # if(self.measurementLocation.MEDITIONS[self.measurementLocation.CENTER][0]):
-            #     center = QtGui.QGraphicsRectItem(QtCore.QRectF(indexFrom+ xpos*0.5- width/2,ystart +ypos*0.5 -height/2,    width,    height))
-            #     center.setBrush(QtGui.QBrush(self.measurementLocation.MEDITIONS[self.measurementLocation.CENTER][1]))
-            #     center.setToolTip("Element:"+str(self.number) +"\nCenter Mesurement Location")
-            #     self.visual_locations.append([center,True])
-            # if(self.measurementLocation.MEDITIONS[self.measurementLocation.END][0]):
-            #     end = QtGui.QGraphicsRectItem(QtCore.QRectF(indexFrom+ xpos*1- width,ystart+ypos*1- height,    width,    height))
-            #     end.setBrush(QtGui.QBrush(self.measurementLocation.MEDITIONS[self.measurementLocation.END][1]))
-            #     end.setToolTip("Element:"+str(self.number) +"\nEnd Mesurement Location")
-            #     self.visual_locations.append([end,True])
-            # if(self.measurementLocation.MEDITIONS[self.measurementLocation.QUARTILE25][0]):
-            #     quartile1 = QtGui.QGraphicsRectItem(QtCore.QRectF(indexFrom+ xpos*0.25 -width/2,ystart+ypos*0.25 -height/2,width,    height))
-            #     quartile1.setBrush(QtGui.QBrush(self.measurementLocation.MEDITIONS[self.measurementLocation.QUARTILE25][1]))
-            #     quartile1.setToolTip("Element:"+str(self.number) +"\nQuartile 25% Mesurement Location")
-            #     self.visual_locations.append([quartile1,True])
-            # if(self.measurementLocation.MEDITIONS[self.measurementLocation.QUARTILE75][0]):
-            #     quartile3 = QtGui.QGraphicsRectItem(QtCore.QRectF(indexFrom+ xpos*0.75- width/2,ystart+ypos*0.75-height/2, width,    height))
-            #     quartile3.setBrush(QtGui.QBrush(self.measurementLocation.MEDITIONS[self.measurementLocation.QUARTILE75][1]))
-            #     quartile3.setToolTip("Element:"+str(self.number) +"\nQuartile 75% Mesurement Location")
-            #     self.visual_locations.append([quartile3,True])
-        else:
-            self.measurementLocation = SpectralMeasurementLocation()
+        self.measurementLocation = SpectralMeasurementLocation()
 
-        # endregion
+        # self.detectTwoDimElements()
 
+    def detectTwoDimElements(self):
         if specgramSettings is None:
             raise Exception("None parameter")
 
@@ -138,28 +100,34 @@ class OscilogramElement(OneDimensionalElement):
 
         if self.specgramSettings.Pxx != [] and self.specgramSettings.bins != [] and self.specgramSettings.freqs != []:
             # spec_resolution, temp_resolution = signal.samplingRate/2.0*len(freqs),bins[1]-bins[0]
-            spec_resolution, temp_resolution = 1000.0/self.specgramSettings.freqs[1],(self.specgramSettings.bins[1]-self.specgramSettings.bins[0])*1000.0
+            spec_resolution, temp_resolution = 1000.0 / self.specgramSettings.freqs[1], (
+                self.specgramSettings.bins[1] - self.specgramSettings.bins[0]) * 1000.0
 
             # minsize came with the hz, sec of minThresholdLabel size elements and its translated to index values in pxx for comparations
-            minsize_spectral = (max(1,int(minsize_spectral[0]*spec_resolution)),max(1,int(minsize_spectral[1]*temp_resolution)))
+            minsize_spectral = (
+                max(1, int(minsize_spectral[0] * spec_resolution)), max(1, int(minsize_spectral[1] * temp_resolution)))
 
-            sr = signal.samplingRate*1.0
-            columnsize = (self.specgramSettings.bins[1] - self.specgramSettings.bins[0])*sr
-            overlap = int(round(self.specgramSettings.overlap,0))
-            overlap_delay = 0 if overlap <= 0 else 99 if overlap >=100 else overlap/(100-overlap)
+            sr = signal.samplingRate * 1.0
+            columnsize = (self.specgramSettings.bins[1] - self.specgramSettings.bins[0]) * sr
+            overlap = int(round(self.specgramSettings.overlap, 0))
+            overlap_delay = 0 if overlap <= 0 else 99 if overlap >= 100 else overlap / (100 - overlap)
 
-            aux = max(0,int(indexFrom*1.0/columnsize))
-            aux2 = min(int(indexTo*1.0/columnsize)+overlap_delay,len(self.specgramSettings.Pxx[0]))
+            aux = max(0, int(indexFrom * 1.0 / columnsize))
+            aux2 = min(int(indexTo * 1.0 / columnsize) + overlap_delay, len(self.specgramSettings.Pxx[0]))
 
-            left, rigth = self.trimMatrix(self.specgramSettings.Pxx,aux,aux2,trim_threshold)
+            left, rigth = self.trimMatrix(self.specgramSettings.Pxx, aux, aux2, trim_threshold)
 
-            self.matrix = self.specgramSettings.Pxx[:,left:rigth]
-            self.indexFromInPxx,self.indexToInPxx = left,rigth
+            self.matrix = self.specgramSettings.Pxx[:, left:rigth]
+            self.indexFromInPxx, self.indexToInPxx = left, rigth
 
-            self.twoDimensionalElements = [SpecgramElement(signal,self.matrix,self.specgramSettings.freqs,0,len(self.specgramSettings.freqs),self.specgramSettings.bins,0,rigth-left,number,self,location,multipleSubelements=False)]
+            self.twoDimensionalElements = [
+                SpecgramElement(signal, self.matrix, self.specgramSettings.freqs, 0, len(self.specgramSettings.freqs),
+                                self.specgramSettings.bins, 0, rigth - left, number, self, location,
+                                multipleSubelements=False)]
 
             if findSpectralSublements:
-                self.computeTwoDimensionalElements(threshold_spectral,self.matrix,self.specgramSettings.freqs,self.specgramSettings.bins,minsize_spectral)
+                self.computeTwoDimensionalElements(threshold_spectral, self.matrix, self.specgramSettings.freqs,
+                                                   self.specgramSettings.bins, minsize_spectral)
 
     def trimMatrix(self, pxx, aux, aux2, threshold_spectral):
         left =aux
@@ -292,7 +260,6 @@ class OscilogramElement(OneDimensionalElement):
                 self.parameters["average"][("minThresholdLabel","visual")] = True
                 self.twoDimensionalElements[0].addVisualGraph(pos,adj,dict(size=2, symbol='o', pxMode=False))
             return self.parameters["average"]["minThresholdLabel"][0]
-
 
     def getMatrixIndexFromLocation(self,location):
         """
@@ -490,5 +457,5 @@ class OscilogramElement(OneDimensionalElement):
         self.visual_text[0][0].setText(str(n))
         for e in self.twoDimensionalElements:
             e.setNumber(n)
-        self.color = QtGui.QColor(0, 255, 0, 100) if self.number%2 == 0 else QtGui.QColor(0, 0, 255,100)
+        self.color = self.COLOR_ODD if self.number%2 == 0 else self.COLOR_EVEN
         self.lr.setBrush(pg.mkBrush(self.color))

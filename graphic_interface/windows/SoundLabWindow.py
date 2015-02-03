@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 from PyQt4.QtCore import pyqtSlot
 import PyQt4.QtCore as QtCore
+from PyQt4.QtGui import QActionGroup
 from PyQt4 import QtGui
-from Utils.Utils import saveImage
+from Utils.Utils import saveImage, DECIMAL_PLACES
 from graphic_interface.Settings.Workspace import Workspace
 from graphic_interface.widgets.signal_visualizer_tools.SignalVisualizerTool import Tools
 
@@ -27,9 +28,15 @@ class SoundLabWindow(QtGui.QMainWindow):
         self.statusbar = self.statusBar()
         self.statusbar.setSizeGripEnabled(False)
 
+        # action groups of common actions for sound lab window
+        self.play_record_actions = QActionGroup(self)
+        self.widgets_visibility_actions = QActionGroup(self)
+        self.zoom_actions = QActionGroup(self)
+        self.tools_actions = QActionGroup(self)
+        self.save_images_actions = QActionGroup(self)
+
         # text edit for the signal name on the toolbar
         self.signalNameLineEdit = QtGui.QLineEdit(self)
-        self.signalNameLineEdit.textChanged.connect(lambda text: self.signalNameChanged(text))
         self.signalNameLineEdit.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum))
         self.signalPropertiesTextLabel = QtGui.QLabel(self)
         self.signalPropertiesTextLabel.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum))
@@ -43,13 +50,64 @@ class SoundLabWindow(QtGui.QMainWindow):
         user configuration.
         :return:
         """
-        sep = QtGui.QAction(self)
-        sep.setSeparator(True)
+        sep1, sep2, sep3, sep4 = [QtGui.QAction(self) for _ in range(4)]
+
+        for sep in [sep1, sep2, sep3, sep4]:
+            sep.setSeparator(True)
+
+        # region play record actions
+        play_record_actions_list = [self.actionPlay_Sound, self.actionPause_Sound, self.actionStop_Sound,
+                                    self.actionRecord, sep2]
+        for act in play_record_actions_list:
+            act.setActionGroup(self.play_record_actions)
+        # endregion
+
+        # region widgets visibility actions
+        widgets_visibility_actions_list = [self.actionOscilogram, self.actionSpectogram, self.actionCombined,
+                                           sep3]
+
+        for act in widgets_visibility_actions_list:
+            act.setActionGroup(self.widgets_visibility_actions)
+        # endregion
+
+        # region zoom actions
+        zoom_actions_list = [self.actionZoomIn, self.actionZoom_out,
+                             self.actionZoom_out_entire_file, sep4]
+
+        for act in zoom_actions_list:
+            act.setActionGroup(self.zoom_actions)
+
+        # endregion
+
+        # region Save Images actions
+        save_images_actions_list = [self.actionOsc_Image, self.actionSpecgram_Image,
+                                    self.actionCombined_Image]
+
+        for act in save_images_actions_list:
+            act.setActionGroup(self.save_images_actions)
+        # endregion
+
+        # region Tools actions
+        tools_actions_list = [self.actionZoom_Cursor, self.actionPointer_Cursor,
+                              self.actionRectangular_Cursor, self.actionRectangular_Eraser]
+
+        for act in tools_actions_list:
+            act.setActionGroup(self.tools_actions)
+        # endregion
+
+        actions_groups = [(self.play_record_actions, self.tr(u"Play/Record")),
+                          (self.zoom_actions, self.tr(u"Zoom")),
+                          (self.widgets_visibility_actions, self.tr(u"Widgets Visibility"))]
+
+        # add to the customizable sound lab toolbar
+        for act in actions_groups:
+            # addActionGroup(actionGroup, name)
+            self.toolBar.addActionGroup(act[0], act[1])
 
         # add the label for signal name (and edit line) that always wil be visible as an option
         # not like the other groups of actions that the user could customize visibility
         self.toolBar.addWidget(self.signalNameLineEdit)
-        self.toolBar.addAction(sep)
+        self.toolBar.addAction(sep1)
         self.toolBar.addWidget(self.signalPropertiesTextLabel)
 
     #  region Widget Tools
@@ -212,6 +270,11 @@ class SoundLabWindow(QtGui.QMainWindow):
         """
         self.widget.visibleOscilogram = visibleOscilogram
         self.widget.visibleSpectrogram = visibleSpectrogram
+
+        # udpate the workspace
+        self.workSpace.visibleOscilogram = visibleOscilogram
+        self.workSpace.visibleSpectrogram = visibleSpectrogram
+
         self.widget.graph()
 
     # endregion
@@ -256,6 +319,37 @@ class SoundLabWindow(QtGui.QMainWindow):
 
     # endregion
 
+    # region Edition and Processing Methods
+
+    # region Undo Redo
+
+    @pyqtSlot()
+    def on_actionUndo_triggered(self):
+        self.widget.undo()
+
+    @pyqtSlot()
+    def on_actionRedo_triggered(self):
+        self.widget.redo()
+
+    # endregion
+
+    #  region Cut, Copy, Paste
+    @pyqtSlot()
+    def on_actionCut_triggered(self):
+        self.widget.cut()
+
+    @pyqtSlot()
+    def on_actionCopy_triggered(self):
+        self.widget.copy()
+
+    @pyqtSlot()
+    def on_actionPaste_triggered(self):
+        self.widget.paste()
+
+    #  endregion
+
+    # endregion
+
     def updateStatusBar(self, line):
         """
         Set a new message in the status bar of the window.
@@ -263,3 +357,23 @@ class SoundLabWindow(QtGui.QMainWindow):
         """
         self.statusbar.showMessage(line)
 
+    def updateSignalPropertiesLabel(self, signal):
+        """
+        Updates the text of the current signal properties in toolbar.
+        :return:
+        """
+        # action signal is a place in the tool bar to show the current signal name
+        self.signalNameLineEdit.setText(signal.name)
+
+        sr = signal.samplingRate
+        bit_depth = signal.bitDepth
+        channels = signal.channelCount
+
+        properties = u"    " + \
+                     u" <b>" + self.tr(u"Sampling Rate: ") + u"</b>" + unicode(sr) + u"  " + \
+                     u" <b>" + self.tr(u"Bit Depth: ") + u"</b>" + unicode(bit_depth) + u"  " + \
+                     u" <b>" + self.tr(u"Channels: ") + u"</b>" + unicode(channels) + u"  " + \
+                     u" <b>" + self.tr(u"Duration(s): ") + u"</b>" + unicode(round(signal.duration, DECIMAL_PLACES)) + \
+                     u"    "
+
+        self.signalPropertiesTextLabel.setText(properties)

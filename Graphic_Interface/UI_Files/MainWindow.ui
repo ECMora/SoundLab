@@ -240,6 +240,7 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
     <addaction name="actionSpectogram"/>
     <addaction name="actionCombined"/>
     <addaction name="actionOneDimensionalTransformation"/>
+    <addaction name="actionBatchProcessing"/>
     <addaction name="separator"/>
     <addaction name="actionSettings"/>
     <addaction name="actionSegmentation_And_Clasification"/>
@@ -964,6 +965,11 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
    </property>
    <property name="shortcut">
     <string>Space</string>
+   </property>
+  </action>
+  <action name="actionBatchProcessing">
+   <property name="text">
+    <string>Batch Processing</string>
    </property>
   </action>
   <zorder>dock_settings</zorder>
