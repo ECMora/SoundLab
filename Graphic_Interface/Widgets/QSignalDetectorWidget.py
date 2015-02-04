@@ -13,14 +13,20 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
     Provide methods to interact with the detected segments: Highlight, remove, etc
     """
 
-    # SIGNALS
+    # region SIGNALS
+
     # signal raised when a detected element is clicked
     # raise the index of the clicked element
     elementClicked = QtCore.pyqtSignal(int)
 
-    # CONSTANTS
+    # endregion
+
+    # region CONSTANTS
+
     # the brush that is used to draw the selected region or Element
-    SELECTED_ELEMENT_BRUSH = pg.mkBrush(QtGui.QColor(255, 255, 255, 60))
+    SELECTED_ELEMENT_BRUSH = pg.mkBrush(QtGui.QColor(255, 0, 0, 200))
+
+    # endregion
 
     def __init__(self, parent):
         # items to highlight elements or regions in the graph
@@ -41,6 +47,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         # detector for one dimensional detection
         self._detector = None
 
+    # region Detector Property
     @property
     def detector(self):
         return self._detector
@@ -48,6 +55,9 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
     @detector.setter
     def detector(self, value):
         self._detector = value
+        self._detector.signal = self.signal
+
+    # endregion
 
     # region Elements
     def detectElements(self):
@@ -67,7 +77,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         for index, c in enumerate(self.detector.elements):
             self.Elements.append(c)
             # connect the click event of an element with the signal of the widget
-            c.elementClicked.connect(lambda: self.elementClicked.emit(index))
+            c.elementClicked.connect(lambda i: self.elementClicked.emit(i))
 
     def changeElementsVisibility(self, visible, element_type=Element.Figures, oscilogramItems=True):
         """
@@ -104,7 +114,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         None for both
         """
         osc = oscilogramItems is None or oscilogramItems
-        spec = oscilogramItems is None or not oscilogramItems
+        # spec = oscilogramItems is None or not oscilogramItems
 
         if self.visibleOscilogram and osc:
             for i in range(len(self.Elements)):
@@ -164,7 +174,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         Clears the detected elements and their visual components from the widget
         """
         self.removeVisualElements(oscilogram=True, specgram=True)
-        self.selectElement()
+        self.deselectElement()
         self.Elements = []
 
     def selectElement(self, number=-1):
@@ -184,8 +194,8 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
                 # move the interval to make completely visible the element selected
                 self.mainCursor.min = max(0, (index_from + index_to - sizeInterval) / 2)
                 self.mainCursor.max = min(self.mainCursor.min + sizeInterval,
-                                          len(self.signalProcessor.signal.data))
-                self.graph()
+                                          len(self.signal.data))
+                self.update()
         else:
             self.selectRegion(0, 0)
 
@@ -212,13 +222,11 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         self.oscSelectionRegion.setRegion([indexFrom, indexTo])
         self.oscSelectionRegion.setBrush(brush if brush is not None else self.SELECTED_ELEMENT_BRUSH)
 
-
-
-        self.specSelectionRegion.setRegion([self.from_osc_to_spec(indexFrom), self.from_osc_to_spec(indexTo)])
-        self.specSelectionRegion.setBrush(brush if brush is not None else self.SELECTED_ELEMENT_BRUSH)
+        # self.specSelectionRegion.setRegion([self.from_osc_to_spec(indexFrom), self.from_osc_to_spec(indexTo)])
+        # self.specSelectionRegion.setBrush(brush if brush is not None else self.SELECTED_ELEMENT_BRUSH)
 
         self.axesOscilogram.update()
-        self.axesSpecgram.update()
+        # self.axesSpecgram.update()
 
     def addSelectedRegionItems(self):
         """
@@ -234,8 +242,8 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
             self.axesOscilogram.addItem(self.oscSelectionRegion)
 
         # add the spectrogram region
-        if self.specSelectionRegion not in self.axesSpecgram.viewBox.childItems():
-            self.axesSpecgram.viewBox.addItem(self.specSelectionRegion)
+        # if self.specSelectionRegion not in self.axesSpecgram.viewBox.childItems():
+        #     self.axesSpecgram.viewBox.addItem(self.specSelectionRegion)
 
     def deleteSelectedElements(self):
         """
@@ -245,7 +253,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         @return: the tuple (x,y) of init and end of the interval deleted.
         If no element is deleted returns None
         """
-        start, end = self.selectedRegion()
+        start, end = self.selectedRegion
 
         if end == start or len(self.Elements) == 0:
             return None

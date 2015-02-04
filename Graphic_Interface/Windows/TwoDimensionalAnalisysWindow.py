@@ -7,7 +7,7 @@ import numpy
 from pyqtgraph.parametertree import Parameter, ParameterTree
 import pyqtgraph as pg
 from PyQt4 import QtGui, QtCore
-
+from Utils.Utils import saveImage
 from graphic_interface.dialogs.EditCategoriesDialog import EditCategoriesDialog
 import graphic_interface.windows.ui_python_files.EditCategoriesDialogUI as editCateg
 from graphic_interface.widgets.EditCategoriesWidget import EditCategoriesWidget
@@ -20,7 +20,8 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
     graphs.
     """
 
-    # SIGNALS
+    # region SIGNALS
+
     # Signal raised when an element is selected in the graph.
     # Raise the index of the selected element
     elementSelected = QtCore.Signal(int)
@@ -30,9 +31,14 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
     # the dict of Category,value for each one
     elementsClasiffied = QtCore.Signal(list, dict)
 
-    # CONSTANTS
+    # endregion
+
+    # region CONSTANTS
+
     # the width by default of the dock window with the options of the graph
     DOCK_WINDOW_WIDTH = 200
+
+    # endregion
 
     def __init__(self, parent=None, columns=None, data=None, classificationData=None):
         """
@@ -55,6 +61,7 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         self.widget.setMouseEnabled(x=False, y=False)
         self.widget.setMenuEnabled(False)
         self.widget.enableAutoRange()
+        self.widget.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
 
         # scatter plot to graphs the elements
         self.scatter_plot = None
@@ -65,17 +72,19 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
             raise Exception(unicode(self.tr(u"ClassificationData could not be None.")))
 
         self.classificationData = classificationData
-                # index of the element currently selected in the widget if any
+        # index of the element currently selected in the widget if any
         # if no selection element then -1
         self.selectedElementIndex = -1
+
         self.columns = columns if columns is not None else []
 
         # the numpy [,] array with the parameter measurement
         self.data = data if data is not None else numpy.zeros(4).reshape((2, 2))
-        self.widget.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
-        self.widget.add(self.actionHide_Show_Settings)
-        self.widget.add(self.actionSaveGraphImage)
-        self.widget.add(self.actionMark_Selected_Elements_As)
+
+        self.widget.addAction(self.actionHide_Show_Settings)
+        self.widget.addAction(self.actionSaveGraphImage)
+        self.widget.addAction(self.actionMark_Selected_Elements_As)
+
         self.createParameterTreeOptions(self.columns)
 
     @pyqtSlot()
@@ -197,15 +206,18 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
             self.widget.getPlotItem().getAxis("bottom").setTickFont(self.font)
             self.widget.getPlotItem().getAxis("left").setTickFont(self.font)
 
-    def load_Theme(self, theme):
+    def load_workspace(self, workspace):
         """
         Update the visual theme of the window with the values from
         the application.
         :param theme: The visual theme currently used in the application.
         :return:
         """
-        self.widget.setBackground(theme.osc_background)
-        self.widget.getPlotItem().showGrid(x=theme.osc_GridX, y=theme.osc_GridY)
+        self.widget.setBackground(workspace.workTheme.oscillogramTheme.background_color)
+
+        xGrid, yGrid = workspace.workTheme.oscillogramTheme.gridX, workspace.workTheme.oscillogramTheme.gridY
+
+        self.widget.getPlotItem().showGrid(x=xGrid, y=yGrid)
 
     # region Elements Selection
 
@@ -221,7 +233,7 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
 
         # get the current elements on the graph
         elems = self.scatter_plot.points()
-        if len(elems) <= index:
+        if not 0 <= index < len(elems):
             return
 
         # get the color of the not selected elements
@@ -269,12 +281,7 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         Save the widget graph as image
         :return:
         """
-        fname = unicode(QFileDialog.getSaveFileName(self, self.tr(u"Save two dimensional graphics as an Image "),
-                                                    self.tr(u"-Duetto-Image"), "*.jpg"))
-        if fname:
-            # save as image
-            image = QtGui.QPixmap.grabWindow(self.widget.winId())
-            image.save(fname, 'jpg')
+        saveImage(self.widget, self.tr(u"twoDimGraph")+ self.widget.signal.name)
 
     def plot(self):
         """

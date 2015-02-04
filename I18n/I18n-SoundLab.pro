@@ -17,8 +17,7 @@ SOURCES += ..\Graphic_Interface\Windows\EditCategoryWidgetUI.py
 SOURCES += ..\Graphic_Interface\Windows\MainWindow.py
 SOURCES += ..\Graphic_Interface\Windows\ParameterList.py
 SOURCES += ..\Graphic_Interface\Windows\PowerSpectrumWindow.py
-SOURCES += ..\Graphic_Interface\Windows\SegmentationAndClasificationWindow.py
-SOURCES += ..\Graphic_Interface\Windows\SegmentationAndClasificationWindowUI.py
+SOURCES += ..\Graphic_Interface\Windows\Segmentation_ClassificationWindow.pySOURCES += ..\Graphic_Interface\Windows\SegmentationAndClasificationWindowUI.py
 SOURCES += ..\Graphic_Interface\Windows\Two_Dimensional_AnalisysWindowUI.py
 SOURCES += ..\Graphic_Interface\Windows\TwoDimensionalAnalisysWindow.py
 SOURCES += ..\Graphic_Interface\Windows\WorkTheme.py

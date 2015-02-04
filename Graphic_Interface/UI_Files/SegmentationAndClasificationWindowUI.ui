@@ -118,22 +118,20 @@
     <property name="title">
      <string>View</string>
     </property>
-    <widget class="QMenu" name="menuPeak_Frecuencies">
-     <property name="title">
-      <string>Peak Frecuencies</string>
-     </property>
-     <addaction name="actionElements_Peaks"/>
-     <addaction name="actionSub_Elements_Peaks"/>
-    </widget>
     <addaction name="actionView_Parameters"/>
-    <addaction name="actionView_Threshold"/>
+    <addaction name="separator"/>
+    <addaction name="actionZoomIn"/>
+    <addaction name="actionZoom_out"/>
+    <addaction name="actionZoom_out_entire_file"/>
+    <addaction name="separator"/>
     <addaction name="actionTemporal_Elements"/>
     <addaction name="actionTemporal_Numbers"/>
     <addaction name="actionTemporal_Figures"/>
     <addaction name="actionSpectral_Elements"/>
     <addaction name="actionSpectral_Numbers"/>
     <addaction name="actionSpectral_Figures"/>
-    <addaction name="menuPeak_Frecuencies"/>
+    <addaction name="separator"/>
+    <addaction name="actionTwo_Dimensional_Graphs"/>
     <addaction name="actionFull_Screen"/>
    </widget>
    <widget class="QMenu" name="menuDetection">
@@ -143,27 +141,14 @@
     <addaction name="actionDetection"/>
     <addaction name="actionDelete_Selected_Elements"/>
     <addaction name="actionDeselect_Elements"/>
-    <addaction name="actionMeditions"/>
    </widget>
    <widget class="QMenu" name="menuTools">
     <property name="title">
      <string>Tools</string>
     </property>
-    <addaction name="actionZoomIn"/>
-    <addaction name="actionZoom_out"/>
-    <addaction name="actionZoom_out_entire_file"/>
-    <addaction name="actionFull_Screen"/>
-    <addaction name="separator"/>
-    <addaction name="actionOsc_Image"/>
-    <addaction name="actionSpecgram_Image"/>
-    <addaction name="actionCombined_Image"/>
-    <addaction name="separator"/>
     <addaction name="actionZoom_Cursor"/>
     <addaction name="actionPointer_Cursor"/>
     <addaction name="actionRectangular_Cursor"/>
-    <addaction name="actionRectangular_Eraser"/>
-    <addaction name="separator"/>
-    <addaction name="actionTwo_Dimensional_Graphs"/>
    </widget>
    <widget class="QMenu" name="menuClasification">
     <property name="title">
@@ -171,6 +156,22 @@
     </property>
     <addaction name="actionClassification_Settings"/>
    </widget>
+   <widget class="QMenu" name="menuExport">
+    <property name="title">
+     <string>Export</string>
+    </property>
+    <widget class="QMenu" name="menuGraph_Images">
+     <property name="title">
+      <string>Graph Images</string>
+     </property>
+     <addaction name="actionOsc_Image"/>
+     <addaction name="actionSpecgram_Image"/>
+     <addaction name="actionCombined_Image"/>
+    </widget>
+    <addaction name="actionMeditions"/>
+    <addaction name="menuGraph_Images"/>
+   </widget>
+   <addaction name="menuExport"/>
    <addaction name="menuDetection"/>
    <addaction name="menuClasification"/>
    <addaction name="menuTools"/>
@@ -269,7 +270,7 @@
      <normaloff>:/myappicons/zoom_26x26.png</normaloff>:/myappicons/zoom_26x26.png</iconset>
    </property>
    <property name="text">
-    <string>Zoom out entire file</string>
+    <string>Zoom None</string>
    </property>
   </action>
   <action name="actionCopy">
@@ -314,7 +315,7 @@
      <normaloff>:/myappicons/Excel.png</normaloff>:/myappicons/Excel.png</iconset>
    </property>
    <property name="text">
-    <string>Save Meditions</string>
+    <string>Measurements</string>
    </property>
   </action>
   <action name="actionView_Parameters">

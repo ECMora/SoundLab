@@ -87,7 +87,7 @@ def folderFiles(folder, extensions=None):
     return files
 
 
-def smallSignal(signal, duration_ms=100):
+def smallSignal(signal, duration_ms=50):
     """
     computes and return (through an heuristic) an small signal
     that represent the current one. The small signal has less than 100ms of duration
@@ -96,7 +96,10 @@ def smallSignal(signal, duration_ms=100):
     :param duration_ms: The duration of the smal signal to genrate from the supplied one in ms
     :return: Audio signal.
     """
-    return signal
+    if signal.duration < duration_ms / 1000.0:
+        return signal
+
+    return signal.copy(0, duration_ms * signal.samplingRate / 1000.0)
 
     if signal.duration < duration_ms / 1000.0:
         return signal

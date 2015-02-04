@@ -15,7 +15,7 @@ from graphic_interface.Settings.WorkTheme import WorkTheme
 from graphic_interface.windows.BatchWindow import BatchWindow
 from graphic_interface.windows.ParameterList import DuettoListParameterItem
 from graphic_interface.windows.OneDimensionalAnalysisWindow import OneDimensionalAnalysisWindow
-from SegmentationAndClasificationWindow import SegmentationAndClasificationWindow
+from Segmentation_ClassificationWindow import Segmentation_ClassificationWindow
 from ui_python_files.MainWindow import Ui_DuettoMainWindow
 from graphic_interface.dialogs import *
 from graphic_interface.widgets.signal_visualizer_tools.SignalVisualizerTool import Tools
@@ -756,7 +756,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
                                       self.tr(u"Use the splitter to divide it"))
             return
 
-        segWindow = SegmentationAndClasificationWindow(parent=self, signal=signal)
+        segWindow = Segmentation_ClassificationWindow(parent=self, signal=signal)
 
         # load the theme and clear the undo redo actions in the current window.
         segWindow.load_workspace(self.workSpace)
@@ -764,7 +764,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
 
     #  endregion
 
-    #  region Theme
+    #  region WorkSpace
     @pyqtSlot()
     def on_actionSaveTheme_triggered(self):
         """
