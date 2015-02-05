@@ -33,7 +33,8 @@ class OneDimPlotWidget(SoundLabWidget,pg.PlotWidget):
         self.setMenuEnabled(False)
         self.getPlotItem().hideButtons()
 
-        self.setSelectedTool(Tools.ZoomTool)
+        self.setSelectedTool(Tools.NoTool)
+        # self.__selectedTool.detectedDataChanged.connect(self.getInfo)
 
     # region Signal Property
 
@@ -81,6 +82,9 @@ class OneDimPlotWidget(SoundLabWidget,pg.PlotWidget):
         self.__one_dim_transform.signal = self.signal
     # endregion
 
+    def getInfo(self, info1, info2):
+       pass
+
     def graph(self, indexFrom=0, indexTo=-1,morekwargs=None):
         """
         Graphs the one dimensional one_dim_transform of a signal interval on the widget
@@ -106,17 +110,15 @@ class OneDimPlotWidget(SoundLabWidget,pg.PlotWidget):
         :param tool: the new tool to set.
         :return:
         """
-
         # switch for the concrete tools implementations
         if tool == Tools.ZoomTool:
             self.changeTool(OneDimZoomTool)
 
         elif tool == Tools.PointerTool:
-            self.axesOscilogram.changeTool(OneDimPointerTool)
+            self.changeTool(OneDimPointerTool)
 
 
         elif tool == Tools.NoTool:
-            self.axesOscilogram.changeTool(NoTool)
-            self.axesSpecgram.changeTool(NoTool)
+            self.changeTool(NoTool)
 
         self.__selectedTool = tool

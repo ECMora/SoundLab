@@ -106,7 +106,7 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
         params = [
             {u'name': unicode(self.tr(u'One_Dim_Transform')), u'type': u'list',
              u'value': transforms[0][0],
-             u'default': transforms[0][1],
+             u'default': transforms[1][1],
              u'values': transforms}
         ]
 
@@ -141,16 +141,12 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
         # add the parameter tree of the one_dim_transform if exists
         if one_dim_transform is not None:
             params = self._tranforms_handler.get_settings(one_dim_transform)
-            self._transform_paramTree = Parameter.create(name=u'params', type=u'group', children=params)
+            self._transform_paramTree = Parameter.create(name=u'Settings', type=u'group', children=params)
 
-            self._transform_parameterTree = ParameterTree()
-            self._transform_parameterTree.setAutoScroll(True)
-            self._transform_parameterTree.setHeaderHidden(True)
-            self._transform_parameterTree.setParameters(self._transform_paramTree, showTop=False)
+            self.ParamTree.param(unicode(self.tr(u'One_Dim_Transform'))).clearChildren()
+            self.ParamTree.param(unicode(self.tr(u'One_Dim_Transform'))).addChild(self._transform_paramTree)
 
             self._transform_paramTree.sigTreeStateChanged.connect(self.changeTransformSettings)
-
-            options_window_layout.addWidget(self._transform_parameterTree)
 
         # removing the old layout from the dock widget
         self.dock_settings_contents = QtGui.QWidget()

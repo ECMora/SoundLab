@@ -19,8 +19,9 @@ class InstantFrequenciesHandler(OneDimensionalHandler):
 
         :type transform: InstantFrequencies
         """
-        return [{u'name': unicode(self.tr(u'Instantaneous Frequency')), u'type': u'group',
-                 u'children': []}]
+        # return [{u'name': unicode(self.tr(u'Instantaneous Frequency')), u'type': u'group',
+        #          u'children': []}]
+        return []
 
     def apply_settings_change(self, transform, change):
         """

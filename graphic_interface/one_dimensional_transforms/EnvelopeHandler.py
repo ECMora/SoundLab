@@ -19,15 +19,13 @@ class EnvelopeHandler(OneDimensionalHandler):
 
         :type transform: Envelope
         """
-        return [{u'name': unicode(self.tr(u'Envelope')), u'type': u'group',
-                 u'children': [
-                     {u'name': unicode(self.tr(u'Decay (ms)')), u'type': u'float', u'value': transform.decay, u'step': 0.5},
+        return [     {u'name': unicode(self.tr(u'Decay (ms)')), u'type': u'float', u'value': transform.decay, u'step': 0.5},
                      {u'name': unicode(self.tr(u'Soft Factor')), u'type': u'int', u'value': transform.softFactor, u'step': 1},
                      {u'name': unicode(self.tr(u'Function Type')), u'type': u'list', u'value': transform.functionType,
                       u'default': "sin",
                       u'values': [(u"Sin", "sin"),
                                   (u'Lineal', "lineal"),
-                                  (u"Cuadratic", "cuadratic")]}]}]
+                                  (u"Cuadratic", "cuadratic")]}]
 
     def apply_settings_change(self, transform, change):
         """
@@ -38,11 +36,11 @@ class EnvelopeHandler(OneDimensionalHandler):
 
         # in all this methods I'm relaying on the transform to check if data is different from previous data and any
         # other desired optimization
-        if childName == unicode(self.tr(u'Envelope')) + u'.' + unicode(self.tr(u'Decay (ms)')):
+        if childName == unicode(self.tr(u'Decay (ms)')):
             transform.decay = data
 
-        elif childName == unicode(self.tr(u'Envelope')) + u'.' + unicode(self.tr(u'Soft Factor')):
+        elif childName == unicode(self.tr(u'Soft Factor')):
             transform.softfactor = data
 
-        elif childName == unicode(self.tr(u'Envelope')) + u'.' + unicode(self.tr(u'Function Type')):
+        elif childName == unicode(self.tr(u'Function Type')):
             transform.function_type = data

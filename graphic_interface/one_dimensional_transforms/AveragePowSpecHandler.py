@@ -19,9 +19,7 @@ class AveragePowSpecHandler(OneDimensionalHandler):
 
         :type transform: AveragePowSpec
         """
-        return [{u'name': unicode(self.tr(u'Power spectrum(Average)')), u'type': u'group',
-                 u'children': [
-                     {u'name': unicode(self.tr(u'FFT size')), u'type': u'list', u'default': 512,
+        return [            {u'name': unicode(self.tr(u'FFT size')), u'type': u'list', u'default': 512,
                       u'values': [(u"128", 128), (u"256", 256), (u"512", 512), (u"1024", 1024)],
                       u'value': transform.NFFT},
                      {u'name': unicode(self.tr(u'FFT window')), u'type': u'list',
@@ -34,7 +32,7 @@ class AveragePowSpecHandler(OneDimensionalHandler):
                                   (unicode(self.tr(u'None')), WindowFunction.WindowNone),
                                   (u"Rectangular", WindowFunction.Rectangular)]},
                      {u'name': unicode(self.tr(u'FFT overlap')), u'type': u'int', u'limits': (1, 99),
-                      u'value': transform.overlapRatio}]}]
+                      u'value': transform.overlapRatio}]
 
     def apply_settings_change(self, transform, change):
         """
@@ -43,11 +41,11 @@ class AveragePowSpecHandler(OneDimensionalHandler):
         """
         childName, _change, data = change
 
-        if childName == unicode(self.tr(u'Power spectrum(Average)')) + u'.' + unicode(self.tr(u'FFT window')):
+        if childName == unicode(self.tr(u'FFT window')):
             transform.window = data
 
-        elif childName == unicode(self.tr(u'Power spectrum(Average)')) + u'.' + unicode(self.tr(u'FFT size')):
+        elif childName == unicode(self.tr(u'FFT size')):
             transform.NFFT = data
 
-        elif childName == unicode(self.tr(u'Power spectrum(Average)')) + u'.' + unicode(self.tr(u'FFT overlap')):
+        elif childName == unicode(self.tr(u'FFT overlap')):
             transform.overlapRatio = data

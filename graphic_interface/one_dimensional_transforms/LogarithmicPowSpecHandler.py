@@ -19,9 +19,7 @@ class LogarithmicPowSpecHandler(OneDimensionalHandler):
 
         :type transform: LogarithmicPowSpec
         """
-        return [{u'name': unicode(self.tr(u'Power spectrum(Logarithmic)')), u'type': u'group',
-                 u'children': [
-                     {u'name': unicode(self.tr(u'FFT window')), u'type': u'list',
+        return [     {u'name': unicode(self.tr(u'FFT window')), u'type': u'list',
                       u'value': transform.window, u'default': WindowFunction.Rectangular,
                       u'values': [(u'Bartlett', WindowFunction.Bartlett),
                                   (u"Blackman", WindowFunction.Blackman),
@@ -29,7 +27,7 @@ class LogarithmicPowSpecHandler(OneDimensionalHandler):
                                   (u"Hanning", WindowFunction.Hanning),
                                   (u'Kaiser', WindowFunction.Kaiser),
                                   (unicode(self.tr(u'None')), WindowFunction.WindowNone),
-                                  (u"Rectangular", WindowFunction.Rectangular)]}]}]
+                                  (u"Rectangular", WindowFunction.Rectangular)]}]
 
     def apply_settings_change(self, transform, change):
         """
@@ -38,5 +36,5 @@ class LogarithmicPowSpecHandler(OneDimensionalHandler):
         """
         childName, _change, data = change
 
-        if childName == unicode(self.tr(u'Power spectrum(Logarithmic)')) + u'.' + unicode(self.tr(u'FFT window')):
+        if childName == unicode(self.tr(u'FFT window')):
             transform.window = data
