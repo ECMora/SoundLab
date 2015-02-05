@@ -6,7 +6,7 @@ from PyQt4 import QtGui, QtCore
 from pyqtgraph.parametertree.parameterTypes import ListParameter
 from pyqtgraph.parametertree import Parameter, ParameterTree
 from PyQt4.QtGui import QMessageBox, QFileDialog, QActionGroup, QAction
-from PyQt4.QtCore import pyqtSlot, QMimeData, pyqtSignal
+from PyQt4.QtCore import pyqtSlot, QMimeData, pyqtSignal, SIGNAL
 
 from duetto.audio_signals import AudioSignal, openSignal
 from duetto.audio_signals.Synthesizer import Synthesizer
@@ -168,6 +168,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         #  the list of one dimensional processing windows opened by the user.
         self.one_dim_windows = []
+        self.widget.signalIntervalSelected.connect(self.updateOneDimWindow)
 
         #  accept drops to open signals by drop
         self.setAcceptDrops(True)
@@ -2198,7 +2199,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
     #  endregion
 
     #  region One dimensional Transforms
-    def updateOneDimWindow(self):
+    def updateOneDimWindow(self, x1, x2):
         """
         Update the current interval of visualization/processing
         of the signal in the opened one dimensional windows
@@ -2215,7 +2216,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         :return:
         """
         one_dim_window = OneDimensionalAnalysisWindow(self,self.widget.signal)
-        one_dim_window.load_workspace(self.workSpace)
+        # one_dim_window.load_workspace(self.workSpace)
 
         indexFrom, indexTo = self.widget.selectedRegion
         one_dim_window.graph(indexFrom, indexTo)

@@ -1,13 +1,21 @@
 # -*- coding: utf-8 -*-
+from PyQt4 import QtCore
 from duetto.audio_signals import AudioSignal
-from graphic_interface.one_dimensional_transforms.OneDimensionalTransform import *
-from graphic_interface.widgets.SoundLabOscillogramWidget import SoundLabOscillogramWidget
+from duetto.dimensional_transformations.one_dimensional_transforms.OneDimensionalTransform import *
+from graphic_interface.widgets.SoundLabWidget import SoundLabWidget
+from graphic_interface.widgets.signal_visualizer_tools.SignalVisualizerTool import Tools
+from graphic_interface.widgets.signal_visualizer_tools.OscilogramTools.ZoomTool import ZoomTool as OneDimZoomTool
+from graphic_interface.widgets.signal_visualizer_tools.OscilogramTools.PointerCursorTool import PointerCursorTool as OneDimPointerTool
+from graphic_interface.widgets.signal_visualizer_tools.NoTool import NoTool
+import pyqtgraph as pg
 
-
-class OneDimPlotWidget(SoundLabOscillogramWidget):
+class OneDimPlotWidget(SoundLabWidget,pg.PlotWidget):
     """
     Plots a one dimensional transformation of a signal
     """
+
+    # Signal raised when a tool made a medition and has new data to show
+    toolDataDetected = QtCore.pyqtSignal(str)
 
     def __init__(self, parent=None,**kargs):
         # set the one dimensional one_dim_transform currently applied to the signal
@@ -15,10 +23,39 @@ class OneDimPlotWidget(SoundLabOscillogramWidget):
 
         self.plot_color = "CC3"
 
-        SoundLabOscillogramWidget.__init__(self, **kargs)
+        SoundLabWidget.__init__(self, **kargs)
+        pg.PlotWidget.__init__(self)
+
+        self.getPlotItem().showGrid(True, True)
+        self.setClipToView(True)
+        self.setDownsampling(auto=True, mode="peak")
+        self.setMouseEnabled(x=False, y=False)
+        self.setMenuEnabled(False)
+        self.getPlotItem().hideButtons()
+
+        self.setSelectedTool(Tools.ZoomTool)
+
+    # region Signal Property
+
+    @property
+    def signal(self):
+        return self.__signal
+
+    @signal.setter
+    def signal(self, signal):
+        """
+        The property to change the current signal.
+        :param signal: the new Audio Signal to process.
+        :return:
+        """
+        if signal is None or not isinstance(signal, AudioSignal):
+            raise Exception("Invalid assignation. Must be of type AudioSignal")
+
+        self.__signal = signal
+
+    # endregion
 
     def load_workspace(self, workspace, forceUpdate=False):
-        SoundLabOscillogramWidget.load_workspace(self,workspace,forceUpdate)
         self.plot_color = workspace.theme.plot_color
 
     # region Property Transform
@@ -42,12 +79,9 @@ class OneDimPlotWidget(SoundLabOscillogramWidget):
         self.__one_dim_transform = transform
 
         self.__one_dim_transform.signal = self.signal
-
-        self.__one_dim_transform.dataChanged.connect(self.graph)
-
     # endregion
 
-    def graph(self, indexFrom=0, indexTo=-1):
+    def graph(self, indexFrom=0, indexTo=-1,morekwargs=None):
         """
         Graphs the one dimensional one_dim_transform of a signal interval on the widget
         :param indexFrom: start value of the signal interval in array data indexes
@@ -56,4 +90,33 @@ class OneDimPlotWidget(SoundLabOscillogramWidget):
         """
         if self.one_dim_transform is not None:
             self.clear()
-            self.plot(self.one_dim_transform.getData(indexFrom, indexTo), pen=self.plot_color)
+            (x, y) = self.one_dim_transform.getData(indexFrom, indexTo)
+            self.plot(x, y, pen=self.plot_color)
+            # self.setRange(xRange = (0,x[len(x) - 1]),yRange = (np.amin(y),0) ,padding=0,update=True)
+            self.update()
+            self.show()
+
+    # region Tools interaction Implementation
+    def changeTool(self, new_tool_class):
+        SoundLabWidget.changeTool(self, new_tool_class)
+
+    def setSelectedTool(self, tool):
+        """
+        Change the current selected tool of the widget.
+        :param tool: the new tool to set.
+        :return:
+        """
+
+        # switch for the concrete tools implementations
+        if tool == Tools.ZoomTool:
+            self.changeTool(OneDimZoomTool)
+
+        elif tool == Tools.PointerTool:
+            self.axesOscilogram.changeTool(OneDimPointerTool)
+
+
+        elif tool == Tools.NoTool:
+            self.axesOscilogram.changeTool(NoTool)
+            self.axesSpecgram.changeTool(NoTool)
+
+        self.__selectedTool = tool

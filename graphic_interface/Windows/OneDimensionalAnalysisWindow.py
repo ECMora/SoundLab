@@ -1,7 +1,13 @@
 # -*- coding: utf-8 -*-
 from PyQt4 import QtGui
+from duetto.audio_signals import AudioSignal
+from pyqtgraph.parametertree import Parameter, ParameterTree
+from pyqtgraph.parametertree.parameterTypes import ListParameter
+from duetto.dimensional_transformations.one_dimensional_transforms import OneDimensionalTransform
+from duetto.dimensional_transformations.one_dimensional_transforms.AveragePowSpectrumTransform import AveragePowSpec
+from graphic_interface.one_dimensional_transforms.OneDimensionalGeneralHandler import OneDimensionalGeneralHandler
+from graphic_interface.windows.ParameterList import DuettoListParameterItem
 from graphic_interface.windows.ui_python_files.one_dim_transforms_window import Ui_OneDimensionalWindow
-from graphic_interface.one_dimensional_transforms import *
 
 
 class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
@@ -10,27 +16,32 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
     """
     DOCK_OPTIONS_WIDTH = 250
 
-    def __init__(self,parent=None,signal=None):
+    def __init__(self, parent=None, signal=None):
         super(OneDimensionalAnalysisWindow, self).__init__(parent)
         self.setupUi(self)
         self.show()
+
+        self._tranforms_handler = OneDimensionalGeneralHandler(self)
 
         # connect the tool detected data to show the status bar message
         self.statusbar = self.statusBar()
         self.statusbar.setSizeGripEnabled(False)
         self.widget.toolDataDetected.connect(self.updateStatusBar)
 
-        self._signal = None
+        self._indexTo = -1
+        self._indexFrom = 0
 
         if signal is None:
             raise Exception("Signal can't be None.")
 
         # set a default one dim one_dim_transform to the widget
-        self.widget.one_dim_transform = OneDimensionalTransform()
-        self.signal = signal
+        self.widget.signal = signal
+        self.widget.one_dim_transform = AveragePowSpec(signal=signal)
+        # self.signal = signal
 
         # Parameter Tree Settings
         self.__createParameterTree()
+        # self._tranforms_handler.dataChanged.connect(self.widget.graph)
 
     def load_workspace(self, workspace):
         """
@@ -40,26 +51,24 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
         """
         self.widget.load_workspace(workspace)
 
-    # region Properties Signal
+
+    # region Properties IndexTo IndexFrom
+
     @property
-    def signal(self):
-        return self._signal
+    def indexTo(self):
+        return self._indexTo
 
-    @signal.setter
-    def signal(self, new_signal):
-        """
-        Modify and update the internal variables that uses the signal.
+    @indexTo.setter
+    def indexTo(self, value):
+        self._indexTo = value
 
-        :param new_signal: the new AudioSignal
-        :raise Exception: If signal is not of type AudioSignal
-        """
-        if new_signal is None or not isinstance(new_signal, AudioSignal):
-            raise Exception("Invalid assignation value. Must be of type AudioSignal")
+    @property
+    def indexFrom(self):
+        return self._indexFrom
 
-        self._signal = new_signal
-        self.widget.signal = self.signal
-        if self.widget.one_dim_transform is not None:
-            self.widget.one_dim_transform.signal = self.signal
+    @indexFrom.setter
+    def indexFrom(self, value):
+        self._indexFrom = value
 
     # endregion
 
@@ -74,7 +83,11 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
         :param indexTo: end of the interval in signal data indexes
         :return:
         """
-        indexTo = indexTo if indexTo >=0 else self.signal.length
+        indexTo = indexTo if indexTo >=0 else self.widget.signal.length
+        if indexTo != self.indexTo:
+            self.indexTo = indexTo
+        if indexFrom != self.indexFrom:
+            self.indexFrom = indexFrom
         self.widget.graph(indexFrom, indexTo)
 
     # endregion
@@ -88,17 +101,13 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
         the active one dimensional transforms to select.
         :return:
         """
+        transforms = self._tranforms_handler.get_all_transforms_names()
+        transforms = [(unicode(self.tr(unicode(t))), t) for t in transforms]
         params = [
             {u'name': unicode(self.tr(u'One_Dim_Transform')), u'type': u'list',
-             u'value': u"Envelope",
-             u'default': Envelope,
-             # classes of the one dim transforms. to add a new one
-             # just add it to the list and implement it
-             u'values': [(u'Envelope', Envelope),
-                         (u'AveragePowSpec', AveragePowSpec),
-                         (u'LogarithmicPowSpec', LogarithmicPowSpec),
-                         (u'InstantFrequencies', InstantFrequencies)
-             ]}
+             u'value': transforms[0][0],
+             u'default': transforms[0][1],
+             u'values': transforms}
         ]
 
         ListParameter.itemClass = DuettoListParameterItem
@@ -131,7 +140,17 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
 
         # add the parameter tree of the one_dim_transform if exists
         if one_dim_transform is not None:
-            options_window_layout.addWidget(one_dim_transform.settings)
+            params = self._tranforms_handler.get_settings(one_dim_transform)
+            self._transform_paramTree = Parameter.create(name=u'params', type=u'group', children=params)
+
+            self._transform_parameterTree = ParameterTree()
+            self._transform_parameterTree.setAutoScroll(True)
+            self._transform_parameterTree.setHeaderHidden(True)
+            self._transform_parameterTree.setParameters(self._transform_paramTree, showTop=False)
+
+            self._transform_paramTree.sigTreeStateChanged.connect(self.changeTransformSettings)
+
+            options_window_layout.addWidget(self._transform_parameterTree)
 
         # removing the old layout from the dock widget
         self.dock_settings_contents = QtGui.QWidget()
@@ -148,15 +167,27 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
         :return:
         """
 
-        transform_class = parameter.value()
+        transform_name = parameter.value()
 
-        self.widget.one_dim_transform = transform_class(self.signal)
+        self.widget.one_dim_transform = self._tranforms_handler.get_transform(transform_name)
 
         self.reloadOptionsWidget(self.widget.one_dim_transform)
 
         self.update()
 
-        self.graph()
+        self.graph(indexFrom=self.indexFrom, indexTo=self.indexTo)
+
+    def changeTransformSettings(self, param, changes):
+        for param, change, data in changes:
+            path = self._transform_paramTree.childPath(param)
+            if path is not None:
+                childName = '.'.join(path)
+            else:
+                childName = param.name()
+
+            self._tranforms_handler.apply_settings_change(self.widget.one_dim_transform, (childName, change, data))
+
+        self.graph(indexFrom=self.indexFrom, indexTo=self.indexTo)
 
     # endregion
 

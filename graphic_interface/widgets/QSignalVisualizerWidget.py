@@ -268,8 +268,10 @@ class QSignalVisualizerWidget(QWidget):
                 min_x_spec = self.from_osc_to_spec(osc_max_x)
                 max_x_spec = self.from_osc_to_spec(osc_min_x)
                 self.axesSpecgram.gui_user_tool.zoomRegion.setRegion([min_x_spec, max_x_spec])
+                self.signalIntervalSelected.emit(osc_min_x,osc_max_x)
             else:
-                self.axesOscilogram.gui_user_tool.zoomRegion.setRegion([spec_min_x,spec_max_x])
+                self.signalIntervalSelected.emit(spec_min_x,spec_min_x)
+                self.axesOscilogram.gui_user_tool.zoomRegion.setRegion([spec_min_x,spec_min_x])
 
     #  endregion
 
