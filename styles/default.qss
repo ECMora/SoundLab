@@ -385,10 +385,6 @@ QTabBar::tab {
     margin-right: -1px;
 }
 
-QTabWidget::pane {
-    border: 1px solid #444;
-    top: 1px;
-}
 
 QTabBar::tab:last
 {
@@ -399,9 +395,7 @@ QTabBar::tab:last
 QTabBar::tab:first:!selected
 {
  margin-left: 0px; /* the last selected tab has nothing to overlap with on the right */
-
-
-    border-top-left-radius: 3px;
+border-top-left-radius: 3px;
 }
 
 QTabBar::tab:!selected
@@ -421,8 +415,8 @@ QTabBar::tab:selected
 
 QTabBar::tab:!selected:hover
 {
-    /*border-top: 2px solid #ffaa00;
-    padding-bottom: 3px;*/
+    border-top: 2px solid #ffaa00;
+    padding-bottom: 3px;
     border-top-left-radius: 3px;
     border-top-right-radius: 3px;
     background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:1 #212121, stop:0.4 #343434, stop:0.2 #343434, stop:0.1 #ffaa00);

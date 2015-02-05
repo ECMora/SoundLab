@@ -191,11 +191,15 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
             if index_from < self.mainCursor.min or index_to > self.mainCursor.max:
                 sizeInterval = self.mainCursor.max - self.mainCursor.min
 
-                # move the interval to make completely visible the element selected
-                self.mainCursor.min = max(0, (index_from + index_to - sizeInterval) / 2)
-                self.mainCursor.max = min(self.mainCursor.min + sizeInterval,
-                                          len(self.signal.data))
-                self.update()
+                # update the interval of visualization if the element is outside the current visible region
+                if index_from < self.mainCursor.min or index_to > self.mainCursor.max:
+                    self.mainCursor.min = index_from
+                    self.mainCursor.max = index_to
+
+                    # move the interval to make completely visible the element selected
+                    self.mainCursor.min = max(0, index_from - sizeInterval/2)
+                    self.mainCursor.max = min(self.signal.length, index_to + sizeInterval/2)
+                    self.graph()
         else:
             self.selectRegion(0, 0)
 
@@ -208,6 +212,9 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         # (the default of the selectElement method)
         # to clear the selection
         self.selectElement()
+
+    def getSelectedRegion(self):
+        return self.oscSelectionRegion.getRegion()
 
     def selectRegion(self, indexFrom, indexTo, brush=None):
         """
@@ -265,6 +272,12 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         indexFrom, indexTo = np.searchsorted(sorted_arr, start), np.searchsorted(sorted_arr, end)
         indexFrom -= 1 if indexFrom > 0 and start <= self.Elements[indexFrom - 1].indexTo else 0
 
+        # remove the selected region Element if is contained on the removed elements region
+        selected_rgn_start, selected_rgn_end = self.getSelectedRegion()
+        if start <= selected_rgn_start <= end or start<= selected_rgn_end <= end:
+            self.selectElement()
+
+
         if indexTo < indexFrom or indexTo > len(self.Elements):
             return -1, -1
 
@@ -282,13 +295,43 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
     # endregion
 
+    # region Widgets synchronization
+
+    def updateOscillogram(self, x1, x2):
+        """
+        Method invoked when the oscilogram range change
+        :param x1: start index of the interval changed
+        :param x2: end index of the interval changed
+        :return:
+        """
+        QSignalVisualizerWidget.updateOscillogram(self, x1, x2)
+        self.graphElements()
+
+    def updateSpecgram(self, x1, x2):
+        """
+        Method invoked when the spectrogram range change
+        :param x1: start index of the interval changed
+        :param x2: end index of the interval changed
+        :return:
+        """
+        QSignalVisualizerWidget.updateSpecgram(self,x1,x2)
+        self.graphElements()
+
+    # endregion
+
     def graph(self):
         """
         Refresh the widgets visual elements and graphs
         :return:
         """
         QSignalVisualizerWidget.graph(self)
+        self.graphElements()
 
+    def graphElements(self):
+        """
+        Execute the logic of update the visual representation of the detected elements
+        :return:
+        """
         # add the region items because the parent method clears the widget
         self.addSelectedRegionItems()
 

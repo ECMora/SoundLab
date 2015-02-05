@@ -1,11 +1,8 @@
 # -*- coding: utf-8 -*-
-from math import log10
-import os.path
 
 from PyQt4.QtCore import pyqtSlot, Qt
 import PyQt4.QtCore as QtCore
 from PyQt4 import QtGui
-from matplotlib import mlab
 import xlwt
 import numpy as np
 from PyQt4.QtGui import QFileDialog, QAbstractItemView, QWidget, QActionGroup
@@ -13,7 +10,7 @@ from pyqtgraph.parametertree import Parameter
 from duetto.audio_signals.AudioSignal import AudioSignal
 from sound_lab_core.Clasification.ClassificationData import ClassificationData
 from sound_lab_core.Segmentation.Elements.Element import Element
-from sound_lab_core.Segmentation.Elements.OneDimensionalElement import SpectralMeasurementLocation
+from sound_lab_core.Segmentation.Elements.OneDimensionalElements.OneDimensionalElement import SpectralMeasurementLocation
 from ..dialogs.elemDetectSettings import ElemDetectSettingsDialog
 from graphic_interface.windows.TwoDimensionalAnalisysWindow import TwoDimensionalAnalisysWindow
 from graphic_interface.windows.ui_python_files.SegmentationAndClasificationWindowUI import Ui_MainWindow
@@ -55,13 +52,15 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         :param signal: the signal to visualize for segmentation and clasiffication
         :return:
         """
-        # set the visual variables and methods from ancesters
+        # set the visual variables and methods from ancestor's
         SoundLabWindow.__init__(self, parent)
         self.setupUi(self)
 
         # check the parameters
         if signal is None or not isinstance(signal, AudioSignal):
             raise Exception("The signal to analyze must be of type AudioSignal")
+
+        self.ParamTree = self.getParamTree()
 
         self.configureToolBarActionsGroups()
 
@@ -73,7 +72,6 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
         # set the signal to the widget
         self.widget.signal = signal
-        self.widget.graph()
 
         # set visible the two widgets by default
         self.changeWidgetsVisibility(True, True)
@@ -84,13 +82,52 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         self.dockWidgetParameterTableOscilogram.setVisible(False)
         self.tableParameterOscilogram.setSelectionBehavior(QAbstractItemView.SelectRows)
 
-        self.show()
-
         self.spectralMeasurementLocation = SpectralMeasurementLocation()
 
         # for select the element in the table. Binding for the element click to the table
         self.widget.elementClicked.connect(self.elementSelectedInTable)
 
+        # add the context menu actions to the widget
+        self.__addContextMenuActions()
+
+        # create the progress bar that is showed while the detection is made
+        self.windowProgressDetection = QtGui.QProgressBar(self.widget)
+        self.setProgressBarVisibility(False)
+
+        # set the name of the signal to the visible label
+        self.actionSignalName.setText(self.widget.signalName)
+
+        # array of windows with two dimensional graphs.
+        # Are stored for a similar behavior to the one dimensional
+        # in the main window. Updates the windows graphs on change etc
+        self.two_dim_windows = []
+
+        # stores the measured parameters of the detected elements
+        self.measuredParameters = np.array([[], []])
+
+        # set the connections for the classification data to
+        # update when is added, changed or deleted a value or category
+        self.classificationData = ClassificationData()
+        self.classificationData.valueAdded.connect(self.classificationCategoryValueAdded)
+        self.classificationData.valueRemoved.connect(self.classificationCategoryValueRemove)
+        self.classificationData.categoryAdded.connect(self.classificationCategoryAdded)
+
+        # stores the classification data that are present in the table of meditions
+        # has the form of a list with [["category name","category value"]] for each element
+        # example with 2 elements and 2 categories
+        # [[["Specie","Cartacuba"],["Location","Cuba"]],
+        # [["Specie","Sinsonte"],["Location","Camaguey"]]]
+        self.elementsClasificationTableData = []
+
+        # the names of the columns in the table of parameters measured
+        self.columnNames = []
+
+        self.showMaximized()
+
+    def getParamTree(self):
+        """
+        :return: the param tree with the segmentation options
+        """
         # region Detection Params Definition
 
         # Time And Spectral Medition Parameters
@@ -133,7 +170,6 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
                        u'value': False}]}
         ]
 
-
         self.timeMeditions = [
             [unicode(self.tr(u"Start(s)")), True, lambda x, d: x.startTime()],
             [unicode(self.tr(u"End(s)")), True, lambda x, d: x.endTime()],
@@ -171,10 +207,9 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
             [unicode(self.tr(u"RMS(V)")), False, lambda x, d: x.rms()],
         ]
 
-        self.meditions = [( unicode(self.tr(u'Temporal Meditions')), self.timeMeditions), \
+        self.meditions = [(unicode(self.tr(u'Temporal Meditions')), self.timeMeditions), \
                           (unicode(self.tr(u'Spectral Meditions')), self.spectralMeditions), \
                           (unicode(self.tr(u'Waveform Meditions')), self.waveMeditions)]
-
 
         for name, dict in self.meditions:
             children = []
@@ -192,49 +227,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
         # endregion
 
-        # parameter tree to provide the measurement and parameter configuration into the dialog
-        self.ParamTree = Parameter.create(name=u'params', type=u'group', children=params)
-
-        # the spectral parameters that changes in function of the location measurements
-        # the order of the elements in the array of self.parameterMeasurement["Temporal"]
-        # is relevant for the visualization in the table and the
-        # binding to the checkboxes in the dialog of parameter measurement
-
-        # add the context menu actions to the widget
-        self.__addContextMenuActions()
-
-        # create the progress bar that is showed while the detection is made
-        self.windowProgressDetection = QtGui.QProgressBar(self.widget)
-
-        # set the name of the signal to the visible label
-        self.actionSignalName.setText(self.widget.signalName)
-
-        # array of windows with two dimensional graphs.
-        # Are stored for a similar behavior to the one dimensional
-        # in the main window. Updates the windows graphs on change etc
-        self.two_dim_windows = []
-
-        # stores the measured parameters of the detected elements
-        self.measuredParameters = np.array([[], []])
-
-        # set the connections for the classification data to
-        # update when is added, changed or deleted a value or category
-        self.classificationData = ClassificationData()
-        self.classificationData.valueAdded.connect(self.classificationCategoryValueAdded)
-        self.classificationData.valueRemoved.connect(self.classificationCategoryValueRemove)
-        self.classificationData.categoryAdded.connect(self.classificationCategoryAdded)
-
-        # stores the classification data that are present in the table of meditions
-        # has the form of a list with [["category name","category value"]] for each element
-        # example with 2 elements and 2 categories
-        # [[["Specie","Cartacuba"],["Location","Cuba"]],
-        # [["Specie","Sinsonte"],["Location","Camaguey"]]]
-        self.elementsClasificationTableData = []
-
-        # the names of the columns in the table of parameters measured
-        self.columnNames = []
-
-        self.showMaximized()
+        return Parameter.create(name=u'params', type=u'group', children=params)
 
     def __addContextMenuActions(self):
         """
@@ -461,7 +454,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         """
 
         mbox = QtGui.QMessageBox(QtGui.QMessageBox.Question, self.tr(u"Save meditions"),
-                                 self.tr(u"Do you want to save the meditions?"),
+                                 self.tr(u"Do you want to save the measurements of "+unicode(self.widget.signalName)),
                                  QtGui.QMessageBox.Yes | QtGui.QMessageBox.No | QtGui.QMessageBox.Cancel, self)
 
         # if there is a medition made and parameters measured that could be saved
@@ -538,7 +531,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
             # updates the numpy array  with the detected parameters
             self.measuredParameters = np.concatenate(
                 (
-                    self.measuredParameters[:start_removed_index[0]], self.measuredParameters[start_removed_index[1] + 1:]))
+            self.measuredParameters[:start_removed_index[0]], self.measuredParameters[start_removed_index[1] + 1:]))
             self.elementsClasificationTableData = self.elementsClasificationTableData[
                                                   :start_removed_index[0]] + self.elementsClasificationTableData[
                                                                              start_removed_index[1] + 1:]
@@ -650,6 +643,12 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
             self.tableParameterOscilogram.update()
 
     def elementsClasification(self, indexes_list, dictionary):
+        """
+        Update the clasificaction of the detected elements on the table
+        :param indexes_list: the indexes of the classified elements
+        :param dictionary: the dictionary with the values of each category
+        :return:
+        """
         for i in indexes_list:
             for column, l in enumerate(self.elementsClasificationTableData[i]):
                 if l[0] in dictionary:
@@ -659,6 +658,8 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
                         self.TABLE_ROW_COLOR_ODD if i % 2 == 0 else self.TABLE_ROW_COLOR_EVEN)
                     self.tableParameterOscilogram.setItem(i, len(self.measuredParameters[i]) + column, item)
 
+        # resize the column to contains completely the new categories and values
+        self.tableParameterOscilogram.resizeColumnsToContents()
         self.tableParameterOscilogram.update()
 
     # endregion
@@ -730,9 +731,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         """
         Method that execute the detection
         """
-        # TODO check if is possible to merge the code in this method and the batch.
-        # TODO common factor code
-        elementsDetectorDialog = ElemDetectSettingsDialog(parent=self, paramTree=self.ParamTree, signal=self.widget.signal)
+        elementsDetectorDialog = ElemDetectSettingsDialog(parent=self,paramTree=self.ParamTree, signal=self.widget.signal)
         elementsDetectorDialog.load_workspace(self.workSpace)
 
         # deselect the elements on the widget
@@ -751,6 +750,8 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
                 # execute the detection
                 self.widget.detectElements()
 
+                self.updateDetectionProgressBar(50)
+
                 # clasification data update TODO improve comments and implementation
                 validcategories = [k for k in self.classificationData.categories.keys() if
                                    len(self.classificationData.getvalues(k)) > 0]
@@ -761,67 +762,35 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
                 # clear the previous meditions
                 self.tableParameterOscilogram.clear()
 
-                self.tableParameterOscilogram.setRowCount(len(self.widget.Elements))
+                elem_count = len(self.widget.Elements)
+                parameter_count = len(paramsTomeasure)
+
+                self.tableParameterOscilogram.setRowCount(elem_count)
 
                 # connect the table selection with the selection of an element
                 self.tableParameterOscilogram.cellPressed.connect(self.elementSelectedInTable)
 
                 # get the column names of the meditions and set them on the table headers
                 self.columnNames = [label[0] for label in paramsTomeasure]
-                print(self.columnNames+validcategories)
 
-                self.tableParameterOscilogram.setHorizontalHeaderLabels(self.columnNames + validcategories)
+                columns = self.columnNames + validcategories
 
                 # set the number of columns to the amount of parameters measured
-                # plus the amount of categories of clasiffication
-                self.tableParameterOscilogram.setColumnCount(len(paramsTomeasure) + len(validcategories))
+                # plus the amount of categories of classification
+                self.tableParameterOscilogram.setColumnCount(len(columns))
+                self.tableParameterOscilogram.setHorizontalHeaderLabels(columns)
+
                 self.updateDetectionProgressBar(95)
-                self.tableParameterOscilogram.resizeColumnsToContents()
 
                 # the table of parameters stored as a numpy array
-                self.measuredParameters = np.zeros(len(self.widget.Elements) * len(paramsTomeasure)).reshape(
-                    (len(self.widget.Elements), len(paramsTomeasure)))
+                self.measuredParameters = np.zeros(elem_count * parameter_count).reshape((elem_count, parameter_count))
 
-                for i in range(self.tableParameterOscilogram.rowCount()):
-                    for j, params in enumerate(paramsTomeasure):
-                        try:
-                            # get the function params.
-                            # params[0] is the name of the param measured
-                            # params[1] is the function to measure the param
-                            # params[2] is the dictionary of params supplied to the function
-                            dictionary = dict(params[2] if params[2] is not None else [])
-
-                            # compute the param with the function
-                            self.measuredParameters[i, j] = params[1](self.widget.Elements[i], dictionary)
-
-                            # set the result to a table item and save it on the table
-                            item = QtGui.QTableWidgetItem(unicode(self.measuredParameters[i, j]))
-
-                            # color options for the rows of the table
-                            item.setBackgroundColor(
-                                self.TABLE_ROW_COLOR_ODD if i % 2 == 0 else self.TABLE_ROW_COLOR_EVEN)
-
-                        except Exception as e:
-                            # if some error is raised set a default value
-                            item = QtGui.QTableWidgetItem(0)  # "Error"+e.message)
-
-                        self.tableParameterOscilogram.setItem(i, j, item)
-
-                    for c in range(len(validcategories)):
-                        try:
-                            val = self.elementsClasificationTableData[i][c][1]
-                            item = QtGui.QTableWidgetItem(unicode(val))
-                            item.setBackgroundColor(
-                                self.TABLE_ROW_COLOR_ODD if i % 2 == 0 else self.TABLE_ROW_COLOR_EVEN)
-
-                        except Exception as e:
-                            # if some error is raised set a default value
-                            item = QtGui.QTableWidgetItem(0)  # "Error"+e.message)
-                        self.tableParameterOscilogram.setItem(i, c + len(paramsTomeasure), item)
+                self.measureParameters(paramsTomeasure, validcategories)
 
                 # complete the progress of detection and hide the progress bar
                 self.updateDetectionProgressBar(100)
                 self.setProgressBarVisibility(False)
+                self.tableParameterOscilogram.resizeColumnsToContents()
 
                 # update the measured data on the two dimensional opened windows
                 for wnd in self.two_dim_windows:
@@ -832,6 +801,47 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
         except Exception as e:
             print("detection errors: " + e.message)
+
+    def measureParameters(self, paramsTomeasure, validcategories ):
+        for i in range(self.tableParameterOscilogram.rowCount()):
+            for j, params in enumerate(paramsTomeasure):
+                try:
+                    # get the function params.
+                    # params[0] is the name of the param measured
+                    # params[1] is the function to measure the param
+                    # params[2] is the dictionary of params supplied to the function
+                    dictionary = dict(params[2] if params[2] is not None else [])
+
+                    # compute the param with the function
+                    self.measuredParameters[i, j] = params[1](self.widget.Elements[i], dictionary)
+
+                    # set the result to a table item and save it on the table
+                    item = QtGui.QTableWidgetItem(unicode(self.measuredParameters[i, j]))
+
+                    # color options for the rows of the table
+                    item.setBackgroundColor(
+                        self.TABLE_ROW_COLOR_ODD if i % 2 == 0 else self.TABLE_ROW_COLOR_EVEN)
+
+                except Exception as e:
+                    # if some error is raised set a default value
+                    item = QtGui.QTableWidgetItem(0)
+                    print("Error measure params " + e.message)
+
+                self.tableParameterOscilogram.setItem(i, j, item)
+
+            for c in range(len(validcategories)):
+                try:
+                    val = self.elementsClasificationTableData[i][c][1]
+                    item = QtGui.QTableWidgetItem(unicode(val))
+                    item.setBackgroundColor(
+                        self.TABLE_ROW_COLOR_ODD if i % 2 == 0 else self.TABLE_ROW_COLOR_EVEN)
+
+                except Exception as e:
+                    # if some error is raised set a default value
+                    item = QtGui.QTableWidgetItem(0)
+                    print("Error measure params " + e.message)
+
+            self.tableParameterOscilogram.setItem(i, c + len(paramsTomeasure), item)
 
     def setProgressBarVisibility(self, visibility=True):
         """

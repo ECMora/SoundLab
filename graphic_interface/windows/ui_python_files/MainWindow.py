@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\MainWindow.ui'
 #
-# Created: Tue Feb 03 15:03:31 2015
+# Created: Thu Feb 05 10:56:26 2015
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -362,6 +362,14 @@ class Ui_DuettoMainWindow(object):
         self.actionSwitchPlayStatus.setObjectName(_fromUtf8("actionSwitchPlayStatus"))
         self.actionBatchProcessing = QtGui.QAction(DuettoMainWindow)
         self.actionBatchProcessing.setObjectName(_fromUtf8("actionBatchProcessing"))
+        self.actionChangeTab = QtGui.QAction(DuettoMainWindow)
+        self.actionChangeTab.setObjectName(_fromUtf8("actionChangeTab"))
+        self.actionPlayLoop = QtGui.QAction(DuettoMainWindow)
+        self.actionPlayLoop.setCheckable(True)
+        icon29 = QtGui.QIcon()
+        icon29.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/Behavior.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionPlayLoop.setIcon(icon29)
+        self.actionPlayLoop.setObjectName(_fromUtf8("actionPlayLoop"))
         self.menuSave_Images.addAction(self.actionOsc_Image)
         self.menuSave_Images.addAction(self.actionSpecgram_Image)
         self.menuSave_Images.addAction(self.actionCombined_Image)
@@ -454,10 +462,10 @@ class Ui_DuettoMainWindow(object):
         self.noSignalOpened_lbl.setText(QtGui.QApplication.translate("DuettoMainWindow", "<div><h2 align=\'left\'> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;\n"
 "No signal is open</h2><hr>\n"
 "<ul align=\'left\'>\n"
-"<li>Open new signals with<font color=\'#3333AA\'> Ctrl + O</font></li>\n"
-"<li>Browse for signals with<font color=\'#3333AA\'> Ctrl + B</font></li>\n"
-"<li>Synthesize new signals with<font color=\'#3333AA\'> Ctrl + N</font></li>\n"
-"<li>Drag and drop files from Explorer</li></ul></div>", None, QtGui.QApplication.UnicodeUTF8))
+"<li style=\'margin-bottom:10px;\'>Open new signals with<font color=\'#3333AA\'> Ctrl + O</font></li>\n"
+"<li style=\'margin-bottom:10px;\'>Browse for signals with<font color=\'#3333AA\'> Ctrl + B</font></li>\n"
+"<li style=\'margin-bottom:10px;\'>Synthesize new signals with<font color=\'#3333AA\'> Ctrl + N</font></li>\n"
+"<li style=\'margin-bottom:10px;\'>Drag and drop files from Explorer</li></ul></div>", None, QtGui.QApplication.UnicodeUTF8))
         self.menuFile.setTitle(QtGui.QApplication.translate("DuettoMainWindow", "File", None, QtGui.QApplication.UnicodeUTF8))
         self.menuSave_Images.setTitle(QtGui.QApplication.translate("DuettoMainWindow", "Save Images", None, QtGui.QApplication.UnicodeUTF8))
         self.menuRecentSignals.setTitle(QtGui.QApplication.translate("DuettoMainWindow", "Recent Signals", None, QtGui.QApplication.UnicodeUTF8))
@@ -566,6 +574,10 @@ class Ui_DuettoMainWindow(object):
         self.actionSwitchPlayStatus.setText(QtGui.QApplication.translate("DuettoMainWindow", "switchPlayStatus", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSwitchPlayStatus.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Space", None, QtGui.QApplication.UnicodeUTF8))
         self.actionBatchProcessing.setText(QtGui.QApplication.translate("DuettoMainWindow", "Batch Processing", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionChangeTab.setText(QtGui.QApplication.translate("DuettoMainWindow", "ChangeTab", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionChangeTab.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Ctrl+Tab", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionPlayLoop.setText(QtGui.QApplication.translate("DuettoMainWindow", "PlayLoop", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionPlayLoop.setToolTip(QtGui.QApplication.translate("DuettoMainWindow", "Play Loop", None, QtGui.QApplication.UnicodeUTF8))
 
 from graphic_interface.widgets.SoundLabToolBar import SoundLabToolBarWidget
 import icons_rc

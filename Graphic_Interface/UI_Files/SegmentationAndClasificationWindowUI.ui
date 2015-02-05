@@ -591,6 +591,21 @@
     <string>Record</string>
    </property>
   </action>
+  <action name="actionPlayLoop">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/Behavior.png</normaloff>:/myappicons/Behavior.png</iconset>
+   </property>
+   <property name="text">
+    <string>PlayLoop</string>
+   </property>
+   <property name="toolTip">
+    <string>Play Loop</string>
+   </property>
+  </action>
   <zorder>dockWidgetParameterTableOscilogram</zorder>
  </widget>
  <customwidgets>

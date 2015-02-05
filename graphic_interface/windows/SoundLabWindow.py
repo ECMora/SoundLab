@@ -20,7 +20,7 @@ class SoundLabWindow(QtGui.QMainWindow):
     def __init__(self,parent):
         """
         """
-        QtGui.QMainWindow.__init__(self,parent)
+        QtGui.QMainWindow.__init__(self, parent)
 
         self.workSpace = Workspace()
 
@@ -37,9 +37,10 @@ class SoundLabWindow(QtGui.QMainWindow):
 
         # text edit for the signal name on the toolbar
         self.signalNameLineEdit = QtGui.QLineEdit(self)
-        self.signalNameLineEdit.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum))
+        self.signalNameLineEdit.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Minimum))
         self.signalPropertiesTextLabel = QtGui.QLabel(self)
-        self.signalPropertiesTextLabel.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum))
+        self.signalPropertiesTextLabel.setAlignment(QtCore.Qt.AlignRight)
+        self.signalPropertiesTextLabel.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum))
 
 
     # endregion
@@ -57,7 +58,7 @@ class SoundLabWindow(QtGui.QMainWindow):
 
         # region play record actions
         play_record_actions_list = [self.actionPlay_Sound, self.actionPause_Sound, self.actionStop_Sound,
-                                    self.actionRecord, sep2]
+                                    self.actionRecord, self.actionPlayLoop, sep2]
         for act in play_record_actions_list:
             act.setActionGroup(self.play_record_actions)
         # endregion
@@ -291,6 +292,10 @@ class SoundLabWindow(QtGui.QMainWindow):
             QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
                                       self.tr(u"There is no selected audio input "
                                               u"device or the selected is unavailable"))
+
+    @pyqtSlot()
+    def on_actionPlayLoop_triggered(self):
+        self.widget.setPlayLoopEnabled(self.actionPlayLoop.isChecked())
 
     @pyqtSlot()
     def on_actionStop_Sound_triggered(self):

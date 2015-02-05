@@ -263,6 +263,8 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         # set the normal brush color to the element selected
         self.scatter_plot.points()[self.selectedElementIndex].setBrush(pg.mkBrush(color))
 
+        self.selectedElementIndex = -1
+
     def elementFigureClicked(self, x, y):
         """
         Method that listen to the event of click an element on the graph.

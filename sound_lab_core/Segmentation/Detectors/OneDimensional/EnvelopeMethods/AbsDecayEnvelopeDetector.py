@@ -1,10 +1,13 @@
+from math import pi, sin
+
+import matplotlib.mlab as mlab
+from numpy import zeros, array, int32, mean
+
 from sound_lab_core.Segmentation.Detectors.OneDimensional.OneDimensionalElementsDetector import \
     OneDimensionalElementsDetector
-from sound_lab_core.Segmentation.Elements.OneDimensionalElement import OscilogramElement
-import matplotlib.mlab as mlab
 from Utils.Utils import fromdB
-from numpy import zeros, array, int32, mean
-from math import pi, sin
+from sound_lab_core.Segmentation.Elements.OneDimensionalElements.OscilogramElement import OscilogramElement
+
 
 class AbsDecayEnvelopeDetector(OneDimensionalElementsDetector):
 

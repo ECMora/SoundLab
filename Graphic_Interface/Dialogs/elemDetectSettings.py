@@ -2,7 +2,7 @@
 from PyQt4 import QtGui
 from PyQt4.QtCore import pyqtSlot
 from PyQt4.QtGui import QDialog
-from pyqtgraph.parametertree import ParameterTree
+from pyqtgraph.parametertree import Parameter,ParameterTree
 from graphic_interface.windows.ui_python_files.detectElementsDialog import Ui_Dialog
 from Utils.Utils import smallSignal
 from sound_lab_core.Segmentation.Detectors.OneDimensional.EnvelopeMethods.AbsDecayEnvelopeDetector import \
@@ -11,7 +11,7 @@ from sound_lab_core.Segmentation.Detectors.OneDimensional.EnvelopeMethods.AbsDec
 
 class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
 
-    def __init__(self, parent, paramTree, signal=None):
+    def __init__(self, parent, paramTree=None, signal=None):
         QDialog.__init__(self, parent)
         self.setupUi(self)
 
@@ -19,7 +19,9 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
             self.widget.signal = smallSignal(signal)
             # else load a didactic signal
 
+        # parameter tree to provide the measurement and parameter configuration into the dialog
         self.ParamTree = paramTree
+
         self.ParamTree.param(unicode(self.tr(u'Temporal Detection Settings'))).sigTreeStateChanged.connect(self.detect)
         self.ParamTree.param(unicode(self.tr(u'Spectral Detection Settings'))).sigTreeStateChanged.connect(self.detect)
         self.ParamTree.param(unicode(self.tr(u'Temporal Detection Settings'))).param(unicode(self.tr(u'Detection Method'))).sigTreeStateChanged.connect(self.changeDetectionMethod)
@@ -37,6 +39,7 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         lay1.addWidget(self.parameterTree)
 
         self.osc_settings_contents.setLayout(lay1)
+
         # self.dock_settings.setVisible(False)
         self.dock_settings.setFixedWidth(350)
 
@@ -95,7 +98,7 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
 
         :return:
         """
-
+        # get the detector's parameters manually
         threshold = self.ParamTree.param(unicode(self.tr(u'Temporal Detection Settings'))).param(
             unicode(self.tr(u'Threshold (db)'))).value()
 
@@ -111,6 +114,7 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         merge_factor = self.ParamTree.param(unicode(self.tr(u'Temporal Detection Settings'))).param(
             unicode(self.tr(u'Merge Factor (%)'))).value()
 
+        # create manually the detector
         self.detector = AbsDecayEnvelopeDetector(self.widget.signal, decay, threshold, min_size, merge_factor, softfactor)
         self.widget.detector = self.detector
 

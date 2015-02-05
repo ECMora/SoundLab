@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\SegmentationAndClasificationWindowUI.ui'
+# Form implementation generated from reading ui file 'D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\SegmentationAndClasificationWindowUI.ui'
 #
-# Created: Wed Feb 04 10:59:40 2015
+# Created: Thu Feb 05 11:12:10 2015
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -264,6 +264,12 @@ class Ui_MainWindow(object):
         icon23.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/record_26x26.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionRecord.setIcon(icon23)
         self.actionRecord.setObjectName(_fromUtf8("actionRecord"))
+        self.actionPlayLoop = QtGui.QAction(MainWindow)
+        self.actionPlayLoop.setCheckable(True)
+        icon24 = QtGui.QIcon()
+        icon24.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/Behavior.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionPlayLoop.setIcon(icon24)
+        self.actionPlayLoop.setObjectName(_fromUtf8("actionPlayLoop"))
         self.toolBar.addAction(self.actionClassification_Settings)
         self.menuParameters.addAction(self.actionView_Parameters)
         self.menuParameters.addSeparator()
@@ -364,6 +370,8 @@ class Ui_MainWindow(object):
         self.actionClassification_Settings.setText(QtGui.QApplication.translate("MainWindow", "Edit Categories", None, QtGui.QApplication.UnicodeUTF8))
         self.actionMethod.setText(QtGui.QApplication.translate("MainWindow", "Method", None, QtGui.QApplication.UnicodeUTF8))
         self.actionRecord.setText(QtGui.QApplication.translate("MainWindow", "Record", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionPlayLoop.setText(QtGui.QApplication.translate("MainWindow", "PlayLoop", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionPlayLoop.setToolTip(QtGui.QApplication.translate("MainWindow", "Play Loop", None, QtGui.QApplication.UnicodeUTF8))
 
 from graphic_interface.widgets.SoundLabToolBar import SoundLabToolBarWidget
 from pyqtgraph import TableWidget

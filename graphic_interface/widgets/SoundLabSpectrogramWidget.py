@@ -209,6 +209,7 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
 
         SpectrogramWidget.graph(self, indexFrom, indexTo)
 
+
     def from_osc_to_spec(self, coord):
         return self.specgramHandler.from_osc_to_spec(coord)
 

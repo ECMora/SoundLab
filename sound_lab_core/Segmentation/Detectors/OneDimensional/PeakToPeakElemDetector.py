@@ -2,7 +2,7 @@
 import numpy as np
 
 from sound_lab_core.Segmentation.Detectors.OneDimensional import OneDimensionalElementsDetector
-from sound_lab_core.Segmentation.Elements.OneDimensionalElement import OscilogramElement
+from sound_lab_core.Segmentation.Elements.OneDimensionalElements.OneDimensionalElement import OscilogramElement
 
 
 class PeakToPeakElemDetector(OneDimensionalElementsDetector):

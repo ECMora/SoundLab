@@ -93,10 +93,10 @@
        <string>&lt;div&gt;&lt;h2 align='left'&gt; &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;
 No signal is open&lt;/h2&gt;&lt;hr&gt;
 &lt;ul align='left'&gt;
-&lt;li&gt;Open new signals with&lt;font color='#3333AA'&gt; Ctrl + O&lt;/font&gt;&lt;/li&gt;
-&lt;li&gt;Browse for signals with&lt;font color='#3333AA'&gt; Ctrl + B&lt;/font&gt;&lt;/li&gt;
-&lt;li&gt;Synthesize new signals with&lt;font color='#3333AA'&gt; Ctrl + N&lt;/font&gt;&lt;/li&gt;
-&lt;li&gt;Drag and drop files from Explorer&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;</string>
+&lt;li style='margin-bottom:10px;'&gt;Open new signals with&lt;font color='#3333AA'&gt; Ctrl + O&lt;/font&gt;&lt;/li&gt;
+&lt;li style='margin-bottom:10px;'&gt;Browse for signals with&lt;font color='#3333AA'&gt; Ctrl + B&lt;/font&gt;&lt;/li&gt;
+&lt;li style='margin-bottom:10px;'&gt;Synthesize new signals with&lt;font color='#3333AA'&gt; Ctrl + N&lt;/font&gt;&lt;/li&gt;
+&lt;li style='margin-bottom:10px;'&gt;Drag and drop files from Explorer&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;</string>
       </property>
       <property name="scaledContents">
        <bool>false</bool>
@@ -970,6 +970,29 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
   <action name="actionBatchProcessing">
    <property name="text">
     <string>Batch Processing</string>
+   </property>
+  </action>
+  <action name="actionChangeTab">
+   <property name="text">
+    <string>ChangeTab</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Tab</string>
+   </property>
+  </action>
+  <action name="actionPlayLoop">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/Behavior.png</normaloff>:/myappicons/Behavior.png</iconset>
+   </property>
+   <property name="text">
+    <string>PlayLoop</string>
+   </property>
+   <property name="toolTip">
+    <string>Play Loop</string>
    </property>
   </action>
   <zorder>dock_settings</zorder>

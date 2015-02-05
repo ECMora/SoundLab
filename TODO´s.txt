@@ -4,6 +4,8 @@ duetto Sound Lab Tasks
 # TODO those marked with - are in process and those marked with + are completed.
 # TODO the tasks are divided by their complexity.
 
+-----------------------------------------------------------
+
 Complexity-1: No new-code activity
 
 * (Yasel) Comment Widgets tools
@@ -21,72 +23,43 @@ Complexity-1: No new-code activity
 * (Gabriela) Testing One dim transform Window
 * (Gabriela) Testing widget signal visualizer
 
+(NOT POSSIBLE FOR NOW) Programar Tile y Cascade.
+(NOT POSSIBLE FOR NOW) Adicionar en North and South: right and left, y en East and West: up and down.
+(NOT POSSIBLE FOR NOW) Añadir un Time Lock y Frequency Lock -para que en tabs de un mismo fichero se reproduzca la misma ventana temporal y espectral-.
++  Tab shape: cambiar Rounded for Squared?
++  Programar botones shortcut para pasar de una tab a otra. Ctrl + Tab
++ Implementar zoom en frequencia.
++ Permitir pasar de un setting a otro con el teclado.
++ Pulir alguno de los Styles.
++ Ampliar el Cuadro del Nombre del Fichero.
++ Reubicar los textos con las caracteristicas del fichero... mas hacia la derecha.
++ Programar Loop en Playback y ponerlo en Botones.
 
-+ Sound Lab window and project rename to "duetto SoundLab"
+* Mejorar el icono: tanto en el programa como en la barra de tareas de windows.
+* Añadir un Control de Volumen para Playback.
+* En los Settings, lograr que se vea todo el cuadro alrededor del boton que se destaca con el mouse.
+* En escalas temporales con mucho zoom, ajustar la sensibilidad de los cursores para poder medir siempre algun valor y no se quede en 0.
+* Hacer corresponder las ventanas de seleccion temporal de oscilo y espectro en grandes resoluciones temporales.
+* Arreglar identificacion de ejes y numeros. Mostrar numeros "significativos".
+* Chequear cambio de colores para dibujar el espectrograma.
+* Normalizar espectrograma.
+* Si hay seleccion temporal (*o espectral), que el play solo reproduzca lo seleccionado... no pasa asi en "solo espectrograma".
+* Chequear que cuando se modifique un parametro en una ventana y se cambie temporalmente de ventana, ese valor se mantenga modificado.
+* Recontra chequear errores en el zooming: Ej: si se selecciona una ventana mayor que una previamente seleccionada, el zoom final no es el esperado.
+* Si utilizamos cortar, mantener los valores de las escalas de amplitud.
+* El Undo no funciona despues de Cortar.
+* Hacer que el Browse abra en un conjunto de ficheros de la ultima carpeta visitada.
+* Revisar cursores: Ej. en rectangular, cambiar dF para el final... despues de mostrar quien es fmin y fmax.
+* En el Pointer cursor hay que presionar para leer la frequencia? En los cursores dejar fijas las posiciones de los parametros que se miden.
 
 -----------------------------------------------------------
 
 Complexity-2: Small-to-medium code changes
-
-+ Start app on maximized state
-+ Change KHz to kHz on the widgets
-+ Fix grids lines on widgets visibility and opacity
-+ Memorize the parameters supplied in the dialogs for next use
-+ Change app language by code
-+ Change style by code
-+ I18n add multiple translations. Add default system translation
-+ Remove File up and Down actions on File menu
-+ Modify order on Edit Menu	set Undo,Redo, Copy,Cut,Paste ...
-+ File Menu Change name of Save as to Save as...
-+ File Menu add the save image action with submenus (osc image spec, and combined)
-+ Remove decimal places in spectrogram settings threshold
-+ Filter dialog Hz rename to kHz and quit the labels changing it by sufix on the numeric up downs
-+ Rename Save Theme action as "Save Theme as..."
-+ File Menu Save selected interval as the ... equal to "Save as..."
-+ Add Save Theme action (current theme with no needed confirmation)
-+ File Menu add Save action (current signal with no needed confirmation)
-+ Change the file name action to show the current signal properties (channels, bit depth, sr etc) and in the tooltip set a large properties display
-+ Associate the .wav files to the app on opening by console
-+ Check the size of strings in tools data to always show the data on the same place (best reading)
-+ Add the tool detected data on the rectangular spectrogram tool (check max and min values order)
-	pointer spectrogram tool (add amp always, and diff in the selection of an interval)
-+ remove tools elements when the mouse leaves the widget
-+ Multiples files opened on tabs
-+ Multiple visualization of the same signal
-+ Operations provided to multiples files handling (close all, close all except the current, etc)
-
-
-+ (Carlos) Create a workspace file or .ini with app settings
-+ (Carlos) Provide access to remember the recent files (5) (init file)
-+ (Carlos) Theme improvement and completion
-
-+ (Hiram) Scroll bar implementation inside the signal visualizer widget
-+ (Yasel) Create a start window with the opening options
-+ (Yasel) Tool Bar actions group by category
-+ (Yasel) Tool Bar actions groups visualization by category
-+ (Yasel) Add Browse window to browse the current signal folder files (see Avisoft)
-
 * (Hiram) Add margins to the widgets for best visualization (API)
-* (Hiram) Fix histogram bug when the histogram line values are not visible (API)
-+ (Hiram) Set fixed the histogram x axis (API)
-+ (Hiram) Set labels into the histogram minimum and maximum thresholds (API)
-+ (Hiram) Check spectrogram coordinate calculation
-- (Hiram) Remove labels on axes (Ampl)
-
-
-+ (Gabriela) Implement play of files amplitude and Frequency) Set the values (% and kHz) on the border of the axes
-even if they are not possible to play completely by the recoding
-	sampling rate (make a filter) (API)
-+ (Gabriela) Allow to select the audio device (input and output) to play/record audio signals (API)
-+ (Gabriela) Add to the Sound Menu the sound format action to change the format of record signals
-  (must use the properties of the selected input sound device)
-
 * Customize the axes on the amount of ticks and the scale used (possibly by context menu) with an dynamic suggested scale
 * Addition of Custom Rich Dock Widgets to the duetto API and use them on the windows
 * User manage of the height relation  between the two widgets (osc and spec) when are  both visible
-+ Tools bugs when a signal processing action is made (zoom osc disappear)
 * Fix zoom bug. Mouse move heavy computation
-* Edition operation improvement
 * Resampling
 + Filter
 -----------------------------------------------------------

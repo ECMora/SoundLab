@@ -373,29 +373,30 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
                 {u'name': unicode(self.tr(u'Tab Shape')), u'type': u'list',
                  u'value': self.workSpace.tabShape,
                  u'default': self.workSpace.tabShape,
-                 u'values': [(u'Rounded', QtGui.QTabWidget.Rounded),
+                 u'values': [(u'Squared', QtGui.QTabWidget.Rounded),
                              (u"Triangular", QtGui.QTabWidget.Triangular)
                  ]}
             ]
-            },
-            {u'name': unicode(self.tr(u'Detection Visual Settings')), u'type': u'group', u'children': [
-                {u'name': unicode(self.tr(u'Measurement Location')), u'type': u'group', u'children': [
-                    {u'name': unicode(self.tr(u'Start')), u'type': u'color',
-                     u'value': self.workSpace.workTheme.detectionTheme.startColor,
-                     u'default': self.workSpace.workTheme.detectionTheme.startColor},
-                    {u'name': unicode(self.tr(u'Quartile25')), u'type': u'color',
-                     u'value': self.workSpace.workTheme.detectionTheme.quart1Color,
-                     u'default': self.workSpace.workTheme.detectionTheme.quart1Color},
-                    {u'name': unicode(self.tr(u'Center')), u'type': u'color',
-                     u'value': self.workSpace.workTheme.detectionTheme.centerColor,
-                     u'default': self.workSpace.workTheme.detectionTheme.centerColor},
-                    {u'name': unicode(self.tr(u'Quartile75')), u'type': u'color',
-                     u'value': self.workSpace.workTheme.detectionTheme.quart2Color,
-                     u'default': self.workSpace.workTheme.detectionTheme.quart2Color},
-                    {u'name': unicode(self.tr(u'End')), u'type': u'color',
-                     u'value': self.workSpace.workTheme.detectionTheme.endColor,
-                     u'default': self.workSpace.workTheme.detectionTheme.endColor},
-                ]}]}
+             }
+            #,  RESERVED FOR FUTURE USE
+            # {u'name': unicode(self.tr(u'Detection Visual Settings')), u'type': u'group', u'children': [
+            #     {u'name': unicode(self.tr(u'Measurement Location')), u'type': u'group', u'children': [
+            #         {u'name': unicode(self.tr(u'Start')), u'type': u'color',
+            #          u'value': self.workSpace.workTheme.detectionTheme.startColor,
+            #          u'default': self.workSpace.workTheme.detectionTheme.startColor},
+            #         {u'name': unicode(self.tr(u'Quartile25')), u'type': u'color',
+            #          u'value': self.workSpace.workTheme.detectionTheme.quart1Color,
+            #          u'default': self.workSpace.workTheme.detectionTheme.quart1Color},
+            #         {u'name': unicode(self.tr(u'Center')), u'type': u'color',
+            #          u'value': self.workSpace.workTheme.detectionTheme.centerColor,
+            #          u'default': self.workSpace.workTheme.detectionTheme.centerColor},
+            #         {u'name': unicode(self.tr(u'Quartile75')), u'type': u'color',
+            #          u'value': self.workSpace.workTheme.detectionTheme.quart2Color,
+            #          u'default': self.workSpace.workTheme.detectionTheme.quart2Color},
+            #         {u'name': unicode(self.tr(u'End')), u'type': u'color',
+            #          u'value': self.workSpace.workTheme.detectionTheme.endColor,
+            #          u'default': self.workSpace.workTheme.detectionTheme.endColor},
+            #     ]}]}
 
         ]
         #  endregion
@@ -727,6 +728,20 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         for i in range(self.tabOpenedSignals.count()-1, -1, -1):
             if i != exceptIndex:
                 self.closeSignalAt(i)
+
+
+    @pyqtSlot()
+    def on_actionChangeTab_triggered(self):
+        """
+        Change the selected tab visualization to the next one
+        :return:
+        """
+        if self.tabOpenedSignals.count() == 0:
+            return
+
+        current_tab = self.tabOpenedSignals.currentIndex()
+
+        self.tabOpenedSignals.setCurrentIndex((current_tab+1) % self.tabOpenedSignals.count())
 
     # endregion
 
@@ -1644,7 +1659,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         widget = self.tabOpenedSignals.widget(signal_index)
 
         indexFrom, indexTo = self.widget.selectedRegion
-        signal = widget.signal.copy(indexFrom, indexTo)
+        signal = widget.signal.copy(indexFrom, indexTo) if indexTo > indexFrom else widget.signal
 
         self.addSignalTab(signal)
 

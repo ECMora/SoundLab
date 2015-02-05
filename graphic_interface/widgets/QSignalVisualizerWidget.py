@@ -297,9 +297,16 @@ class QSignalVisualizerWidget(QWidget):
         Audio Device is unavailable.
         """
         start, end = self.selectedRegion
-        
         self.addPlayerLine(start, end)
         self.signalPlayer.play(start, end, self.playSpeed)
+
+    def setPlayLoopEnabled(self, enabled):
+        """
+        Define the play loop as enable or disabled
+        :param enabled: boolean. True to enable play in loop false otherwise.
+        :return:
+        """
+        self.signalPlayer.playLoop = enabled
 
     def switchPlayStatus(self):
         """
@@ -518,8 +525,14 @@ class QSignalVisualizerWidget(QWidget):
 
     @visibleSpectrogram.setter
     def visibleSpectrogram(self, value):
+        """
+        Change the visibility of the specgram widget.
+        :param value: Bolean with the new visibility
+        :return:
+        """
         self._visibleSpectrogram = value
         self.axesSpecgram.setVisible(value)
+
 
     @property
     def playSpeed(self):
@@ -594,21 +607,20 @@ class QSignalVisualizerWidget(QWidget):
         """
         #  get the current visible interval indexes
         index_from, index_to = self.mainCursor.min, self.mainCursor.max
+        index_from_zoom, index_to_zoom = index_from, index_to
 
         #  if selected tool is Zoom get the selection interval indexes
-        axe = self.axesOscilogram if self.visibleOscilogram \
-                                  else self.axesSpecgram if self.visibleSpectrogram \
-                                  else None
+        if self.selectedTool == Tools.ZoomTool:
+            if self.visibleOscilogram:
+                index_from_zoom, index_to_zoom = self.axesOscilogram.gui_user_tool.zoomRegion.getRegion()
 
-        if self.selectedTool == Tools.ZoomTool and axe is not None:
-            zoom_region = axe.gui_user_tool.zoomRegion.getRegion()
-            if zoom_region[0] >= index_from and zoom_region[1] <= index_to:
-                #  get the start of the region
-                index_from = zoom_region[0]
+            elif self.visibleSpectrogram:
+                spec_rgn = self.axesSpecgram.gui_user_tool.zoomRegion.getRegion()
+                index_from_zoom, index_to_zoom = self.from_spec_to_osc(spec_rgn[0]), self.from_spec_to_osc(spec_rgn[1])
 
-                #  set the maxThresholdLabel limit if the region borders are different
-                if zoom_region[1] > zoom_region[0]:
-                     index_to = zoom_region[1]
+            if index_from_zoom >= index_from and index_to_zoom <= index_to:
+                # get the start of the region
+                index_from, index_to = index_from_zoom, index_to_zoom
 
         return int(index_from), int(index_to)
 
