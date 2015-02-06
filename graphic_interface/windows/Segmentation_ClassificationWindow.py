@@ -5,9 +5,7 @@ from PyQt4 import QtGui
 import xlwt
 import numpy as np
 from PyQt4.QtGui import QFileDialog, QAbstractItemView, QWidget, QActionGroup
-from pyqtgraph.parametertree import Parameter
 from duetto.audio_signals.AudioSignal import AudioSignal
-from sound_lab_core.Clasification.ClassificationData import ClassificationData
 from sound_lab_core.Segmentation.Elements.Element import Element
 from sound_lab_core.Segmentation.Elements.OneDimensionalElements.OneDimensionalElement import SpectralMeasurementLocation
 from ..dialogs.elemDetectSettings import ElemDetectSettingsDialog
@@ -17,120 +15,7 @@ import graphic_interface.windows.ui_python_files.EditCategoriesDialogUI as editC
 from graphic_interface.dialogs.EditCategoriesDialog import EditCategoriesDialog
 from graphic_interface.widgets.EditCategoriesWidget import EditCategoriesWidget
 from SoundLabWindow import SoundLabWindow
-
-
-class SegmentManager:
-    """
-    Manage the parameter measurement over a group of segments.
-    Provide a table interface for segments parameter measurement and classification
-    """
-    def __init__(self):
-        # the classifier object that
-        self._classifier = None
-
-        # the parameter measurer list
-        self._measurer = None
-
-        # stores the measured parameters of the detected elements
-        self.measuredParameters = np.array([[], []])
-
-        # set the connections for the classification data to
-        # update when is added, changed or deleted a value or category
-        self.classificationData = ClassificationData()
-        self.classificationData.valueAdded.connect(self.classificationCategoryValueAdded)
-        self.classificationData.valueRemoved.connect(self.classificationCategoryValueRemove)
-        self.classificationData.categoryAdded.connect(self.classificationCategoryAdded)
-
-        # stores the classification data that are present in the table of meditions
-        # has the form of a list with [["category name","category value"]] for each element
-        # example with 2 elements and 2 categories
-        # [[["Specie","Cartacuba"],["Location","Cuba"]],
-        # [["Specie","Sinsonte"],["Location","Camaguey"]]]
-        self.elementsClasificationTableData = []
-
-        # the names of the columns in the table of parameters measured
-        self.columnNames = []
-
-    def getData(self, row, col):
-        """
-        """
-        if row >= len(self.measuredParameters):
-            raise IndexError()
-
-
-        return self.measuredParameters[row,col]
-
-    # region Properties
-
-    # region Classifier
-
-    @property
-    def classifier(self):
-        return self._classifier
-
-    @classifier.setter
-    def classifier(self, classifier):
-        self._classifier = classifier
-
-    # endregion
-
-    # region Measurer
-
-    @property
-    def measurer(self):
-        return self._measurer
-
-    @measurer.setter
-    def measurer(self, new_measurer):
-        self._measurer = new_measurer
-
-    # endregion
-
-    # endregion
-
-    # region Classification
-    def classificationCategoryValueAdded(self, category, value):
-        # print("In Category "+category+" was added the value: "+value)
-        pass
-
-    def classificationCategoryValueRemove(self, category, value):
-        # print("In Category "+category+" was removed the value: " + value)
-        for i, elem in enumerate(self.elementsClasificationTableData):
-            for j, l in enumerate(elem):
-                if l[0] == category and l[1] == value:
-                    self.elementsClasificationTableData[i][j][1] = self.tr(u"No Identified")
-                    item = QtGui.QTableWidgetItem(unicode(self.elementsClasificationTableData[i][j][1]))
-                    item.setBackgroundColor(
-                        self.TABLE_ROW_COLOR_ODD if i % 2 == 0 else self.TABLE_ROW_COLOR_EVEN)
-                    self.tableParameterOscilogram.setItem(i, len(self.measuredParameters[i]) + j, item)
-
-        self.tableParameterOscilogram.update()
-
-    def classificationCategoryAdded(self, category):
-        for i, elem in enumerate(self.elementsClasificationTableData):
-            self.segmentManager.elementsClasificationTableData[i].append([str(category), self.tr(u"No Identified")])
-
-        if self.tableParameterOscilogram.rowCount() > 0:
-            self.tableParameterOscilogram.insertColumn(self.tableParameterOscilogram.columnCount())
-            column = self.tableParameterOscilogram.columnCount() - 1
-            # put rows in table
-            for row in range(self.tableParameterOscilogram.rowCount()):
-                item = QtGui.QTableWidgetItem(unicode(self.tr(u"No Identified")))
-                item.setBackgroundColor(
-                    self.TABLE_ROW_COLOR_ODD if row % 2 == 0 else self.TABLE_ROW_COLOR_EVEN)
-                self.tableParameterOscilogram.setItem(row, column, item)
-                self.tableParameterOscilogram.setHorizontalHeaderItem(column, QtGui.QTableWidgetItem(category))
-            # insert data in clasification Data
-            self.tableParameterOscilogram.update()
-    # endregion
-
-    def addSegment(self, segment):
-        """
-        Add a new segment to the list of detected elements on the
-        manager. if a parameter measurer is selected
-        """
-        pass
-
+from sound_lab_core.Segmentation.SegmentManager import SegmentManager
 
 
 class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
@@ -172,8 +57,6 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         # check the parameters
         if signal is None or not isinstance(signal, AudioSignal):
             raise Exception("The signal to analyze must be of type AudioSignal")
-
-        self.ParamTree = self.getParamTree()
 
         self.configureToolBarActionsGroups()
 
@@ -218,111 +101,6 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         self.segmentManager = SegmentManager()
 
         self.showMaximized()
-
-    def getParamTree(self):
-        """
-        :return: the param tree with the segmentation options
-        """
-        # region Detection Params Definition
-
-        # Time And Spectral Medition Parameters
-        # the medition parameters are defined here
-        # are divided into time and spectral meditions
-        # time are those parameters that are measured in time domain. ie Oscilogram
-        # spectral meditions are measured on spectrogram
-        params = [{u'name': unicode(self.tr(u'Temporal Detection Settings')), u'type': u'group', u'children': [
-            {u'name': unicode(self.tr(u'Detection Method')), u'type': u'list',
-             u'default': 0, u'values':
-                [(unicode(self.tr(u'Envelope')), 0)]},
-            {u'name': unicode(self.tr(u'Threshold (db)')), u'type': u'float', u'value': -40.00, u'step': 1},
-            {u'name': unicode(self.tr(u'Auto')), u'type': u'bool', u'default': True, u'value': True},
-            {u'name': unicode(self.tr(u'Min Size (ms)')), u'type': u'float', u'value': 2.00, u'step': 1},
-            {u'name': unicode(self.tr(u'Decay (ms)')), u'type': u'float', u'value': 1.00, u'step': 0.5},
-            {u'name': unicode(self.tr(u'Threshold 2(db)')), u'type': u'float', u'value': 0.00, u'step': 1},
-            {u'name': unicode(self.tr(u'Soft Factor')), u'type': u'float', u'value': 6, u'step': 1},
-            {u'name': unicode(self.tr(u'Merge Factor (%)')), u'type': u'float', u'value': 5.00, u'step': 1,
-             u'limits': (0, 50)}
-        ]},
-
-                  {u'name': unicode(self.tr(u'Spectral Detection Settings')), u'type': u'group', u'children': [
-                      {u'name': unicode(self.tr(u'Detect Spectral Subelements')), u'type': u'bool', u'default': False,
-                       u'value': False},
-                      {u'name': unicode(self.tr(u'Threshold (%)')), u'type': u'float', u'value': 95.00, u'step': 1,
-                       u'limits': (0, 100)},
-                      {u'name': unicode(self.tr(u'Minimum size')), u'type': u'group', u'children': [
-                          {u'name': unicode(self.tr(u'Time (ms)')), u'type': u'float', u'value': 0.00, u'step': 1},
-                          {u'name': unicode(self.tr(u'Frequency (kHz)')), u'type': u'float', u'value': 0.00,
-                           u'step': 1}]}
-                  ]},
-
-                  {u'name': unicode(self.tr(u'Measurement Location')), u'type': u'group', u'children': [
-                      {u'name': unicode(self.tr(u'Start')), u'type': u'bool', u'default': False, u'value': False},
-                      {u'name': unicode(self.tr(u'Center')), u'type': u'bool', u'default': False, u'value': False},
-                      {u'name': unicode(self.tr(u'End')), u'type': u'bool', u'default': False, u'value': False},
-                      {u'name': unicode(self.tr(u'Quartile 25')), u'type': u'bool', u'default': False, u'value': False},
-                      {u'name': unicode(self.tr(u'Mean')), u'type': u'bool', u'default': False, u'value': False},
-                      {u'name': unicode(self.tr(u'Quartile 75')), u'type': u'bool', u'default': False,
-                       u'value': False}]}
-        ]
-
-        self.timeMeditions = [
-            [unicode(self.tr(u"Start(s)")), True, lambda x, d: x.startTime()],
-            [unicode(self.tr(u"End(s)")), True, lambda x, d: x.endTime()],
-            [unicode(self.tr(u"StartToMax(s)")), False, lambda x, d: x.distanceFromStartToMax()],
-            [unicode(self.tr(u"Duration(s)")), True, lambda x, d: x.duration()],
-        ]
-
-        self.spectralMeditions = [
-            [unicode(self.tr(u"Spectral Elems")), False, lambda x, d: x.spectralElements()],
-            [unicode(self.tr(u"Peak Freq(Hz)")), False, lambda x, d: x.peakFreq(d)],
-            [unicode(self.tr(u"Peak Amplitude(dB)")), False, lambda x, d: x.peakAmplitude(d)],
-            [unicode(self.tr(u"Frequency")),
-             [
-                 [unicode(self.tr(u"Threshold (db)")), -20]
-             ],
-             [
-                 [unicode(self.tr(u"Min Freq(Hz)")), False, lambda x, d: x.minFreq(d)],
-                 [unicode(self.tr(u"Max Freq(Hz)")), False, lambda x, d: x.maxFreq(d)],
-                 [unicode(self.tr(u"Band Width(Hz)")), False, lambda x, d: x.bandwidth(d)]
-             ]
-            ],
-            [unicode(self.tr(u"Peaks")),
-             [
-                 [unicode(self.tr(u"Peaks Threshold (db)")), -20]
-             ],
-             [
-                 [unicode(self.tr(u"Peaks Above")), False, lambda x, d: x.peaksAbove(d)],
-             ]
-            ]
-
-        ]
-
-        self.waveMeditions = [
-            [unicode(self.tr(u"PeekToPeek(V)")), False, lambda x, d: x.peekToPeek()],
-            [unicode(self.tr(u"RMS(V)")), False, lambda x, d: x.rms()],
-        ]
-
-        self.meditions = [(unicode(self.tr(u'Temporal Meditions')), self.timeMeditions), \
-                          (unicode(self.tr(u'Spectral Meditions')), self.spectralMeditions), \
-                          (unicode(self.tr(u'Waveform Meditions')), self.waveMeditions)]
-
-        for name, dict in self.meditions:
-            children = []
-            for x in dict:
-                if isinstance(x[1], bool):
-                    children.append({u'name': x[0], u'type': u'bool', u'default': x[1], u'value': x[1]})
-                else:
-                    temp = []
-                    for y in x[1]:
-                        temp.append({u'name': y[0], u'type': u'float', u'value': y[1], u'step': 0.1})
-                    for y in x[2]:
-                        temp.append({u'name': y[0], u'type': u'bool', u'default': y[1], u'value': y[1]})
-                    children.append({u'name': x[0], u'type': u'group', u'children': temp})
-            params.append({u'name': name, u'type': u'group', u'children': children})
-
-        # endregion
-
-        return Parameter.create(name=u'params', type=u'group', children=params)
 
     def __addContextMenuActions(self):
         """
@@ -423,8 +201,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
                                           u"The two dimensional analisys requires at least one parameter measured."))
             return
 
-        wnd = TwoDimensionalAnalisysWindow(self, columns=self.segmentManager.columnNames, data=self.segmentManager.measuredParameters,
-                                           classificationData=self.segmentManager.classificationData)
+        wnd = TwoDimensionalAnalisysWindow(self, self.segmentManager)
 
         # connect the signals for update the new two dim window actions
         wnd.elementSelected.connect(self.elementSelectedInTable)
@@ -610,14 +387,16 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         if deleted_elements is None:
             return
 
+        rows = self.tableParameterOscilogram.rowCount()
+
         start_removed_index, end_removed_index = deleted_elements
         # TODO complete the comment here
-        if start_removed_index is not None and start_removed_index >= 0 and end_removed_index < self.tableParameterOscilogram.rowCount():
+        if start_removed_index is not None and start_removed_index >= 0 and end_removed_index < rows:
             for i in range(end_removed_index, start_removed_index - 1, -1):
                 # delete from table
                 self.tableParameterOscilogram.removeRow(i)
 
-            for i in range(self.tableParameterOscilogram.rowCount()):
+            for i in range(rows):
                 # update table bacground color
                 for j in range(self.tableParameterOscilogram.columnCount()):
                     self.tableParameterOscilogram.item(i, j).setBackgroundColor(
@@ -625,15 +404,14 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
             # updates the numpy array  with the detected parameters
             self.segmentManager.measuredParameters = np.concatenate(
-                (
-            self.segmentManager.measuredParameters[:start_removed_index[0]], self.segmentManager.measuredParameters[start_removed_index[1] + 1:]))
+                (self.segmentManager.measuredParameters[:start_removed_index[0]], self.segmentManager.measuredParameters[start_removed_index[1] + 1:]))
             self.segmentManager.elementsClasificationTableData = self.segmentManager.elementsClasificationTableData[
                                                   :start_removed_index[0]] + self.segmentManager.elementsClasificationTableData[
                                                                              start_removed_index[1] + 1:]
 
             self.tableParameterOscilogram.update()
             for wnd in self.two_dim_windows:
-                wnd.loadData(self.segmentManager.columnNames, self.segmentManager.measuredParameters)
+                wnd.loadData(self.segmentManager)
 
         # deselect the elements on the widget
         self.on_actionDeselect_Elements_triggered()
@@ -727,37 +505,6 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
     # region Detection
 
-    def getSettings(self, elementsDetectorDialog):
-        """
-        get the detection settings
-        :param elementsDetectorDialog: dialog that contains the parameter tree with all the options
-        :return:
-        """
-        # parameters
-        for name, dict in self.meditions:
-            for x in dict:
-                if isinstance(x[1], bool):
-                    x[1] = self.ParamTree.param(name).param(x[0]).value()
-                else:
-                    for y in x[1]:
-                        y[1] = self.ParamTree.param(name).param(x[0]).param(y[0]).value()
-                    for y in x[2]:
-                        y[1] = self.ParamTree.param(name).param(x[0]).param(y[0]).value()
-
-        # measurements u'Measurement Location'
-        self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.START][0] = self.ParamTree.param(
-            unicode(self.tr(u'Measurement Location'))).param(unicode(self.tr(u'Start'))).value()
-        self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.END][0] = self.ParamTree.param(
-            unicode(self.tr(u'Measurement Location'))).param(unicode(self.tr(u'End'))).value()
-        self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.CENTER][0] = self.ParamTree.param(
-            unicode(self.tr(u'Measurement Location'))).param(unicode(self.tr(u'Center'))).value()
-        self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.QUARTILE25][
-            0] = self.ParamTree.param(unicode(self.tr(u'Measurement Location'))).param(
-            unicode(self.tr(u'Quartile 25'))).value()
-        self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.QUARTILE75][
-            0] = self.ParamTree.param(unicode(self.tr(u'Measurement Location'))).param(
-            unicode(self.tr(u'Quartile 75'))).value()
-
     def updateDetectionProgressBar(self, x):
         """
         update the detection progress bar.
@@ -792,19 +539,18 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         """
         Method that execute the detection
         """
-        elementsDetectorDialog = ElemDetectSettingsDialog(parent=self,paramTree=self.ParamTree, signal=self.widget.signal)
+        elementsDetectorDialog = ElemDetectSettingsDialog(parent=self, signal=self.widget.signal)
         elementsDetectorDialog.load_workspace(self.workSpace)
 
         # deselect the elements on the widget
         self.widget.deselectElement()
         try:
             if elementsDetectorDialog.exec_():
-                self.getSettings(elementsDetectorDialog)
 
                 # get the detector from dialog selection
                 self.widget.detector = elementsDetectorDialog.detector
 
-                paramsTomeasure = self.getParameters()
+                self.segmentManager.measurerList = elementsDetectorDialog.getParametersList()
 
                 self.setProgressBarVisibility(True)
 
@@ -814,48 +560,23 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
                 self.updateDetectionProgressBar(50)
 
                 # clasification data update TODO improve comments and implementation
-                validcategories = [k for k in self.segmentManager.classificationData.categories.keys() if
-                                   len(self.segmentManager.classificationData.getvalues(k)) > 0]
-
-                self.segmentManager.elementsClasificationTableData = [[[k, self.tr(u"No Identified")] for k in validcategories] for
-                                                       _ in range(self.tableParameterOscilogram.rowCount())]
-
-                # clear the previous meditions
-                self.tableParameterOscilogram.clear()
-
-                elem_count = len(self.widget.Elements)
-                parameter_count = len(paramsTomeasure)
-
-                self.tableParameterOscilogram.setRowCount(elem_count)
-
-                # connect the table selection with the selection of an element
-                self.tableParameterOscilogram.cellPressed.connect(self.elementSelectedInTable)
-
-                # get the column names of the meditions and set them on the table headers
-                self.segmentManager.columnNames = [label[0] for label in paramsTomeasure]
-
-                columns = self.segmentManager.columnNames + validcategories
-
-                # set the number of columns to the amount of parameters measured
-                # plus the amount of categories of classification
-                self.tableParameterOscilogram.setColumnCount(len(columns))
-                self.tableParameterOscilogram.setHorizontalHeaderLabels(columns)
+                self.segmentManager.updateClassifTableData()
 
                 self.updateDetectionProgressBar(95)
 
-                # the table of parameters stored as a numpy array
-                self.segmentManager.measuredParameters = np.zeros(elem_count * parameter_count).reshape((elem_count, parameter_count))
+                # measure the parameters over elements detected
+                self.segmentManager.measureParameters(self.widget.Elements)
 
-                self.measureParameters(paramsTomeasure, validcategories)
+                # visualize the detection
+                self.updateTableParameter()
 
                 # complete the progress of detection and hide the progress bar
                 self.updateDetectionProgressBar(100)
                 self.setProgressBarVisibility(False)
-                self.tableParameterOscilogram.resizeColumnsToContents()
 
                 # update the measured data on the two dimensional opened windows
                 for wnd in self.two_dim_windows:
-                    wnd.loadData(self.segmentManager.columnNames, self.segmentManager.measuredParameters)
+                    wnd.loadData(self.segmentManager)
 
             # refresh changes
             self.widget.graph()
@@ -863,46 +584,32 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         except Exception as e:
             print("detection errors: " + e.message)
 
-    def measureParameters(self, paramsTomeasure, validcategories ):
-        for i in range(self.tableParameterOscilogram.rowCount()):
-            for j, params in enumerate(paramsTomeasure):
-                try:
-                    # get the function params.
-                    # params[0] is the name of the param measured
-                    # params[1] is the function to measure the param
-                    # params[2] is the dictionary of params supplied to the function
-                    dictionary = dict(params[2] if params[2] is not None else [])
+    def updateTableParameter(self):
+        """
+        Method that updates the parameter table to visualize
+        the data of the detected segments, their masured parameters and classification
+        :return:
+        """
+        # set the number of columns to the amount of parameters measured
+        # plus the amount of categories of classification
+        self.tableParameterOscilogram.clear()
+        self.tableParameterOscilogram.setRowCount(self.segmentManager.rowCount())
+        self.tableParameterOscilogram.setColumnCount(self.segmentManager.columnCount())
+        self.tableParameterOscilogram.setHorizontalHeaderLabels(self.segmentManager.columnNames)
 
-                    # compute the param with the function
-                    self.segmentManager.measuredParameters[i, j] = params[1](self.widget.Elements[i], dictionary)
-
-                    # set the result to a table item and save it on the table
-                    item = QtGui.QTableWidgetItem(unicode(self.segmentManager.measuredParameters[i, j]))
-
-                    # color options for the rows of the table
-                    item.setBackgroundColor(
-                        self.TABLE_ROW_COLOR_ODD if i % 2 == 0 else self.TABLE_ROW_COLOR_EVEN)
-
-                except Exception as e:
-                    # if some error is raised set a default value
-                    item = QtGui.QTableWidgetItem(0)
-                    print("Error measure params " + e.message)
-
+        # update every x,y position
+        for i in range(self.segmentManager.rowCount()):
+            for j in range(self.segmentManager.columnCount()):
+                # set the result to a table item and save it on the table
+                item = QtGui.QTableWidgetItem(unicode(self.segmentManager.getData(i, j)))
+                # color options for the rows of the table
+                item.setBackgroundColor(self.TABLE_ROW_COLOR_ODD if i % 2 == 0 else self.TABLE_ROW_COLOR_EVEN)
                 self.tableParameterOscilogram.setItem(i, j, item)
 
-            for c in range(len(validcategories)):
-                try:
-                    val = self.segmentManager.elementsClasificationTableData[i][c][1]
-                    item = QtGui.QTableWidgetItem(unicode(val))
-                    item.setBackgroundColor(
-                        self.TABLE_ROW_COLOR_ODD if i % 2 == 0 else self.TABLE_ROW_COLOR_EVEN)
+        # connect the table selection with the selection of an element
+        self.tableParameterOscilogram.cellPressed.connect(self.elementSelectedInTable)
+        self.tableParameterOscilogram.resizeColumnsToContents()
 
-                except Exception as e:
-                    # if some error is raised set a default value
-                    item = QtGui.QTableWidgetItem(0)
-                    print("Error measure params " + e.message)
-
-            self.tableParameterOscilogram.setItem(i, c + len(paramsTomeasure), item)
 
     def setProgressBarVisibility(self, visibility=True):
         """
@@ -917,9 +624,9 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
             self.windowProgressDetection.resize(width / 3, height)
             self.windowProgressDetection.move(x + width / 3, y - height / 2 + width / 2)
-            self.windowProgressDetection.show()
+            self.windowProgressDetection.setVisible(True)
         else:
-            self.windowProgressDetection.hide()
+            self.windowProgressDetection.setVisible(False)
 
     # endregion
 
@@ -1006,64 +713,3 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
     # endregion
 
-    def getspectralParameters(self):
-        """
-        obtain the methods for spectral parameter meausrement of the measurementLocations
-        """
-        params = []
-
-        for x in self.spectralMeditions:
-            if isinstance(x[1], bool):
-                if x[1]:
-                    if self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.START][0]:
-                        params.append([x[0] + "(start)", x[2], [["location", self.spectralMeasurementLocation.START]]])
-                    if self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.CENTER][0]:
-                        params.append(
-                            [x[0] + "(center)", x[2], [["location", self.spectralMeasurementLocation.CENTER]]])
-                    if self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.END][0]:
-                        params.append([x[0] + "(end)", x[2], [["location", self.spectralMeasurementLocation.END]]])
-                    if self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.QUARTILE25][0]:
-                        params.append(
-                            [x[0] + "(quartile25)", x[2], [["location", self.spectralMeasurementLocation.QUARTILE25]]])
-                    if self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.QUARTILE75][0]:
-                        params.append(
-                            [x[0] + "(quartile75)", x[2], [["location", self.spectralMeasurementLocation.QUARTILE75]]])
-            else:
-                for y in x[2]:
-                    if y[1]:
-                        if self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.START][0]:
-                            l = [paramData for paramData in x[1]]
-                            l.append(["location", self.spectralMeasurementLocation.START])
-                            params.append([y[0] + "(start)", y[2], l])
-                        if self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.CENTER][0]:
-                            l = [paramData for paramData in x[1]]
-                            l.append(["location", self.spectralMeasurementLocation.CENTER])
-                            params.append([y[0] + "(center)", y[2], l])
-                        if self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.END][0]:
-                            l = [paramData for paramData in x[1]]
-                            l.append(["location", self.spectralMeasurementLocation.END])
-                            params.append([y[0] + "(end)", y[2], l])
-                        if self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.QUARTILE25][0]:
-                            l = [paramData for paramData in x[1]]
-                            l.append(["location", self.spectralMeasurementLocation.QUARTILE25])
-                            params.append([y[0] + "(quartile25)", y[2], l])
-                        if self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.QUARTILE75][0]:
-                            l = [paramData for paramData in x[1]]
-                            l.append(["location", self.spectralMeasurementLocation.QUARTILE75])
-                            params.append([y[0] + "(quartile75)", y[2], l])
-
-        return params
-
-    def getParameters(self):
-        params = []
-        for name, dict in self.meditions:
-            if not name == unicode(self.tr(u'Spectral Meditions')):
-                for x in dict:
-                    if isinstance(x[1], bool):
-                        if x[1]:
-                            params.append([x[0], x[2], []])
-                    else:
-                        for y in x[2]:
-                            if y[1]:
-                                params.append([y[0], y[2], x[1]])
-        return params + self.getspectralParameters()

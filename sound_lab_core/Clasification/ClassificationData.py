@@ -31,11 +31,11 @@ class ClassificationData(QObject):
         """
         QObject.__init__(self)
 
-        #set the training data
-        #TODO establecer la via de almacenamiento y recuperacion de vectores de entrenamiento
+        # set the training data
+        # TODO establecer la via de almacenamiento y recuperacion de vectores de entrenamiento
         trainingData = [] if trainingData is None else trainingData
 
-        #set the categories
+        # set the categories
         default = {"Specie": ["Cartacuba","Arriero"], "Taxa": ["Birds", "Mammals"]}
         categories = default if categories is None else categories
 
