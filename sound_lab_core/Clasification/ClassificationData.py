@@ -46,7 +46,7 @@ class ClassificationData(QObject):
         self.data = trainingData
         self.categories = categories
 
-    def addCategory(self,category):
+    def addCategory(self, category):
         """
 
         :param category:
@@ -58,7 +58,7 @@ class ClassificationData(QObject):
             return True
         return False
 
-    def addValue(self,category,value):
+    def addValue(self, category, value):
         """
         Add a new value (if not exist) into a category.
         If category not exist is created.
@@ -75,7 +75,7 @@ class ClassificationData(QObject):
             return True
         return False
 
-    def removeValue(self,category,value):
+    def removeValue(self, category, value):
         """
 
         :param category:
@@ -88,10 +88,10 @@ class ClassificationData(QObject):
             return True
         return False
 
-    def getvalues(self,category):
+    def getvalues(self, category):
         return self.categories[category] if category in self.categories else []
 
-    def addTrainingVector(self,vector):
+    def addTrainingVector(self, vector):
         """
 
         :param vector:

@@ -57,7 +57,7 @@ class SegmentManager(QObject):
     def getData(self, row, col):
         """
         """
-        if row >= len(self.measuredParameters):
+        if row < 0 or row >= len(self.measuredParameters):
             raise IndexError()
 
         return self.measuredParameters[row, col]
