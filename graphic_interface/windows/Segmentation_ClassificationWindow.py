@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-
 from PyQt4.QtCore import pyqtSlot, Qt
 import PyQt4.QtCore as QtCore
 from PyQt4 import QtGui
@@ -18,6 +17,120 @@ import graphic_interface.windows.ui_python_files.EditCategoriesDialogUI as editC
 from graphic_interface.dialogs.EditCategoriesDialog import EditCategoriesDialog
 from graphic_interface.widgets.EditCategoriesWidget import EditCategoriesWidget
 from SoundLabWindow import SoundLabWindow
+
+
+class SegmentManager:
+    """
+    Manage the parameter measurement over a group of segments.
+    Provide a table interface for segments parameter measurement and classification
+    """
+    def __init__(self):
+        # the classifier object that
+        self._classifier = None
+
+        # the parameter measurer list
+        self._measurer = None
+
+        # stores the measured parameters of the detected elements
+        self.measuredParameters = np.array([[], []])
+
+        # set the connections for the classification data to
+        # update when is added, changed or deleted a value or category
+        self.classificationData = ClassificationData()
+        self.classificationData.valueAdded.connect(self.classificationCategoryValueAdded)
+        self.classificationData.valueRemoved.connect(self.classificationCategoryValueRemove)
+        self.classificationData.categoryAdded.connect(self.classificationCategoryAdded)
+
+        # stores the classification data that are present in the table of meditions
+        # has the form of a list with [["category name","category value"]] for each element
+        # example with 2 elements and 2 categories
+        # [[["Specie","Cartacuba"],["Location","Cuba"]],
+        # [["Specie","Sinsonte"],["Location","Camaguey"]]]
+        self.elementsClasificationTableData = []
+
+        # the names of the columns in the table of parameters measured
+        self.columnNames = []
+
+    def getData(self, row, col):
+        """
+        """
+        if row >= len(self.measuredParameters):
+            raise IndexError()
+
+
+        return self.measuredParameters[row,col]
+
+    # region Properties
+
+    # region Classifier
+
+    @property
+    def classifier(self):
+        return self._classifier
+
+    @classifier.setter
+    def classifier(self, classifier):
+        self._classifier = classifier
+
+    # endregion
+
+    # region Measurer
+
+    @property
+    def measurer(self):
+        return self._measurer
+
+    @measurer.setter
+    def measurer(self, new_measurer):
+        self._measurer = new_measurer
+
+    # endregion
+
+    # endregion
+
+    # region Classification
+    def classificationCategoryValueAdded(self, category, value):
+        # print("In Category "+category+" was added the value: "+value)
+        pass
+
+    def classificationCategoryValueRemove(self, category, value):
+        # print("In Category "+category+" was removed the value: " + value)
+        for i, elem in enumerate(self.elementsClasificationTableData):
+            for j, l in enumerate(elem):
+                if l[0] == category and l[1] == value:
+                    self.elementsClasificationTableData[i][j][1] = self.tr(u"No Identified")
+                    item = QtGui.QTableWidgetItem(unicode(self.elementsClasificationTableData[i][j][1]))
+                    item.setBackgroundColor(
+                        self.TABLE_ROW_COLOR_ODD if i % 2 == 0 else self.TABLE_ROW_COLOR_EVEN)
+                    self.tableParameterOscilogram.setItem(i, len(self.measuredParameters[i]) + j, item)
+
+        self.tableParameterOscilogram.update()
+
+    def classificationCategoryAdded(self, category):
+        for i, elem in enumerate(self.elementsClasificationTableData):
+            self.segmentManager.elementsClasificationTableData[i].append([str(category), self.tr(u"No Identified")])
+
+        if self.tableParameterOscilogram.rowCount() > 0:
+            self.tableParameterOscilogram.insertColumn(self.tableParameterOscilogram.columnCount())
+            column = self.tableParameterOscilogram.columnCount() - 1
+            # put rows in table
+            for row in range(self.tableParameterOscilogram.rowCount()):
+                item = QtGui.QTableWidgetItem(unicode(self.tr(u"No Identified")))
+                item.setBackgroundColor(
+                    self.TABLE_ROW_COLOR_ODD if row % 2 == 0 else self.TABLE_ROW_COLOR_EVEN)
+                self.tableParameterOscilogram.setItem(row, column, item)
+                self.tableParameterOscilogram.setHorizontalHeaderItem(column, QtGui.QTableWidgetItem(category))
+            # insert data in clasification Data
+            self.tableParameterOscilogram.update()
+    # endregion
+
+    def addSegment(self, segment):
+        """
+        Add a new segment to the list of detected elements on the
+        manager. if a parameter measurer is selected
+        """
+        pass
+
 
 
 class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
@@ -102,25 +215,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         # in the main window. Updates the windows graphs on change etc
         self.two_dim_windows = []
 
-        # stores the measured parameters of the detected elements
-        self.measuredParameters = np.array([[], []])
-
-        # set the connections for the classification data to
-        # update when is added, changed or deleted a value or category
-        self.classificationData = ClassificationData()
-        self.classificationData.valueAdded.connect(self.classificationCategoryValueAdded)
-        self.classificationData.valueRemoved.connect(self.classificationCategoryValueRemove)
-        self.classificationData.categoryAdded.connect(self.classificationCategoryAdded)
-
-        # stores the classification data that are present in the table of meditions
-        # has the form of a list with [["category name","category value"]] for each element
-        # example with 2 elements and 2 categories
-        # [[["Specie","Cartacuba"],["Location","Cuba"]],
-        # [["Specie","Sinsonte"],["Location","Camaguey"]]]
-        self.elementsClasificationTableData = []
-
-        # the names of the columns in the table of parameters measured
-        self.columnNames = []
+        self.segmentManager = SegmentManager()
 
         self.showMaximized()
 
@@ -328,8 +423,8 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
                                           u"The two dimensional analisys requires at least one parameter measured."))
             return
 
-        wnd = TwoDimensionalAnalisysWindow(self, columns=self.columnNames, data=self.measuredParameters,
-                                           classificationData=self.classificationData)
+        wnd = TwoDimensionalAnalisysWindow(self, columns=self.segmentManager.columnNames, data=self.segmentManager.measuredParameters,
+                                           classificationData=self.segmentManager.classificationData)
 
         # connect the signals for update the new two dim window actions
         wnd.elementSelected.connect(self.elementSelectedInTable)
@@ -529,16 +624,16 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
                         self.TABLE_ROW_COLOR_ODD if i % 2 == 0 else self.TABLE_ROW_COLOR_EVEN)
 
             # updates the numpy array  with the detected parameters
-            self.measuredParameters = np.concatenate(
+            self.segmentManager.measuredParameters = np.concatenate(
                 (
-            self.measuredParameters[:start_removed_index[0]], self.measuredParameters[start_removed_index[1] + 1:]))
-            self.elementsClasificationTableData = self.elementsClasificationTableData[
-                                                  :start_removed_index[0]] + self.elementsClasificationTableData[
+            self.segmentManager.measuredParameters[:start_removed_index[0]], self.segmentManager.measuredParameters[start_removed_index[1] + 1:]))
+            self.segmentManager.elementsClasificationTableData = self.segmentManager.elementsClasificationTableData[
+                                                  :start_removed_index[0]] + self.segmentManager.elementsClasificationTableData[
                                                                              start_removed_index[1] + 1:]
 
             self.tableParameterOscilogram.update()
             for wnd in self.two_dim_windows:
-                wnd.loadData(self.columnNames, self.measuredParameters)
+                wnd.loadData(self.segmentManager.columnNames, self.segmentManager.measuredParameters)
 
         # deselect the elements on the widget
         self.on_actionDeselect_Elements_triggered()
@@ -571,9 +666,9 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
         self.clasiffCategories_vlayout = QtGui.QVBoxLayout()
 
-        for k in self.classificationData.categories.keys():
+        for k in self.segmentManager.classificationData.categories.keys():
             # foreach clasification category add a widget to show it
-            widget = EditCategoriesWidget(self, k, self.classificationData)
+            widget = EditCategoriesWidget(self, k, self.segmentManager.classificationData)
             self.clasiffCategories_vlayout.addWidget(widget)
 
         # connect the methods for add category action
@@ -605,42 +700,8 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
             if category == "":
                 QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"), self.tr(u"Invalid Category Name."))
                 return
-            if self.clasiffCategories_vlayout and self.classificationData.addCategory(category):
-                self.clasiffCategories_vlayout.addWidget(EditCategoriesWidget(self, category, self.classificationData))
-
-    def classificationCategoryValueAdded(self, category, value):
-        # print("In Category "+category+" was added the value: "+value)
-        pass
-
-    def classificationCategoryValueRemove(self, category, value):
-        # print("In Category "+category+" was removed the value: " + value)
-        for i, elem in enumerate(self.elementsClasificationTableData):
-            for j, l in enumerate(elem):
-                if l[0] == category and l[1] == value:
-                    self.elementsClasificationTableData[i][j][1] = self.tr(u"No Identified")
-                    item = QtGui.QTableWidgetItem(unicode(self.elementsClasificationTableData[i][j][1]))
-                    item.setBackgroundColor(
-                        self.TABLE_ROW_COLOR_ODD if i % 2 == 0 else self.TABLE_ROW_COLOR_EVEN)
-                    self.tableParameterOscilogram.setItem(i, len(self.measuredParameters[i]) + j, item)
-
-        self.tableParameterOscilogram.update()
-
-    def classificationCategoryAdded(self, category):
-        for i, elem in enumerate(self.elementsClasificationTableData):
-            self.elementsClasificationTableData[i].append([str(category), self.tr(u"No Identified")])
-
-        if self.tableParameterOscilogram.rowCount() > 0:
-            self.tableParameterOscilogram.insertColumn(self.tableParameterOscilogram.columnCount())
-            column = self.tableParameterOscilogram.columnCount() - 1
-            # put rows in table
-            for row in range(self.tableParameterOscilogram.rowCount()):
-                item = QtGui.QTableWidgetItem(unicode(self.tr(u"No Identified")))
-                item.setBackgroundColor(
-                    self.TABLE_ROW_COLOR_ODD if row % 2 == 0 else self.TABLE_ROW_COLOR_EVEN)
-                self.tableParameterOscilogram.setItem(row, column, item)
-                self.tableParameterOscilogram.setHorizontalHeaderItem(column, QtGui.QTableWidgetItem(category))
-            # insert data in clasification Data
-            self.tableParameterOscilogram.update()
+            if self.clasiffCategories_vlayout and self.segmentManager.classificationData.addCategory(category):
+                self.clasiffCategories_vlayout.addWidget(EditCategoriesWidget(self, category, self.segmentManager.classificationData))
 
     def elementsClasification(self, indexes_list, dictionary):
         """
@@ -650,13 +711,13 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         :return:
         """
         for i in indexes_list:
-            for column, l in enumerate(self.elementsClasificationTableData[i]):
+            for column, l in enumerate(self.segmentManager.elementsClasificationTableData[i]):
                 if l[0] in dictionary:
-                    self.elementsClasificationTableData[i][column][1] = dictionary[l[0]]
-                    item = QtGui.QTableWidgetItem(unicode(self.elementsClasificationTableData[i][column][1]))
+                    self.segmentManager.elementsClasificationTableData[i][column][1] = dictionary[l[0]]
+                    item = QtGui.QTableWidgetItem(unicode(self.segmentManager.elementsClasificationTableData[i][column][1]))
                     item.setBackgroundColor(
                         self.TABLE_ROW_COLOR_ODD if i % 2 == 0 else self.TABLE_ROW_COLOR_EVEN)
-                    self.tableParameterOscilogram.setItem(i, len(self.measuredParameters[i]) + column, item)
+                    self.tableParameterOscilogram.setItem(i, len(self.segmentManager.measuredParameters[i]) + column, item)
 
         # resize the column to contains completely the new categories and values
         self.tableParameterOscilogram.resizeColumnsToContents()
@@ -753,10 +814,10 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
                 self.updateDetectionProgressBar(50)
 
                 # clasification data update TODO improve comments and implementation
-                validcategories = [k for k in self.classificationData.categories.keys() if
-                                   len(self.classificationData.getvalues(k)) > 0]
+                validcategories = [k for k in self.segmentManager.classificationData.categories.keys() if
+                                   len(self.segmentManager.classificationData.getvalues(k)) > 0]
 
-                self.elementsClasificationTableData = [[[k, self.tr(u"No Identified")] for k in validcategories] for
+                self.segmentManager.elementsClasificationTableData = [[[k, self.tr(u"No Identified")] for k in validcategories] for
                                                        _ in range(self.tableParameterOscilogram.rowCount())]
 
                 # clear the previous meditions
@@ -771,9 +832,9 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
                 self.tableParameterOscilogram.cellPressed.connect(self.elementSelectedInTable)
 
                 # get the column names of the meditions and set them on the table headers
-                self.columnNames = [label[0] for label in paramsTomeasure]
+                self.segmentManager.columnNames = [label[0] for label in paramsTomeasure]
 
-                columns = self.columnNames + validcategories
+                columns = self.segmentManager.columnNames + validcategories
 
                 # set the number of columns to the amount of parameters measured
                 # plus the amount of categories of classification
@@ -783,7 +844,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
                 self.updateDetectionProgressBar(95)
 
                 # the table of parameters stored as a numpy array
-                self.measuredParameters = np.zeros(elem_count * parameter_count).reshape((elem_count, parameter_count))
+                self.segmentManager.measuredParameters = np.zeros(elem_count * parameter_count).reshape((elem_count, parameter_count))
 
                 self.measureParameters(paramsTomeasure, validcategories)
 
@@ -794,7 +855,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
                 # update the measured data on the two dimensional opened windows
                 for wnd in self.two_dim_windows:
-                    wnd.loadData(self.columnNames, self.measuredParameters)
+                    wnd.loadData(self.segmentManager.columnNames, self.segmentManager.measuredParameters)
 
             # refresh changes
             self.widget.graph()
@@ -813,10 +874,10 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
                     dictionary = dict(params[2] if params[2] is not None else [])
 
                     # compute the param with the function
-                    self.measuredParameters[i, j] = params[1](self.widget.Elements[i], dictionary)
+                    self.segmentManager.measuredParameters[i, j] = params[1](self.widget.Elements[i], dictionary)
 
                     # set the result to a table item and save it on the table
-                    item = QtGui.QTableWidgetItem(unicode(self.measuredParameters[i, j]))
+                    item = QtGui.QTableWidgetItem(unicode(self.segmentManager.measuredParameters[i, j]))
 
                     # color options for the rows of the table
                     item.setBackgroundColor(
@@ -831,7 +892,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
             for c in range(len(validcategories)):
                 try:
-                    val = self.elementsClasificationTableData[i][c][1]
+                    val = self.segmentManager.elementsClasificationTableData[i][c][1]
                     item = QtGui.QTableWidgetItem(unicode(val))
                     item.setBackgroundColor(
                         self.TABLE_ROW_COLOR_ODD if i % 2 == 0 else self.TABLE_ROW_COLOR_EVEN)
