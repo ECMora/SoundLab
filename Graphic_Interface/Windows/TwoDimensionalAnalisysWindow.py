@@ -283,7 +283,7 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         Save the widget graph as image
         :return:
         """
-        saveImage(self.widget, self.tr(u"twoDimGraph")+ self.widget.signal.name)
+        saveImage(self.widget, self.tr(u"twoDimGraph")  + self.widget.signal.name)
 
     def plot(self):
         """

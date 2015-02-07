@@ -738,10 +738,15 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         self.widget.deselectElement()
         try:
             if elementsDetectorDialog.exec_():
+                # the detection dialog is a factory of segmentation,
+                # parameter measurements and classification concrete implementations
                 self.getSettings(elementsDetectorDialog)
 
                 # get the detector from dialog selection
                 self.widget.detector = elementsDetectorDialog.detector
+
+                # get the parameter measurement implementation
+                # get the classification object
 
                 paramsTomeasure = self.getParameters()
 
@@ -802,7 +807,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         except Exception as e:
             print("detection errors: " + e.message)
 
-    def measureParameters(self, paramsTomeasure, validcategories ):
+    def measureParameters(self, paramsTomeasure, validcategories):
         for i in range(self.tableParameterOscilogram.rowCount()):
             for j, params in enumerate(paramsTomeasure):
                 try:
