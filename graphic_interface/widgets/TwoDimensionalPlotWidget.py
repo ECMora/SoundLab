@@ -15,7 +15,7 @@ class TwoDPlotWidget(pg.PlotWidget):
     def __init__(self,parent=None):
         pg.PlotWidget.__init__(self, parent)
 
-        #variables for rectangular selection manipulation
+        # variables for rectangular selection manipulation
         self.mousePressed = False
         self.lastPoint = QPoint(0, 0)
         self.oldX, self.oldY = 0, 0
@@ -40,6 +40,7 @@ class TwoDPlotWidget(pg.PlotWidget):
         pg.PlotWidget.mousePressEvent(self, ev)
         if ev.button() == QtCore.Qt.LeftButton:
             self.mousePressed = True
+
             # get the local graph coordinate point from
             # the pixel where the cursor was pressed
             # update last point
@@ -55,8 +56,8 @@ class TwoDPlotWidget(pg.PlotWidget):
         """
         point = self.getPlotItem().getViewBox().mapSceneToView(QtCore.QPointF(ev.x(),ev.y()))
         x, y = point.x(), point.y()
-        #self.oldX,self.oldY, x, y = minThresholdLabel(self.oldX,x),minThresholdLabel(self.oldY,y),maxThresholdLabel(self.oldX,x),maxThresholdLabel(self.oldY,y)
-        self.ElementSelectionRect.setRect(self.lastPoint.x(),self.lastPoint.y(),x-self.lastPoint.x(),y - self.lastPoint.y())
+        self.ElementSelectionRect.setRect(self.lastPoint.x(), self.lastPoint.y(),
+                                          x-self.lastPoint.x(), y - self.lastPoint.y())
 
     def mouseReleaseEvent(self, ev):
         """
@@ -69,7 +70,7 @@ class TwoDPlotWidget(pg.PlotWidget):
     def mouseMoveEvent(self, ev):
         pg.PlotWidget.mouseMoveEvent(self,ev)
         if self.mousePressed:
-            #update (if necessary) the coordinates of the visual rectangle.
+            # update (if necessary) the coordinates of the visual rectangle.
             self.__updateSelectionRect(ev)
             self.update()
 

@@ -40,7 +40,9 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
 
     # endregion
 
-    def __init__(self, parent=None, columns=None, data=None, classificationData=None):
+    # region Initialize
+
+    def __init__(self, parent, segmentManager):
         """
         Create a new window for two dimensional graphs
         :param parent: parent window if any
@@ -53,9 +55,30 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         super(TwoDimensionalAnalisysWindow, self).__init__(parent)
         self.setupUi(self)
 
+        # initialization settings for the plot widget
+        self.configureWidget()
+
+        self.segmentManager = segmentManager
+
+        # scatter plot to graphs the elements
+        self.scatter_plot = None
+
+        # font to use in the axis of the graph
+        self.font = QtGui.QFont()
+
+        # index of the element currently selected in the widget if any
+        # if no selection element then -1
+        self.selectedElementIndex = -1
+
+        self.createParameterTreeOptions(self.segmentManager.columnNames)
+
         self.show()
 
-        # initialization settings for the plot widget
+    def configureWidget(self):
+        """
+        Set a group of initial configuration on the visualization widget
+        :return:
+        """
         self.widget.getPlotItem().showGrid(x=True, y=True)
         self.widget.getPlotItem().hideButtons()
         self.widget.setMouseEnabled(x=False, y=False)
@@ -63,29 +86,11 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         self.widget.enableAutoRange()
         self.widget.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
 
-        # scatter plot to graphs the elements
-        self.scatter_plot = None
-
-        # font to use in the axis of the graph
-        self.font = QtGui.QFont()
-        if classificationData is None:
-            raise Exception(unicode(self.tr(u"ClassificationData could not be None.")))
-
-        self.classificationData = classificationData
-        # index of the element currently selected in the widget if any
-        # if no selection element then -1
-        self.selectedElementIndex = -1
-
-        self.columns = columns if columns is not None else []
-
-        # the numpy [,] array with the parameter measurement
-        self.data = data if data is not None else numpy.zeros(4).reshape((2, 2))
-
         self.widget.addAction(self.actionHide_Show_Settings)
         self.widget.addAction(self.actionSaveGraphImage)
         self.widget.addAction(self.actionMark_Selected_Elements_As)
 
-        self.createParameterTreeOptions(self.columns)
+    # endregion
 
     @pyqtSlot()
     def on_actionHide_Show_Settings_triggered(self):
@@ -157,43 +162,35 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         # visualize the changes
         self.plot()
 
-    def loadData(self, columns=None, data=None):
+    def loadData(self, segmentManager):
         """
         Load a new detection data. Update the graph and the internal variables
-        from the
-        :param columns: The new columns of the parameters names
-        :param data: the measured new data. must be a numpy array of len(columns)*count_detected_elements
+        from the segment manager update
         :return:
         """
         self.deselectElement()
-        self.data = data
 
-        # update graph and param tree
-        if self.columns != columns:
-            xaxis = [unicode(x) for x in columns]
+        # removes the old combo for the old measurements
+        # the x axis old measurements
+        self.ParamTree.param(unicode(self.tr(u'X Axis Parameter Settings'))).removeChild(
+            self.ParamTree.param(unicode(self.tr(u'X Axis Parameter Settings'))).
+            param(unicode(self.tr(u'X Axis'))))
 
-            # removes the old combo for the old measurements
-            # the x axis old measurements
-            self.ParamTree.param(unicode(self.tr(u'X Axis Parameter Settings'))).removeChild(
-                self.ParamTree.param(unicode(self.tr(u'X Axis Parameter Settings'))).
-                param(unicode(self.tr(u'X Axis'))))
-            # the y axis old measurements
-            self.ParamTree.param(unicode(self.tr(u'Y Axis Parameter Settings'))).removeChild(
-                self.ParamTree.param(unicode(self.tr(u'Y Axis Parameter Settings'))).
-                param(unicode(self.tr(u'Y Axis'))))
+        # the y axis old measurements
+        self.ParamTree.param(unicode(self.tr(u'Y Axis Parameter Settings'))).removeChild(
+            self.ParamTree.param(unicode(self.tr(u'Y Axis Parameter Settings'))).
+            param(unicode(self.tr(u'Y Axis'))))
 
-            # create the new combo for the new measurements
-            # the x axis new measurements
-            self.ParamTree.param(unicode(self.tr(u'X Axis Parameter Settings'))).addChild(
-                Parameter.create(**{u'name': unicode(self.tr(u'X Axis')), u'type': u'list', u'value': 0,
-                                    u'default': 0, u'values': [(name, i) for i, name in enumerate(xaxis)]}))
+        # create the new combo for the new measurements
+        # the x axis new measurements
+        self.ParamTree.param(unicode(self.tr(u'X Axis Parameter Settings'))).addChild(
+            Parameter.create(**{u'name': unicode(self.tr(u'X Axis')), u'type': u'list', u'value': 0,
+                                u'default': 0, u'values': [(name, i) for i, name in enumerate(segmentManager.columnNames)]}))
 
-            # the y axis new measurements
-            self.ParamTree.param(unicode(self.tr(u'Y Axis Parameter Settings'))).addChild(
-                Parameter.create(**{u'name': unicode(self.tr(u'Y Axis')), u'type': u'list', u'value': 0,
-                                    u'default': 0, u'values': [(name, i) for i, name in enumerate(xaxis)]}))
-
-            self.columns = columns
+        # the y axis new measurements
+        self.ParamTree.param(unicode(self.tr(u'Y Axis Parameter Settings'))).addChild(
+            Parameter.create(**{u'name': unicode(self.tr(u'Y Axis')), u'type': u'list', u'value': 0,
+                                u'default': 0, u'values': [(name, i) for i, name in enumerate(segmentManager.columnNames)]}))
 
         self.plot()
 
@@ -304,8 +301,8 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         fig_size = self.ParamTree.param(unicode(self.tr(u'Figures Size'))).value()
 
         # get the values x,y of each element according to the measured parameter selected in each axis
-        x_coords = [e[x_axis_index] for e in self.data]
-        y_coords = [e[y_axis_index] for e in self.data]
+        x_coords = [e[x_axis_index] for e in self.segmentManager.measuredParameters]
+        y_coords = [e[y_axis_index] for e in self.segmentManager.measuredParameters]
 
         xmin, xmax = min(x_coords), max(x_coords)
         ymin, ymax = min(y_coords), max(y_coords)
@@ -331,8 +328,8 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
 
         # update font size in axis labels
         text_size = {'color': '#FFF', 'font-size': str(self.font.pointSize()) + 'pt'}
-        self.widget.getPlotItem().getAxis("bottom").setLabel(text=str(self.columns[x_axis_index]), **text_size)
-        self.widget.getPlotItem().getAxis("left").setLabel(text=str(self.columns[y_axis_index]), **text_size)
+        self.widget.getPlotItem().getAxis("bottom").setLabel(text=str(self.segmentManager.columnNames[x_axis_index]), **text_size)
+        self.widget.getPlotItem().getAxis("left").setLabel(text=str(self.segmentManager.columnNames[y_axis_index]), **text_size)
 
         # add the plot to the widget
         self.widget.addItem(self.scatter_plot)
@@ -380,9 +377,8 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         self.clasiffCategories_vlayout = QtGui.QVBoxLayout()
         self.selection_widgets = []
 
-        for k in self.classificationData.categories.keys():
-            a = EditCategoriesWidget(self, k, self.classificationData, selectionOnly=True)
-            # a.setStyleSheet("background-color:#EEF")
+        for k in self.segmentManager.classificationData.categories.keys():
+            a = EditCategoriesWidget(self, k, self.segmentManager.classificationData, selectionOnly=True)
             self.selection_widgets.append(a)
             self.clasiffCategories_vlayout.addWidget(a)
 
@@ -391,7 +387,8 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         widget.setLayout(self.clasiffCategories_vlayout)
         editCategDialog.listWidget.setWidget(widget)
         editCategDialogWindow.exec_()
-        d = dict([(x.categoryName, self.classificationData.categories[x.categoryName][x.comboCategories.currentIndex()]) \
+        d = dict([(x.categoryName,
+                   self.segmentManager.classificationData.categories[x.categoryName][x.comboCategories.currentIndex()]) \
                   for x in self.selection_widgets if x.comboCategories.count() > 0])
         self.elementsClasiffied.emit(selected_elements, d)
 
@@ -429,7 +426,7 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
                                           unicode(self.tr(u"Invalid Category Name.")))
                 return
 
-            if self.clasiffCategories_vlayout and self.classificationData.addCategory(category):
-                w = EditCategoriesWidget(self, category, self.classificationData)
+            if self.clasiffCategories_vlayout and self.segmentManager.classificationData.addCategory(category):
+                w = EditCategoriesWidget(self, category, self.segmentManager.classificationData)
                 self.selection_widgets.append(w)
                 self.clasiffCategories_vlayout.addWidget(w)
