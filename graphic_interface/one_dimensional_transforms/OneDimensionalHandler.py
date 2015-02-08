@@ -34,6 +34,13 @@ class OneDimensionalHandler(QObject):
         """
         pass
 
+    def get_axis_labels(self):
+        """
+        Gets the axis information to show
+        :return: a dict with the corresponding axis labels
+        """
+        pass
+
     def apply_settings_change(self, transform, change):
         """
         Applies the given change to the given transform.

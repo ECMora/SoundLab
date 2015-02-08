@@ -16,9 +16,9 @@ class OneDimensionalGeneralHandler(QObject):
         QObject.__init__(self, parent)
         self._handlers_by_name = {
             'Envelope': EnvelopeHandler(parent),
-            'AveragePowSpec': AveragePowSpecHandler(parent),
-            'LogarithmicPowSpec': LogarithmicPowSpecHandler(parent),
-            'InstantFrequencies': InstantFrequenciesHandler(parent)
+            'Averaged Power Spectrum': AveragePowSpecHandler(parent),
+            'Logarithmic Power Spectrum': LogarithmicPowSpecHandler(parent),
+            'Instant Frequencies': InstantFrequenciesHandler(parent)
         }
         self._handlers_by_class = {handler.get_transform_class(): handler for _, handler in
                                    self._handlers_by_name.items()}
@@ -37,6 +37,14 @@ class OneDimensionalGeneralHandler(QObject):
         :return: an instance of the corresponding one dimensional transform
         """
         return self._handlers_by_name[name].get_transform_instance()
+
+    def get_axis_labels(self, transform):
+        """
+        Gets the axis labels information of the corresponding transform to show it when graphing
+        :param transform: the one dimensional transform instance from which to take the values
+        :return: a dict with the axis information of the corresponding one dimensional transform
+        """
+        return self._handlers_by_class[transform.__class__].get_axis_labels()
 
     def get_settings(self, transform):
         """

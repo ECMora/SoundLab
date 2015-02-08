@@ -23,6 +23,9 @@ class InstantFrequenciesHandler(OneDimensionalHandler):
         #          u'children': []}]
         return []
 
+    def get_axis_labels(self):
+        return {u'X': u'Time (s)', u'Y': u'Frequency (kHz)' }
+
     def apply_settings_change(self, transform, change):
         """
 

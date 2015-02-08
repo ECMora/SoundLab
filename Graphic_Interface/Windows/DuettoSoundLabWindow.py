@@ -168,7 +168,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         #  the list of one dimensional processing windows opened by the user.
         self.one_dim_windows = []
-        self.widget.signalIntervalSelected.connect(self.updateOneDimWindow)
+
 
         #  accept drops to open signals by drop
         self.setAcceptDrops(True)
@@ -703,6 +703,9 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         # connect the histogram
         self.updateHistogramWidget()
+
+        # connection for one dim transforms update
+        self.widget.signalIntervalSelected.connect(self.updateOneDimWindow)
 
         # connect for data display
         self.widget.toolDataDetected.connect(self.updateStatusBar)

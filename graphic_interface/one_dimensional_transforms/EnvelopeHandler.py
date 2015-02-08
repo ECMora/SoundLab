@@ -26,6 +26,8 @@ class EnvelopeHandler(OneDimensionalHandler):
                       u'values': [(u"Sin", "sin"),
                                   (u'Lineal', "lineal"),
                                   (u"Cuadratic", "cuadratic")]}]
+    def get_axis_labels(self):
+        return {u'X': u'Time (s)', u'Y': u'Amplitude' }
 
     def apply_settings_change(self, transform, change):
         """

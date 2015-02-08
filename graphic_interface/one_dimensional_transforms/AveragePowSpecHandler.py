@@ -34,6 +34,9 @@ class AveragePowSpecHandler(OneDimensionalHandler):
                      {u'name': unicode(self.tr(u'FFT overlap')), u'type': u'int', u'limits': (1, 99),
                       u'value': transform.overlapRatio}]
 
+    def get_axis_labels(self):
+        return {u'X': u'Frequency (kHz)', u'Y': u'Intensity (dB)' }
+
     def apply_settings_change(self, transform, change):
         """
 

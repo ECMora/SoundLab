@@ -85,7 +85,7 @@ class OneDimPlotWidget(SoundLabWidget,pg.PlotWidget):
     def getInfo(self, info1, info2):
        pass
 
-    def graph(self, indexFrom=0, indexTo=-1,morekwargs=None):
+    def graph(self, indexFrom=0, indexTo=-1,labels=None, morekwargs=None):
         """
         Graphs the one dimensional one_dim_transform of a signal interval on the widget
         :param indexFrom: start value of the signal interval in array data indexes
@@ -96,7 +96,11 @@ class OneDimPlotWidget(SoundLabWidget,pg.PlotWidget):
             self.clear()
             (x, y) = self.one_dim_transform.getData(indexFrom, indexTo)
             self.plot(x, y, pen=self.plot_color)
-            # self.setRange(xRange = (0,x[len(x) - 1]),yRange = (np.amin(y),0) ,padding=0,update=True)
+            self.setXRange(0, x[len(x) - 1],padding=0)
+            xLabel = unicode(self.tr(labels[u'X']))
+            yLabel = unicode(self.tr(labels[u'Y']))
+            self.getPlotItem().setLabel(axis='bottom',text=xLabel)
+            self.getPlotItem().setLabel(axis='left', text=yLabel)
             self.update()
             self.show()
 

@@ -3,7 +3,6 @@ from PyQt4 import QtGui
 from duetto.audio_signals import AudioSignal
 from pyqtgraph.parametertree import Parameter, ParameterTree
 from pyqtgraph.parametertree.parameterTypes import ListParameter
-from duetto.dimensional_transformations.one_dimensional_transforms import OneDimensionalTransform
 from duetto.dimensional_transformations.one_dimensional_transforms.AveragePowSpectrumTransform import AveragePowSpec
 from graphic_interface.one_dimensional_transforms.OneDimensionalGeneralHandler import OneDimensionalGeneralHandler
 from graphic_interface.windows.ParameterList import DuettoListParameterItem
@@ -15,11 +14,15 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
     Window that allow to create and visualize one dimensional transforms on signals
     """
     DOCK_OPTIONS_WIDTH = 250
+    WIDGET_MINIMUN_HEIGHT = 350
+    WIDGET_MINIMUN_WIDTH = 2. * DOCK_OPTIONS_WIDTH
 
     def __init__(self, parent=None, signal=None):
         super(OneDimensionalAnalysisWindow, self).__init__(parent)
         self.setupUi(self)
         self.show()
+        self.widget.setMinimumWidth(self.WIDGET_MINIMUN_WIDTH)
+        self.widget.setMinimumHeight(self.WIDGET_MINIMUN_HEIGHT)
 
         self._tranforms_handler = OneDimensionalGeneralHandler(self)
 
@@ -36,11 +39,12 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
 
         # set a default one dim one_dim_transform to the widget
         self.widget.signal = signal
-        self.widget.one_dim_transform = AveragePowSpec(signal=signal)
+
         # self.signal = signal
 
         # Parameter Tree Settings
         self.__createParameterTree()
+        self.widget.one_dim_transform = AveragePowSpec(signal)
         # self._tranforms_handler.dataChanged.connect(self.widget.graph)
 
     def load_workspace(self, workspace):
@@ -88,7 +92,8 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
             self.indexTo = indexTo
         if indexFrom != self.indexFrom:
             self.indexFrom = indexFrom
-        self.widget.graph(indexFrom, indexTo)
+        labels = self._tranforms_handler.get_axis_labels(self.widget.one_dim_transform)
+        self.widget.graph(indexFrom, indexTo, labels)
 
     # endregion
 
@@ -104,9 +109,9 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
         transforms = self._tranforms_handler.get_all_transforms_names()
         transforms = [(unicode(self.tr(unicode(t))), t) for t in transforms]
         params = [
-            {u'name': unicode(self.tr(u'One_Dim_Transform')), u'type': u'list',
-             u'value': transforms[0][0],
-             u'default': transforms[1][1],
+            {u'name': unicode(self.tr(u'One Dimensional Transform')), u'type': u'list',
+             u'value': transforms[3][1],
+             u'default': transforms[3][1],
              u'values': transforms}
         ]
 
@@ -120,7 +125,7 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
         self.parameterTree.setParameters(self.ParamTree, showTop=False)
 
         # connect the signals to react when a change of one_dim_transform is made
-        self.ParamTree.param(unicode(self.tr(u'One_Dim_Transform'))).sigValueChanged.connect(self.changeTransform)
+        self.ParamTree.param(unicode(self.tr(u'One Dimensional Transform'))).sigValueChanged.connect(self.changeTransform)
 
         # reload the new widgets one_dim_transform options
         self.reloadOptionsWidget(self.widget.one_dim_transform)
@@ -143,8 +148,9 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
             params = self._tranforms_handler.get_settings(one_dim_transform)
             self._transform_paramTree = Parameter.create(name=u'Settings', type=u'group', children=params)
 
-            self.ParamTree.param(unicode(self.tr(u'One_Dim_Transform'))).clearChildren()
-            self.ParamTree.param(unicode(self.tr(u'One_Dim_Transform'))).addChild(self._transform_paramTree)
+            self.ParamTree.param(unicode(self.tr(u'One Dimensional Transform'))).clearChildren()
+            if params != []:
+                self.ParamTree.param(unicode(self.tr(u'One Dimensional Transform'))).addChild(self._transform_paramTree)
 
             self._transform_paramTree.sigTreeStateChanged.connect(self.changeTransformSettings)
 

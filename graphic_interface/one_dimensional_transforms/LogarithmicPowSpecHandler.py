@@ -29,6 +29,9 @@ class LogarithmicPowSpecHandler(OneDimensionalHandler):
                                   (unicode(self.tr(u'None')), WindowFunction.WindowNone),
                                   (u"Rectangular", WindowFunction.Rectangular)]}]
 
+    def get_axis_labels(self):
+        return {u'X': u'Frequency (kHz)', u'Y': u'Intensity (dB)' }
+
     def apply_settings_change(self, transform, change):
         """
 
