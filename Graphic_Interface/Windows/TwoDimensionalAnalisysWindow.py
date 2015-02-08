@@ -70,7 +70,7 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         # if no selection element then -1
         self.selectedElementIndex = -1
 
-        self.createParameterTreeOptions(self.segmentManager.columnNames)
+        self.createParameterTreeOptions(self.segmentManager.parameterColumnNames)
 
         self.show()
 
@@ -105,17 +105,17 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
             # if was previously invisible
             self.dockGraphsOptions.setFloating(False)
 
-    def createParameterTreeOptions(self, columnNames):
+    def createParameterTreeOptions(self, parameterColumnNames):
         """
         Create the parameter tree with the visual options according to the
         measured parameters.
-        :param columnNames: the names of the measured parameters
+        :param parameterColumnNames: the names of the measured parameters
         :return:
         """
-        if len(columnNames) == 0:
+        if len(parameterColumnNames) == 0:
             return
         # the X axis posible params names
-        xaxis = [unicode(x) for x in columnNames]
+        xaxis = [unicode(x) for x in parameterColumnNames]
 
         # get two initial random parameters to visualize in x and y axis
         x, y = random.randint(0, len(xaxis) / 2), random.randint(len(xaxis) / 2, len(xaxis) - 1)
@@ -185,13 +185,26 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         # the x axis new measurements
         self.ParamTree.param(unicode(self.tr(u'X Axis Parameter Settings'))).addChild(
             Parameter.create(**{u'name': unicode(self.tr(u'X Axis')), u'type': u'list', u'value': 0,
-                                u'default': 0, u'values': [(name, i) for i, name in enumerate(segmentManager.columnNames)]}))
+                                u'default': 0, u'values':
+                [(name, i) for i, name in enumerate(segmentManager.parameterColumnNames)]}))
 
         # the y axis new measurements
         self.ParamTree.param(unicode(self.tr(u'Y Axis Parameter Settings'))).addChild(
             Parameter.create(**{u'name': unicode(self.tr(u'Y Axis')), u'type': u'list', u'value': 0,
-                                u'default': 0, u'values': [(name, i) for i, name in enumerate(segmentManager.columnNames)]}))
+                                u'default': 0, u'values':
+                [(name, i) for i, name in enumerate(segmentManager.parameterColumnNames)]}))
 
+        self.plot()
+
+    def updateData(self, segmentManager):
+        """
+        Update the data from the segment manager where a change is made
+        on the amount of elements(someone(s) is(are) deleted) but not in the paramaters measured
+        (If the change is made on parameters must call loadData)
+        :param segmentManager:
+        :return:
+        """
+        self.segmentManager = self.segmentManager
         self.plot()
 
     def changeFont(self):
@@ -280,7 +293,10 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         Save the widget graph as image
         :return:
         """
-        saveImage(self.widget, self.tr(u"twoDimGraph")  + self.widget.signal.name)
+        fname = unicode(QFileDialog.getSaveFileName(self, self.tr(u"Save two dimensional graph as an Image"),
+                                                    u"two-dim-graph-Duetto-Image" + unicode(self.widget.signal.name),
+                                                    u"*.jpg"))
+        saveImage(self.widget, fname)
 
     def plot(self):
         """
@@ -328,8 +344,8 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
 
         # update font size in axis labels
         text_size = {'color': '#FFF', 'font-size': str(self.font.pointSize()) + 'pt'}
-        self.widget.getPlotItem().getAxis("bottom").setLabel(text=str(self.segmentManager.columnNames[x_axis_index]), **text_size)
-        self.widget.getPlotItem().getAxis("left").setLabel(text=str(self.segmentManager.columnNames[y_axis_index]), **text_size)
+        self.widget.getPlotItem().getAxis("bottom").setLabel(text=str(self.segmentManager.parameterColumnNames[x_axis_index]), **text_size)
+        self.widget.getPlotItem().getAxis("left").setLabel(text=str(self.segmentManager.parameterColumnNames[y_axis_index]), **text_size)
 
         # add the plot to the widget
         self.widget.addItem(self.scatter_plot)
@@ -370,63 +386,12 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
             return
 
         # get the selection
-        editCategDialog = editCateg.Ui_Dialog()
-        editCategDialogWindow = EditCategoriesDialog(self)
-        editCategDialog.setupUi(editCategDialogWindow)
-        widget = QWidget()
-        self.clasiffCategories_vlayout = QtGui.QVBoxLayout()
-        self.selection_widgets = []
+        editCategDialogWindow = EditCategoriesDialog(self.segmentManager.classificationData,
+                                                     selectionOnly=True)
 
-        for k in self.segmentManager.classificationData.categories.keys():
-            a = EditCategoriesWidget(self, k, self.segmentManager.classificationData, selectionOnly=True)
-            self.selection_widgets.append(a)
-            self.clasiffCategories_vlayout.addWidget(a)
-
-        editCategDialog.bttnAddCategory.clicked.connect(self.addCategory)
-
-        widget.setLayout(self.clasiffCategories_vlayout)
-        editCategDialog.listWidget.setWidget(widget)
         editCategDialogWindow.exec_()
-        d = dict([(x.categoryName,
-                   self.segmentManager.classificationData.categories[x.categoryName][x.comboCategories.currentIndex()]) \
-                  for x in self.selection_widgets if x.comboCategories.count() > 0])
+
+        d = dict([(x.categoryName, self.segmentManager.classificationData.categories[x.categoryName][x.comboCategories.currentIndex()]) \
+                  for x in editCategDialogWindow.selection_widgets if x.comboCategories.count() > 0])
+
         self.elementsClasiffied.emit(selected_elements, d)
-
-    def addCategory(self):
-        """
-        Add a new available classification category
-        Open the dialog of categories and save the changes.
-        :return:
-        """
-        dialog = QtGui.QDialog(self)
-        dialog.setWindowTitle(unicode(self.tr(u"Create New Category")))
-
-        text = QtGui.QLineEdit()
-        layout = QtGui.QVBoxLayout()
-        layout.addWidget(QtGui.QLabel(unicode(
-                        self.tr(u"Insert the name of the new Category"))))
-        layout.addWidget(text)
-
-        # add the results buttons
-        butts = QtGui.QDialogButtonBox()
-        butts.addButton(QtGui.QDialogButtonBox.Ok)
-        butts.addButton(QtGui.QDialogButtonBox.Cancel)
-        QtCore.QObject.connect(butts, QtCore.SIGNAL("accepted()"), dialog.accept)
-        QtCore.QObject.connect(butts, QtCore.SIGNAL("rejected()"), dialog.reject)
-
-        layout.addWidget(butts)
-        dialog.setLayout(layout)
-
-        if dialog.exec_():
-
-            # get the category
-            category = str(text.text())
-            if category == "":
-                QtGui.QMessageBox.warning(QtGui.QMessageBox(), unicode(self.tr(u"Error")),
-                                          unicode(self.tr(u"Invalid Category Name.")))
-                return
-
-            if self.clasiffCategories_vlayout and self.segmentManager.classificationData.addCategory(category):
-                w = EditCategoriesWidget(self, category, self.segmentManager.classificationData)
-                self.selection_widgets.append(w)
-                self.clasiffCategories_vlayout.addWidget(w)

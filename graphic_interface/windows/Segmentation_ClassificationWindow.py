@@ -7,7 +7,6 @@ import numpy as np
 from PyQt4.QtGui import QFileDialog, QAbstractItemView, QWidget, QActionGroup
 from duetto.audio_signals.AudioSignal import AudioSignal
 from sound_lab_core.Segmentation.Elements.Element import Element
-from sound_lab_core.Segmentation.Elements.OneDimensionalElements.OneDimensionalElement import SpectralMeasurementLocation
 from ..dialogs.elemDetectSettings import ElemDetectSettingsDialog
 from graphic_interface.windows.TwoDimensionalAnalisysWindow import TwoDimensionalAnalisysWindow
 from graphic_interface.windows.ui_python_files.SegmentationAndClasificationWindowUI import Ui_MainWindow
@@ -60,44 +59,40 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
         self.configureToolBarActionsGroups()
 
-        # the segmentation window do not allow record or signal name edition
-        self.updateSignalPropertiesLabel(signal)
-        self.signalNameLineEdit.setReadOnly(True)
-
         self.actionRecord.setEnabled(False)
 
         # set the signal to the widget
         self.widget.signal = signal
 
-        # set visible the two widgets by default
+        # the segmentation window do not allow record or signal name edition
+        self.updateSignalPropertiesLabel(signal)
+        self.signalNameLineEdit.setReadOnly(True)
+
+        # set the name of the signal to the visible label
+        self.actionSignalName.setText(self.widget.signalName)
+
+        # set visible the two graphs by default
         self.changeWidgetsVisibility(True, True)
 
-        # connect the signal of the widget for new detected data by its tools
+        # connect the signals on the widget for new detected data by its tools
+        # and to select the element in the table. Binding the element click to the table
         self.widget.toolDataDetected.connect(self.updateStatusBar)
+        self.widget.elementClicked.connect(self.elementSelectedInTable)
 
         self.dockWidgetParameterTableOscilogram.setVisible(False)
         self.tableParameterOscilogram.setSelectionBehavior(QAbstractItemView.SelectRows)
-
-        self.spectralMeasurementLocation = SpectralMeasurementLocation()
-
-        # for select the element in the table. Binding for the element click to the table
-        self.widget.elementClicked.connect(self.elementSelectedInTable)
 
         # add the context menu actions to the widget
         self.__addContextMenuActions()
 
         # create the progress bar that is showed while the detection is made
-        self.windowProgressDetection = QtGui.QProgressBar(self.widget)
+        self.windowProgressDetection = QtGui.QProgressBar(self)
         self.setProgressBarVisibility(False)
 
-        # set the name of the signal to the visible label
-        self.actionSignalName.setText(self.widget.signalName)
-
         # array of windows with two dimensional graphs.
-        # Are stored for a similar behavior to the one dimensional
-        # in the main window. Updates the windows graphs on change etc
         self.two_dim_windows = []
 
+        # the object that handles the measuring of parameters and manage the segments
         self.segmentManager = SegmentManager()
 
         self.showMaximized()
@@ -229,18 +224,6 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
         # initialize the list
         self.two_dim_windows = []
-
-    # endregion
-
-    # region WorkSpace
-
-    def load_workspace(self, workspace):
-        """
-        Method that loads the workspace to update visual options from main window.
-        :param workspace:
-        """
-        self.workSpace = workspace
-        self.widget.load_workspace(workspace)
 
     # endregion
 
@@ -387,31 +370,17 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         if deleted_elements is None:
             return
 
-        rows = self.tableParameterOscilogram.rowCount()
-
         start_removed_index, end_removed_index = deleted_elements
-        # TODO complete the comment here
-        if start_removed_index is not None and start_removed_index >= 0 and end_removed_index < rows:
-            for i in range(end_removed_index, start_removed_index - 1, -1):
-                # delete from table
-                self.tableParameterOscilogram.removeRow(i)
 
-            for i in range(rows):
-                # update table bacground color
-                for j in range(self.tableParameterOscilogram.columnCount()):
-                    self.tableParameterOscilogram.item(i, j).setBackgroundColor(
-                        self.TABLE_ROW_COLOR_ODD if i % 2 == 0 else self.TABLE_ROW_COLOR_EVEN)
+        if start_removed_index is not None and start_removed_index >= 0 \
+           and end_removed_index < self.segmentManager.rowCount():
+            # updates the detected elements
+            self.segmentManager.deleteElements(start_removed_index, end_removed_index)
 
-            # updates the numpy array  with the detected parameters
-            self.segmentManager.measuredParameters = np.concatenate(
-                (self.segmentManager.measuredParameters[:start_removed_index[0]], self.segmentManager.measuredParameters[start_removed_index[1] + 1:]))
-            self.segmentManager.elementsClasificationTableData = self.segmentManager.elementsClasificationTableData[
-                                                  :start_removed_index[0]] + self.segmentManager.elementsClasificationTableData[
-                                                                             start_removed_index[1] + 1:]
+            self.updateTableParameter()
 
-            self.tableParameterOscilogram.update()
             for wnd in self.two_dim_windows:
-                wnd.loadData(self.segmentManager)
+                wnd.updateData(self.segmentManager)
 
         # deselect the elements on the widget
         self.on_actionDeselect_Elements_triggered()
@@ -428,9 +397,29 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         for wnd in self.two_dim_windows:
             wnd.deselectElement()
 
+    def elementSelectedInTable(self, row, column=0):
+        """
+        Callback that is executed for update the element that is selected.
+        An element is selected by the user ad must be updated in all visible representations
+        like table parameter, two dimensional windows, and graphs.
+        :param row: index of the element selected
+        :param column: parameter provided to reuse this method as callabck of the event selected cell
+        in the QTableWidget
+        """
+        # select the element in the table of meditions
+        self.tableParameterOscilogram.selectRow(row)
+
+        # in the widget...
+        self.widget.selectElement(row)
+
+        # and in the opened two dimensional windows
+        for wnd in self.two_dim_windows:
+            wnd.selectElement(row)
+
     # endregion
 
     # region Classification
+
     @pyqtSlot()
     def on_actionClassification_Settings_triggered(self):
         """
@@ -438,68 +427,18 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         in which could be classified a segment.
         """
         # create and open the dialog
-        editCategDialog = editCateg.Ui_Dialog()
-        editCategDialogWindow = EditCategoriesDialog(self)
-        editCategDialog.setupUi(editCategDialogWindow)
-
-        self.clasiffCategories_vlayout = QtGui.QVBoxLayout()
-
-        for k in self.segmentManager.classificationData.categories.keys():
-            # foreach clasification category add a widget to show it
-            widget = EditCategoriesWidget(self, k, self.segmentManager.classificationData)
-            self.clasiffCategories_vlayout.addWidget(widget)
-
-        # connect the methods for add category action
-        editCategDialog.bttnAddCategory.clicked.connect(self.addCategory)
-
-        widget = QWidget()
-        widget.setLayout(self.clasiffCategories_vlayout)
-        editCategDialog.listWidget.setWidget(widget)
-        editCategDialogWindow.exec_()
-
-    def addCategory(self):
-        dialog = QtGui.QDialog(self)
-        dialog.setWindowTitle(self.tr(u"Create New Category"))
-        layout = QtGui.QVBoxLayout()
-        layout.addWidget(QtGui.QLabel(self.tr(u"Insert the name of the new Category")))
-        text = QtGui.QLineEdit()
-        layout.addWidget(text)
-        butts = QtGui.QDialogButtonBox()
-
-        butts.addButton(QtGui.QDialogButtonBox.Ok)
-        butts.addButton(QtGui.QDialogButtonBox.Cancel)
-        QtCore.QObject.connect(butts, QtCore.SIGNAL("accepted()"), dialog.accept)
-        QtCore.QObject.connect(butts, QtCore.SIGNAL("rejected()"), dialog.reject)
-
-        layout.addWidget(butts)
-        dialog.setLayout(layout)
-        if dialog.exec_():
-            category = str(text.text())
-            if category == "":
-                QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"), self.tr(u"Invalid Category Name."))
-                return
-            if self.clasiffCategories_vlayout and self.segmentManager.classificationData.addCategory(category):
-                self.clasiffCategories_vlayout.addWidget(EditCategoriesWidget(self, category, self.segmentManager.classificationData))
+        edit_categ_dialog = EditCategoriesDialog(self.segmentManager.classificationData)
+        edit_categ_dialog.exec_()
 
     def elementsClasification(self, indexes_list, dictionary):
         """
-        Update the clasificaction of the detected elements on the table
+        Update the classification of the detected elements on the table manually
         :param indexes_list: the indexes of the classified elements
         :param dictionary: the dictionary with the values of each category
         :return:
         """
-        for i in indexes_list:
-            for column, l in enumerate(self.segmentManager.elementsClasificationTableData[i]):
-                if l[0] in dictionary:
-                    self.segmentManager.elementsClasificationTableData[i][column][1] = dictionary[l[0]]
-                    item = QtGui.QTableWidgetItem(unicode(self.segmentManager.elementsClasificationTableData[i][column][1]))
-                    item.setBackgroundColor(
-                        self.TABLE_ROW_COLOR_ODD if i % 2 == 0 else self.TABLE_ROW_COLOR_EVEN)
-                    self.tableParameterOscilogram.setItem(i, len(self.segmentManager.measuredParameters[i]) + column, item)
-
-        # resize the column to contains completely the new categories and values
-        self.tableParameterOscilogram.resizeColumnsToContents()
-        self.tableParameterOscilogram.update()
+        self.segmentManager.classifyElements(indexes_list, dictionary)
+        self.updateTableParameter()
 
     # endregion
 
@@ -515,24 +454,24 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         """
         self.windowProgressDetection.setValue(x)
 
-    def elementSelectedInTable(self, row, column=0):
+    def setProgressBarVisibility(self, visibility=True):
         """
-        Callback that is executed for update the element that is selected.
-        An element is selected by the user ad must be updated in all visible representations
-        like table parameter, twodimensional windows, and graphs.
-        :param row: index of the element selected
-        :param column: parameter provided to reuse this method as callabck of the event selected cell
-        in the QTableWidget
+        Show the progress bar in the middle of the widget.
+        Used when a high time demanding task is going to be made to
+        show to the user it's progress.
+        :return:
         """
-        # select the element in the table of meditions
-        self.tableParameterOscilogram.selectRow(row)
+        if visibility:
+            width, height = self.widget.width(), self.windowProgressDetection.size().height()
+            x, y = self.widget.x(), self.widget.y()
 
-        # in the widget...
-        self.widget.selectElement(row)
+            self.windowProgressDetection.resize(width / 3, height)
+            self.windowProgressDetection.move(x + width / 3, y - height / 2 + width / 2)
+            self.windowProgressDetection.setVisible(True)
+        else:
+            self.windowProgressDetection.setVisible(False)
 
-        # and in the opened two dimensional windows
-        for wnd in self.two_dim_windows:
-            wnd.selectElement(row)
+        self.update()
 
     @pyqtSlot()
     def on_actionDetection_triggered(self):
@@ -552,9 +491,8 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
                 # get the detector from dialog selection
                 self.widget.detector = elementsDetectorDialog.detector
 
-                self.segmentManager.measurerList = elementsDetectorDialog.getParametersList()
+                self.segmentManager.measurerList = elementsDetectorDialog.measurerList
                 # get the classification object
-
 
                 self.setProgressBarVisibility(True)
 
@@ -563,20 +501,13 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
                 self.updateDetectionProgressBar(50)
 
-                # clasification data update TODO improve comments and implementation
-                self.segmentManager.updateClassifTableData()
-
-                self.updateDetectionProgressBar(95)
-
                 # measure the parameters over elements detected
                 self.segmentManager.measureParameters(self.widget.Elements)
 
+                self.updateDetectionProgressBar(95)
+
                 # visualize the detection
                 self.updateTableParameter()
-
-                # complete the progress of detection and hide the progress bar
-                self.updateDetectionProgressBar(100)
-                self.setProgressBarVisibility(False)
 
                 # update the measured data on the two dimensional opened windows
                 for wnd in self.two_dim_windows:
@@ -587,6 +518,11 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
         except Exception as e:
             print("detection errors: " + e.message)
+
+
+        # complete the progress of detection and hide the progress bar
+        self.updateDetectionProgressBar(100)
+        self.setProgressBarVisibility(False)
 
     def updateTableParameter(self):
         """
@@ -599,13 +535,15 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         self.tableParameterOscilogram.clear()
         self.tableParameterOscilogram.setRowCount(self.segmentManager.rowCount())
         self.tableParameterOscilogram.setColumnCount(self.segmentManager.columnCount())
-        self.tableParameterOscilogram.setHorizontalHeaderLabels(self.segmentManager.columnNames)
+        self.tableParameterOscilogram.setHorizontalHeaderLabels(self.segmentManager.parameterColumnNames +
+                                                                self.segmentManager.classificationColumnNames)
 
         # update every x,y position
         for i in range(self.segmentManager.rowCount()):
             for j in range(self.segmentManager.columnCount()):
                 # set the result to a table item and save it on the table
                 item = QtGui.QTableWidgetItem(unicode(self.segmentManager.getData(i, j)))
+
                 # color options for the rows of the table
                 item.setBackgroundColor(self.TABLE_ROW_COLOR_ODD if i % 2 == 0 else self.TABLE_ROW_COLOR_EVEN)
                 self.tableParameterOscilogram.setItem(i, j, item)
@@ -613,24 +551,6 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         # connect the table selection with the selection of an element
         self.tableParameterOscilogram.cellPressed.connect(self.elementSelectedInTable)
         self.tableParameterOscilogram.resizeColumnsToContents()
-
-
-    def setProgressBarVisibility(self, visibility=True):
-        """
-        Show the progress bar in the middle of the widget.
-        Used when a high time demanding task is going to be made to
-        show to the user it's progress.
-        :return:
-        """
-        if visibility:
-            width, height = self.widget.width(), self.windowProgressDetection.size().height()
-            x, y = self.widget.x(), self.widget.y()
-
-            self.windowProgressDetection.resize(width / 3, height)
-            self.windowProgressDetection.move(x + width / 3, y - height / 2 + width / 2)
-            self.windowProgressDetection.setVisible(True)
-        else:
-            self.windowProgressDetection.setVisible(False)
 
     # endregion
 
@@ -717,3 +637,10 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
     # endregion
 
+    def load_workspace(self, workspace):
+        """
+        Method that loads the workspace to update visual options from main window.
+        :param workspace:
+        """
+        self.workSpace = workspace
+        self.widget.load_workspace(workspace)

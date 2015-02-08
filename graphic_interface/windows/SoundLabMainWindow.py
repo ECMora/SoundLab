@@ -1026,6 +1026,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
 
             min_freq = self.widget.spectrogramWorkSpace.minY / 1000.0
             max_freq = self.widget.spectrogramWorkSpace.maxY / 1000.0
+
             # the spectrogram theme save the min and max frequency in Hz
             self.workSpace.spectrogramWorkspace.minY = min_freq * 1000
             self.workSpace.spectrogramWorkspace.maxY = max_freq * 1000
@@ -1058,6 +1059,9 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
                 .param(unicode(self.tr(u'FFT window'))). \
                 setValue(window)
 
+            # update the region and gradient from spectrogram histogram
+            self.updateRegionTheme()
+            self.histogramGradientChanged(self.histogram.gradient)
             # endregion
 
             # endregion
@@ -1138,7 +1142,8 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
 
     def updateRegionTheme(self):
         """
-        Updates the variables in the param tree and the work theme that represent the region of the histogram.
+        Updates the variables in the param tree and the
+        work theme that represent the region of the histogram.
         """
         reg = self.histogram.region.getRegion()
         value_min, value_max = min(reg[0], reg[1]), max(reg[0], reg[1])
@@ -1773,6 +1778,8 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         if file_path is None or file_path == '':
             return
 
+        file_path = unicode(file_path)
+
         try:
             #  get the folder of the path and the files on that folder.
             path_base = os.path.split(file_path)[0]
@@ -1835,6 +1842,25 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
                  u'1x': 100, u'2x': 200, u'4x': 400, u'8x': 800}[unicode(action.text())]
 
         self.widget.playSpeed = speed
+
+    @pyqtSlot()
+    def on_actionRecord_triggered(self):
+        mbox = QtGui.QMessageBox(QtGui.QMessageBox.Question, self.tr(u"Record"),
+                                 self.tr(u"Do you want to append recording to the existing "
+                                         + self.widget.signalName + u" signal?"),
+                                 QtGui.QMessageBox.Yes | QtGui.QMessageBox.No, self)
+        result = mbox.exec_()
+
+        try:
+            self.widget.record(newSignal=(result == QtGui.QMessageBox.No))
+            if result == QtGui.QMessageBox.No:
+                self.signalNameLineEdit.setText(self.widget.signalName)
+
+
+        except Exception as ex:
+            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
+                                      self.tr(u"There is no selected audio output "
+                                              u"device or the selected is unavailable"))
 
     # endregion
 

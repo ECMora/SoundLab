@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from PyQt4.QtCore import pyqtSlot
 import PyQt4.QtCore as QtCore
-from PyQt4.QtGui import QActionGroup
+from PyQt4.QtGui import QActionGroup, QFileDialog
 from PyQt4 import QtGui
 from Utils.Utils import saveImage, DECIMAL_PLACES
 from graphic_interface.Settings.Workspace import Workspace
@@ -172,7 +172,10 @@ class SoundLabWindow(QtGui.QMainWindow):
         :return:
         """
         if self.widget.visibleOscilogram:
-            saveImage(self.widget.axesOscilogram, self.tr(u"oscilogram"))
+            fname = unicode(QFileDialog.getSaveFileName(self, self.tr(u"Save oscilogram graph as an Image"),
+                                                u"oscilogram-Duetto-Image", u"*.jpg"))
+            saveImage(self.widget.axesOscilogram, fname)
+
         else:
             QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
                                       self.tr(u"The Oscilogram plot widget is not visible.") + u"\n" + self.tr(
@@ -185,7 +188,9 @@ class SoundLabWindow(QtGui.QMainWindow):
         :return:
         """
         if self.widget.visibleSpectrogram:
-            saveImage(self.widget.axesSpecgram, self.tr(u"specgram"))
+            fname = unicode(QFileDialog.getSaveFileName(self, self.tr(u"Save specgram graph as an Image"),
+                                                u"specgram-Duetto-Image", u"*.jpg"))
+            saveImage(self.widget.axesSpecgram, fname)
         else:
             QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
                                       self.tr(u"The Espectrogram plot widget is not visible.") + " \n" + self.tr(
@@ -199,7 +204,9 @@ class SoundLabWindow(QtGui.QMainWindow):
         :return:
         """
         if self.widget.visibleOscilogram and self.widget.visibleSpectrogram:
-            saveImage(self.widget, self.tr(u"graph"))
+            fname = unicode(QFileDialog.getSaveFileName(self, self.tr(u"Save graph as an Image"),
+                                                u"Duetto-Image", u"*.jpg"))
+            saveImage(self.widget, fname)
         else:
             QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
                                       self.tr(u"One of the plot widgets is not visible.") + " \n" + self.tr(
@@ -300,16 +307,6 @@ class SoundLabWindow(QtGui.QMainWindow):
     @pyqtSlot()
     def on_actionStop_Sound_triggered(self):
         self.widget.stop()
-
-    @pyqtSlot()
-    def on_actionRecord_triggered(self):
-        try:
-            self.widget.record()
-
-        except Exception as ex:
-            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
-                                      self.tr(u"There is no selected audio output "
-                                              u"device or the selected is unavailable"))
 
     @pyqtSlot()
     def on_actionPause_Sound_triggered(self):

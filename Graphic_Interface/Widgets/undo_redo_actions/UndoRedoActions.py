@@ -132,6 +132,26 @@ class SignalNameChangeAction(UndoRedoAction):
         self.signalNameChanged.emit(self.signal.name)
 
 
+class RecordAction(UndoRedoAction):
+    """
+    A record action over a signal
+    """
+    def __init__(self, signal):
+        UndoRedoAction.__init__(self)
+        self.signal = signal
+
+        # update for multiple channels data signals
+        # self.signal_data = np.copy(signal.data)
+        # self.signal_old_data = signal.copy().data
+
+    def undo(self):
+        # self.signal.data = self.signal_old_data
+        pass
+
+    def redo(self):
+        # self.signal.data = self.signal_data
+        pass
+
 
 class ReverseAction(UndoRedoAction):
     def __init__(self, signal, start, end):
@@ -175,7 +195,6 @@ class SilenceAction(UndoRedoAction):
 
     def redo(self):
         CommonSignalProcessor(self.signal).setSilence(self.start,self.end)
-
 
 
 class InsertSignalAction(UndoRedoAction):
@@ -330,6 +349,7 @@ class CopyAction(UndoRedoAction):
         self.editionProcesor = EditionSignalProcessor(self.signal)
 
     def undo(self):
+        # clears the clipboard
         mime_data = QtCore.QMimeData()
         mime_data.setData("signal", QtCore.QByteArray(""))
         clip = QApplication.clipboard()

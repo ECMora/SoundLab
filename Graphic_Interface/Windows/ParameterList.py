@@ -2,6 +2,7 @@ from pyqtgraph.parametertree.parameterTypes import WidgetParameterItem
 from pyqtgraph.python2_3 import asUnicode
 from PyQt4 import QtCore, QtGui
 
+
 class DuettoListParameterItem(WidgetParameterItem):
     """
     WidgetParameterItem subclass providing comboBox that lets the user select from a list of options.

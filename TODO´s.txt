@@ -23,52 +23,41 @@ Complexity-1: No new-code activity
 * (Gabriela) Testing One dim transform Window
 * (Gabriela) Testing widget signal visualizer
 
-(NOT POSSIBLE FOR NOW) Programar Tile y Cascade.
-(NOT POSSIBLE FOR NOW) Adicionar en North and South: right and left, y en East and West: up and down.
-(NOT POSSIBLE FOR NOW) Añadir un Time Lock y Frequency Lock -para que en tabs de un mismo fichero se reproduzca la misma ventana temporal y espectral-.
-+  Tab shape: cambiar Rounded for Squared?
-+  Programar botones shortcut para pasar de una tab a otra. Ctrl + Tab
-+ Implementar zoom en frequencia.
-+ Permitir pasar de un setting a otro con el teclado.
-+ Pulir alguno de los Styles.
-+ Ampliar el Cuadro del Nombre del Fichero.
-+ Reubicar los textos con las caracteristicas del fichero... mas hacia la derecha.
-+ Programar Loop en Playback y ponerlo en Botones.
+-----------------------------------------------------------
 
+Complexity-2: Small-to-medium code changes
++ Filter
++ Hacer que el Browse abra en un conjunto de ficheros de la ultima carpeta visitada.
++ Chequear cambio de colores para dibujar el espectrograma.
++ Add margins to the widgets for best visualization (API)
+
+* Customize the axes on the amount of ticks and the scale used (possibly by context menu) with an dynamic suggested scale
+* Addition of Custom Rich Dock Widgets to the duetto API and use them on the windows
+* User manage of the height relation  between the two widgets (osc and spec) when are  both visible
+* Fix zoom bug. Mouse move heavy computation
+* Resampling
 * Mejorar el icono: tanto en el programa como en la barra de tareas de windows.
 * Añadir un Control de Volumen para Playback.
 * En los Settings, lograr que se vea todo el cuadro alrededor del boton que se destaca con el mouse.
 * En escalas temporales con mucho zoom, ajustar la sensibilidad de los cursores para poder medir siempre algun valor y no se quede en 0.
 * Hacer corresponder las ventanas de seleccion temporal de oscilo y espectro en grandes resoluciones temporales.
 * Arreglar identificacion de ejes y numeros. Mostrar numeros "significativos".
-* Chequear cambio de colores para dibujar el espectrograma.
 * Normalizar espectrograma.
 * Si hay seleccion temporal (*o espectral), que el play solo reproduzca lo seleccionado... no pasa asi en "solo espectrograma".
 * Chequear que cuando se modifique un parametro en una ventana y se cambie temporalmente de ventana, ese valor se mantenga modificado.
 * Recontra chequear errores en el zooming: Ej: si se selecciona una ventana mayor que una previamente seleccionada, el zoom final no es el esperado.
 * Si utilizamos cortar, mantener los valores de las escalas de amplitud.
 * El Undo no funciona despues de Cortar.
-* Hacer que el Browse abra en un conjunto de ficheros de la ultima carpeta visitada.
-* Revisar cursores: Ej. en rectangular, cambiar dF para el final... despues de mostrar quien es fmin y fmax.
++ Revisar cursores: Ej. en rectangular, cambiar dF para el final... despues de mostrar quien es fmin y fmax.
 * En el Pointer cursor hay que presionar para leer la frequencia? En los cursores dejar fijas las posiciones de los parametros que se miden.
 
 -----------------------------------------------------------
 
-Complexity-2: Small-to-medium code changes
-* (Hiram) Add margins to the widgets for best visualization (API)
-* Customize the axes on the amount of ticks and the scale used (possibly by context menu) with an dynamic suggested scale
-* Addition of Custom Rich Dock Widgets to the duetto API and use them on the windows
-* User manage of the height relation  between the two widgets (osc and spec) when are  both visible
-* Fix zoom bug. Mouse move heavy computation
-* Resampling
-+ Filter
------------------------------------------------------------
-
 Complexity-3: Large code changes and/or multiple code files tasks
 
-* Transformations completion
+- (Gabi, Carlos) Transformations completion
+- (Gabi, Carlos) Transformation interaction with the main window to select intervals
 * Transformation Tools implementation
-* Transformation interaction with the main window to select intervals
 
 -----------------------------------------------------------
 

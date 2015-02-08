@@ -59,7 +59,7 @@
   <customwidget>
    <class>OneDimPlotWidget</class>
    <extends>QWidget</extends>
-   <header location="global">..widgets.OneDimensionalPlotWidget.h</header>
+   <header location="global">graphic_interface.widgets.OneDimensionalPlotWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

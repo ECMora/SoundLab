@@ -49,6 +49,10 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
 
         self.changeTool(SpectrogramZoomTool)
 
+        # set lines grid opacity by default
+        self.xAxis.setGrid(self.GRID_LINE_OPACITY)
+        self.yAxis.setGrid(self.GRID_LINE_OPACITY)
+
         # the object to compute spectrogram on record mode
         self.recordModeSpectrogram = Spectrogram(NFFT=256, overlap=0)
         self.activeRecordMode = False
@@ -197,7 +201,7 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
 
         minY = 0 if minY_index == -1 else minY_index
         maxY = 0 if maxY_index == -1 else maxY_index
-        self.viewBox.setYRange(minY, maxY, padding=0, update=True)
+        self.viewBox.setYRange(minY, maxY, padding=0.01, update=True)
         self.yAxis.setRange(minY, maxY)
 
 

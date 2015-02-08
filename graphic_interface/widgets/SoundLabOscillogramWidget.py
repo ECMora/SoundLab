@@ -37,7 +37,12 @@ class SoundLabOscillogramWidget(SoundLabWidget, OscillogramWidget):
         SoundLabWidget.__init__(self)
         self.changeTool(ZoomTool)
 
+        # set lines grid opacity by default
+        self.xAxis.setGrid(self.GRID_LINE_OPACITY)
+        self.yAxis.setGrid(self.GRID_LINE_OPACITY)
+
         self.workspace = OscillogramWorkspace()
+
         self._pointsConnectedOnLastUpdate = False
 
     # region Tools interaction Implementation

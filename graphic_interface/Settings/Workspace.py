@@ -114,7 +114,7 @@ class Workspace(object):
         """
         # use the recent files to save the state of last opened file
         # after application closed and start again
-        return self.recentFiles[-1] if len(self.recentFiles) > 0 else ""
+        return self.recentFiles[-1] if len(self.recentFiles) > 0 else u""
 
     def clearOpenedFiles(self):
         """
@@ -131,7 +131,7 @@ class Workspace(object):
         :param file_path: the signal path previously open.
         :return:
         """
-        file_path = str(file_path)
+        file_path = unicode(file_path)
         if file_path in self.openedFiles:
             self.openedFiles.remove(file_path)
 
@@ -141,7 +141,7 @@ class Workspace(object):
         :param filepath:
         :return:
         """
-        filepath = str(filepath)
+        filepath = unicode(filepath)
 
         if filepath not in self.openedFiles:
             self.openedFiles.append(filepath)

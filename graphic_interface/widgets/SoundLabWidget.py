@@ -83,7 +83,7 @@ class SoundLabWidget:
         detected_data = " "
         decimal_places = self.gui_user_tool.DECIMAL_PLACES
 
-        for atr_name,value in data_list:
+        for atr_name, value in data_list:
             value_str = str(value)
             # str to concat at front of values strings to make const the amount of
             # chars used on each value

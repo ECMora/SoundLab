@@ -4,7 +4,7 @@ import os
 from PyQt4.QtCore import pyqtSignal, pyqtSlot, Qt
 from PyQt4.QtGui import QAbstractItemView, QFileDialog
 import time
-from Utils.Utils import DECIMAL_PLACES
+from Utils.Utils import DECIMAL_PLACES, folderFiles as getFolderFiles
 from duetto.audio_signals.AudioSignalPlayer import AudioSignalPlayer
 from duetto.audio_signals import openSignal
 from graphic_interface.windows.ui_python_files.BrowseFilesWindow import Ui_BrowseFilesWindow
@@ -12,12 +12,11 @@ from graphic_interface.windows.ui_python_files.BrowseFilesWindow import Ui_Brows
 
 class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
     """
-    Window that provide an interface to create two dimensional
-    graphs.
+    Window that allow to browse over the files on a file system  folder.
     """
 
     # SIGNALS
-    # signal raised when a file is selected by user and must be opened
+    # signal raised when a file(s) is(are) selected by user and must be opened
     # raise the list (list of str with the paths) of selected files to open
     openFiles = pyqtSignal(list)
 
@@ -36,7 +35,13 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
         self.folderFiles = []
 
         # the path of the base of the folder
-        self.selected_folder = '' if len(folderFiles) == 0 else os.path.dirname(unicode(folderFiles[0]))
+        self.selected_folder = u""
+        if len(folderFiles) > 0:
+            self.selected_folder = os.path.dirname(unicode(folderFiles[0]))
+        else:
+            self.selected_folder = os.path.join(u"Utils", u"duetto-Signals")
+            folderFiles = getFolderFiles(self.selected_folder)
+
         self.folderPath_lineEdit.setText(self.selected_folder)
 
         # add the files to the table widget
@@ -74,7 +79,7 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
         # region Create Items for Table
 
         # check if the file was already added
-        if str(file_path) in self.folderFiles:
+        if unicode(file_path) in self.folderFiles:
             return
 
         # get the row to insert at the file
@@ -126,7 +131,7 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
         # region Duration
         try:
             duration_seg = openSignal(file_path).duration
-            sufix = [self.tr(u"(seg)"), self.tr(u"(minThresholdLabel)"), self.tr(u"(hours)")]
+            sufix = [self.tr(u"(seg)"), self.tr(u"(min)"), self.tr(u"(hours)")]
             j = 0
             while duration_seg > 60 and j < len(sufix):
                 duration_seg /= 60.0
@@ -150,7 +155,7 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
 
         # add the new file to the folder files list
         self.folderFiles.append(file_path)
-        self.files_tablewidget.resizeRowsToContents()
+        self.files_tablewidget.resizeColumnsToContents()
 
     @pyqtSlot()
     def on_actionAddFileButton_triggered(self):
@@ -162,8 +167,10 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
                                                caption=self.tr(u"Open File"),
                                                filter=self.tr(u"Wav Files") + u" (*.wav);(*.WAV);All Files (*)")
 
+        self.selected_folder = os.path.dirname(unicode(new_file))
+
         # update the line edit with the name of the new file
-        self.folderPath_lineEdit.setText(new_file)
+        self.folderPath_lineEdit.setText(self.selected_folder)
 
         # add the new file into the table widget
         self.addFile(new_file)
@@ -180,14 +187,10 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
         :return:
         """
         for x in range(self.files_tablewidget.rowCount()):
-
+            # change the check state of every file item
             check_state = self.files_tablewidget.item(x, 0).checkState()
 
-            if check_state == Qt.Checked:
-                check_state = Qt.Unchecked
-
-            elif check_state == Qt.Unchecked:
-                check_state = Qt.Checked
+            check_state = Qt.Unchecked if check_state == Qt.Checked else Qt.Checked
 
             self.files_tablewidget.item(x, 0).setCheckState(check_state)
 
@@ -202,8 +205,8 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
         """
 
         check_state = Qt.Checked if self.selectAll_bttn.text() == self.tr(u"Select All") else Qt.Unchecked
-        self.selectAll_bttn.setText(self.tr(u"Deselect All") if self.selectAll_bttn.text() == self.tr(u"Select All")
-                                    else self.tr(u"Select All"))
+
+        self.selectAll_bttn.setText(self.tr(u"Deselect All") if check_state == Qt.Checked else self.tr(u"Select All"))
 
         for x in range(self.files_tablewidget.rowCount()):
             self.files_tablewidget.item(x, 0).setCheckState(check_state)
@@ -254,7 +257,6 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
         step = 1 if up else -1
 
         for i in range(start_index, end_index, step):
-
             if self.files_tablewidget.item(i, 0).checkState() == Qt.Unchecked:
                 # get the first unselected, change it state and open it
                 self.files_tablewidget.item(i, 0).setCheckState(Qt.Checked)
@@ -292,6 +294,7 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
         try:
             self.player = AudioSignalPlayer(openSignal(files_selected[0]))
             self.player.play()
+
         except Exception as ex:
             pass
 

@@ -52,9 +52,9 @@ class RectangularCursorTool(SpectrogramTool):
             self.detectedData = [("t0", round(info[0], self.DECIMAL_PLACES)),
                                  ("t1", round(info1[0], self.DECIMAL_PLACES)),
                                  ("dt", round(info1[0] - info[0],self.DECIMAL_PLACES)),
-                                 ("dF", round(info1[1] - info[1], self.DECIMAL_PLACES)),
-                                 ("MinFreq(Hz)", round(info[1],self.DECIMAL_PLACES)),
-                                 ("MaxFreq(Hz)", round(info1[1],self.DECIMAL_PLACES))
+                                 ("MinFreq(Hz)", round(info[1], self.DECIMAL_PLACES)),
+                                 ("MaxFreq(Hz)", round(info1[1], self.DECIMAL_PLACES)),
+                                 ("dF", round(info1[1] - info[1], self.DECIMAL_PLACES))
                                 ]
 
         else:

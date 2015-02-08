@@ -50,7 +50,6 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
 
         self._detector = None
         self._classifier = None
-        self._parameter_measurer_list = []
 
         self.detect()
 
@@ -107,7 +106,7 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
             [unicode(self.tr(u"Duration(s)")), True, lambda x, d: x.duration()],
         ]
 
-        spectralMeditions = [
+        self.spectralMeditions = [
             [unicode(self.tr(u"Spectral Elems")), False, lambda x, d: x.spectralElements()],
             [unicode(self.tr(u"Peak Freq(Hz)")), False, lambda x, d: x.peakFreq(d)],
             [unicode(self.tr(u"Peak Amplitude(dB)")), False, lambda x, d: x.peakAmplitude(d)],
@@ -138,7 +137,7 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         ]
 
         self.meditions = [(unicode(self.tr(u'Temporal Meditions')), timeMeditions), \
-                          (unicode(self.tr(u'Spectral Meditions')), spectralMeditions), \
+                          (unicode(self.tr(u'Spectral Meditions')), self.spectralMeditions), \
                           (unicode(self.tr(u'Waveform Meditions')), waveMeditions)]
 
         for name, dict in self.meditions:
@@ -225,6 +224,7 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         return params
 
     def getParameters(self):
+        # todo create the list of parameters objects
         params = []
         for name, dict in self.meditions:
             if not name == unicode(self.tr(u'Spectral Meditions')):
@@ -294,7 +294,7 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         """
         :return: The list of selected parameters to measure
         """
-        return self._parameter_measurer_list
+        return self.getParameters()
 
     @property
     def classifier(self):
