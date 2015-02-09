@@ -41,10 +41,10 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
         self.widget.signal = signal
 
         # self.signal = signal
-
+        self.widget.one_dim_transform = AveragePowSpec(signal)
         # Parameter Tree Settings
         self.__createParameterTree()
-        self.widget.one_dim_transform = AveragePowSpec(signal)
+
         # self._tranforms_handler.dataChanged.connect(self.widget.graph)
 
     def load_workspace(self, workspace):
@@ -109,25 +109,27 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
         transforms = self._tranforms_handler.get_all_transforms_names()
         transforms = [(unicode(self.tr(unicode(t))), t) for t in transforms]
         params = [
-            {u'name': unicode(self.tr(u'One Dimensional Transform')), u'type': u'list',
+            {u'name': unicode(self.tr(u'Select')),
+             u'type': u'list',
              u'value': transforms[3][1],
              u'default': transforms[3][1],
              u'values': transforms}
         ]
 
         ListParameter.itemClass = DuettoListParameterItem
-        self.ParamTree = Parameter.create(name=u'params', type=u'group', children=params)
+        self.ParamTree = Parameter.create(name=u'One Dimensional Transform', type=u'group', children=params)
 
         # create and set initial properties
         self.parameterTree = ParameterTree()
         self.parameterTree.setAutoScroll(True)
         self.parameterTree.setHeaderHidden(True)
-        self.parameterTree.setParameters(self.ParamTree, showTop=False)
+        self.parameterTree.setParameters(self.ParamTree)
 
         # connect the signals to react when a change of one_dim_transform is made
-        self.ParamTree.param(unicode(self.tr(u'One Dimensional Transform'))).sigValueChanged.connect(self.changeTransform)
+        self.ParamTree.param(unicode(self.tr(u'Select'))).sigValueChanged.connect(self.changeTransform)
 
         # reload the new widgets one_dim_transform options
+        self._transform_paramTree = None
         self.reloadOptionsWidget(self.widget.one_dim_transform)
 
     def reloadOptionsWidget(self, one_dim_transform):
@@ -145,12 +147,14 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
 
         # add the parameter tree of the one_dim_transform if exists
         if one_dim_transform is not None:
+
+            if self._transform_paramTree is not None:
+                self.ParamTree.param(u'Select').clearChildren()
             params = self._tranforms_handler.get_settings(one_dim_transform)
             self._transform_paramTree = Parameter.create(name=u'Settings', type=u'group', children=params)
 
-            self.ParamTree.param(unicode(self.tr(u'One Dimensional Transform'))).clearChildren()
             if params != []:
-                self.ParamTree.param(unicode(self.tr(u'One Dimensional Transform'))).addChild(self._transform_paramTree)
+                self.ParamTree.param(u'Select').addChild(self._transform_paramTree)
 
             self._transform_paramTree.sigTreeStateChanged.connect(self.changeTransformSettings)
 

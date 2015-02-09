@@ -95,13 +95,14 @@ class OneDimPlotWidget(SoundLabWidget,pg.PlotWidget):
         if self.one_dim_transform is not None:
             self.clear()
             (x, y) = self.one_dim_transform.getData(indexFrom, indexTo)
-            self.plot(x, y, pen=self.plot_color)
-            self.setXRange(0, x[len(x) - 1],padding=0)
+            self.plot(x, y, pen=self.plot_color, clear=True)
+            self.setXRange(0, x[len(x) - 1], padding=0)
+            self.getPlotItem().getAxis(u'bottom').setRange(0, x[len(x) - 1])
             xLabel = unicode(self.tr(labels[u'X']))
             yLabel = unicode(self.tr(labels[u'Y']))
             self.getPlotItem().setLabel(axis='bottom',text=xLabel)
             self.getPlotItem().setLabel(axis='left', text=yLabel)
-            self.update()
+            
             self.show()
 
     # region Tools interaction Implementation
