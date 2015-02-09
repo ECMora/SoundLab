@@ -90,7 +90,7 @@ class SoundLabWindow(QtGui.QMainWindow):
 
         # region Tools actions
         tools_actions_list = [self.actionZoom_Cursor, self.actionPointer_Cursor,
-                              self.actionRectangular_Cursor, self.actionRectangular_Eraser]
+                              self.actionRectangular_Cursor]
 
         for act in tools_actions_list:
             act.setActionGroup(self.tools_actions)

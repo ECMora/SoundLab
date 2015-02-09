@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\SegmentationAndClasificationWindowUI.ui'
 #
-# Created: Thu Feb 05 11:12:10 2015
+# Created: Mon Feb 09 16:29:46 2015
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -18,7 +18,7 @@ class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
         MainWindow.setWindowModality(QtCore.Qt.ApplicationModal)
-        MainWindow.resize(596, 450)
+        MainWindow.resize(596, 390)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -159,8 +159,6 @@ class Ui_MainWindow(object):
         icon14.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/Process Viewer.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionDetection.setIcon(icon14)
         self.actionDetection.setObjectName(_fromUtf8("actionDetection"))
-        self.actionClear_Meditions = QtGui.QAction(MainWindow)
-        self.actionClear_Meditions.setObjectName(_fromUtf8("actionClear_Meditions"))
         self.actionView_Threshold = QtGui.QAction(MainWindow)
         self.actionView_Threshold.setCheckable(True)
         self.actionView_Threshold.setObjectName(_fromUtf8("actionView_Threshold"))
@@ -221,9 +219,6 @@ class Ui_MainWindow(object):
         self.actionRectangular_Cursor = QtGui.QAction(MainWindow)
         self.actionRectangular_Cursor.setCheckable(True)
         self.actionRectangular_Cursor.setObjectName(_fromUtf8("actionRectangular_Cursor"))
-        self.actionRectangular_Eraser = QtGui.QAction(MainWindow)
-        self.actionRectangular_Eraser.setCheckable(True)
-        self.actionRectangular_Eraser.setObjectName(_fromUtf8("actionRectangular_Eraser"))
         self.actionZoom_Cursor = QtGui.QAction(MainWindow)
         self.actionZoom_Cursor.setCheckable(True)
         self.actionZoom_Cursor.setChecked(True)
@@ -248,17 +243,11 @@ class Ui_MainWindow(object):
         icon21.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/2dgraphs.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionTwo_Dimensional_Graphs.setIcon(icon21)
         self.actionTwo_Dimensional_Graphs.setObjectName(_fromUtf8("actionTwo_Dimensional_Graphs"))
-        self.actionTraining_Mode = QtGui.QAction(MainWindow)
-        self.actionTraining_Mode.setCheckable(True)
-        self.actionTraining_Mode.setChecked(True)
-        self.actionTraining_Mode.setObjectName(_fromUtf8("actionTraining_Mode"))
         self.actionClassification_Settings = QtGui.QAction(MainWindow)
         icon22 = QtGui.QIcon()
         icon22.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/ColorSync Utility.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionClassification_Settings.setIcon(icon22)
         self.actionClassification_Settings.setObjectName(_fromUtf8("actionClassification_Settings"))
-        self.actionMethod = QtGui.QAction(MainWindow)
-        self.actionMethod.setObjectName(_fromUtf8("actionMethod"))
         self.actionRecord = QtGui.QAction(MainWindow)
         icon23 = QtGui.QIcon()
         icon23.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/record_26x26.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
@@ -270,6 +259,16 @@ class Ui_MainWindow(object):
         icon24.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/Behavior.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionPlayLoop.setIcon(icon24)
         self.actionPlayLoop.setObjectName(_fromUtf8("actionPlayLoop"))
+        self.actionAddElement = QtGui.QAction(MainWindow)
+        icon25 = QtGui.QIcon()
+        icon25.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/add.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionAddElement.setIcon(icon25)
+        self.actionAddElement.setObjectName(_fromUtf8("actionAddElement"))
+        self.actionSound_File_Segmentation = QtGui.QAction(MainWindow)
+        icon26 = QtGui.QIcon()
+        icon26.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/225.ico")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionSound_File_Segmentation.setIcon(icon26)
+        self.actionSound_File_Segmentation.setObjectName(_fromUtf8("actionSound_File_Segmentation"))
         self.toolBar.addAction(self.actionClassification_Settings)
         self.menuParameters.addAction(self.actionView_Parameters)
         self.menuParameters.addSeparator()
@@ -289,6 +288,7 @@ class Ui_MainWindow(object):
         self.menuDetection.addAction(self.actionDetection)
         self.menuDetection.addAction(self.actionDelete_Selected_Elements)
         self.menuDetection.addAction(self.actionDeselect_Elements)
+        self.menuDetection.addAction(self.actionAddElement)
         self.menuTools.addAction(self.actionZoom_Cursor)
         self.menuTools.addAction(self.actionPointer_Cursor)
         self.menuTools.addAction(self.actionRectangular_Cursor)
@@ -298,6 +298,7 @@ class Ui_MainWindow(object):
         self.menuGraph_Images.addAction(self.actionCombined_Image)
         self.menuExport.addAction(self.actionMeditions)
         self.menuExport.addAction(self.menuGraph_Images.menuAction())
+        self.menuExport.addAction(self.actionSound_File_Segmentation)
         self.menuBar.addAction(self.menuExport.menuAction())
         self.menuBar.addAction(self.menuDetection.menuAction())
         self.menuBar.addAction(self.menuClasification.menuAction())
@@ -308,7 +309,7 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QtGui.QApplication.translate("MainWindow", "Duetto Sound Lab", None, QtGui.QApplication.UnicodeUTF8))
+        MainWindow.setWindowTitle(QtGui.QApplication.translate("MainWindow", "duetto Sound Lab", None, QtGui.QApplication.UnicodeUTF8))
         self.toolBar.setWindowTitle(QtGui.QApplication.translate("MainWindow", "toolBar", None, QtGui.QApplication.UnicodeUTF8))
         self.dockWidgetParameterTableOscilogram.setWindowTitle(QtGui.QApplication.translate("MainWindow", "Elements", None, QtGui.QApplication.UnicodeUTF8))
         self.tableParameterOscilogram.setToolTip(QtGui.QApplication.translate("MainWindow", "Oscilogram elements  meditions", None, QtGui.QApplication.UnicodeUTF8))
@@ -341,8 +342,6 @@ class Ui_MainWindow(object):
         self.actionView_Parameters.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+Space", None, QtGui.QApplication.UnicodeUTF8))
         self.actionDetection.setText(QtGui.QApplication.translate("MainWindow", "Detect Elements", None, QtGui.QApplication.UnicodeUTF8))
         self.actionDetection.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+D", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionClear_Meditions.setText(QtGui.QApplication.translate("MainWindow", "Clear Meditions", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionClear_Meditions.setShortcut(QtGui.QApplication.translate("MainWindow", "Alt+E", None, QtGui.QApplication.UnicodeUTF8))
         self.actionView_Threshold.setText(QtGui.QApplication.translate("MainWindow", "Threshold", None, QtGui.QApplication.UnicodeUTF8))
         self.actionTemporal_Elements.setText(QtGui.QApplication.translate("MainWindow", "Temporal Elements", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSpectral_Elements.setText(QtGui.QApplication.translate("MainWindow", "Spectral Elements", None, QtGui.QApplication.UnicodeUTF8))
@@ -359,19 +358,19 @@ class Ui_MainWindow(object):
         self.actionExit.setText(QtGui.QApplication.translate("MainWindow", "Exit", None, QtGui.QApplication.UnicodeUTF8))
         self.actionExit.setShortcut(QtGui.QApplication.translate("MainWindow", "Esc", None, QtGui.QApplication.UnicodeUTF8))
         self.actionRectangular_Cursor.setText(QtGui.QApplication.translate("MainWindow", "Rectangular_Cursor", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionRectangular_Eraser.setText(QtGui.QApplication.translate("MainWindow", "Rectangular_Eraser", None, QtGui.QApplication.UnicodeUTF8))
         self.actionZoom_Cursor.setText(QtGui.QApplication.translate("MainWindow", "Zoom_Cursor", None, QtGui.QApplication.UnicodeUTF8))
         self.actionPointer_Cursor.setText(QtGui.QApplication.translate("MainWindow", "Pointer Cursor", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSignalName.setText(QtGui.QApplication.translate("MainWindow", "SignalName", None, QtGui.QApplication.UnicodeUTF8))
         self.actionDelete_Selected_Elements.setText(QtGui.QApplication.translate("MainWindow", "Delete Selected Elements", None, QtGui.QApplication.UnicodeUTF8))
         self.actionDeselect_Elements.setText(QtGui.QApplication.translate("MainWindow", "Deselect Elements", None, QtGui.QApplication.UnicodeUTF8))
         self.actionTwo_Dimensional_Graphs.setText(QtGui.QApplication.translate("MainWindow", "Two Dimensional Graphs", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionTraining_Mode.setText(QtGui.QApplication.translate("MainWindow", "Training Mode", None, QtGui.QApplication.UnicodeUTF8))
         self.actionClassification_Settings.setText(QtGui.QApplication.translate("MainWindow", "Edit Categories", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionMethod.setText(QtGui.QApplication.translate("MainWindow", "Method", None, QtGui.QApplication.UnicodeUTF8))
         self.actionRecord.setText(QtGui.QApplication.translate("MainWindow", "Record", None, QtGui.QApplication.UnicodeUTF8))
         self.actionPlayLoop.setText(QtGui.QApplication.translate("MainWindow", "PlayLoop", None, QtGui.QApplication.UnicodeUTF8))
         self.actionPlayLoop.setToolTip(QtGui.QApplication.translate("MainWindow", "Play Loop", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionAddElement.setText(QtGui.QApplication.translate("MainWindow", "AddElement", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionAddElement.setToolTip(QtGui.QApplication.translate("MainWindow", "Mark Selected Region As Element", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSound_File_Segmentation.setText(QtGui.QApplication.translate("MainWindow", "Sound File Segmentation", None, QtGui.QApplication.UnicodeUTF8))
 
 from graphic_interface.widgets.SoundLabToolBar import SoundLabToolBarWidget
 from pyqtgraph import TableWidget

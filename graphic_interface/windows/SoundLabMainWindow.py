@@ -773,6 +773,8 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
 
         segWindow = Segmentation_ClassificationWindow(parent=self, signal=signal)
 
+        segWindow.setSignalFile(self.widget.signalFilePath)
+
         # load the theme and clear the undo redo actions in the current window.
         segWindow.load_workspace(self.workSpace)
         self.widget.undoRedoManager.clear()

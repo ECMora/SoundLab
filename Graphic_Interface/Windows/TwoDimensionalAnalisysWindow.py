@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 import random
-
-from PyQt4.QtGui import QFileDialog, QWidget
+from PyQt4.QtGui import QFileDialog
 from PyQt4.QtCore import pyqtSlot
 import numpy
 from pyqtgraph.parametertree import Parameter, ParameterTree
@@ -9,8 +8,6 @@ import pyqtgraph as pg
 from PyQt4 import QtGui, QtCore
 from Utils.Utils import saveImage
 from graphic_interface.dialogs.EditCategoriesDialog import EditCategoriesDialog
-import graphic_interface.windows.ui_python_files.EditCategoriesDialogUI as editCateg
-from graphic_interface.widgets.EditCategoriesWidget import EditCategoriesWidget
 from graphic_interface.windows.ui_python_files.Two_Dimensional_AnalisysWindowUI import Ui_TwoDimensionalWindow
 
 
@@ -37,6 +34,9 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
 
     # the width by default of the dock window with the options of the graph
     DOCK_WINDOW_WIDTH = 200
+
+    # the color of the selected element brush
+    SELECTED_ELEMENT_COLOR = "FFF"
 
     # endregion
 
@@ -89,21 +89,6 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         self.widget.addAction(self.actionHide_Show_Settings)
         self.widget.addAction(self.actionSaveGraphImage)
         self.widget.addAction(self.actionMark_Selected_Elements_As)
-
-    # endregion
-
-    @pyqtSlot()
-    def on_actionHide_Show_Settings_triggered(self):
-        """
-        Switch the visibility of the settings window
-        :return:
-        """
-        visibility = self.dockGraphsOptions.isVisible()
-        self.dockGraphsOptions.setVisible(not visibility)
-
-        if not visibility:
-            # if was previously invisible
-            self.dockGraphsOptions.setFloating(False)
 
     def createParameterTreeOptions(self, parameterColumnNames):
         """
@@ -162,6 +147,10 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         # visualize the changes
         self.plot()
 
+    # endregion
+
+    # region Graph Managing
+
     def loadData(self, segmentManager):
         """
         Load a new detection data. Update the graph and the internal variables
@@ -204,7 +193,7 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         :param segmentManager:
         :return:
         """
-        self.segmentManager = self.segmentManager
+        self.segmentManager = segmentManager
         self.plot()
 
     def changeFont(self):
@@ -215,88 +204,6 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         if ok:
             self.widget.getPlotItem().getAxis("bottom").setTickFont(self.font)
             self.widget.getPlotItem().getAxis("left").setTickFont(self.font)
-
-    def load_workspace(self, workspace):
-        """
-        Update the visual theme of the window with the values from
-        the application.
-        :param theme: The visual theme currently used in the application.
-        :return:
-        """
-        self.widget.setBackground(workspace.workTheme.oscillogramTheme.background_color)
-
-        xGrid, yGrid = workspace.workTheme.oscillogramTheme.gridX, workspace.workTheme.oscillogramTheme.gridY
-
-        self.widget.getPlotItem().showGrid(x=xGrid, y=yGrid)
-
-    # region Elements Selection
-
-    def selectElement(self, index):
-        """
-        Select the element at index 'index' in the graph.
-        If index is outside of the elements count range nothing is do it.
-        :param index: The index of the element to select.
-        :return:
-        """
-        if self.scatter_plot is None or self.selectedElementIndex == index:
-            return
-
-        # get the current elements on the graph
-        elems = self.scatter_plot.points()
-        if not 0 <= index < len(elems):
-            return
-
-        # get the color of the not selected elements
-        color = self.ParamTree.param(unicode(self.tr(u'Color'))).value()
-
-        element_to_select = elems[index]
-        element_to_select.setBrush(pg.mkBrush("FFF"))
-
-        # update the old selected element to unselected (if any)
-        if self.selectedElementIndex != -1:
-            elems[self.selectedElementIndex].setBrush(pg.mkBrush(color))
-
-        # update the state variable of last selected element
-        self.selectedElementIndex = index
-
-    def deselectElement(self):
-        """
-        Deselect the element currently selected (if any) on the graph.
-        :return:
-        """
-        if self.scatter_plot is None or self.selectedElementIndex < 0:
-            return
-
-        # get the color of the normal element figures on the graph
-        color = self.ParamTree.param(unicode(self.tr(u'Color'))).value()
-
-        # set the normal brush color to the element selected
-        self.scatter_plot.points()[self.selectedElementIndex].setBrush(pg.mkBrush(color))
-
-        self.selectedElementIndex = -1
-
-    def elementFigureClicked(self, x, y):
-        """
-        Method that listen to the event of click an element on the graph.
-        :param x:
-        :param y:
-        :return:
-        """
-        self.selectElement(y[0].data())
-        self.elementSelected.emit(y[0].data())
-
-    # endregion
-
-    @pyqtSlot()
-    def on_actionSaveGraphImage_triggered(self):
-        """
-        Save the widget graph as image
-        :return:
-        """
-        fname = unicode(QFileDialog.getSaveFileName(self, self.tr(u"Save two dimensional graph as an Image"),
-                                                    u"two-dim-graph-Duetto-Image" + unicode(self.widget.signal.name),
-                                                    u"*.jpg"))
-        saveImage(self.widget, fname)
 
     def plot(self):
         """
@@ -344,8 +251,10 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
 
         # update font size in axis labels
         text_size = {'color': '#FFF', 'font-size': str(self.font.pointSize()) + 'pt'}
-        self.widget.getPlotItem().getAxis("bottom").setLabel(text=str(self.segmentManager.parameterColumnNames[x_axis_index]), **text_size)
-        self.widget.getPlotItem().getAxis("left").setLabel(text=str(self.segmentManager.parameterColumnNames[y_axis_index]), **text_size)
+        self.widget.getPlotItem().getAxis("bottom").setLabel(
+            text=str(self.segmentManager.parameterColumnNames[x_axis_index]), **text_size)
+        self.widget.getPlotItem().getAxis("left").setLabel(
+            text=str(self.segmentManager.parameterColumnNames[y_axis_index]), **text_size)
 
         # add the plot to the widget
         self.widget.addItem(self.scatter_plot)
@@ -357,6 +266,103 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         # clear the selection rectangle
         self.widget.removeSelectionRect()
         self.widget.addSelectionRect()
+
+    # endregion
+
+    # region Elements Selection
+
+    def selectElement(self, index):
+        """
+        Select the element at index 'index' in the graph.
+        If index is outside of the elements count range nothing is do it.
+        :param index: The index of the element to select.
+        :return:
+        """
+        if self.scatter_plot is None or self.selectedElementIndex == index:
+            return
+
+        # get the current elements on the graph
+        elems = self.scatter_plot.points()
+        if not 0 <= index < len(elems):
+            return
+
+        # get the color of the not selected elements
+        color = self.ParamTree.param(unicode(self.tr(u'Color'))).value()
+
+        element_to_select = elems[index]
+        element_to_select.setBrush(pg.mkBrush(self.SELECTED_ELEMENT_COLOR))
+
+        # update the old selected element to unselected (if any)
+        if self.selectedElementIndex != -1:
+            elems[self.selectedElementIndex].setBrush(pg.mkBrush(color))
+
+        # update the state variable of last selected element
+        self.selectedElementIndex = index
+
+    def deselectElement(self):
+        """
+        Deselect the element currently selected (if any) on the graph.
+        :return:
+        """
+        if self.scatter_plot is None or self.selectedElementIndex < 0:
+            return
+
+        # get the color of the normal element figures on the graph
+        color = self.ParamTree.param(unicode(self.tr(u'Color'))).value()
+
+        # set the normal brush color to the element selected
+        self.scatter_plot.points()[self.selectedElementIndex].setBrush(pg.mkBrush(color))
+
+        self.selectedElementIndex = -1
+
+    def elementFigureClicked(self, x, y):
+        """
+        Method that listen to the event of click an element on the scatter plot graph.
+        :param x:
+        :param y:
+        :return:
+        """
+        self.selectElement(y[0].data())
+        self.elementSelected.emit(y[0].data())
+
+    # endregion
+
+    def load_workspace(self, workspace):
+        """
+        Update the visual theme of the window with the values from
+        the application.
+        :param theme: The visual theme currently used in the application.
+        :return:
+        """
+        self.widget.setBackground(workspace.workTheme.oscillogramTheme.background_color)
+
+        xGrid, yGrid = workspace.workTheme.oscillogramTheme.gridX, workspace.workTheme.oscillogramTheme.gridY
+
+        self.widget.getPlotItem().showGrid(x=xGrid, y=yGrid)
+
+    @pyqtSlot()
+    def on_actionHide_Show_Settings_triggered(self):
+        """
+        Switch the visibility of the settings window
+        :return:
+        """
+        visibility = self.dockGraphsOptions.isVisible()
+        self.dockGraphsOptions.setVisible(not visibility)
+
+        if not visibility:
+            # if was previously invisible
+            self.dockGraphsOptions.setFloating(False)
+
+    @pyqtSlot()
+    def on_actionSaveGraphImage_triggered(self):
+        """
+        Save the widget graph as image
+        :return:
+        """
+        fname = unicode(QFileDialog.getSaveFileName(self, self.tr(u"Save two dimensional graph as an Image"),
+                                                    u"two-dim-graph-Duetto-Image" + unicode(self.widget.signal.name),
+                                                    u"*.jpg"))
+        saveImage(self.widget, fname)
 
     @pyqtSlot()
     def on_actionMark_Selected_Elements_As_triggered(self):
@@ -391,7 +397,4 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
 
         editCategDialogWindow.exec_()
 
-        d = dict([(x.categoryName, self.segmentManager.classificationData.categories[x.categoryName][x.comboCategories.currentIndex()]) \
-                  for x in editCategDialogWindow.selection_widgets if x.comboCategories.count() > 0])
-
-        self.elementsClasiffied.emit(selected_elements, d)
+        self.elementsClasiffied.emit(selected_elements, editCategDialogWindow.classification)

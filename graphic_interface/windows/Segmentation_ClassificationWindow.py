@@ -1,18 +1,14 @@
 # -*- coding: utf-8 -*-
 from PyQt4.QtCore import pyqtSlot, Qt
-import PyQt4.QtCore as QtCore
 from PyQt4 import QtGui
 import xlwt
-import numpy as np
-from PyQt4.QtGui import QFileDialog, QAbstractItemView, QWidget, QActionGroup
+from PyQt4.QtGui import QFileDialog, QAbstractItemView, QActionGroup
 from duetto.audio_signals.AudioSignal import AudioSignal
 from sound_lab_core.Segmentation.Elements.Element import Element
 from ..dialogs.elemDetectSettings import ElemDetectSettingsDialog
 from graphic_interface.windows.TwoDimensionalAnalisysWindow import TwoDimensionalAnalisysWindow
 from graphic_interface.windows.ui_python_files.SegmentationAndClasificationWindowUI import Ui_MainWindow
-import graphic_interface.windows.ui_python_files.EditCategoriesDialogUI as editCateg
 from graphic_interface.dialogs.EditCategoriesDialog import EditCategoriesDialog
-from graphic_interface.widgets.EditCategoriesWidget import EditCategoriesWidget
 from SoundLabWindow import SoundLabWindow
 from sound_lab_core.Segmentation.SegmentManager import SegmentManager
 
@@ -59,16 +55,15 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
         self.configureToolBarActionsGroups()
 
+        # the segmentation window do not allow to record a signal
         self.actionRecord.setEnabled(False)
 
         # set the signal to the widget
         self.widget.signal = signal
 
-        # the segmentation window do not allow record or signal name edition
+        # set the configurations for the name of the signal and the visible label
         self.updateSignalPropertiesLabel(signal)
         self.signalNameLineEdit.setReadOnly(True)
-
-        # set the name of the signal to the visible label
         self.actionSignalName.setText(self.widget.signalName)
 
         # set visible the two graphs by default
@@ -77,7 +72,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         # connect the signals on the widget for new detected data by its tools
         # and to select the element in the table. Binding the element click to the table
         self.widget.toolDataDetected.connect(self.updateStatusBar)
-        self.widget.elementClicked.connect(self.elementSelectedInTable)
+        self.widget.elementClicked.connect(self.selectElement)
 
         self.dockWidgetParameterTableOscilogram.setVisible(False)
         self.tableParameterOscilogram.setSelectionBehavior(QAbstractItemView.SelectRows)
@@ -94,8 +89,28 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
         # the object that handles the measuring of parameters and manage the segments
         self.segmentManager = SegmentManager()
+        self.segmentManager.measurementsChanged.connect(lambda : self.updateTableParameter())
 
         self.showMaximized()
+
+        self.restorePreviousSession()
+
+    def restorePreviousSession(self):
+        """
+        Restore (if any) the previous session with this file.
+        That means detected elements, measured parameters etc that are saved on the signal
+        extra data.
+
+        :return:
+        """
+        if self.widget.signal.extraData:
+            data = self.widget.signal.extraData
+            if isinstance(data,list):
+                for element in data:
+                    if isinstance(element, tuple):
+                        self.widget.markRegionAsElement(element, update=False)
+
+            self.widget.graph()
 
     def __addContextMenuActions(self):
         """
@@ -124,16 +139,15 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
                 separator,
 
                 # meditions manipulation actions
-                self.actionClear_Meditions,
                 self.actionMeditions,
                 self.actionView_Parameters,
+                self.actionAddElement,
                 separator2,
 
                 # change tools actions
                 self.actionZoom_Cursor,
                 self.actionPointer_Cursor,
                 self.actionRectangular_Cursor,
-                self.actionRectangular_Eraser,
                 separator3,
 
                 # elements select/deselect
@@ -158,7 +172,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         segm_transf_actions = QActionGroup(self)
         segm_transf_actions_list = [self.actionDetection, self.actionTwo_Dimensional_Graphs,
                                     self.actionDelete_Selected_Elements,
-                                    self.actionDeselect_Elements, sep]
+                                    self.actionDeselect_Elements, self.actionAddElement, sep]
 
         for act in segm_transf_actions_list:
             act.setActionGroup(segm_transf_actions)
@@ -199,10 +213,10 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         wnd = TwoDimensionalAnalisysWindow(self, self.segmentManager)
 
         # connect the signals for update the new two dim window actions
-        wnd.elementSelected.connect(self.elementSelectedInTable)
+        wnd.elementSelected.connect(self.selectElement)
         wnd.elementsClasiffied.connect(self.elementsClasification)
 
-        # load the theme in the new two dimensional window
+        # load the workspace in the new two dimensional window
         if self.workSpace:
             wnd.load_workspace(self.workSpace)
 
@@ -227,7 +241,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
     # endregion
 
-    # region Save Measurements as Excel
+    # region Save Measurements
 
     @pyqtSlot()
     def on_actionMeditions_triggered(self, name="", table=None):
@@ -238,34 +252,56 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         :return:
         """
         # get the file name to save the data into.
-        fname = name if name != "" else unicode(QFileDialog.getSaveFileName(self,
+        file_name = name if name != "" else unicode(QFileDialog.getSaveFileName(self,
                                                 self.tr(u"Save measurements as excel file"),
                                                 self.widget.signalName + ".xls", "*.xls"))
         # save the data of table
-        if fname:
+        if file_name:
             # the excel book to save data
-            self.saveAsExcel(table, fname, self.tr(u"Elements Measurements"))
+            try:
 
-    def saveAsExcel(self, table, file_name, excel_sheet_name):
+                wb = xlwt.Workbook()
+                ws = wb.add_sheet(self.tr(u"Elements Measurements"))
+                self.writeData(ws, table)
+                wb.save(file_name)
+
+            except Exception as ex:
+                print("Error saving the excel file. " + ex.message)
+
+    @pyqtSlot()
+    def on_actionSound_File_Segmentation_triggered(self):
         """
-        Save in an excel file the data stored in the table
-        :param table: A table widget with the data to save
-        :param file_name: The file name to save the data.
+        Save the signal into file. Store the segmentation values
+        (list of tuples start,end with the indexes of detected element)
         :return:
         """
-        try:
+        if self.segmentManager.rowCount == 0:
+            return
 
-            wb = xlwt.Workbook()
-            ws = wb.add_sheet(unicode(excel_sheet_name))
-            self.writeData(ws, table)
-            wb.save(file_name)
+        self.widget.saveElementsOnSignal()
 
-        except Exception as ex:
-            print("Error saving the excel file. "+ex.message)
+        # save the signal to file
+        if self.widget.signalFilePath:
+            self.widget.save()
+        else:
+            file_name = unicode(QFileDialog.getSaveFileName(self, self.tr(u"Save signal"),
+                                                            self.widget.signalName, u"*.wav"))
+            if file_name:
+                self.widget.save(file_name)
+                self.widget.signalFilePath = file_name
+
+    def setSignalFile(self, file_path=''):
+        """
+        Update the data of the current signal file path origin in the widget
+        (if any)
+        :param file_path:
+        :return:
+        """
+        self.widget.signalFilePath = file_path
 
     def writeData(self, ws, tableParameter):
         """
-        write the data from the table into an excel file.
+        Write the data from the table into an excel file stylesheet.
         :param ws:WorkSheet object from xwlt module for interacts with excell files.
         :param tableParameter: QTableWidget with the information of the data to save.
         """
@@ -284,7 +320,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
                 else:
                     ws.write(i, j, unicode(self.tr(u"No Identified")), self.EXCEL_STYLE_BODY)
 
-        # ws object must be part of a Woorkbook that would be saved later
+        # ws object must be part of a Work book that would be saved later
         ws.write(tableParameter.model().rowCount() + 3, 0, unicode(self.tr(u"duetto-Sound Lab")),
                  self.EXCEL_STYLE_COPYRIGHT)
 
@@ -312,7 +348,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
                                  self.tr(u"Do you want to save the measurements of "+unicode(self.widget.signalName)),
                                  QtGui.QMessageBox.Yes | QtGui.QMessageBox.No | QtGui.QMessageBox.Cancel, self)
 
-        # if there is a medition made and parameters measured that could be saved
+        # if there is a measurement made and parameters measured that could be saved
         if self.tableParameterOscilogram.rowCount() > 0:
             # if the signal was playing must be stopped
             self.widget.stop()
@@ -327,33 +363,13 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
             elif result == QtGui.QMessageBox.Yes:
                 # save the measured data as excel
                 # get the file name to save the meditions
-                fname = unicode(QFileDialog.getSaveFileName(self,
-                                self.tr(u"Save meditions as excel file"),
-                                self.widget.signalName + ".xls", "*.xls"))
-                if fname:
-                    self.saveAsExcel(self.tableParameterOscilogram, fname, self.widget.signalName)
+                self.on_actionMeditions_triggered()
 
             self.clearTwoDimensionalWindows()
 
     # endregion
 
     # region Elements Selection
-
-    @pyqtSlot()
-    def on_actionClear_Meditions_triggered(self):
-        """
-        Clear all the detections made. Clear the elements on the widget,
-        the meditions on the table and update the
-        :return:
-        """
-        # clear the widget elements detection and its visual figures
-        self.widget.clearDetection()
-
-        # clear the two dimensional window asociated with the elements detected
-        self.clearTwoDimensionalWindows()
-
-        # refresh the changes
-        self.widget.graph()
 
     @pyqtSlot()
     def on_actionDelete_Selected_Elements_triggered(self):
@@ -373,17 +389,32 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         start_removed_index, end_removed_index = deleted_elements
 
         if start_removed_index is not None and start_removed_index >= 0 \
-           and end_removed_index < self.segmentManager.rowCount():
+           and end_removed_index < self.segmentManager.rowCount:
             # updates the detected elements
             self.segmentManager.deleteElements(start_removed_index, end_removed_index)
-
-            self.updateTableParameter()
 
             for wnd in self.two_dim_windows:
                 wnd.updateData(self.segmentManager)
 
         # deselect the elements on the widget
         self.on_actionDeselect_Elements_triggered()
+
+    @pyqtSlot()
+    def on_actionAddElement_triggered(self):
+        """
+        Try to add the selected region on the widget as a new element
+        Performs the manual segmentation.
+        :return:
+        """
+        element_added_index = self.widget.markRegionAsElement()
+
+        if element_added_index is None:
+            return
+
+        self.segmentManager.addElement(self.widget.Elements[element_added_index], element_added_index)
+
+        for wnd in self.two_dim_windows:
+            wnd.loadData(self.segmentManager)
 
     @pyqtSlot()
     def on_actionDeselect_Elements_triggered(self):
@@ -397,24 +428,26 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         for wnd in self.two_dim_windows:
             wnd.deselectElement()
 
-    def elementSelectedInTable(self, row, column=0):
+        # the table remains equal as before for efficiency (do not update for deselect)
+
+    def selectElement(self, element_index, column=0):
         """
         Callback that is executed for update the element that is selected.
         An element is selected by the user ad must be updated in all visible representations
         like table parameter, two dimensional windows, and graphs.
-        :param row: index of the element selected
-        :param column: parameter provided to reuse this method as callabck of the event selected cell
-        in the QTableWidget
+        :param element_index: index of the element selected
+        :param column: parameter provided to reuse this method as callback of
+        the event selected cell in the QTableWidget. Useless in this application context.
         """
-        # select the element in the table of meditions
-        self.tableParameterOscilogram.selectRow(row)
+        # select the element in the table of measurements
+        self.tableParameterOscilogram.selectRow(element_index)
 
         # in the widget...
-        self.widget.selectElement(row)
+        self.widget.selectElement(element_index)
 
         # and in the opened two dimensional windows
         for wnd in self.two_dim_windows:
-            wnd.selectElement(row)
+            wnd.selectElement(element_index)
 
     # endregion
 
@@ -426,7 +459,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         Open the classification dialog for update the categories and values
         in which could be classified a segment.
         """
-        # create and open the dialog
+        # create and open the dialog to edit the classification categories
         edit_categ_dialog = EditCategoriesDialog(self.segmentManager.classificationData)
         edit_categ_dialog.exec_()
 
@@ -438,7 +471,6 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         :return:
         """
         self.segmentManager.classifyElements(indexes_list, dictionary)
-        self.updateTableParameter()
 
     # endregion
 
@@ -462,11 +494,11 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         :return:
         """
         if visibility:
-            width, height = self.widget.width(), self.windowProgressDetection.size().height()
+            width, height = self.widget.width(), self.widget.height()
             x, y = self.widget.x(), self.widget.y()
 
-            self.windowProgressDetection.resize(width / 3, height)
-            self.windowProgressDetection.move(x + width / 3, y - height / 2 + width / 2)
+            self.windowProgressDetection.resize(width / 3, 20)
+            self.windowProgressDetection.move(x + width / 3, y - height / 2)
             self.windowProgressDetection.setVisible(True)
         else:
             self.windowProgressDetection.setVisible(False)
@@ -481,8 +513,9 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         elementsDetectorDialog = ElemDetectSettingsDialog(parent=self, signal=self.widget.signal)
         elementsDetectorDialog.load_workspace(self.workSpace)
 
-        # deselect the elements on the widget
-        self.widget.deselectElement()
+        # deselect the elements
+        self.on_actionDeselect_Elements_triggered()
+
         try:
             if elementsDetectorDialog.exec_():
                 # the detection dialog is a factory of segmentation,
@@ -506,9 +539,6 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
                 self.updateDetectionProgressBar(95)
 
-                # visualize the detection
-                self.updateTableParameter()
-
                 # update the measured data on the two dimensional opened windows
                 for wnd in self.two_dim_windows:
                     wnd.loadData(self.segmentManager)
@@ -518,7 +548,6 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
         except Exception as e:
             print("detection errors: " + e.message)
-
 
         # complete the progress of detection and hide the progress bar
         self.updateDetectionProgressBar(100)
@@ -533,14 +562,13 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         # set the number of columns to the amount of parameters measured
         # plus the amount of categories of classification
         self.tableParameterOscilogram.clear()
-        self.tableParameterOscilogram.setRowCount(self.segmentManager.rowCount())
-        self.tableParameterOscilogram.setColumnCount(self.segmentManager.columnCount())
-        self.tableParameterOscilogram.setHorizontalHeaderLabels(self.segmentManager.parameterColumnNames +
-                                                                self.segmentManager.classificationColumnNames)
+        self.tableParameterOscilogram.setRowCount(self.segmentManager.rowCount)
+        self.tableParameterOscilogram.setColumnCount(self.segmentManager.columnCount)
+        self.tableParameterOscilogram.setHorizontalHeaderLabels(self.segmentManager.columnNames)
 
         # update every x,y position
-        for i in range(self.segmentManager.rowCount()):
-            for j in range(self.segmentManager.columnCount()):
+        for i in range(self.segmentManager.rowCount):
+            for j in range(self.segmentManager.columnCount):
                 # set the result to a table item and save it on the table
                 item = QtGui.QTableWidgetItem(unicode(self.segmentManager.getData(i, j)))
 
@@ -549,7 +577,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
                 self.tableParameterOscilogram.setItem(i, j, item)
 
         # connect the table selection with the selection of an element
-        self.tableParameterOscilogram.cellPressed.connect(self.elementSelectedInTable)
+        self.tableParameterOscilogram.cellPressed.connect(self.selectElement)
         self.tableParameterOscilogram.resizeColumnsToContents()
 
     # endregion

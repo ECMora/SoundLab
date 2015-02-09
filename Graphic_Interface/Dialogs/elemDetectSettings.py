@@ -7,6 +7,8 @@ from graphic_interface.windows.ui_python_files.detectElementsDialog import Ui_Di
 from Utils.Utils import smallSignal
 from sound_lab_core.Segmentation.Detectors.OneDimensional.EnvelopeMethods.AbsDecayEnvelopeDetector import \
     AbsDecayEnvelopeDetector
+from sound_lab_core.Segmentation.Elements.OneDimensionalElements.OneDimensionalElement import \
+    SpectralMeasurementLocation
 
 
 class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
@@ -37,6 +39,9 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         self.parameterTree.setFixedWidth(340)
         self.parameterTree.setHeaderHidden(True)
         self.parameterTree.setParameters(self.ParamTree, showTop=False)
+
+        # temporal
+        self.spectralMeasurementLocation = SpectralMeasurementLocation()
 
         lay1 = QtGui.QVBoxLayout()
         lay1.setMargin(0)
@@ -223,6 +228,32 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
 
         return params
 
+    def getSettings(self):
+        # parameters
+        for name, dict in self.meditions:
+            for x in dict:
+                if isinstance(x[1], bool):
+                    x[1] = self.ParamTree.param(name).param(x[0]).value()
+                else:
+                    for y in x[1]:
+                        y[1] = self.ParamTree.param(name).param(x[0]).param(y[0]).value()
+                    for y in x[2]:
+                        y[1] = self.ParamTree.param(name).param(x[0]).param(y[0]).value()
+
+        # measurements u'Measurement Location'
+        self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.START][0] = self.ParamTree.param(
+            unicode(self.tr(u'Measurement Location'))).param(unicode(self.tr(u'Start'))).value()
+        self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.END][0] = self.ParamTree.param(
+            unicode(self.tr(u'Measurement Location'))).param(unicode(self.tr(u'End'))).value()
+        self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.CENTER][0] = self.ParamTree.param(
+            unicode(self.tr(u'Measurement Location'))).param(unicode(self.tr(u'Center'))).value()
+        self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.QUARTILE25][
+            0] = self.ParamTree.param(unicode(self.tr(u'Measurement Location'))).param(
+            unicode(self.tr(u'Quartile 25'))).value()
+        self.spectralMeasurementLocation.MEDITIONS[self.spectralMeasurementLocation.QUARTILE75][
+            0] = self.ParamTree.param(unicode(self.tr(u'Measurement Location'))).param(
+            unicode(self.tr(u'Quartile 75'))).value()
+
     def getParameters(self):
         # todo create the list of parameters objects
         params = []
@@ -242,6 +273,9 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         """
         :return: The list pf parameters that would be measured
         """
+        # (TEMPORAL) update from the tree parameter the parameters to measure
+        self.getSettings()
+
         return self.getParameters()
 
     # region WorkSpace

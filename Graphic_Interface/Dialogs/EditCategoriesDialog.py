@@ -37,6 +37,14 @@ class EditCategoriesDialog(editCateg.Ui_Dialog, QtGui.QDialog):
         widget.setLayout(self.clasiffCategories_vlayout)
         self.listWidget.setWidget(widget)
 
+    @property
+    def classification(self):
+        return dict([(x.categoryName,
+                     self.classificationData.categories[x.categoryName]
+                                                       [x.comboCategories.currentIndex()])
+                     for x in self.selection_widgets if x.comboCategories.count() > 0])
+
+
     def addCategory(self):
         dialog = QtGui.QDialog(self)
         dialog.setWindowTitle(self.tr(u"Create New Category"))

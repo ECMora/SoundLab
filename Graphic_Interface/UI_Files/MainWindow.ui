@@ -191,7 +191,6 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
     <addaction name="actionZoom_Cursor"/>
     <addaction name="actionPointer_Cursor"/>
     <addaction name="actionRectangular_Cursor"/>
-    <addaction name="actionRectangular_Eraser"/>
     <addaction name="separator"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
@@ -225,7 +224,6 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
     <addaction name="separator"/>
     <addaction name="actionFilter"/>
     <addaction name="actionSmart_Scale"/>
-    <addaction name="actionResampling"/>
     <addaction name="separator"/>
     <addaction name="menuGenerate"/>
    </widget>

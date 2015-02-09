@@ -20,6 +20,9 @@ class AbsDecayEnvelopeDetector(OneDimensionalElementsDetector):
 
     # region Properties
 
+    def one_dimensional_element(self):
+        return OscilogramElement
+
     @property
     def decay(self):
         return self._decay

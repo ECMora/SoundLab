@@ -8,6 +8,14 @@ class OneDimensionalElementsDetector(ElementsDetector):
     def __init__(self, signal):
         ElementsDetector.__init__(self, signal)
 
+    @property
+    def one_dimensional_element(self):
+        """
+        The instance of the detected one dimensional elements
+        :return:
+        """
+        pass
+
     def detect(self, indexFrom=0, indexTo=-1):
         """
         :param indexFrom:

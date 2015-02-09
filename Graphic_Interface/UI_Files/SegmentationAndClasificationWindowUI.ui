@@ -141,6 +141,7 @@
     <addaction name="actionDetection"/>
     <addaction name="actionDelete_Selected_Elements"/>
     <addaction name="actionDeselect_Elements"/>
+    <addaction name="actionAddElement"/>
    </widget>
    <widget class="QMenu" name="menuTools">
     <property name="title">
@@ -170,6 +171,7 @@
     </widget>
     <addaction name="actionMeditions"/>
     <addaction name="menuGraph_Images"/>
+    <addaction name="actionSound_File_Segmentation"/>
    </widget>
    <addaction name="menuExport"/>
    <addaction name="menuDetection"/>
@@ -341,14 +343,6 @@
     <string>Ctrl+D</string>
    </property>
   </action>
-  <action name="actionClear_Meditions">
-   <property name="text">
-    <string>Clear Meditions</string>
-   </property>
-   <property name="shortcut">
-    <string>Alt+E</string>
-   </property>
-  </action>
   <action name="actionView_Threshold">
    <property name="checkable">
     <bool>true</bool>
@@ -498,14 +492,6 @@
     <string>Rectangular_Cursor</string>
    </property>
   </action>
-  <action name="actionRectangular_Eraser">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Rectangular_Eraser</string>
-   </property>
-  </action>
   <action name="actionZoom_Cursor">
    <property name="checkable">
     <bool>true</bool>
@@ -557,17 +543,6 @@
     <string>Two Dimensional Graphs</string>
    </property>
   </action>
-  <action name="actionTraining_Mode">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Training Mode</string>
-   </property>
-  </action>
   <action name="actionClassification_Settings">
    <property name="icon">
     <iconset resource="resources/icons.qrc">
@@ -575,11 +550,6 @@
    </property>
    <property name="text">
     <string>Edit Categories</string>
-   </property>
-  </action>
-  <action name="actionMethod">
-   <property name="text">
-    <string>Method</string>
    </property>
   </action>
   <action name="actionRecord">
@@ -604,6 +574,27 @@
    </property>
    <property name="toolTip">
     <string>Play Loop</string>
+   </property>
+  </action>
+  <action name="actionAddElement">
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/add.png</normaloff>:/myappicons/add.png</iconset>
+   </property>
+   <property name="text">
+    <string>AddElement</string>
+   </property>
+   <property name="toolTip">
+    <string>Mark Selected Region As Element</string>
+   </property>
+  </action>
+  <action name="actionSound_File_Segmentation">
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/225.ico</normaloff>:/myappicons/225.ico</iconset>
+   </property>
+   <property name="text">
+    <string>Sound File Segmentation</string>
    </property>
   </action>
   <zorder>dockWidgetParameterTableOscilogram</zorder>

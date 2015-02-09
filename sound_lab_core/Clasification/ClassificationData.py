@@ -1,14 +1,13 @@
 # -*- coding: utf-8 -*-
-#Classification Methods based on a set of previously classified elements
-#stored as {'data':numpy array}
-from PyQt4.QtCore import pyqtSignal,QObject
+from PyQt4.QtCore import pyqtSignal, QObject
 
 
 class ClassificationData(QObject):
     """
     Class that handles the clasiffication
     """
-    #SIGNALS
+
+    # region SIGNALS
 
     # Signal raised when a new category was added.
     # raises str --> name of new category
@@ -22,7 +21,9 @@ class ClassificationData(QObject):
     # raise a tuple (str,str) --> category,value
     valueRemoved = pyqtSignal(str, str)
 
-    def __init__(self,trainingData = None,categories=None):
+    # endregion
+
+    def __init__(self, trainingData=None, categories=None):
         """
 
         @param trainingData: list of ClassificationVector for training
