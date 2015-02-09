@@ -14,6 +14,13 @@ class SoundLabWidget:
     handle it. Provide a way to change the tool and react to the gui events
     """
 
+    # region CONSTANTS
+
+    # the number of characters used to visualize the data detected tool
+    DATA_TOOL_STR_LENGTH = 5
+
+    # endregion
+
     def __init__(self):
         # the gui tool that is used on the widget gui interaction
         self.gui_user_tool = None
@@ -85,11 +92,7 @@ class SoundLabWidget:
 
         for atr_name, value in data_list:
             value_str = str(value)
-            # str to concat at front of values strings to make const the amount of
-            # chars used on each value
-            # 1 char for sign (- or ' ') 3 for numbers
-            negative_padd = " " if value >= -1**(-decimal_places) else ""
-            negative_padd += "" if abs(value) >= 100 else (" " if abs(value) >= 10 else "  ")
+
             try:
                 decimals = value_str[value_str.rindex("."):]
                 # concat as much '0' to the end of the str as chars to complete the decimal places
@@ -97,9 +100,10 @@ class SoundLabWidget:
                 value_str += "0" * (decimal_places - len(decimals) + 1)
 
             except Exception as ex:
-                pass
+                print("Data text tool update " + ex.message)
 
-            detected_data += str(atr_name) + ": " + negative_padd + value_str + " "
+            str_pad = " " * (len(value_str) - self.DATA_TOOL_STR_LENGTH)
+            detected_data += str(atr_name) + ": " + str_pad + value_str + " "
 
         # raise the detected data as signal
         # the definition of the signal must be in every descendant widget

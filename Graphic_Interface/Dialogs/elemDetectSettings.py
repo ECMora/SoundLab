@@ -104,7 +104,7 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
                        u'value': False}]}
         ]
 
-        timeMeditions = [
+        self.timeMeditions = [
             [unicode(self.tr(u"Start(s)")), True, lambda x, d: x.startTime()],
             [unicode(self.tr(u"End(s)")), True, lambda x, d: x.endTime()],
             [unicode(self.tr(u"StartToMax(s)")), False, lambda x, d: x.distanceFromStartToMax()],
@@ -136,14 +136,14 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
 
         ]
 
-        waveMeditions = [
+        self.waveMeditions = [
             [unicode(self.tr(u"PeekToPeek(V)")), False, lambda x, d: x.peekToPeek()],
             [unicode(self.tr(u"RMS(V)")), False, lambda x, d: x.rms()],
         ]
 
-        self.meditions = [(unicode(self.tr(u'Temporal Meditions')), timeMeditions), \
+        self.meditions = [(unicode(self.tr(u'Temporal Meditions')), self.timeMeditions), \
                           (unicode(self.tr(u'Spectral Meditions')), self.spectralMeditions), \
-                          (unicode(self.tr(u'Waveform Meditions')), waveMeditions)]
+                          (unicode(self.tr(u'Waveform Meditions')), self.waveMeditions)]
 
         for name, dict in self.meditions:
             children = []
@@ -267,6 +267,7 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
                         for y in x[2]:
                             if y[1]:
                                 params.append([y[0], y[2], x[1]])
+        print(params)
         return params + self.getspectralParameters()
 
     def getParametersList(self):

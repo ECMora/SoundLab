@@ -44,16 +44,24 @@ class EditCategoriesDialog(editCateg.Ui_Dialog, QtGui.QDialog):
                                                        [x.comboCategories.currentIndex()])
                      for x in self.selection_widgets if x.comboCategories.count() > 0])
 
-
     def addCategory(self):
+        """
+        Add a new category into the classification.
+        manage the visual widget to get the name of the category
+        :return:
+        """
+
         dialog = QtGui.QDialog(self)
         dialog.setWindowTitle(self.tr(u"Create New Category"))
+
         layout = QtGui.QVBoxLayout()
         layout.addWidget(QtGui.QLabel(self.tr(u"Insert the name of the new Category")))
+
         text = QtGui.QLineEdit()
         layout.addWidget(text)
-        butts = QtGui.QDialogButtonBox()
 
+        # add the accept, cancel button box
+        butts = QtGui.QDialogButtonBox()
         butts.addButton(QtGui.QDialogButtonBox.Ok)
         butts.addButton(QtGui.QDialogButtonBox.Cancel)
         QtCore.QObject.connect(butts, QtCore.SIGNAL("accepted()"), dialog.accept)
@@ -61,11 +69,8 @@ class EditCategoriesDialog(editCateg.Ui_Dialog, QtGui.QDialog):
 
         layout.addWidget(butts)
         dialog.setLayout(layout)
+
         if dialog.exec_():
             category = str(text.text())
-            if category == "":
-                QtGui.QMessageBox.warning(QtGui.QMessageBox(),
-                                          self.tr(u"Error"), self.tr(u"Invalid Category Name."))
-                return
-            if self.clasiffCategories_vlayout and self.classificationData.addCategory(category):
+            if category != "" and self.clasiffCategories_vlayout and self.classificationData.addCategory(category):
                 self.clasiffCategories_vlayout.addWidget(EditCategoriesWidget(self, category, self.classificationData))

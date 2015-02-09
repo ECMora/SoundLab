@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 from PyQt4.QtCore import pyqtSlot, Qt
 from PyQt4 import QtGui
 import xlwt
@@ -100,17 +101,20 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         Restore (if any) the previous session with this file.
         That means detected elements, measured parameters etc that are saved on the signal
         extra data.
-
         :return:
         """
-        if self.widget.signal.extraData:
-            data = self.widget.signal.extraData
-            if isinstance(data,list):
-                for element in data:
-                    if isinstance(element, tuple):
-                        self.widget.markRegionAsElement(element, update=False)
+        if not self.widget.signal.extraData:
+            return
 
-            self.widget.graph()
+        data = self.widget.signal.extraData
+        # try to add the detected elements from the extra data (list of tuples (start,end) )
+        if not isinstance(data, list):
+            return
+
+        for element in [e for e in data if isinstance(e, tuple)]:
+            self.widget.markRegionAsElement(element, update=False)
+
+        self.widget.graph()
 
     def __addContextMenuActions(self):
         """
@@ -198,16 +202,10 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         """
         # a two dim window must be created after segment detection
         # and parameters measurement
-        if self.tableParameterOscilogram.rowCount() == 0:
+        if self.segmentManager.rowCount == 0 or len(self.segmentManager.parameterColumnNames) == 0:
             QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
-                                      self.tr(u"There is not detected elements.") + u" \n" + self.tr(
-                                          u"The two dimensional analyses requires at least one detected element."))
-            return
-
-        if self.tableParameterOscilogram.columnCount() == 0:
-            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
-                                      self.tr(u"There is not parameters measurement.") + u"\n" + self.tr(
-                                          u"The two dimensional analisys requires at least one parameter measured."))
+                                      self.tr(u"The two dimensional analyses window requires at least "
+                                              u"one detected element with one parameter measurement."))
             return
 
         wnd = TwoDimensionalAnalisysWindow(self, self.segmentManager)
@@ -232,11 +230,11 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         Close the two dimensional windows and clear the list of two dim windows
         :return:
         """
-        # close the open windows
+        # close the opened windows
         for window in self.two_dim_windows:
             window.close()
 
-        # initialize the list
+        # clear the list of two dimensional windows
         self.two_dim_windows = []
 
     # endregion
@@ -252,9 +250,13 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         :return:
         """
         # get the file name to save the data into.
-        file_name = name if name != "" else unicode(QFileDialog.getSaveFileName(self,
-                                                self.tr(u"Save measurements as excel file"),
-                                                self.widget.signalName + ".xls", "*.xls"))
+        file_name = name
+
+        if file_name == "":
+            file_name = unicode(QFileDialog.getSaveFileName(self, self.tr(u"Save measurements as excel file"),
+                                os.path.join(self.workSpace.lastOpenedFolder,
+                                str(self.widget.signalName) + ".xls"), "*.xls"))
+
         # save the data of table
         if file_name:
             # the excel book to save data
@@ -285,7 +287,8 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
             self.widget.save()
         else:
             file_name = unicode(QFileDialog.getSaveFileName(self, self.tr(u"Save signal"),
-                                                            self.widget.signalName, u"*.wav"))
+                                                            os.path.join(self.workSpace.lastOpenedFolder,
+                                                            str(self.widget.signalName)), u"*.wav"))
             if file_name:
                 self.widget.save(file_name)
                 self.widget.signalFilePath = file_name
@@ -598,8 +601,8 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
     @pyqtSlot()
     def on_actionElements_Peaks_triggered(self):
-        visibility = self.actionElements_Peaks.isChecked()
-        self.widget.changeElementsVisibility(visibility, Element.PeakFreqs, oscilogramItems=False)
+        self.widget.changeElementsVisibility(self.actionElements_Peaks.isChecked(),
+                                             Element.PeakFreqs, oscilogramItems=False)
 
     @pyqtSlot()
     def on_actionTemporal_Elements_triggered(self):
@@ -621,16 +624,15 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         Change visibility of the numbers of the detected segments on the oscilogram graph
 
         """
-        visibility = self.actionTemporal_Numbers.isChecked()
-        self.widget.changeElementsVisibility(visibility, Element.Text)
+        self.widget.changeElementsVisibility(self.actionTemporal_Numbers.isChecked(), Element.Text)
 
     @pyqtSlot()
     def on_actionSpectral_Numbers_triggered(self):
         """
         Change visibility of the numbers of the detected segments on the spectrogram graph
         """
-        visibility = self.actionSpectral_Numbers.isChecked()
-        self.widget.changeElementsVisibility(visibility, Element.Text, oscilogramItems=False)
+        self.widget.changeElementsVisibility(self.actionSpectral_Numbers.isChecked(),
+                                             Element.Text, oscilogramItems=False)
 
     @pyqtSlot()
     def on_actionSpectral_Figures_triggered(self):
@@ -672,3 +674,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         """
         self.workSpace = workspace
         self.widget.load_workspace(workspace)
+
+        # update workspace on every window
+        for wnd in self.two_dim_windows:
+            wnd.load_workspace(self.workSpace)

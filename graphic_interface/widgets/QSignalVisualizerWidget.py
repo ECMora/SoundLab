@@ -642,9 +642,14 @@ class QSignalVisualizerWidget(QtGui.QWidget):
                 spec_rgn = self.axesSpecgram.gui_user_tool.zoomRegion.getRegion()
                 index_from_zoom, index_to_zoom = self.from_spec_to_osc(spec_rgn[0]), self.from_spec_to_osc(spec_rgn[1])
 
-            if index_from_zoom > index_from and index_to_zoom < index_to and index_from_zoom != index_to_zoom:
+            index_from_zoom, index_to_zoom = max(index_from, index_from_zoom), min(index_to, index_to_zoom)
+
+            if index_from < index_from_zoom < index_to_zoom:
+                index_from = index_from_zoom
+
+            if index_from_zoom < index_to_zoom < index_to:
                 # get the start of the region
-                index_from, index_to = index_from_zoom, index_to_zoom
+                index_to = index_to_zoom
 
         return int(index_from), int(index_to)
 

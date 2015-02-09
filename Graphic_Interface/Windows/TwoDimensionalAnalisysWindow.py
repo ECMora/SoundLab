@@ -154,12 +154,12 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
     def loadData(self, segmentManager):
         """
         Load a new detection data. Update the graph and the internal variables
-        from the segment manager update
+        from the segment manager.
         :return:
         """
         self.deselectElement()
 
-        # removes the old combo for the old measurements
+        # removes the old combo with the old measurements
         # the x axis old measurements
         self.ParamTree.param(unicode(self.tr(u'X Axis Parameter Settings'))).removeChild(
             self.ParamTree.param(unicode(self.tr(u'X Axis Parameter Settings'))).
@@ -188,7 +188,8 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
     def updateData(self, segmentManager):
         """
         Update the data from the segment manager where a change is made
-        on the amount of elements(someone(s) is(are) deleted) but not in the paramaters measured
+        on the amount of elements(someone(s) is(are) deleted(added)) but the parameters measured
+        remains equals.
         (If the change is made on parameters must call loadData)
         :param segmentManager:
         :return:
@@ -202,8 +203,8 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         """
         self.font, ok = QtGui.QFontDialog.getFont(self.font)
         if ok:
-            self.widget.getPlotItem().getAxis("bottom").setTickFont(self.font)
-            self.widget.getPlotItem().getAxis("left").setTickFont(self.font)
+            self.widget.setAxisFont("bottom", self.font)
+            self.widget.setAxisFont("left", self.font)
 
     def plot(self):
         """
@@ -213,10 +214,11 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         self.widget.clear()
 
         # get the indexes of the two params X and Y for each axis values to graph
-        x_axis_index, y_axis_index = self.ParamTree.param(unicode(self.tr(u'X Axis Parameter Settings'))).param(
-            unicode(self.tr(u'X Axis'))).value(), \
-                                     self.ParamTree.param(unicode(self.tr(u'Y Axis Parameter Settings'))).param(
-                                         unicode(self.tr(u'Y Axis'))).value()
+        x_axis_index = self.ParamTree.param(unicode(self.tr(u'X Axis Parameter Settings'))).param(
+                                            unicode(self.tr(u'X Axis'))).value()
+
+        y_axis_index = self.ParamTree.param(unicode(self.tr(u'Y Axis Parameter Settings'))).param(
+                                            unicode(self.tr(u'Y Axis'))).value()
 
         # get the visual options of the graph
         color = self.ParamTree.param(unicode(self.tr(u'Color'))).value()
@@ -240,28 +242,26 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
                                                data=numpy.arange(len(x_coords)),
                                                size=fig_size, symbol=shape, brush=(pg.mkBrush(color)))
 
-        # connect the signals for selection on the plot
+        # connect the signals for selection item on the plot
         self.scatter_plot.sigClicked.connect(self.elementFigureClicked)
 
         elems = self.scatter_plot.points()
 
         # draw the selected element with a different brush
-        if 0 < self.selectedElementIndex < len(elems):
+        if 0 <= self.selectedElementIndex < len(elems):
             elems[self.selectedElementIndex].setBrush(pg.mkBrush("FFF"))
 
         # update font size in axis labels
         text_size = {'color': '#FFF', 'font-size': str(self.font.pointSize()) + 'pt'}
-        self.widget.getPlotItem().getAxis("bottom").setLabel(
-            text=str(self.segmentManager.parameterColumnNames[x_axis_index]), **text_size)
-        self.widget.getPlotItem().getAxis("left").setLabel(
-            text=str(self.segmentManager.parameterColumnNames[y_axis_index]), **text_size)
+        self.widget.setAxisLabel("bottom", str(self.segmentManager.parameterColumnNames[x_axis_index]), **text_size)
+
+        self.widget.setAxisLabel("left", str(self.segmentManager.parameterColumnNames[y_axis_index]), **text_size)
 
         # add the plot to the widget
         self.widget.addItem(self.scatter_plot)
 
         # set range to the visible region of values
-        self.widget.getPlotItem().setRange(xRange=(xmin - xshift, xmax + xshift),
-                                           yRange=(ymin - yshift, ymax + yshift))
+        self.widget.setRange(xRange=(xmin - xshift, xmax + xshift),yRange=(ymin - yshift, ymax + yshift))
 
         # clear the selection rectangle
         self.widget.removeSelectionRect()
@@ -338,7 +338,7 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
 
         xGrid, yGrid = workspace.workTheme.oscillogramTheme.gridX, workspace.workTheme.oscillogramTheme.gridY
 
-        self.widget.getPlotItem().showGrid(x=xGrid, y=yGrid)
+        self.widget.showGrid(x=xGrid, y=yGrid)
 
     @pyqtSlot()
     def on_actionHide_Show_Settings_triggered(self):

@@ -19,7 +19,7 @@ class SegmentManager(QObject):
         self._classifier = None
 
         # the parameter measurer list
-        self._measurerList = [[unicode(self.tr(u"Start(s)")), lambda x, d: x.startTime(),[]]]
+        self._measurerList = []
 
         # set the connections for the classification data to
         # update when is added, changed or deleted a value or category
@@ -30,7 +30,7 @@ class SegmentManager(QObject):
 
         # stores the measured parameters of the detected elements
         # has dimensions len(Elements) * len(_measurerList)
-        self.measuredParameters = np.array([[], []])
+        self.measuredParameters = np.array([])
 
         # stores the classification data that are present in the table of meditions
         self.classificationTableData = self.classificationTableData = [[self.tr(u"No Identified")
@@ -150,12 +150,11 @@ class SegmentManager(QObject):
         self.classificationTableData = self.classificationTableData[:start_index] + \
                                               self.classificationTableData[end_index + 1:]
 
-        print(self.measuredParameters, self.classificationTableData)
         self.measurementsChanged.emit()
 
     def addElement(self, element, index):
         """
-        Add a new element at index supplied. Execute the parameter measuremetn over it
+        Add a new element at index supplied. Execute the parameter measurement over it
         :param element:  the element to add
         :param index: the index to insert the element at
         :return:
@@ -163,13 +162,18 @@ class SegmentManager(QObject):
         if not 0 <= index <= self.rowCount:
             raise IndexError()
 
-        # add the element
-        self.measuredParameters = np.concatenate((self.measuredParameters[:index],
-                                                  np.array([np.zeros(len(self.measurerList))]),
-                                                  self.measuredParameters[index:]))
+        if self.rowCount == 0:
+            self.measuredParameters = np.array([np.zeros(len(self.measurerList))])
+            self.classificationTableData = [[self.tr(u"No Identified") for _ in self.classificationColumnNames]]
 
-        self.classificationTableData.insert(index, [self.tr(u"No Identified")
-                                                    for _ in self.classificationColumnNames])
+        else:
+            # add the element
+            self.measuredParameters = np.concatenate((self.measuredParameters[:index],
+                                                      np.array([np.zeros(len(self.measurerList))]),
+                                                      self.measuredParameters[index:]))
+
+            self.classificationTableData.insert(index, [self.tr(u"No Identified")
+                                                        for _ in self.classificationColumnNames])
         # measure parameters
         self._measure(element, index)
 
@@ -186,6 +190,9 @@ class SegmentManager(QObject):
         :param elements:
         :return:
         """
+
+        if len(self.measurerList) == 0:
+            return
 
         self.measuredParameters = np.zeros(len(elements) * len(self.measurerList)).reshape(
             (len(elements), len(self.measurerList)))
@@ -233,7 +240,7 @@ class SegmentManager(QObject):
         if row < 0 or row >= self.rowCount:
             raise IndexError()
 
-        if col < len(self.measuredParameters[row]):
+        if col < len(self.measurerList):
             return self.measuredParameters[row, col]
 
-        return self.classificationTableData[row][col - len(self.measuredParameters[row])]
+        return self.classificationTableData[row][col - len(self.measurerList)]

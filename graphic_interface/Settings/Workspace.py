@@ -1,3 +1,4 @@
+import os
 from PyQt4.QtGui import QTabWidget
 from duetto.dimensional_transformations.two_dimensional_transforms.Spectrogram.WindowFunctions import WindowFunction
 from graphic_interface.Settings.WorkTheme import WorkTheme, OscillogramTheme, SpectrogramTheme, OneDimensionalTheme, \
@@ -106,6 +107,15 @@ class Workspace(object):
 
         self.tabPosition = int(QTabWidget.North)
         self.tabShape = int(QTabWidget.Rounded)
+
+    @property
+    def lastOpenedFolder(self):
+        """
+        :return: The folder of the last opened file if any else ""
+        """
+        if self.lastOpenedFile != "":
+            return os.path.split(self.lastOpenedFile)[0]
+        return ""
 
     @property
     def lastOpenedFile(self):

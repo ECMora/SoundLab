@@ -298,8 +298,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         for i, x in enumerate(self.Elements):
             x.setNumber(i + 1)
 
-        self.axesOscilogram.update()
-        self.axesSpecgram.update()
+        self.graph()
 
         return indexFrom, indexTo - 1
 
@@ -317,6 +316,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         else:
             start, end = interval
 
+        # no selected region
         if end <= start or (self.mainCursor.min == start and self.mainCursor.max == end):
             return None
 
@@ -325,9 +325,11 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         indexFrom, indexTo = np.searchsorted(sorted_arr, start), np.searchsorted(sorted_arr, end)
         indexFrom -= 1 if indexFrom > 0 and start <= self.Elements[indexFrom - 1].indexTo else 0
 
+        # overlaps with other elements
         if indexFrom != indexTo:
             return None
 
+        # todo hard code instance must be used an injection of dependencies
         element = OscilogramElement(self.signal, start, end)
         self.Elements.insert(indexFrom, element)
         element.elementClicked.connect(lambda i: self.elementClicked.emit(i))

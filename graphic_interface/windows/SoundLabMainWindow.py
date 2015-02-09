@@ -1633,7 +1633,8 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
 
         # get the filename to store the signal
         file_name = unicode(QFileDialog.getSaveFileName(self, self.tr(u"Save signal"),
-                                                        widget.signalName, u"*.wav"))
+                                                        os.path.join(self.workSpace.lastOpenedFolder,
+                                                        str(self.widget.signalName)), u"*.wav"))
         if file_name:
             widget.save(file_name)
 
@@ -1649,11 +1650,10 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
 
         #  get the filename to store the new signal
         file_name = unicode(QFileDialog.getSaveFileName(self, self.tr(u"Save signal"),
-                                                        self.tr(u"Selection-") +
-                                                        widget.signalName, u"*.wav"))
+                                                       os.path.join(self.workSpace.lastOpenedFolder,
+                                                       str(self.widget.signalName)), u"*.wav"))
         if file_name:
             widget.saveSelectedSectionAsSignal(file_name)
-
 
     @pyqtSlot()
     def on_actionOpen_Selection_triggered(self, signal_index=None):
@@ -1833,9 +1833,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         :param action: the action to set the speed
         :return:
         """
-
-        # stop prevoiusly playing or recording at other speed.
-
+        # stop previously playing or recording at other speed.
         if self.widget is not None:
             self.widget.stop()
 
@@ -1912,26 +1910,25 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
 
         # set manually the actions for each recent file action (issues when use a for and
         # update the lambda function, keep reference to the same value for all the actions)
-
         if len(actions) >= 1:
             actions[0].setData(self.workSpace.recentFiles[0])
-            actions[0].triggered.connect(lambda : self._open(actions[0].data().toString()))
+            actions[0].triggered.connect(lambda: self._open(actions[0].data().toString()))
 
         if len(actions) >= 2:
             actions[1].setData(self.workSpace.recentFiles[1])
-            actions[1].triggered.connect(lambda : self._open(actions[1].data().toString()))
+            actions[1].triggered.connect(lambda: self._open(actions[1].data().toString()))
 
         if len(actions) >= 3:
             actions[2].setData(self.workSpace.recentFiles[2])
-            actions[2].triggered.connect(lambda : self._open(actions[2].data().toString()))
+            actions[2].triggered.connect(lambda: self._open(actions[2].data().toString()))
 
         if len(actions) >= 4:
             actions[3].setData(self.workSpace.recentFiles[3])
-            actions[3].triggered.connect(lambda : self._open(actions[3].data().toString()))
+            actions[3].triggered.connect(lambda: self._open(actions[3].data().toString()))
 
         if len(actions) >= 5:
             actions[4].setData(self.workSpace.recentFiles[4])
-            actions[4].triggered.connect(lambda : self._open(actions[4].data().toString()))
+            actions[4].triggered.connect(lambda: self._open(actions[4].data().toString()))
 
         self.menuRecentSignals.addActions(actions)
 
