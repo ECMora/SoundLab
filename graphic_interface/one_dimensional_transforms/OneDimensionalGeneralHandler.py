@@ -38,6 +38,9 @@ class OneDimensionalGeneralHandler(QObject):
         """
         return self._handlers_by_name[name].get_transform_instance()
 
+    def get_y_limits(self, transform):
+        return self._handlers_by_class[transform.__class__].get_y_limits(transform)
+
     def get_axis_labels(self, transform):
         """
         Gets the axis labels information of the corresponding transform to show it when graphing

@@ -3,7 +3,7 @@ from PyQt4 import QtGui
 from duetto.audio_signals import AudioSignal
 from pyqtgraph.parametertree import Parameter, ParameterTree
 from pyqtgraph.parametertree.parameterTypes import ListParameter
-from duetto.dimensional_transformations.one_dimensional_transforms.AveragePowSpectrumTransform import AveragePowSpec
+from duetto.dimensional_transformations.one_dimensional_transforms.InstantFrequenciesTransform import InstantFrequencies
 from graphic_interface.one_dimensional_transforms.OneDimensionalGeneralHandler import OneDimensionalGeneralHandler
 from graphic_interface.windows.ParameterList import DuettoListParameterItem
 from graphic_interface.windows.ui_python_files.one_dim_transforms_window import Ui_OneDimensionalWindow
@@ -41,7 +41,8 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
         self.widget.signal = signal
 
         # self.signal = signal
-        self.widget.one_dim_transform = AveragePowSpec(signal)
+        self.widget.one_dim_transform = InstantFrequencies(signal)
+
         # Parameter Tree Settings
         self.__createParameterTree()
 
@@ -111,8 +112,8 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
         params = [
             {u'name': unicode(self.tr(u'Select')),
              u'type': u'list',
-             u'value': transforms[3][1],
-             u'default': transforms[3][1],
+             u'value': transforms[0][1],
+             u'default': transforms[0][1],
              u'values': transforms}
         ]
 
@@ -156,7 +157,22 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
             if params != []:
                 self.ParamTree.param(u'Select').addChild(self._transform_paramTree)
 
+            labels = self._tranforms_handler.get_axis_labels(one_dim_transform)
+            limits = self._tranforms_handler.get_y_limits(one_dim_transform)
+
+            self.widget.minY = limits[0]
+            self.widget.maxY = limits[1]
+
+            rangeParams = [  { u'name': unicode(self.tr(u'Min')), u'type': u'int', u'limits': limits, u'value': self.widget.minY },
+                             { u'name': unicode(self.tr(u'Max')), u'type': u'int', u'limits': limits, u'value': self.widget.maxY }
+                          ]
+
+            self._yRange_paramTree = Parameter.create(name=labels[u'Y'], type=u'group', children=rangeParams)
+
+            self.ParamTree.param(u'Select').addChild(self._yRange_paramTree)
+
             self._transform_paramTree.sigTreeStateChanged.connect(self.changeTransformSettings)
+            self._yRange_paramTree.sigTreeStateChanged.connect(self.changeYRangeSettings)
 
         # removing the old layout from the dock widget
         self.dock_settings_contents = QtGui.QWidget()
@@ -184,6 +200,7 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
         self.graph(indexFrom=self.indexFrom, indexTo=self.indexTo)
 
     def changeTransformSettings(self, param, changes):
+
         for param, change, data in changes:
             path = self._transform_paramTree.childPath(param)
             if path is not None:
@@ -192,6 +209,25 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
                 childName = param.name()
 
             self._tranforms_handler.apply_settings_change(self.widget.one_dim_transform, (childName, change, data))
+
+        self.graph(indexFrom=self.indexFrom, indexTo=self.indexTo)
+
+    def changeYRangeSettings(self, param, changes):
+
+        labels = self._tranforms_handler.get_axis_labels(self.widget.one_dim_transform)
+        for param, change, data in changes:
+            path = self._transform_paramTree.childPath(param)
+            if path is not None:
+                childName = '.'.join(path)
+            else:
+                childName = param.name()
+
+            if childName == u'Min':
+                self.widget.minY = data
+
+            if childName ==u'Max':
+                self.widget.maxY = data
+
 
         self.graph(indexFrom=self.indexFrom, indexTo=self.indexTo)
 

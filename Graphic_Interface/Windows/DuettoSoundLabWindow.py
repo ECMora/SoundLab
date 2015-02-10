@@ -2209,8 +2209,9 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         :return:
         """
         indexFrom, indexTo = self.widget.selectedRegion
-        for win in self.one_dim_windows:
-            win.graph(indexFrom, indexTo)
+        for widget, win in self.one_dim_windows:
+            if self.widget is widget:
+                win.graph(indexFrom, indexTo)
 
     @pyqtSlot()
     def on_actionOneDimensionalTransformation_triggered(self):
@@ -2225,7 +2226,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         one_dim_window.graph(indexFrom, indexTo)
 
         #  store the opened one dimensional one_dim_transform windows for handling
-        self.one_dim_windows.append(one_dim_window)
+        self.one_dim_windows.append((self.widget, one_dim_window))
 
     #  endregion
 

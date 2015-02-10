@@ -32,6 +32,9 @@ class LogarithmicPowSpecHandler(OneDimensionalHandler):
     def get_axis_labels(self):
         return {u'X': u'Frequency (kHz)', u'Y': u'Intensity (dB)' }
 
+    def get_y_limits(self,transform):
+        return (-50,0)
+
     def apply_settings_change(self, transform, change):
         """
 

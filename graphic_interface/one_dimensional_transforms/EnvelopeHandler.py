@@ -29,6 +29,9 @@ class EnvelopeHandler(OneDimensionalHandler):
     def get_axis_labels(self):
         return {u'X': u'Time (s)', u'Y': u'Amplitude' }
 
+    def get_y_limits(self, transform):
+        return (0,100)
+
     def apply_settings_change(self, transform, change):
         """
 
@@ -42,7 +45,7 @@ class EnvelopeHandler(OneDimensionalHandler):
             transform.decay = data
 
         elif childName == unicode(self.tr(u'Soft Factor')):
-            transform.softfactor = data
+            transform.softFactor = data
 
         elif childName == unicode(self.tr(u'Function Type')):
-            transform.function_type = data
+            transform.functionType = data

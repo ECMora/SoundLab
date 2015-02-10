@@ -20,6 +20,8 @@ class OneDimPlotWidget(SoundLabWidget,pg.PlotWidget):
     def __init__(self, parent=None,**kargs):
         # set the one dimensional one_dim_transform currently applied to the signal
         self.__one_dim_transform = None
+        self._minY = 0
+        self._maxY = 0
 
         self.plot_color = "CC3"
 
@@ -28,7 +30,6 @@ class OneDimPlotWidget(SoundLabWidget,pg.PlotWidget):
 
         self.getPlotItem().showGrid(True, True)
         self.setClipToView(True)
-        self.setDownsampling(auto=True, mode="peak")
         self.setMouseEnabled(x=False, y=False)
         self.setMenuEnabled(False)
         self.getPlotItem().hideButtons()
@@ -56,8 +57,28 @@ class OneDimPlotWidget(SoundLabWidget,pg.PlotWidget):
 
     # endregion
 
+    #region MinY, MaxY Properties
+
+    @property
+    def minY(self):
+        return self._minY
+
+    @minY.setter
+    def minY(self, value):
+        self._minY = value
+
+    @property
+    def maxY(self):
+        return self._maxY
+
+    @maxY.setter
+    def maxY(self, value):
+        self._maxY = value
+
+    #endregion
+
     def load_workspace(self, workspace, forceUpdate=False):
-        self.plot_color = workspace.theme.plot_color
+        self.plot_color = workspace.oneDimensionalWorkspace.theme.plot_color
 
     # region Property Transform
     # the signal and the one_dim_transform update is made on the window
@@ -80,10 +101,8 @@ class OneDimPlotWidget(SoundLabWidget,pg.PlotWidget):
         self.__one_dim_transform = transform
 
         self.__one_dim_transform.signal = self.signal
-    # endregion
 
-    def getInfo(self, info1, info2):
-       pass
+    # endregion
 
     def graph(self, indexFrom=0, indexTo=-1,labels=None, morekwargs=None):
         """
@@ -97,12 +116,14 @@ class OneDimPlotWidget(SoundLabWidget,pg.PlotWidget):
             (x, y) = self.one_dim_transform.getData(indexFrom, indexTo)
             self.plot(x, y, pen=self.plot_color, clear=True)
             self.setXRange(0, x[len(x) - 1], padding=0)
+            self.setYRange(self.minY, self.maxY, padding=0)
             self.getPlotItem().getAxis(u'bottom').setRange(0, x[len(x) - 1])
+            self.getPlotItem().getAxis(u'left').setRange(self.minY, self.maxY)
             xLabel = unicode(self.tr(labels[u'X']))
             yLabel = unicode(self.tr(labels[u'Y']))
             self.getPlotItem().setLabel(axis='bottom',text=xLabel)
             self.getPlotItem().setLabel(axis='left', text=yLabel)
-            
+
             self.show()
 
     # region Tools interaction Implementation

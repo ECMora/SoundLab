@@ -41,6 +41,9 @@ class OneDimensionalHandler(QObject):
         """
         pass
 
+    def get_y_limits(self, transform):
+        pass
+
     def apply_settings_change(self, transform, change):
         """
         Applies the given change to the given transform.
