@@ -1,6 +1,7 @@
 #  -*- coding: utf-8 -*-
 from Utils.Utils import *
 from duetto.audio_signals import openSignal
+from duetto.audio_signals.audio_signals_stream_readers.FileManager import FileManager
 from ui_python_files.BatchWindow import Ui_MainWindow
 
 
@@ -12,7 +13,7 @@ class BatchWindow(QtGui.QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
         """
         """
-        QtGui.QMainWindow.__init__(self,parent)
+        QtGui.QMainWindow.__init__(self, parent)
         self.setupUi(self)
 
     def batch(self):
@@ -41,7 +42,7 @@ class BatchWindow(QtGui.QMainWindow, Ui_MainWindow):
         # updating the progress bar
         self.progressBarProcesed.setValue(0)
 
-        # the number of files processed for use in the progres bar update
+        # the number of files processed for use in the progress bar update
         files_processed = 0
 
         if self.rbttnSplitFile.isChecked():
@@ -56,18 +57,18 @@ class BatchWindow(QtGui.QMainWindow, Ui_MainWindow):
                     left = len(signal.data) % pieceSize
                     if pieces >= 1:
                         for i in range(pieces):
-                            save = signal.copy(i * pieceSize,(i + 1) * pieceSize)
-                            # save.save(os.path.join(directoryoutput, str(i + 1) + "-" + signal.name))
+                            save = signal.copy(i * pieceSize, (i + 1) * pieceSize)
+                            FileManager().write(save, os.path.join(directoryoutput, str(i + 1) + "-" + signal.name))
                     if left > 0:
                         save = signal.copy(signal.length - left, signal.length)
-                        save.save(os.path.join(directoryoutput, str(pieces + 1) + "-" + signal.name))
+                        FileManager().write(save, os.path.join(directoryoutput, str(pieces + 1) + "-" + signal.name))
 
                     files_processed += 1
 
                     self.progressBarProcesed.setValue(100.0 * files_processed / len(sounds))
                     self.listwidgetProgress.addItem(signal.name + u" " + self.tr(u"has been files_processed"))
-                    self.progressBarProcesed.update()
-                    self.listwidgetProgress.update()
+                    self.progressBarProcesed.repaint()
+                    self.listwidgetProgress.repaint()
 
                 except Exception as ex:
                     print("some split problems: " + ex.message)

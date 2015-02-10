@@ -564,7 +564,7 @@ class QSignalVisualizerWidget(QtGui.QWidget):
 
     @playSpeed.setter
     def playSpeed(self, value):
-        if value <= 0:
+        if not 0 <= value <= 100:
             raise Exception("The play speed must be positive.")
         self._playSpeed = value
 
@@ -740,9 +740,6 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         if self.selectedTool == Tools.ZoomTool:
             self.updateZoomRegion(oscilogram_update=True)
 
-
-
-
     #  endregion
 
     #  region Edition CUT,COPY PASTE
@@ -756,16 +753,13 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         """
         # get the current signal selection interval
         start, end = self.selectedRegion
+
         self.editionSignalProcessor.cut(start, end)
 
         # connect the action of cut for update
         # the signal and visualization in the undo and redo
         action = CutAction(self.signal, start, end)
-        action.signal_size_changed.connect(self._updateSignal)
-
         self.undoRedoManager.add(action)
-        self._updateSignal(self.editionSignalProcessor.signal)
-
         self.graph()
 
     def _updateSignal(self, new_signal):
@@ -803,10 +797,7 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         #  the signal and visualization in the undo and redo
         #  because the paste action do not change the signal reference but the size
         action = PasteAction(self.signal, start, end)
-        action.signal_size_changed.connect(self._updateSignal)
-
         self.undoRedoManager.add(action)
-
         self.graph()
 
     #  endregion
@@ -1099,8 +1090,8 @@ class QSignalVisualizerWidget(QtGui.QWidget):
             if isinstance(act, QtGui.QAction):
                 self.addAction(act)
 
-    def from_osc_to_spec(self,x):
+    def from_osc_to_spec(self, x):
         return self.axesSpecgram.from_osc_to_spec(x)
 
-    def from_spec_to_osc(self,x):
+    def from_spec_to_osc(self, x):
         return self.axesSpecgram.from_spec_to_osc(x)
