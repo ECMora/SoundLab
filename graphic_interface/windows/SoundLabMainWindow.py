@@ -102,7 +102,6 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         # user interface to manipulate several visual parameters
         # and display options of the application theme.
         #  Is used a parameter tree to present to the user the visual options
-
         #  region Parameter Tree definition
 
         #  create the tree,  and connect
@@ -135,7 +134,6 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         #  the list of one dimensional processing windows opened by the user.
         self.one_dim_windows = []
 
-
         #  accept drops to open signals by drop
         self.setAcceptDrops(True)
 
@@ -151,7 +149,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
 
         QtCore.QTimer.singleShot(10, self.restorePreviousSession)
 
-        # temporal desable of sound devices change and browse until study use cases of pyaudio 2.8
+        # temporal disable of sound devices change and browse until study use cases of pyaudio 2.8
         self.actionSound_Devices.setEnabled(False)
 
         self.showMaximized()

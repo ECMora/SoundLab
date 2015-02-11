@@ -15,17 +15,19 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
     """
 
     # region CONSTANTS
+
     DOCK_OPTIONS_WIDTH = 250
-    WIDGET_MINIMUN_HEIGHT = 350
-    WIDGET_MINIMUN_WIDTH = 2. * DOCK_OPTIONS_WIDTH
+    WIDGET_MINIMUM_HEIGHT = 350
+    WIDGET_MINIMUM_WIDTH = 2. * DOCK_OPTIONS_WIDTH
+
     # endregion
 
     def __init__(self, parent=None, signal=None):
         super(OneDimensionalAnalysisWindow, self).__init__(parent)
         self.setupUi(self)
         self.show()
-        self.widget.setMinimumWidth(self.WIDGET_MINIMUN_WIDTH)
-        self.widget.setMinimumHeight(self.WIDGET_MINIMUN_HEIGHT)
+        self.widget.setMinimumWidth(self.WIDGET_MINIMUM_WIDTH)
+        self.widget.setMinimumHeight(self.WIDGET_MINIMUM_HEIGHT)
 
         self._transforms_handler = OneDimensionalGeneralHandler(self)
 
@@ -159,7 +161,7 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
             params = self._transforms_handler.get_settings(one_dim_transform)
             self._transform_paramTree = Parameter.create(name=u'Settings', type=u'group', children=params)
 
-            if params != []:
+            if params:
                 self.ParamTree.param(u'Select').addChild(self._transform_paramTree)
 
             labels = self._transforms_handler.get_axis_labels(one_dim_transform)

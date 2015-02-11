@@ -5,8 +5,7 @@ import numpy as np
 import pyqtgraph as pg
 from sound_lab_core.Segmentation.Detectors.TwoDimensional.TwoDimensionalElementsDetector import \
     TwoDimensionalElementsDetector
-from sound_lab_core.Segmentation.Elements.OneDimensionalElements.OneDimensionalElement import OneDimensionalElement, \
-    SpectralMeasurementLocation
+from sound_lab_core.Segmentation.Elements.OneDimensionalElements.OneDimensionalElement import OneDimensionalElement
 from sound_lab_core.Segmentation.Elements.TwoDimensionalElements.TwoDimensionalElement import SpecgramElement
 
 
@@ -53,8 +52,6 @@ class OscilogramElement(OneDimensionalElement):
         # update the visual representation
         self.visual_figures.append([self.element_region, True])  # item visibility
         self.visual_text.append([text, True])
-
-        self.measurementLocation = SpectralMeasurementLocation()
 
         # self.detectTwoDimElements()
 
@@ -108,7 +105,7 @@ class OscilogramElement(OneDimensionalElement):
     def computeTwoDimensionalElements(self, threshold_spectral, pxx, freqs, bins, minsize_spectral):
         detector = TwoDimensionalElementsDetector()
         detector.detect(self.signal, threshold_spectral, pxx, freqs, bins, minsize_spectral,
-                        one_dimensional_parent=self, location=self.measurementLocation)
+                        one_dimensional_parent=self)
         for elem in detector.elements:
             self.twoDimensionalElements.append(elem)
 
@@ -246,17 +243,8 @@ class OscilogramElement(OneDimensionalElement):
         @param location: the measurement location
         @return: the index of the column in the matrix that corresponds to the location
         """
-        size = len(self.matrix[0])
-        if location == self.measurementLocation.START:
-            return 0
-        if location == self.measurementLocation.CENTER:
-            return size / 2
-        if location == self.measurementLocation.END:
-            return size - 1
-        if location == self.measurementLocation.QUARTILE25:
-            return size / 4
-        if location == self.measurementLocation.QUARTILE75:
-            return 3 * size / 4
+        return 0
+
 
     # The following methods measure properties that needs aditional parameters for its calculation
     # dict are a dictionary with the aditional data

@@ -3,16 +3,6 @@ from sound_lab_core.Segmentation.Elements.Element import Element
 from PyQt4 import QtGui, QtCore
 
 
-class SpectralMeasurementLocation:
-    START, CENTER, END, QUARTILE25, QUARTILE75 = range(5)
-    MEDITIONS = [
-        [False,  QtGui.QColor(255, 0, 0, 255)],
-        [False, QtGui.QColor(0, 255, 0, 255)],
-        [False,  QtGui.QColor(0, 0, 255, 255)],
-        [False, QtGui.QColor(255,255,255, 255)],
-        [False,  QtGui.QColor(255, 255, 255, 255)]]
-
-
 class OneDimensionalElement(Element):
     """
     Element defined in one-dimensional transform of a signal.
