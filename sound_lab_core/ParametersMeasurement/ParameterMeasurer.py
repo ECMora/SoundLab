@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 
-class SegmentParameterMeasurer:
+class ParameterMeasurer:
     """
     Class that represent an object that measure parameters
     in segments.
@@ -23,6 +23,9 @@ class SegmentParameterMeasurer:
 
     @name.setter
     def name(self, new_name):
+        if not isinstance(new_name, (str,unicode)):
+            raise Exception("Invalid type for name. Must be str or unicode.")
+
         self._name = new_name
 
     # endregion

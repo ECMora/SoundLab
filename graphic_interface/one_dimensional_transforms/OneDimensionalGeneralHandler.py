@@ -1,8 +1,5 @@
 from PyQt4.QtCore import QObject
-from graphic_interface.one_dimensional_transforms.AveragePowSpecHandler import AveragePowSpecHandler
-from graphic_interface.one_dimensional_transforms.EnvelopeHandler import EnvelopeHandler
-from graphic_interface.one_dimensional_transforms.InstantFrequenciesHandler import InstantFrequenciesHandler
-from graphic_interface.one_dimensional_transforms.LogarithmicPowSpecHandler import LogarithmicPowSpecHandler
+from graphic_interface.one_dimensional_transforms import *
 
 
 class OneDimensionalGeneralHandler(QObject):
@@ -14,6 +11,7 @@ class OneDimensionalGeneralHandler(QObject):
 
     def __init__(self, parent):
         QObject.__init__(self, parent)
+
         self._handlers_by_name = {
             'Envelope': EnvelopeHandler(parent),
             'Averaged Power Spectrum': AveragePowSpecHandler(parent),

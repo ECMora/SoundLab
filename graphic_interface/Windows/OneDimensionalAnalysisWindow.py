@@ -13,9 +13,12 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
     """
     Window that allow to create and visualize one dimensional transforms on signals
     """
+
+    # region CONSTANTS
     DOCK_OPTIONS_WIDTH = 250
     WIDGET_MINIMUN_HEIGHT = 350
     WIDGET_MINIMUN_WIDTH = 2. * DOCK_OPTIONS_WIDTH
+    # endregion
 
     def __init__(self, parent=None, signal=None):
         super(OneDimensionalAnalysisWindow, self).__init__(parent)
@@ -24,7 +27,7 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
         self.widget.setMinimumWidth(self.WIDGET_MINIMUN_WIDTH)
         self.widget.setMinimumHeight(self.WIDGET_MINIMUN_HEIGHT)
 
-        self._tranforms_handler = OneDimensionalGeneralHandler(self)
+        self._transforms_handler = OneDimensionalGeneralHandler(self)
 
         # connect the tool detected data to show the status bar message
         self.statusbar = self.statusBar()
@@ -46,7 +49,7 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
         # Parameter Tree Settings
         self.__createParameterTree()
 
-        # self._tranforms_handler.dataChanged.connect(self.widget.graph)
+        # self._transforms_handler.dataChanged.connect(self.widget.graph)
 
     def load_workspace(self, workspace):
         """
@@ -55,7 +58,6 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
         :return:
         """
         self.widget.load_workspace(workspace)
-
 
     # region Properties IndexTo IndexFrom
 
@@ -89,11 +91,14 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
         :return:
         """
         indexTo = indexTo if indexTo >=0 else self.widget.signal.length
+
         if indexTo != self.indexTo:
             self.indexTo = indexTo
+
         if indexFrom != self.indexFrom:
             self.indexFrom = indexFrom
-        labels = self._tranforms_handler.get_axis_labels(self.widget.one_dim_transform)
+
+        labels = self._transforms_handler.get_axis_labels(self.widget.one_dim_transform)
         self.widget.graph(indexFrom, indexTo, labels)
 
     # endregion
@@ -107,7 +112,7 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
         the active one dimensional transforms to select.
         :return:
         """
-        transforms = self._tranforms_handler.get_all_transforms_names()
+        transforms = self._transforms_handler.get_all_transforms_names()
         transforms = [(unicode(self.tr(unicode(t))), t) for t in transforms]
         params = [
             {u'name': unicode(self.tr(u'Select')),
@@ -151,14 +156,14 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
 
             if self._transform_paramTree is not None:
                 self.ParamTree.param(u'Select').clearChildren()
-            params = self._tranforms_handler.get_settings(one_dim_transform)
+            params = self._transforms_handler.get_settings(one_dim_transform)
             self._transform_paramTree = Parameter.create(name=u'Settings', type=u'group', children=params)
 
             if params != []:
                 self.ParamTree.param(u'Select').addChild(self._transform_paramTree)
 
-            labels = self._tranforms_handler.get_axis_labels(one_dim_transform)
-            limits = self._tranforms_handler.get_y_limits(one_dim_transform)
+            labels = self._transforms_handler.get_axis_labels(one_dim_transform)
+            limits = self._transforms_handler.get_y_limits(one_dim_transform)
 
             self.widget.minY = limits[0]
             self.widget.maxY = limits[1]
@@ -191,7 +196,7 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
 
         transform_name = parameter.value()
 
-        self.widget.one_dim_transform = self._tranforms_handler.get_transform(transform_name)
+        self.widget.one_dim_transform = self._transforms_handler.get_transform(transform_name)
 
         self.reloadOptionsWidget(self.widget.one_dim_transform)
 
@@ -208,13 +213,13 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
             else:
                 childName = param.name()
 
-            self._tranforms_handler.apply_settings_change(self.widget.one_dim_transform, (childName, change, data))
+            self._transforms_handler.apply_settings_change(self.widget.one_dim_transform, (childName, change, data))
 
         self.graph(indexFrom=self.indexFrom, indexTo=self.indexTo)
 
     def changeYRangeSettings(self, param, changes):
 
-        labels = self._tranforms_handler.get_axis_labels(self.widget.one_dim_transform)
+        labels = self._transforms_handler.get_axis_labels(self.widget.one_dim_transform)
         for param, change, data in changes:
             path = self._transform_paramTree.childPath(param)
             if path is not None:
