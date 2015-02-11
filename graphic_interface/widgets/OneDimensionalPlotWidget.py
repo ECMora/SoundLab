@@ -33,6 +33,9 @@ class OneDimPlotWidget(SoundLabWidget,pg.PlotWidget):
         self.setMouseEnabled(x=False, y=False)
         self.setMenuEnabled(False)
         self.getPlotItem().hideButtons()
+        self.setRange(xRange=(0, 10),
+                       yRange=(0, 10),
+                       padding=0, update=True)
 
         self.setSelectedTool(Tools.NoTool)
         # self.__selectedTool.detectedDataChanged.connect(self.getInfo)
