@@ -3,7 +3,7 @@ from PyQt4 import QtCore
 from pyqtgraph.parametertree.parameterTypes import ListParameter
 from pyqtgraph.parametertree import Parameter, ParameterTree
 from PyQt4.QtGui import QMessageBox, QActionGroup, QAction
-from PyQt4.QtCore import pyqtSlot, QMimeData, pyqtSignal
+from PyQt4.QtCore import pyqtSlot, QMimeData, pyqtSignal, SIGNAL
 from duetto.audio_signals import openSignal
 from duetto.audio_signals.Synthesizer import Synthesizer
 from duetto.signal_processing.filter_signal_processors.frequency_domain_filters import BandPassFilter, HighPassFilter, \
@@ -134,6 +134,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
 
         #  the list of one dimensional processing windows opened by the user.
         self.one_dim_windows = []
+
 
         #  accept drops to open signals by drop
         self.setAcceptDrops(True)
@@ -640,6 +641,9 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         self.widget.signalNameChanged.connect(lambda: self.updateSignalPropertiesLabel(self.widget.signal))
 
         self.setUniqueSignalName(self.widget.signal)
+
+        # connection for one dim transforms update
+        self.widget.signalIntervalSelected.connect(self.updateOneDimWindow)
 
         # connect for data display
         self.widget.toolDataDetected.connect(self.updateStatusBar)
@@ -1865,15 +1869,16 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
     # endregion
 
     #  region One dimensional Transforms
-    def updateOneDimWindow(self):
+    def updateOneDimWindow(self, x1, x2):
         """
         Update the current interval of visualization/processing
         of the signal in the opened one dimensional windows
         :return:
         """
         indexFrom, indexTo = self.widget.selectedRegion
-        for win in self.one_dim_windows:
-            win.graph(indexFrom, indexTo)
+        for widget, win in self.one_dim_windows:
+            if self.widget is widget:
+                win.graph(indexFrom, indexTo)
 
     @pyqtSlot()
     def on_actionOneDimensionalTransformation_triggered(self):
@@ -1882,13 +1887,13 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         :return:
         """
         one_dim_window = OneDimensionalAnalysisWindow(self,self.widget.signal)
-        one_dim_window.load_workspace(self.workSpace)
+        # one_dim_window.load_workspace(self.workSpace)
 
         indexFrom, indexTo = self.widget.selectedRegion
         one_dim_window.graph(indexFrom, indexTo)
 
         #  store the opened one dimensional one_dim_transform windows for handling
-        self.one_dim_windows.append(one_dim_window)
+        self.one_dim_windows.append((self.widget, one_dim_window))
 
     #  endregion
 

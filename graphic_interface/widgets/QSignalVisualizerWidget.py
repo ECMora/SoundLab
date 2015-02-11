@@ -280,9 +280,10 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         if abs(osc_max_x - spec_max_x) > 1 or abs(osc_min_x - spec_min_x) > 1:
             if oscilogram_update and (min_x_spec != spec_min_x or max_x_spec != spec_max_x):
                 self.axesSpecgram.gui_user_tool.zoomRegion.setRegion([min_x_spec, max_x_spec])
-
+                self.signalIntervalSelected.emit(osc_min_x,osc_max_x)
             elif not oscilogram_update and (spec_min_x != osc_min_x or spec_max_x != osc_max_x):
-                self.axesOscilogram.gui_user_tool.zoomRegion.setRegion([spec_min_x,spec_max_x])
+                self.signalIntervalSelected.emit(spec_min_x,spec_min_x)
+                self.axesOscilogram.gui_user_tool.zoomRegion.setRegion([spec_min_x,spec_min_x])
 
         self.zoom_update_in_progress = False
 
