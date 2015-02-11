@@ -187,6 +187,7 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         :param x2: the end limit of the new visible interval in signal data array indexes
         :return:
         """
+
         self.axesOscilogram.changeRange(x1, x2)
         self.mainCursor.min = x1
         self.mainCursor.max = x2
@@ -753,13 +754,8 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         """
         # get the current signal selection interval
         start, end = self.selectedRegion
-
         self.editionSignalProcessor.cut(start, end)
-
-        # connect the action of cut for update
-        # the signal and visualization in the undo and redo
-        action = CutAction(self.signal, start, end)
-        self.undoRedoManager.add(action)
+        self.undoRedoManager.add(CutAction(self.signal, start, end))
         self.graph()
 
     def _updateSignal(self, new_signal):
@@ -780,8 +776,8 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         """
         #  get the current signal selection interval
         start, end = self.selectedRegion
-        self.undoRedoManager.add(CopyAction(self.signal, start, end))
         self.editionSignalProcessor.copy(start, end)
+        self.undoRedoManager.add(CopyAction(self.signal, start, end))
 
     def paste(self):
         """
@@ -790,14 +786,8 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         """
         #  get the current signal selection interval
         start, end = self.selectedRegion
-
         self.editionSignalProcessor.paste(start)
-
-        #  connect the action of paste for update
-        #  the signal and visualization in the undo and redo
-        #  because the paste action do not change the signal reference but the size
-        action = PasteAction(self.signal, start, end)
-        self.undoRedoManager.add(action)
+        self.undoRedoManager.add(PasteAction(self.signal, start, end))
         self.graph()
 
     #  endregion

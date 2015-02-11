@@ -370,7 +370,6 @@ class PasteAction(UndoRedoAction):
 
 # endregion
 
-
 class Absolute_ValuesAction(UndoRedoAction):
     def __init__(self,signal,start,end,sign):
         UndoRedoAction.__init__(self)

@@ -204,7 +204,6 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
         self.viewBox.setYRange(minY, maxY, padding=0.01, update=True)
         self.yAxis.setRange(minY, maxY)
 
-
     # endregion
 
     def graph(self, indexFrom=0, indexTo=-1):
@@ -212,7 +211,6 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
         indexTo = indexTo if (indexTo >= 0 and indexTo > indexFrom) else self.signal.length
 
         SpectrogramWidget.graph(self, indexFrom, indexTo)
-
 
     def from_osc_to_spec(self, coord):
         return self.specgramHandler.from_osc_to_spec(coord)
