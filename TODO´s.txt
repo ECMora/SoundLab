@@ -24,12 +24,6 @@ Complexity-1: No new-code activity
 -----------------------------------------------------------
 
 Complexity-2: Small-to-medium code changes
-+ Filter
-+ Hacer que el Browse abra en un conjunto de ficheros de la ultima carpeta visitada.
-+ Chequear cambio de colores para dibujar el espectrograma.
-- Add margins to the widgets for best visualization (API)
-+ Manual Segmentation
-+ 
 
 * Customize the axes on the amount of ticks and the scale used (possibly by context menu) with an dynamic suggested scale
 * Addition of Custom Rich Dock Widgets to the duetto API and use them on the windows

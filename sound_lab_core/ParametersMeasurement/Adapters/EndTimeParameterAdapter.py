@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from sound_lab_core.ParametersMeasurement.TimeParameters.EndTimeParameter import EndTimeParameter
 from sound_lab_core.SoundLabAdapter import SoundLabAdapter
+from pyqtgraph.parametertree import Parameter
 
 
 class EndTimeParameterAdapter(SoundLabAdapter):
@@ -11,10 +12,12 @@ class EndTimeParameterAdapter(SoundLabAdapter):
     def __init__(self, parent):
         SoundLabAdapter.__init__(self, parent)
 
-        self.adapted_class = EndTimeParameter
+    @property
+    def instance(self):
+        return EndTimeParameter()
 
     def get_settings(self):
-        return []
+        return Parameter.create(name=u'Settings', type=u'group')
 
     def apply_settings_change(self, transform, change):
         pass

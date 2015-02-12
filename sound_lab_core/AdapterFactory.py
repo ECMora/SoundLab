@@ -1,7 +1,6 @@
 from PyQt4.QtCore import QObject
-from sound_lab_core.ParametersMeasurement.TimeParameters.EndTimeParameterAdapter import EndTimeParameterAdapter
-from sound_lab_core.ParametersMeasurement.TimeParameters.StartTimeParameterAdapter import StartTimeParameterAdapter
-from sound_lab_core.ParametersMeasurement.TimeParameters.DurationTimeParameterAdapter import DurationTimeParameterAdapter
+from sound_lab_core.ParametersMeasurement.Adapters import *
+from sound_lab_core.Segmentation.Detectors.Adapters import *
 
 
 class AdapterFactory(QObject):
@@ -46,8 +45,9 @@ class SegmentationAdapterFactory(AdapterFactory):
         AdapterFactory.__init__(self, parent)
 
         self.adapters = {
-            'Manual': None,
-            'Envelope Abs Decay': None
+            # 'Manual': ManualDetectorAdapter(parent),
+            'Manual': AbsDecayEnvelopeDetectorAdapter(parent),
+            'Envelope Abs Decay': AbsDecayEnvelopeDetectorAdapter(parent)
         }
 
 

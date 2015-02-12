@@ -12,42 +12,21 @@ class SoundLabAdapter(QObject):
         """
         QObject.__init__(self, parent)
 
-        # the class to be adapted to
-        self._adapted_class = None
-
-    # region Parameter Class Property
-
     @property
-    def adapted_class(self):
+    def instance(self):
         """
-        the parameter class of the adapter
-        :return:
+        Gets a new instance of the corresponding adapted object .
+        :return: A new instance of the corresponding class
         """
-        return self._adapted_class
+        return None
 
-    @adapted_class.setter
-    def adapted_class(self, value):
-        """
-        the parameter class of the adapter
-        :return:
-        """
-        self._adapted_class = value
-
-    # endregion
-
-    def get_instance(self):
-        """
-        Gets a new instance of the corresponding parameter measurement.
-        :return: A new instance of the corresponding parameter measurement class
-        """
-        return self.adapted_class()
 
     def get_settings(self):
         """
         Gets the settings of the corresponding adapted class.
         :return: a list of dicts in the way needed to create the param tree
         """
-        return []
+        return None
 
     def apply_settings_change(self, transform, change):
         pass

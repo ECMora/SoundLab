@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
+from sound_lab_core.Segmentation.Detectors.ManualDetector import ManualDetector
 from sound_lab_core.SoundLabAdapter import SoundLabAdapter
-from sound_lab_core.ParametersMeasurement.TimeParameters.StartTimeParameter import StartTimeParameter
+from pyqtgraph.parametertree import Parameter
 
 
-class StartTimeParameterAdapter(SoundLabAdapter):
+class ManualDetectorAdapter(SoundLabAdapter):
     """
     Adapter class for the start time parameter.
     """
@@ -11,17 +12,17 @@ class StartTimeParameterAdapter(SoundLabAdapter):
     def __init__(self, parent):
         SoundLabAdapter.__init__(self, parent)
 
-        self.adapted_class = StartTimeParameter
+        self.settings = Parameter.create(name=u'Settings', type=u'group')
+
+    @property
+    def instance(self):
+        return ManualDetector()
 
     def get_settings(self):
         """
         :type parameter:
         """
-        return []
+        return ["manual seg"]
 
     def apply_settings_change(self, transform, change):
-        """
-
-        :type transform:
-        """
         pass

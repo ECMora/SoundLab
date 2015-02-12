@@ -111,7 +111,10 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         if not isinstance(data, list):
             return
 
-        for element in [e for e in data if isinstance(e, tuple)]:
+        elements = [e for e in data if isinstance(e, tuple) and len(e) == 2
+                    and isinstance(e[0], int) and isinstance(e[1], int)]
+
+        for element in elements:
             self.widget.markRegionAsElement(element, update=False)
 
         self.widget.graph()
@@ -527,7 +530,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
                 # get the detector from dialog selection
                 self.widget.detector = elementsDetectorDialog.detector
 
-                self.segmentManager.measurerList = elementsDetectorDialog.measurerList
+                self.segmentManager.measurerList = elementsDetectorDialog.measurerList()
                 # get the classification object
 
                 self.setProgressBarVisibility(True)
