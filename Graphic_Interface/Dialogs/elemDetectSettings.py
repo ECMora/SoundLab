@@ -37,6 +37,12 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         self._segmentationAdapterFactory = SegmentationAdapterFactory(self)
         self._classificationAdapterFactory = ClassificationAdapterFactory(self)
 
+        self.parameter_measurement_paramTree = ParameterTree()
+        self.parameter_measurementParamTree = None
+
+        self.segmentation_classification_paramTree = ParameterTree()
+        self.segmentation_classificationParamTree = None
+
         self.widget.visibleSpectrogram = False
         self.widget.visibleOscilogram = True
 
@@ -44,23 +50,6 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         self.__createParameterTrees()
 
         self.detect()
-
-    # region Parameter Tree Options
-
-    # region  Factory Adapters
-    @property
-    def parameterAdapterFactory(self):
-        return self._parameterAdapterFactory
-
-    @property
-    def segmentationAdapterFactory(self):
-        return self._segmentationAdapterFactory
-
-    @property
-    def classificationAdapterFactory(self):
-        return self._classificationAdapterFactory
-
-    # endregion
 
     def __createParameterTrees(self):
         """
@@ -70,7 +59,7 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         :return:
         """
         self.createSegmentation_ClassificationParameterTree()
-        self.createParameterMeasurementParameterTree()
+        self.createMeasurementParameterTree()
         self.configureParameterTreesLayout()
 
     def createSegmentation_ClassificationParameterTree(self):
@@ -82,48 +71,53 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         classification_adapters = [(self.tr(unicode(t)), t) for t in classification_adapters]
 
         params = [
-            {u'name': unicode(self.tr(u'Segmentation Method')),
-             u'type': u'list',
-             u'value': segmentation_adapters[0][1],
-             u'default': segmentation_adapters[0][1],
-             u'values': segmentation_adapters},
-
-            {u'name': unicode(self.tr(u'Classification Method')),
-             u'type': u'list',
-             u'value': classification_adapters[0][1],
-             u'default': classification_adapters[0][1],
-             u'values': classification_adapters}
-        ]
+            {u'name': unicode(self.tr(u'Segmentation')),
+             u'type': u'group', u'children':
+                [{u'name': unicode(self.tr(u'Method')),
+                  u'type': u'list',
+                  u'default': segmentation_adapters[0][1],
+                  u'values':segmentation_adapters}]
+            },
+            {u'name': unicode(self.tr(u'Classification')),
+             u'type': u'group', u'children':
+                [{u'name': unicode(self.tr(u'Method')),
+                  u'type': u'list',
+                  u'value': classification_adapters[0][1],
+                  u'default': classification_adapters[0][1],
+                  u'values': classification_adapters}]
+            }]
 
         ListParameter.itemClass = DuettoListParameterItem
-        self.segmentation_classificationParamTree = Parameter.create(name=u'', type=u'group', children=params)
+        self.segmentation_classificationParamTree = Parameter.create(name=unicode(self.tr(u'Segmentation-Classification')), type=u'group', children=params)
+
+        self.segmentation_classificationParamTree.param(unicode(self.tr(u'Segmentation'))).\
+            param(unicode(self.tr(u'Method'))).sigValueChanged.connect(self.segmentationChanged)
+
+        self.segmentation_classificationParamTree.param(unicode(self.tr(u'Classification'))). \
+            param(unicode(self.tr(u'Method'))).sigValueChanged.connect(self.segmentationChanged)
 
         # create and set initial properties
-        self.segmentation_classification_paramTree = ParameterTree()
         self.segmentation_classification_paramTree.setAutoScroll(True)
         self.segmentation_classification_paramTree.setHeaderHidden(True)
         self.segmentation_classification_paramTree.setParameters(self.segmentation_classificationParamTree)
 
-    def createParameterMeasurementParameterTree(self):
+    def createMeasurementParameterTree(self):
         # set the segmentation and classification parameters
-        parameters_measurements_adapters = self.parameterAdapterFactory.adapters_names()
-        parameters_measurements_adapters = [(self.tr(unicode(t)), t) for t in parameters_measurements_adapters]
-
-        params = [
-            {u'name': unicode(self.tr(u'Parameter Measurements')),
-             u'type': u'group', u'children':
-            [{u'name': p[1], u'type': u'group', u'children':
-                [{u'name': unicode(self.tr(u'Measure')),
-                  u'type': u'bool', u'default': False,
-                  u'value': False}] + self.parameterAdapterFactory.get_adapter(p[1]).get_settings()
-             } for p in parameters_measurements_adapters]
-            }]
-
         ListParameter.itemClass = DuettoListParameterItem
-        self.parameter_measurementParamTree = Parameter.create(name=u'', type=u'group', children=params)
+        self.parameter_measurementParamTree = Parameter.create(name=unicode(self.tr(u'Parameter Measurements')),
+                                                               type=u'group')
+        for p in self.parameterAdapterFactory.adapters_names():
+            group = Parameter.create(name=unicode(self.tr(unicode(p))),
+                                     type=u'group')
 
-        # create and set initial properties
-        self.parameter_measurement_paramTree = ParameterTree()
+            measure = Parameter.create(name=unicode(self.tr(u'Measure')), type=u'bool', default=False, value=False)
+            group.addChild(measure)
+
+            param_settings = self.parameterAdapterFactory.get_adapter(p).get_settings()
+            group.addChild(param_settings)
+
+            self.parameter_measurementParamTree.addChild(group)
+
         self.parameter_measurement_paramTree.setAutoScroll(True)
         self.parameter_measurement_paramTree.setHeaderHidden(True)
         self.parameter_measurement_paramTree.setParameters(self.parameter_measurementParamTree)
@@ -144,7 +138,18 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         layout2.addWidget(self.parameter_measurement_paramTree)
         self.parameter_measurement_settings.setLayout(layout2)
 
-    # endregion
+    def segmentationChanged(self, parameter):
+        """
+        :param parameter:
+        :return:
+        """
+        parameter.clearChildren()
+
+        method = self.segmentationAdapterFactory.get_adapter(parameter.value())
+
+        method_settings = method.settings()
+
+        parameter.addChild(method_settings)
 
     # endregion
 
@@ -156,6 +161,21 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         :param workspace:
         """
         self.widget.load_workspace(workspace)
+
+    # endregion
+
+    # region  Factory Adapters Properties
+    @property
+    def parameterAdapterFactory(self):
+        return self._parameterAdapterFactory
+
+    @property
+    def segmentationAdapterFactory(self):
+        return self._segmentationAdapterFactory
+
+    @property
+    def classificationAdapterFactory(self):
+        return self._classificationAdapterFactory
 
     # endregion
 
@@ -174,12 +194,19 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
     def detector(self, value):
         self._detector = value
 
-    @property
+
     def measurerList(self):
         """
         :return: The list of selected parameters to measure
         """
-        return []
+        parameters_list = self.parameter_measurement_paramTree.children()
+
+        # parameters_list = [x for x in parameters_list if x.param(unicode(self.tr(u'Measure'))).value()]
+
+        return [[unicode(self.tr(u"Start(s)")), lambda x, d: x.startTime(), []],
+                [unicode(self.tr(u"End(s)")), lambda x, d: x.endTime(), []],
+                [unicode(self.tr(u"StartToMax(s)")), lambda x, d: x.distanceFromStartToMax(), []],
+                [unicode(self.tr(u"Duration(s)")), lambda x, d: x.duration(), []]]
 
     @property
     def classifier(self):
