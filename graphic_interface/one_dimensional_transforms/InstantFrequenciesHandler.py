@@ -38,7 +38,18 @@ class InstantFrequenciesHandler(OneDimensionalHandler):
     def get_axis_labels(self):
         return {u'X': u'Time (s)', u'Y': u'Frequency (kHz)' }
 
+    def get_y_default(self, transform):
+        """
+
+        :type transform: InstantFrequencies
+        """
+        return (0,transform.signal.samplingRate/(2000))
+
     def get_y_limits(self, transform):
+        """
+
+        :type transform: InstantFrequencies
+        """
         return (0,transform.signal.samplingRate/(2000))
 
     def apply_settings_change(self, transform, change):

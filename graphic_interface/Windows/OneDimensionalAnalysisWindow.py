@@ -13,7 +13,7 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
     """
     Window that allow to create and visualize one dimensional transforms on signals
     """
-    DOCK_OPTIONS_WIDTH = 250
+    DOCK_OPTIONS_WIDTH = 300
     WIDGET_MINIMUN_HEIGHT = 350
     WIDGET_MINIMUN_WIDTH = 2. * DOCK_OPTIONS_WIDTH
 
@@ -114,7 +114,8 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
              u'type': u'list',
              u'value': transforms[0][1],
              u'default': transforms[0][1],
-             u'values': transforms}
+             u'values': transforms},
+            {u'name':  unicode(self.tr(u'Settings')), u'type': u'group'}
         ]
 
         ListParameter.itemClass = DuettoListParameterItem
@@ -125,6 +126,7 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
         self.parameterTree.setAutoScroll(True)
         self.parameterTree.setHeaderHidden(True)
         self.parameterTree.setParameters(self.ParamTree)
+
 
         # connect the signals to react when a change of one_dim_transform is made
         self.ParamTree.param(unicode(self.tr(u'Select'))).sigValueChanged.connect(self.changeTransform)
@@ -149,28 +151,34 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
         # add the parameter tree of the one_dim_transform if exists
         if one_dim_transform is not None:
 
+            # clear the settings options of the parameter tree
             if self._transform_paramTree is not None:
-                self.ParamTree.param(u'Select').clearChildren()
+                self.ParamTree.param(u'Settings').clearChildren()
+
             params = self._tranforms_handler.get_settings(one_dim_transform)
-            self._transform_paramTree = Parameter.create(name=u'Settings', type=u'group', children=params)
+            self._transform_paramTree = Parameter.create(name=u'Parameters', type=u'group', children=params)
 
+            # adding the transform parameters to the Settings
             if params != []:
-                self.ParamTree.param(u'Select').addChild(self._transform_paramTree)
+                self.ParamTree.param(u'Settings').addChild(self._transform_paramTree)
 
+            # getting transform graph information by the general handler
             labels = self._tranforms_handler.get_axis_labels(one_dim_transform)
             limits = self._tranforms_handler.get_y_limits(one_dim_transform)
+            default_limits =  self._tranforms_handler.get_y_default(one_dim_transform)
 
-            self.widget.minY = limits[0]
-            self.widget.maxY = limits[1]
+            # setting the default Y range values
+            self.widget.minY = default_limits[0]
+            self.widget.maxY = default_limits[1]
 
+            # adding the range params to the settings
             rangeParams = [  { u'name': unicode(self.tr(u'Min')), u'type': u'int', u'limits': limits, u'value': self.widget.minY },
                              { u'name': unicode(self.tr(u'Max')), u'type': u'int', u'limits': limits, u'value': self.widget.maxY }
                           ]
-
             self._yRange_paramTree = Parameter.create(name=labels[u'Y'], type=u'group', children=rangeParams)
+            self.ParamTree.param(u'Settings').addChild(self._yRange_paramTree)
 
-            self.ParamTree.param(u'Select').addChild(self._yRange_paramTree)
-
+            # connecting the signals to the change handler function
             self._transform_paramTree.sigTreeStateChanged.connect(self.changeTransformSettings)
             self._yRange_paramTree.sigTreeStateChanged.connect(self.changeYRangeSettings)
 

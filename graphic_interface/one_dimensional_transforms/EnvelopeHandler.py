@@ -29,7 +29,18 @@ class EnvelopeHandler(OneDimensionalHandler):
     def get_axis_labels(self):
         return {u'X': u'Time (s)', u'Y': u'Amplitude' }
 
+    def get_y_default(self, transform):
+        """
+
+        :type transform: Envelope
+        """
+        return (0, 100)
+
     def get_y_limits(self, transform):
+        """
+
+        :type transform: Envelope
+        """
         return (0,100)
 
     def apply_settings_change(self, transform, change):
