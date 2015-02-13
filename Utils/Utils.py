@@ -77,9 +77,13 @@ def folderFiles(folder, extensions=None):
     # walk for the folder file system tree
     for root, dirs, filenames in os.walk(folder):
         for f in filenames:
-            if any([unicode(f).lower().endswith(x) for x in extensions]):
-                # if file extension is admissible
-                files.append(unicode(unicode(root) + u"/" + unicode(f)))
+            try:
+                if any([unicode(f).lower().endswith(unicode(x)) for x in extensions]):
+                    # if file extension is admissible
+
+                    files.append(unicode(unicode(root) + u"/" + unicode(f)))
+            except Exception as ex:
+                print("Errors in get folder files. On file " + str(f) + ". " + ex.message)
 
     return files
 

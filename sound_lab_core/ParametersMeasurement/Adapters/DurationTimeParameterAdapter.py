@@ -12,12 +12,5 @@ class DurationTimeParameterAdapter(SoundLabAdapter):
     def __init__(self, parent):
         SoundLabAdapter.__init__(self, parent)
 
-    @property
-    def instance(self):
+    def get_instance(self):
         return DurationTimeParameter()
-
-    def get_settings(self):
-        return Parameter.create(name=u'Settings', type=u'group')
-
-    def apply_settings_change(self, transform, change):
-        pass

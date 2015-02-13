@@ -75,15 +75,12 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
              u'type': u'group', u'children':
                 [{u'name': unicode(self.tr(u'Method')),
                   u'type': u'list',
-                  u'default': segmentation_adapters[0][1],
-                  u'values':segmentation_adapters}]
+                  u'values': segmentation_adapters}]
             },
             {u'name': unicode(self.tr(u'Classification')),
              u'type': u'group', u'children':
                 [{u'name': unicode(self.tr(u'Method')),
                   u'type': u'list',
-                  u'value': classification_adapters[0][1],
-                  u'default': classification_adapters[0][1],
                   u'values': classification_adapters}]
             }]
 
@@ -114,7 +111,9 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
             group.addChild(measure)
 
             param_settings = self.parameterAdapterFactory.get_adapter(p).get_settings()
-            group.addChild(param_settings)
+
+            if param_settings is not None:
+                group.addChild(param_settings)
 
             self.parameter_measurementParamTree.addChild(group)
 
@@ -143,13 +142,17 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         :param parameter:
         :return:
         """
-        parameter.clearChildren()
+        try:
+            parameter.clearChildren()
 
-        method = self.segmentationAdapterFactory.get_adapter(parameter.value())
+            adapter = self.segmentationAdapterFactory.get_adapter(parameter.value())
 
-        method_settings = method.settings()
+            method_settings = adapter.get_settings()
+            if method_settings:
+                parameter.addChild(method_settings)
 
-        parameter.addChild(method_settings)
+        except Exception as ex:
+            print("Error getting the segmentation settings. "+ex.message)
 
     # endregion
 
@@ -187,26 +190,38 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         :return: The selected detector to perform segmentation
         """
         # create manually the detector
-        self._detector = AbsDecayEnvelopeDetector(self.widget.signal, 1, -40, 2, 5, 6)
+        detector_instance = None
+        try:
+            detector_name = self.segmentation_classificationParamTree.param(unicode(self.tr(u'Segmentation'))). \
+                            param(unicode(self.tr(u'Method'))).value()
+
+            adapter = self.segmentationAdapterFactory.get_adapter(detector_name)
+
+            detector_instance = adapter.get_instance()
+
+        except Exception as e:
+            print("Fail to get the detector instance")
+            detector_instance = None
+
+        self._detector = detector_instance if detector_instance is not None else AbsDecayEnvelopeDetector(self.widget.signal, 1, -40, 2, 5, 6)
+
+        self._detector.signal = self.widget.signal
+
         return self._detector
 
     @detector.setter
     def detector(self, value):
         self._detector = value
 
-
-    def measurerList(self):
+    def get_measurer_list(self):
         """
         :return: The list of selected parameters to measure
         """
-        parameters_list = self.parameter_measurement_paramTree.children()
+        parameters_list = self.parameter_measurementParamTree.children()
 
-        # parameters_list = [x for x in parameters_list if x.param(unicode(self.tr(u'Measure'))).value()]
+        parameters_list = [self.parameterAdapterFactory.get_adapter(x.name()) for x in parameters_list if x.param(unicode(self.tr(u'Measure'))).value()]
 
-        return [[unicode(self.tr(u"Start(s)")), lambda x, d: x.startTime(), []],
-                [unicode(self.tr(u"End(s)")), lambda x, d: x.endTime(), []],
-                [unicode(self.tr(u"StartToMax(s)")), lambda x, d: x.distanceFromStartToMax(), []],
-                [unicode(self.tr(u"Duration(s)")), lambda x, d: x.duration(), []]]
+        return [p.get_instance() for p in parameters_list]
 
     @property
     def classifier(self):
@@ -223,8 +238,8 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         """
         :return:
         """
-        self.widget.detector = self.detector
+        self.detector.detect()
 
-        self.widget.detectElements()
+        self.widget.elements = self.detector.elements
 
         self.widget.graph()

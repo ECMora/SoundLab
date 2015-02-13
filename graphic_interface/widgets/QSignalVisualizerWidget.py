@@ -62,7 +62,6 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         QtGui.QWidget.__init__(self, parent)
 
         #  !!! THE ORDER OF VARIABLES INITIALIZATION IS RELEVANT !!!
-
         #  the two widgets in which are delegated the functions of time and
         #  frequency domain representation and visualization.
         self.axesOscilogram = SoundLabOscillogramWidget(**kwargs)
@@ -142,6 +141,8 @@ class QSignalVisualizerWidget(QtGui.QWidget):
 
         # signal file path to save and read the signals from files. None if signal was not loaded from file
         self.__signalFilePath = None
+
+        self.graph()
 
     # region Scroll Bar
 
@@ -255,6 +256,8 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         :param oscilogram_update: if the update was made in the oscilogram zoom region
         :return:
         """
+        # to avoid multiple recursive calls at this method because
+        # the signal raised by the zoom region widgets of osc and spec widgets
         if self.zoom_update_in_progress:
             return
 
@@ -282,8 +285,8 @@ class QSignalVisualizerWidget(QtGui.QWidget):
                 self.axesSpecgram.gui_user_tool.zoomRegion.setRegion([min_x_spec, max_x_spec])
                 self.signalIntervalSelected.emit(osc_min_x,osc_max_x)
             elif not oscilogram_update and (spec_min_x != osc_min_x or spec_max_x != osc_max_x):
-                self.signalIntervalSelected.emit(spec_min_x,spec_min_x)
-                self.axesOscilogram.gui_user_tool.zoomRegion.setRegion([spec_min_x,spec_min_x])
+                self.axesOscilogram.gui_user_tool.zoomRegion.setRegion([spec_min_x, spec_max_x])
+                self.signalIntervalSelected.emit(spec_min_x, spec_max_x)
 
         self.zoom_update_in_progress = False
 

@@ -1,12 +1,14 @@
 from math import log10
+
 from PyQt4.QtGui import QFont
 from matplotlib import mlab
 import numpy as np
 import pyqtgraph as pg
+
+from sound_lab_core.Elements.OneDimensionalElements.OneDimensionalElement import OneDimensionalElement
 from sound_lab_core.Segmentation.Detectors.TwoDimensional.TwoDimensionalElementsDetector import \
     TwoDimensionalElementsDetector
-from sound_lab_core.Segmentation.Elements.OneDimensionalElements.OneDimensionalElement import OneDimensionalElement
-from sound_lab_core.Segmentation.Elements.TwoDimensionalElements.TwoDimensionalElement import SpecgramElement
+from sound_lab_core.Elements.TwoDimensionalElements.TwoDimensionalElement import SpecgramElement
 
 
 class OscilogramElement(OneDimensionalElement):
@@ -41,11 +43,11 @@ class OscilogramElement(OneDimensionalElement):
                                bandwidth=dict())
 
         # a tooltip for the element's easy information access
-        tooltip = "Element: " + str(self.number) + "\nStart Time: " + str(self.startTime()) + "s\n" \
-                  + "End Time:" + str(self.endTime()) + "s\n" \
-                  + "RMS: " + str(self.rms()) + "\n" \
-                  + "PeekToPeek: " + str(self.peekToPeek())
-        self.element_region.setToolTip(tooltip)
+        # tooltip = "Element: " + str(self.number) + "\nStart Time: " + str(self.startTime()) + "s\n" \
+        #           + "End Time:" + str(self.endTime()) + "s\n" \
+        #           + "RMS: " + str(self.rms()) + "\n" \
+        #           + "PeekToPeek: " + str(self.peekToPeek())
+        # self.element_region.setToolTip(tooltip)
 
         self.element_region.mouseClickEvent = self.mouseClickEvent
 
@@ -56,10 +58,6 @@ class OscilogramElement(OneDimensionalElement):
         # self.detectTwoDimElements()
 
     def detectTwoDimElements(self):
-        if specgramSettings is None:
-            raise Exception("None parameter")
-
-        self.specgramSettings = specgramSettings
 
         if self.specgramSettings.Pxx != [] and self.specgramSettings.bins != [] and self.specgramSettings.freqs != []:
             # spec_resolution, temp_resolution = signal.samplingRate/2.0*len(freqs),bins[1]-bins[0]
@@ -110,50 +108,15 @@ class OscilogramElement(OneDimensionalElement):
             self.twoDimensionalElements.append(elem)
 
     # region Oscilogram parameter measurement
-    def startTime(self):
-        # the start time in s
-        return round(self.indexFrom * 1.0 / self.signal.samplingRate, self.DECIMAL_PLACES)
 
-    def endTime(self):
-        return round(self.indexTo * 1.0 / self.signal.samplingRate, self.DECIMAL_PLACES)
 
-    def duration(self):
-        """
-        returns the len in s of an element (float)
-        """
-        return round((self.indexTo - self.indexFrom) * 1.0 / self.signal.samplingRate, self.DECIMAL_PLACES)
+        def distanceFromStartToMax(self):
+            if self.parameters["StartToMax"] is None:
+                self.parameters["StartToMax"] = round(
+                    np.argmax(self.signal.data[self.indexFrom:self.indexTo]) * 1.0 / self.signal.samplingRate,
+                    self.DECIMAL_PLACES)
 
-    def distanceFromStartToMax(self):
-        if self.parameters["StartToMax"] is None:
-            self.parameters["StartToMax"] = round(
-                np.argmax(self.signal.data[self.indexFrom:self.indexTo]) * 1.0 / self.signal.samplingRate,
-                self.DECIMAL_PLACES)
         return self.parameters["StartToMax"]
-
-    def peekToPeek(self):
-        if self.parameters["peekToPeek"] is None:
-            self.parameters["peekToPeek"] = round(
-                np.ptp(self.signal.data[self.indexFrom:self.indexTo]) * 1.0 / (2 ** self.signal.bitDepth),
-                self.DECIMAL_PLACES)
-        return self.parameters["peekToPeek"]
-
-    def rms(self):
-        """
-        computes the root mean square of the signal.
-        indexFrom,indexTo the optionally limits of the interval
-        """
-        if self.parameters["rms"] is None:
-            globalSum = 0.0
-            intervalSum = 0.0
-            for i in range(self.indexFrom, self.indexTo):
-                intervalSum += (self.signal.data[i] ** 2)
-                if i % 10 == 0:
-                    globalSum += intervalSum * 1.0 / max(self.indexTo - self.indexFrom, 1)
-                    intervalSum = 0.0
-
-            globalSum += intervalSum * 1.0 / max(self.indexTo - self.indexFrom, 1)
-            self.parameters["rms"] = round(np.sqrt(globalSum) * 1.0 / (2 ** self.signal.bitDepth), self.DECIMAL_PLACES)
-        return self.parameters["rms"]
 
     def spectralElements(self):
         s = len(self.twoDimensionalElements)

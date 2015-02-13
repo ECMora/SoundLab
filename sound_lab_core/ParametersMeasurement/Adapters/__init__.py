@@ -1,3 +1,6 @@
 from DurationTimeParameterAdapter import DurationTimeParameterAdapter
 from EndTimeParameterAdapter import EndTimeParameterAdapter
 from StartTimeParameterAdapter import StartTimeParameterAdapter
+from RmsTimeParameterAdapter import RmsTimeParameterAdapter
+from PeekToPeekParameterAdapter import PeekToPeekParameterAdapter
+

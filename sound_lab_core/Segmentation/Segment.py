@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from sound_lab_core.Segmentation.Elements import Element
+from sound_lab_core.Elements import Element
 
 
 class Segment:

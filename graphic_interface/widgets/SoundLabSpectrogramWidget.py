@@ -188,7 +188,7 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
         if self.workspace.maxY < 0 or self.workspace.maxY > self.signal.samplingRate / 2.0:
             self.workspace.maxY = self.signal.samplingRate / 2.0
 
-        self.workspace.minY = min(self.workspace.minY, self.signal.samplingRate / 2.0)
+        self.workspace.minY = min(self.workspace.minY, self.workspace.maxY)
 
         # update the widget if needed (showing the same X axis' range as before)
         if update or forceUpdate:

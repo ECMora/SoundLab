@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from . import DECIMAL_PLACES
 from sound_lab_core.ParametersMeasurement.ParameterMeasurer import ParameterMeasurer
 
 
@@ -12,4 +13,4 @@ class StartTimeParameter(ParameterMeasurer):
         self.name = "Start(s)"
 
     def measure(self, segment):
-        return 0
+        return round(segment.indexFrom * 1.0 / segment.signal.samplingRate, DECIMAL_PLACES)

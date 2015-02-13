@@ -49,7 +49,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
 
     # the maxThresholdLabel duration of signal that is possible to process
     # with the segmentation and classification window (in seconds)
-    MAX_SIGNAL_DURATION_ALLOWED = 60
+    MAX_SIGNAL_DURATION_ALLOWED_SEG = 60
 
     #  Width and height of the dock window of visual options
     SETTINGS_WINDOW_WIDTH = 340
@@ -767,7 +767,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
 
         # check if the signal can be analyzed acording to its
         # duration and the maxThresholdLabel duration signal allowed
-        if signal.duration > self.MAX_SIGNAL_DURATION_ALLOWED:
+        if signal.duration > self.MAX_SIGNAL_DURATION_ALLOWED_SEG:
             QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
                                       self.tr(u"The signal is larger than the maximum duration allowed.") + " \n" +
                                       self.tr(u"Use the splitter to divide it"))
@@ -994,13 +994,13 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
     def updateWorkspaceParamTree(self, from_widget=True):
         """
         Update the paramtree when there is a difference between the
-        parameter values andd th workspace that represents.
+        parameter values and the workspace that it represents.
         Load the settings of the current widget.
         There is some settings that are unique for each widget.
         Those settings are updated in the param tree and the workspace by this method.
-        :param from_widget: True if the parameters on the tree will be updated with the
+        :param from_widget: True if the parameters on the tree will be updated with those
         provided by the widget. False if the change is from a change in the current workspace
-        and need to be updated.
+        and the param tree needs to be updated.
         :return:
         """
 

@@ -4,7 +4,7 @@ from collections import deque
 import numpy as np
 
 from sound_lab_core.Segmentation.Detectors.ElementsDetector import ElementsDetector
-from sound_lab_core.Segmentation.Elements.TwoDimensionalElements.TwoDimensionalElement import SpecgramElement
+from sound_lab_core.Elements.TwoDimensionalElements.TwoDimensionalElement import SpecgramElement
 
 
 class TwoDimensionalElementsDetector(ElementsDetector):

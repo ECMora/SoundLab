@@ -1,6 +1,7 @@
 #  -*- coding: utf-8 -*-
-from sound_lab_core.Segmentation.Elements.Element import Element
 from PyQt4 import QtGui, QtCore
+
+from sound_lab_core.Elements.Element import Element
 
 
 class OneDimensionalElement(Element):

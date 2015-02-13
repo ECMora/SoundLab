@@ -3,7 +3,7 @@ from PyQt4 import QtCore, QtGui
 import pyqtgraph as pg
 import numpy as np
 
-from sound_lab_core.Segmentation.Elements.Element import Element
+from sound_lab_core.Elements.Element import Element
 
 
 class TwoDimensionalElement(Element):

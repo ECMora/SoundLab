@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 import os
+
 from PyQt4.QtCore import pyqtSlot, Qt
 from PyQt4 import QtGui
 import xlwt
 from PyQt4.QtGui import QFileDialog, QAbstractItemView, QActionGroup
+
 from duetto.audio_signals.AudioSignal import AudioSignal
-from sound_lab_core.Segmentation.Elements.Element import Element
+from sound_lab_core.Elements.Element import Element
 from ..dialogs.elemDetectSettings import ElemDetectSettingsDialog
 from graphic_interface.windows.TwoDimensionalAnalisysWindow import TwoDimensionalAnalisysWindow
 from graphic_interface.windows.ui_python_files.SegmentationAndClasificationWindowUI import Ui_MainWindow
@@ -59,8 +61,13 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         # the segmentation window do not allow to record a signal
         self.actionRecord.setEnabled(False)
 
+        # the object that handles the measuring of parameters and manage the segments
+        self.segmentManager = SegmentManager()
+        self.segmentManager.measurementsChanged.connect(lambda: self.updateTableParameter())
+
         # set the signal to the widget
         self.widget.signal = signal
+        self.segmentManager.signal = signal
 
         # set the configurations for the name of the signal and the visible label
         self.updateSignalPropertiesLabel(signal)
@@ -88,10 +95,6 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         # array of windows with two dimensional graphs.
         self.two_dim_windows = []
 
-        # the object that handles the measuring of parameters and manage the segments
-        self.segmentManager = SegmentManager()
-        self.segmentManager.measurementsChanged.connect(lambda : self.updateTableParameter())
-
         self.showMaximized()
 
         self.restorePreviousSession()
@@ -113,11 +116,17 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
         elements = [e for e in data if isinstance(e, tuple) and len(e) == 2
                     and isinstance(e[0], int) and isinstance(e[1], int)]
+        if len(elements) > 0:
+            buttons_box = QtGui.QMessageBox.Yes | QtGui.QMessageBox.No
+            mbox = QtGui.QMessageBox(QtGui.QMessageBox.Question, self.tr(u"soundLab"),
+                                     self.tr(u"The file has segmentation data stored. Do you want to load it?"),
+                                     buttons_box, self)
+            result = mbox.exec_()
 
-        for element in elements:
-            self.widget.markRegionAsElement(element, update=False)
-
-        self.widget.graph()
+            if result == QtGui.QMessageBox.Yes:
+                for element in elements:
+                    self.widget.markRegionAsElement(element, update=False)
+                    self.widget.graph()
 
     def __addContextMenuActions(self):
         """
@@ -417,7 +426,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         if element_added_index is None:
             return
 
-        self.segmentManager.addElement(self.widget.Elements[element_added_index], element_added_index)
+        self.segmentManager.addElement(self.widget.elements[element_added_index], element_added_index)
 
         for wnd in self.two_dim_windows:
             wnd.loadData(self.segmentManager)
@@ -528,20 +537,21 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
                 # parameter measurements and classification concrete implementations
 
                 # get the detector from dialog selection
-                self.widget.detector = elementsDetectorDialog.detector
+                self.segmentManager.detector = elementsDetectorDialog.detector
 
-                self.segmentManager.measurerList = elementsDetectorDialog.measurerList()
+                self.segmentManager.measurerList = elementsDetectorDialog.get_measurer_list()
                 # get the classification object
 
                 self.setProgressBarVisibility(True)
 
                 # execute the detection
-                self.widget.detectElements()
+                self.segmentManager.detectElements()
+                self.widget.elements = self.segmentManager.elements
 
                 self.updateDetectionProgressBar(50)
 
                 # measure the parameters over elements detected
-                self.segmentManager.measureParameters(self.widget.Elements)
+                self.segmentManager.measureParameters()
 
                 self.updateDetectionProgressBar(95)
 
@@ -614,7 +624,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         This method allows to change its visibility
         """
         visibility = self.actionTemporal_Elements.isChecked()
-        for e in self.widget.Elements:
+        for e in self.widget.elements:
             e.visible = visibility
         self.widget.drawElements(oscilogramItems=True)
 
@@ -660,7 +670,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         This method allows to change its visibility
         """
         visibility = self.actionSpectral_Elements.isChecked()
-        for e in self.widget.Elements:
+        for e in self.widget.elements:
             for e2 in e.twoDimensionalElements:
                 e2.visible = visibility
         self.widget.drawElements(oscilogramItems=False)

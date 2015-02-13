@@ -1,4 +1,5 @@
 from PyQt4.QtCore import QObject
+from pyqtgraph.parametertree import Parameter
 
 
 class SoundLabAdapter(QObject):
@@ -12,14 +13,12 @@ class SoundLabAdapter(QObject):
         """
         QObject.__init__(self, parent)
 
-    @property
-    def instance(self):
+    def get_instance(self):
         """
-        Gets a new instance of the corresponding adapted object .
-        :return: A new instance of the corresponding class
+        Gets a new get_instance of the corresponding adapted object .
+        :return: A new get_instance of the corresponding class
         """
         return None
-
 
     def get_settings(self):
         """

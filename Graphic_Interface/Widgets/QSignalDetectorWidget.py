@@ -1,11 +1,9 @@
 from PyQt4 import QtGui, QtCore
 import pyqtgraph as pg
 import numpy as np
-
-from sound_lab_core.Segmentation.Elements.Element import Element
+from sound_lab_core.Elements.Element import Element
 from QSignalVisualizerWidget import QSignalVisualizerWidget
-from sound_lab_core.Segmentation.Detectors.OneDimensional.OneDimensionalElementsDetector import OneDimensionalElementsDetector
-from sound_lab_core.Segmentation.Elements.OneDimensionalElements.OscilogramElement import OscilogramElement
+from sound_lab_core.Elements.OneDimensionalElements.OscilogramElement import OscilogramElement
 
 
 class QSignalDetectorWidget(QSignalVisualizerWidget):
@@ -41,22 +39,26 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
         # list of detected elements. Each element contains the object
         # and the extra data for visualize it
-        self.Elements = []
+        self._elements = []
 
         QSignalVisualizerWidget.__init__(self, parent)
 
-        # detector for one dimensional detection
-        self._detector = None
-
-    # region Detector Property
+    # region Elements Property
     @property
-    def detector(self):
-        return self._detector
+    def elements(self):
+        return self._elements
 
-    @detector.setter
-    def detector(self, value):
-        self._detector = value
-        self._detector.signal = self.signal
+    @elements.setter
+    def elements(self, elements_list):
+        self.clearDetection()
+
+        self._elements = []
+
+        # get the elements detected by the detector
+        for index, c in enumerate(elements_list):
+            self._elements.append(c)
+            # connect the click event of an element with the signal of the widget
+            c.elementClicked.connect(lambda i: self.elementClicked.emit(i))
 
     # endregion
 
@@ -74,16 +76,16 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         # spec = oscilogramItems is None or not oscilogramItems
 
         if self.visibleOscilogram and osc:
-            for i in range(len(self.Elements)):
-                if self.Elements[i].visible:
-                    for item, visible in self.Elements[i].visualwidgets():
+            for i in range(len(self.elements)):
+                if self.elements[i].visible:
+                    for item, visible in self.elements[i].visualwidgets():
                         if not visible:
                             self.axesOscilogram.removeItem(item)
                         else:
                             if item not in self.axesOscilogram.items() and visible:
                                 self.axesOscilogram.addItem(item)
                 else:
-                    for item, visible in self.Elements[i].visualwidgets():
+                    for item, visible in self.elements[i].visualwidgets():
                         self.axesOscilogram.removeItem(item)
             self.axesOscilogram.update()
 
@@ -111,9 +113,9 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         :param oscilogram: Removes the oscilogram visual elements
         :param specgram: Removes the spectrogram visual elements
         :param elements: the elements that would be (visually) removed.
-        all the self.Elements if None
+        all the self.elements if None
         """
-        elements = elements if elements is not None else self.Elements
+        elements = elements if elements is not None else self.elements
         elements = [e for e in elements if e is not None]  # validate that e is instance of Element class
 
         if oscilogram:
@@ -133,9 +135,9 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         :param element_type:
         :param oscilogramItems:
         """
-        iterable = self.Elements
+        iterable = self.elements
         if not oscilogramItems:
-            aux = [x.twoDimensionalElements for x in self.Elements]
+            aux = [x.twoDimensionalElements for x in self.elements]
             iterable = []
             for list in aux:
                 iterable.extend(list)
@@ -164,7 +166,6 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         """
         self.removeVisualElements(oscilogram=True, specgram=True)
         self.deselectElement()
-        self.Elements = []
 
     def selectElement(self, number=-1):
         """
@@ -174,8 +175,8 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         Otherwise the selection would be cleared.
         :param number: the element index
         """
-        if 0 <= number < len(self.Elements):
-            index_from, index_to = self.Elements[number].indexFrom, self.Elements[number].indexTo
+        if 0 <= number < len(self.elements):
+            index_from, index_to = self.elements[number].indexFrom, self.elements[number].indexTo
             self.selectRegion(index_from, index_to)
 
             if index_from < self.mainCursor.min or index_to > self.mainCursor.max:
@@ -241,25 +242,6 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
     # endregion
 
-    def detectElements(self):
-        """
-        Detect elements in the signal using the parameters.
-        Just performs the detection.
-        To visualize all the elements has to call drawElements after detection
-        """
-        if self.detector is None:
-            return
-
-        self.clearDetection()
-
-        self.detector.detect()
-
-        # get the elements detected by the detector
-        for index, c in enumerate(self.detector.elements):
-            self.Elements.append(c)
-            # connect the click event of an element with the signal of the widget
-            c.elementClicked.connect(lambda i: self.elementClicked.emit(i))
-
     def deleteSelectedElements(self):
         """
         Deletes the elements between the selection
@@ -270,19 +252,19 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         """
         start, end = self.selectedRegion
 
-        if end == start or len(self.Elements) == 0:
+        if end == start or len(self.elements) == 0:
             return None
 
         # create a list with start index of each element
-        sorted_arr = np.array([x.indexFrom for x in self.Elements])
+        sorted_arr = np.array([x.indexFrom for x in self.elements])
 
         # binary search of the interval
         indexFrom, indexTo = np.searchsorted(sorted_arr, start), np.searchsorted(sorted_arr, end)
 
         # if the region selected starts before the previous element finish then include it
-        indexFrom -= 1 if indexFrom > 0 and start <= self.Elements[indexFrom - 1].indexTo else 0
+        indexFrom -= 1 if indexFrom > 0 and start <= self.elements[indexFrom - 1].indexTo else 0
 
-        if indexTo < indexFrom or indexTo > len(self.Elements):
+        if indexTo < indexFrom or indexTo > len(self.elements):
             return -1, -1
 
         # remove the selected region Element if is contained on the removed elements region
@@ -291,11 +273,11 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         if start <= selected_rgn_start <= end or start <= selected_rgn_end <= end:
             self.selectElement()
 
-        self.removeVisualElements(elements=self.Elements[indexFrom:indexTo])
+        self.removeVisualElements(elements=self.elements[indexFrom:indexTo])
 
-        self.Elements = self.Elements[0:indexFrom] + self.Elements[indexTo:]
+        self.elements = self.elements[0:indexFrom] + self.elements[indexTo:]
 
-        for i, x in enumerate(self.Elements):
+        for i, x in enumerate(self.elements):
             x.setNumber(i + 1)
 
         self.graph()
@@ -320,10 +302,10 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         if end <= start or (self.mainCursor.min == start and self.mainCursor.max == end):
             return None
 
-        sorted_arr = np.array([x.indexFrom for x in self.Elements])
+        sorted_arr = np.array([x.indexFrom for x in self.elements])
 
         indexFrom, indexTo = np.searchsorted(sorted_arr, start), np.searchsorted(sorted_arr, end)
-        indexFrom -= 1 if indexFrom > 0 and start <= self.Elements[indexFrom - 1].indexTo else 0
+        indexFrom -= 1 if indexFrom > 0 and start <= self.elements[indexFrom - 1].indexTo else 0
 
         # overlaps with other elements
         if indexFrom != indexTo:
@@ -331,10 +313,10 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
         # todo hard code instance must be used an injection of dependencies
         element = OscilogramElement(self.signal, start, end)
-        self.Elements.insert(indexFrom, element)
+        self.elements.insert(indexFrom, element)
         element.elementClicked.connect(lambda i: self.elementClicked.emit(i))
 
-        for index, e in enumerate(self.Elements):
+        for index, e in enumerate(self.elements):
             e.setNumber(index+1)
 
         # for efficiency when add multiple elements
@@ -348,7 +330,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         Store the list of (start, end) indexes of detetcted elements
         :return:
         """
-        self.signal.extraData = [(x.indexFrom, x.indexTo) for x in self.Elements]
+        self.signal.extraData = [(x.indexFrom, x.indexTo) for x in self.elements]
 
     # endregion
 

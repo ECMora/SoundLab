@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
 from sound_lab_core.SoundLabAdapter import SoundLabAdapter
-from sound_lab_core.ParametersMeasurement.TimeParameters.StartTimeParameter import StartTimeParameter
-from pyqtgraph.parametertree import Parameter
+from sound_lab_core.ParametersMeasurement.TimeParameters.PeekToPeekParameter import PeekToPeekParameter
 
 
-class StartTimeParameterAdapter(SoundLabAdapter):
+class PeekToPeekParameterAdapter(SoundLabAdapter):
     """
     Adapter class for the start time parameter.
     """
@@ -13,4 +12,4 @@ class StartTimeParameterAdapter(SoundLabAdapter):
         SoundLabAdapter.__init__(self, parent)
 
     def get_instance(self):
-        return StartTimeParameter()
+        return PeekToPeekParameter()

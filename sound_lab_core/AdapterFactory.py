@@ -18,9 +18,9 @@ class AdapterFactory(QObject):
 
     def get_adapter(self, name):
         """
-        Gets an instance of the corresponding one dimensional transform given its name.
+        Gets an get_instance of the corresponding one dimensional transform given its name.
         :param name: a str, the name of the transform. Must be one of the values returned by the get_all_transforms_names method.
-        :return: an instance of the corresponding one dimensional transform
+        :return: an get_instance of the corresponding one dimensional transform
         """
         if name not in self.adapters:
             raise Exception("Not found adapter")
@@ -36,7 +36,9 @@ class ParametersAdapterFactory(AdapterFactory):
         self.adapters = {
             'Start Time': StartTimeParameterAdapter(parent),
             'End Time': EndTimeParameterAdapter(parent),
-            'Duration': DurationTimeParameterAdapter(parent)
+            'Duration': DurationTimeParameterAdapter(parent),
+            'RMS': RmsTimeParameterAdapter(parent),
+            'PeekToPeek': PeekToPeekParameterAdapter(parent)
         }
 
 
@@ -45,8 +47,7 @@ class SegmentationAdapterFactory(AdapterFactory):
         AdapterFactory.__init__(self, parent)
 
         self.adapters = {
-            # 'Manual': ManualDetectorAdapter(parent),
-            'Manual': AbsDecayEnvelopeDetectorAdapter(parent),
+            'Manual': ManualDetectorAdapter(parent),
             'Envelope Abs Decay': AbsDecayEnvelopeDetectorAdapter(parent)
         }
 

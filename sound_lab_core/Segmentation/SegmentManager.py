@@ -1,5 +1,6 @@
 from PyQt4.QtCore import QObject, pyqtSignal
 import numpy as np
+from duetto.audio_signals import AudioSignal
 from sound_lab_core.Clasification.ClassificationData import ClassificationData
 
 
@@ -21,6 +22,12 @@ class SegmentManager(QObject):
         # the parameter measurer list
         self._measurerList = []
 
+        # the detected elements
+        self._elements = []
+
+        # the signal in which would be detected the elements
+        self._signal = None
+
         # set the connections for the classification data to
         # update when is added, changed or deleted a value or category
         self.classificationData = ClassificationData()
@@ -40,6 +47,24 @@ class SegmentManager(QObject):
     # region Properties
 
     @property
+    def elements(self):
+        return self._elements
+
+    @elements.setter
+    def elements(self, elements_list):
+        self._elements = elements_list
+
+        # clear the measurements
+        rows = len(self._elements)
+        cols = len(self.measurerList)
+
+        self.measuredParameters = np.zeros(rows * cols).reshape((rows * cols))
+
+        self.classificationTableData = [[self.tr(u"No Identified")
+                                         for _ in self.classificationColumnNames]
+                                        for _ in range(len(self._elements))]
+
+    @property
     def classificationColumnNames(self):
         """
         The names of the columns of classification data
@@ -54,12 +79,38 @@ class SegmentManager(QObject):
         The names of the columns of parameters.
         :return:
         """
-        return [x[0] for x in self.measurerList]
+        return [x.name for x in self.measurerList]
 
     @property
     def columnNames(self):
         return self.parameterColumnNames + self.classificationColumnNames
-    
+
+    @property
+    def detector(self):
+        return self._detector
+
+    @detector.setter
+    def detector(self, value):
+        self._detector = value
+        self._detector.signal = self.signal
+
+    @property
+    def signal(self):
+        return self._signal
+
+    @signal.setter
+    def signal(self, new_signal):
+        """
+        Modify and update the internal variables that uses the signal.
+
+        :param new_signal: the new AudioSignal
+        :raise Exception: If signal is not of type AudioSignal
+        """
+        if new_signal is None or not isinstance(new_signal, AudioSignal):
+            raise Exception("Invalid assignation value. Must be of type AudioSignal")
+
+        self._signal = new_signal
+
     # region Classifier
 
     @property
@@ -150,6 +201,8 @@ class SegmentManager(QObject):
         self.classificationTableData = self.classificationTableData[:start_index] + \
                                               self.classificationTableData[end_index + 1:]
 
+        self._elements = self.elements[:start_index] + self.elements[end_index+1:]
+
         self.measurementsChanged.emit()
 
     def addElement(self, element, index):
@@ -163,8 +216,7 @@ class SegmentManager(QObject):
             raise IndexError()
 
         if self.rowCount == 0:
-            self.measuredParameters = np.array([np.zeros(len(self.measurerList))])
-            self.classificationTableData = [[self.tr(u"No Identified") for _ in self.classificationColumnNames]]
+            self.elements = [element]
 
         else:
             # add the element
@@ -174,16 +226,29 @@ class SegmentManager(QObject):
 
             self.classificationTableData.insert(index, [self.tr(u"No Identified")
                                                         for _ in self.classificationColumnNames])
+
+            self.elements.insert(element, index)
+
         # measure parameters
         self._measure(element, index)
 
         self.measurementsChanged.emit()
 
+    def detectElements(self):
+        """
+        Detect elements in the signal using the parameters.
+        """
+        if self.detector is None:
+            return
+        self.detector.detect()
+
+        self.elements = self.detector.elements
+
     # endregion
 
     # region Measurements
 
-    def measureParameters(self, elements):
+    def measureParameters(self):
         """
         :param tableParameterOscilogram:
         :param paramsTomeasure:
@@ -194,15 +259,8 @@ class SegmentManager(QObject):
         if len(self.measurerList) == 0:
             return
 
-        self.measuredParameters = np.zeros(len(elements) * len(self.measurerList)).reshape(
-            (len(elements), len(self.measurerList)))
-
-        self.classificationTableData = [[self.tr(u"No Identified")
-                                                for _ in self.classificationColumnNames]
-                                                for _ in range(self.rowCount)]
-
         for i in range(self.rowCount):
-            self._measure(elements[i], i)
+            self._measure(self.elements[i], i)
 
         self.measurementsChanged.emit()
 
@@ -216,16 +274,10 @@ class SegmentManager(QObject):
         if not 0 <= index < self.rowCount:
             raise IndexError()
 
-        for j, params in enumerate(self.measurerList):
+        for j, method in enumerate(self.measurerList):
             try:
-                # get the function params.
-                # params[0] is the name of the param measured
-                # params[1] is the function to measure the param
-                # params[2] is the dictionary of params supplied to the function
-                dictionary = dict(params[2] if params[2] is not None else [])
-
                 # compute the param with the function
-                self.measuredParameters[index, j] = params[1](element, dictionary)
+                self.measuredParameters[index, j] = method.measure(element)
 
             except Exception as e:
                 # if some error is raised set a default value
@@ -235,8 +287,7 @@ class SegmentManager(QObject):
     # endregion
 
     def getData(self, row, col):
-        """
-        """
+        # todo (yasel) implement as indexer
         if row < 0 or row >= self.rowCount:
             raise IndexError()
 
