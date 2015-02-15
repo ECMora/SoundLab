@@ -1,10 +1,7 @@
 from math import log10
-
 from PyQt4.QtGui import QFont
-from matplotlib import mlab
 import numpy as np
 import pyqtgraph as pg
-
 from sound_lab_core.Elements.OneDimensionalElements.OneDimensionalElement import OneDimensionalElement
 from sound_lab_core.Segmentation.Detectors.TwoDimensional.TwoDimensionalElementsDetector import \
     TwoDimensionalElementsDetector
@@ -106,23 +103,6 @@ class OscilogramElement(OneDimensionalElement):
                         one_dimensional_parent=self)
         for elem in detector.elements:
             self.twoDimensionalElements.append(elem)
-
-    # region Oscilogram parameter measurement
-
-
-        def distanceFromStartToMax(self):
-            if self.parameters["StartToMax"] is None:
-                self.parameters["StartToMax"] = round(
-                    np.argmax(self.signal.data[self.indexFrom:self.indexTo]) * 1.0 / self.signal.samplingRate,
-                    self.DECIMAL_PLACES)
-
-        return self.parameters["StartToMax"]
-
-    def spectralElements(self):
-        s = len(self.twoDimensionalElements)
-        return s - 1 if s > 0 else s
-
-    # endregion
 
     # region Spectral Parameter Measurement
     def peakFreqAverage(self):

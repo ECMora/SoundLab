@@ -1,6 +1,6 @@
 duetto Sound Lab Tasks
 # TODO these are the tasks to do in the software development of the duetto SoundLab System.
-# TODO tasks marked with * are ready to been implemented
+# TODO tasks marked with * are ready to be implemented
 # TODO those marked with - are in process and those marked with + are completed.
 # TODO the tasks are divided by their complexity.
 
@@ -24,6 +24,9 @@ Complexity-1: No new-code activity
 -----------------------------------------------------------
 
 Complexity-2: Small-to-medium code changes
++ Si hay seleccion temporal (*o espectral), que el play solo reproduzca lo seleccionado... no pasa asi en "solo espectrograma".
++ El Undo no funciona despues de Cortar.
++ Revisar cursores: Ej. en rectangular, cambiar dF para el final... despues de mostrar quien es fmin y fmax.
 
 * Customize the axes on the amount of ticks and the scale used (possibly by context menu) with an dynamic suggested scale
 * Addition of Custom Rich Dock Widgets to the duetto API and use them on the windows
@@ -37,12 +40,9 @@ Complexity-2: Small-to-medium code changes
 * Hacer corresponder las ventanas de seleccion temporal de oscilo y espectro en grandes resoluciones temporales.
 * Arreglar identificacion de ejes y numeros. Mostrar numeros "significativos".
 * Normalizar espectrograma.
-+ Si hay seleccion temporal (*o espectral), que el play solo reproduzca lo seleccionado... no pasa asi en "solo espectrograma".
 * Chequear que cuando se modifique un parametro en una ventana y se cambie temporalmente de ventana, ese valor se mantenga modificado.
 * Recontra chequear errores en el zooming: Ej: si se selecciona una ventana mayor que una previamente seleccionada, el zoom final no es el esperado.
 * Si utilizamos cortar, mantener los valores de las escalas de amplitud.
-+ El Undo no funciona despues de Cortar.
-+ Revisar cursores: Ej. en rectangular, cambiar dF para el final... despues de mostrar quien es fmin y fmax.
 * En el Pointer cursor hay que presionar para leer la frequencia? En los cursores dejar fijas las posiciones de los parametros que se miden.
 
 -----------------------------------------------------------
@@ -55,12 +55,12 @@ Complexity-3: Large code changes and/or multiple code files tasks
 
 -----------------------------------------------------------
 
-Complexity-4: New Code Design and Infrastructure implementation (Somoza's Revision)
+Complexity-4: New Code Design and Infrastructure implementation
 
 - Detector widget implementation.
 - Design Segmentation by polymorphic methods
 - Design Elements detection and parameter measurement
 - Design Classification
-- Batch window implementation
++ Batch window implementation
 
 -------------------------------------------- ---------------

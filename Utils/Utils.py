@@ -16,7 +16,7 @@ DECIMAL_PLACES = 2
 WORK_SPACE_FILE_NAME = "soundlab.ini"
 
 
-def deSerialize(filename):
+def deserialize(filename):
     """
     Deserialize an object from a file.
     :param filename: the path to the file where the object is saved
@@ -25,7 +25,7 @@ def deSerialize(filename):
     if not os.path.exists(filename):
         raise Exception('File does not exist.')
 
-    with open(filename, 'r') as f:
+    with open(filename, 'rb') as f:
         return pickle.load(f)
 
 
@@ -48,7 +48,7 @@ def serialize(filename, serializable_object):
         print(ex.message)
 
 
-def saveImage(widget, fname=""):
+def save_image(widget, fname=""):
     """
     Method that saves as image a widget by taking a screenshot of it.
     All the signal graphs save images methods delegate in this one their
@@ -62,7 +62,7 @@ def saveImage(widget, fname=""):
         image.save(fname, u'jpg')
 
 
-def folderFiles(folder, extensions=None):
+def folder_files(folder, extensions=None):
     """
     Method that gets all the files that contains a provided folder in
     the file system.
@@ -88,12 +88,13 @@ def folderFiles(folder, extensions=None):
     return files
 
 
-def smallSignal(signal, duration_ms=50):
+def small_signal(signal, duration_ms=50):
     """
     computes and return (through an heuristic) an small signal
     that represent the current one. The small signal has less than 100ms of duration
     and is provided as a way of search characteristics of the whole signal.
     Must be "as similar as possible to the complete signal".
+    :param signal:
     :param duration_ms: The duration of the smal signal to genrate from the supplied one in ms
     :return: Audio signal.
     """

@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>752</width>
-    <height>521</height>
+    <width>745</width>
+    <height>386</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -113,7 +113,7 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>752</width>
+     <width>745</width>
      <height>21</height>
     </rect>
    </property>
@@ -723,7 +723,7 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
     <string>File Up</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Up</string>
+    <string>Alt+Up</string>
    </property>
   </action>
   <action name="actionFile_Down">
@@ -735,7 +735,7 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
     <string>File Down</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Down</string>
+    <string>Alt+Down</string>
    </property>
   </action>
   <action name="actionOsc_Image">
@@ -771,14 +771,6 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
    </property>
    <property name="text">
     <string>Rectangular Cursor</string>
-   </property>
-  </action>
-  <action name="actionRectangular_Eraser">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Rectangular Eraser</string>
    </property>
   </action>
   <action name="actionPositive_Values">
@@ -961,21 +953,18 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
    <property name="text">
     <string>switchPlayStatus</string>
    </property>
-   <property name="shortcut">
-    <string>Space</string>
-   </property>
   </action>
   <action name="actionBatchProcessing">
    <property name="text">
     <string>Batch Processing</string>
    </property>
   </action>
-  <action name="actionChangeTab">
+  <action name="actionChangeTabUp">
    <property name="text">
-    <string>ChangeTab</string>
+    <string>ChangeTabUp</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Tab</string>
+    <string>Alt+Right</string>
    </property>
   </action>
   <action name="actionPlayLoop">
@@ -991,6 +980,17 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
    </property>
    <property name="toolTip">
     <string>Play Loop</string>
+   </property>
+  </action>
+  <action name="actionChangeTabDown">
+   <property name="text">
+    <string>ChangeTabDown</string>
+   </property>
+   <property name="toolTip">
+    <string>ChangeTabDown</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+Left</string>
    </property>
   </action>
   <zorder>dock_settings</zorder>

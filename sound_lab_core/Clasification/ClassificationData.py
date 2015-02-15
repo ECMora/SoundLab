@@ -37,7 +37,8 @@ class ClassificationData(QObject):
         trainingData = [] if trainingData is None else trainingData
 
         # set the categories
-        default = {"Specie": ["Cartacuba","Arriero"], "Taxa": ["Birds", "Mammals"]}
+        default = {"Location": ["Cuba", "Mexico", "EEUU", "Colombia", "Brasil"],
+                   "Taxa": ["Birds", "Mammals"]}
         categories = default if categories is None else categories
 
         if any([not isinstance(x, ClassificationVector) for x in trainingData]) or\

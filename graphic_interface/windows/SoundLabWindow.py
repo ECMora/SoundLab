@@ -3,7 +3,7 @@ from PyQt4.QtCore import pyqtSlot
 import PyQt4.QtCore as QtCore
 from PyQt4.QtGui import QActionGroup, QFileDialog
 from PyQt4 import QtGui
-from Utils.Utils import saveImage, DECIMAL_PLACES
+from Utils.Utils import save_image, DECIMAL_PLACES
 from graphic_interface.Settings.Workspace import Workspace
 from graphic_interface.widgets.signal_visualizer_tools.SignalVisualizerTool import Tools
 
@@ -41,7 +41,6 @@ class SoundLabWindow(QtGui.QMainWindow):
         self.signalPropertiesTextLabel = QtGui.QLabel(self)
         self.signalPropertiesTextLabel.setAlignment(QtCore.Qt.AlignRight)
         self.signalPropertiesTextLabel.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum))
-
 
     # endregion
 
@@ -118,9 +117,7 @@ class SoundLabWindow(QtGui.QMainWindow):
         Select the Zoom Tool as current working tool in the widget
         :return:
         """
-        self.deselectToolsActions()
-        self.actionZoom_Cursor.setChecked(True)
-        self.widget.setSelectedTool(Tools.ZoomTool)
+        self.select_tool(self.actionZoom_Cursor, Tools.ZoomTool)
 
     @pyqtSlot()
     def on_actionRectangular_Cursor_triggered(self):
@@ -128,9 +125,7 @@ class SoundLabWindow(QtGui.QMainWindow):
         Select the Rectangular Cursor as current working tool in the widget
         :return:
         """
-        self.deselectToolsActions()
-        self.actionRectangular_Cursor.setChecked(True)
-        self.widget.setSelectedTool(Tools.RectangularZoomTool)
+        self.select_tool(self.actionRectangular_Cursor, Tools.RectangularZoomTool)
 
     @pyqtSlot()
     def on_actionRectangular_Eraser_triggered(self):
@@ -138,9 +133,7 @@ class SoundLabWindow(QtGui.QMainWindow):
         Select the Rectangular Eraser as current working tool in the widget
         :return:
         """
-        self.deselectToolsActions()
-        self.actionRectangular_Eraser.setChecked(True)
-        self.widget.setSelectedTool(Tools.RectangularEraser)
+        self.select_tool(self.actionRectangular_Eraser, Tools.RectangularEraser)
 
     @pyqtSlot()
     def on_actionPointer_Cursor_triggered(self):
@@ -148,9 +141,7 @@ class SoundLabWindow(QtGui.QMainWindow):
         Select the Pointer Cursor as current working tool in the widget
         :return:
         """
-        self.deselectToolsActions()
-        self.actionPointer_Cursor.setChecked(True)
-        self.widget.setSelectedTool(Tools.PointerTool)
+        self.select_tool(self.actionPointer_Cursor, Tools.PointerTool)
 
     def deselectToolsActions(self):
         """
@@ -158,8 +149,18 @@ class SoundLabWindow(QtGui.QMainWindow):
         """
         self.actionZoom_Cursor.setChecked(False)
         self.actionRectangular_Cursor.setChecked(False)
-        self.actionRectangular_Eraser.setChecked(False)
         self.actionPointer_Cursor.setChecked(False)
+
+    def select_tool(self, tool_action, tool_type):
+        """
+
+        :param tool_action: the checkable action that handles the selection of the tool
+        :param tool_type: the enum type of the tool to select in the widget
+        :return:
+        """
+        self.deselectToolsActions()
+        tool_action.setChecked(True)
+        self.widget.setSelectedTool(tool_type)
 
     #  endregion
 
@@ -174,7 +175,7 @@ class SoundLabWindow(QtGui.QMainWindow):
         if self.widget.visibleOscilogram:
             fname = unicode(QFileDialog.getSaveFileName(self, self.tr(u"Save oscilogram graph as an Image"),
                                                 u"oscilogram-Duetto-Image", u"*.jpg"))
-            saveImage(self.widget.axesOscilogram, fname)
+            save_image(self.widget.axesOscilogram, fname)
 
         else:
             QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
@@ -190,7 +191,7 @@ class SoundLabWindow(QtGui.QMainWindow):
         if self.widget.visibleSpectrogram:
             fname = unicode(QFileDialog.getSaveFileName(self, self.tr(u"Save specgram graph as an Image"),
                                                 u"specgram-Duetto-Image", u"*.jpg"))
-            saveImage(self.widget.axesSpecgram, fname)
+            save_image(self.widget.axesSpecgram, fname)
         else:
             QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
                                       self.tr(u"The Espectrogram plot widget is not visible.") + " \n" + self.tr(
@@ -206,7 +207,7 @@ class SoundLabWindow(QtGui.QMainWindow):
         if self.widget.visibleOscilogram and self.widget.visibleSpectrogram:
             fname = unicode(QFileDialog.getSaveFileName(self, self.tr(u"Save graph as an Image"),
                                                 u"Duetto-Image", u"*.jpg"))
-            saveImage(self.widget, fname)
+            save_image(self.widget, fname)
         else:
             QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
                                       self.tr(u"One of the plot widgets is not visible.") + " \n" + self.tr(

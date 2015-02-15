@@ -1,5 +1,6 @@
 #  -*- coding: utf-8 -*-
 from PyQt4 import QtCore
+from kiva.fonttools.fontTools.ttLib.tables._n_a_m_e import table__n_a_m_e
 from pyqtgraph.parametertree.parameterTypes import ListParameter
 from pyqtgraph.parametertree import Parameter, ParameterTree
 from PyQt4.QtGui import QMessageBox, QActionGroup, QAction
@@ -91,13 +92,13 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         self.configureToolBarActionsGroups()
 
         # get all the themes that are in the static folder for themes ("Utils\Themes\")
-        app_themes = folderFiles(os.path.join("Utils", "Themes"), extensions=[".dth"])
+        app_themes = folder_files(os.path.join("Utils", "Themes"), extensions=[".dth"])
 
         # get all the styles that are in the static folder for styles ("styles\")
-        app_styles = folderFiles("styles", extensions=[".qss"])
+        app_styles = folder_files("styles", extensions=[".qss"])
 
         # get all the languages translations that are in the static folder for languagues ("I18n\")
-        app_languagues = folderFiles("I18n", extensions=[".qm"])
+        app_languagues = folder_files("I18n", extensions=[".qm"])
 
         # user interface to manipulate several visual parameters
         # and display options of the application theme.
@@ -445,7 +446,6 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
             self.actionZoom_Cursor,
             self.actionPointer_Cursor,
             self.actionRectangular_Cursor,
-            self.actionRectangular_Eraser,
             sep5,
 
             #  widgets images
@@ -669,7 +669,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         self.widget.load_workspace(self.workSpace)
         self.widget.graph()
 
-    def currentSignalTabChanged(self,tabIndex):
+    def currentSignalTabChanged(self, tabIndex):
         """
         Update the window state and variables when the current signal tab has changed
         :param tabIndex: The new index of selected tab signal
@@ -731,11 +731,10 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
             if i != exceptIndex:
                 self.closeSignalAt(i)
 
-
-    @pyqtSlot()
-    def on_actionChangeTab_triggered(self):
+    def change_tab(self, up=True):
         """
-        Change the selected tab visualization to the next one
+        Change the selected tab visualization to the next/previous one
+        :type up: True if the tab is moved to the next one False otherwise
         :return:
         """
         if self.tabOpenedSignals.count() == 0:
@@ -743,11 +742,19 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
 
         current_tab = self.tabOpenedSignals.currentIndex()
 
-        self.tabOpenedSignals.setCurrentIndex((current_tab+1) % self.tabOpenedSignals.count())
+        tab_change = 1 if up else -1
+
+        self.tabOpenedSignals.setCurrentIndex((current_tab + tab_change) % self.tabOpenedSignals.count())
+
+    @pyqtSlot()
+    def on_actionChangeTabDown_triggered(self):
+        self.change_tab(up=False)
+
+    @pyqtSlot()
+    def on_actionChangeTabUp_triggered(self):
+        self.change_tab(up=True)
 
     # endregion
-
-    #  region Segmentation And Clasification
 
     @pyqtSlot()
     def on_actionSegmentation_And_Clasification_triggered(self):
@@ -760,12 +767,12 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
 
         signal = self.widget.signal
 
-        indexFrom, indexTo = self.widget.selectedRegion
+        index_from, index_to = self.widget.selectedRegion
 
-        if indexTo > indexFrom:
-            signal = signal.copy(indexFrom, indexTo)
+        if index_to > index_from:
+            signal = signal.copy(index_from, index_to)
 
-        # check if the signal can be analyzed acording to its
+        # check if the signal can be analyzed according to its
         # duration and the maxThresholdLabel duration signal allowed
         if signal.duration > self.MAX_SIGNAL_DURATION_ALLOWED_SEG:
             QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
@@ -773,15 +780,15 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
                                       self.tr(u"Use the splitter to divide it"))
             return
 
-        segWindow = Segmentation_ClassificationWindow(parent=self, signal=signal)
+        seg_window = Segmentation_ClassificationWindow(parent=self, signal=signal)
 
-        segWindow.setSignalFile(self.widget.signalFilePath)
+        # if was loaded the same signal on segmentation window give the file path (if any) to save options
+        if signal.length == self.widget.signal.length:
+            seg_window.setSignalFile(self.widget.signalFilePath)
 
         # load the theme and clear the undo redo actions in the current window.
-        segWindow.load_workspace(self.workSpace)
+        seg_window.load_workspace(self.workSpace)
         self.widget.undoRedoManager.clear()
-
-    #  endregion
 
     #  region WorkSpace
     @pyqtSlot()
@@ -830,7 +837,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         :param theme_file_path: The file path of the new Theme to load
         :return:
         """
-        theme = deSerialize(theme_file_path)
+        theme = deserialize(theme_file_path)
 
         if not isinstance(theme, WorkTheme):
             raise Exception("Invalid type. theme must be of type WorkTheme.")
@@ -1787,7 +1794,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         try:
             #  get the folder of the path and the files on that folder.
             path_base = os.path.split(file_path)[0]
-            self.filesInFolder = folderFiles(path_base)
+            self.filesInFolder = folder_files(path_base)
 
             # set the current index to the index of the supplied file_path
             self.filesInFolderIndex = self.filesInFolder.index(file_path)

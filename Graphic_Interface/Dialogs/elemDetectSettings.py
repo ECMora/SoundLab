@@ -2,12 +2,13 @@
 from PyQt4 import QtGui
 from PyQt4.QtCore import pyqtSlot
 from PyQt4.QtGui import QDialog
-from pyqtgraph.parametertree import Parameter,ParameterTree
+from pyqtgraph.parametertree import Parameter, ParameterTree
 from pyqtgraph.parametertree.parameterTypes import ListParameter
 from graphic_interface.windows.ParameterList import DuettoListParameterItem
 from graphic_interface.windows.ui_python_files.detectElementsDialog import Ui_Dialog
-from Utils.Utils import smallSignal
-from sound_lab_core.AdapterFactory import ParametersAdapterFactory, SegmentationAdapterFactory, ClassificationAdapterFactory
+from Utils.Utils import small_signal
+from sound_lab_core.AdapterFactory import ParametersAdapterFactory, SegmentationAdapterFactory, \
+    ClassificationAdapterFactory
 from sound_lab_core.Segmentation.Detectors.OneDimensional.EnvelopeMethods.AbsDecayEnvelopeDetector import \
     AbsDecayEnvelopeDetector
 
@@ -27,7 +28,7 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         self.setupUi(self)
 
         if signal is not None:
-            self.widget.signal = smallSignal(signal)
+            self.widget.signal = small_signal(signal)
             # else load a didactic signal
 
         self._detector = None
@@ -75,19 +76,24 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
              u'type': u'group', u'children':
                 [{u'name': unicode(self.tr(u'Method')),
                   u'type': u'list',
-                  u'values': segmentation_adapters}]
+                  u'value': segmentation_adapters[0][1],
+                  u'default': segmentation_adapters[0][1],
+                  u'values': segmentation_adapters}],
+             u'expanded': False
             },
             {u'name': unicode(self.tr(u'Classification')),
              u'type': u'group', u'children':
                 [{u'name': unicode(self.tr(u'Method')),
                   u'type': u'list',
-                  u'values': classification_adapters}]
+                  u'values': classification_adapters}],
+             u'expanded': False
             }]
 
         ListParameter.itemClass = DuettoListParameterItem
-        self.segmentation_classificationParamTree = Parameter.create(name=unicode(self.tr(u'Segmentation-Classification')), type=u'group', children=params)
+        self.segmentation_classificationParamTree = Parameter.create(
+            name=unicode(self.tr(u'Segmentation-Classification')), type=u'group', children=params)
 
-        self.segmentation_classificationParamTree.param(unicode(self.tr(u'Segmentation'))).\
+        self.segmentation_classificationParamTree.param(unicode(self.tr(u'Segmentation'))). \
             param(unicode(self.tr(u'Method'))).sigValueChanged.connect(self.segmentationChanged)
 
         self.segmentation_classificationParamTree.param(unicode(self.tr(u'Classification'))). \
@@ -105,9 +111,10 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
                                                                type=u'group')
         for p in self.parameterAdapterFactory.adapters_names():
             group = Parameter.create(name=unicode(self.tr(unicode(p))),
-                                     type=u'group')
+                                     type=u'group', expanded=False)
 
-            measure = Parameter.create(name=unicode(self.tr(u'Measure')), type=u'bool', default=False, value=False)
+            measure = Parameter.create(name=unicode(self.tr(u'Measure')), type=u'bool', default=False,
+                                       value=False)
             group.addChild(measure)
 
             param_settings = self.parameterAdapterFactory.get_adapter(p).get_settings()
@@ -152,7 +159,7 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
                 parameter.addChild(method_settings)
 
         except Exception as ex:
-            print("Error getting the segmentation settings. "+ex.message)
+            print("Error getting the segmentation settings. " + ex.message)
 
     # endregion
 
@@ -193,7 +200,7 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         detector_instance = None
         try:
             detector_name = self.segmentation_classificationParamTree.param(unicode(self.tr(u'Segmentation'))). \
-                            param(unicode(self.tr(u'Method'))).value()
+                param(unicode(self.tr(u'Method'))).value()
 
             adapter = self.segmentationAdapterFactory.get_adapter(detector_name)
 
@@ -203,7 +210,8 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
             print("Fail to get the detector instance")
             detector_instance = None
 
-        self._detector = detector_instance if detector_instance is not None else AbsDecayEnvelopeDetector(self.widget.signal, 1, -40, 2, 5, 6)
+        self._detector = detector_instance if detector_instance is not None else AbsDecayEnvelopeDetector(
+            self.widget.signal, 1, -40, 2, 5, 6)
 
         self._detector.signal = self.widget.signal
 
@@ -219,9 +227,11 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         """
         parameters_list = self.parameter_measurementParamTree.children()
 
-        parameters_list = [self.parameterAdapterFactory.get_adapter(x.name()) for x in parameters_list if x.param(unicode(self.tr(u'Measure'))).value()]
+        # get just the parameter selected by user to be measured
+        parameters_adapters_list = [self.parameterAdapterFactory.get_adapter(x.name()) for x in parameters_list
+                                    if x.param(unicode(self.tr(u'Measure'))).value()]
 
-        return [p.get_instance() for p in parameters_list]
+        return [p.get_instance() for p in parameters_adapters_list]
 
     @property
     def classifier(self):
@@ -238,8 +248,6 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         """
         :return:
         """
-        self.detector.detect()
-
-        self.widget.elements = self.detector.elements
+        self.widget.elements = self.detector.detect()
 
         self.widget.graph()

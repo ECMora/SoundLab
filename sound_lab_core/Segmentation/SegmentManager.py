@@ -19,6 +19,9 @@ class SegmentManager(QObject):
         # the classifier object that would be used on segments classification
         self._classifier = None
 
+        # the detector object that would be used on segments detection
+        self._detector = None
+
         # the parameter measurer list
         self._measurerList = []
 
@@ -40,9 +43,7 @@ class SegmentManager(QObject):
         self.measuredParameters = np.array([])
 
         # stores the classification data that are present in the table of meditions
-        self.classificationTableData = self.classificationTableData = [[self.tr(u"No Identified")
-                                                                        for _ in self.classificationColumnNames]
-                                                                       for _ in range(self.rowCount)]
+        self.classificationTableData = self.classificationTableData = [[]]
 
     # region Properties
 
@@ -53,16 +54,34 @@ class SegmentManager(QObject):
     @elements.setter
     def elements(self, elements_list):
         self._elements = elements_list
+        self.recompute_element_table()
 
+    @property
+    def measurerList(self):
+        return self._measurerList
+
+    @measurerList.setter
+    def measurerList(self, new_measurerList):
+        self._measurerList = new_measurerList
+        self.recompute_element_table()
+
+    def recompute_element_table(self):
+        """
+        Recompute the shape of the elements parameter table
+        when a change is made on the amount of elements or the amount of
+        measured parameters
+        :return:
+        """
         # clear the measurements
-        rows = len(self._elements)
+        rows = len(self.elements)
         cols = len(self.measurerList)
 
-        self.measuredParameters = np.zeros(rows * cols).reshape((rows * cols))
+        self.measuredParameters = np.zeros(rows * cols).reshape((rows, cols))
 
         self.classificationTableData = [[self.tr(u"No Identified")
                                          for _ in self.classificationColumnNames]
                                         for _ in range(len(self._elements))]
+        self.measurementsChanged.emit()
 
     @property
     def classificationColumnNames(self):
@@ -70,7 +89,7 @@ class SegmentManager(QObject):
         The names of the columns of classification data
         :return:
         """
-        return [k for k in self.classificationData.categories.keys() if
+        return [k for k in self.classificationData.categories if
                 len(self.classificationData.getvalues(k)) > 0]
     
     @property
@@ -111,8 +130,6 @@ class SegmentManager(QObject):
 
         self._signal = new_signal
 
-    # region Classifier
-
     @property
     def classifier(self):
         return self._classifier
@@ -121,23 +138,9 @@ class SegmentManager(QObject):
     def classifier(self, classifier):
         self._classifier = classifier
 
-    # endregion
-
-    # region Measurer List
-
-    @property
-    def measurerList(self):
-        return self._measurerList
-
-    @measurerList.setter
-    def measurerList(self, new_measurerList):
-        self._measurerList = new_measurerList
-
-    # endregion
-
     @property
     def rowCount(self):
-        return len(self.measuredParameters)
+        return len(self.elements)
 
     @property
     def columnCount(self):
@@ -178,9 +181,7 @@ class SegmentManager(QObject):
         for i, elem in enumerate(self.classificationTableData):
             self.classificationTableData[i].append(self.tr(u"No Identified"))
 
-        if self.rowCount > 0:
-            for row in range(self.rowCount):
-                pass
+        self.measurementsChanged.emit()
 
     # endregion
 
@@ -198,8 +199,8 @@ class SegmentManager(QObject):
             (self.measuredParameters[:start_index],
              self.measuredParameters[end_index + 1:]))
 
-        self.classificationTableData = self.classificationTableData[:start_index] + \
-                                              self.classificationTableData[end_index + 1:]
+        self.classificationTableData = self.classificationTableData[:start_index] +\
+                                       self.classificationTableData[end_index + 1:]
 
         self._elements = self.elements[:start_index] + self.elements[end_index+1:]
 
@@ -216,6 +217,7 @@ class SegmentManager(QObject):
             raise IndexError()
 
         if self.rowCount == 0:
+            # the property would update the other variables
             self.elements = [element]
 
         else:
@@ -227,7 +229,7 @@ class SegmentManager(QObject):
             self.classificationTableData.insert(index, [self.tr(u"No Identified")
                                                         for _ in self.classificationColumnNames])
 
-            self.elements.insert(element, index)
+            self.elements.insert(index, element)
 
         # measure parameters
         self._measure(element, index)

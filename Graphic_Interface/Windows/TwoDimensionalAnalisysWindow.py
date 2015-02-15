@@ -6,7 +6,7 @@ import numpy
 from pyqtgraph.parametertree import Parameter, ParameterTree
 import pyqtgraph as pg
 from PyQt4 import QtGui, QtCore
-from Utils.Utils import saveImage
+from Utils.Utils import save_image
 from graphic_interface.dialogs.EditCategoriesDialog import EditCategoriesDialog
 from graphic_interface.windows.ui_python_files.Two_Dimensional_AnalisysWindowUI import Ui_TwoDimensionalWindow
 
@@ -362,7 +362,7 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         fname = unicode(QFileDialog.getSaveFileName(self, self.tr(u"Save two dimensional graph as an Image"),
                                                     u"two-dim-graph-Duetto-Image" + unicode(self.widget.signal.name),
                                                     u"*.jpg"))
-        saveImage(self.widget, fname)
+        save_image(self.widget, fname)
 
     @pyqtSlot()
     def on_actionMark_Selected_Elements_As_triggered(self):

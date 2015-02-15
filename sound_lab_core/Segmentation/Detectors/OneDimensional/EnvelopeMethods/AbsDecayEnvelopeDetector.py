@@ -76,9 +76,13 @@ class AbsDecayEnvelopeDetector(OneDimensionalElementsDetector):
 
         elems = self.envelope_detector(self.signal.data[indexFrom:indexTo], threshold, decay, min_size)
 
+        self.detectionProgressChanged.emit(90)
+
         self.elements = [None for _ in elems]
         for i, c in enumerate(elems):
             self.elements[i] = OscilogramElement(self.signal, c[0], c[1], number=i + 1)
+
+        self.detectionProgressChanged.emit(100)
 
         return self.elements
 
@@ -91,34 +95,42 @@ class AbsDecayEnvelopeDetector(OneDimensionalElementsDetector):
         # create envelope
         envelope = self.abs_decay_averaged_envelope(data, decay, self.softfactor)
 
+        self.detectionProgressChanged.emit(80)
+
         regions = mlab.contiguous_regions(envelope > threshold)
+
+        self.detectionProgressChanged.emit(85)
 
         if self.merge_factor > 0:
             regions = self.mergeIntervals(regions, self.merge_factor)
 
+        self.detectionProgressChanged.emit(90)
+
         return [c for c in regions if (c[1] - c[0]) > min_size]
 
-    def abs_decay_averaged_envelope(self, data, decay=1, softfactor=6, type="sin"):
+    def abs_decay_averaged_envelope(self, data, decay=1, softfactor=6, envelope_type="sin"):
         """
         decay is the min number of samples in data that separates two elements
         """
 
         rectified = array(abs(data))
 
+        self.detectionProgressChanged.emit(10)
+
         i = 1
         arr = zeros(len(rectified), dtype=int32)
         current = rectified[0]
         fall_init = None
-        progress_size = len(arr) / 8.0
+        progress_step = len(arr) / 10
 
         while i < len(arr):
             if fall_init is not None:
                 value = rectified[fall_init]
-                if type == "lineal":
+                if envelope_type == "lineal":
                     value -= rectified[fall_init] * (i - fall_init) / decay  # lineal
-                elif type == "sin":
+                elif envelope_type == "sin":
                     value = rectified[fall_init] * sin(((i - fall_init) * 1.0 * pi) / (decay * 2) + pi / 2)
-                elif type == "cuadratic":
+                elif envelope_type == "cuadratic":
                     value = rectified[fall_init] * (1 - ((i - fall_init) * 1.0) / decay) ** 2
 
                 arr[i - 1] = max(value, rectified[i])
@@ -128,6 +140,8 @@ class AbsDecayEnvelopeDetector(OneDimensionalElementsDetector):
                 arr[i - 1] = current
             current = rectified[i]
             i += 1
+            if i % progress_step == 0:
+                self.detectionProgressChanged.emit(10 + (i / progress_step) * 7)
 
         arr[-1] = current
 

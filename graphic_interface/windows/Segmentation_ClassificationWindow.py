@@ -1,19 +1,17 @@
 # -*- coding: utf-8 -*-
 import os
-
-from PyQt4.QtCore import pyqtSlot, Qt
-from PyQt4 import QtGui
 import xlwt
-from PyQt4.QtGui import QFileDialog, QAbstractItemView, QActionGroup
-
-from duetto.audio_signals.AudioSignal import AudioSignal
-from sound_lab_core.Elements.Element import Element
-from ..dialogs.elemDetectSettings import ElemDetectSettingsDialog
-from graphic_interface.windows.TwoDimensionalAnalisysWindow import TwoDimensionalAnalisysWindow
-from graphic_interface.windows.ui_python_files.SegmentationAndClasificationWindowUI import Ui_MainWindow
-from graphic_interface.dialogs.EditCategoriesDialog import EditCategoriesDialog
+from PyQt4.QtCore import pyqtSlot, Qt
 from SoundLabWindow import SoundLabWindow
+from sound_lab_core.Elements.Element import Element
+from duetto.audio_signals.AudioSignal import AudioSignal
+from ..dialogs.elemDetectSettings import ElemDetectSettingsDialog
 from sound_lab_core.Segmentation.SegmentManager import SegmentManager
+from ..dialogs.EditCategoriesDialog import EditCategoriesDialog
+from TwoDimensionalAnalisysWindow import TwoDimensionalAnalisysWindow
+from ui_python_files.SegmentationAndClasificationWindowUI import Ui_MainWindow
+from PyQt4.QtGui import QFileDialog, QAbstractItemView, QActionGroup, QMessageBox, \
+    QProgressBar, QColor, QAction, QTableWidgetItem
 
 
 class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
@@ -30,12 +28,12 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
     # region CONSTANTS
     # different colors for the even and odds rows in the parameter table and segment colors.
-    TABLE_ROW_COLOR_ODD = QtGui.QColor(0, 0, 255, 150)
-    TABLE_ROW_COLOR_EVEN = QtGui.QColor(0, 255, 0, 150)
+    TABLE_ROW_COLOR_ODD = QColor(0, 0, 255, 150)
+    TABLE_ROW_COLOR_EVEN = QColor(0, 255, 0, 150)
 
     # stylesheet to use on excel file saved
     EXCEL_STYLE_HEADER = xlwt.easyxf('font: name Times New Roman, color-index black, bold on, height 300')
-    EXCEL_STYLE_BODY = xlwt.easyxf('font: name Times New Roman, color-index black, height 220', num_format_str='# ,# # 0.00')
+    EXCEL_STYLE_BODY = xlwt.easyxf('font: name Times New Roman, color-index black, height 220', num_format_str='#,# # 0.00')
     EXCEL_STYLE_COPYRIGHT = xlwt.easyxf('font: name Arial, color-index pale_blue, height 250, italic on', num_format_str='# ,# # 0.00')
     # endregion
 
@@ -63,7 +61,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
         # the object that handles the measuring of parameters and manage the segments
         self.segmentManager = SegmentManager()
-        self.segmentManager.measurementsChanged.connect(lambda: self.updateTableParameter())
+        self.segmentManager.measurementsChanged.connect(lambda: self.update_parameter_table())
 
         # set the signal to the widget
         self.widget.signal = signal
@@ -89,7 +87,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         self.__addContextMenuActions()
 
         # create the progress bar that is showed while the detection is made
-        self.windowProgressDetection = QtGui.QProgressBar(self)
+        self.windowProgressDetection = QProgressBar(self)
         self.setProgressBarVisibility(False)
 
         # array of windows with two dimensional graphs.
@@ -117,13 +115,13 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         elements = [e for e in data if isinstance(e, tuple) and len(e) == 2
                     and isinstance(e[0], int) and isinstance(e[1], int)]
         if len(elements) > 0:
-            buttons_box = QtGui.QMessageBox.Yes | QtGui.QMessageBox.No
-            mbox = QtGui.QMessageBox(QtGui.QMessageBox.Question, self.tr(u"soundLab"),
-                                     self.tr(u"The file has segmentation data stored. Do you want to load it?"),
-                                     buttons_box, self)
+            buttons_box =  QMessageBox.Yes | QMessageBox.No
+            mbox = QMessageBox(QMessageBox.Question, self.tr(u"soundLab"),
+                               self.tr(u"The file has segmentation data stored. Do you want to load it?"),
+                               buttons_box, self)
             result = mbox.exec_()
 
-            if result == QtGui.QMessageBox.Yes:
+            if result == QMessageBox.Yes:
                 for element in elements:
                     self.widget.markRegionAsElement(element, update=False)
                     self.widget.graph()
@@ -133,7 +131,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         Add the context menu actions into the widget in the creation process of the window
         :return:
         """
-        separator, separator1, separator2, separator3, separator4 = [QtGui.QAction(self) for _ in range(5)]
+        separator, separator1, separator2, separator3, separator4 = [QAction(self) for _ in range(5)]
 
         for sep in [separator, separator1, separator2, separator3, separator4]:
             sep.setSeparator(True)
@@ -181,7 +179,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         """
         :return:
         """
-        sep = QtGui.QAction(self)
+        sep =  QAction(self)
         sep.setSeparator(True)
 
         # region Segmentation and Transformations actions
@@ -212,13 +210,13 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         Creates a new two dimensional window for analysis.
         :return:
         """
-        # a two dim window must be created after segment detection
-        # and parameters measurement
+        # a two dim window must be created after
+        # segment detection and parameters measurement
         if self.segmentManager.rowCount == 0 or len(self.segmentManager.parameterColumnNames) == 0:
-            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
+             QMessageBox.warning( QMessageBox(), self.tr(u"Error"),
                                       self.tr(u"The two dimensional analyses window requires at least "
                                               u"one detected element with one parameter measurement."))
-            return
+             return
 
         wnd = TwoDimensionalAnalisysWindow(self, self.segmentManager)
 
@@ -254,18 +252,14 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
     # region Save Measurements
 
     @pyqtSlot()
-    def on_actionMeditions_triggered(self, name="", table=None):
+    def on_actionMeditions_triggered(self):
         """
         Save to disc the measurement made by the window to the elements detected.
         :param name: The name of the file to save the data
         :param table: The table with the parameter to save into excel
         :return:
         """
-        # get the file name to save the data into.
-        file_name = name
-
-        if file_name == "":
-            file_name = unicode(QFileDialog.getSaveFileName(self, self.tr(u"Save measurements as excel file"),
+        file_name = unicode(QFileDialog.getSaveFileName(self, self.tr(u"Save measurements as excel file"),
                                 os.path.join(self.workSpace.lastOpenedFolder,
                                 str(self.widget.signalName) + ".xls"), "*.xls"))
 
@@ -275,8 +269,8 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
             try:
 
                 wb = xlwt.Workbook()
-                ws = wb.add_sheet(self.tr(u"Elements Measurements"))
-                self.writeData(ws, table)
+                ws = wb.add_sheet("Elements Measurements")
+                self.writeData(ws, self.tableParameterOscilogram)
                 wb.save(file_name)
 
             except Exception as ex:
@@ -359,9 +353,9 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         :return:
         """
 
-        mbox = QtGui.QMessageBox(QtGui.QMessageBox.Question, self.tr(u"Save meditions"),
+        mbox = QMessageBox(QMessageBox.Question, self.tr(u"Save meditions"),
                                  self.tr(u"Do you want to save the measurements of "+unicode(self.widget.signalName)),
-                                 QtGui.QMessageBox.Yes | QtGui.QMessageBox.No | QtGui.QMessageBox.Cancel, self)
+                                QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel, self)
 
         # if there is a measurement made and parameters measured that could be saved
         if self.tableParameterOscilogram.rowCount() > 0:
@@ -370,12 +364,12 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
             result = mbox.exec_()
             # get the user decision
-            if result == QtGui.QMessageBox.Cancel:
+            if result == QMessageBox.Cancel:
                 # cancel the close
                 event.ignore()
                 return
 
-            elif result == QtGui.QMessageBox.Yes:
+            elif result == QMessageBox.Yes:
                 # save the measured data as excel
                 # get the file name to save the meditions
                 self.on_actionMeditions_triggered()
@@ -511,14 +505,15 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         if visibility:
             width, height = self.widget.width(), self.widget.height()
             x, y = self.widget.x(), self.widget.y()
+            progress_bar_height = height / 20.0
 
-            self.windowProgressDetection.resize(width / 3, 20)
-            self.windowProgressDetection.move(x + width / 3, y - height / 2)
+            self.windowProgressDetection.resize(width / 3.0, progress_bar_height)
+            self.windowProgressDetection.move(x + width / 3.0, y + height / 2.0 + progress_bar_height / 2.0)
             self.windowProgressDetection.setVisible(True)
         else:
             self.windowProgressDetection.setVisible(False)
 
-        self.update()
+        self.repaint()
 
     @pyqtSlot()
     def on_actionDetection_triggered(self):
@@ -543,12 +538,15 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
                 # get the classification object
 
                 self.setProgressBarVisibility(True)
+                self.updateDetectionProgressBar(0)
+                self.segmentManager.detector.detectionProgressChanged.connect(
+                    lambda x: self.updateDetectionProgressBar(x * 0.8))
 
                 # execute the detection
                 self.segmentManager.detectElements()
                 self.widget.elements = self.segmentManager.elements
 
-                self.updateDetectionProgressBar(50)
+                self.updateDetectionProgressBar(80)
 
                 # measure the parameters over elements detected
                 self.segmentManager.measureParameters()
@@ -564,15 +562,16 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
         except Exception as e:
             print("detection errors: " + e.message)
+            self.update_parameter_table()
 
         # complete the progress of detection and hide the progress bar
         self.updateDetectionProgressBar(100)
         self.setProgressBarVisibility(False)
 
-    def updateTableParameter(self):
+    def update_parameter_table(self):
         """
         Method that updates the parameter table to visualize
-        the data of the detected segments, their masured parameters and classification
+        the data of the detected segments, their measured parameters and classification
         :return:
         """
         # set the number of columns to the amount of parameters measured
@@ -586,7 +585,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         for i in range(self.segmentManager.rowCount):
             for j in range(self.segmentManager.columnCount):
                 # set the result to a table item and save it on the table
-                item = QtGui.QTableWidgetItem(unicode(self.segmentManager.getData(i, j)))
+                item = QTableWidgetItem(unicode(self.segmentManager.getData(i, j)))
 
                 # color options for the rows of the table
                 item.setBackgroundColor(self.TABLE_ROW_COLOR_ODD if i % 2 == 0 else self.TABLE_ROW_COLOR_EVEN)

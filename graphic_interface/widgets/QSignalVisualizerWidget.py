@@ -58,6 +58,8 @@ class QSignalVisualizerWidget(QtGui.QWidget):
 
     # endregion
 
+    # region Initialize
+
     def __init__(self, parent=None, signal=None, **kwargs):
         QtGui.QWidget.__init__(self, parent)
 
@@ -109,12 +111,36 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         self.horizontalScrollBar.setOrientation(QtCore.Qt.Horizontal)
         self.horizontalScrollBar.valueChanged.connect(self.scrollBarRangeChanged)
 
+        self.signalPlayer = None
+        self.editionSignalProcessor = None
+        self.commonSignalProcessor = None
+
         # current signal to initialize
         self._signal = None
         self.signal = signal if signal is not None else Synthesizer.generateSilence(duration=1)
 
         self.setSelectedTool(Tools.ZoomTool)
 
+        self.configure_widget_layout()
+
+        #  variables for visualization
+        self._visibleOscillogram = True
+        self._visibleSpectrogram = True
+
+        self._recordTimer = QTimer(self)
+        self._recordTimer.timeout.connect(self.on_newDataRecorded)
+
+        # signal file path to save and read the signals from files.
+        # None if signal was not loaded from file
+        self.__signalFilePath = None
+
+        self.graph()
+
+    def configure_widget_layout(self):
+        """
+        Set some initial state configurations of the widget layout
+        :return:
+        """
         #  grouping the oscilogram and spectrogram widgets in the control
         layout = QtGui.QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
@@ -128,21 +154,7 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         layout.setStretch(2, 1)
         self.setLayout(layout)
 
-        #  variables for visualization
-        self._visibleOscillogram = True
-        self._visibleSpectrogram = True
-
-        self._recordTimer = QTimer(self)
-        self._recordTimer.timeout.connect(self.on_newDataRecorded)
-
-        self.signalPlayer = AudioSignalPlayer(self.signal)
-        self.signalPlayer.playing.connect(self.notifyPlayingCursor)
-        self.signalPlayer.playingDone.connect(self.removePlayerLine)
-
-        # signal file path to save and read the signals from files. None if signal was not loaded from file
-        self.__signalFilePath = None
-
-        self.graph()
+    # endregion
 
     # region Scroll Bar
 
@@ -608,7 +620,7 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         #  update the variables that manage the signal
         #  the audio signal handler to play options
         if self.signalPlayer is not None and (self.signalPlayer.playStatus == self.signalPlayer.RECORDING \
-          or self.signalPlayer.playStatus == self.signalPlayer.PLAYING):
+           or self.signalPlayer.playStatus == self.signalPlayer.PLAYING):
                 self.stop()
 
         self.signalPlayer = AudioSignalPlayer(self._signal)
@@ -735,9 +747,8 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         if self.mainCursor.min > self.mainCursor.max:
             self.zoomNone()
 
-        # update first the spectrogram because is the heaviest computation
-        self.axesSpecgram.graph(indexFrom=self.mainCursor.min, indexTo=self.mainCursor.max)
         self.axesOscilogram.graph(indexFrom=self.mainCursor.min, indexTo=self.mainCursor.max)
+        self.axesSpecgram.graph(indexFrom=self.mainCursor.min, indexTo=self.mainCursor.max)
 
         self.updateScrollbar()
 

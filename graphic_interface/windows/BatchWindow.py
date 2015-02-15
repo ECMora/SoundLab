@@ -37,7 +37,7 @@ class BatchWindow(QtGui.QMainWindow, Ui_MainWindow):
                                       self.tr(u"The output path is not a directory."))
             return
 
-        sounds = folderFiles(directoryinput)  # the audio files to process
+        sounds = folder_files(directoryinput)  # the audio files to process
 
         # updating the progress bar
         self.progressBarProcesed.setValue(0)

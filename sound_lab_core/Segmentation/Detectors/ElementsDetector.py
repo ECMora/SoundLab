@@ -1,11 +1,21 @@
 # -*- coding: utf-8 -*-
-class ElementsDetector:
+from PyQt4.QtCore import QObject, pyqtSignal
+
+
+class ElementsDetector(QObject):
     """
     Base class for the detection hierarchy. Parent of the one
     and two dimension's elements detectors
     """
 
+    #  region SIGNALS
+    #  signal raised while detection is been made. Raise the percent of detection progress.
+    detectionProgressChanged = pyqtSignal(int)
+
+    # endregion
+
     def __init__(self, signal):
+        QObject.__init__(self)
         self.elements = []
         self.signal = signal
 
@@ -14,9 +24,6 @@ class ElementsDetector:
         The method that detect the elements in the signal and storages into the corresponding list
         """
         pass
-
-    def elementCount(self):
-        return len(self.elements)
 
 
 

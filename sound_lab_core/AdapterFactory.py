@@ -38,7 +38,11 @@ class ParametersAdapterFactory(AdapterFactory):
             'End Time': EndTimeParameterAdapter(parent),
             'Duration': DurationTimeParameterAdapter(parent),
             'RMS': RmsTimeParameterAdapter(parent),
-            'PeekToPeek': PeekToPeekParameterAdapter(parent)
+            'PeekToPeek': PeekToPeekParameterAdapter(parent),
+            'StartToMax': StartToMaxTimeParameterAdapter(parent),
+            'PeekFreq': PeakFreqParameterAdapter(parent),
+            'MaxFreq': MaxFreqParameterAdapter(parent),
+            'MinFreq': MinFreqParameterAdapter(parent)
         }
 
 
