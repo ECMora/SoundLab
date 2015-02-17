@@ -1,5 +1,6 @@
 #  -*- coding: utf-8 -*-
 from numpy import *
+from sound_lab_core.Elements.OneDimensionalElements.OneDimensionalElement import OneDimensionalElement
 from sound_lab_core.Segmentation.Detectors.ElementsDetector import ElementsDetector
 
 
@@ -8,13 +9,12 @@ class OneDimensionalElementsDetector(ElementsDetector):
     def __init__(self, signal):
         ElementsDetector.__init__(self, signal)
 
-    @property
-    def one_dimensional_element(self):
+    def get_one_dimensional_class(self):
         """
         The instance of the detected one dimensional elements
         :return:
         """
-        pass
+        return OneDimensionalElement
 
     def detect(self, indexFrom=0, indexTo=-1):
         """

@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from PyQt4 import QtGui
-from PyQt4.QtCore import pyqtSlot
 from PyQt4.QtGui import QDialog
 from pyqtgraph.parametertree import Parameter, ParameterTree
 from pyqtgraph.parametertree.parameterTypes import ListParameter
@@ -207,7 +206,7 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
             detector_instance = adapter.get_instance()
 
         except Exception as e:
-            print("Fail to get the detector instance")
+            print("Fail to get the detector instance. " + e.message)
             detector_instance = None
 
         self._detector = detector_instance if detector_instance is not None else AbsDecayEnvelopeDetector(
@@ -243,7 +242,6 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
 
     # endregion
 
-    @pyqtSlot()
     def detect(self):
         """
         :return:

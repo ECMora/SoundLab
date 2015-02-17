@@ -1,9 +1,10 @@
 from PyQt4 import QtGui, QtCore
 import pyqtgraph as pg
 import numpy as np
-from sound_lab_core.Elements.Element import Element
+from graphic_interface.segments.DetectedSoundLabElement import DetectedSoundLabElement
+from graphic_interface.segments.VisualElement import VisualElement
 from QSignalVisualizerWidget import QSignalVisualizerWidget
-from sound_lab_core.Elements.OneDimensionalElements.OscilogramElement import OscilogramElement
+from sound_lab_core.Elements.OneDimensionalElements.OneDimensionalElement import OneDimensionalElement
 
 
 class QSignalDetectorWidget(QSignalVisualizerWidget):
@@ -25,6 +26,8 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
     # the brush that is used to draw the selected region or Element
     SELECTED_ELEMENT_BRUSH = pg.mkBrush(QtGui.QColor(255, 0, 0, 200))
 
+    # the number of elements visible by default when a detection is made (efficiency)
+    VISIBLE_ELEMENTS_COUNT = 5
     # endregion
 
     def __init__(self, parent):
@@ -56,9 +59,19 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
         # get the elements detected by the detector
         for index, c in enumerate(elements_list):
-            self._elements.append(c)
+            if not isinstance(c, OneDimensionalElement):
+                continue
+
+            e = DetectedSoundLabElement(c.signal, c.indexFrom, c.indexTo, index)
+            self._elements.append(e)
             # connect the click event of an element with the signal of the widget
-            c.elementClicked.connect(lambda i: self.elementClicked.emit(i))
+            e.elementClicked.connect(lambda i: self.elementClicked.emit(i))
+            e.setNumber(index+1)
+
+        # just show an interval of 5 elements visible for starting
+        if len(self.elements) > self.VISIBLE_ELEMENTS_COUNT:
+            self.mainCursor.min, self.mainCursor.max = 0, self.elements[self.VISIBLE_ELEMENTS_COUNT-1].indexTo
+            self.graph()
 
     # endregion
 
@@ -73,38 +86,32 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         None for both
         """
         osc = oscilogramItems is None or oscilogramItems
-        # spec = oscilogramItems is None or not oscilogramItems
+        spec = oscilogramItems is None or not oscilogramItems
 
-        if self.visibleOscilogram and osc:
-            for i in range(len(self.elements)):
-                if self.elements[i].visible:
-                    for item, visible in self.elements[i].visualwidgets():
-                        if not visible:
-                            self.axesOscilogram.removeItem(item)
-                        else:
-                            if item not in self.axesOscilogram.items() and visible:
-                                self.axesOscilogram.addItem(item)
-                else:
-                    for item, visible in self.elements[i].visualwidgets():
+        # just update the visualization of visible elements
+        start, end = self.mainCursor.min, self.mainCursor.max
+        elements = [e for e in self.elements if start <= e.indexFrom <= end or start <= e.indexTo <= end]
+
+        for i in range(len(elements)):
+            if not self.elements[i].visible:
+                continue
+
+            if self.visibleOscilogram and osc:
+                for item, visible in elements[i].time_element.visual_widgets():
+                    if not visible:
                         self.axesOscilogram.removeItem(item)
-            self.axesOscilogram.update()
+                    else:
+                        self.axesOscilogram.addItem(item)
 
-            # do not update the specgram elements until better design
             # if self.visibleSpectrogram and spec:
-            # for i in range(len(self.Elements)):
-            #         for j in range(len(self.Elements[i].twoDimensionalElements)):
-            #             if self.Elements[i].twoDimensionalElements[j].visible:
-            #                 for item, visible in self.Elements[i].twoDimensionalElements[j].visualwidgets():
-            #                     if not visible:
-            #                         self.axesSpecgram.viewBox.removeItem(item)
-            #                     else:
-            #                         if item not in self.axesSpecgram.viewBox.childItems() and visible:
-            #                             self.axesSpecgram.viewBox.addItem(item)
-            #             else:
-            #                 for item, visible in self.Elements[i].twoDimensionalElements[j].visualwidgets():
-            #                     self.axesSpecgram.viewBox.removeItem(item)
-            #
-            #     self.axesSpecgram.update()
+            #     elements[i].spectral_element.updateSpectralPosition(self.from_osc_to_spec)
+            #     for item, visible in elements[i].spectral_element.visual_widgets():
+            #         self.axesSpecgram.viewBox.removeItem(item)
+            #         if visible:
+            #             self.axesSpecgram.viewBox.addItem(item)
+
+        self.axesSpecgram.update()
+        self.axesOscilogram.update()
 
     def removeVisualElements(self, oscilogram=True, specgram=True, elements=None):
         """
@@ -118,17 +125,15 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         elements = elements if elements is not None else self.elements
         elements = [e for e in elements if e is not None]  # validate that e is instance of Element class
 
-        if oscilogram:
-            for osc_elem in elements:
-                for item, visible in osc_elem.visualwidgets():
+        for elem in elements:
+            if oscilogram:
+                for item, visible in elem.time_element.visual_widgets():
                     self.axesOscilogram.removeItem(item)
-        if specgram:
-            for elem in elements:
-                for elem2 in elem.twoDimensionalElements:
-                    for item, visible in elem2.visualwidgets():
-                        self.axesSpecgram.viewBox.removeItem(item)
+            if specgram:
+                for item, visible in elem.spectral_element.visual_widgets():
+                    self.axesSpecgram.viewBox.removeItem(item)
 
-    def changeElementsVisibility(self, visible, element_type=Element.Figures, oscilogramItems=True):
+    def changeElementsVisibility(self, visible, element_type=VisualElement.Text, oscilogramItems=True):
         """
         Change the visibility of the visual items
         :param visible:
@@ -136,24 +141,15 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         :param oscilogramItems:
         """
         iterable = self.elements
-        if not oscilogramItems:
-            aux = [x.twoDimensionalElements for x in self.elements]
-            iterable = []
-            for list in aux:
-                iterable.extend(list)
+
         for e in iterable:
-            if element_type is Element.Figures:
-                for x in e.visual_figures:
+            if element_type is VisualElement.Figures:
+                for x in e.time_elements.visual_figures:
                     x[1] = visible
-            elif element_type is Element.Text:
-                for x in e.visual_text:
+            elif element_type is VisualElement.Text:
+                for x in e.time_elements.visual_text:
                     x[1] = visible
-            elif element_type is Element.Locations:
-                for x in e.visual_locations:
-                    x[1] = visible
-            elif element_type is Element.PeakFreqs:
-                for x in e.visual_peaksfreqs:
-                    x[1] = visible
+
         self.drawElements()
 
     # endregion
@@ -167,32 +163,29 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         self.removeVisualElements(oscilogram=True, specgram=True)
         self.deselectElement()
 
-    def selectElement(self, number=-1):
+    def selectElement(self, index=-1):
         """
         Method that select an element in the widget
-        by highlighting it. If number is in the range of [0, number_of_elements] then the
-        the element at index "number" would be selected.
+        by highlighting it. If index is in the range of [0, number_of_elements] then the
+        the element at index "index" would be selected.
         Otherwise the selection would be cleared.
-        :param number: the element index
+        :param index: the element index
         """
-        if 0 <= number < len(self.elements):
-            index_from, index_to = self.elements[number].indexFrom, self.elements[number].indexTo
-            self.selectRegion(index_from, index_to)
-
-            if index_from < self.mainCursor.min or index_to > self.mainCursor.max:
-                sizeInterval = self.mainCursor.max - self.mainCursor.min
-
-                # update the interval of visualization if the element is outside the current visible region
-                if index_from < self.mainCursor.min or index_to > self.mainCursor.max:
-                    self.mainCursor.min = index_from
-                    self.mainCursor.max = index_to
-
-                    # move the interval to make completely visible the element selected
-                    self.mainCursor.min = max(0, index_from - sizeInterval/2)
-                    self.mainCursor.max = min(self.signal.length, index_to + sizeInterval/2)
-                    self.graph()
-        else:
+        if index < 0 or index >= len(self.elements):
             self.selectRegion(0, 0)
+            return
+
+        index_from, index_to = self.elements[index].indexFrom, self.elements[index].indexTo
+        self.selectRegion(index_from, index_to)
+
+        if index_from < self.mainCursor.min or index_to > self.mainCursor.max:
+            # update the interval of visualization if the element is outside the current visible region
+            interval_size = self.mainCursor.max - self.mainCursor.min
+
+            # move the interval to make completely visible the element selected
+            self.mainCursor.min = max(0, index_from - interval_size/2)
+            self.mainCursor.max = min(self.signal.length, index_to + interval_size/2)
+            self.graph()
 
     def deselectElement(self):
         """
@@ -275,7 +268,8 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
         self.removeVisualElements(elements=self.elements[indexFrom:indexTo])
 
-        self.elements = self.elements[0:indexFrom] + self.elements[indexTo:]
+        # do not call the property to avoid recompute the visualization unnecessary
+        self._elements = self.elements[0:indexFrom] + self.elements[indexTo:]
 
         for i, x in enumerate(self.elements):
             x.setNumber(i + 1)
@@ -286,17 +280,14 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
     def markRegionAsElement(self, interval=None, update=True):
         """
-        Try to add a new element with manual segmentation using the interval supplied
+        Try to add a new element manually using the interval supplied
         if None is supplied use the current selected region as delimiters from start and end in time
         domain.
         :return: index of the new element inserted if success None otherwise.
         Could fail because there is no selected region or the region
         overlaps with others elements
         """
-        if interval is None:
-            start, end = self.selectedRegion
-        else:
-            start, end = interval
+        start, end = self.selectedRegion if interval is None else interval
 
         # no selected region
         if end <= start or (self.mainCursor.min == start and self.mainCursor.max == end):
@@ -311,15 +302,15 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         if indexFrom != indexTo:
             return None
 
-        # todo hard code instance must be used an injection of dependencies
-        element = OscilogramElement(self.signal, start, end)
+        # todo hard code instance must be used an injection of dependencies instead
+        element = DetectedSoundLabElement(self.signal, start, end)
         self.elements.insert(indexFrom, element)
         element.elementClicked.connect(lambda i: self.elementClicked.emit(i))
 
         for index, e in enumerate(self.elements):
             e.setNumber(index+1)
 
-        # for efficiency when add multiple elements
+        # variable used for efficiency when add multiple elements
         if update:
             self.graph()
 
@@ -327,7 +318,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
     def saveElementsOnSignal(self):
         """
-        Store the list of (start, end) indexes of detetcted elements
+        Store the list of (start, end) indexes of detected elements
         :return:
         """
         self.signal.extraData = [(x.indexFrom, x.indexTo) for x in self.elements]

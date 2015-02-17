@@ -35,13 +35,12 @@ Complexity-2: Small-to-medium code changes
 * Resampling
 * Mejorar el icono: tanto en el programa como en la barra de tareas de windows.
 * Añadir un Control de Volumen para Playback.
-* En los Settings, lograr que se vea todo el cuadro alrededor del boton que se destaca con el mouse.
+* En los Settings, lograr que se vea el cuadro alrededor del boton que se destaca con el mouse.
 * En escalas temporales con mucho zoom, ajustar la sensibilidad de los cursores para poder medir siempre algun valor y no se quede en 0.
 * Hacer corresponder las ventanas de seleccion temporal de oscilo y espectro en grandes resoluciones temporales.
 * Arreglar identificacion de ejes y numeros. Mostrar numeros "significativos".
 * Normalizar espectrograma.
 * Chequear que cuando se modifique un parametro en una ventana y se cambie temporalmente de ventana, ese valor se mantenga modificado.
-* Recontra chequear errores en el zooming: Ej: si se selecciona una ventana mayor que una previamente seleccionada, el zoom final no es el esperado.
 * Si utilizamos cortar, mantener los valores de las escalas de amplitud.
 * En el Pointer cursor hay que presionar para leer la frequencia? En los cursores dejar fijas las posiciones de los parametros que se miden.
 

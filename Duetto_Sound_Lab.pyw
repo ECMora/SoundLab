@@ -4,7 +4,7 @@ from PyQt4.QtCore import *
 import os, hashlib
 import sys
 from Utils.Utils import deserialize, WORK_SPACE_FILE_NAME
-from graphic_interface.Settings.Workspace import Workspace
+from graphic_interface.settings.Workspace import Workspace
 from graphic_interface.windows.SoundLabMainWindow import SoundLabMainWindow
 from graphic_interface.windows.PresentationSlogan.presentation import Ui_MainWindow
 

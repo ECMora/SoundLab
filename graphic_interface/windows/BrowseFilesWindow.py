@@ -107,6 +107,8 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
         self.files_tablewidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.selectAll_bttn.setText(self.tr(u"Select All"))
 
+        self.player = None
+
     # region Files Handling
 
     def filesSelected(self):
@@ -176,7 +178,7 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
         # region Creation date
         try:
             date = time.gmtime(os.path.getctime(file_path))
-            date = str(time.strftime("%d/%m/%Y",date))
+            date = str(time.strftime("%d/%m/%Y", date))
         except Exception as ex:
             date = "-"
 
@@ -191,12 +193,12 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
             duration_seg = size * 1.0 / rate
 
         except Exception as ex:
-            print("Error in browse window obtainig the duration of a file. "+ex.message)
+            print("Error in browse window obtaining the duration of a file. " + ex.message)
             duration_seg = 0
 
         sufix = [self.tr(u"(seg)"), self.tr(u"(min)"), self.tr(u"(hours)")]
         j = 0
-        while duration_seg > 60 and j < len(sufix):
+        while duration_seg >= 60 and j < len(sufix):
             duration_seg /= 60.0
             j += 1
 
@@ -336,6 +338,8 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
         self.openFiles.emit(files_selected)
 
         if len(files_selected) > 0:
+            if self.player:
+                self.player.stop()
             self.close()
 
     @pyqtSlot()
@@ -356,8 +360,8 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
             # for i in range(1, len(files_selected)):
             #     players[i-1].playingDone.connect(players[i].play)
             # players[0].play()
-            player = AudioSignalPlayer(openSignal(files_selected[0]))
-            player.play()
+            self.player = AudioSignalPlayer(openSignal(files_selected[0]))
+            self.player.play()
 
         except Exception as ex:
             pass

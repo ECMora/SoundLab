@@ -21,7 +21,7 @@ class ElementsDetector(QObject):
 
     def detect(self):
         """
-        The method that detect the elements in the signal and storages into the corresponding list
+        The method that detect the elements in the signal and storage into the corresponding list
         """
         pass
 

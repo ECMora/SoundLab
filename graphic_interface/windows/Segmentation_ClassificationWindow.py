@@ -3,7 +3,7 @@ import os
 import xlwt
 from PyQt4.QtCore import pyqtSlot, Qt
 from SoundLabWindow import SoundLabWindow
-from sound_lab_core.Elements.Element import Element
+from graphic_interface.segments.VisualElement import VisualElement
 from duetto.audio_signals.AudioSignal import AudioSignal
 from ..dialogs.elemDetectSettings import ElemDetectSettingsDialog
 from sound_lab_core.Segmentation.SegmentManager import SegmentManager
@@ -33,17 +33,19 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
     # stylesheet to use on excel file saved
     EXCEL_STYLE_HEADER = xlwt.easyxf('font: name Times New Roman, color-index black, bold on, height 300')
-    EXCEL_STYLE_BODY = xlwt.easyxf('font: name Times New Roman, color-index black, height 220', num_format_str='#,# # 0.00')
-    EXCEL_STYLE_COPYRIGHT = xlwt.easyxf('font: name Arial, color-index pale_blue, height 250, italic on', num_format_str='# ,# # 0.00')
+    EXCEL_STYLE_BODY = xlwt.easyxf('font: name Times New Roman, color-index black, height 220',
+                                   num_format_str='#,# # 0.00')
+    EXCEL_STYLE_COPYRIGHT = xlwt.easyxf('font: name Arial, color-index pale_blue, height 250, italic on',
+                                        num_format_str='# ,# # 0.00')
     # endregion
 
     # region Initialize
 
     def __init__(self, parent, signal):
         """
-        Create a the window of segmentation and clasiffication.
+        Create a the window of segmentation and classification.
         :param parent: the parent widget if any
-        :param signal: the signal to visualize for segmentation and clasiffication
+        :param signal: the signal to visualize for segmentation and classification
         :return:
         """
         # set the visual variables and methods from ancestor's
@@ -114,17 +116,20 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
         elements = [e for e in data if isinstance(e, tuple) and len(e) == 2
                     and isinstance(e[0], int) and isinstance(e[1], int)]
-        if len(elements) > 0:
-            buttons_box =  QMessageBox.Yes | QMessageBox.No
-            mbox = QMessageBox(QMessageBox.Question, self.tr(u"soundLab"),
-                               self.tr(u"The file has segmentation data stored. Do you want to load it?"),
-                               buttons_box, self)
-            result = mbox.exec_()
 
-            if result == QMessageBox.Yes:
-                for element in elements:
-                    self.widget.markRegionAsElement(element, update=False)
-                    self.widget.graph()
+        if len(elements) == 0:
+            return
+
+        buttons_box = QMessageBox.Yes | QMessageBox.No
+        mbox = QMessageBox(QMessageBox.Question, self.tr(u"soundLab"),
+                           self.tr(u"The file has segmentation data stored. Do you want to load it?"),
+                           buttons_box, self)
+        result = mbox.exec_()
+
+        if result == QMessageBox.Yes:
+            for element in elements:
+                self.widget.markRegionAsElement(element, update=False)
+                self.widget.graph()
 
     def __addContextMenuActions(self):
         """
@@ -152,7 +157,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
                 self.actionSpectogram,
                 separator,
 
-                # meditions manipulation actions
+                # measurements manipulation actions
                 self.actionMeditions,
                 self.actionView_Parameters,
                 self.actionAddElement,
@@ -179,7 +184,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         """
         :return:
         """
-        sep =  QAction(self)
+        sep = QAction(self)
         sep.setSeparator(True)
 
         # region Segmentation and Transformations actions
@@ -194,7 +199,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         # endregion
 
         # add to the customizable sound lab toolbar first than the default actions
-        #            addActionGroup(actionGroup, name)
+        # addActionGroup(actionGroup, name)
         self.toolBar.addActionGroup(segm_transf_actions, u"Segments")
 
         # apply the common sound lab window toolbar actions
@@ -213,10 +218,10 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         # a two dim window must be created after
         # segment detection and parameters measurement
         if self.segmentManager.rowCount == 0 or len(self.segmentManager.parameterColumnNames) == 0:
-             QMessageBox.warning( QMessageBox(), self.tr(u"Error"),
-                                      self.tr(u"The two dimensional analyses window requires at least "
-                                              u"one detected element with one parameter measurement."))
-             return
+            QMessageBox.warning(QMessageBox(), self.tr(u"Error"),
+                                self.tr(u"The two dimensional analyses window requires at least "
+                                        u"one detected element with one parameter measurement."))
+            return
 
         wnd = TwoDimensionalAnalisysWindow(self, self.segmentManager)
 
@@ -260,8 +265,8 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         :return:
         """
         file_name = unicode(QFileDialog.getSaveFileName(self, self.tr(u"Save measurements as excel file"),
-                                os.path.join(self.workSpace.lastOpenedFolder,
-                                str(self.widget.signalName) + ".xls"), "*.xls"))
+                                                        os.path.join(self.workSpace.lastOpenedFolder,
+                                                                     str(self.widget.signalName) + ".xls"), "*.xls"))
 
         # save the data of table
         if file_name:
@@ -294,7 +299,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         else:
             file_name = unicode(QFileDialog.getSaveFileName(self, self.tr(u"Save signal"),
                                                             os.path.join(self.workSpace.lastOpenedFolder,
-                                                            str(self.widget.signalName)), u"*.wav"))
+                                                                         str(self.widget.signalName)), u"*.wav"))
             if file_name:
                 self.widget.save(file_name)
                 self.widget.signalFilePath = file_name
@@ -325,7 +330,8 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         for i in range(1, tableParameter.model().rowCount() + 1):
             for j in range(tableParameter.model().columnCount()):
                 if tableParameter.item(i - 1, j):
-                    ws.write(i, j, str(tableParameter.item(i - 1, j).data(Qt.DisplayRole).toString()), self.EXCEL_STYLE_BODY)
+                    ws.write(i, j, str(tableParameter.item(i - 1, j).data(Qt.DisplayRole).toString()),
+                             self.EXCEL_STYLE_BODY)
                 else:
                     ws.write(i, j, unicode(self.tr(u"No Identified")), self.EXCEL_STYLE_BODY)
 
@@ -354,8 +360,8 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         """
 
         mbox = QMessageBox(QMessageBox.Question, self.tr(u"Save meditions"),
-                                 self.tr(u"Do you want to save the measurements of "+unicode(self.widget.signalName)),
-                                QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel, self)
+                           self.tr(u"Do you want to save the measurements of " + unicode(self.widget.signalName)),
+                           QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel, self)
 
         # if there is a measurement made and parameters measured that could be saved
         if self.tableParameterOscilogram.rowCount() > 0:
@@ -398,7 +404,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         start_removed_index, end_removed_index = deleted_elements
 
         if start_removed_index is not None and start_removed_index >= 0 \
-           and end_removed_index < self.segmentManager.rowCount:
+                and end_removed_index < self.segmentManager.rowCount:
             # updates the detected elements
             self.segmentManager.deleteElements(start_removed_index, end_removed_index)
 
@@ -437,7 +443,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         for wnd in self.two_dim_windows:
             wnd.deselectElement()
 
-        # the table remains equal as before for efficiency (do not update for deselect)
+            # the table remains equal as before for efficiency (do not update for deselect)
 
     def selectElement(self, element_index, column=0):
         """
@@ -523,7 +529,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         elementsDetectorDialog = ElemDetectSettingsDialog(parent=self, signal=self.widget.signal)
         elementsDetectorDialog.load_workspace(self.workSpace)
 
-        # deselect the elements
+        # deselect the elements before new detection
         self.on_actionDeselect_Elements_triggered()
 
         try:
@@ -535,22 +541,23 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
                 self.segmentManager.detector = elementsDetectorDialog.detector
 
                 self.segmentManager.measurerList = elementsDetectorDialog.get_measurer_list()
-                # get the classification object
+                # todo get the classification object
 
                 self.setProgressBarVisibility(True)
                 self.updateDetectionProgressBar(0)
+
+                # set the detection as the 80% of the segmentation,
+                # parameter measurements and classification time
                 self.segmentManager.detector.detectionProgressChanged.connect(
                     lambda x: self.updateDetectionProgressBar(x * 0.8))
 
                 # execute the detection
                 self.segmentManager.detectElements()
                 self.widget.elements = self.segmentManager.elements
-
                 self.updateDetectionProgressBar(80)
 
                 # measure the parameters over elements detected
                 self.segmentManager.measureParameters()
-
                 self.updateDetectionProgressBar(95)
 
                 # update the measured data on the two dimensional opened windows
@@ -612,11 +619,6 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         self.dockWidgetParameterTableOscilogram.setVisible(self.actionView_Parameters.isChecked())
 
     @pyqtSlot()
-    def on_actionElements_Peaks_triggered(self):
-        self.widget.changeElementsVisibility(self.actionElements_Peaks.isChecked(),
-                                             Element.PeakFreqs, oscilogramItems=False)
-
-    @pyqtSlot()
     def on_actionTemporal_Elements_triggered(self):
         """
         Temporal Elements are the elements that are visible on the oscilogram graph.
@@ -636,46 +638,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         Change visibility of the numbers of the detected segments on the oscilogram graph
 
         """
-        self.widget.changeElementsVisibility(self.actionTemporal_Numbers.isChecked(), Element.Text)
-
-    @pyqtSlot()
-    def on_actionSpectral_Numbers_triggered(self):
-        """
-        Change visibility of the numbers of the detected segments on the spectrogram graph
-        """
-        self.widget.changeElementsVisibility(self.actionSpectral_Numbers.isChecked(),
-                                             Element.Text, oscilogramItems=False)
-
-    @pyqtSlot()
-    def on_actionSpectral_Figures_triggered(self):
-        """
-        Change visibility of the figures of the detected segments on the spectrogram graph
-        """
-        visibility = self.actionSpectral_Figures.isChecked()
-        self.widget.changeElementsVisibility(visibility, Element.Figures, oscilogramItems=False)
-
-    @pyqtSlot()
-    def on_actionTemporal_Figures_triggered(self):
-        """
-        Change visibility of the figures of the detected segments on the oscilogram graph
-        """
-        visibility = self.actionTemporal_Figures.isChecked()
-        self.widget.changeElementsVisibility(visibility, Element.Figures, oscilogramItems=True)
-
-    @pyqtSlot()
-    def on_actionSpectral_Elements_triggered(self):
-        """
-        Spectral Elements are the elements that are visible on the spectrogram graph.
-        This method allows to change its visibility
-        """
-        visibility = self.actionSpectral_Elements.isChecked()
-        for e in self.widget.elements:
-            for e2 in e.twoDimensionalElements:
-                e2.visible = visibility
-        self.widget.drawElements(oscilogramItems=False)
-        self.actionSpectral_Figures.setEnabled(visibility)
-        self.actionSpectral_Numbers.setEnabled(visibility)
-        self.actionSub_Elements_Peaks.setEnabled(visibility)
+        self.widget.changeElementsVisibility(self.actionTemporal_Numbers.isChecked(), VisualElement.Text)
 
     # endregion
 

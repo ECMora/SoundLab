@@ -1,7 +1,6 @@
 from math import pi, sin
 import matplotlib.mlab as mlab
 from numpy import zeros, array, int32, mean
-from sound_lab_core.Elements.OneDimensionalElements.OscilogramElement import OscilogramElement
 from sound_lab_core.Segmentation.Detectors.OneDimensional.OneDimensionalElementsDetector import \
     OneDimensionalElementsDetector
 from Utils.Utils import fromdB
@@ -19,9 +18,6 @@ class AbsDecayEnvelopeDetector(OneDimensionalElementsDetector):
         self._min_size = min_size_ms
 
     # region Properties
-
-    def one_dimensional_element(self):
-        return OscilogramElement
 
     @property
     def decay(self):
@@ -79,8 +75,10 @@ class AbsDecayEnvelopeDetector(OneDimensionalElementsDetector):
         self.detectionProgressChanged.emit(90)
 
         self.elements = [None for _ in elems]
+        one_dim_class = self.get_one_dimensional_class()
+
         for i, c in enumerate(elems):
-            self.elements[i] = OscilogramElement(self.signal, c[0], c[1], number=i + 1)
+            self.elements[i] = one_dim_class(self.signal, c[0], c[1])
 
         self.detectionProgressChanged.emit(100)
 

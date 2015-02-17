@@ -12,7 +12,7 @@ from duetto.signal_processing.filter_signal_processors.frequency_domain_filters 
 from duetto.dimensional_transformations.two_dimensional_transforms.Spectrogram.WindowFunctions import WindowFunction
 from Utils.Utils import *
 from graphic_interface.widgets.QSignalVisualizerWidget import QSignalVisualizerWidget
-from graphic_interface.Settings.WorkTheme import WorkTheme
+from graphic_interface.settings.WorkTheme import WorkTheme
 from graphic_interface.windows.BatchWindow import BatchWindow
 from graphic_interface.windows.ParameterList import DuettoListParameterItem
 from graphic_interface.windows.OneDimensionalAnalysisWindow import OneDimensionalAnalysisWindow

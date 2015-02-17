@@ -1,6 +1,6 @@
 from PyQt4 import QtCore
 from duetto.dimensional_transformations.two_dimensional_transforms.Spectrogram.Spectrogram import Spectrogram
-from graphic_interface.Settings.Workspace import SpectrogramWorkspace
+from graphic_interface.settings.Workspace import SpectrogramWorkspace
 import numpy
 from duetto.widgets.SpectrogramWidget import SpectrogramWidget
 from graphic_interface.widgets.SoundLabWidget import SoundLabWidget
