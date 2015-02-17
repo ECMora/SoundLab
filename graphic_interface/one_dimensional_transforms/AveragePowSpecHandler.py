@@ -37,6 +37,9 @@ class AveragePowSpecHandler(OneDimensionalHandler):
     def get_axis_labels(self):
         return {u'X': u'Frequency (kHz)', u'Y': u'Intensity (dB)' }
 
+    def get_default_lines(self):
+        return True
+
     def get_y_default(self, transform):
         """
 

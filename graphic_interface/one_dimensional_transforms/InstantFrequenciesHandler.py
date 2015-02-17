@@ -38,6 +38,9 @@ class InstantFrequenciesHandler(OneDimensionalHandler):
     def get_axis_labels(self):
         return {u'X': u'Time (s)', u'Y': u'Frequency (kHz)' }
 
+    def get_default_lines(self):
+        return False
+
     def get_y_default(self, transform):
         """
 

@@ -26,6 +26,13 @@ class OneDimensionalHandler(QObject):
         """
         pass
 
+    def get_default_lines(self):
+        """
+        Gets the defaults connect lines mode.
+        :return: a boolean value
+        """
+        return True
+
     def get_settings(self, transform):
         """
         Gets the settings of the corresponding one dimensional transform with the values of the supplied instance.

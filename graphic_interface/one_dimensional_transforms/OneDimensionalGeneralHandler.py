@@ -46,6 +46,9 @@ class OneDimensionalGeneralHandler(QObject):
         """
         return self._handlers_by_class[transform.__class__].get_y_default(transform)
 
+    def get_default_lines(self, transform):
+        return self._handlers_by_class[transform.__class__].get_default_lines()
+
     def get_y_limits(self, transform):
         """
         Gets the Y axis limits values of the corresponding transform

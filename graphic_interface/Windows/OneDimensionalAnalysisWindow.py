@@ -15,8 +15,7 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
     """
     DOCK_OPTIONS_WIDTH = 300
     WIDGET_MINIMUN_HEIGHT = 350
-    WIDGET_MINIMUN_WIDTH = 2. * DOCK_OPTIONS_WIDTH
-
+    WIDGET_MINIMUN_WIDTH = 1.5 * DOCK_OPTIONS_WIDTH
     def __init__(self, parent=None, signal=None):
         super(OneDimensionalAnalysisWindow, self).__init__(parent)
         self.setupUi(self)
@@ -162,6 +161,8 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
             if params != []:
                 self.ParamTree.param(u'Settings').addChild(self._transform_paramTree)
 
+
+
             # getting transform graph information by the general handler
             labels = self._tranforms_handler.get_axis_labels(one_dim_transform)
             limits = self._tranforms_handler.get_y_limits(one_dim_transform)
@@ -175,10 +176,22 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
             rangeParams = [  { u'name': unicode(self.tr(u'Min')), u'type': u'int', u'limits': limits, u'value': self.widget.minY },
                              { u'name': unicode(self.tr(u'Max')), u'type': u'int', u'limits': limits, u'value': self.widget.maxY }
                           ]
+
             self._yRange_paramTree = Parameter.create(name=labels[u'Y'], type=u'group', children=rangeParams)
             self.ParamTree.param(u'Settings').addChild(self._yRange_paramTree)
 
+            # setting the connecting lines option on settings with default transform value
+            self.widget.lines = self._tranforms_handler.get_default_lines(one_dim_transform)
+
+            lines = {u'name': unicode(self.tr(u'Connect points')),
+                      u'type':u'bool',
+                      u'value': self.widget.lines,
+                      u'default': self.widget.lines}
+
+            self.ParamTree.param(u'Settings').addChild(lines)
+
             # connecting the signals to the change handler function
+            self.ParamTree.param(u'Settings').param(u'Connect points').sigTreeStateChanged.connect(self.connectLinesChanged)
             self._transform_paramTree.sigTreeStateChanged.connect(self.changeTransformSettings)
             self._yRange_paramTree.sigTreeStateChanged.connect(self.changeYRangeSettings)
 
@@ -204,6 +217,13 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
         self.reloadOptionsWidget(self.widget.one_dim_transform)
 
         self.update()
+
+        self.graph(indexFrom=self.indexFrom, indexTo=self.indexTo)
+
+    def connectLinesChanged(self, param, changes):
+
+        param, change, data = changes[0]
+        self.widget.lines = data
 
         self.graph(indexFrom=self.indexFrom, indexTo=self.indexTo)
 
