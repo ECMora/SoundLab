@@ -153,7 +153,7 @@ class OneDimPlotWidget(SoundLabWidget,pg.PlotWidget):
 
             self.show()
 
-    # region Tools interaction Implementation
+    #region Tools interaction Implementation
     def changeTool(self, new_tool_class):
         SoundLabWidget.changeTool(self, new_tool_class)
 
@@ -175,3 +175,5 @@ class OneDimPlotWidget(SoundLabWidget,pg.PlotWidget):
             self.changeTool(NoTool)
 
         self.__selectedTool = tool
+
+    #endregion

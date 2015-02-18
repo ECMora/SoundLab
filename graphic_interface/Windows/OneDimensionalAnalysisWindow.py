@@ -15,9 +15,9 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
     """
 
     # region CONSTANTS
-
+    DOCK_OPTIONS_WIDTH = 350
     WIDGET_MINIMUM_HEIGHT = 350
-    WIDGET_MINIMUM_WIDTH = 2. * DOCK_OPTIONS_WIDTH
+    WIDGET_MINIMUM_WIDTH = 1.5 * DOCK_OPTIONS_WIDTH
 
     # endregion
     def __init__(self, parent=None, signal=None):
@@ -158,17 +158,17 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
 
             # clear the settings options of the parameter tree
             if self._transform_paramTree is not None:
-                self.ParamTree.param(u'Settings').clearChildren()
+               self.ParamTree.param(u'Settings').clearChildren()
             params = self._transforms_handler.get_settings(one_dim_transform)
             self._transform_paramTree = Parameter.create(name=u'Parameters', type=u'group', children=params)
 
             if params:
                 self.ParamTree.param(u'Settings').addChild(self._transform_paramTree)
 
+            # getting transform graph information by the general handler
             labels = self._transforms_handler.get_axis_labels(one_dim_transform)
             limits = self._transforms_handler.get_y_limits(one_dim_transform)
-            # getting transform graph information by the general handler
-            default_limits =  self._tranforms_handler.get_y_default(one_dim_transform)
+            default_limits =  self._transforms_handler.get_y_default(one_dim_transform)
 
             # setting the default Y range values
             self.widget.minY = default_limits[0]
@@ -183,7 +183,7 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
             self.ParamTree.param(u'Settings').addChild(self._yRange_paramTree)
 
             # setting the connecting lines option on settings with default transform value
-            self.widget.lines = self._tranforms_handler.get_default_lines(one_dim_transform)
+            self.widget.lines = self._transforms_handler.get_default_lines(one_dim_transform)
 
             lines = {u'name': unicode(self.tr(u'Connect points')),
                       u'type':u'bool',
