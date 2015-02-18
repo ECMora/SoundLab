@@ -12,7 +12,7 @@ class PeaksAboveParameterAdapter(SoundLabAdapter):
     def __init__(self, parent):
         SoundLabAdapter.__init__(self, parent)
         settings = [
-            {u'name': unicode(self.tr(u'Threshold (db)')), u'type': u'int', u'value': -20.00, u'step': 1, u'limits': (-100, 0)}]
+            {u'name': unicode(self.tr(u'Threshold (dB)')), u'type': u'int', u'value': -20.00, u'step': 1, u'limits': (-100, 0)}]
 
         self.settings = Parameter.create(name=u'Settings', type=u'group', children=settings)
 
@@ -24,7 +24,7 @@ class PeaksAboveParameterAdapter(SoundLabAdapter):
         return self.settings
 
     def get_instance(self):
-        threshold = self.settings.param(unicode(self.tr(u'Threshold (db)'))).value()
+        threshold = self.settings.param(unicode(self.tr(u'Threshold (dB)'))).value()
 
         return PeaksAboveParameter(threshold=threshold)
 

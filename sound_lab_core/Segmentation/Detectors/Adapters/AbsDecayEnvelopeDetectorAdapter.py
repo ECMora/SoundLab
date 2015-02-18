@@ -14,10 +14,10 @@ class AbsDecayEnvelopeDetectorAdapter(SoundLabAdapter):
         SoundLabAdapter.__init__(self, parent)
 
         settings = [
-            {u'name': unicode(self.tr(u'Threshold (db)')), u'type': u'float', u'value': -40.00, u'step': 1, u'limits': (-120, 0)},
+            {u'name': unicode(self.tr(u'Threshold (dB)')), u'type': u'float', u'value': -40.00, u'step': 1, u'limits': (-120, 0)},
             {u'name': unicode(self.tr(u'Min Size (ms)')), u'type': u'float', u'value': 2.00, u'step': 1, u'limits': (0, 30000)},
             {u'name': unicode(self.tr(u'Decay (ms)')), u'type': u'float', u'value': 1.00, u'step': 0.5, u'limits': (0, 10000)},
-            {u'name': unicode(self.tr(u'Threshold 2(db)')), u'type': u'float', u'value': 0.00, u'step': 1, u'limits': (-120, 0)},
+            {u'name': unicode(self.tr(u'Threshold 2(dB)')), u'type': u'float', u'value': 0.00, u'step': 1, u'limits': (-120, 0)},
             {u'name': unicode(self.tr(u'Soft Factor')), u'type': u'float', u'value': 6, u'step': 1, u'limits': (0, 50)},
             {u'name': unicode(self.tr(u'Merge Factor (%)')), u'type': u'float', u'value': 5.00, u'step': 1,
              u'limits': (0, 50)}]
@@ -37,7 +37,7 @@ class AbsDecayEnvelopeDetectorAdapter(SoundLabAdapter):
         Gets a new get_instance of the corresponding parameter measurement.
         :return: A new get_instance of the corresponding parameter measurement class
         """
-        threshold = self.settings.param(unicode(self.tr(u'Threshold (db)'))).value()
+        threshold = self.settings.param(unicode(self.tr(u'Threshold (dB)'))).value()
         min_size = self.settings.param(unicode(self.tr(u'Min Size (ms)'))).value()
         decay = self.settings.param(unicode(self.tr(u'Decay (ms)'))).value()
         soft_factor = self.settings.param(unicode(self.tr(u'Soft Factor'))).value()
