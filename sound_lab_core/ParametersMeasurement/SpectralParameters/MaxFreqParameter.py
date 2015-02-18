@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from Utils.Utils import DECIMAL_PLACES
 from matplotlib import mlab
-from numpy import argmax
+import numpy as np
 from sound_lab_core.ParametersMeasurement.ParameterMeasurer import ParameterMeasurer
 
 
@@ -17,5 +17,6 @@ class MaxFreqParameter(ParameterMeasurer):
 
     def measure(self, segment):
         Pxx, freqs = mlab.psd(segment.signal.data[segment.indexFrom:segment.indexTo], Fs=segment.signal.samplingRate)
-        index = argmax(Pxx)
-        return round(freqs[index] / 1000.0, DECIMAL_PLACES)
+        value = np.amax(Pxx) * np.power(10,self.threshold/10.0)
+        max_freq_index = np.argwhere(Pxx >= value).max()
+        return round(freqs[max_freq_index] / 1000.0, DECIMAL_PLACES)

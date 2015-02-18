@@ -2,22 +2,22 @@
 from Utils.Utils import DECIMAL_PLACES
 from matplotlib import mlab
 import numpy as np
+from scipy.ndimage import label
 from sound_lab_core.ParametersMeasurement.ParameterMeasurer import ParameterMeasurer
 
-
-class MinFreqParameter(ParameterMeasurer):
+class PeaksAboveParameter(ParameterMeasurer):
     """
-    Class that measure the min freq parameter on a segment
+    Class that measure the peaks above parameter on a segment
     """
 
     def __init__(self, threshold=-20):
         ParameterMeasurer.__init__(self)
-        self.name = "MinFreq(kHz)"
+        self.name = "PeaksAbove"
         self.threshold = threshold
-
 
     def measure(self, segment):
         Pxx, freqs = mlab.psd(segment.signal.data[segment.indexFrom:segment.indexTo], Fs=segment.signal.samplingRate)
         value = np.amax(Pxx) * np.power(10,self.threshold/10.0)
-        min_freq_index = np.argwhere(Pxx >= value).min()
-        return round(freqs[min_freq_index] / 1000.0, DECIMAL_PLACES)
+        _, cnt_regions = label(Pxx >= value)
+        return cnt_regions
+
