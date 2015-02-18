@@ -1,34 +1,30 @@
 #  -*- coding: utf-8 -*-
-import os
-import pickle
-
-from PyQt4 import QtGui, QtCore
+from PyQt4 import QtCore
+from kiva.fonttools.fontTools.ttLib.tables._n_a_m_e import table__n_a_m_e
 from pyqtgraph.parametertree.parameterTypes import ListParameter
 from pyqtgraph.parametertree import Parameter, ParameterTree
-from PyQt4.QtGui import QMessageBox, QFileDialog, QActionGroup, QAction
+from PyQt4.QtGui import QMessageBox, QActionGroup, QAction
 from PyQt4.QtCore import pyqtSlot, QMimeData, pyqtSignal, SIGNAL
-
-from duetto.audio_signals import AudioSignal, openSignal
+from duetto.audio_signals import openSignal
 from duetto.audio_signals.Synthesizer import Synthesizer
 from duetto.signal_processing.filter_signal_processors.frequency_domain_filters import BandPassFilter, HighPassFilter, \
     BandStopFilter, LowPassFilter
 from duetto.dimensional_transformations.two_dimensional_transforms.Spectrogram.WindowFunctions import WindowFunction
-from Utils.Utils import folderFiles, saveImage, DECIMAL_PLACES
-from duetto.widgets.HorizontalHistogram import HorizontalHistogramWidget
+from Utils.Utils import *
 from graphic_interface.widgets.QSignalVisualizerWidget import QSignalVisualizerWidget
-from graphic_interface.Settings.WorkTheme import WorkTheme
-from graphic_interface.Settings.Workspace import Workspace
+from graphic_interface.settings.WorkTheme import WorkTheme
+from graphic_interface.windows.BatchWindow import BatchWindow
 from graphic_interface.windows.ParameterList import DuettoListParameterItem
 from graphic_interface.windows.OneDimensionalAnalysisWindow import OneDimensionalAnalysisWindow
-from SegmentationAndClasificationWindow import SegmentationAndClasificationWindow
+from Segmentation_ClassificationWindow import Segmentation_ClassificationWindow
 from ui_python_files.MainWindow import Ui_DuettoMainWindow
 from graphic_interface.dialogs import *
-from sound_lab_core.Clasification.ClassificationData import ClassificationData
 from graphic_interface.widgets.signal_visualizer_tools.SignalVisualizerTool import Tools
 from BrowseFilesWindow import BrowseFilesWindow
+from SoundLabWindow import SoundLabWindow
 
 
-class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
+class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
     """
     Main window of the application.
     """
@@ -54,50 +50,34 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     # the maxThresholdLabel duration of signal that is possible to process
     # with the segmentation and classification window (in seconds)
-    MAX_SIGNAL_DURATION_ALLOWED = 60
+    MAX_SIGNAL_DURATION_ALLOWED_SEG = 60
 
     #  Width and height of the dock window of visual options
     SETTINGS_WINDOW_WIDTH = 340
     SETTINGS_WINDOW_HEIGHT = 100
-    # name of the file with the workspace information on folder Utils
-    WORK_SPACE_FILE_NAME = "soundlab.ini"
-
-    # The decimal places to round visible data to the user
-    DECIMAL_PLACES = 2
 
     # The max number of chars of a recent file signal path
     # will be showed to the user on the recent files submenu
     MAX_RECENT_FILES_ACTION_TEXT_LENGTH = 50
 
-
     # endregion
 
     # region Initialize
 
-    def __init__(self, parent=None, signal_path=''):
+    def __init__(self, parent=None, signal_path='', workSpace=None):
         """
         :param parent:
         :param signal_path: Optional Signal path to open
         :return:
         """
-        super(DuettoSoundLabWindow, self).__init__(parent)
+        SoundLabWindow.__init__(self,parent)
         self.setupUi(self)
 
         # the histogram of the signal spectrogram
         self.histogram = None
 
-        #  theme for the visual options
-        workspace_path = os.path.join("Utils", self.WORK_SPACE_FILE_NAME)
-
-        try:
-            self.workSpace = self.deSerialize(workspace_path)
-            if not isinstance(self.workSpace, Workspace):
-                raise Exception()
-
-        except Exception as e:
-            self.workSpace = Workspace()
-            QMessageBox.warning(self, self.tr(u'Error loading theme'),
-            self.tr(u'An error occurred while loading the theme. \n A default theme will be loaded instead.'))
+        if workSpace is not None:
+            self.workSpace = workSpace
 
         self.loadRecentFiles()
 
@@ -105,29 +85,24 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         # of at least one open signal. Are disabled if there is no open signal
         self.signalDependingActions = []
 
-        # text edit for the signal name
-        self.signalNameLineEdit = QtGui.QLineEdit(self)
-        self.signalNameLineEdit.textChanged.connect(lambda text: self.signalNameChanged(text))
-        self.signalNameLineEdit.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Minimum, QtGui.QSizePolicy.Minimum))
-
         # some initial state configurations
+        self.signalNameLineEdit.textChanged.connect(lambda text: self.signalNameChanged(text))
         self.configureSignalsTab()
         self.configureNoOpenedWidget()
-        self.configureActionsGroups()
+        self.configureToolBarActionsGroups()
 
         # get all the themes that are in the static folder for themes ("Utils\Themes\")
-        app_themes = folderFiles(os.path.join("Utils", "Themes"), extensions=[".dth"])
+        app_themes = folder_files(os.path.join("Utils", "Themes"), extensions=[".dth"])
 
         # get all the styles that are in the static folder for styles ("styles\")
-        app_styles = folderFiles("styles", extensions=[".qss"])
+        app_styles = folder_files("styles", extensions=[".qss"])
 
         # get all the languages translations that are in the static folder for languagues ("I18n\")
-        app_languagues = folderFiles("I18n", extensions=[".qm"])
+        app_languagues = folder_files("I18n", extensions=[".qm"])
 
         # user interface to manipulate several visual parameters
         # and display options of the application theme.
         #  Is used a parameter tree to present to the user the visual options
-
         #  region Parameter Tree definition
 
         #  create the tree,  and connect
@@ -145,59 +120,45 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         self.addSignalTab(Synthesizer.generateSilence(duration=1))
 
-        #  the path to the last opened file signal used to
-        #  give higher user friendly interaction on file search
-        self.last_opened_signal_path = ''
-
-        #  get the status bar to show messages to the user
-        self.statusbar = self.statusBar()
-        self.statusbar.setSizeGripEnabled(False)
-        self.statusbar.showMessage(self.tr(u"Welcome to duetto-Sound Lab"), 5000)
-
         self.dock_settings.setVisible(False)
         self.dock_settings.setFixedWidth(self.SETTINGS_WINDOW_WIDTH)
 
-        #  get the clasification data stored
-        #  classifPath = os.path.join(os.path.join("Utils","Classification"),"classifSettings")
-        self.classificationData = self.deserializeClassificationData()
+        self.tabOpenedSignals.setTabPosition(int(self.workSpace.tabPosition))
+        self.tabOpenedSignals.setTabShape(int(self.workSpace.tabShape))
 
         #  variables to handle the navigation across the signal files of one folder
         #  to allow to open all the files in the folder user friendly by action up/down next file
-        self.filesInFolder = []
         self.filesInFolderIndex = -1
+        self.filesInFolder = []
+        self.getFolderFiles(self.workSpace.lastOpenedFile)
 
         #  the list of one dimensional processing windows opened by the user.
         self.one_dim_windows = []
 
-
         #  accept drops to open signals by drop
         self.setAcceptDrops(True)
 
-        # close the signal of the opening
+        # close the signal of the opening to statr with no opened signals
         self.tabOpenedSignals.removeTab(0)
 
         # set the values for start with no opened signals
-        self.setNoSignalsOpenState(signals_open=False)
-
-        # update the app options from workspace
-        # language, style and tabs
-        self.languageChanged.emit(self.workSpace.language)
-        self.styleChanged.emit(self.workSpace.style)
-        self.tabOpenedSignals.setTabPosition(int(self.workSpace.tabPosition))
-        self.tabOpenedSignals.setTabShape(int(self.workSpace.tabShape))
+        self.updateSignalsOpenedAppState()
 
         # open a signal if any
         if signal_path != '':
             self._open(unicode(signal_path))
 
-        QtCore.QTimer.singleShot(1000, self.restorePreviousSession)
+        QtCore.QTimer.singleShot(10, self.restorePreviousSession)
+
+        # temporal disable of sound devices change and browse until study use cases of pyaudio 2.8
+        self.actionSound_Devices.setEnabled(False)
 
         self.showMaximized()
 
     def updateHistogramWidget(self):
         """
         Updates the spectrogram histogram of the selected widget signal visualizer
-        into the layout of the settings dock window.
+        into the layout of the settings dock window when the selected signal change.
         :return:
         """
         layout = self.osc_settings_contents.layout()
@@ -245,16 +206,23 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             if result == QtGui.QMessageBox.Yes:
                 for file_path in self.workSpace.openedFiles:
                     self._open(file_path)
+                    # restore if any the widgets visibility
+                    self.changeWidgetsVisibility(self.workSpace.visibleOscilogram,
+                                                 self.workSpace.visibleSpectrogram)
+
             else:
+                # clear the previous session state
                 self.workSpace.clearOpenedFiles()
 
-    def setNoSignalsOpenState(self, signals_open):
+    def updateSignalsOpenedAppState(self):
         """
-        Configure the app behavior and variables for a no open signal situation.
-        In this case just to show the no signal opened widget and hide the tabbar with signals.
-        :param signals_open: True if there is signals open. False otherwise
+        Update the app state (variables) for the no open signal situation.
+        In this case just to show/hide the 'no signal opened' widget and hide/show the tabbar with signals.
+        Signals are open if there is a signal on the tab widget.
         :return:
         """
+        signals_open = self.tabOpenedSignals.count() > 0
+
         # set the tab bar with signals visible and the action
         # that depend of signals enabled if there is opened signals
         self.setSignalActionsEnabledState(signals_open)
@@ -266,7 +234,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         # set the defaults name for signal on edit and window title
         if not signals_open:
             self.signalNameLineEdit.setText("")
-            self.signalNameLineEdit.setToolTip("")
+            self.signalPropertiesTextLabel.setText("")
             self.setWindowTitle(self.tr(u"duetto-Sound Lab"))
 
     def configureNoOpenedWidget(self):
@@ -330,11 +298,14 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
             {u'name': unicode(self.tr(u'Spectrogram Settings')), u'type': u'group', u'children': [
                 {u'name': unicode(self.tr(u'Frequency(kHz)')), u'type': u'group', u'children': [
-                    {u'name': unicode(self.tr(u'Min')), u'type': u'float', u'value': 0, u'step': 0.1},
-                    {u'name': unicode(self.tr(u'Max')), u'type': u'float', u'value': 22, u'step': 0.1},
+                    {u'name': unicode(self.tr(u'Min')), u'type': u'float', u'value': self.workSpace.spectrogramWorkspace.minY, u'step': 0.1},
+                    {u'name': unicode(self.tr(u'Max')), u'type': u'float', u'value': self.workSpace.spectrogramWorkspace.maxY, u'step': 0.1},
                 ]},
                 {u'name': unicode(self.tr(u'FFT size')), u'type': u'list', u'default': 512,
-                 u'values': [(u"128", 128), (u"256", 256), (u"512", 512), (u"1024", 1024), (u"8192", 8192)],
+                 u'values': [(u"128", 128), (u"256", 256),
+                             (u"512", 512), (u"1024", 1024),
+                             (u"2048", 2048), (u"4096", 4096),
+                             (u"8192", 8192)],
                  u'value': u'512'},
                 {u'name': unicode(self.tr(u'FFT window')), u'type': u'list',
                  u'value': WindowFunction.Hanning,
@@ -368,24 +339,24 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             ]},
             {u'name': unicode(self.tr(u'Themes')), u'type': u'group', u'children': [
                 {u'name': unicode(self.tr(u'Theme Selected')), u'type': u'list',
-                 u'value': u"" if not app_themes else os.path.basename(app_themes[0]),
-                 u'default': u"" if not app_themes else os.path.basename(app_themes[0]),
+                 u'value': self.workSpace.theme_file,
+                 u'default': self.workSpace.theme_file,
                  u'values': [(u"", u"")] if not app_themes else [(os.path.basename(x), x) for x in
                                                                  app_themes]},
             ]
             },
             {u'name': unicode(self.tr(u'Language')), u'type': u'group', u'children': [
                 {u'name': unicode(self.tr(u'Language Selected')), u'type': u'list',
-                 u'value': u"" if not app_languagues else os.path.basename(app_languagues[0]),
-                 u'default': u"" if not app_languagues else os.path.basename(app_languagues[0]),
+                 u'value': self.workSpace.language,
+                 u'default': self.workSpace.language,
                  u'values': [(u"", u"")] if not app_languagues else [(os.path.basename(x), x) for x in
                                                                      app_languagues]},
             ]
             },
             {u'name': unicode(self.tr(u'Style')), u'type': u'group', u'children': [
                 {u'name': unicode(self.tr(u'Style Selected')), u'type': u'list',
-                 u'value': u"" if not app_styles else os.path.basename(app_styles[0]),
-                 u'default': u"" if not app_styles else os.path.basename(app_styles[0]),
+                 u'value': self.workSpace.style,
+                 u'default': self.workSpace.style,
                  u'values': [(u"", u"")] if not app_styles else [(os.path.basename(x), x) for x in
                                                                  app_styles]},
             ]
@@ -402,36 +373,36 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 {u'name': unicode(self.tr(u'Tab Shape')), u'type': u'list',
                  u'value': self.workSpace.tabShape,
                  u'default': self.workSpace.tabShape,
-                 u'values': [(u'Rounded', QtGui.QTabWidget.Rounded),
+                 u'values': [(u'Squared', QtGui.QTabWidget.Rounded),
                              (u"Triangular", QtGui.QTabWidget.Triangular)
                  ]}
             ]
-            },
-            {u'name': unicode(self.tr(u'Detection Visual Settings')), u'type': u'group', u'children': [
-                {u'name': unicode(self.tr(u'Measurement Location')), u'type': u'group', u'children': [
-                    {u'name': unicode(self.tr(u'Start')), u'type': u'color',
-                     u'value': self.workSpace.workTheme.detectionTheme.startColor,
-                     u'default': self.workSpace.workTheme.detectionTheme.startColor},
-                    {u'name': unicode(self.tr(u'Quartile25')), u'type': u'color',
-                     u'value': self.workSpace.workTheme.detectionTheme.quart1Color,
-                     u'default': self.workSpace.workTheme.detectionTheme.quart1Color},
-                    {u'name': unicode(self.tr(u'Center')), u'type': u'color',
-                     u'value': self.workSpace.workTheme.detectionTheme.centerColor,
-                     u'default': self.workSpace.workTheme.detectionTheme.centerColor},
-                    {u'name': unicode(self.tr(u'Quartile75')), u'type': u'color',
-                     u'value': self.workSpace.workTheme.detectionTheme.quart2Color,
-                     u'default': self.workSpace.workTheme.detectionTheme.quart2Color},
-                    {u'name': unicode(self.tr(u'End')), u'type': u'color',
-                     u'value': self.workSpace.workTheme.detectionTheme.endColor,
-                     u'default': self.workSpace.workTheme.detectionTheme.endColor},
-                ]}]}
+             }
+            #,  RESERVED FOR FUTURE USE
+            # {u'name': unicode(self.tr(u'Detection Visual Settings')), u'type': u'group', u'children': [
+            #     {u'name': unicode(self.tr(u'Measurement Location')), u'type': u'group', u'children': [
+            #         {u'name': unicode(self.tr(u'Start')), u'type': u'color',
+            #          u'value': self.workSpace.workTheme.detectionTheme.startColor,
+            #          u'default': self.workSpace.workTheme.detectionTheme.startColor},
+            #         {u'name': unicode(self.tr(u'Quartile25')), u'type': u'color',
+            #          u'value': self.workSpace.workTheme.detectionTheme.quart1Color,
+            #          u'default': self.workSpace.workTheme.detectionTheme.quart1Color},
+            #         {u'name': unicode(self.tr(u'Center')), u'type': u'color',
+            #          u'value': self.workSpace.workTheme.detectionTheme.centerColor,
+            #          u'default': self.workSpace.workTheme.detectionTheme.centerColor},
+            #         {u'name': unicode(self.tr(u'Quartile75')), u'type': u'color',
+            #          u'value': self.workSpace.workTheme.detectionTheme.quart2Color,
+            #          u'default': self.workSpace.workTheme.detectionTheme.quart2Color},
+            #         {u'name': unicode(self.tr(u'End')), u'type': u'color',
+            #          u'value': self.workSpace.workTheme.detectionTheme.endColor,
+            #          u'default': self.workSpace.workTheme.detectionTheme.endColor},
+            #     ]}]}
 
         ]
         #  endregion
 
         # change the item class of the list parameter type to allow order in the children params added
         ListParameter.itemClass = DuettoListParameterItem
-
         return Parameter.create(name=u'params', type=u'group', children=params)
 
     def addWidgetContextMenuActions(self):
@@ -475,7 +446,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             self.actionZoom_Cursor,
             self.actionPointer_Cursor,
             self.actionRectangular_Cursor,
-            self.actionRectangular_Eraser,
             sep5,
 
             #  widgets images
@@ -485,16 +455,14 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         ])
         # endregion
 
-    def configureActionsGroups(self):
+    def configureToolBarActionsGroups(self):
         """
-        Configure the actions into groups for best visualization and
-        user configuration.
         :return:
         """
 
         # region Add actions groups
         # create the separators for the actions
-        sep1, sep2, sep3, sep4, sep5, sep6, sep7,sep8 = [QtGui.QAction(self) for _ in range(8)]
+        sep1, sep2, sep3, sep4, sep5, sep6, sep7, sep8 = [QtGui.QAction(self) for _ in range(8)]
 
         for sep in [sep1, sep2, sep3, sep4, sep5, sep6, sep7, sep8]:
             sep.setSeparator(True)
@@ -515,40 +483,12 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             act.setActionGroup(edition_actions)
         # endregion
 
-        # region play record actions
-        play_record_actions = QActionGroup(self)
-        play_record_actions_list = [self.actionPlay_Sound, self.actionPause_Sound, self.actionStop_Sound,
-                                    self.actionRecord, sep3]
-
-        for act in play_record_actions_list:
-            act.setActionGroup(play_record_actions)
-        # endregion
-
-        # region widgets visibility actions
-        widgets_visibility_actions = QActionGroup(self)
-        widgets_visibility_actions_list = [self.actionOscilogram, self.actionSpectogram, self.actionCombined,
-                                           sep4]
-
-        for act in widgets_visibility_actions_list:
-            act.setActionGroup(widgets_visibility_actions)
-        # endregion
-
         # region undo redo actions
         undo_redo_actions = QActionGroup(self)
         undo_redo_actions_list = [self.actionUndo, self.actionRedo,sep5]
 
         for act in undo_redo_actions_list:
             act.setActionGroup(undo_redo_actions)
-
-        # endregion
-
-        # region zoom actions
-        zoom_actions = QActionGroup(self)
-        zoom_actions_list = [self.actionZoomIn, self.actionZoom_out,
-                                  self.actionZoom_out_entire_file,sep6]
-
-        for act in zoom_actions_list:
-            act.setActionGroup(zoom_actions)
 
         # endregion
 
@@ -582,15 +522,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         # endregion
 
-        # region Save Images actions
-        save_images_actions = QActionGroup(self)
-        save_images_actions_list = [self.actionOsc_Image,self.actionSpecgram_Image,
-                                   self.actionCombined_Image]
-
-        for act in save_images_actions_list:
-            act.setActionGroup(save_images_actions)
-        # endregion
-
         # region Save actions
         save_actions = QActionGroup(self)
         save_actions_list = [self.actionSave,self.actionSave_selected_interval_as,
@@ -598,15 +529,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         for act in save_actions_list:
             act.setActionGroup(save_actions)
-        # endregion
-
-        # region Tools actions
-        tools_actions = QActionGroup(self)
-        tools_actions_list = [self.actionZoom_Cursor,self.actionPointer_Cursor,
-                              self.actionRectangular_Cursor,self.actionRectangular_Eraser]
-
-        for act in tools_actions_list:
-            act.setActionGroup(tools_actions)
         # endregion
 
         # region Play Speed actions
@@ -629,30 +551,30 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         # endregion
         # endregion
 
-        # add the actions to the signalDependingActions list
-        for action_group in [edition_actions, play_record_actions,save_actions, tools_actions,
-                             widgets_visibility_actions,zoom_actions, undo_redo_actions,
-                             segm_transf_actions, save_images_actions,processing_actions, play_speed_actions]:
+        # add the widget as an action because the behoavior of the list
+        # is to disable the elements on it when there is no open signals and enable otherwise
+        self.signalDependingActions.append(self.signalNameLineEdit)
+        self.signalDependingActions.append(self.actionSwitchPlayStatus)
 
-            self.signalDependingActions.extend(action_group.actions())
-
+        # add the actions to the toolbar
         # actions groups (action,name of group)
         actions_groups = [(open_save_actions, self.tr(u"Open/Save")),(undo_redo_actions, self.tr(u"Undo/Redo")),
-                          (edition_actions,self.tr(u"Edition")),(play_record_actions, self.tr(u"Play/Record")),
-                          (zoom_actions, self.tr(u"Zoom")),(widgets_visibility_actions, self.tr(u"Widgets Visibility")),
-                          (file_updown_actions, self.tr(u"File Up/Down")), (segm_transf_actions, self.tr(u"Processing")),
+                          (edition_actions,self.tr(u"Edition")), (file_updown_actions, self.tr(u"File Up/Down")),
+                          (segm_transf_actions, self.tr(u"Processing")),
                           (settings_actions, self.tr(u"Settings"))]
 
-        # first add the label for signal name that always wil be visible as an option
-        # not like the other groups of actions that the user could customize
-        self.toolBar.addWidget(self.signalNameLineEdit)
-
-        # add to the customizable sound lab toolbar
+        # add to the customizable sound lab toolbar first than the default actions
         for act in actions_groups:
             #            addActionGroup(actionGroup, name)
             self.toolBar.addActionGroup(act[0], act[1])
 
-        self.signalDependingActions.append(self.signalNameLineEdit)
+        SoundLabWindow.configureToolBarActionsGroups(self)
+
+        # add the actions to the signalDependingActions list
+        for action_group in [edition_actions, self.play_record_actions, save_actions, self.tools_actions,
+                             self.widgets_visibility_actions, self.zoom_actions, undo_redo_actions,
+                             segm_transf_actions, self.save_images_actions, processing_actions, play_speed_actions]:
+            self.signalDependingActions.extend(action_group.actions())
 
     def setSignalActionsEnabledState(self, enable_state=True):
         """
@@ -665,6 +587,17 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             action.setEnabled(enable_state)
 
     # endregion
+
+    @property
+    def widget(self):
+        """
+        Gets the current widget selected or None if no signal is opened
+        :return:
+        """
+        if self.tabOpenedSignals.count() == 0:
+            return None
+
+        return self.tabOpenedSignals.currentWidget()
 
     # region TAB Multiple Files Handling
 
@@ -680,7 +613,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         # if is the first signal to open close the "No opened signals widget"
         if self.tabOpenedSignals.count() == 1:
-            self.setNoSignalsOpenState(signals_open=True)
+            self.updateSignalsOpenedAppState()
 
     def loadSignalOnTab(self, signal, tabIndex=None):
         """
@@ -699,10 +632,13 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             if tabIndex != self.tabOpenedSignals.currentIndex():
                 self.tabOpenedSignals.setCurrentIndex(tabIndex)
 
+        # release the previous signal of the tab like currently opened signal
+        self.workSpace.setClosedFile(self.widget.signalFilePath)
         self.widget.signal = signal
 
-        # connect the histogram
-        self.updateHistogramWidget()
+        self.widget.signalNameChanged.connect(lambda: self.updateSignalPropertiesLabel(self.widget.signal))
+
+        self.setUniqueSignalName(self.widget.signal)
 
         # connection for one dim transforms update
         self.widget.signalIntervalSelected.connect(self.updateOneDimWindow)
@@ -710,32 +646,30 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         # connect for data display
         self.widget.toolDataDetected.connect(self.updateStatusBar)
 
-        # refresh and set the visibility of the axes on the new widget
-        self.changeWidgetsVisibility(True, True)
-
-        # update the app title, tab text and signal properties label
-        self.signalNameChanged(self.widget.signalName())
-        self.updateSignalPropertiesLabel()
-
         # add context menu actions
         self.addWidgetContextMenuActions()
+
+        self.updateFromSignalLoaded()
+
+    def updateFromSignalLoaded(self):
+        """
+        Update the application state when a new signal is loaded.
+        :return:
+        """
+        # update the app title, tab text and signal properties label
+        self.signalNameChanged(self.widget.signalName)
+        self.updateSignalPropertiesLabel(self.widget.signal)
+
+        # connect the histogram
+        self.updateHistogramWidget()
+
+        # update the paramtree with the values form the new widget (ampl and freq range mostly)
+        self.updateWorkspaceParamTree(from_widget=True)
 
         self.widget.load_workspace(self.workSpace)
         self.widget.graph()
 
-    def signalNameChanged(self, new_name):
-        """
-        Update the window variables dependent of the signal name when a change is made
-        on the text line edit for the signal name.
-        :param new_name: The new signal name
-        :return:
-        """
-        self.setWindowTitle(self.tr(u"duetto-Sound Lab - ") + new_name)
-        self.tabOpenedSignals.setTabText(self.tabOpenedSignals.currentIndex(), new_name)
-        if self.widget is not None:
-            self.widget.signal.name = new_name
-
-    def currentSignalTabChanged(self,tabIndex):
+    def currentSignalTabChanged(self, tabIndex):
         """
         Update the window state and variables when the current signal tab has changed
         :param tabIndex: The new index of selected tab signal
@@ -745,10 +679,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         # the documentation says the index raised is -1
         if tabIndex < 0:
             return
-
-        # update the app title and signal properties label
-        self.setWindowTitle(self.tr(u"duetto-Sound Lab - ") + self.widget.signalName())
-        self.updateSignalPropertiesLabel()
 
         # update the tool selected
         tool = self.widget.selectedTool
@@ -763,15 +693,10 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         elif tool == Tools.RectangularZoomTool:
             self.actionRectangular_Cursor.setChecked(True)
 
-        # connect the histogram
-        self.updateHistogramWidget()
+        # update the app title and signal properties label
+        self.setWindowTitle(self.tr(u"duetto-Sound Lab - ") + self.widget.signalName)
 
-        # update the paramtree with the values form the new widget
-        self.updateWorkspaceParamTree(from_widget=True)
-
-        # update the theme on the new selected widget
-        self.widget.load_workspace(self.workSpace)
-        self.widget.graph()
+        self.updateFromSignalLoaded()
 
     def closeSignalAt(self, index):
         """
@@ -793,7 +718,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         # if close the last opened signal show the widget for no opened signals
         if self.tabOpenedSignals.count() == 0:
-            self.setNoSignalsOpenState(signals_open=False)
+            self.updateSignalsOpenedAppState()
 
     def closeAllTabs(self, exceptIndex=-1):
         """
@@ -806,56 +731,30 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             if i != exceptIndex:
                 self.closeSignalAt(i)
 
-    # endregion
-
-    # region Properties
-
-    @property
-    def widget(self):
+    def change_tab(self, up=True):
         """
-        Gets the current widget selected or None if no signal is opened
+        Change the selected tab visualization to the next/previous one
+        :type up: True if the tab is moved to the next one False otherwise
         :return:
         """
         if self.tabOpenedSignals.count() == 0:
-            return None
+            return
 
-        return self.tabOpenedSignals.currentWidget()
+        current_tab = self.tabOpenedSignals.currentIndex()
+
+        tab_change = 1 if up else -1
+
+        self.tabOpenedSignals.setCurrentIndex((current_tab + tab_change) % self.tabOpenedSignals.count())
+
+    @pyqtSlot()
+    def on_actionChangeTabDown_triggered(self):
+        self.change_tab(up=False)
+
+    @pyqtSlot()
+    def on_actionChangeTabUp_triggered(self):
+        self.change_tab(up=True)
 
     # endregion
-
-    #  region Segmentation And Clasification
-
-    def serializeClassificationData(self, filename=""):
-        """
-        Store in disc the classification data manipulated by the application
-        :param filename: file path to store the data
-        :return:
-        """
-        if filename and os.path.exists(filename):
-            try:
-                classif_data_file = open(filename, 'wb')
-                pickle.dump(self.classificationData, classif_data_file)
-                classif_data_file.close()
-            except Exception as ex:
-                print(ex.message)
-
-    def deserializeClassificationData(self, filename=""):
-        """
-        Get the classification data previously stored on disc
-        :param filename:
-        :return:
-        """
-        try:
-            if filename and os.path.exists(filename):
-                classif_data_file = open(filename, 'rb')
-                data = pickle.load(classif_data_file)
-                classif_data_file.close()
-                return data
-
-        except Exception as ex:
-            print("Error al deserializar los datos de clasificacion. " + ex.message)
-            #  return a default
-            return ClassificationData()
 
     @pyqtSlot()
     def on_actionSegmentation_And_Clasification_triggered(self):
@@ -868,29 +767,30 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         signal = self.widget.signal
 
-        indexFrom, indexTo = self.widget.selectedRegion
+        index_from, index_to = self.widget.selectedRegion
 
-        if indexTo > indexFrom:
-            signal = signal.copy(indexFrom, indexTo)
+        if index_to > index_from:
+            signal = signal.copy(index_from, index_to)
 
-        # check if the signal can be analyzed acording to its
+        # check if the signal can be analyzed according to its
         # duration and the maxThresholdLabel duration signal allowed
-        if signal.duration > self.MAX_SIGNAL_DURATION_ALLOWED:
+        if signal.duration > self.MAX_SIGNAL_DURATION_ALLOWED_SEG:
             QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
                                       self.tr(u"The signal is larger than the maximum duration allowed.") + " \n" +
                                       self.tr(u"Use the splitter to divide it"))
             return
 
-        segWindow = SegmentationAndClasificationWindow(parent=self, signal=signal,
-                                                       classifcationSettings=self.classificationData)
+        seg_window = Segmentation_ClassificationWindow(parent=self, signal=signal)
+
+        # if was loaded the same signal on segmentation window give the file path (if any) to save options
+        if signal.length == self.widget.signal.length:
+            seg_window.setSignalFile(self.widget.signalFilePath)
 
         # load the theme and clear the undo redo actions in the current window.
-        segWindow.load_Theme(self.workSpace.workTheme)
+        seg_window.load_workspace(self.workSpace)
         self.widget.undoRedoManager.clear()
 
-    #  endregion
-
-    #  region Theme
+    #  region WorkSpace
     @pyqtSlot()
     def on_actionSaveTheme_triggered(self):
         """
@@ -902,7 +802,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         theme_path = os.path.join("Utils", "Themes", selected_theme + ".dth")
 
-        self.serialize(theme_path, self.workSpace.workTheme)
+        serialize(theme_path, self.workSpace.workTheme)
 
     @pyqtSlot()
     def on_actionSaveThemeAs_triggered(self):
@@ -913,7 +813,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                                                directory=os.path.join(u"Utils", u"Themes"),
                                                filter=self.tr(u"duetto Theme Files") + u"(*.dth);;All Files (*)")
         if filename:
-            self.serialize(filename, self.workSpace.workTheme)
+            serialize(filename, self.workSpace.workTheme)
 
     @pyqtSlot()
     def on_actionLoadTheme_triggered(self):
@@ -926,28 +826,31 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         if filename and os.path.exists(filename):
             try:
-                theme = self.deSerialize(filename)
-                self.loadTheme(theme)
+                self.loadTheme(filename)
 
             except Exception as ex:
                 raise ex
 
-    def loadTheme(self, theme):
+    def loadTheme(self, theme_file_path):
         """
         Load the supplied theme into the application.
-        :param theme: The new Theme to load
+        :param theme_file_path: The file path of the new Theme to load
         :return:
         """
+        theme = deserialize(theme_file_path)
+
         if not isinstance(theme, WorkTheme):
             raise Exception("Invalid type. theme must be of type WorkTheme.")
 
         #  change the current theme
         self.workSpace.workTheme = theme
+        self.workSpace.theme_file = theme_file_path
 
         # update the param tree with the new theme values
         self.updateWorkspaceParamTree(from_widget=False)
 
-        # get into the param tree the specific widget selected settings
+        # put into the param tree the specific widget selected settings
+        # overrided by the previuos operation
         self.updateWorkspaceParamTree(from_widget=True)
 
         #  update the theme in the widget
@@ -986,6 +889,9 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 threshold_min = data
                 threshold_max = self.settingsParameterTree.param(unicode(self.tr(u'Spectrogram Settings'))).param(
                     unicode(self.tr(u'Threshold(dB)'))).param(unicode(self.tr(u'Max'))).value()
+
+                # self.settingsParameterTree.param(unicode(self.tr(u'Spectrogram Settings'))).param(
+                #     unicode(self.tr(u'Threshold(dB)'))).param(unicode(self.tr(u'Max'))).setMinimum(threshold_min)
 
                 self.histogram.setRegion((threshold_min, threshold_max))
                 return
@@ -1056,12 +962,15 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             elif childName == unicode(self.tr(u'Themes')) + u"." + \
                     unicode(self.tr(u'Theme Selected')):
                 try:
-                    self.loadTheme(self.deSerialize(data))
+
+                    self.loadTheme(data)
+
                     return
                 except Exception as e:
                     QMessageBox.warning(self, self.tr(u'Error loading theme'),
                                         self.tr(u'An error occurred while loading the theme.') + u'\n' +
                                         self.tr(u'Error:') + u'\n' + unicode(e))
+
 
             elif childName == unicode(self.tr(u'Style')) + u"." + \
                     unicode(self.tr(u'Style Selected')):
@@ -1088,31 +997,30 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             self.widget.load_workspace(self.workSpace)
 
     # region Update Settings From Widget to Workspace
+
     def updateWorkspaceParamTree(self, from_widget=True):
         """
+        Update the paramtree when there is a difference between the
+        parameter values and the workspace that it represents.
         Load the settings of the current widget.
         There is some settings that are unique for each widget.
         Those settings are updated in the param tree and the workspace by this method.
-        :param from_widget: True if the parameters on the tree will be updated with the
+        :param from_widget: True if the parameters on the tree will be updated with those
         provided by the widget. False if the change is from a change in the current workspace
-        and need to be updated.
+        and the param tree needs to be updated.
         :return:
         """
 
         self.settingsParameterTree.blockSignals(True)
 
-        if from_widget:
+        if from_widget and self.widget:
             # region Update from Widget
 
             # region Oscilogram
 
             # max and min amplitude from widget
-
-            if self.widget.workSpace is None:
-                min_amp, max_amp = -100, 100
-            else:
-                min_amp  = self.widget.workSpace.oscillogramWorkspace.minY
-                max_amp = self.widget.workSpace.oscillogramWorkspace.maxY
+            min_amp = self.widget.oscilogramWorkSpace.minY
+            max_amp = self.widget.oscilogramWorkSpace.maxY
 
             self.workSpace.oscillogramWorkspace.minY = min_amp
             self.workSpace.oscillogramWorkspace.maxY = max_amp
@@ -1126,11 +1034,9 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             # region Spectrogram
 
             #  max and min frequency from widget
-            if self.widget.workSpace is None:
-                min_freq, max_freq = 0, self.widget.signal.samplingRate/2000.0
-            else:
-                min_freq  = self.widget.workSpace.spectrogramWorkspace.minY / 1000.0
-                max_freq = self.widget.workSpace.spectrogramWorkspace.maxY / 1000.0
+
+            min_freq = self.widget.spectrogramWorkSpace.minY / 1000.0
+            max_freq = self.widget.spectrogramWorkSpace.maxY / 1000.0
 
             # the spectrogram theme save the min and max frequency in Hz
             self.workSpace.spectrogramWorkspace.minY = min_freq * 1000
@@ -1143,27 +1049,30 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             self.settingsParameterTree.param(unicode(self.tr(u'Spectrogram Settings'))).param(
                 unicode(self.tr(u'Frequency(kHz)'))).param(unicode(self.tr(u'Max'))).setDefault(max_freq)
 
-            if self.widget.workSpace is not None:
-                nfft = self.widget.workSpace.spectrogramWorkspace.FFTSize
-                window = self.widget.workSpace.spectrogramWorkspace.FFTWindow
-                overlap = self.widget.workSpace.spectrogramWorkspace.FFTOverlap
 
-                # the spectrogram theme save the min and max frequency in Hz
-                self.workSpace.spectrogramWorkspace.FFTSize = nfft
-                self.workSpace.spectrogramWorkspace.FFTWindow = window
-                self.workSpace.spectrogramWorkspace.FFTOverlap = overlap
+            nfft = self.widget.spectrogramWorkSpace.FFTSize
+            window = self.widget.spectrogramWorkSpace.FFTWindow
+            overlap = self.widget.spectrogramWorkSpace.FFTOverlap
 
-                # update the spectrogram settings NFFT, overlap, etc
-                self.settingsParameterTree.param(unicode(self.tr(u'Spectrogram Settings')))\
-                    .param(unicode(self.tr(u'FFT size'))).\
-                    setValue(nfft)
-                self.settingsParameterTree.param(unicode(self.tr(u'Spectrogram Settings')))\
-                    .param(unicode(self.tr(u'FFT overlap'))).\
-                    setValue(overlap)
-                self.settingsParameterTree.param(unicode(self.tr(u'Spectrogram Settings')))\
-                    .param(unicode(self.tr(u'FFT window'))).\
-                    setValue(window)
+            # the spectrogram theme save the min and max frequency in Hz
+            self.workSpace.spectrogramWorkspace.FFTSize = nfft
+            self.workSpace.spectrogramWorkspace.FFTWindow = window
+            self.workSpace.spectrogramWorkspace.FFTOverlap = overlap
 
+            # update the spectrogram settings NFFT, overlap, etc
+            self.settingsParameterTree.param(unicode(self.tr(u'Spectrogram Settings'))) \
+                .param(unicode(self.tr(u'FFT size'))). \
+                setValue(nfft)
+            self.settingsParameterTree.param(unicode(self.tr(u'Spectrogram Settings'))) \
+                .param(unicode(self.tr(u'FFT overlap'))). \
+                setValue(overlap)
+            self.settingsParameterTree.param(unicode(self.tr(u'Spectrogram Settings'))) \
+                .param(unicode(self.tr(u'FFT window'))). \
+                setValue(window)
+
+            # update the region and gradient from spectrogram histogram
+            self.updateRegionTheme()
+            self.histogramGradientChanged(self.histogram.gradient)
             # endregion
 
             # endregion
@@ -1244,7 +1153,8 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     def updateRegionTheme(self):
         """
-        Updates the variables in the param tree and the work theme that represent the region of the histogram.
+        Updates the variables in the param tree and the
+        work theme that represent the region of the histogram.
         """
         reg = self.histogram.region.getRegion()
         value_min, value_max = min(reg[0], reg[1]), max(reg[0], reg[1])
@@ -1265,36 +1175,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         self.workSpace.spectrogramWorkspace.theme.colorBarState = gradient.saveState()
 
     # endregion
-
-    def deSerialize(self, filename):
-        """
-        Deserialize an object from a file.
-        :param filename: the path to the file where the object is saved
-        :return: the instance of tyhe serialized object in the file
-        """
-        if not os.path.exists(filename):
-            raise Exception('File does not exist.')
-
-        with open(filename, 'r') as f:
-            return pickle.load(f)
-
-    def serialize(self, filename, serializable_object):
-        """
-        Serialize an obeject to a file.
-        :param filename: the path to the file for the object storage.
-        :param object: the object to serialize.
-        """
-        if not (filename and os.path.exists(filename)):
-            raise Exception("Invalid Path to save the Theme.")
-
-        try:
-
-            data_file = open(filename, 'wb')
-            pickle.dump(serializable_object, data_file)
-            data_file.close()
-
-        except Exception as ex:
-            print(ex.message)
 
     #  endregion
 
@@ -1334,86 +1214,11 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     #  endregion
 
-    #  region Widget Tools
-    @pyqtSlot()
-    def on_actionZoom_Cursor_triggered(self):
-        """
-        Select the Zoom Tool as current working tool in the widget
-        :return:
-        """
-        self.deselectToolsActions()
-        self.actionZoom_Cursor.setChecked(True)
-        self.widget.setSelectedTool(Tools.ZoomTool)
-
-    @pyqtSlot()
-    def on_actionRectangular_Cursor_triggered(self):
-        """
-        Select the Rectangular Cursor as current working tool in the widget
-        :return:
-        """
-        self.deselectToolsActions()
-        self.actionRectangular_Cursor.setChecked(True)
-        self.widget.setSelectedTool(Tools.RectangularZoomTool)
-
-    @pyqtSlot()
-    def on_actionRectangular_Eraser_triggered(self):
-        """
-        Select the Rectangular Eraser as current working tool in the widget
-        :return:
-        """
-        self.deselectToolsActions()
-        self.actionRectangular_Eraser.setChecked(True)
-        self.widget.setSelectedTool(Tools.RectangularEraser)
-
-    @pyqtSlot()
-    def on_actionPointer_Cursor_triggered(self):
-        """
-        Select the Pointer Cursor as current working tool in the widget
-        :return:
-        """
-        self.deselectToolsActions()
-        self.actionPointer_Cursor.setChecked(True)
-        self.widget.setSelectedTool(Tools.PointerTool)
-
-    def deselectToolsActions(self):
-        """
-        Change the checked status of all the actions tools to False
-        """
-        self.actionZoom_Cursor.setChecked(False)
-        self.actionRectangular_Cursor.setChecked(False)
-        self.actionRectangular_Eraser.setChecked(False)
-        self.actionPointer_Cursor.setChecked(False)
-
-    #  endregion
-
-    #  region Cut, Copy, Paste
-    @pyqtSlot()
-    def on_actionCut_triggered(self):
-        self.widget.cut()
-
-    @pyqtSlot()
-    def on_actionCopy_triggered(self):
-        self.widget.copy()
-
-    @pyqtSlot()
-    def on_actionPaste_triggered(self):
-        self.widget.paste()
-
-    #  endregion
-
-    #  region Undo Redo
-
-    @pyqtSlot()
-    def on_actionUndo_triggered(self):
-        self.widget.undo()
-
-    @pyqtSlot()
-    def on_actionRedo_triggered(self):
-        self.widget.redo()
-
-    # endregion
-
     #  region Signal Processing Methods
+    @pyqtSlot()
+    def on_actionBatchProcessing_triggered(self):
+        batch_wnd = BatchWindow(self)
+        batch_wnd.show()
 
     @pyqtSlot()
     def on_actionPositive_Values_triggered(self):
@@ -1606,64 +1411,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     # endregion
 
-    #  region Zoom IN, OUT, NONE
-    # delegate the task of zoom in, out and none
-    # in the widget operations
-    @pyqtSlot()
-    def on_actionZoomIn_triggered(self):
-        self.widget.zoomIn()
-
-    @pyqtSlot()
-    def on_actionZoom_out_triggered(self):
-        self.widget.zoomOut()
-
-    @pyqtSlot()
-    def on_actionZoom_out_entire_file_triggered(self):
-        self.widget.zoomNone()
-
-    # endregion
-
-    def loadRecentFiles(self):
-        """
-        Load the recent files actions as open signal actions on Recent Files
-        submenu.
-        :return:
-        """
-        self.menuRecentSignals.clear()
-
-        # a max of MAX_RECENT_FILES_ACTION_TEXT_LENGTH char text label for the action
-        action_text = lambda file_path: file_path if \
-                                       len(file_path) < self.MAX_RECENT_FILES_ACTION_TEXT_LENGTH else \
-                                       file_path[0:self.MAX_RECENT_FILES_ACTION_TEXT_LENGTH/2] + \
-                                       "..." + file_path[-self.MAX_RECENT_FILES_ACTION_TEXT_LENGTH/2:]
-
-        actions = [QAction(action_text(x), self) for x in self.workSpace.recentFiles]
-
-        # set manually the actions for each recent file action (issues when use a for and
-        # update the lambda function, keep reference to the same value for all the actions)
-
-        if len(actions) >= 1:
-            actions[0].setData(self.workSpace.recentFiles[0])
-            actions[0].triggered.connect(lambda : self._open(actions[0].data().toString()))
-
-        if len(actions) >= 2:
-            actions[1].setData(self.workSpace.recentFiles[1])
-            actions[1].triggered.connect(lambda : self._open(actions[1].data().toString()))
-
-        if len(actions) >= 3:
-            actions[2].setData(self.workSpace.recentFiles[2])
-            actions[2].triggered.connect(lambda : self._open(actions[2].data().toString()))
-
-        if len(actions) >= 4:
-            actions[3].setData(self.workSpace.recentFiles[3])
-            actions[3].triggered.connect(lambda : self._open(actions[3].data().toString()))
-
-        if len(actions) >= 5:
-            actions[4].setData(self.workSpace.recentFiles[4])
-            actions[4].triggered.connect(lambda : self._open(actions[4].data().toString()))
-
-        self.menuRecentSignals.addActions(actions)
-
     #  region Open, Close and Save
 
     @pyqtSlot()
@@ -1682,8 +1429,8 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
             self.save_signal_if_modified(event, signal_index=i)
 
         # save the workspace options
-        workspace_path = os.path.join("Utils", self.WORK_SPACE_FILE_NAME)
-        self.serialize(workspace_path, self.workSpace)
+        workspace_path = os.path.join("Utils", WORK_SPACE_FILE_NAME)
+        serialize(workspace_path, self.workSpace)
 
         #  close the window
         self.close()
@@ -1766,7 +1513,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         :return:
         """
         file_name = QFileDialog.getOpenFileName(self, self.tr(u"Select a file to open"),
-                                                directory=self.last_opened_signal_path,
+                                                directory=self.workSpace.lastOpenedFile,
                                                 filter=self.tr(u"Wave Files") + u"(*.wav);;All Files(*)")
 
         self._open(unicode(file_name))
@@ -1786,7 +1533,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         """
         :return:
         """
-        browse_wnd = BrowseFilesWindow(self,self.filesInFolder)
+        browse_wnd = BrowseFilesWindow(self, self.filesInFolder)
 
         # connect the signals for open in the current window
         browse_wnd.openFiles.connect(self.open_files)
@@ -1813,7 +1560,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         if file_path != u'':
             try:
                 # set the variables for folder files management
-                self.last_opened_signal_path = file_path
                 self.getFolderFiles(file_path)
                 signal = openSignal(file_path)
             except Exception as ex:
@@ -1859,7 +1605,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 buttons_box = buttons_box | QtGui.QMessageBox.Cancel
 
             mbox = QtGui.QMessageBox(QtGui.QMessageBox.Question, self.tr(u"Save"),
-                                     self.tr(u"Do you want to save the signal " + widget.signalName() + u" ?"),
+                                     self.tr(u"Do you want to save the signal " + widget.signalName + u" ?"),
                                      buttons_box, self)
             result = mbox.exec_()
 
@@ -1879,7 +1625,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         signal_index = self.tabOpenedSignals.currentIndex() if signal_index is None else signal_index
         widget = self.tabOpenedSignals.widget(signal_index)
 
-        if widget.signalFilePath is not None:
+        if widget.signalFilePath:
             widget.save()
         else:
             self.on_actionSaveAs_triggered(signal_index)
@@ -1896,7 +1642,8 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         # get the filename to store the signal
         file_name = unicode(QFileDialog.getSaveFileName(self, self.tr(u"Save signal"),
-                                                        widget.signalName(), u"*.wav"))
+                                                        os.path.join(self.workSpace.lastOpenedFolder,
+                                                        str(self.widget.signalName)), u"*.wav"))
         if file_name:
             widget.save(file_name)
 
@@ -1912,11 +1659,10 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         #  get the filename to store the new signal
         file_name = unicode(QFileDialog.getSaveFileName(self, self.tr(u"Save signal"),
-                                                        self.tr(u"Selection-") +
-                                                        widget.signalName(), u"*.wav"))
+                                                       os.path.join(self.workSpace.lastOpenedFolder,
+                                                       str(self.widget.signalName)), u"*.wav"))
         if file_name:
             widget.saveSelectedSectionAsSignal(file_name)
-
 
     @pyqtSlot()
     def on_actionOpen_Selection_triggered(self, signal_index=None):
@@ -1929,37 +1675,71 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         widget = self.tabOpenedSignals.widget(signal_index)
 
         indexFrom, indexTo = self.widget.selectedRegion
-        signal = widget.signal.copy(indexFrom, indexTo)
+        signal = widget.signal.copy(indexFrom, indexTo) if indexTo > indexFrom else widget.signal
 
-        # add same name with(#) at end of the new signal
-        # names = [self.tabOpenedSignals.widget(i).signalName() for i in range(self.tabOpenedSignals.count())]
-        # signal_name_count = len([name for name in names if name.contains(widget.signalName())])
-
-        # signal.name = widget.signalName() + "(" + str(signal_name_count) + ")"
         self.addSignalTab(signal)
 
     # endregion
 
     # region Signal Properties Info Display
 
-    def updateSignalPropertiesLabel(self):
+    def signalNameChanged(self, new_name):
         """
-        Updates the text of the current signal properties in toolbar.
+        Update the window variables dependent of the signal name when a change is made
+        on the text line edit for the signal name.
+        :param new_name: The new signal name
         :return:
         """
-        #  action signal is a place in the tool bar to show the current signal name
-        self.signalNameLineEdit.setText(self.widget.signalName())
+        self.setWindowTitle(self.tr(u"duetto-Sound Lab - ") + new_name)
+        self.tabOpenedSignals.setTabText(self.tabOpenedSignals.currentIndex(), new_name)
+        if self.widget is not None:
+            self.widget.signalName = new_name
+            # change the name of the signal remove the state of opened from file system
+            # asumes the state of syntetized to save in other file
+            self.workSpace.setClosedFile(self.widget.signalFilePath)
+            self.widget.signalFilePath = None
 
-        sr = self.widget.signal.samplingRate
-        bit_depth = self.widget.signal.bitDepth
-        channels = self.widget.signal.channelCount
+    def setUniqueSignalName(self, signal):
+        """
+        Ensure that all the signals maintain different name when a new one is added.
+        :param signal: The new signal added.
+        :return:
+        """
+        # if the only signal with the name of the supplied one is it self
+        if self.uniqueSignalName(signal.name):
+            return
 
-        tooltip = "Sampling Rate: " + str(sr) + \
-                  "\nBit Depth: " + str(bit_depth) + \
-                  "\nChannels: " + str(channels) + \
-                  "\nDuration(s): " + str(round(self.widget.signal.duration, DECIMAL_PLACES))
+        # ask for names like signal.name(#)
+        n = 1
+        while self.signalNameExists(signal.name + "(" + str(n) + ")"):
+            n += 1
 
-        self.signalNameLineEdit.setToolTip(tooltip)
+        signal.name = signal.name + "(" + str(n) + ")"
+
+    def signalNameExists(self, name):
+        """
+        Find if there is a tab signal opened with a signal  with name 'name'
+        :param name: the name of the desired signal to find.
+        :return: True if exists False otherwise
+        """
+        return self.signalNameCount(name) > 0
+
+    def uniqueSignalName(self, name):
+        """
+        Find if there is a tab signal opened with a signal  with name 'name' and just one.
+        Find if the name 'name' is unique on the opened signals.
+        :param name: the name of the desired signal to find uniqueness.
+        :return: True if unique Flase otherwise
+        """
+        return self.signalNameCount(name) == 1
+
+    def signalNameCount(self, name):
+        """
+        :param name: the name to ask for
+        :return: Returns the number of times that a name is repeated on the opened signals names
+        """
+        return len([i for i in range(self.tabOpenedSignals.count())
+                  if self.tabOpenedSignals.widget(i).signalName == name])
 
     # endregion
 
@@ -1972,14 +1752,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         open the previous file signal in the folder that is been analyzed
         :return:
         """
-        if self.filesInFolderIndex > 0:
-            # if there is files in the folder to be opened
-            # or the current file signal is not the first on the folder
-            self.filesInFolderIndex -= 1
-
-            # try to open the file in the new signal file path
-            if os.path.exists(self.filesInFolder[self.filesInFolderIndex]):
-                self._open(self.filesInFolder[self.filesInFolderIndex],currentTab=True)
+        self._openFileUpDownHelper(fileUp=True)
 
     @pyqtSlot()
     def on_actionFile_Down_triggered(self):
@@ -1987,13 +1760,25 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         open the next file signal in the folder that is been analyzed
         :return:
         """
-        if self.filesInFolderIndex < len(self.filesInFolder) - 1:
+        self._openFileUpDownHelper(fileUp=False)
+
+    def _openFileUpDownHelper(self, fileUp):
+        """
+        Method that factorize the logic of move to open file by up down
+        operation on the file path of the currently opened signal
+        :param fileUp: Tru if opearation is open File Up, False if operation is open File Down
+        :return:
+        """
+        operation_increment = -1 if fileUp else 1
+
+        if len(self.filesInFolder) > 0:
             # if the current file signal is not the last on the folder
-            self.filesInFolderIndex += 1
+            self.filesInFolderIndex = (self.filesInFolderIndex + operation_increment) % len(self.filesInFolder)
 
             #  try to open the file in the new signal file path
-            if os.path.exists(self.filesInFolder[self.filesInFolderIndex]):
-                self._open(self.filesInFolder[self.filesInFolderIndex], currentTab=True)
+            file_path = self.filesInFolder[self.filesInFolderIndex]
+            if os.path.exists(file_path):
+                self._open(file_path, currentTab=True)
 
     def getFolderFiles(self, file_path):
         """
@@ -2001,22 +1786,28 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         :param file_path: The path to a file that is on the folder desired.
         :return:
         """
+        if file_path is None or file_path == '':
+            return
+
+        file_path = unicode(file_path)
+
         try:
             #  get the folder of the path and the files on that folder.
             path_base = os.path.split(file_path)[0]
-            self.filesInFolder = folderFiles(path_base)
+            self.filesInFolder = folder_files(path_base)
 
             # set the current index to the index of the supplied file_path
             self.filesInFolderIndex = self.filesInFolder.index(file_path)
-        except:
-            # if somethign wrong go to the initial state
+
+        except Exception as ex:
+            print(ex.message)
+            # if something wrong go to the initial state
             self.filesInFolder = []
             self.filesInFolderIndex = -1
 
     # endregion
 
-    #  region Play, Pause, Stop, Record
-    # delegate in the widget the reproduction actions
+    # region Sound
 
     @pyqtSlot()
     def on_actionSound_Devices_triggered(self):
@@ -2044,46 +1835,6 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
                 QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
                                       self.tr(error_message))
 
-    @pyqtSlot()
-    def on_actionPlay_Sound_triggered(self):
-        try:
-            self.widget.play()
-
-        except Exception as ex:
-            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
-                                      self.tr(u"There is no selected audio input "
-                                              u"device or the selected is unavailable"))
-
-    @pyqtSlot()
-    def on_actionStop_Sound_triggered(self):
-        self.widget.stop()
-
-    @pyqtSlot()
-    def on_actionRecord_triggered(self):
-        try:
-            # to avoid changes on the theme during recording
-            self.dock_settings.setVisible(False)
-
-            self.widget.record()
-
-        except Exception as ex:
-            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
-                                      self.tr(u"There is no selected audio output "
-                                              u"device or the selected is unavailable"))
-
-    @pyqtSlot()
-    def on_actionPause_Sound_triggered(self):
-        self.widget.pause()
-
-    @pyqtSlot()
-    def on_actionSwitchPlayStatus_triggered(self):
-        """
-        Change the play status of the signal from play-pause and vice versa
-        :return:
-        """
-        print("Stwich Play status")
-        self.widget.switchPlayStatus()
-
     @pyqtSlot(QAction)
     def on_playSpeedChanged_triggered(self, action):
         """
@@ -2091,9 +1842,7 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
         :param action: the action to set the speed
         :return:
         """
-
-        # stop prevoiusly playing or recording at other speed.
-
+        # stop previously playing or recording at other speed.
         if self.widget is not None:
             self.widget.stop()
 
@@ -2103,103 +1852,26 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
         self.widget.playSpeed = speed
 
-    # endregion
-
-    #  region Widgets And Window Visibility
-
     @pyqtSlot()
-    def on_actionFull_Screen_triggered(self):
-        """
-        Action that switch the window visualization state between
-        Full Screen and Normal
-        :return:
-        """
-        if self.actionFull_Screen.isChecked():
-            self.showFullScreen()
-        else:
-            self.showNormal()
+    def on_actionRecord_triggered(self):
+        mbox = QtGui.QMessageBox(QtGui.QMessageBox.Question, self.tr(u"Record"),
+                                 self.tr(u"Do you want to append recording to the existing "
+                                         + self.widget.signalName + u" signal?"),
+                                 QtGui.QMessageBox.Yes | QtGui.QMessageBox.No, self)
+        result = mbox.exec_()
 
-    @pyqtSlot()
-    def on_actionCombined_triggered(self):
-        """
-        Shows both axes visualization oscilogram and spectrogram.
-        :return:
-        """
-        self.changeWidgetsVisibility(True, True)
+        try:
+            self.widget.record(newSignal=(result == QtGui.QMessageBox.No))
+            if result == QtGui.QMessageBox.No:
+                self.signalNameLineEdit.setText(self.widget.signalName)
 
-    @pyqtSlot()
-    def on_actionSpectogram_triggered(self):
-        """
-        Shows the spectrogram visualization graph only.
-        :return:
-        """
-        self.changeWidgetsVisibility(False, True)
 
-    @pyqtSlot()
-    def on_actionOscilogram_triggered(self):
-        """
-        Shows the oscilogram visualization graph only.
-        :return:
-        """
-        self.changeWidgetsVisibility(True, False)
-
-    def changeWidgetsVisibility(self, visibleOscilogram=True, visibleSpectrogram=True):
-        """
-        Method that change the visibility of the widgets
-        oscilogram and spectrogram on the main widget
-        :param visibleOscilogram:  Visibility of the oscilogram
-        :param visibleSpectrogram: Visibility of the spectrogram
-        :return:
-        """
-        self.widget.visibleOscilogram = visibleOscilogram
-        self.widget.visibleSpectrogram = visibleSpectrogram
-        self.widget.graph()
+        except Exception as ex:
+            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
+                                      self.tr(u"There is no selected audio output "
+                                              u"device or the selected is unavailable"))
 
     # endregion
-
-    #  region Save widgets Image
-
-    @pyqtSlot()
-    def on_actionOsc_Image_triggered(self):
-        """
-        Save to disc the image of the oscilogram graph.
-        :return:
-        """
-        if self.widget.visibleOscilogram:
-            saveImage(self.widget.axesOscilogram, self.tr(u"oscilogram"))
-        else:
-            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
-                                      self.tr(u"The Oscilogram plot widget is not visible.") + u"\n" + self.tr(
-                                          u"You should see the data that you are going to save."))
-
-    @pyqtSlot()
-    def on_actionSpecgram_Image_triggered(self):
-        """
-        Save to disc the image of the spectrogram graph.
-        :return:
-        """
-        if self.widget.visibleSpectrogram:
-            saveImage(self.widget.axesSpecgram, self.tr(u"specgram"))
-        else:
-            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
-                                      self.tr(u"The Espectrogram plot widget is not visible.") + " \n" + self.tr(
-                                          u"You should see the data that you are going to save."))
-
-    @pyqtSlot()
-    def on_actionCombined_Image_triggered(self):
-        """
-        Save to disc the image of the both (oscilogram and spectrogram)
-        visualization graphs.
-        :return:
-        """
-        if self.widget.visibleOscilogram and self.widget.visibleSpectrogram:
-            saveImage(self.widget, self.tr(u"graph"))
-        else:
-            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
-                                      self.tr(u"One of the plot widgets is not visible.") + " \n" + self.tr(
-                                          u"You should see the data that you are going to save."))
-
-    #  endregion
 
     #  region One dimensional Transforms
     def updateOneDimWindow(self, x1, x2):
@@ -2230,13 +1902,45 @@ class DuettoSoundLabWindow(QtGui.QMainWindow, Ui_DuettoMainWindow):
 
     #  endregion
 
-    def updateStatusBar(self, line):
+    def loadRecentFiles(self):
         """
-        Update the status bar window message.
-        :param line: The (string) to show as message
-        :return: None
+        Load the recent files actions as open signal actions on Recent Files
+        submenu.
+        :return:
         """
-        self.statusbar.showMessage(line)
+        self.menuRecentSignals.clear()
+
+        # a max of MAX_RECENT_FILES_ACTION_TEXT_LENGTH char text label for the action
+        action_text = lambda file_path: file_path if \
+                                       len(file_path) < self.MAX_RECENT_FILES_ACTION_TEXT_LENGTH else \
+                                       file_path[0:self.MAX_RECENT_FILES_ACTION_TEXT_LENGTH/2] + \
+                                       "..." + file_path[-self.MAX_RECENT_FILES_ACTION_TEXT_LENGTH/2:]
+
+        actions = [QAction(action_text(x), self) for x in self.workSpace.recentFiles]
+
+        # set manually the actions for each recent file action (issues when use a for and
+        # update the lambda function, keep reference to the same value for all the actions)
+        if len(actions) >= 1:
+            actions[0].setData(self.workSpace.recentFiles[0])
+            actions[0].triggered.connect(lambda: self._open(actions[0].data().toString()))
+
+        if len(actions) >= 2:
+            actions[1].setData(self.workSpace.recentFiles[1])
+            actions[1].triggered.connect(lambda: self._open(actions[1].data().toString()))
+
+        if len(actions) >= 3:
+            actions[2].setData(self.workSpace.recentFiles[2])
+            actions[2].triggered.connect(lambda: self._open(actions[2].data().toString()))
+
+        if len(actions) >= 4:
+            actions[3].setData(self.workSpace.recentFiles[3])
+            actions[3].triggered.connect(lambda: self._open(actions[3].data().toString()))
+
+        if len(actions) >= 5:
+            actions[4].setData(self.workSpace.recentFiles[4])
+            actions[4].triggered.connect(lambda: self._open(actions[4].data().toString()))
+
+        self.menuRecentSignals.addActions(actions)
 
     @pyqtSlot()
     def on_actionSettings_triggered(self):

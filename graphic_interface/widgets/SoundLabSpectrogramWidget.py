@@ -1,6 +1,6 @@
 from PyQt4 import QtCore
 from duetto.dimensional_transformations.two_dimensional_transforms.Spectrogram.Spectrogram import Spectrogram
-from graphic_interface.Settings.Workspace import SpectrogramWorkspace
+from graphic_interface.settings.Workspace import SpectrogramWorkspace
 import numpy
 from duetto.widgets.SpectrogramWidget import SpectrogramWidget
 from graphic_interface.widgets.SoundLabWidget import SoundLabWidget
@@ -49,14 +49,18 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
 
         self.changeTool(SpectrogramZoomTool)
 
+        # set lines grid opacity by default
+        self.xAxis.setGrid(self.GRID_LINE_OPACITY)
+        self.yAxis.setGrid(self.GRID_LINE_OPACITY)
+
         # the object to compute spectrogram on record mode
         self.recordModeSpectrogram = Spectrogram(NFFT=256, overlap=0)
         self.activeRecordMode = False
 
         self.workspace = SpectrogramWorkspace()
 
-
     # region Tools interaction Implementation
+
     def changeTool(self, new_tool_class):
         SoundLabWidget.changeTool(self,new_tool_class)
         if self.gui_user_tool is not None:
@@ -143,15 +147,18 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
     def load_workspace(self, workspace, forceUpdate=False):
         """
         Loads a workspace and updates the view according with it.
-        :param workspace: an instance of SpectrogramWorkspace, the part of the Workspace concerning the spectrogram
+        :param workspace: an instance of SpectrogramWorkspace,
+        the part of the Workspace concerning the spectrogram
         """
         # get the current visualizing range (X axis)
         rangeX = self.viewBox.viewRange()[0]
-        rangeX = self.specgramHandler.from_spec_to_osc(rangeX[0]), self.specgramHandler.from_spec_to_osc(rangeX[1])
+        rangeX = self.specgramHandler.from_spec_to_osc(rangeX[0]), \
+                 self.specgramHandler.from_spec_to_osc(rangeX[1])
 
         # load the workspace and determine if it's necessary to update the widget
         update = False
 
+        # update FFT Size, Window and overlap
         if not self.activeRecordMode:
             # set the FFT size (must also reset the overlap)
             if self.workspace.FFTSize != workspace.FFTSize:
@@ -168,26 +175,34 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
                 if workspace.FFTOverlap >= 0:
                     self.specgramHandler.set_overlap_ratio(workspace.FFTOverlap)
                 else:
-                    self.specgramHandler.overlap = workspace.FFTSize / 2
+                    self.specgramHandler.overlap = workspace.FFTSize - 1
 
                 update = True
 
         # load the theme
         update = self.load_theme(workspace.theme) or update
 
-        # keep a copy of the workspace
+        # get a copy of the workspace
         self.workspace = workspace.copy()
+
+        if self.workspace.maxY < 0 or self.workspace.maxY > self.signal.samplingRate / 2.0:
+            self.workspace.maxY = self.signal.samplingRate / 2.0
+
+        self.workspace.minY = min(self.workspace.minY, self.workspace.maxY)
 
         # update the widget if needed (showing the same X axis' range as before)
         if update or forceUpdate:
             self.graph(rangeX[0], rangeX[1])
 
-        # set the y axis' range (must be made after the spectrogram is computed)
-        minY = self.specgramHandler.get_freq_index(workspace.minY)
-        maxY = self.specgramHandler.get_freq_index(workspace.maxY)
+        # set the y axis' range
+        # !!!!!(MUST BE MADE AFTER THE SPECTROGRAM IS COMPUTED BECAUSE THE SPEC MATRIX CHANGE)!!!!!
+        minY_index = self.specgramHandler.get_freq_index(self.workspace.minY)
+        maxY_index = self.specgramHandler.get_freq_index(self.workspace.maxY)
 
-        # todo update the yaxis
-        self.viewBox.setYRange(minY, maxY, padding=0, update=True)
+        minY = 0 if minY_index == -1 else minY_index
+        maxY = 0 if maxY_index == -1 else maxY_index
+        self.viewBox.setYRange(minY, maxY, padding=0.01, update=True)
+        self.yAxis.setRange(minY, maxY)
 
     # endregion
 

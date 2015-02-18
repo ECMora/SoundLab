@@ -31,6 +31,10 @@ class SoundLabToolBarWidget(QtGui.QToolBar):
         # list of GroupActionManager
         self.actions_groups = []
 
+        self.flag_action = QtGui.QAction(self)
+        self.flag_action.setSeparator(True)
+        self.addAction(self.flag_action)
+
         # manage internally the context menu
         # to show actions groups options
         self.setContextMenuPolicy(QtCore.Qt.DefaultContextMenu)
@@ -84,7 +88,7 @@ class SoundLabToolBarWidget(QtGui.QToolBar):
         # add the actions
         for action_group in active_actions_groups:
             for act in action_group.actions():
-                self.addAction(act)
+                self.insertAction(self.flag_action, act)
 
     def contextMenuEvent(self, QContextMenuEvent):
         """

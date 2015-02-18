@@ -116,7 +116,7 @@ QPushButton:pressed
 
 QComboBox
 {
-    color:#FFF;
+    color:#000;
     selection-background-color: #ffaa00;
     background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #565656, stop: 0.1 #525252, stop: 0.5 #4e4e4e, stop: 0.9 #4a4a4a, stop: 1 #464646);
     border-style: solid;
@@ -126,7 +126,7 @@ QComboBox
 
 QComboBox:hover,QPushButton:hover
 {
-    color:#FFF;
+    color:#000;
     border: 2px solid QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #ffa02f, stop: 1 #d7801a);
 }
 
@@ -142,7 +142,7 @@ QComboBox:on
 
 QComboBox QAbstractItemView
 {
-    color:#FFF;
+    color:#000;
     border: 2px solid darkgray;
     selection-background-color: QLinearGradient( x1: 0, y1: 0, x2: 0, y2: 1, stop: 0 #ffa02f, stop: 1 #d7801a);
 }
@@ -358,15 +358,18 @@ QMenu::separator
 
 QProgressBar
 {
-    border: 2px dashed grey;
+    background-color: #666;
+    border: 2px green;
     border-radius: 5px;
     text-align: center;
+    font-size: 15px;
+
 }
 
 QProgressBar::chunk
 {
-    background-color: #d7801a;
-    width: 2.15px;
+    background-color: #5F5;
+    width: 5px;
     margin: 0.5px;
 }
 
@@ -382,10 +385,6 @@ QTabBar::tab {
     margin-right: -1px;
 }
 
-QTabWidget::pane {
-    border: 1px solid #444;
-    top: 1px;
-}
 
 QTabBar::tab:last
 {
@@ -396,9 +395,7 @@ QTabBar::tab:last
 QTabBar::tab:first:!selected
 {
  margin-left: 0px; /* the last selected tab has nothing to overlap with on the right */
-
-
-    border-top-left-radius: 3px;
+border-top-left-radius: 3px;
 }
 
 QTabBar::tab:!selected
@@ -418,8 +415,8 @@ QTabBar::tab:selected
 
 QTabBar::tab:!selected:hover
 {
-    /*border-top: 2px solid #ffaa00;
-    padding-bottom: 3px;*/
+    border-top: 2px solid #ffaa00;
+    padding-bottom: 3px;
     border-top-left-radius: 3px;
     border-top-right-radius: 3px;
     background-color: QLinearGradient(x1:0, y1:0, x2:0, y2:1, stop:1 #212121, stop:0.4 #343434, stop:0.2 #343434, stop:0.1 #ffaa00);

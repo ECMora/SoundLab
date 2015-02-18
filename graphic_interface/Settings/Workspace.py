@@ -1,6 +1,7 @@
+import os
 from PyQt4.QtGui import QTabWidget
 from duetto.dimensional_transformations.two_dimensional_transforms.Spectrogram.WindowFunctions import WindowFunction
-from graphic_interface.Settings.WorkTheme import WorkTheme, OscillogramTheme, SpectrogramTheme, OneDimensionalTheme, \
+from graphic_interface.settings.WorkTheme import WorkTheme, OscillogramTheme, SpectrogramTheme, OneDimensionalTheme, \
     DetectionTheme
 
 
@@ -33,7 +34,7 @@ class OscillogramWorkspace(object):
 
 
 class SpectrogramWorkspace(object):
-    def __init__(self, minY=0, maxY=22050, FFTSize=512, FFTWindow=WindowFunction.Hanning, FFTOverlap=-1,
+    def __init__(self, minY=0, maxY=44100, FFTSize=512, FFTWindow=WindowFunction.Hanning, FFTOverlap=-1,
                  theme=None):
         """
 
@@ -96,10 +97,34 @@ class Workspace(object):
         self.detectionWorkspace = detectionWorkspace if detectionWorkspace else DetectionWorkspace()
         self.openedFiles = [] if openedFiles is None else openedFiles
         self.recentFiles = []
-        self.language = ""
-        self.style = ""
-        self.tabPosition = QTabWidget.North
-        self.tabShape = QTabWidget.Rounded
+
+        self.language = u""
+        self.theme_file = u""
+        self.style = u""
+
+        self.visibleOscilogram = True
+        self.visibleSpectrogram = True
+
+        self.tabPosition = int(QTabWidget.North)
+        self.tabShape = int(QTabWidget.Rounded)
+
+    @property
+    def lastOpenedFolder(self):
+        """
+        :return: The folder of the last opened file if any else ""
+        """
+        if self.lastOpenedFile != "":
+            return os.path.split(self.lastOpenedFile)[0]
+        return ""
+
+    @property
+    def lastOpenedFile(self):
+        """
+        :return: the last opened file path if any.
+        """
+        # use the recent files to save the state of last opened file
+        # after application closed and start again
+        return self.recentFiles[-1] if len(self.recentFiles) > 0 else u""
 
     def clearOpenedFiles(self):
         """
@@ -108,7 +133,7 @@ class Workspace(object):
         """
         self.openedFiles = []
 
-    def setClosedFile(self,file_path):
+    def setClosedFile(self, file_path):
         """
         Update the state of the signal at file_path to close by the application
         If the signal at file_path was previously opened the removes it from
@@ -116,9 +141,9 @@ class Workspace(object):
         :param file_path: the signal path previously open.
         :return:
         """
+        file_path = unicode(file_path)
         if file_path in self.openedFiles:
             self.openedFiles.remove(file_path)
-
 
     def addOpenedFile(self, filepath):
         """
@@ -126,12 +151,15 @@ class Workspace(object):
         :param filepath:
         :return:
         """
-        self.openedFiles.append(filepath)
+        filepath = unicode(filepath)
+
+        if filepath not in self.openedFiles:
+            self.openedFiles.append(filepath)
 
         if len(self.recentFiles) < self.LAST_OPENED_FILES_AMOUNT:
-            self.recentFiles.append(filepath)
+            self.recentFiles.append(str(filepath))
         else:
-            self.recentFiles.append(filepath)
+            self.recentFiles.append(str(filepath))
             self.recentFiles.pop(0)
 
     def copy(self):

@@ -96,11 +96,6 @@ class UndoRedoAction(QObject):
     Contains an undo method and a redo that are called when an undo or redo action its made
     respectivily.
     """
-    # SIGNALS
-    # signal raised when an action are performed and
-    # the signal size is changed. Raise the new changed signal
-    signal_size_changed = pyqtSignal(object)
-
     def __init__(self):
         QObject.__init__(self)
 
@@ -108,6 +103,48 @@ class UndoRedoAction(QObject):
         pass
 
     def redo(self):
+        pass
+
+
+class SignalNameChangeAction(UndoRedoAction):
+
+    # signal raised when the name of the signal is changed by code
+    # raise the new name
+    signalNameChanged = pyqtSignal(str)
+
+    def __init__(self, signal, new_name):
+        UndoRedoAction.__init__(self)
+        self.signal = signal
+        self.old_name = self.signal.name
+        self.new_name = new_name
+
+    def undo(self):
+        self.signal.name = self.old_name
+        self.signalNameChanged.emit(self.signal.name)
+
+    def redo(self):
+        self.signal.name = self.new_name
+        self.signalNameChanged.emit(self.signal.name)
+
+
+class RecordAction(UndoRedoAction):
+    """
+    A record action over a signal
+    """
+    def __init__(self, signal):
+        UndoRedoAction.__init__(self)
+        self.signal = signal
+
+        # update for multiple channels data signals
+        # self.signal_data = np.copy(signal.data)
+        # self.signal_old_data = signal.copy().data
+
+    def undo(self):
+        # self.signal.data = self.signal_old_data
+        pass
+
+    def redo(self):
+        # self.signal.data = self.signal_data
         pass
 
 
@@ -153,7 +190,6 @@ class SilenceAction(UndoRedoAction):
 
     def redo(self):
         CommonSignalProcessor(self.signal).setSilence(self.start,self.end)
-
 
 
 class InsertSignalAction(UndoRedoAction):
@@ -266,7 +302,6 @@ class FilterAction(UndoRedoAction):
         self.filter_processor.filter(self.start, self.end)
 
 
-
 class ResamplingAction(UndoRedoAction):
     def __init__(self,signal,sr):
         UndoRedoAction.__init__(self)
@@ -280,7 +315,8 @@ class ResamplingAction(UndoRedoAction):
     def redo(self):
         self.signal.resampling(self.sr)
 
-#region CUT,COPY,PASTE
+
+# region CUT,COPY,PASTE
 
 class CutAction(UndoRedoAction):
 
@@ -290,7 +326,6 @@ class CutAction(UndoRedoAction):
         self.start = start
         self.end = end
         self.editionProcesor = EditionSignalProcessor(self.signal)
-        self.editionProcesor.signal_size_changed.connect(lambda :self.signal_size_changed.emit(self.signal))
 
     def undo(self):
        self.editionProcesor.paste(self.start)
@@ -308,6 +343,7 @@ class CopyAction(UndoRedoAction):
         self.editionProcesor = EditionSignalProcessor(self.signal)
 
     def undo(self):
+        # clears the clipboard
         mime_data = QtCore.QMimeData()
         mime_data.setData("signal", QtCore.QByteArray(""))
         clip = QApplication.clipboard()
@@ -319,13 +355,12 @@ class CopyAction(UndoRedoAction):
 
 class PasteAction(UndoRedoAction):
 
-    def __init__(self,signal,start,end):
+    def __init__(self, signal, start, end):
         UndoRedoAction.__init__(self)
         self.signal = signal
         self.start = start
         self.end = end
         self.editionProcesor = EditionSignalProcessor(self.signal)
-        self.editionProcesor.signal_size_changed.connect(lambda: self.signal_size_changed.emit(self.signal))
 
     def undo(self):
         self.editionProcesor.cut(self.start, self.end)
@@ -333,7 +368,7 @@ class PasteAction(UndoRedoAction):
     def redo(self):
         self.editionProcesor.paste(self.start)
 
-#endregion
+# endregion
 
 class Absolute_ValuesAction(UndoRedoAction):
     def __init__(self,signal,start,end,sign):

@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>752</width>
-    <height>493</height>
+    <width>745</width>
+    <height>386</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -93,10 +93,10 @@
        <string>&lt;div&gt;&lt;h2 align='left'&gt; &amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp;
 No signal is open&lt;/h2&gt;&lt;hr&gt;
 &lt;ul align='left'&gt;
-&lt;li&gt;Open new signals with&lt;font color='#3333AA'&gt; Ctrl + O&lt;/font&gt;&lt;/li&gt;
-&lt;li&gt;Browse for signals with&lt;font color='#3333AA'&gt; Ctrl + B&lt;/font&gt;&lt;/li&gt;
-&lt;li&gt;Synthesize new signals with&lt;font color='#3333AA'&gt; Ctrl + N&lt;/font&gt;&lt;/li&gt;
-&lt;li&gt;Drag and drop files from Explorer&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;</string>
+&lt;li style='margin-bottom:10px;'&gt;Open new signals with&lt;font color='#3333AA'&gt; Ctrl + O&lt;/font&gt;&lt;/li&gt;
+&lt;li style='margin-bottom:10px;'&gt;Browse for signals with&lt;font color='#3333AA'&gt; Ctrl + B&lt;/font&gt;&lt;/li&gt;
+&lt;li style='margin-bottom:10px;'&gt;Synthesize new signals with&lt;font color='#3333AA'&gt; Ctrl + N&lt;/font&gt;&lt;/li&gt;
+&lt;li style='margin-bottom:10px;'&gt;Drag and drop files from Explorer&lt;/li&gt;&lt;/ul&gt;&lt;/div&gt;</string>
       </property>
       <property name="scaledContents">
        <bool>false</bool>
@@ -113,7 +113,7 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>752</width>
+     <width>745</width>
      <height>21</height>
     </rect>
    </property>
@@ -191,7 +191,6 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
     <addaction name="actionZoom_Cursor"/>
     <addaction name="actionPointer_Cursor"/>
     <addaction name="actionRectangular_Cursor"/>
-    <addaction name="actionRectangular_Eraser"/>
     <addaction name="separator"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
@@ -225,7 +224,6 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
     <addaction name="separator"/>
     <addaction name="actionFilter"/>
     <addaction name="actionSmart_Scale"/>
-    <addaction name="actionResampling"/>
     <addaction name="separator"/>
     <addaction name="menuGenerate"/>
    </widget>
@@ -240,6 +238,7 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
     <addaction name="actionSpectogram"/>
     <addaction name="actionCombined"/>
     <addaction name="actionOneDimensionalTransformation"/>
+    <addaction name="actionBatchProcessing"/>
     <addaction name="separator"/>
     <addaction name="actionSettings"/>
     <addaction name="actionSegmentation_And_Clasification"/>
@@ -724,7 +723,7 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
     <string>File Up</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Up</string>
+    <string>Alt+Up</string>
    </property>
   </action>
   <action name="actionFile_Down">
@@ -736,7 +735,7 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
     <string>File Down</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Down</string>
+    <string>Alt+Down</string>
    </property>
   </action>
   <action name="actionOsc_Image">
@@ -772,14 +771,6 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
    </property>
    <property name="text">
     <string>Rectangular Cursor</string>
-   </property>
-  </action>
-  <action name="actionRectangular_Eraser">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Rectangular Eraser</string>
    </property>
   </action>
   <action name="actionPositive_Values">
@@ -870,14 +861,6 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
     <string>Close</string>
    </property>
   </action>
-  <action name="actionSwitchPlayStatus">
-   <property name="text">
-    <string>SwitchPlayStatus</string>
-   </property>
-   <property name="shortcut">
-    <string>Space</string>
-   </property>
-  </action>
   <action name="actionSave">
    <property name="icon">
     <iconset resource="resources/icons.qrc">
@@ -966,6 +949,50 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
     <string>Open Selection</string>
    </property>
   </action>
+  <action name="actionSwitchPlayStatus">
+   <property name="text">
+    <string>switchPlayStatus</string>
+   </property>
+  </action>
+  <action name="actionBatchProcessing">
+   <property name="text">
+    <string>Batch Processing</string>
+   </property>
+  </action>
+  <action name="actionChangeTabUp">
+   <property name="text">
+    <string>ChangeTabUp</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+Right</string>
+   </property>
+  </action>
+  <action name="actionPlayLoop">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/Behavior.png</normaloff>:/myappicons/Behavior.png</iconset>
+   </property>
+   <property name="text">
+    <string>PlayLoop</string>
+   </property>
+   <property name="toolTip">
+    <string>Play Loop</string>
+   </property>
+  </action>
+  <action name="actionChangeTabDown">
+   <property name="text">
+    <string>ChangeTabDown</string>
+   </property>
+   <property name="toolTip">
+    <string>ChangeTabDown</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+Left</string>
+   </property>
+  </action>
   <zorder>dock_settings</zorder>
  </widget>
  <customwidgets>
@@ -978,5 +1005,25 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
  <resources>
   <include location="resources/icons.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>actionSwitchPlayStatus</sender>
+   <signal>triggered()</signal>
+   <receiver>DuettoMainWindow</receiver>
+   <slot>switchPlayStatus()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>375</x>
+     <y>246</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>switchPlayStatus()</slot>
+ </slots>
 </ui>

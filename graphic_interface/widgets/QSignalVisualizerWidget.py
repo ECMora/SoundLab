@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
 import os
-from PyQt4.QtGui import *
-from PyQt4 import QtCore, QtGui
+from PyQt4 import QtGui
 from duetto.audio_signals import openSignal
 import pyqtgraph as pg
 from PyQt4.QtCore import QTimer, Qt
 from duetto.audio_signals.AudioSignalPlayer import AudioSignalPlayer
 from duetto.audio_signals.AudioSignal import AudioSignal
-from duetto.sound_devices.Device import Device
 from SoundLabOscillogramWidget import SoundLabOscillogramWidget
 from SoundLabSpectrogramWidget import SoundLabSpectrogramWidget
 from duetto.audio_signals.audio_signals_stream_readers.FileManager import FileManager
@@ -15,10 +13,10 @@ from duetto.signal_processing.filter_signal_processors.FilterSignalProcessor imp
 from graphic_interface.widgets.signal_visualizer_tools.SignalVisualizerTool import Tools
 from graphic_interface.widgets.signal_visualizer_tools.NoTool import NoTool
 from graphic_interface.widgets.signal_visualizer_tools.OscilogramTools.ZoomTool import ZoomTool as OscilogramZoomTool
-from graphic_interface.widgets.signal_visualizer_tools.SpectrogramTools.SpectrogramZoomTool import SpectrogramZoomTool
-from graphic_interface.widgets.signal_visualizer_tools.OscilogramTools.PointerCursorTool import PointerCursorTool as OscilogramPointerTool
-from graphic_interface.widgets.signal_visualizer_tools.SpectrogramTools.PointerCursorTool import PointerCursorTool as SpectrogramPointerTool
 from graphic_interface.widgets.signal_visualizer_tools.OscilogramTools.RectangularCursorTool import RectangularCursorTool as OscilogramRectangularCursorTool
+from graphic_interface.widgets.signal_visualizer_tools.OscilogramTools.PointerCursorTool import PointerCursorTool as OscilogramPointerTool
+from graphic_interface.widgets.signal_visualizer_tools.SpectrogramTools.SpectrogramZoomTool import SpectrogramZoomTool
+from graphic_interface.widgets.signal_visualizer_tools.SpectrogramTools.PointerCursorTool import PointerCursorTool as SpectrogramPointerTool
 from graphic_interface.widgets.signal_visualizer_tools.SpectrogramTools.RectangularCursorTool import RectangularCursorTool as SpectrogramRectangularCursorTool
 from graphic_interface.widgets.undo_redo_actions.UndoRedoActions import *
 
@@ -29,7 +27,7 @@ class IntervalCursor:
         self.max = maxvalue
 
 
-class QSignalVisualizerWidget(QWidget):
+class QSignalVisualizerWidget(QtGui.QWidget):
     """
     Widget to visualize a signal in time and frequency domain.
     Provides wrappers for useful signal processing methods.
@@ -43,6 +41,9 @@ class QSignalVisualizerWidget(QWidget):
     # raise the limits of the interval in signal data array coordinates
     signalIntervalSelected = QtCore.pyqtSignal(int, int)
 
+    # signal raised when the name of the signal is changed by code
+    # raise the new name
+    signalNameChanged = pyqtSignal(str)
     # endregion
 
     # region CONSTANTS
@@ -57,11 +58,12 @@ class QSignalVisualizerWidget(QWidget):
 
     # endregion
 
+    # region Initialize
+
     def __init__(self, parent=None, signal=None, **kwargs):
-        QWidget.__init__(self, parent)
+        QtGui.QWidget.__init__(self, parent)
 
         #  !!! THE ORDER OF VARIABLES INITIALIZATION IS RELEVANT !!!
-
         #  the two widgets in which are delegated the functions of time and
         #  frequency domain representation and visualization.
         self.axesOscilogram = SoundLabOscillogramWidget(**kwargs)
@@ -94,6 +96,9 @@ class QSignalVisualizerWidget(QWidget):
         self.axesSpecgram.signalChanged.connect(lambda x1, x2: self.axesOscilogram.updateSignal(x1, x2))
         self.axesOscilogram.signalChanged.connect(lambda x1, x2: self.axesSpecgram.updateSignal(x1, x2))
 
+        # variable to avoid multiple recursion calls to update limits of spec and osc widgets
+        self.zoom_update_in_progress = False
+
         #  connect the signals for tools data detected
         self.axesOscilogram.toolDataDetected.connect(lambda x: self.toolDataDetected.emit(x))
         self.axesSpecgram.toolDataDetected.connect(lambda x: self.toolDataDetected.emit(x))
@@ -106,14 +111,38 @@ class QSignalVisualizerWidget(QWidget):
         self.horizontalScrollBar.setOrientation(QtCore.Qt.Horizontal)
         self.horizontalScrollBar.valueChanged.connect(self.scrollBarRangeChanged)
 
+        self.signalPlayer = None
+        self.editionSignalProcessor = None
+        self.commonSignalProcessor = None
+
         # current signal to initialize
         self._signal = None
         self.signal = signal if signal is not None else Synthesizer.generateSilence(duration=1)
 
         self.setSelectedTool(Tools.ZoomTool)
 
+        self.configure_widget_layout()
+
+        #  variables for visualization
+        self._visibleOscillogram = True
+        self._visibleSpectrogram = True
+
+        self._recordTimer = QTimer(self)
+        self._recordTimer.timeout.connect(self.on_newDataRecorded)
+
+        # signal file path to save and read the signals from files.
+        # None if signal was not loaded from file
+        self.__signalFilePath = None
+
+        self.graph()
+
+    def configure_widget_layout(self):
+        """
+        Set some initial state configurations of the widget layout
+        :return:
+        """
         #  grouping the oscilogram and spectrogram widgets in the control
-        layout = QVBoxLayout()
+        layout = QtGui.QVBoxLayout()
         layout.setContentsMargins(0, 0, 0, 0)
 
         layout.addWidget(self.axesOscilogram)
@@ -125,21 +154,7 @@ class QSignalVisualizerWidget(QWidget):
         layout.setStretch(2, 1)
         self.setLayout(layout)
 
-        #  variables for visualization
-        self._visibleOscillogram = True
-        self._visibleSpectrogram = True
-
-        self._recordTimer = QTimer(self)
-        self._recordTimer.timeout.connect(self.on_newDataRecorded)
-
-        self.signalPlayer = AudioSignalPlayer(self.signal)
-        self.signalPlayer.playing.connect(self.notifyPlayingCursor)
-        self.signalPlayer.playingDone.connect(self.removePlayerLine)
-
-        # signal file path to save and read the signals from files. None if signal was not loaded from file
-        self.__signalFilePath = None
-
-        self.workSpace = None
+    # endregion
 
     # region Scroll Bar
 
@@ -156,12 +171,6 @@ class QSignalVisualizerWidget(QWidget):
         """
         This method updates the values of the scrollbar
         """
-
-        # if the scrollbar is up to date then nothing is need to be done
-        if self.mainCursor.min == self.horizontalScrollBar.value() and \
-            self.mainCursor.max == self.horizontalScrollBar.value() + self.horizontalScrollBar.pageStep():
-            return
-
         self.horizontalScrollBar.blockSignals(True)
 
         # ----------------------------------------
@@ -171,6 +180,10 @@ class QSignalVisualizerWidget(QWidget):
         self.horizontalScrollBar.setPageStep(self.mainCursor.max - self.mainCursor.min)
         self.horizontalScrollBar.setSingleStep((self.mainCursor.max - self.mainCursor.min) / self.SCROLL_BAR_STEP)
         # ----------------------------------------
+
+        # if zoom tool is selected update its limits here because
+        # this is where all change range operations finish it's processing
+        self.updateZoomRegionsLimits()
 
         self.horizontalScrollBar.blockSignals(False)
 
@@ -187,6 +200,7 @@ class QSignalVisualizerWidget(QWidget):
         :param x2: the end limit of the new visible interval in signal data array indexes
         :return:
         """
+
         self.axesOscilogram.changeRange(x1, x2)
         self.mainCursor.min = x1
         self.mainCursor.max = x2
@@ -219,11 +233,15 @@ class QSignalVisualizerWidget(QWidget):
         Set the limits of the zoom regions if the zoom tool is selected
         :return:
         """
-        if self.selectedTool == Tools.ZoomTool:
-            pass
-            # set the limits of the zoom regions to the length of the signal
-            # self.axesOscilogram.gui_user_tool.zoomRegion.setBounds((0, self.signal.length))
-            # self.axesSpecgram.gui_user_tool.zoomRegion.setBounds((0, self.from_osc_to_spec(self.signal.length)))
+        if self.selectedTool != Tools.ZoomTool:
+            return
+
+        min_limit, max_limit = self.mainCursor.min, self.mainCursor.max
+        # set the limits of the zoom regions to the length of the signal
+        self.axesOscilogram.gui_user_tool.zoomRegion.setBounds((min_limit, max_limit))
+
+        self.axesSpecgram.gui_user_tool.zoomRegion.setBounds((self.from_osc_to_spec(min_limit),
+                                                              self.from_osc_to_spec(max_limit)))
 
     def updateSpecZoomRegion(self):
         """
@@ -250,6 +268,14 @@ class QSignalVisualizerWidget(QWidget):
         :param oscilogram_update: if the update was made in the oscilogram zoom region
         :return:
         """
+        # to avoid multiple recursive calls at this method because
+        # the signal raised by the zoom region widgets of osc and spec widgets
+        if self.zoom_update_in_progress:
+            return
+
+        # avoid multiples recursion calls when update the zoom regions in widgets
+        self.zoom_update_in_progress = True
+
         oscilogram_zoom_region = self.axesOscilogram.gui_user_tool.zoomRegion.getRegion()
         spectrogram_zoom_region = self.axesSpecgram.gui_user_tool.zoomRegion.getRegion()
 
@@ -263,19 +289,23 @@ class QSignalVisualizerWidget(QWidget):
         #  rename for easy code
         spec_min_x, spec_max_x = spec_region_coords_in_osc[0], spec_region_coords_in_osc[1]
 
+        min_x_spec = self.from_osc_to_spec(osc_max_x)
+        max_x_spec = self.from_osc_to_spec(osc_min_x)
+
         if abs(osc_max_x - spec_max_x) > 1 or abs(osc_min_x - spec_min_x) > 1:
-            if oscilogram_update:
-                min_x_spec = self.from_osc_to_spec(osc_max_x)
-                max_x_spec = self.from_osc_to_spec(osc_min_x)
+            if oscilogram_update and (min_x_spec != spec_min_x or max_x_spec != spec_max_x):
                 self.axesSpecgram.gui_user_tool.zoomRegion.setRegion([min_x_spec, max_x_spec])
                 self.signalIntervalSelected.emit(osc_min_x,osc_max_x)
-            else:
-                self.signalIntervalSelected.emit(spec_min_x,spec_min_x)
-                self.axesOscilogram.gui_user_tool.zoomRegion.setRegion([spec_min_x,spec_min_x])
+            elif not oscilogram_update and (spec_min_x != osc_min_x or spec_max_x != osc_max_x):
+                self.axesOscilogram.gui_user_tool.zoomRegion.setRegion([spec_min_x, spec_max_x])
+                self.signalIntervalSelected.emit(spec_min_x, spec_max_x)
+
+        self.zoom_update_in_progress = False
 
     #  endregion
 
     #  region Undo Redo
+
     def undo(self):
         """
         Undo the last signal processing action.
@@ -301,18 +331,30 @@ class QSignalVisualizerWidget(QWidget):
         Audio Device is unavailable.
         """
         start, end = self.selectedRegion
-        
         self.addPlayerLine(start, end)
         self.signalPlayer.play(start, end, self.playSpeed)
+
+    def setPlayLoopEnabled(self, enabled):
+        """
+        Define the play loop as enable or disabled
+        :param enabled: boolean. True to enable play in loop false otherwise.
+        :return:
+        """
+        self.signalPlayer.playLoop = enabled
 
     def switchPlayStatus(self):
         """
         Change the play status from PLAYING into PAUSE
         and vice versa.
         """
-        if self.signalPlayer.playStatus == AudioSignalPlayer.PLAYING:
+        if self.signalPlayer.playStatus == AudioSignalPlayer.PLAYING or \
+           self.signalPlayer.playStatus == AudioSignalPlayer.RECORDING:
+
             self.pause()
-        elif self.signalPlayer.playStatus == AudioSignalPlayer.PAUSED:
+
+        elif self.signalPlayer.playStatus == AudioSignalPlayer.PAUSED or \
+             self.signalPlayer.playStatus == AudioSignalPlayer.STOPPED:
+
             self.play()
 
     def stop(self):
@@ -342,14 +384,14 @@ class QSignalVisualizerWidget(QWidget):
         #  the player read from the record stream
         self.signalPlayer.readFromStream()
         # update the current view interval of the recording signal
-        if len(self.signal) > 0:
+        if self.signal.length > 0:
             self.mainCursor.max = self.signal.length
 
             # draw the last signal second
             self.mainCursor.min = max(0, self.signal.length - self.signal.samplingRate)
             self.graph()
 
-    def record(self, newSignal=True):
+    def record(self, newSignal=False):
         """
         Start to record a new signal.
         If the signal is been playing nothing is made.
@@ -357,13 +399,19 @@ class QSignalVisualizerWidget(QWidget):
         Audio Device is unavailable.
         """
         if newSignal:
-            self.signal = AudioSignal(self.signal.samplingRate,self.signal.bitDepth,self.signal.channelCount)
+            self.signal = AudioSignal(self.signal.samplingRate, self.signal.bitDepth, self.signal.channelCount)
         #  Here we try to record and in
         #   case of any IO device exception occurs then
         #  we just stop recording immediately.
         try:
             self.axesSpecgram.setRecordMode(True)
             self.signalPlayer.record()
+            # add a undo redo action to save the state of signal edited.
+            # reserved to future use the implementation
+            # of the redo action for return to the previous one before record
+            action = RecordAction(self._signal)
+            self.undoRedoManager.add(action)
+
         except Exception as ex:
             self.stop()
             self.signal = Synthesizer.generateSilence(samplingRate=self.signal.samplingRate,
@@ -433,6 +481,23 @@ class QSignalVisualizerWidget(QWidget):
     #  endregion
 
     #  region Properties
+    @property
+    def signalName(self):
+        """
+        Returns the name of the current signal if it has one.
+        An empty string is returned if there is no signal.
+        :return: string with the name or default name.
+        """
+        return "" if self._signal is None else self._signal.name
+
+    @signalName.setter
+    def signalName(self, name):
+        if name != self._signal.name:
+            action = SignalNameChangeAction(self._signal, name)
+            action.signalNameChanged.connect(lambda name: self.signalNameChanged.emit(name))
+
+            self.undoRedoManager.add(action)
+            self._signal.name = name
 
     # region Audio Devices
 
@@ -500,8 +565,15 @@ class QSignalVisualizerWidget(QWidget):
 
     @visibleSpectrogram.setter
     def visibleSpectrogram(self, value):
+        """
+        Change the visibility of the specgram widget.
+        :param value: Bolean with the new visibility
+        :return:
+        """
         self._visibleSpectrogram = value
         self.axesSpecgram.setVisible(value)
+        # update graph to avoid the pyqtgraph
+        # widget error that do not update the axis grid lines
 
     @property
     def playSpeed(self):
@@ -509,7 +581,7 @@ class QSignalVisualizerWidget(QWidget):
 
     @playSpeed.setter
     def playSpeed(self, value):
-        if value <= 0:
+        if not 0 <= value <= 100:
             raise Exception("The play speed must be positive.")
         self._playSpeed = value
 
@@ -538,21 +610,22 @@ class QSignalVisualizerWidget(QWidget):
         self.axesOscilogram.signal = new_signal
         self.axesSpecgram.signal = new_signal
 
+        # update workspace values for the widgets
+        self.axesSpecgram.workspace.maxY = 0
+        self.axesSpecgram.workspace.maxY = new_signal.samplingRate / 2.0
+
         # update the zoom regions limit sif zoom tool is selected
         self.updateZoomRegionsLimits()
 
-        input = None
-        output = None
         #  update the variables that manage the signal
         #  the audio signal handler to play options
         if self.signalPlayer is not None and (self.signalPlayer.playStatus == self.signalPlayer.RECORDING \
-          or self.signalPlayer.playStatus == self.signalPlayer.PLAYING):
+           or self.signalPlayer.playStatus == self.signalPlayer.PLAYING):
                 self.stop()
 
         self.signalPlayer = AudioSignalPlayer(self._signal)
         self.signalPlayer.playing.connect(self.notifyPlayingCursor)
         self.signalPlayer.playingDone.connect(self.removePlayerLine)
-
 
         #  the edition object that manages cut and paste options
         self.editionSignalProcessor = EditionSignalProcessor(self._signal)
@@ -575,21 +648,25 @@ class QSignalVisualizerWidget(QWidget):
         """
         #  get the current visible interval indexes
         index_from, index_to = self.mainCursor.min, self.mainCursor.max
+        index_from_zoom, index_to_zoom = index_from, index_to
 
         #  if selected tool is Zoom get the selection interval indexes
-        axe = self.axesOscilogram if self.visibleOscilogram \
-                                  else self.axesSpecgram if self.visibleSpectrogram \
-                                  else None
+        if self.selectedTool == Tools.ZoomTool:
+            if self.visibleOscilogram:
+                index_from_zoom, index_to_zoom = self.axesOscilogram.gui_user_tool.zoomRegion.getRegion()
 
-        if self.selectedTool == Tools.ZoomTool and axe is not None:
-            zoom_region = axe.gui_user_tool.zoomRegion.getRegion()
-            if zoom_region[0] >= index_from and zoom_region[1] <= index_to:
-                #  get the start of the region
-                index_from = zoom_region[0]
+            elif self.visibleSpectrogram:
+                spec_rgn = self.axesSpecgram.gui_user_tool.zoomRegion.getRegion()
+                index_from_zoom, index_to_zoom = self.from_spec_to_osc(spec_rgn[0]), self.from_spec_to_osc(spec_rgn[1])
 
-                #  set the maxThresholdLabel limit if the region borders are different
-                if zoom_region[1] > zoom_region[0]:
-                     index_to = zoom_region[1]
+            index_from_zoom, index_to_zoom = max(index_from, index_from_zoom), min(index_to, index_to_zoom)
+
+            if index_from < index_from_zoom < index_to_zoom:
+                index_from = index_from_zoom
+
+            if index_from_zoom < index_to_zoom < index_to:
+                # get the start of the region
+                index_to = index_to_zoom
 
         return int(index_from), int(index_to)
 
@@ -630,13 +707,13 @@ class QSignalVisualizerWidget(QWidget):
         """
         interval_size_added = (self.mainCursor.max - self.mainCursor.min) / self.ZOOM_STEP
 
-        # update the maxThresholdLabel interval limit
-        if (self.mainCursor.max + interval_size_added) < len(self.signal):
+        # update the max interval limit
+        if (self.mainCursor.max + interval_size_added) < self.signal.length:
             self.mainCursor.max += interval_size_added
         else:
-            self.mainCursor.max = len(self.signal)
+            self.mainCursor.max = self.signal.length
 
-        #  update the minThresholdLabel interval limit
+        #  update the min interval limit
         if self.mainCursor.min - interval_size_added >= 0:
             self.mainCursor.min -= interval_size_added
         else:
@@ -650,7 +727,7 @@ class QSignalVisualizerWidget(QWidget):
         Set to visible the complete signal.
         """
         self.mainCursor.min = 0
-        self.mainCursor.max = len(self.signal)
+        self.mainCursor.max = self.signal.length
         self.graph()
 
     #  endregion
@@ -664,11 +741,20 @@ class QSignalVisualizerWidget(QWidget):
         :param updateSpecgram:
         :return:
         """
-        # update first the spectrogram because is the heaviest computation
-        self.axesSpecgram.graph(indexFrom=self.mainCursor.min, indexTo=self.mainCursor.max)
+        # ensure that the region to graph is inside the signal limits
+        self.mainCursor.max = min(self.mainCursor.max, self.signal.length)
+        self.mainCursor.min = max(self.mainCursor.min, 0)
+        if self.mainCursor.min > self.mainCursor.max:
+            self.zoomNone()
+
         self.axesOscilogram.graph(indexFrom=self.mainCursor.min, indexTo=self.mainCursor.max)
+        self.axesSpecgram.graph(indexFrom=self.mainCursor.min, indexTo=self.mainCursor.max)
 
         self.updateScrollbar()
+
+        # update the coordinates of zoom
+        if self.selectedTool == Tools.ZoomTool:
+            self.updateZoomRegion(oscilogram_update=True)
 
     #  endregion
 
@@ -678,22 +764,16 @@ class QSignalVisualizerWidget(QWidget):
         """
         Cut the current selected section of the signal for later paste
         in this or another instance of the sound lab.
-        If the zoom cursor is active then the its selection is taked.
+        If the zoom cursor is active then the its selection is taken.
         else the whole inteval of current visualization is used.
         """
         # get the current signal selection interval
         start, end = self.selectedRegion
-        self.editionSignalProcessor.cut(start,end)
+        self.editionSignalProcessor.cut(start, end)
+        self.undoRedoManager.add(CutAction(self.signal, start, end))
+        self.graph()
 
-        # connect the action of cut for update
-        # the signal and visualization in the undo and redo
-        action = CutAction(self.signal, start, end)
-        action.signal_size_changed.connect(self._updateSignal)
-
-        self.undoRedoManager.add(action)
-        self._updateSignal(self.editionSignalProcessor.signal)
-
-    def _updateSignal(self,new_signal):
+    def _updateSignal(self, new_signal):
         """
         Update the signal property and the visualization in the widgets.
         Used when a changing size undo redo action is produced.
@@ -711,8 +791,8 @@ class QSignalVisualizerWidget(QWidget):
         """
         #  get the current signal selection interval
         start, end = self.selectedRegion
+        self.editionSignalProcessor.copy(start, end)
         self.undoRedoManager.add(CopyAction(self.signal, start, end))
-        self.editionSignalProcessor.copy(start,end)
 
     def paste(self):
         """
@@ -721,16 +801,8 @@ class QSignalVisualizerWidget(QWidget):
         """
         #  get the current signal selection interval
         start, end = self.selectedRegion
-
         self.editionSignalProcessor.paste(start)
-
-        #  connect the action of paste for update
-        #  the signal and visualization in the undo and redo
-        #  because the paste action do not change the signal reference but the size
-        action = PasteAction(self.signal, start, end)
-        action.signal_size_changed.connect(self._updateSignal)
-
-        self.undoRedoManager.add(action)
+        self.undoRedoManager.add(PasteAction(self.signal, start, end))
         self.graph()
 
     #  endregion
@@ -948,6 +1020,19 @@ class QSignalVisualizerWidget(QWidget):
     #  endregion
 
     # region WorkSpace
+    @property
+    def oscilogramWorkSpace(self):
+        """
+        :return: the workspace of the oscilogram signal widget
+        """
+        return self.axesOscilogram.workspace
+
+    @property
+    def spectrogramWorkSpace(self):
+        """
+        :return: the workspace of the spectrogram signal widget
+        """
+        return self.axesSpecgram.workspace
 
     def load_workspace(self, workspace, forceUpdate=False):
         """
@@ -957,9 +1042,8 @@ class QSignalVisualizerWidget(QWidget):
         :param workspace: the workspace to load
         :param forceUpdate: whether to update even if there were no changes to the workspace
         """
-        self.workSpace = workspace.copy()
-        self.axesOscilogram.load_workspace(workspace.oscillogramWorkspace, forceUpdate)
         self.axesSpecgram.load_workspace(workspace.spectrogramWorkspace, forceUpdate)
+        self.axesOscilogram.load_workspace(workspace.oscillogramWorkspace, forceUpdate)
 
     # endregion
 
@@ -1001,14 +1085,6 @@ class QSignalVisualizerWidget(QWidget):
 
         self.__selectedTool = tool
 
-    def signalName(self):
-        """
-        Returns the name of the current signal if it has one.
-        An empty string is returned if there is no signal.
-        :return: string with the name or default name.
-        """
-        return "" if self._signal is None else self._signal.name
-
     def createContextCursor(self, actions):
         """
         method that add a number of actions to the control's context menu.
@@ -1019,8 +1095,8 @@ class QSignalVisualizerWidget(QWidget):
             if isinstance(act, QtGui.QAction):
                 self.addAction(act)
 
-    def from_osc_to_spec(self,x):
+    def from_osc_to_spec(self, x):
         return self.axesSpecgram.from_osc_to_spec(x)
 
-    def from_spec_to_osc(self,x):
+    def from_spec_to_osc(self, x):
         return self.axesSpecgram.from_spec_to_osc(x)

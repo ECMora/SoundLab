@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 from collections import deque
+
 import numpy as np
+
 from sound_lab_core.Segmentation.Detectors.ElementsDetector import ElementsDetector
-from sound_lab_core.Segmentation.Elements.TwoDimensionalElement import SpecgramElement
+from sound_lab_core.Elements.TwoDimensionalElements.TwoDimensionalElement import SpecgramElement
 
 
 class TwoDimensionalElementsDetector(ElementsDetector):
@@ -10,13 +12,13 @@ class TwoDimensionalElementsDetector(ElementsDetector):
         ElementsDetector.__init__(self)
         self.regionsOverUmbral = []
         self._nr, self._nc = 0, 0
-        self._dr, self._dc = [-1,0,1,0], [0,1,0,-1]
+        self._dr, self._dc = [-1, 0, 1, 0], [0, 1, 0, -1]
         self._gt_tresh = np.ndarray((0, 0))
         self.pxx = np.ndarray((0, 0))
         self.markedPxx = self.pxx
 
     def detect(self, signal, threshold, pxx, freqs, bins, minsize=(0, 0),one_dimensional_parent=None,location=None):
-        if(signal is None):
+        if signal is None:
                 return
         #gets the  relevant regions in spectrogram
         self.pxx = pxx
@@ -35,8 +37,8 @@ class TwoDimensionalElementsDetector(ElementsDetector):
                         self.markedPxx[idxs[0], idxs[1]] = 0
                     continue
                 else:
-                    rc = SpecgramElement(signal,pxx[regionBounds[0]: regionBounds[1],regionBounds[2]:regionBounds[3]],freqs,regionBounds[0],regionBounds[1],bins,regionBounds[2],regionBounds[3],number=elemIndex,one_dimensional_parent=one_dimensional_parent,location=location, multipleSubelements=True)
-                    elemIndex+=1
+                    rc = SpecgramElement(signal, pxx[regionBounds[0]: regionBounds[1],regionBounds[2]:regionBounds[3]],freqs,regionBounds[0],regionBounds[1],bins,regionBounds[2],regionBounds[3],number=elemIndex,one_dimensional_parent=one_dimensional_parent,location=location, multipleSubelements=True)
+                    elemIndex += 1
                     self.elements.append(rc)
 
     def _islandDelete(self, r, c, element_number):

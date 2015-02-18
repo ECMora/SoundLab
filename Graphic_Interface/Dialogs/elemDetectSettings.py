@@ -1,121 +1,251 @@
 # -*- coding: utf-8 -*-
-from math import log10
-
 from PyQt4 import QtGui
-from PyQt4.QtCore import pyqtSlot
 from PyQt4.QtGui import QDialog
-from pyqtgraph.parametertree import ParameterTree
-
-from sound_lab_core.Segmentation.Detectors.OneDimensional.OneDimensionalElementsDetector import DetectionSettings, DetectionType,AutomaticThresholdType
-from graphic_interface.windows.ui_python_files.ui_elemDetectSettings import Ui_Dialog
+from pyqtgraph.parametertree import Parameter, ParameterTree
+from pyqtgraph.parametertree.parameterTypes import ListParameter
+from graphic_interface.windows.ParameterList import DuettoListParameterItem
+from graphic_interface.windows.ui_python_files.detectElementsDialog import Ui_Dialog
+from Utils.Utils import small_signal
+from sound_lab_core.AdapterFactory import ParametersAdapterFactory, SegmentationAdapterFactory, \
+    ClassificationAdapterFactory
+from sound_lab_core.Segmentation.Detectors.OneDimensional.EnvelopeMethods.AbsDecayEnvelopeDetector import \
+    AbsDecayEnvelopeDetector
 
 
 class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
-    def __init__(self, parent, paramTree):
-        super(QDialog,self).__init__(parent)
+    """
+    Dialog that allow to the user to select
+    the segmentation, parameter measurement and classification
+    type that would be used on the process of a segment.
+    Factory of detectors, parameter measurers and classifiers
+    """
+
+    # region Initialize
+
+    def __init__(self, parent, signal=None):
+        QDialog.__init__(self, parent)
         self.setupUi(self)
 
-        if parent is not None:
-            self.widget.axesSpecgram
-            self.widget.signal = parent.widget.signal
+        if signal is not None:
+            self.widget.signal = small_signal(signal)
+            # else load a didactic signal
 
+        self._detector = None
+        self._classifier = None
 
-        self.detectortypeData = [DetectionType.LocalMax,
-                             DetectionType.IntervalRms,DetectionType.IntervalMaxMedia,
-                             DetectionType.IntervalMaxProportion,
-                             DetectionType.Envelope_Abs_Decay_Averaged,
-                             DetectionType.Envelope_Rms]
+        self._parameterAdapterFactory = ParametersAdapterFactory(self)
+        self._segmentationAdapterFactory = SegmentationAdapterFactory(self)
+        self._classificationAdapterFactory = ClassificationAdapterFactory(self)
 
-        self.detectionSettings = DetectionSettings(DetectionType.Envelope_Abs_Decay_Averaged,AutomaticThresholdType.Global_MaxMean)
+        self.parameter_measurement_paramTree = ParameterTree()
+        self.parameter_measurementParamTree = None
 
-        self.ParamTree = paramTree
-        self.ParamTree.param(unicode(self.tr(u'Temporal Detection Settings'))).sigTreeStateChanged.connect(self.detect)
-        self.ParamTree.param(unicode(self.tr(u'Spectral Detection Settings'))).sigTreeStateChanged.connect(self.detect)
-        self.ParamTree.param(unicode(self.tr(u'Temporal Detection Settings'))).param(unicode(self.tr(u'Detection Method'))).sigTreeStateChanged.connect(self.changeDetectionMethod)
-        self.ParamTree.param(unicode(self.tr(u'Temporal Detection Settings'))).param(unicode(self.tr(u'Threshold (db)'))).sigTreeStateChanged.connect(self.updateThresholdLine)
-        self.ParamTree.param(unicode(self.tr(u'Spectral Detection Settings'))).param(unicode(self.tr(u'Detect Spectral Subelements'))).sigTreeStateChanged.connect(self.updateGraphsVisibility)
-        self.ParamTree.param(unicode(self.tr(u'Temporal Detection Settings'))).param(unicode(self.tr(u'Auto'))).sigTreeStateChanged.connect(self.changeDetectionMethod)
-        self.parameterTree = ParameterTree()
-        self.parameterTree.setAutoScroll(True)
-        self.parameterTree.setFixedWidth(340)
-
-        self.parameterTree.setHeaderHidden(True)
-        self.parameterTree.setParameters(self.ParamTree, showTop=False)
-
-        lay1 = QtGui.QVBoxLayout()
-        lay1.setMargin(0)
-        lay1.addWidget(self.parameterTree)
-
-        self.osc_settings_contents.setLayout(lay1)
-        # self.dock_settings.setVisible(False)
-        self.dock_settings.setFixedWidth(350)
+        self.segmentation_classification_paramTree = ParameterTree()
+        self.segmentation_classificationParamTree = None
 
         self.widget.visibleSpectrogram = False
         self.widget.visibleOscilogram = True
 
-
-        self.widget.signal = self.widget.signal.smallSignal()
-        if self.widget.signal is None:
-            self.widget.open("Utils\\Didactic Signals\\recognition.wav")
-
-        # self.widget.axesOscilogram.threshold.sigPositionChangeFinished.connect(self.updateThreshold)
-        # self.widget.axesOscilogram.threshold.setBounds((-2**(self.widget.signalProcessor.signal.bitDepth-1),2**(self.widget.signalProcessor.signal.bitDepth-1)))
+        # Parameter Tree Settings
+        self.__createParameterTrees()
 
         self.detect()
 
-    def changeDetectionMethod(self,paramTree,changes):
-        for param, change, data in changes:
-            path = self.ParamTree.childPath(param)
-            if path is not None:
-                childName = '.'.join(path)
-            else:
-                childName = param.name()
-            if childName == unicode(self.tr(u'Temporal Detection Settings')) + u'.' +\
-                    unicode(self.tr(u'Detection Method')):
-                self.detectionSettings.detectiontype = self.detectortypeData[data]
-            elif childName == unicode(self.tr(u'Temporal Detection Settings')) + u'.' + unicode(self.tr(u'Auto')):
-                if data:
-                    self.detectionSettings.automaticthresholdtype = AutomaticThresholdType.Global_MaxMean
-                else:
-                    self.detectionSettings.automaticthresholdtype = AutomaticThresholdType.UserDefined
-        self.detect()
+    def __createParameterTrees(self):
+        """
+        Create the ParameterTree with the options of the dialog.
+        The ParameterTree contains the combo box of
+        the active parameters measurements and to select.
+        :return:
+        """
+        self.createSegmentation_ClassificationParameterTree()
+        self.createMeasurementParameterTree()
+        self.configureParameterTreesLayout()
 
-    def updateGraphsVisibility(self):
-        self.widget.visibleSpectrogram = self.ParamTree.param(unicode(self.tr(u'Spectral Detection Settings'))).param(unicode(self.tr(u'Detect Spectral Subelements'))).value()
-        self.widget.refresh()
+    def createSegmentation_ClassificationParameterTree(self):
+        # set the segmentation and classification parameters
+        segmentation_adapters = self.segmentationAdapterFactory.adapters_names()
+        segmentation_adapters = [(self.tr(unicode(t)), t) for t in segmentation_adapters]
 
-    def updateThreshold(self,line):
-        self.ParamTree.param(unicode(self.tr(u'Temporal Detection Settings'))).param(unicode(self.tr(u'Threshold (db)'))).setValue(self.toDB() if line.value() == 0 else self.toDB(line.value()))
+        classification_adapters = self.classificationAdapterFactory.adapters_names()
+        classification_adapters = [(self.tr(unicode(t)), t) for t in classification_adapters]
 
-    def updateThresholdLine(self):
-        thresholdValue = self.ParamTree.param(unicode(self.tr(u'Temporal Detection Settings'))).param(unicode(self.tr(u'Threshold (db)'))).value()
-        self.widget.axesOscilogram.threshold.setValue(round((10.0**((60 + thresholdValue)/20.0))*(2**self.widget.signalProcessor.signal.bitDepth)/1000.0,0)
-                                                      *self.widget.envelopeFactor-2**(self.widget.signalProcessor.signal.bitDepth-1))
+        params = [
+            {u'name': unicode(self.tr(u'Segmentation')),
+             u'type': u'group', u'children':
+                [{u'name': unicode(self.tr(u'Method')),
+                  u'type': u'list',
+                  u'value': segmentation_adapters[0][1],
+                  u'default': segmentation_adapters[0][1],
+                  u'values': segmentation_adapters}],
+             u'expanded': False
+            },
+            {u'name': unicode(self.tr(u'Classification')),
+             u'type': u'group', u'children':
+                [{u'name': unicode(self.tr(u'Method')),
+                  u'type': u'list',
+                  u'values': classification_adapters}],
+             u'expanded': False
+            }]
 
-    def toDB(self,value=None):
-        if value is None:
-            return -60
-        return -60 + int(20*log10(abs((value+2**(self.widget.signalProcessor.signal.bitDepth-1))/self.widget.envelopeFactor)*1000.0/(2**self.widget.signalProcessor.signal.bitDepth)))
+        ListParameter.itemClass = DuettoListParameterItem
+        self.segmentation_classificationParamTree = Parameter.create(
+            name=unicode(self.tr(u'Segmentation-Classification')), type=u'group', children=params)
 
-    def load_Theme(self,theme):
-        self.theme = theme
-        self.widget.load_Theme(theme)
-        self.widget.graph()
+        self.segmentation_classificationParamTree.param(unicode(self.tr(u'Segmentation'))). \
+            param(unicode(self.tr(u'Method'))).sigValueChanged.connect(self.segmentationChanged)
 
-    @pyqtSlot()
+        self.segmentation_classificationParamTree.param(unicode(self.tr(u'Classification'))). \
+            param(unicode(self.tr(u'Method'))).sigValueChanged.connect(self.segmentationChanged)
+
+        # create and set initial properties
+        self.segmentation_classification_paramTree.setAutoScroll(True)
+        self.segmentation_classification_paramTree.setHeaderHidden(True)
+        self.segmentation_classification_paramTree.setParameters(self.segmentation_classificationParamTree)
+
+    def createMeasurementParameterTree(self):
+        # set the segmentation and classification parameters
+        ListParameter.itemClass = DuettoListParameterItem
+        self.parameter_measurementParamTree = Parameter.create(name=unicode(self.tr(u'Parameter Measurements')),
+                                                               type=u'group')
+        for p in self.parameterAdapterFactory.adapters_names():
+            group = Parameter.create(name=unicode(self.tr(unicode(p))),
+                                     type=u'group', expanded=False)
+
+            measure = Parameter.create(name=unicode(self.tr(u'Measure')), type=u'bool', default=False,
+                                       value=False)
+            group.addChild(measure)
+
+            param_settings = self.parameterAdapterFactory.get_adapter(p).get_settings()
+
+            if param_settings is not None:
+                group.addChild(param_settings)
+
+            self.parameter_measurementParamTree.addChild(group)
+
+        self.parameter_measurement_paramTree.setAutoScroll(True)
+        self.parameter_measurement_paramTree.setHeaderHidden(True)
+        self.parameter_measurement_paramTree.setParameters(self.parameter_measurementParamTree)
+
+    def configureParameterTreesLayout(self):
+        """
+        Configure the layout of the parameter trees of segmentation,
+        classification methods and parameter measurement.
+        :return:
+        """
+        layout = QtGui.QVBoxLayout()
+        layout.setMargin(0)
+        layout.addWidget(self.segmentation_classification_paramTree)
+        self.segmentation_classification_settings.setLayout(layout)
+
+        layout2 = QtGui.QVBoxLayout()
+        layout2.setMargin(0)
+        layout2.addWidget(self.parameter_measurement_paramTree)
+        self.parameter_measurement_settings.setLayout(layout2)
+
+    def segmentationChanged(self, parameter):
+        """
+        :param parameter:
+        :return:
+        """
+        try:
+            parameter.clearChildren()
+
+            adapter = self.segmentationAdapterFactory.get_adapter(parameter.value())
+
+            method_settings = adapter.get_settings()
+            if method_settings:
+                parameter.addChild(method_settings)
+
+        except Exception as ex:
+            print("Error getting the segmentation settings. " + ex.message)
+
+    # endregion
+
+    # region WorkSpace
+
+    def load_workspace(self, workspace):
+        """
+        Method that loads the workspace to update visual options from main window.
+        :param workspace:
+        """
+        self.widget.load_workspace(workspace)
+
+    # endregion
+
+    # region  Factory Adapters Properties
+    @property
+    def parameterAdapterFactory(self):
+        return self._parameterAdapterFactory
+
+    @property
+    def segmentationAdapterFactory(self):
+        return self._segmentationAdapterFactory
+
+    @property
+    def classificationAdapterFactory(self):
+        return self._classificationAdapterFactory
+
+    # endregion
+
+    # region Detector, Parameter Measurers and Classifier
+
+    @property
+    def detector(self):
+        """
+        :return: The selected detector to perform segmentation
+        """
+        # create manually the detector
+        detector_instance = None
+        try:
+            detector_name = self.segmentation_classificationParamTree.param(unicode(self.tr(u'Segmentation'))). \
+                param(unicode(self.tr(u'Method'))).value()
+
+            adapter = self.segmentationAdapterFactory.get_adapter(detector_name)
+
+            detector_instance = adapter.get_instance()
+
+        except Exception as e:
+            print("Fail to get the detector instance. " + e.message)
+            detector_instance = None
+
+        self._detector = detector_instance if detector_instance is not None else AbsDecayEnvelopeDetector(
+            self.widget.signal, 1, -40, 2, 5, 6)
+
+        self._detector.signal = self.widget.signal
+
+        return self._detector
+
+    @detector.setter
+    def detector(self, value):
+        self._detector = value
+
+    def get_measurer_list(self):
+        """
+        :return: The list of selected parameters to measure
+        """
+        parameters_list = self.parameter_measurementParamTree.children()
+
+        # get just the parameter selected by user to be measured
+        parameters_adapters_list = [self.parameterAdapterFactory.get_adapter(x.name()) for x in parameters_list
+                                    if x.param(unicode(self.tr(u'Measure'))).value()]
+
+        return [p.get_instance() for p in parameters_adapters_list]
+
+    @property
+    def classifier(self):
+        return self._classifier
+
+    @classifier.setter
+    def classifier(self, value):
+        self._classifier = value
+
+    # endregion
+
     def detect(self):
-        self.widget.detectElements(threshold= self.ParamTree.param(unicode(self.tr(u'Temporal Detection Settings'))).param(unicode(self.tr(u'Threshold (db)'))).value(),
-                                   detectionsettings=self.detectionSettings,
-                                   decay=self.ParamTree.param(unicode(self.tr(u'Temporal Detection Settings'))).param(unicode(self.tr(u'Decay (ms)'))).value(),
-                                   minSize= self.ParamTree.param(unicode(self.tr(u'Temporal Detection Settings'))).param(unicode(self.tr(u'Min Size (ms)'))).value(),
-                                   softfactor = self.ParamTree.param(unicode(self.tr(u'Temporal Detection Settings'))).param(unicode(self.tr(u'Soft Factor'))).value(),
-                                   merge_factor = self.ParamTree.param(unicode(self.tr(u'Temporal Detection Settings'))).param(unicode(self.tr(u'Merge Factor (%)'))).value(),
-                                   threshold2 = self.ParamTree.param(unicode(self.tr(u'Temporal Detection Settings'))).param(unicode(self.tr(u'Threshold 2(db)'))).value(),
-                                   threshold_spectral = self.ParamTree.param(unicode(self.tr(u'Spectral Detection Settings'))).param(unicode(self.tr(u'Threshold (%)'))).value(),
-                                   minsize_spectral=(self.ParamTree.param(unicode(self.tr(u'Spectral Detection Settings'))).param(unicode(self.tr(u'Minimum size'))).param(unicode(self.tr(u'Frequency (kHz)'))).value(),
-                                                     self.ParamTree.param(unicode(self.tr(u'Spectral Detection Settings'))).param(unicode(self.tr(u'Minimum size'))).param(unicode(self.tr(u'Time (ms)'))).value()),
-                                   findSpectralSublements = self.ParamTree.param(unicode(self.tr(u'Spectral Detection Settings'))).param(unicode(self.tr(u'Detect Spectral Subelements'))).value())
-        self.widget.refresh()
+        """
+        :return:
+        """
+        self.widget.elements = self.detector.detect()
 
-
-
+        self.widget.graph()

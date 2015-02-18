@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>596</width>
-    <height>450</height>
+    <height>390</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -20,7 +20,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Duetto Sound Lab</string>
+   <string>duetto Sound Lab</string>
   </property>
   <property name="windowIcon">
    <iconset resource="resources/icons.qrc">
@@ -56,7 +56,7 @@
    </layout>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
-  <widget class="QToolBar" name="toolBar">
+  <widget class="SoundLabToolBarWidget" name="toolBar">
    <property name="maximumSize">
     <size>
      <width>16777215</width>
@@ -81,27 +81,7 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionDetection"/>
-   <addaction name="actionTwo_Dimensional_Graphs"/>
-   <addaction name="actionDelete_Selected_Elements"/>
-   <addaction name="actionDeselect_Elements"/>
-   <addaction name="separator"/>
    <addaction name="actionClassification_Settings"/>
-   <addaction name="separator"/>
-   <addaction name="actionZoomIn"/>
-   <addaction name="actionZoom_out"/>
-   <addaction name="actionZoom_out_entire_file"/>
-   <addaction name="separator"/>
-   <addaction name="actionPlay_Sound"/>
-   <addaction name="actionPause_Sound"/>
-   <addaction name="actionStop_Sound"/>
-   <addaction name="separator"/>
-   <addaction name="actionFull_Screen"/>
-   <addaction name="actionCombined"/>
-   <addaction name="actionOscilogram"/>
-   <addaction name="actionSpectogram"/>
-   <addaction name="separator"/>
-   <addaction name="actionSignalName"/>
   </widget>
   <widget class="QDockWidget" name="dockWidgetParameterTableOscilogram">
    <property name="styleSheet">
@@ -138,22 +118,20 @@
     <property name="title">
      <string>View</string>
     </property>
-    <widget class="QMenu" name="menuPeak_Frecuencies">
-     <property name="title">
-      <string>Peak Frecuencies</string>
-     </property>
-     <addaction name="actionElements_Peaks"/>
-     <addaction name="actionSub_Elements_Peaks"/>
-    </widget>
     <addaction name="actionView_Parameters"/>
-    <addaction name="actionView_Threshold"/>
+    <addaction name="separator"/>
+    <addaction name="actionZoomIn"/>
+    <addaction name="actionZoom_out"/>
+    <addaction name="actionZoom_out_entire_file"/>
+    <addaction name="separator"/>
     <addaction name="actionTemporal_Elements"/>
     <addaction name="actionTemporal_Numbers"/>
     <addaction name="actionTemporal_Figures"/>
     <addaction name="actionSpectral_Elements"/>
     <addaction name="actionSpectral_Numbers"/>
     <addaction name="actionSpectral_Figures"/>
-    <addaction name="menuPeak_Frecuencies"/>
+    <addaction name="separator"/>
+    <addaction name="actionTwo_Dimensional_Graphs"/>
     <addaction name="actionFull_Screen"/>
    </widget>
    <widget class="QMenu" name="menuDetection">
@@ -163,27 +141,15 @@
     <addaction name="actionDetection"/>
     <addaction name="actionDelete_Selected_Elements"/>
     <addaction name="actionDeselect_Elements"/>
-    <addaction name="actionMeditions"/>
+    <addaction name="actionAddElement"/>
    </widget>
    <widget class="QMenu" name="menuTools">
     <property name="title">
      <string>Tools</string>
     </property>
-    <addaction name="actionZoomIn"/>
-    <addaction name="actionZoom_out"/>
-    <addaction name="actionZoom_out_entire_file"/>
-    <addaction name="actionFull_Screen"/>
-    <addaction name="separator"/>
-    <addaction name="actionOsgram_Image"/>
-    <addaction name="actionSpecgram_Image"/>
-    <addaction name="actionCombined_Image"/>
-    <addaction name="separator"/>
     <addaction name="actionZoom_Cursor"/>
     <addaction name="actionPointer_Cursor"/>
     <addaction name="actionRectangular_Cursor"/>
-    <addaction name="actionRectangular_Eraser"/>
-    <addaction name="separator"/>
-    <addaction name="actionTwo_Dimensional_Graphs"/>
    </widget>
    <widget class="QMenu" name="menuClasification">
     <property name="title">
@@ -191,6 +157,23 @@
     </property>
     <addaction name="actionClassification_Settings"/>
    </widget>
+   <widget class="QMenu" name="menuExport">
+    <property name="title">
+     <string>Export</string>
+    </property>
+    <widget class="QMenu" name="menuGraph_Images">
+     <property name="title">
+      <string>Graph Images</string>
+     </property>
+     <addaction name="actionOsc_Image"/>
+     <addaction name="actionSpecgram_Image"/>
+     <addaction name="actionCombined_Image"/>
+    </widget>
+    <addaction name="actionMeditions"/>
+    <addaction name="menuGraph_Images"/>
+    <addaction name="actionSound_File_Segmentation"/>
+   </widget>
+   <addaction name="menuExport"/>
    <addaction name="menuDetection"/>
    <addaction name="menuClasification"/>
    <addaction name="menuTools"/>
@@ -289,7 +272,7 @@
      <normaloff>:/myappicons/zoom_26x26.png</normaloff>:/myappicons/zoom_26x26.png</iconset>
    </property>
    <property name="text">
-    <string>Zoom out entire file</string>
+    <string>Zoom None</string>
    </property>
   </action>
   <action name="actionCopy">
@@ -334,7 +317,7 @@
      <normaloff>:/myappicons/Excel.png</normaloff>:/myappicons/Excel.png</iconset>
    </property>
    <property name="text">
-    <string>Save Meditions</string>
+    <string>Measurements</string>
    </property>
   </action>
   <action name="actionView_Parameters">
@@ -358,14 +341,6 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+D</string>
-   </property>
-  </action>
-  <action name="actionClear_Meditions">
-   <property name="text">
-    <string>Clear Meditions</string>
-   </property>
-   <property name="shortcut">
-    <string>Alt+E</string>
    </property>
   </action>
   <action name="actionView_Threshold">
@@ -447,7 +422,7 @@
     <string>Elements Peaks</string>
    </property>
   </action>
-  <action name="actionOsgram_Image">
+  <action name="actionOsc_Image">
    <property name="icon">
     <iconset resource="resources/icons.qrc">
      <normaloff>:/myappicons/Camera.ico</normaloff>:/myappicons/Camera.ico</iconset>
@@ -517,14 +492,6 @@
     <string>Rectangular_Cursor</string>
    </property>
   </action>
-  <action name="actionRectangular_Eraser">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Rectangular_Eraser</string>
-   </property>
-  </action>
   <action name="actionZoom_Cursor">
    <property name="checkable">
     <bool>true</bool>
@@ -576,29 +543,58 @@
     <string>Two Dimensional Graphs</string>
    </property>
   </action>
-  <action name="actionTraining_Mode">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Training Mode</string>
-   </property>
-  </action>
   <action name="actionClassification_Settings">
    <property name="icon">
-    <iconset>
-     <normaloff>:/myappicons/categories.png</normaloff>:/myappicons/categories.png</iconset>
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/ColorSync Utility.png</normaloff>:/myappicons/ColorSync Utility.png</iconset>
    </property>
    <property name="text">
     <string>Edit Categories</string>
    </property>
   </action>
-  <action name="actionMethod">
+  <action name="actionRecord">
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/record_26x26.png</normaloff>:/myappicons/record_26x26.png</iconset>
+   </property>
    <property name="text">
-    <string>Method</string>
+    <string>Record</string>
+   </property>
+  </action>
+  <action name="actionPlayLoop">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/Behavior.png</normaloff>:/myappicons/Behavior.png</iconset>
+   </property>
+   <property name="text">
+    <string>PlayLoop</string>
+   </property>
+   <property name="toolTip">
+    <string>Play Loop</string>
+   </property>
+  </action>
+  <action name="actionAddElement">
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/add.png</normaloff>:/myappicons/add.png</iconset>
+   </property>
+   <property name="text">
+    <string>AddElement</string>
+   </property>
+   <property name="toolTip">
+    <string>Mark Selected Region As Element</string>
+   </property>
+  </action>
+  <action name="actionSound_File_Segmentation">
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/225.ico</normaloff>:/myappicons/225.ico</iconset>
+   </property>
+   <property name="text">
+    <string>Sound File Segmentation</string>
    </property>
   </action>
   <zorder>dockWidgetParameterTableOscilogram</zorder>
@@ -614,6 +610,11 @@
    <class>TableWidget</class>
    <extends>QTableWidget</extends>
    <header>pyqtgraph.h</header>
+  </customwidget>
+  <customwidget>
+   <class>SoundLabToolBarWidget</class>
+   <extends>QToolBar</extends>
+   <header>graphic_interface.widgets.SoundLabToolBar</header>
   </customwidget>
  </customwidgets>
  <resources>

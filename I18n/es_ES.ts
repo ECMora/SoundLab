@@ -16,32 +16,32 @@
     <message>
         <location filename="../Graphic_Interface/Dialogs/ChangeVolumeDialog.py" line="95"/>
         <source>Constant</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Constante</translation>
     </message>
     <message>
         <location filename="../Graphic_Interface/Dialogs/ChangeVolumeDialog.py" line="96"/>
         <source>Linear</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Linear</translation>
     </message>
     <message>
         <location filename="../Graphic_Interface/Dialogs/ChangeVolumeDialog.py" line="97"/>
         <source>sin</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">seno</translation>
     </message>
     <message>
         <location filename="../Graphic_Interface/Dialogs/ChangeVolumeDialog.py" line="98"/>
         <source>sin-sqrt</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">seno-raiz cuadrada</translation>
     </message>
     <message>
         <location filename="../Graphic_Interface/Dialogs/ChangeVolumeDialog.py" line="99"/>
         <source>sin^2</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">seno^2</translation>
     </message>
     <message>
         <location filename="../Graphic_Interface/Dialogs/ChangeVolumeDialog.py" line="100"/>
         <source>cuadratic</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">cuadratico</translation>
     </message>
     <message>
         <location filename="../Graphic_Interface/Dialogs/ChangeVolumeDialog.py" line="101"/>
@@ -164,37 +164,37 @@ p, li { white-space: pre-wrap; }
     <message>
         <location filename="../Graphic_Interface/Windows/MainWindow.py" line="434"/>
         <source>Duetto Sound Lab</source>
-        <translation>JAJAJAJ</translation>
+        <translation type="unfinished">duetto Sound Lab</translation>
     </message>
     <message>
         <location filename="../Graphic_Interface/Windows/MainWindow.py" line="435"/>
         <source>File</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Archivo</translation>
     </message>
     <message>
         <location filename="../Graphic_Interface/Windows/MainWindow.py" line="436"/>
         <source>Tools</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Herramientas</translation>
     </message>
     <message>
         <location filename="../Graphic_Interface/Windows/MainWindow.py" line="437"/>
         <source>Export</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Exportar</translation>
     </message>
     <message>
         <location filename="../Graphic_Interface/Windows/MainWindow.py" line="438"/>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Edicion</translation>
     </message>
     <message>
         <location filename="../Graphic_Interface/Windows/MainWindow.py" line="439"/>
         <source>Generate</source>
-        <translation type="unfinished"></translation>
+        <translation>Generar</translation>
     </message>
     <message>
         <location filename="../Graphic_Interface/Windows/MainWindow.py" line="440"/>
         <source>Analysis</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="../Graphic_Interface/Windows/MainWindow.py" line="441"/>

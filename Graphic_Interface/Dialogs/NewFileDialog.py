@@ -13,7 +13,7 @@ class NewFileDialog(QDialog, Ui_NewFileDialog):
     dialogValues = {
         "rbtnSilence": True,
         "rbtnWhiteNoise": False,
-        "cbxBitDepth": 0,
+        "cbxBitDepth": 1,
         "dsbxDuration": 1,
         "sbxSamplingRate": 44100
     }

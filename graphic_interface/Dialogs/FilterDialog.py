@@ -47,12 +47,11 @@ class FilterDialog(filterdg.Ui_Dialog, QDialog):
         if signalSamplingRate is not None:
             # max freq in kHz
             max_freq = signalSamplingRate / 2000.0
-
+            print(max_freq)
             self.spinBoxBandPassFu.setMaximum(max_freq)
             self.spinBoxBandStopFu.setMaximum(max_freq)
             self.spinBoxHighPass.setMaximum(max_freq)
             self.spinBoxLowPass.setMaximum(max_freq)
-
 
     def load_values(self):
         """

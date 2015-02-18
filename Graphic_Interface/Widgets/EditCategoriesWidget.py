@@ -6,7 +6,7 @@ from graphic_interface.windows.ui_python_files.EditCategoryWidgetUI import Ui_Ed
 
 class EditCategoriesWidget(Ui_EditCategoryWidget,QWidget):
 
-    def __init__(self, parent=None,categoryName="",classificationData=None, selectionOnly=False):
+    def __init__(self, parent=None, categoryName="", classificationData=None, selectionOnly=False):
         super(QWidget, self).__init__(parent)
         self.setupUi(self)
         if not isinstance(categoryName,str) and not isinstance(categoryName,QtCore.QString):
@@ -34,18 +34,25 @@ class EditCategoriesWidget(Ui_EditCategoryWidget,QWidget):
     def addValue(self):
         val = str(self.lineEditCategoryValue.text())
         if val == "":
-            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"), self.tr(u"The value for this category should have a name."))
+            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
+                                      self.tr(u"The value for this category should have a name."))
             return
+
         if self.classificationData.addValue(self.categoryName,val):
             self.comboCategories.addItem(val)
             self.comboCategories.setCurrentIndex(self.comboCategories.count()-1)
+
         else:
-            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"), self.tr(u"There is other value with that name in the category"))
+            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
+                                      self.tr(u"There is other value with that name in the category"))
 
     def removeValue(self):
         if self.comboCategories.count() > 0:
             val = self.comboCategories.itemText(self.comboCategories.currentIndex())
+
             if self.classificationData.removeValue(self.categoryName,val):
                 self.comboCategories.removeItem(self.comboCategories.currentIndex())
+
             else:
-                QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"), self.tr(u"The value can't be removed because is in use."))
+                QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
+                                          self.tr(u"The value can't be removed because is in use."))

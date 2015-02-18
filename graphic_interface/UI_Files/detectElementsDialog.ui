@@ -9,20 +9,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1100</width>
-    <height>660</height>
+    <width>1092</width>
+    <height>440</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
   <property name="minimumSize">
    <size>
-    <width>1100</width>
-    <height>660</height>
+    <width>0</width>
+    <height>0</height>
    </size>
   </property>
   <property name="maximumSize">
@@ -35,14 +35,13 @@
    <string>Detection Settings</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">background-color: qlineargradient(spread:pad, x1:0.006, y1:0.017, x2:0.886, y2:0.892045, stop:0.0340909 rgba(94, 116, 236, 255), stop:1 rgba(255, 255, 255, 255));
-font: 75 10pt &quot;MS Shell Dlg 2&quot;;</string>
+   <string notr="true"/>
   </property>
   <property name="modal">
    <bool>false</bool>
   </property>
-  <layout class="QGridLayout" name="gridLayout_3">
-   <item row="0" column="0">
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="0" column="0" rowspan="2">
     <widget class="QSignalDetectorWidget" name="widget" native="true">
      <property name="enabled">
       <bool>false</bool>
@@ -52,6 +51,12 @@ font: 75 10pt &quot;MS Shell Dlg 2&quot;;</string>
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>300</width>
+       <height>200</height>
+      </size>
      </property>
      <property name="toolTip">
       <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Signal to learn about algorithm parameters&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -63,10 +68,10 @@ font: 75 10pt &quot;MS Shell Dlg 2&quot;;</string>
      </layout>
     </widget>
    </item>
-   <item row="0" column="1">
-    <widget class="QDockWidget" name="dock_settings">
+   <item row="0" column="1" rowspan="2" colspan="2">
+    <widget class="QDockWidget" name="dock_parameter_measurement">
      <property name="sizePolicy">
-      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+      <sizepolicy hsizetype="Maximum" vsizetype="Expanding">
        <horstretch>0</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
@@ -79,12 +84,12 @@ font: 75 10pt &quot;MS Shell Dlg 2&quot;;</string>
      </property>
      <property name="maximumSize">
       <size>
-       <width>250</width>
-       <height>524287</height>
+       <width>16777215</width>
+       <height>16777215</height>
       </size>
      </property>
      <property name="styleSheet">
-      <string notr="true">background-color: rgb(255, 255, 255);</string>
+      <string notr="true"/>
      </property>
      <property name="floating">
       <bool>false</bool>
@@ -93,17 +98,30 @@ font: 75 10pt &quot;MS Shell Dlg 2&quot;;</string>
       <set>QDockWidget::AllDockWidgetFeatures</set>
      </property>
      <property name="windowTitle">
-      <string/>
+      <string>Parameter Measurements</string>
      </property>
-     <widget class="QWidget" name="osc_settings_contents"/>
+     <widget class="QWidget" name="parameter_measurement_settings">
+      <zorder>dock_segm_classif</zorder>
+      <zorder>dock_segm_classif</zorder>
+     </widget>
     </widget>
    </item>
-   <item row="1" column="0" colspan="2">
+   <item row="1" column="4">
     <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>250</width>
+       <height>16777215</height>
+      </size>
+     </property>
      <property name="styleSheet">
-      <string notr="true">font: 75 11pt &quot;MS Shell Dlg 2&quot;;
-background-color: rgb(8, 100, 180);
-color: rgb(255, 255, 255);</string>
+      <string notr="true"/>
      </property>
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -116,13 +134,48 @@ color: rgb(255, 255, 255);</string>
      </property>
     </widget>
    </item>
+   <item row="0" column="3" colspan="2">
+    <widget class="QDockWidget" name="dock_segm_classif">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Maximum" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
+       <width>250</width>
+       <height>84</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>524287</width>
+       <height>524287</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
+     <property name="floating">
+      <bool>false</bool>
+     </property>
+     <property name="features">
+      <set>QDockWidget::AllDockWidgetFeatures</set>
+     </property>
+     <property name="windowTitle">
+      <string>Segmentation and Classification Settings</string>
+     </property>
+     <widget class="QWidget" name="segmentation_classification_settings"/>
+    </widget>
+   </item>
   </layout>
  </widget>
  <customwidgets>
   <customwidget>
    <class>QSignalDetectorWidget</class>
    <extends>QWidget</extends>
-   <header>Graphic_Interface.Widgets.QSignalDetectorWidget.h</header>
+   <header>graphic_interface.widgets.QSignalDetectorWidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>
