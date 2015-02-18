@@ -281,15 +281,15 @@ class SegmentManager(QObject):
         if not 0 <= index < self.rowCount:
             raise IndexError()
 
-        for j, adapter in enumerate(self.measurerList):
+        for j, parameter_adapter in enumerate(self.measurerList):
             try:
                 # compute the param with the function
-                method = adapter.get_instance()
-                self.measuredParameters[index, j] = method.measure(element)
+                measure_method = parameter_adapter.get_instance()
+                self.measuredParameters[index, j] = measure_method.measure(element)
 
-                visual_item = adapter.get_visual_item()
+                visual_item = parameter_adapter.get_visual_item()
                 if visual_item:
-                    visual_item.set_data()
+                    visual_item.set_data(self.signal, self.elements[index], self.measuredParameters[index, j])
 
                 self.segmentParameterMeasured.emit(index, visual_item)
 

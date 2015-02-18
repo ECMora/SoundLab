@@ -127,9 +127,12 @@
     <addaction name="actionTemporal_Elements"/>
     <addaction name="actionTemporal_Numbers"/>
     <addaction name="actionTemporal_Figures"/>
+    <addaction name="actionTemporal_Parameters"/>
+    <addaction name="separator"/>
     <addaction name="actionSpectral_Elements"/>
     <addaction name="actionSpectral_Numbers"/>
     <addaction name="actionSpectral_Figures"/>
+    <addaction name="actionSpectral_Parameters"/>
     <addaction name="separator"/>
     <addaction name="actionTwo_Dimensional_Graphs"/>
     <addaction name="actionFull_Screen"/>
@@ -595,6 +598,28 @@
    </property>
    <property name="text">
     <string>Sound File Segmentation</string>
+   </property>
+  </action>
+  <action name="actionTemporal_Parameters">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Temporal Parameters</string>
+   </property>
+  </action>
+  <action name="actionSpectral_Parameters">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Spectral Parameters</string>
    </property>
   </action>
   <zorder>dockWidgetParameterTableOscilogram</zorder>

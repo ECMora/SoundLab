@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from PyQt4 import QtGui
+from graphic_interface.segments.parameter_items.spectral_parameter_items.AverageFreqVisualItem import AverageFreqVisualItem
 from sound_lab_core.ParametersMeasurement.SpectralParameters.PeakFreqParameter import PeakFreqParameter
 from sound_lab_core.SoundLabAdapter import SoundLabAdapter
 
@@ -13,3 +15,6 @@ class PeakFreqParameterAdapter(SoundLabAdapter):
 
     def get_instance(self):
         return PeakFreqParameter()
+
+    def get_visual_item(self):
+        return AverageFreqVisualItem(QtGui.QColor(255, 50, 50, 255), tooltip=self.tr(u"Peak Freq"))

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\SegmentationAndClasificationWindowUI.ui'
+# Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\SegmentationAndClasificationWindowUI.ui'
 #
-# Created: Mon Feb 09 16:29:46 2015
+# Created: Wed Feb 18 23:09:00 2015
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -269,6 +269,14 @@ class Ui_MainWindow(object):
         icon26.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/225.ico")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionSound_File_Segmentation.setIcon(icon26)
         self.actionSound_File_Segmentation.setObjectName(_fromUtf8("actionSound_File_Segmentation"))
+        self.actionTemporal_Parameters = QtGui.QAction(MainWindow)
+        self.actionTemporal_Parameters.setCheckable(True)
+        self.actionTemporal_Parameters.setChecked(True)
+        self.actionTemporal_Parameters.setObjectName(_fromUtf8("actionTemporal_Parameters"))
+        self.actionSpectral_Parameters = QtGui.QAction(MainWindow)
+        self.actionSpectral_Parameters.setCheckable(True)
+        self.actionSpectral_Parameters.setChecked(True)
+        self.actionSpectral_Parameters.setObjectName(_fromUtf8("actionSpectral_Parameters"))
         self.toolBar.addAction(self.actionClassification_Settings)
         self.menuParameters.addAction(self.actionView_Parameters)
         self.menuParameters.addSeparator()
@@ -279,9 +287,12 @@ class Ui_MainWindow(object):
         self.menuParameters.addAction(self.actionTemporal_Elements)
         self.menuParameters.addAction(self.actionTemporal_Numbers)
         self.menuParameters.addAction(self.actionTemporal_Figures)
+        self.menuParameters.addAction(self.actionTemporal_Parameters)
+        self.menuParameters.addSeparator()
         self.menuParameters.addAction(self.actionSpectral_Elements)
         self.menuParameters.addAction(self.actionSpectral_Numbers)
         self.menuParameters.addAction(self.actionSpectral_Figures)
+        self.menuParameters.addAction(self.actionSpectral_Parameters)
         self.menuParameters.addSeparator()
         self.menuParameters.addAction(self.actionTwo_Dimensional_Graphs)
         self.menuParameters.addAction(self.actionFull_Screen)
@@ -371,6 +382,8 @@ class Ui_MainWindow(object):
         self.actionAddElement.setText(QtGui.QApplication.translate("MainWindow", "AddElement", None, QtGui.QApplication.UnicodeUTF8))
         self.actionAddElement.setToolTip(QtGui.QApplication.translate("MainWindow", "Mark Selected Region As Element", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSound_File_Segmentation.setText(QtGui.QApplication.translate("MainWindow", "Sound File Segmentation", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionTemporal_Parameters.setText(QtGui.QApplication.translate("MainWindow", "Temporal Parameters", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSpectral_Parameters.setText(QtGui.QApplication.translate("MainWindow", "Spectral Parameters", None, QtGui.QApplication.UnicodeUTF8))
 
 from graphic_interface.widgets.SoundLabToolBar import SoundLabToolBarWidget
 from pyqtgraph import TableWidget

@@ -34,7 +34,7 @@ class SpecgramElement(TwoDimensionalElement):
         if one_dimensional_parent is not None:
             starttime += one_dimensional_parent.indexFromInPxx
             endtime += one_dimensional_parent.indexFromInPxx
-            self.parentnumber = one_dimensional_parent.number
+            self.parentnumber = one_dimensional_parent.setNumber
 
         self.bins = bins
         self.number = number
@@ -97,7 +97,7 @@ class SpecgramElement(TwoDimensionalElement):
 
             self.visual_figures.append([g,True])
 
-            text = pg.TextItem(str(one_dimensional_parent.number),color=(255,255,255),anchor=(0.5,0))
+            text = pg.TextItem(str(one_dimensional_parent.setNumber),color=(255,255,255),anchor=(0.5,0))
             text.setFont(QtGui.QFont("Arial",pointSize=13))
             _t = (self.timeStartIndex/2.0+self.timeEndIndex/2.0, self.freqStartIndex+f*95/100)
             self.textPosition.append(_t)

@@ -3,13 +3,13 @@
 
 class ParameterVisualItem:
     """
-    Represent the item from a parameter measurement action.
+    Represent the visual item from a parameter measurement action.
     """
 
     def __init__(self):
         pass
 
-    def set_data(self, **data):
+    def set_data(self, signal, segment, data):
         """
         Update the visual item with the measurement data supplied
         """

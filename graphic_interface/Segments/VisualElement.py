@@ -43,11 +43,25 @@ class VisualElement(QObject):
         self.visual_parameters_items = []
 
         # the number of this element for visualization and ordering options
-        self.number = number
+        self._number = number
+
+    @property
+    def color(self):
+        """
+        :return: the current element visual color
+        """
+        return self.COLOR_ODD if self.number % 2 == 0 else self.COLOR_EVEN
+
+    @property
+    def number(self):
+        return self._number
+
+    def setNumber(self, n):
+        self._number = n
 
     def visual_widgets(self):
         """
-        all the visual elements that represents this element.
+        all the visual items that represents this element.
         @return: iterator of objects of the form (object visual element, bool visibility)
         """
         for f in self.visual_figures:
@@ -56,10 +70,11 @@ class VisualElement(QObject):
         for t in self.visual_text:
             yield t
 
-        for t in self.visual_parameters_items:
+        for t, visibility in self.visual_parameters_items:
             # if the parameter has an item to show
-            if t[0]:
-                yield t[0].get_visual_item(), t[1]
+            item = t.get_item()
+            if item:
+                yield item, visibility
 
     def mouseClickEvent(self, event):
         """
@@ -69,8 +84,11 @@ class VisualElement(QObject):
         """
         self.elementClicked.emit(self.number - 1)
 
-    def setNumber(self, n):
-        self.number = n
-
     def addParameterItem(self, parameter_item):
+        """
+
+        :param parameter_item: the new parameter item to visualize
+        :return:
+        """
+        # visible by default
         self.visual_parameters_items.append([parameter_item, True])

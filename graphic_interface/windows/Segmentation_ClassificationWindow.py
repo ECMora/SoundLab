@@ -626,20 +626,71 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         This method allows to change its visibility
         """
         visibility = self.actionTemporal_Elements.isChecked()
-        for e in self.widget.elements:
-            e.visible = visibility
-        self.widget.drawElements(oscilogramItems=True)
+        if visibility:
+            self.on_actionTemporal_Numbers_triggered(update_widget=False)
+            self.on_actionTemporal_Figures_triggered(update_widget=False)
+            self.on_actionTemporal_Parameters_triggered(update_widget=True)
+        else:
+            self.widget.changeElementsVisibility(visibility, VisualElement.Text, oscilogramItems=True)
+            self.widget.changeElementsVisibility(visibility, VisualElement.Figures, oscilogramItems=True)
+            self.widget.changeElementsVisibility(visibility, VisualElement.Parameters, oscilogramItems=True)
 
         self.actionTemporal_Figures.setEnabled(visibility)
         self.actionTemporal_Numbers.setEnabled(visibility)
+        self.actionTemporal_Parameters.setEnabled(visibility)
 
     @pyqtSlot()
-    def on_actionTemporal_Numbers_triggered(self):
+    def on_actionTemporal_Figures_triggered(self,update_widget=True):
+        self.widget.changeElementsVisibility(self.actionTemporal_Figures.isChecked(), VisualElement.Figures, oscilogramItems=True, update=update_widget)
+
+    @pyqtSlot()
+    def on_actionTemporal_Parameters_triggered(self,update_widget=True):
+        self.widget.changeElementsVisibility(self.actionTemporal_Figures.isChecked(), VisualElement.Parameters, oscilogramItems=True, update=update_widget)
+
+    @pyqtSlot()
+    def on_actionTemporal_Numbers_triggered(self,update_widget=True):
         """
         Change visibility of the numbers of the detected segments on the oscilogram graph
 
         """
-        self.widget.changeElementsVisibility(self.actionTemporal_Numbers.isChecked(), VisualElement.Text)
+        self.widget.changeElementsVisibility(self.actionTemporal_Numbers.isChecked(), VisualElement.Text, oscilogramItems=True, update=update_widget)
+
+    @pyqtSlot()
+    def on_actionSpectral_Elements_triggered(self):
+        """
+        Spectral Elements are the elements that are visible on the spectrogram graph.
+        This method allows to change its visibility
+        """
+        visibility = self.actionSpectral_Elements.isChecked()
+        if visibility:
+            self.on_actionSpectral_Numbers_triggered(update_widget=False)
+            self.on_actionSpectral_Figures_triggered(update_widget=False)
+            self.on_actionSpectral_Parameters_triggered(update_widget=True)
+        else:
+            self.widget.changeElementsVisibility(visibility, VisualElement.Text, oscilogramItems=False)
+            self.widget.changeElementsVisibility(visibility, VisualElement.Figures, oscilogramItems=False)
+            self.widget.changeElementsVisibility(visibility, VisualElement.Parameters, oscilogramItems=False)
+
+        self.actionSpectral_Numbers.setEnabled(visibility)
+        self.actionSpectral_Figures.setEnabled(visibility)
+        self.actionSpectral_Parameters.setEnabled(visibility)
+
+
+    @pyqtSlot()
+    def on_actionSpectral_Figures_triggered(self,update_widget=True):
+        self.widget.changeElementsVisibility(self.actionSpectral_Figures.isChecked(), VisualElement.Figures, oscilogramItems=False, update=update_widget)
+
+    @pyqtSlot()
+    def on_actionSpectral_Parameters_triggered(self,update_widget=True):
+        self.widget.changeElementsVisibility(self.actionSpectral_Parameters.isChecked(), VisualElement.Parameters, oscilogramItems=False, update=update_widget)
+
+    @pyqtSlot()
+    def on_actionSpectral_Numbers_triggered(self,update_widget=True):
+        """
+        Change visibility of the numbers of the detected segments on the oscilogram graph
+
+        """
+        self.widget.changeElementsVisibility(self.actionSpectral_Numbers.isChecked(), VisualElement.Text, oscilogramItems=False, update=update_widget)
 
     # endregion
 

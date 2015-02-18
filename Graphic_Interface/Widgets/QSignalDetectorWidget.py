@@ -92,8 +92,10 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         start, end = self.mainCursor.min, self.mainCursor.max
         elements = [e for e in self.elements if start <= e.indexFrom <= end or start <= e.indexTo <= end]
 
-        # clear the spectrogram items (osc items are cleared on graph from widget api)
         for i in range(len(self.elements)):
+            for item, visible in self.elements[i].time_element.visual_widgets():
+                self.axesOscilogram.removeItem(item)
+
             for item, visible in self.elements[i].spectral_element.visual_widgets():
                 self.axesSpecgram.viewBox.removeItem(item)
                 self.elements[i].spectral_element.translate_time_freq_coords(self.from_osc_to_spec, self.get_freq_index)
@@ -138,24 +140,47 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
                 for item, visible in elem.spectral_element.visual_widgets():
                     self.axesSpecgram.viewBox.removeItem(item)
 
-    def changeElementsVisibility(self, visible, element_type=VisualElement.Text, oscilogramItems=True):
+    def changeElementsVisibility(self, visibility, element_type=VisualElement.Text, oscilogramItems=None, update=True):
         """
         Change the visibility of the visual items
-        :param visible:
+        :type update: Bool for efficiency optimization when change multiples elements visibility.
+        True if must be update the widget False otherwise
+        :param visibility:
         :param element_type:
         :param oscilogramItems:
         """
         iterable = self.elements
+        osc_update = oscilogramItems is None or oscilogramItems
+        spec_update = oscilogramItems is None or not oscilogramItems
 
         for e in iterable:
             if element_type is VisualElement.Figures:
-                for x in e.time_elements.visual_figures:
-                    x[1] = visible
-            elif element_type is VisualElement.Text:
-                for x in e.time_elements.visual_text:
-                    x[1] = visible
+                if osc_update:
+                    for x in e.time_element.visual_figures:
+                        x[1] = visibility
+                if spec_update:
+                    for x in e.spectral_element.visual_figures:
+                        x[1] = visibility
 
-        self.drawElements()
+            elif element_type is VisualElement.Text:
+
+                if osc_update:
+                    for x in e.time_element.visual_text:
+                        x[1] = visibility
+                if spec_update:
+                    for x in e.spectral_element.visual_text:
+                        x[1] = visibility
+
+            elif element_type is VisualElement.Parameters:
+
+                if osc_update:
+                    for x in e.time_element.visual_parameters_items:
+                        x[1] = visibility
+                if spec_update:
+                    for x in e.spectral_element.visual_parameters_items:
+                        x[1] = visibility
+        if update:
+            self.drawElements()
 
     def addParameterItem(self, element_index, parameter_item):
         """

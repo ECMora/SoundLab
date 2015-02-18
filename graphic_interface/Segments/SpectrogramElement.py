@@ -38,19 +38,11 @@ class SpectrogramElement(VisualElement):
         self.element_region_adj = np.array([[0, 1], [1, 2], [2, 3]])
 
         self.element_region = pg.GraphItem()
-        self.visual_figures.append([self.element_region, True])
         self.element_region.mouseClickEvent = self.mouseClickEvent
 
         # update the visual representation
         self.visual_figures.append([self.element_region, True])  # item visibility
         self.visual_text.append([self.text_number, True])
-
-    @property
-    def color(self):
-        """
-        :return: the current elemenmt visual color
-        """
-        return self.COLOR_ODD if self.number % 2 == 0 else self.COLOR_EVEN
 
     def setNumber(self, n):
         """
@@ -79,17 +71,20 @@ class SpectrogramElement(VisualElement):
         x,y coordinate from time, frequency to the x,y indexes in spectrogram matrix
         :return:
         """
-        # update the text and region
+        # update the text label
         x, y = self.text_number_pos
         x = x if translate_time_function is None else translate_time_function(x)
         y = y if translate_freq_function is None else translate_freq_function(y)
 
         self.text_number.setPos(x, y)
+
+        # update the region delimiter
         pos = np.zeros(len(self.element_region_pos) * 2).reshape((len(self.element_region_pos), 2))
 
         for i in range(len(self.element_region_pos)):
             if translate_time_function is not None:
                 pos[i, 0] = translate_time_function(self.element_region_pos[i, 0])
+
             if translate_freq_function is not None:
                 pos[i, 1] = translate_freq_function(self.element_region_pos[i, 1])
 

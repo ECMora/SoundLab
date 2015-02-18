@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from graphic_interface.segments.parameter_items.time_parameter_items.PeakToPeakVisualItem import PeakToPeakVisualItem
 from sound_lab_core.SoundLabAdapter import SoundLabAdapter
 from sound_lab_core.ParametersMeasurement.TimeParameters.PeakToPeakParameter import PeakToPeakParameter
 
@@ -13,3 +14,6 @@ class PeakToPeakParameterAdapter(SoundLabAdapter):
 
     def get_instance(self):
         return PeakToPeakParameter()
+
+    def get_visual_item(self):
+        return PeakToPeakVisualItem()
