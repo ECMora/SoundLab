@@ -4,7 +4,7 @@ import numpy as np
 from sound_lab_core.ParametersMeasurement.ParameterMeasurer import ParameterMeasurer
 
 
-class PeekToPeekParameter(ParameterMeasurer):
+class PeakToPeakParameter(ParameterMeasurer):
     """
     Class that measure the start time paramter on a segment
     """

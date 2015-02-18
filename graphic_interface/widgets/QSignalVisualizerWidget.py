@@ -1100,3 +1100,6 @@ class QSignalVisualizerWidget(QtGui.QWidget):
 
     def from_spec_to_osc(self, x):
         return self.axesSpecgram.from_spec_to_osc(x)
+
+    def get_freq_index(self, freq):
+        return self.axesSpecgram.get_freq_index(freq)

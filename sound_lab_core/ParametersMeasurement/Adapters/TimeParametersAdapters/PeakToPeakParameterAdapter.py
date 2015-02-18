@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 from sound_lab_core.SoundLabAdapter import SoundLabAdapter
-from sound_lab_core.ParametersMeasurement.TimeParameters.PeekToPeekParameter import PeekToPeekParameter
+from sound_lab_core.ParametersMeasurement.TimeParameters.PeakToPeakParameter import PeakToPeakParameter
 
 
-class PeekToPeekParameterAdapter(SoundLabAdapter):
+class PeakToPeakParameterAdapter(SoundLabAdapter):
     """
     Adapter class for the start time parameter.
     """
@@ -12,4 +12,4 @@ class PeekToPeekParameterAdapter(SoundLabAdapter):
         SoundLabAdapter.__init__(self, parent)
 
     def get_instance(self):
-        return PeekToPeekParameter()
+        return PeakToPeakParameter()

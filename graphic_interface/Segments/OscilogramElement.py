@@ -1,6 +1,8 @@
 from PyQt4.QtGui import QFont
 import pyqtgraph as pg
 from graphic_interface.segments.VisualElement import VisualElement
+from graphic_interface.segments.parameter_items.time_parameter_items.TimeParameterVisualItem import \
+    TimeParameterVisualItem
 
 
 class OscilogramElement(VisualElement):
@@ -30,12 +32,18 @@ class OscilogramElement(VisualElement):
         self.visual_figures.append([self.element_region, True])  # item visibility
         self.visual_text.append([self.text_number, True])
 
+    def addParameterItem(self, parameter_item):
+        if not isinstance(parameter_item, TimeParameterVisualItem):
+            raise Exception("Invalid type argument. parameter_item must be of type TimeParameterVisualItem")
+
+        VisualElement.addParameterItem(self, parameter_item)
+
     def setNumber(self, n):
         """
         Updates the info in this element when its number changes.
         Is updated his instance variables and visual figures.
         @param n: The new index
         """
-        self.number = n
+        VisualElement.setNumber(self, n)
         self.text_number.setText(str(n))
         self.element_region.setBrush(pg.mkBrush(self.COLOR_ODD if self.number % 2 == 0 else self.COLOR_EVEN))

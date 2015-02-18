@@ -98,27 +98,29 @@ def small_signal(signal, duration_ms=50):
     :param duration_ms: The duration of the smal signal to genrate from the supplied one in ms
     :return: Audio signal.
     """
-    if signal.duration < duration_ms / 1000.0:
+    if signal.duration <= duration_ms / 1000.0:
         return signal
 
-    return signal.copy(0, duration_ms * signal.samplingRate / 1000.0)
+    # small signal
+    smaller_signal = Synthesizer.generateSilence(samplingRate=signal.samplingRate,
+                                                 bitDepth=signal.bitDepth, duration=duration_ms+1)
 
-    # # small signal
-    # small_signal = Synthesizer.generateSilence(samplingRate=signal.samplingRate,
-    #                                            bitDepth=signal.bitDepth, duration=duration_ms)
-    #
-    # # garantize that the mas amplitude interval is in the small signal
-    # index_max_amp = argmax(signal.data)
-    #
-    # ms = signal.samplingRate / 1000.0
-    #
-    # index_from = max(0, index_max_amp - duration_ms * ms / 2)
-    # index_to   = min(small_signal.length, index_max_amp + duration_ms * ms / 2)
-    #
-    # print(index_from,index_to,index_max_amp)
-    # small_signal.data[0: index_to-index_from] = signal.data[index_from:index_to]
-    #
-    # return small_signal
+    # ensure that the max amplitude interval is in the small signal
+    index_max_amp = argmax(signal.data)
+
+    ms = signal.samplingRate / 1000.0
+
+    index_from = int(max(0, index_max_amp - duration_ms * ms / 2))
+    index_to = int(min(signal.length, index_max_amp + duration_ms * ms / 2))
+
+    if index_to - index_from > smaller_signal.length:
+        difference = smaller_signal.length - (index_to-index_from)
+        index_to -= difference/2
+        index_from += difference - difference / 2
+
+    smaller_signal.data[:index_to - index_from] = signal.data[index_from:index_to]
+
+    return smaller_signal
 
 
 def toDB(value=0, min_value=1, max_value=1):

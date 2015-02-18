@@ -12,7 +12,7 @@ from duetto.signal_processing.filter_signal_processors.frequency_domain_filters 
 from duetto.dimensional_transformations.two_dimensional_transforms.Spectrogram.WindowFunctions import WindowFunction
 from Utils.Utils import *
 from graphic_interface.widgets.QSignalVisualizerWidget import QSignalVisualizerWidget
-from graphic_interface.settings.WorkTheme import WorkTheme
+from graphic_interface.Settings.WorkTheme import WorkTheme
 from graphic_interface.windows.BatchWindow import BatchWindow
 from graphic_interface.windows.ParameterList import DuettoListParameterItem
 from graphic_interface.windows.OneDimensionalAnalysisWindow import OneDimensionalAnalysisWindow
@@ -298,8 +298,8 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
 
             {u'name': unicode(self.tr(u'Spectrogram Settings')), u'type': u'group', u'children': [
                 {u'name': unicode(self.tr(u'Frequency(kHz)')), u'type': u'group', u'children': [
-                    {u'name': unicode(self.tr(u'Min')), u'type': u'float', u'value': self.workSpace.spectrogramWorkspace.minY, u'step': 0.1},
-                    {u'name': unicode(self.tr(u'Max')), u'type': u'float', u'value': self.workSpace.spectrogramWorkspace.maxY, u'step': 0.1},
+                    {u'name': unicode(self.tr(u'Min')), u'type': u'float', u'value': self.workSpace.spectrogramWorkspace.minY/1000.0, u'step': 1},
+                    {u'name': unicode(self.tr(u'Max')), u'type': u'float', u'value': self.workSpace.spectrogramWorkspace.maxY/1000.0, u'step': 1},
                 ]},
                 {u'name': unicode(self.tr(u'FFT size')), u'type': u'list', u'default': 512,
                  u'values': [(u"128", 128), (u"256", 256),
@@ -916,11 +916,13 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
             elif childName == unicode(self.tr(u'Spectrogram Settings')) + u"." + \
                     unicode(self.tr(u'Frequency(kHz)')) + u"." + \
                     unicode(self.tr(u'Min')):
+                # specgram work space min and max Y is saved on Hz
                 self.workSpace.spectrogramWorkspace.minY = data * 1000
 
             elif childName == unicode(self.tr(u'Spectrogram Settings')) + u"." + \
                     unicode(self.tr(u'Frequency(kHz)')) + u"." + \
                     unicode(self.tr(u'Max')):
+                # specgram work space min and max Y is saved on Hz
                 self.workSpace.spectrogramWorkspace.maxY = data * 1000
 
             elif childName == unicode(self.tr(u'Spectrogram Settings')) + u"." + \
@@ -1035,19 +1037,19 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
 
             #  max and min frequency from widget
 
-            min_freq = self.widget.spectrogramWorkSpace.minY / 1000.0
-            max_freq = self.widget.spectrogramWorkSpace.maxY / 1000.0
+            min_freq = self.widget.spectrogramWorkSpace.minY
+            max_freq = self.widget.spectrogramWorkSpace.maxY
 
             # the spectrogram theme save the min and max frequency in Hz
-            self.workSpace.spectrogramWorkspace.minY = min_freq * 1000
-            self.workSpace.spectrogramWorkspace.maxY = max_freq * 1000
+            self.workSpace.spectrogramWorkspace.minY = min_freq
+            self.workSpace.spectrogramWorkspace.maxY = max_freq
 
             self.settingsParameterTree.param(unicode(self.tr(u'Spectrogram Settings'))).param(
-                unicode(self.tr(u'Frequency(kHz)'))).param(unicode(self.tr(u'Min'))).setValue(min_freq)
+                unicode(self.tr(u'Frequency(kHz)'))).param(unicode(self.tr(u'Min'))).setValue(min_freq/1000.0)
             self.settingsParameterTree.param(unicode(self.tr(u'Spectrogram Settings'))).param(
-                unicode(self.tr(u'Frequency(kHz)'))).param(unicode(self.tr(u'Max'))).setValue(max_freq)
+                unicode(self.tr(u'Frequency(kHz)'))).param(unicode(self.tr(u'Max'))).setValue(max_freq/1000.0)
             self.settingsParameterTree.param(unicode(self.tr(u'Spectrogram Settings'))).param(
-                unicode(self.tr(u'Frequency(kHz)'))).param(unicode(self.tr(u'Max'))).setDefault(max_freq)
+                unicode(self.tr(u'Frequency(kHz)'))).param(unicode(self.tr(u'Max'))).setDefault(max_freq/1000.0)
 
 
             nfft = self.widget.spectrogramWorkSpace.FFTSize
@@ -1116,10 +1118,10 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
             # Min Max Freq
             self.settingsParameterTree.param(unicode(self.tr(u'Spectrogram Settings')))\
                 .param(unicode(self.tr(u'Frequency(kHz)'))).param(unicode(self.tr(u'Max'))).\
-                setValue(self.workSpace.spectrogramWorkspace.maxY)
+                setValue(self.workSpace.spectrogramWorkspace.maxY/1000.0)
             self.settingsParameterTree.param(unicode(self.tr(u'Spectrogram Settings')))\
                 .param(unicode(self.tr(u'Frequency(kHz)'))).param(unicode(self.tr(u'Min'))).\
-                setValue(self.workSpace.spectrogramWorkspace.minY)
+                setValue(self.workSpace.spectrogramWorkspace.minY/1000.0)
 
             # Grid
             self.settingsParameterTree.param(unicode(self.tr(u'Spectrogram Settings')))\
@@ -1144,6 +1146,8 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
             self.settingsParameterTree.param(unicode(self.tr(u'Spectrogram Settings')))\
                 .param(unicode(self.tr(u'Background color'))).\
                 setValue(self.workSpace.workTheme.spectrogramTheme.background_color)
+
+
 
             # endregion
 

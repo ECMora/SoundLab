@@ -12,6 +12,11 @@ class SegmentManager(QObject):
 
     # region SIGNALS
     measurementsChanged = pyqtSignal()
+
+    # signal raised when a parameter is measured on a segment
+    # raise the segment index and the parameter visual item associated
+    segmentParameterMeasured = pyqtSignal(int, object)
+
     # endregion
 
     def __init__(self):
@@ -22,7 +27,7 @@ class SegmentManager(QObject):
         # the detector object that would be used on segments detection
         self._detector = None
 
-        # the parameter measurer list
+        # the parameter measurer adapter list
         self._measurerList = []
 
         # the detected elements
@@ -98,7 +103,7 @@ class SegmentManager(QObject):
         The names of the columns of parameters.
         :return:
         """
-        return [x.name for x in self.measurerList]
+        return [x.get_instance().name for x in self.measurerList]
 
     @property
     def columnNames(self):
@@ -276,15 +281,23 @@ class SegmentManager(QObject):
         if not 0 <= index < self.rowCount:
             raise IndexError()
 
-        for j, method in enumerate(self.measurerList):
+        for j, adapter in enumerate(self.measurerList):
             try:
                 # compute the param with the function
+                method = adapter.get_instance()
                 self.measuredParameters[index, j] = method.measure(element)
+
+                visual_item = adapter.get_visual_item()
+                if visual_item:
+                    visual_item.set_data()
+
+                self.segmentParameterMeasured.emit(index, visual_item)
 
             except Exception as e:
                 # if some error is raised set a default value
                 self.measuredParameters[index, j] = 0
                 print("Error measure params " + e.message)
+
 
     # endregion
 

@@ -23,7 +23,7 @@ class VisualElement(QObject):
     COLOR_EVEN = QtGui.QColor(0, 255, 0, 100)
     # endregion
 
-    Figures, Text = range(2)
+    Figures, Text, Parameters = range(3)
 
     def __init__(self, number=0):
         QObject.__init__(self)
@@ -37,6 +37,10 @@ class VisualElement(QObject):
 
         # the visual components that show the elements representation
         self.visual_figures = []
+
+        # the visual components that show the measured parameters representation
+        # list of (ParameterVisualItem, bool)
+        self.visual_parameters_items = []
 
         # the number of this element for visualization and ordering options
         self.number = number
@@ -52,6 +56,11 @@ class VisualElement(QObject):
         for t in self.visual_text:
             yield t
 
+        for t in self.visual_parameters_items:
+            # if the parameter has an item to show
+            if t[0]:
+                yield t[0].get_visual_item(), t[1]
+
     def mouseClickEvent(self, event):
         """
         Interception of GUI events by switching this method for its similar
@@ -61,4 +70,7 @@ class VisualElement(QObject):
         self.elementClicked.emit(self.number - 1)
 
     def setNumber(self, n):
-        pass
+        self.number = n
+
+    def addParameterItem(self, parameter_item):
+        self.visual_parameters_items.append([parameter_item, True])

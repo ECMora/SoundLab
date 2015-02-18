@@ -64,6 +64,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         # the object that handles the measuring of parameters and manage the segments
         self.segmentManager = SegmentManager()
         self.segmentManager.measurementsChanged.connect(lambda: self.update_parameter_table())
+        self.segmentManager.segmentParameterMeasured.connect(self.widget.addParameterItem)
 
         # set the signal to the widget
         self.widget.signal = signal

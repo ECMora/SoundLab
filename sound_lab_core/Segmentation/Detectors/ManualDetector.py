@@ -8,5 +8,4 @@ class ManualDetector(OneDimensionalElementsDetector):
         OneDimensionalElementsDetector.__init__(self, signal)
 
     def detect(self, indexFrom=0, indexTo=-1):
-
         return []

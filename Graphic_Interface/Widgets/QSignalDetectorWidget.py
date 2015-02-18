@@ -92,6 +92,13 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         start, end = self.mainCursor.min, self.mainCursor.max
         elements = [e for e in self.elements if start <= e.indexFrom <= end or start <= e.indexTo <= end]
 
+        # clear the spectrogram items (osc items are cleared on graph from widget api)
+        for i in range(len(self.elements)):
+            for item, visible in self.elements[i].spectral_element.visual_widgets():
+                self.axesSpecgram.viewBox.removeItem(item)
+                self.elements[i].spectral_element.translate_time_freq_coords(self.from_osc_to_spec, self.get_freq_index)
+
+        # add the visible elements
         for i in range(len(elements)):
             if not self.elements[i].visible:
                 continue
@@ -103,12 +110,10 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
                     else:
                         self.axesOscilogram.addItem(item)
 
-            # if self.visibleSpectrogram and spec:
-            #     elements[i].spectral_element.updateSpectralPosition(self.from_osc_to_spec)
-            #     for item, visible in elements[i].spectral_element.visual_widgets():
-            #         self.axesSpecgram.viewBox.removeItem(item)
-            #         if visible:
-            #             self.axesSpecgram.viewBox.addItem(item)
+            if self.visibleSpectrogram and spec:
+                for item, visible in elements[i].spectral_element.visual_widgets():
+                    if visible:
+                        self.axesSpecgram.viewBox.addItem(item)
 
         self.axesSpecgram.update()
         self.axesOscilogram.update()
@@ -151,6 +156,17 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
                     x[1] = visible
 
         self.drawElements()
+
+    def addParameterItem(self, element_index, parameter_item):
+        """
+        Add a new visual item of a parameter measurement.
+        :param element_index: the index of the segment measured
+        :param parameter_item: the parameter item to visualize
+        :return:
+        """
+        if not 0 <= element_index < len(self.elements):
+            return
+        self.elements[element_index].addParameterItem(parameter_item)
 
     # endregion
 

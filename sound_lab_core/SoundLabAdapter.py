@@ -27,5 +27,13 @@ class SoundLabAdapter(QObject):
         """
         return None
 
+    def get_visual_item(self):
+        """
+        The instance of the visual item to include for visualization
+        :return:
+        """
+        # todo improve implementation and design
+        return None
+
     def apply_settings_change(self, transform, change):
         pass

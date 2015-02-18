@@ -1,6 +1,6 @@
 from PyQt4 import QtCore
 from duetto.dimensional_transformations.two_dimensional_transforms.Spectrogram.Spectrogram import Spectrogram
-from graphic_interface.settings.Workspace import SpectrogramWorkspace
+from graphic_interface.Settings.Workspace import SpectrogramWorkspace
 import numpy
 from duetto.widgets.SpectrogramWidget import SpectrogramWidget
 from graphic_interface.widgets.SoundLabWidget import SoundLabWidget
@@ -194,13 +194,14 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
         if update or forceUpdate:
             self.graph(rangeX[0], rangeX[1])
 
-        # set the y axis' range
         # !!!!!(MUST BE MADE AFTER THE SPECTROGRAM IS COMPUTED BECAUSE THE SPEC MATRIX CHANGE)!!!!!
         minY_index = self.specgramHandler.get_freq_index(self.workspace.minY)
         maxY_index = self.specgramHandler.get_freq_index(self.workspace.maxY)
 
         minY = 0 if minY_index == -1 else minY_index
         maxY = 0 if maxY_index == -1 else maxY_index
+
+        # set the y axis' range
         self.viewBox.setYRange(minY, maxY, padding=0.01, update=True)
         self.yAxis.setRange(minY, maxY)
 
@@ -217,3 +218,6 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
 
     def from_spec_to_osc(self, coord):
         return self.specgramHandler.from_spec_to_osc(coord)
+
+    def get_freq_index(self, freq):
+        return self.specgramHandler.get_freq_index(freq)

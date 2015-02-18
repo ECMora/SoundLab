@@ -4,17 +4,17 @@ from sound_lab_core.Segmentation.Detectors.Adapters import *
 
 
 class AdapterFactory(QObject):
-
     def __init__(self, parent=None):
         QObject.__init__(self, parent)
-        self.adapters = {}
+        # list of (name, adapter)
+        self.adapters = []
 
     def adapters_names(self):
         """
         Gets the name of all registered adapters.
         :return: a list of str, each the name of one adapter
         """
-        return self.adapters.keys()
+        return [x[0] for x in self.adapters]
 
     def get_adapter(self, name):
         """
@@ -22,44 +22,46 @@ class AdapterFactory(QObject):
         :param name: a str, the name of the transform. Must be one of the values returned by the get_all_transforms_names method.
         :return: an get_instance of the corresponding one dimensional transform
         """
-        if name not in self.adapters:
-            raise Exception("Not found adapter")
+        index = -1
+        for i in range(len(self.adapters)):
+            if name == self.adapters[i][0]:
+                return self.adapters[i][1]
 
-        return self.adapters[name]
+        raise Exception("Not found adapter")
 
 
 class ParametersAdapterFactory(AdapterFactory):
-
     def __init__(self, parent=None):
         AdapterFactory.__init__(self, parent)
 
-        self.adapters = {
-            'Start Time': StartTimeParameterAdapter(parent),
-            'End Time': EndTimeParameterAdapter(parent),
-            'Duration': DurationTimeParameterAdapter(parent),
-            'RMS': RmsTimeParameterAdapter(parent),
-            'PeekToPeek': PeekToPeekParameterAdapter(parent),
-            'StartToMax': StartToMaxTimeParameterAdapter(parent),
-            'PeekFreq': PeakFreqParameterAdapter(parent),
-            'MaxFreq': MaxFreqParameterAdapter(parent),
-            'MinFreq': MinFreqParameterAdapter(parent)
-        }
+        self.adapters = [
+            (u'Start Time', StartTimeParameterAdapter(parent)),
+            (u'End Time', EndTimeParameterAdapter(parent)),
+            (u'Duration', DurationTimeParameterAdapter(parent)),
+            (u'RMS', RmsTimeParameterAdapter(parent)),
+            (u'PeakToPeak', PeakToPeakParameterAdapter(parent)),
+            (u'StartToMax', StartToMaxTimeParameterAdapter(parent)),
+            (u'PeakFreq', PeakFreqParameterAdapter(parent)),
+            (u'MaxFreq', MaxFreqParameterAdapter(parent)),
+            (u'MinFreq', MinFreqParameterAdapter(parent))
+        ]
 
 
 class SegmentationAdapterFactory(AdapterFactory):
     def __init__(self, parent=None):
         AdapterFactory.__init__(self, parent)
 
-        self.adapters = {
-            'Manual': ManualDetectorAdapter(parent),
-            'Envelope Abs Decay': AbsDecayEnvelopeDetectorAdapter(parent)
-        }
+        self.adapters = [
+            (u'Envelope Abs Decay', AbsDecayEnvelopeDetectorAdapter(parent)),
+            (u'Manual', ManualDetectorAdapter(parent))
+
+        ]
 
 
 class ClassificationAdapterFactory(AdapterFactory):
     def __init__(self, parent=None):
         AdapterFactory.__init__(self, parent)
 
-        self.adapters = {
-            'Manual': None
-        }
+        self.adapters = [
+            (u'Manual', None)
+        ]
