@@ -36,7 +36,23 @@ class OneDimensionalGeneralHandler(QObject):
         """
         return self._handlers_by_name[name].get_transform_instance()
 
+    def get_y_default(self, transform):
+        """
+        Gets the default Y range values according to the transform param
+        :param transform: the one dimensional transform instance from which to take the values
+        :return: a tuple with the min and max default values
+        """
+        return self._handlers_by_class[transform.__class__].get_y_default(transform)
+
+    def get_default_lines(self, transform):
+        return self._handlers_by_class[transform.__class__].get_default_lines()
+
     def get_y_limits(self, transform):
+        """
+        Gets the Y axis limits values of the corresponding transform
+        :param transform: the one dimensional transform instance from which to take the values
+        :return: a tuple with the min and max limits values
+        """
         return self._handlers_by_class[transform.__class__].get_y_limits(transform)
 
     def get_axis_labels(self, transform):
