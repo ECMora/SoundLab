@@ -251,6 +251,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         # close the opened windows
         for window in self.two_dim_windows:
             window.close()
+            del window
 
         # clear the list of two dimensional windows
         self.two_dim_windows = []
@@ -468,14 +469,12 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
             wnd.selectElement(element_index)
 
         # and in the cross-correlation windows
-        i = 0
-        while i < len(self._cross_correlation_windows):
+        for i in range(len(self._cross_correlation_windows)):
             wnd = self._cross_correlation_windows[i]
             if wnd.isHidden():
                 del self._cross_correlation_windows[i]
             else:
                 wnd.selectElement(element_index)
-                i += 1
 
     # endregion
 

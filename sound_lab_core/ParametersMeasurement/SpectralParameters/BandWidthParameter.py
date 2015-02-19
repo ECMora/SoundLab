@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-from Utils.Utils import DECIMAL_PLACES
 from matplotlib import mlab
 import numpy as np
 from sound_lab_core.ParametersMeasurement.ParameterMeasurer import ParameterMeasurer
+from sound_lab_core.ParametersMeasurement.SpectralParameters import DECIMAL_PLACES
 
 
 class BandWidthParameter(ParameterMeasurer):
@@ -31,4 +31,6 @@ class BandWidthParameter(ParameterMeasurer):
             min_freq_index = np.argwhere(below_left).max() + 1
             max_freq_index = np.argwhere(below_right).min() - 1 + peak_index
 
-        return round((freqs[max_freq_index] - freqs[min_freq_index]) / 1000.0, DECIMAL_PLACES)
+        band_with = (freqs[max_freq_index] - freqs[min_freq_index])
+
+        return round((band_with - band_with % 10)/1000.0, DECIMAL_PLACES)

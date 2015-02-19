@@ -78,8 +78,7 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
              u'type': u'group', u'children':
                 [{u'name': unicode(self.tr(u'Method')),
                   u'type': u'list',
-                  u'values': classification_adapters}],
-             u'expanded': False
+                  u'values': classification_adapters}]
             }]
 
         self.segmentation_classificationParamTree = Parameter.create(
@@ -87,9 +86,6 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
 
         self.segmentation_classificationParamTree.param(unicode(self.tr(u'Segmentation'))). \
             sigTreeStateChanged.connect(self.segmentationChanged)
-        #
-        # self.segmentation_classificationParamTree.param(unicode(self.tr(u'Classification'))). \
-        #     param(unicode(self.tr(u'Method'))).sigValueChanged.connect(self.segmentationChanged)
 
         # create and set initial properties
         self.segmentation_classification_paramTree.setAutoScroll(True)
@@ -100,20 +96,26 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         # set the segmentation and classification parameters
         self.parameter_measurementParamTree = Parameter.create(name=unicode(self.tr(u'Parameter Measurements')),
                                                                type=u'group')
-        for p in self.parameterAdapterFactory.adapters_names():
-            group = Parameter.create(name=unicode(self.tr(unicode(p))),
-                                     type=u'group', expanded=False)
+        for parameter_group in self.parameterAdapterFactory.parameter_groups:
+            parameter_group_tree = Parameter.create(name=unicode(self.tr(unicode(parameter_group.name))),
+                                               type=u'group', expanded=False)
 
-            measure = Parameter.create(name=unicode(self.tr(u'Measure')), type=u'bool', default=False,
-                                       value=False)
-            group.addChild(measure)
+            for adapter_name in parameter_group.adapters_names():
+                group = Parameter.create(name=unicode(self.tr(unicode(adapter_name))),
+                                         type=u'group', expanded=False)
 
-            param_settings = self.parameterAdapterFactory.get_adapter(p).get_settings()
+                measure = Parameter.create(name=unicode(self.tr(u'Measure')), type=u'bool', default=False,
+                                           value=False)
+                group.addChild(measure)
 
-            if param_settings is not None:
-                group.addChild(param_settings)
+                param_settings = parameter_group.get_adapter(adapter_name).get_settings()
 
-            self.parameter_measurementParamTree.addChild(group)
+                if param_settings is not None:
+                    group.addChild(param_settings)
+
+                parameter_group_tree.addChild(group)
+
+            self.parameter_measurementParamTree.addChild(parameter_group_tree)
 
         self.parameter_measurement_paramTree.setAutoScroll(True)
         self.parameter_measurement_paramTree.setHeaderHidden(True)
@@ -166,7 +168,6 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
                     for p in self.segmentation_classificationParamTree.param(unicode(self.tr(u'Segmentation'))).children():
                         if p.type() == u"bool" and p.name() != parameter.name():
                             p.setValue(False)
-
 
         self.blockSignals = False
         self.detect()
@@ -235,7 +236,11 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         """
         :return: The list of selected parameters to measure
         """
-        parameters_list = self.parameter_measurementParamTree.children()
+        parameters_groups = self.parameter_measurementParamTree.children()
+
+        parameters_list = []
+        for group in parameters_groups:
+            parameters_list.extend(group.children())
 
         # get just the parameter selected by user to be measured
         parameters_adapters_list = [self.parameterAdapterFactory.get_adapter(x.name()) for x in parameters_list

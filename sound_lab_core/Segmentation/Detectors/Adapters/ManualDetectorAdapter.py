@@ -14,6 +14,3 @@ class ManualDetectorAdapter(SoundLabAdapter):
 
     def get_instance(self,signal):
         return ManualDetector(signal)
-
-    def apply_settings_change(self, transform, change):
-        pass

@@ -36,16 +36,16 @@ class AverageFreqVisualItem(SpectralParameterVisualItem):
     def get_item(self):
         return self.peak_freq_region
 
-    def set_data(self, signal, segment, data):
+    def set_data(self, signal, segment, data_kHz):
 
         self.indexFrom = segment.indexFrom
         self.indexTo = segment.indexTo
 
-        self.peak_freq_value = int(data)
+        self.peak_freq_value = int(data_kHz*1000)
 
         self.peak_freq_pos = np.array([[self.indexFrom,  self.peak_freq_value],
                                        [self.indexTo,  self.peak_freq_value]])
-        self.peak_freq_region.setToolTip(self.tooltip + " " + str(int(data/1000.0)) + "(kHz)")
+        self.peak_freq_region.setToolTip(self.tooltip + " " + str(data_kHz) + "(kHz)")
 
     def translate_time_freq_coords(self, translate_time_function=None, translate_freq_function=None):
         pos = np.zeros(4).reshape((2,2))

@@ -90,14 +90,19 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
         # just update the visualization of visible elements
         start, end = self.mainCursor.min, self.mainCursor.max
+
         elements = [e for e in self.elements if start <= e.indexFrom <= end or start <= e.indexTo <= end]
 
         for i in range(len(self.elements)):
-            for item, visible in self.elements[i].time_element.visual_widgets():
-                self.axesOscilogram.removeItem(item)
+            # oscilogram elements are cleared by graph so are not in axes
+            # for item, visible in self.elements[i].time_element.visual_widgets():
+            #     if item in self.axesOscilogram.items():
+            #         self.axesOscilogram.removeItem(item)
 
             for item, visible in self.elements[i].spectral_element.visual_widgets():
-                self.axesSpecgram.viewBox.removeItem(item)
+                # if item in self.axesSpecgram.viewBox.childItems():
+                #     self.axesSpecgram.viewBox.removeItem(item)
+
                 self.elements[i].spectral_element.translate_time_freq_coords(self.from_osc_to_spec, self.get_freq_index)
 
         # add the visible elements
@@ -107,14 +112,12 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
             if self.visibleOscilogram and osc:
                 for item, visible in elements[i].time_element.visual_widgets():
-                    if not visible:
-                        self.axesOscilogram.removeItem(item)
-                    else:
+                    if visible and item not in self.axesOscilogram.items():
                         self.axesOscilogram.addItem(item)
 
             if self.visibleSpectrogram and spec:
                 for item, visible in elements[i].spectral_element.visual_widgets():
-                    if visible:
+                    if visible and item not in self.axesSpecgram.viewBox.childItems():
                         self.axesSpecgram.viewBox.addItem(item)
 
         self.axesSpecgram.update()
@@ -192,6 +195,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         if not 0 <= element_index < len(self.elements):
             return
         self.elements[element_index].addParameterItem(parameter_item)
+        self.drawElements()
 
     # endregion
 

@@ -1,1 +1,1 @@
-__author__ = 'y.febles'
+DECIMAL_PLACES = 2

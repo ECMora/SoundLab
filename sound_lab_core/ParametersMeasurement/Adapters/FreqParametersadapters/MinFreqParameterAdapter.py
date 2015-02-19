@@ -16,7 +16,10 @@ class MinFreqParameterAdapter(SoundLabAdapter):
         settings = [
             {u'name': unicode(self.tr(u'Threshold (dB)')), u'type': u'int', u'value': -20.00, u'step': 1, u'limits': (-100, 0)},
             {u'name': unicode(self.tr(u'Total')), u'type': u'bool', u'default': True, u'value': True}]
+
         self.threshold = -20
+        self.total = True
+
         self.settings = Parameter.create(name=u'Settings', type=u'group', children=settings)
 
     def get_settings(self):
@@ -30,17 +33,21 @@ class MinFreqParameterAdapter(SoundLabAdapter):
         # todo improvement the way to get the calues form the param tree
         # use a try catch because the instance must be required after
         # param tree object is destroyed
-        threshold = 0
+        threshold = -20
+        total = True
         try:
-            threshold = self.settings.param(unicode(self.tr(u'Threshold (db)'))).value()
+            threshold = self.settings.param(unicode(self.tr(u'Threshold (dB)'))).value()
+            total = self.settings.param(unicode(self.tr(u'Total'))).value()
 
         except Exception as e:
             threshold = self.threshold
+            total = self.total
 
         self.threshold = threshold
+        self.total = total
 
-        return MinFreqParameter(threshold=self.threshold)
+        return MinFreqParameter(threshold=self.threshold,total=self.total)
 
     def get_visual_item(self):
-        return AverageFreqVisualItem(tooltip=self.tr(u"Min Freq"))
+        return AverageFreqVisualItem(tooltip=self.tr(u"Min Freq") + u" at " + unicode(self.threshold) + u"dB->")
 

@@ -2,6 +2,7 @@
 from matplotlib import mlab
 import numpy as np
 from sound_lab_core.ParametersMeasurement.ParameterMeasurer import ParameterMeasurer
+from sound_lab_core.ParametersMeasurement.SpectralParameters import DECIMAL_PLACES
 
 
 class MaxFreqParameter(ParameterMeasurer):
@@ -11,7 +12,7 @@ class MaxFreqParameter(ParameterMeasurer):
 
     def __init__(self, threshold=-20, total=True):
         ParameterMeasurer.__init__(self)
-        self.name = "MaxFreq(Hz)"
+        self.name = "MaxFreq(kHz)"
         self.threshold = threshold
         self.total = total
 
@@ -26,4 +27,4 @@ class MaxFreqParameter(ParameterMeasurer):
             peak_index = np.argmax(Pxx)
             below[:peak_index] = False
             max_freq_index = np.argwhere(below).min() - 1
-        return int(freqs[max_freq_index] - freqs[max_freq_index] % 100)
+        return round((freqs[max_freq_index] - freqs[max_freq_index] % 10)/1000.0, DECIMAL_PLACES)

@@ -2,6 +2,7 @@
 from matplotlib import mlab
 from numpy import argmax
 from sound_lab_core.ParametersMeasurement.ParameterMeasurer import ParameterMeasurer
+from sound_lab_core.ParametersMeasurement.SpectralParameters import DECIMAL_PLACES
 
 
 class PeakFreqParameter(ParameterMeasurer):
@@ -11,9 +12,9 @@ class PeakFreqParameter(ParameterMeasurer):
 
     def __init__(self):
         ParameterMeasurer.__init__(self)
-        self.name = "PeakFreq(Hz)"
+        self.name = "PeakFreq(kHz)"
 
     def measure(self, segment):
         Pxx, freqs = mlab.psd(segment.signal.data[segment.indexFrom:segment.indexTo], Fs=segment.signal.samplingRate,noverlap=128)
         index = argmax(Pxx)
-        return int(freqs[index] - freqs[index] % 100)
+        return round((freqs[index] - freqs[index] % 10) / 1000.0, DECIMAL_PLACES)

@@ -29,23 +29,56 @@ class AdapterFactory(QObject):
         raise Exception("Not found adapter")
 
 
-class ParametersAdapterFactory(AdapterFactory):
-    def __init__(self, parent=None):
-        AdapterFactory.__init__(self, parent)
+class ParameterGroup:
+    def __init__(self, name, adapters):
+        self.name = name
+        self.adapters = adapters
 
-        self.adapters = [
+    def adapters_names(self):
+        return [x[0] for x in self.adapters]
+
+    def get_adapter(self, name):
+        for i in range(len(self.adapters)):
+            if name == self.adapters[i][0]:
+                return self.adapters[i][1]
+
+        raise Exception("Not found adapter")
+
+
+class ParametersAdapterFactory(QObject):
+    def __init__(self, parent=None):
+        QObject.__init__(self)
+
+        time_params_adapters = [
             (u'Start Time', StartTimeParameterAdapter(parent)),
             (u'End Time', EndTimeParameterAdapter(parent)),
-            (u'Duration', DurationTimeParameterAdapter(parent)),
+            (u'Duration', DurationTimeParameterAdapter(parent))]
+        wave_params_adapters = [
             (u'RMS', RmsTimeParameterAdapter(parent)),
             (u'PeakToPeak', PeakToPeakParameterAdapter(parent)),
-            (u'StartToMax', StartToMaxTimeParameterAdapter(parent)),
+            (u'StartToMax', StartToMaxTimeParameterAdapter(parent))]
+        spectral_params_adapters = [
             (u'PeakFreq', PeakFreqParameterAdapter(parent)),
             (u'MaxFreq', MaxFreqParameterAdapter(parent)),
             (u'MinFreq', MinFreqParameterAdapter(parent)),
             (u'BandWidth', BandWidthParameterAdapter(parent)),
-            (u'PeaksAbove', PeaksAboveParameterAdapter(parent))
-        ]
+            (u'PeaksAbove', PeaksAboveParameterAdapter(parent))]
+
+        self.parameter_groups = [ParameterGroup(unicode(self.tr(u"Time Parameters")),time_params_adapters),
+                                 ParameterGroup(unicode(self.tr(u"Wave Parameters")), wave_params_adapters),
+                                 ParameterGroup(unicode(self.tr(u"Spectral Parameters")), spectral_params_adapters),
+                                 ]
+
+    def get_adapter(self, name):
+        for group in self.parameter_groups:
+            try:
+                adapter = group.get_adapter(name)
+                if adapter:
+                    return adapter
+            except Exception as ex:
+                pass
+
+        raise Exception("Not found adapter")
 
 
 class SegmentationAdapterFactory(AdapterFactory):
@@ -59,7 +92,6 @@ class SegmentationAdapterFactory(AdapterFactory):
             (u'Adaptive Threshold', AdaptThreshDetectorAdapter(parent)),
             (u'GrabCut', GrabCutDetectorAdapter(parent))
         ]
-
 
 
 class ClassificationAdapterFactory(AdapterFactory):

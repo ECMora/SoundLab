@@ -2,6 +2,7 @@
 from matplotlib import mlab
 import numpy as np
 from sound_lab_core.ParametersMeasurement.ParameterMeasurer import ParameterMeasurer
+from sound_lab_core.ParametersMeasurement.SpectralParameters import DECIMAL_PLACES
 
 
 class MinFreqParameter(ParameterMeasurer):
@@ -11,7 +12,7 @@ class MinFreqParameter(ParameterMeasurer):
 
     def __init__(self, threshold=-20, total=True):
         ParameterMeasurer.__init__(self)
-        self.name = "MinFreq(Hz)"
+        self.name = "MinFreq(kHz)"
         self.threshold = threshold
         self.total = total
 
@@ -27,4 +28,4 @@ class MinFreqParameter(ParameterMeasurer):
             peak_index = np.argmax(Pxx)
             below[peak_index:] = False
             min_freq_index = np.argwhere(below).max() + 1
-        return int(freqs[min_freq_index] - freqs[min_freq_index] % 100)
+        return round((freqs[min_freq_index] - freqs[min_freq_index] % 10)/1000.0, DECIMAL_PLACES)

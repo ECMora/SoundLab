@@ -1,5 +1,5 @@
 import numpy as np
-import cv2
+# import cv2
 from sound_lab_core.Segmentation.Detectors.OneDimensional.OneDimensionalElementsDetector import \
     OneDimensionalElementsDetector
 from duetto.dimensional_transformations.two_dimensional_transforms.Spectrogram.Spectrogram import Spectrogram

@@ -18,6 +18,7 @@ class MaxFreqParameterAdapter(SoundLabAdapter):
             {u'name': unicode(self.tr(u'Total')), u'type': u'bool', u'default': True, u'value': True}]
 
         self.threshold = -20
+        self.total = True
 
         self.settings = Parameter.create(name=u'Settings', type=u'group', children=settings)
 
@@ -32,16 +33,20 @@ class MaxFreqParameterAdapter(SoundLabAdapter):
         # todo improvement the way to get the calues form the param tree
         # use a try catch because the instance must be required after
         # param tree object is destroyed
-        threshold = 0
+        threshold = -20
+        total = True
         try:
-            threshold = self.settings.param(unicode(self.tr(u'Threshold (db)'))).value()
+            threshold = self.settings.param(unicode(self.tr(u'Threshold (dB)'))).value()
+            total = self.settings.param(unicode(self.tr(u'Total'))).value()
 
         except Exception as e:
             threshold = self.threshold
+            total = self.total
 
         self.threshold = threshold
+        self.total = total
 
-        return MaxFreqParameter(threshold=self.threshold)
+        return MaxFreqParameter(threshold=self.threshold,total=self.total)
 
     def get_visual_item(self):
-        return AverageFreqVisualItem(tooltip=self.tr(u"Max Freq"))
+        return AverageFreqVisualItem(tooltip=self.tr(u"Max Freq") + u" at " + unicode(self.threshold) + u" dB->")
