@@ -77,7 +77,7 @@ class SpectrogramElement(VisualElement):
         y = y if translate_freq_function is None else translate_freq_function(y)
 
         self.text_number.setPos(x, y)
-        print("***********")
+        
         # update the region delimiter
         pos = np.zeros(len(self.element_region_pos) * 2).reshape((len(self.element_region_pos), 2))
 
@@ -87,8 +87,7 @@ class SpectrogramElement(VisualElement):
 
             if translate_freq_function is not None:
                 pos[i, 1] = translate_freq_function(self.element_region_pos[i, 1])
-        print("spec" + str(self.number))
-        print(pos[0,0], pos[2, 0])
+        
         options = dict(size=1, symbol='d', pxMode=False, pen=(pg.mkPen(self.color, width=3)))
         self.element_region.setData(pos=pos, adj=self.element_region_adj, **options)
 
