@@ -22,6 +22,7 @@ class OneDimPlotWidget(SoundLabWidget,pg.PlotWidget):
         self.__one_dim_transform = None
         self._minY = 0
         self._maxY = 0
+        self._lines = True
 
         self.plot_color = "CC3"
 
@@ -30,12 +31,28 @@ class OneDimPlotWidget(SoundLabWidget,pg.PlotWidget):
 
         self.getPlotItem().showGrid(True, True)
         self.setClipToView(True)
+        self.setDownsampling(auto=True, mode="peak")
         self.setMouseEnabled(x=False, y=False)
         self.setMenuEnabled(False)
         self.getPlotItem().hideButtons()
+        self.setRange(xRange=(0, 10),
+                       yRange=(0, 10),
+                       padding=0, update=True)
 
         self.setSelectedTool(Tools.NoTool)
         # self.__selectedTool.detectedDataChanged.connect(self.getInfo)
+
+    #region Lines Property
+
+    @property
+    def lines(self):
+        return self._lines
+
+    @lines.setter
+    def lines(self, value):
+        self._lines = value
+
+    #endregion
 
     # region Signal Property
 
@@ -112,13 +129,23 @@ class OneDimPlotWidget(SoundLabWidget,pg.PlotWidget):
         :return:
         """
         if self.one_dim_transform is not None:
+
             self.clear()
             (x, y) = self.one_dim_transform.getData(indexFrom, indexTo)
-            self.plot(x, y, pen=self.plot_color, clear=True)
+
+            # plotting function according connecting lines between points or not
+            if self.lines:
+                self.plot(x, y, pen=self.plot_color, clear=True)
+            else:
+                self.plot(x, y, pen=None, symbol='s', symbolSize=1, symbolPen=self.plot_color, clear=True)
+
+            # setting the range desired
             self.setXRange(0, x[len(x) - 1], padding=0)
             self.setYRange(self.minY, self.maxY, padding=0)
             self.getPlotItem().getAxis(u'bottom').setRange(0, x[len(x) - 1])
             self.getPlotItem().getAxis(u'left').setRange(self.minY, self.maxY)
+
+            # getting and setting the axis labels
             xLabel = unicode(self.tr(labels[u'X']))
             yLabel = unicode(self.tr(labels[u'Y']))
             self.getPlotItem().setLabel(axis='bottom',text=xLabel)
@@ -126,7 +153,7 @@ class OneDimPlotWidget(SoundLabWidget,pg.PlotWidget):
 
             self.show()
 
-    # region Tools interaction Implementation
+    #region Tools interaction Implementation
     def changeTool(self, new_tool_class):
         SoundLabWidget.changeTool(self, new_tool_class)
 
@@ -148,3 +175,5 @@ class OneDimPlotWidget(SoundLabWidget,pg.PlotWidget):
             self.changeTool(NoTool)
 
         self.__selectedTool = tool
+
+    #endregion

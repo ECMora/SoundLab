@@ -26,6 +26,13 @@ class OneDimensionalHandler(QObject):
         """
         pass
 
+    def get_default_lines(self):
+        """
+        Gets the defaults connect lines mode.
+        :return: a boolean value
+        """
+        return True
+
     def get_settings(self, transform):
         """
         Gets the settings of the corresponding one dimensional transform with the values of the supplied instance.
@@ -41,7 +48,20 @@ class OneDimensionalHandler(QObject):
         """
         pass
 
+    def get_y_default(self, transform):
+        """
+        Gets the axis y limits
+        :param transform: the one dimensional transform instance which settings are to be changed
+        :return: a tuple with the max and min y default values to show
+        """
+        pass
+
     def get_y_limits(self, transform):
+        """
+        Gets the axis y limits
+        :param transform: the one dimensional transform instance which settings are to be changed
+        :return: a tuple with the max and min y limits to show
+        """
         pass
 
     def apply_settings_change(self, transform, change):

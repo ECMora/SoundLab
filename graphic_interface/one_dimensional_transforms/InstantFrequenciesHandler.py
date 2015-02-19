@@ -33,12 +33,26 @@ class InstantFrequenciesHandler(OneDimensionalHandler):
                                   (unicode(self.tr(u'None')), WindowFunction.WindowNone),
                                   (u"Rectangular", WindowFunction.Rectangular)]},
                      {u'name': unicode(self.tr(u'FFT overlap')), u'type': u'int', u'limits': (1, 99),
-                      u'value': transform.overlap}]
+                      u'value': transform.overlap , u'default': 50}]
 
     def get_axis_labels(self):
         return {u'X': u'Time (s)', u'Y': u'Frequency (kHz)' }
 
+    def get_default_lines(self):
+        return False
+
+    def get_y_default(self, transform):
+        """
+
+        :type transform: InstantFrequencies
+        """
+        return (0,transform.signal.samplingRate/(2000))
+
     def get_y_limits(self, transform):
+        """
+
+        :type transform: InstantFrequencies
+        """
         return (0,transform.signal.samplingRate/(2000))
 
     def apply_settings_change(self, transform, change):

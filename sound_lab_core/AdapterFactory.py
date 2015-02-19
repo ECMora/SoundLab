@@ -45,6 +45,9 @@ class ParametersAdapterFactory(AdapterFactory):
             (u'MaxFreq', MaxFreqParameterAdapter(parent)),
             (u'MinFreq', MinFreqParameterAdapter(parent))
         ]
+            'MinFreq': MinFreqParameterAdapter(parent),
+            'BandWidth': BandWidthParameterAdapter(parent),
+            'PeaksAbove': PeaksAboveParameterAdapter(parent)
 
 
 class SegmentationAdapterFactory(AdapterFactory):
@@ -56,6 +59,10 @@ class SegmentationAdapterFactory(AdapterFactory):
             (u'Manual', ManualDetectorAdapter(parent))
 
         ]
+            'Envelope Abs Decay': AbsDecayEnvelopeDetectorAdapter(parent),
+            'Watershed': WatershedDetectorAdapter(parent),
+            'Adaptive Threshold': AdaptThreshDetectorAdapter(parent),
+            'GrabCut': GrabCutDetectorAdapter(parent)
 
 
 class ClassificationAdapterFactory(AdapterFactory):

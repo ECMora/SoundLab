@@ -14,6 +14,6 @@ class PeakFreqParameter(ParameterMeasurer):
         self.name = "PeakFreq(Hz)"
 
     def measure(self, segment):
-        Pxx, freqs = mlab.psd(segment.signal.data[segment.indexFrom:segment.indexTo], Fs=segment.signal.samplingRate)
+        Pxx, freqs = mlab.psd(segment.signal.data[segment.indexFrom:segment.indexTo], Fs=segment.signal.samplingRate,noverlap=128)
         index = argmax(Pxx)
         return int(freqs[index] - freqs[index] % 100)

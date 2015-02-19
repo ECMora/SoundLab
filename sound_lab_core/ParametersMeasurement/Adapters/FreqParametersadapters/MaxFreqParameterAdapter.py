@@ -14,7 +14,8 @@ class MaxFreqParameterAdapter(SoundLabAdapter):
     def __init__(self, parent):
         SoundLabAdapter.__init__(self, parent)
         settings = [
-            {u'name': unicode(self.tr(u'Threshold (db)')), u'type': u'int', u'value': -20.00, u'step': 1, u'limits': (-100, 0)}]
+            {u'name': unicode(self.tr(u'Threshold (dB)')), u'type': u'int', u'value': -20.00, u'step': 1, u'limits': (-100, 0)},
+            {u'name': unicode(self.tr(u'Total')), u'type': u'bool', u'default': True, u'value': True}]
 
         self.threshold = -20
 
