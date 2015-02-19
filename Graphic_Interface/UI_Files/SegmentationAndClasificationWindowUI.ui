@@ -82,6 +82,7 @@
     <bool>false</bool>
    </attribute>
    <addaction name="actionClassification_Settings"/>
+   <addaction name="actionCross_correlation"/>
   </widget>
   <widget class="QDockWidget" name="dockWidgetParameterTableOscilogram">
    <property name="styleSheet">
@@ -156,6 +157,7 @@
      <string>Classification</string>
     </property>
     <addaction name="actionClassification_Settings"/>
+    <addaction name="actionCross_correlation"/>
    </widget>
    <widget class="QMenu" name="menuExport">
     <property name="title">
@@ -595,6 +597,15 @@
    </property>
    <property name="text">
     <string>Sound File Segmentation</string>
+   </property>
+  </action>
+  <action name="actionCross_correlation">
+   <property name="icon">
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/cross-correlation.png</normaloff>:/myappicons/cross-correlation.png</iconset>
+   </property>
+   <property name="text">
+    <string>Cross-correlation</string>
    </property>
   </action>
   <zorder>dockWidgetParameterTableOscilogram</zorder>

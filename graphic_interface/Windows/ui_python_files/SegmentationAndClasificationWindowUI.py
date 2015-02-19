@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\SegmentationAndClasificationWindowUI.ui'
+# Form implementation generated from reading ui file 'graphic_interface\UI_Files\SegmentationAndClasificationWindowUI.ui'
 #
-# Created: Mon Feb 09 16:29:46 2015
+# Created: Tue Feb 17 14:08:20 2015
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -269,7 +269,13 @@ class Ui_MainWindow(object):
         icon26.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/225.ico")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionSound_File_Segmentation.setIcon(icon26)
         self.actionSound_File_Segmentation.setObjectName(_fromUtf8("actionSound_File_Segmentation"))
+        self.actionCross_correlation = QtGui.QAction(MainWindow)
+        icon27 = QtGui.QIcon()
+        icon27.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/cross-correlation.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionCross_correlation.setIcon(icon27)
+        self.actionCross_correlation.setObjectName(_fromUtf8("actionCross_correlation"))
         self.toolBar.addAction(self.actionClassification_Settings)
+        self.toolBar.addAction(self.actionCross_correlation)
         self.menuParameters.addAction(self.actionView_Parameters)
         self.menuParameters.addSeparator()
         self.menuParameters.addAction(self.actionZoomIn)
@@ -293,6 +299,7 @@ class Ui_MainWindow(object):
         self.menuTools.addAction(self.actionPointer_Cursor)
         self.menuTools.addAction(self.actionRectangular_Cursor)
         self.menuClasification.addAction(self.actionClassification_Settings)
+        self.menuClasification.addAction(self.actionCross_correlation)
         self.menuGraph_Images.addAction(self.actionOsc_Image)
         self.menuGraph_Images.addAction(self.actionSpecgram_Image)
         self.menuGraph_Images.addAction(self.actionCombined_Image)
@@ -371,6 +378,7 @@ class Ui_MainWindow(object):
         self.actionAddElement.setText(QtGui.QApplication.translate("MainWindow", "AddElement", None, QtGui.QApplication.UnicodeUTF8))
         self.actionAddElement.setToolTip(QtGui.QApplication.translate("MainWindow", "Mark Selected Region As Element", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSound_File_Segmentation.setText(QtGui.QApplication.translate("MainWindow", "Sound File Segmentation", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionCross_correlation.setText(QtGui.QApplication.translate("MainWindow", "Cross-correlation", None, QtGui.QApplication.UnicodeUTF8))
 
 from graphic_interface.widgets.SoundLabToolBar import SoundLabToolBarWidget
 from pyqtgraph import TableWidget

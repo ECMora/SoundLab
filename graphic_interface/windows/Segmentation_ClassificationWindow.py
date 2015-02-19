@@ -5,6 +5,7 @@ from PyQt4.QtCore import pyqtSlot, Qt
 from SoundLabWindow import SoundLabWindow
 from graphic_interface.segments.VisualElement import VisualElement
 from duetto.audio_signals.AudioSignal import AudioSignal
+from graphic_interface.dialogs.Cross_correlationDialog import Cross_correlationDialog
 from ..dialogs.elemDetectSettings import ElemDetectSettingsDialog
 from sound_lab_core.Segmentation.SegmentManager import SegmentManager
 from ..dialogs.EditCategoriesDialog import EditCategoriesDialog
@@ -94,6 +95,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
         # array of windows with two dimensional graphs.
         self.two_dim_windows = []
+        self._cross_correlation_windows = []
 
         self.showMaximized()
 
@@ -460,9 +462,19 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         # in the widget...
         self.widget.selectElement(element_index)
 
-        # and in the opened two dimensional windows
+        # in the opened two dimensional windows...
         for wnd in self.two_dim_windows:
             wnd.selectElement(element_index)
+
+        # and in the cross-correlation windows
+        i = 0
+        while i < len(self._cross_correlation_windows):
+            wnd = self._cross_correlation_windows[i]
+            if wnd.isHidden():
+                del self._cross_correlation_windows[i]
+            else:
+                wnd.selectElement(element_index)
+                i += 1
 
     # endregion
 
@@ -486,6 +498,22 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         :return:
         """
         self.segmentManager.classifyElements(indexes_list, dictionary)
+
+    @pyqtSlot()
+    def on_actionCross_correlation_triggered(self):
+        """
+        Opens the cross-correlation dialog (after selecting a file containing a reference segment) to check each
+        segment's match with a reference segment.
+        """
+        file_name = QFileDialog.getOpenFileName(self, self.tr(u"Select the file of a reference segment"),
+                                                directory=self.workSpace.lastOpenedFile,
+                                                filter=self.tr(u"Wave Files") + u"(*.wav);;All Files(*)")
+        if file_name:
+            dialog = Cross_correlationDialog(self, self.widget, file_name,
+                                             self.TABLE_ROW_COLOR_ODD, self.TABLE_ROW_COLOR_EVEN)
+            self._cross_correlation_windows.append(dialog)
+            dialog.elementSelected.connect(self.selectElement)
+            dialog.show()
 
     # endregion
 
