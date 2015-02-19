@@ -22,7 +22,6 @@ class AdapterFactory(QObject):
         :param name: a str, the name of the transform. Must be one of the values returned by the get_all_transforms_names method.
         :return: an get_instance of the corresponding one dimensional transform
         """
-        index = -1
         for i in range(len(self.adapters)):
             if name == self.adapters[i][0]:
                 return self.adapters[i][1]
@@ -43,11 +42,10 @@ class ParametersAdapterFactory(AdapterFactory):
             (u'StartToMax', StartToMaxTimeParameterAdapter(parent)),
             (u'PeakFreq', PeakFreqParameterAdapter(parent)),
             (u'MaxFreq', MaxFreqParameterAdapter(parent)),
-            (u'MinFreq', MinFreqParameterAdapter(parent))
+            (u'MinFreq', MinFreqParameterAdapter(parent)),
+            (u'BandWidth', BandWidthParameterAdapter(parent)),
+            (u'PeaksAbove', PeaksAboveParameterAdapter(parent))
         ]
-            'MinFreq': MinFreqParameterAdapter(parent),
-            'BandWidth': BandWidthParameterAdapter(parent),
-            'PeaksAbove': PeaksAboveParameterAdapter(parent)
 
 
 class SegmentationAdapterFactory(AdapterFactory):
@@ -56,13 +54,12 @@ class SegmentationAdapterFactory(AdapterFactory):
 
         self.adapters = [
             (u'Envelope Abs Decay', AbsDecayEnvelopeDetectorAdapter(parent)),
-            (u'Manual', ManualDetectorAdapter(parent))
-
+            (u'Manual', ManualDetectorAdapter(parent)),
+            (u'Watershed', WatershedDetectorAdapter(parent)),
+            (u'Adaptive Threshold', AdaptThreshDetectorAdapter(parent)),
+            (u'GrabCut', GrabCutDetectorAdapter(parent))
         ]
-            'Envelope Abs Decay': AbsDecayEnvelopeDetectorAdapter(parent),
-            'Watershed': WatershedDetectorAdapter(parent),
-            'Adaptive Threshold': AdaptThreshDetectorAdapter(parent),
-            'GrabCut': GrabCutDetectorAdapter(parent)
+
 
 
 class ClassificationAdapterFactory(AdapterFactory):

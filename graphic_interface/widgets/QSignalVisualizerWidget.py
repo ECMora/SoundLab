@@ -251,8 +251,6 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         # the spec zoom region would be updated by the connections made
         self.updateSpecZoomRegion()
 
-
-
     def updateSpecZoomRegion(self):
         """
         Method that update the zoom region of

@@ -26,7 +26,4 @@ class MaxFreqParameter(ParameterMeasurer):
             peak_index = np.argmax(Pxx)
             below[:peak_index] = False
             max_freq_index = np.argwhere(below).min() - 1
-        return round(freqs[max_freq_index] / 1000.0, DECIMAL_PLACES)
-
-        max_freq_index = np.argwhere(Pxx >= value).max()
-        return round(freqs[max_freq_index] / 1000.0, DECIMAL_PLACES)
+        return int(freqs[max_freq_index] - freqs[max_freq_index] % 100)

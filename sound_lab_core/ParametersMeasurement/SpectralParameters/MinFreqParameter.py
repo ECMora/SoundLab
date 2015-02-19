@@ -27,4 +27,4 @@ class MinFreqParameter(ParameterMeasurer):
             peak_index = np.argmax(Pxx)
             below[peak_index:] = False
             min_freq_index = np.argwhere(below).max() + 1
-        return round(freqs[min_freq_index] / 1000.0, DECIMAL_PLACES)
+        return int(freqs[min_freq_index] - freqs[min_freq_index] % 100)

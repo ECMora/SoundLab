@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from sound_lab_core.Segmentation.Detectors.OneDimensional.Image.WatershedDetector import \
+from sound_lab_core.Segmentation.Detectors.OneDimensional.Image.WaterShedDetector import \
     WatershedDetector
 from sound_lab_core.SoundLabAdapter import SoundLabAdapter
 from pyqtgraph.parametertree import Parameter
