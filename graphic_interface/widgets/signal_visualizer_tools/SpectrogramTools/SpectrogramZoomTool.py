@@ -55,9 +55,9 @@ class SpectrogramZoomTool(SpectrogramTool):
             rgn = self.zoomRegion.getRegion()
             if rgn[0] == rgn[1]:
                 return
-            indexFrom = int(self.widget.specgramHandler.bins[rgn[0]] * self.widget.signal.samplingRate)
-            indexTo = int(self.widget.specgramHandler.bins[rgn[1]] * self.widget.signal.samplingRate)
-            self.rangeChanged.emit(indexFrom,indexTo,0,0)
+            indexFrom = int(self.widget.from_spec_to_osc(rgn[0]))
+            indexTo = int(self.widget.from_spec_to_osc(rgn[1]))
+            self.rangeChanged.emit(indexFrom, indexTo, 0, 0)
 
     def mouseReleaseEvent(self, event):
         self.mousePressed = False

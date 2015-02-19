@@ -29,8 +29,9 @@ class AverageFreqVisualItem(SpectralParameterVisualItem):
 
         self.peak_freq_adj = np.array([[0, 1]])
         self.peak_freq_region = pg.GraphItem()
+        self.tooltip = tooltip
 
-        self.peak_freq_region.setToolTip(tooltip)
+        self.peak_freq_region.setToolTip(self.tooltip)
 
     def get_item(self):
         return self.peak_freq_region
@@ -40,10 +41,11 @@ class AverageFreqVisualItem(SpectralParameterVisualItem):
         self.indexFrom = segment.indexFrom
         self.indexTo = segment.indexTo
 
-        self.peak_freq_value = data
+        self.peak_freq_value = int(data)
 
         self.peak_freq_pos = np.array([[self.indexFrom,  self.peak_freq_value],
                                        [self.indexTo,  self.peak_freq_value]])
+        self.peak_freq_region.setToolTip(self.tooltip + " " + str(int(data/1000.0)) + "(kHz)")
 
     def translate_time_freq_coords(self, translate_time_function=None, translate_freq_function=None):
         pos = np.zeros(4).reshape((2,2))

@@ -34,7 +34,7 @@ class OscillogramWorkspace(object):
 
 
 class SpectrogramWorkspace(object):
-    def __init__(self, minY=0, maxY=44100, FFTSize=512, FFTWindow=WindowFunction.Hanning, FFTOverlap=-1,
+    def __init__(self, minY=0, maxY=1, FFTSize=512, FFTWindow=WindowFunction.Hanning, FFTOverlap=-1,
                  theme=None):
         """
 

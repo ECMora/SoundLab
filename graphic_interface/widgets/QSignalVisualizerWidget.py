@@ -240,8 +240,18 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         # set the limits of the zoom regions to the length of the signal
         self.axesOscilogram.gui_user_tool.zoomRegion.setBounds((min_limit, max_limit))
 
-        self.axesSpecgram.gui_user_tool.zoomRegion.setBounds((self.from_osc_to_spec(min_limit),
-                                                              self.from_osc_to_spec(max_limit)))
+        rgn = self.axesOscilogram.gui_user_tool.zoomRegion.getRegion()
+        # if the zoom region is the complete interval of visualization
+        # clear the zoom tool region
+        if rgn == (min_limit, max_limit):
+            self.axesOscilogram.gui_user_tool.zoomRegion.setRegion((min_limit, min_limit))
+
+        # do not update the spectrogram cursors directly because the oscilogram
+        # zoom region setBounds raise the signal of changed if have to and then
+        # the spec zoom region would be updated by the connections made
+        self.updateSpecZoomRegion()
+
+
 
     def updateSpecZoomRegion(self):
         """
@@ -614,7 +624,7 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         self.axesSpecgram.workspace.maxY = 0
         self.axesSpecgram.workspace.maxY = new_signal.samplingRate / 2.0
 
-        # update the zoom regions limit sif zoom tool is selected
+        # update the zoom regions limit if zoom tool is selected
         self.updateZoomRegionsLimits()
 
         #  update the variables that manage the signal
@@ -1059,12 +1069,12 @@ class QSignalVisualizerWidget(QtGui.QWidget):
             self.axesOscilogram.changeTool(OscilogramZoomTool)
             self.axesSpecgram.changeTool(SpectrogramZoomTool)
 
-            # set the limits of the zoom regions to the length of the signal
-            self.updateZoomRegionsLimits()
-
             #  Set the connections for the zoom tool synchronization
             self.axesOscilogram.gui_user_tool.zoomRegion.sigRegionChanged.connect(self.updateSpecZoomRegion)
             self.axesSpecgram.gui_user_tool.zoomRegion.sigRegionChanged.connect(self.updateOscZoomRegion)
+
+            # set the limits of the zoom regions to the length of the signal
+            self.updateZoomRegionsLimits()
 
         elif tool == Tools.PointerTool:
             self.axesOscilogram.changeTool(OscilogramPointerTool)
