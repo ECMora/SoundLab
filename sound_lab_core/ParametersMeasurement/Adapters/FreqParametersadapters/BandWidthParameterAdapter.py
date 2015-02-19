@@ -14,7 +14,8 @@ class BandWidthParameterAdapter(SoundLabAdapter):
         settings = [
             {u'name': unicode(self.tr(u'Threshold (dB)')), u'type': u'int', u'value': -20.00, u'step': 1, u'limits': (-100, 0)},
             {u'name': unicode(self.tr(u'Total')), u'type': u'bool', u'default': True, u'value': True}]
-
+        self.threshold = -20
+        self.total = True
         self.settings = Parameter.create(name=u'Settings', type=u'group', children=settings)
 
     def get_settings(self):
@@ -25,7 +26,18 @@ class BandWidthParameterAdapter(SoundLabAdapter):
         return self.settings
 
     def get_instance(self):
-        threshold = self.settings.param(unicode(self.tr(u'Threshold (dB)'))).value()
-        total = self.settings.param(unicode(self.tr(u'Total'))).value()
 
-        return BandWidthParameter(threshold=threshold, total=total)
+        threshold = -20
+        total = False
+        try:
+            threshold = self.settings.param(unicode(self.tr(u'Threshold (dB)'))).value()
+            total = self.settings.param(unicode(self.tr(u'Total'))).value()
+
+        except Exception as e:
+            threshold = self.threshold
+            total = self.total
+
+        self.threshold = threshold
+        self.total = total
+
+        return BandWidthParameter(threshold=self.threshold, total=self.total)

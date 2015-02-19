@@ -9,12 +9,18 @@ from scipy.ndimage import label, find_objects
 
 class GrabCutDetector(OneDimensionalElementsDetector):
 
-    def __init__(self, signal, min_size_ms=1, min_size_kHz=1):
+    def __init__(self, signal=None, min_size_ms=1, min_size_kHz=1):
         OneDimensionalElementsDetector.__init__(self, signal)
         self.spec = Spectrogram(signal, 512, 500, WindowFunction.Hamming)
         self.spec.recomputeSpectrogram()
         self.min_size_ms = min_size_ms
         self.min_size_kHz = min_size_kHz
+
+    @property
+    def signal(self, new_signal):
+        OneDimensionalElementsDetector.signal(self,new_signal)
+        self.spec = Spectrogram(new_signal, 512, 500, WindowFunction.Hamming)
+        self.spec.recomputeSpectrogram()
 
     def detect(self, indexFrom=0, indexTo=-1):
         indexTo = self.signal.length if indexTo == -1 else indexTo

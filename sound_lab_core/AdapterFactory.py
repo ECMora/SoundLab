@@ -53,8 +53,8 @@ class SegmentationAdapterFactory(AdapterFactory):
         AdapterFactory.__init__(self, parent)
 
         self.adapters = [
-            (u'Envelope Abs Decay', AbsDecayEnvelopeDetectorAdapter(parent)),
             (u'Manual', ManualDetectorAdapter(parent)),
+            (u'Envelope Abs Decay', AbsDecayEnvelopeDetectorAdapter(parent)),
             (u'Watershed', WatershedDetectorAdapter(parent)),
             (u'Adaptive Threshold', AdaptThreshDetectorAdapter(parent)),
             (u'GrabCut', GrabCutDetectorAdapter(parent))

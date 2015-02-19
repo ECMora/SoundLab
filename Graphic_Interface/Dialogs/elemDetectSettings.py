@@ -5,8 +5,7 @@ from pyqtgraph.parametertree import Parameter, ParameterTree
 from graphic_interface.windows.ui_python_files.detectElementsDialog import Ui_Dialog
 from Utils.Utils import small_signal
 from sound_lab_core.AdapterFactory import *
-from sound_lab_core.Segmentation.Detectors.OneDimensional.EnvelopeMethods.AbsDecayEnvelopeDetector import \
-    AbsDecayEnvelopeDetector
+from sound_lab_core.Segmentation.Detectors.ManualDetector import ManualDetector
 
 
 class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
@@ -41,7 +40,9 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         self.segmentation_classificationParamTree = None
 
         # Parameter Tree Settings
+        self.blockSignals = False
         self.__createParameterTrees()
+
 
         self.detect()
 
@@ -63,16 +64,15 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
 
         classification_adapters = self.classificationAdapterFactory.adapters_names()
         classification_adapters = [(self.tr(t), t) for t in classification_adapters]
+        list_param = [{u'name': unicode(x[1]),
+                       u'type': u'bool',
+                       u'value': False, u'default': False} for x in segmentation_adapters]
 
+        list_param.append({u'name': unicode(self.tr(u'Method Settings')),
+                          u'type': u'group', u'children':[]})
         params = [
             {u'name': unicode(self.tr(u'Segmentation')),
-             u'type': u'group', u'children':
-                [{u'name': unicode(self.tr(u'Method')),
-                  u'type': u'list',
-                  u'value': 545,
-                  u'default': 545,
-                  u'values': segmentation_adapters}],
-             u'expanded': False
+             u'type': u'group', u'children': list_param, u'expanded': False
             },
             {u'name': unicode(self.tr(u'Classification')),
              u'type': u'group', u'children':
@@ -85,13 +85,11 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         self.segmentation_classificationParamTree = Parameter.create(
             name=unicode(self.tr(u'Segmentation-Classification')), type=u'group', children=params)
 
-        self.segmentation_classificationParamTree.sigTreeStateChanged.connect(self.detect)
-
         self.segmentation_classificationParamTree.param(unicode(self.tr(u'Segmentation'))). \
-            param(unicode(self.tr(u'Method'))).sigValueChanged.connect(self.segmentationChanged)
-
-        self.segmentation_classificationParamTree.param(unicode(self.tr(u'Classification'))). \
-            param(unicode(self.tr(u'Method'))).sigValueChanged.connect(self.segmentationChanged)
+            sigTreeStateChanged.connect(self.segmentationChanged)
+        #
+        # self.segmentation_classificationParamTree.param(unicode(self.tr(u'Classification'))). \
+        #     param(unicode(self.tr(u'Method'))).sigValueChanged.connect(self.segmentationChanged)
 
         # create and set initial properties
         self.segmentation_classification_paramTree.setAutoScroll(True)
@@ -137,23 +135,41 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         layout2.addWidget(self.parameter_measurement_paramTree)
         self.parameter_measurement_settings.setLayout(layout2)
 
-    def segmentationChanged(self, parameter):
-        """
-        :param parameter:
-        :return:
-        """
-        try:
-            parameter.clearChildren()
+    def segmentationChanged(self, param, changes):
+        if self.blockSignals:
+            return
 
-            adapter = self.segmentationAdapterFactory.get_adapter(parameter.value())
+        for parameter, _, value in changes:
+            if parameter in self.segmentation_classificationParamTree.param(unicode(self.tr(u'Segmentation'))). \
+                            param(unicode(self.tr(u'Method Settings'))).children():
+                pass
+            else:
+                self.blockSignals = True
+                if isinstance(value, bool) and value:
+                    # add the parameter settings
+                    try:
+                        adapter = self.segmentationAdapterFactory.get_adapter(parameter.name())
 
-            method_settings = adapter.get_settings()
-            if method_settings:
-                parameter.addChild(method_settings)
+                        param_settings = self.segmentation_classificationParamTree.param(unicode(self.tr(u'Segmentation'))).\
+                                         param(unicode(self.tr(u'Method Settings')))
+                        param_settings.clearChildren()
 
-        except Exception as ex:
-            print("Error getting the segmentation settings. " + ex.message)
+                        method_settings = adapter.get_settings()
+                        if method_settings:
+                            param_settings.addChild(method_settings)
 
+                        print(parameter.name())
+                    except Exception as ex:
+                        print(ex.message)
+
+                    # set to false the others segmentation methods
+                    for p in self.segmentation_classificationParamTree.param(unicode(self.tr(u'Segmentation'))).children():
+                        if p.type() == u"bool" and p.name() != parameter.name():
+                            p.setValue(False)
+
+
+        self.blockSignals = False
+        self.detect()
 
     # endregion
 
@@ -193,21 +209,21 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         # create manually the detector
         detector_instance = None
         try:
-            detector_name = self.segmentation_classificationParamTree.param(unicode(self.tr(u'Segmentation'))). \
-                param(unicode(self.tr(u'Method'))).value()
+            detector_name = ""
+            for p in self.segmentation_classificationParamTree.param(unicode(self.tr(u'Segmentation'))).children():
+                if p.type() == u"bool" and p.value():
+                    detector_name = p.name()
+                    break
 
             adapter = self.segmentationAdapterFactory.get_adapter(detector_name)
 
-            detector_instance = adapter.get_instance()
+            detector_instance = adapter.get_instance(self.widget.signal)
 
         except Exception as e:
             print("Fail to get the detector instance. " + e.message)
             detector_instance = None
 
-        self._detector = detector_instance if detector_instance is not None else AbsDecayEnvelopeDetector(
-            self.widget.signal, 1, -40, 2, 5, 6)
-
-        self._detector.signal = self.widget.signal
+        self._detector = detector_instance if detector_instance is not None else ManualDetector(self.widget.signal)
 
         return self._detector
 

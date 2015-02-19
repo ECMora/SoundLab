@@ -58,5 +58,5 @@ class AverageFreqVisualItem(SpectralParameterVisualItem):
             pos[0, 1] = translate_freq_function(self.peak_freq_pos[0, 1])
             pos[1, 1] = translate_freq_function(self.peak_freq_pos[1, 1])
 
-        options = dict(size=1, symbol='d', pxMode=False, pen=(pg.mkPen(self.COLOR, width=5)))
+        options = dict(size=1, symbol='d', pxMode=False, pen=(pg.mkPen(self.COLOR, width=3)))
         self.peak_freq_region.setData(pos=pos, adj=self.peak_freq_adj, **options)

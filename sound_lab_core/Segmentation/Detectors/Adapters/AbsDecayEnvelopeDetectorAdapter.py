@@ -32,7 +32,7 @@ class AbsDecayEnvelopeDetectorAdapter(SoundLabAdapter):
         """
         return self.settings
 
-    def get_instance(self):
+    def get_instance(self, signal):
         """
         Gets a new get_instance of the corresponding parameter measurement.
         :return: A new get_instance of the corresponding parameter measurement class
@@ -43,8 +43,7 @@ class AbsDecayEnvelopeDetectorAdapter(SoundLabAdapter):
         soft_factor = self.settings.param(unicode(self.tr(u'Soft Factor'))).value()
         merge_factor = self.settings.param(unicode(self.tr(u'Merge Factor (%)'))).value()
 
-
-        return AbsDecayEnvelopeDetector(None, decay, threshold, min_size, merge_factor, soft_factor)
+        return AbsDecayEnvelopeDetector(signal, decay, threshold, min_size, merge_factor, soft_factor)
 
     def apply_settings_change(self,parameter, changes):
         print(changes)
