@@ -1,2 +1,5 @@
 from AbsDecayEnvelopeDetectorAdapter import AbsDecayEnvelopeDetectorAdapter
 from ManualDetectorAdapter import ManualDetectorAdapter
+from WatershedDetectorAdapter import WatershedDetectorAdapter
+from AdaptThreshDetectorAdapter import AdaptThreshDetectorAdapter
+from GrabCutDetectorAdapter import GrabCutDetectorAdapter

@@ -1,9 +1,5 @@
 from PyQt4.QtCore import QObject
 from sound_lab_core.ParametersMeasurement.Adapters import *
-from sound_lab_core.ParametersMeasurement.Adapters.FreqParametersadapters.BandWidthParameterAdapter import BandWidthParameterAdapter
-from sound_lab_core.ParametersMeasurement.Adapters.FreqParametersadapters.PeaksAboveParameterAdapter import PeaksAboveParameterAdapter
-from sound_lab_core.ParametersMeasurement.SpectralParameters.BandWidthParameter import BandWidthParameter
-from sound_lab_core.ParametersMeasurement.SpectralParameters.PeaksAboveParameter import PeaksAboveParameter
 from sound_lab_core.Segmentation.Detectors.Adapters import *
 
 
@@ -58,7 +54,10 @@ class SegmentationAdapterFactory(AdapterFactory):
 
         self.adapters = {
             'Manual': ManualDetectorAdapter(parent),
-            'Envelope Abs Decay': AbsDecayEnvelopeDetectorAdapter(parent)
+            'Envelope Abs Decay': AbsDecayEnvelopeDetectorAdapter(parent),
+            'Watershed': WatershedDetectorAdapter(parent),
+            'Adaptive Threshold': AdaptThreshDetectorAdapter(parent),
+            'GrabCut': GrabCutDetectorAdapter(parent)
         }
 
 
