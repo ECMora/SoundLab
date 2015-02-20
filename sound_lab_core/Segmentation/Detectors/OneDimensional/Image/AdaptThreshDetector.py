@@ -52,11 +52,11 @@ class AdaptThreshDetector(OneDimensionalElementsDetector):
         elems = []
         try:
             img = self.spec.matriz
+            img = np.power(10, img/10.0)
             img.astype('float')
             img = 255 * (img / np.amax(img))
 
-            gray = img
-            gray.astype('uint8')
+            gray = img.astype('uint8')
             gray_blur = cv2.GaussianBlur(gray, (15, 15), 0)
 
             thresh = cv2.adaptiveThreshold(gray_blur, 255, cv2.ADAPTIVE_THRESH_GAUSSIAN_C, cv2.THRESH_BINARY_INV, 11, 1)
@@ -69,7 +69,8 @@ class AdaptThreshDetector(OneDimensionalElementsDetector):
                 downright = np.amax(c,0)[0]
                 regionBounds = (upleft[1], downright[1], upleft[0], downright[0])
                 if regionBounds[1] - regionBounds[0] >= min_size_x and regionBounds[3] - regionBounds[2] >= min_size_y:
-                    elems.append((regionBounds[0],regionBounds[1]))
+                    elems.append((self.spec.from_spec_to_osc(regionBounds[0]),
+                                  self.spec.from_spec_to_osc(regionBounds[1])))
 
         except Exception as ex:
             elems = []

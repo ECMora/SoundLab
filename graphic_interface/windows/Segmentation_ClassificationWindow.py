@@ -176,12 +176,10 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
                 # elements select/deselect
                 self.actionDeselect_Elements,
                 self.actionDelete_Selected_Elements,
-                separator4,
+                self.actionSelectedElement_Correlation,
+                separator4
 
-                # widgets images
-                self.actionOsc_Image,
-                self.actionSpecgram_Image,
-                self.actionCombined_Image])
+                ])
         # endregion
 
     def configureToolBarActionsGroups(self):
@@ -515,6 +513,21 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
             self._cross_correlation_windows.append(dialog)
             dialog.elementSelected.connect(self.selectElement)
             dialog.show()
+
+    @pyqtSlot()
+    def on_actionSelectedElement_Correlation_triggered(self):
+        signal = self.widget.selected_element_signal()
+        if not signal:
+            QMessageBox.warning(QMessageBox(), self.tr(u"Error"),
+                                self.tr(u"There is no selected element."))
+            return
+
+        dialog = Cross_correlationDialog(self, self.widget, signal,
+                                         self.TABLE_ROW_COLOR_ODD, self.TABLE_ROW_COLOR_EVEN)
+
+        self._cross_correlation_windows.append(dialog)
+        dialog.elementSelected.connect(self.selectElement)
+        dialog.show()
 
     # endregion
 

@@ -269,6 +269,13 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         # if self.specSelectionRegion not in self.axesSpecgram.viewBox.childItems():
         #     self.axesSpecgram.viewBox.addItem(self.specSelectionRegion)
 
+    def selected_element_signal(self):
+        start, end = self.oscSelectionRegion.getRegion()
+        if end <= start:
+            return None
+
+        return self.signal.copy(start, end)
+
     # endregion
 
     def deleteSelectedElements(self):

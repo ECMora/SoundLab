@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\SegmentationAndClasificationWindowUI.ui'
+# Form implementation generated from reading ui file 'D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\SegmentationAndClasificationWindowUI.ui'
 #
-# Created: Wed Feb 18 23:09:00 2015
+# Created: Fri Feb 20 14:25:32 2015
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -62,6 +62,7 @@ class Ui_MainWindow(object):
         self.verticalLayout_3 = QtGui.QVBoxLayout(self.dockWidgetContents)
         self.verticalLayout_3.setObjectName(_fromUtf8("verticalLayout_3"))
         self.tableParameterOscilogram = TableWidget(self.dockWidgetContents)
+        self.tableParameterOscilogram.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
         self.tableParameterOscilogram.setObjectName(_fromUtf8("tableParameterOscilogram"))
         self.tableParameterOscilogram.setColumnCount(0)
         self.tableParameterOscilogram.setRowCount(0)
@@ -274,14 +275,16 @@ class Ui_MainWindow(object):
         self.actionTemporal_Parameters.setChecked(True)
         self.actionTemporal_Parameters.setObjectName(_fromUtf8("actionTemporal_Parameters"))
         self.actionSpectral_Parameters = QtGui.QAction(MainWindow)
+        self.actionSpectral_Parameters.setCheckable(True)
+        self.actionSpectral_Parameters.setChecked(True)
+        self.actionSpectral_Parameters.setObjectName(_fromUtf8("actionSpectral_Parameters"))
         self.actionCross_correlation = QtGui.QAction(MainWindow)
         icon27 = QtGui.QIcon()
         icon27.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/cross-correlation.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionCross_correlation.setIcon(icon27)
         self.actionCross_correlation.setObjectName(_fromUtf8("actionCross_correlation"))
-        self.actionSpectral_Parameters.setCheckable(True)
-        self.actionSpectral_Parameters.setChecked(True)
-        self.actionSpectral_Parameters.setObjectName(_fromUtf8("actionSpectral_Parameters"))
+        self.actionSelectedElement_Correlation = QtGui.QAction(MainWindow)
+        self.actionSelectedElement_Correlation.setObjectName(_fromUtf8("actionSelectedElement_Correlation"))
         self.toolBar.addAction(self.actionClassification_Settings)
         self.toolBar.addAction(self.actionCross_correlation)
         self.menuParameters.addAction(self.actionView_Parameters)
@@ -390,8 +393,9 @@ class Ui_MainWindow(object):
         self.actionAddElement.setToolTip(QtGui.QApplication.translate("MainWindow", "Mark Selected Region As Element", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSound_File_Segmentation.setText(QtGui.QApplication.translate("MainWindow", "Sound File Segmentation", None, QtGui.QApplication.UnicodeUTF8))
         self.actionTemporal_Parameters.setText(QtGui.QApplication.translate("MainWindow", "Temporal Parameters", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionCross_correlation.setText(QtGui.QApplication.translate("MainWindow", "Cross-correlation", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSpectral_Parameters.setText(QtGui.QApplication.translate("MainWindow", "Spectral Parameters", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionCross_correlation.setText(QtGui.QApplication.translate("MainWindow", "Cross-correlation", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSelectedElement_Correlation.setText(QtGui.QApplication.translate("MainWindow", "Selected Element Correlation", None, QtGui.QApplication.UnicodeUTF8))
 
 from graphic_interface.widgets.SoundLabToolBar import SoundLabToolBarWidget
 from pyqtgraph import TableWidget

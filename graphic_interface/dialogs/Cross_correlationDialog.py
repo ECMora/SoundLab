@@ -1,28 +1,31 @@
 from PyQt4.QtCore import pyqtSlot, pyqtSignal
 from PyQt4.QtGui import QDialog, QMessageBox, QTableWidgetItem, QColor
+from duetto.audio_signals import AudioSignal
 from duetto.audio_signals.audio_signals_stream_readers.FileManager import FileManager
 import numpy as np
-from graphic_interface.windows.ui_python_files.cross_correlationDialog_ui import Ui_cross_correlationDialog
+from graphic_interface.windows.ui_python_files.cross_correlationDialog import Ui_cross_correlationDialog
 
 
 class Cross_correlationDialog(QDialog, Ui_cross_correlationDialog):
 
     elementSelected = pyqtSignal(int)
 
-    def __init__(self, parent, signalDetectorWidget, referenceFile, tableColorOdd=None, tableColorEven=None):
+    def __init__(self, parent, signalDetectorWidget, signal, tableColorOdd=None, tableColorEven=None):
         QDialog.__init__(self, parent)
         self.setupUi(self)
-        self.matchTableWidget.setColumnWidth(0, 55)
-        self.matchTableWidget.setColumnWidth(1, 55)
 
         self._tableColorOdd = tableColorOdd if tableColorOdd is not None else QColor(0, 0, 255, 150)
         self._tableColorEven = tableColorEven if tableColorEven is not None else QColor(0, 255, 0, 150)
 
         self._signalDetectorWidget = signalDetectorWidget
 
-        if not referenceFile:
-            raise ValueError('referenceFile must be a non empty string')
-        self._refSignal = FileManager().read(unicode(referenceFile))
+
+        if signal and isinstance(signal, AudioSignal):
+            self._refSignal = signal
+        elif signal:
+            self._refSignal = FileManager().read(unicode(signal))
+        else:
+            raise ValueError('signal must be a non empty string')
 
         self.oscillogramWidget.signal = self._refSignal
         self.oscillogramWidget.graph()
@@ -114,3 +117,6 @@ class Cross_correlationDialog(QDialog, Ui_cross_correlationDialog):
             item = QTableWidgetItem(str('{:.0f} ms'.format(offset)))
             item.setBackground(self._tableColorEven if i % 2 == 0 else self._tableColorOdd)
             self.matchTableWidget.setItem(row_count, 1, item)
+
+        self.matchTableWidget.resizeColumnsToContents()
+        self.matchTableWidget.resizeRowsToContents()

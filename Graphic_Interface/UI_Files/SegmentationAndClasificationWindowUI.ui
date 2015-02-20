@@ -636,6 +636,11 @@
     <string>Cross-correlation</string>
    </property>
   </action>
+  <action name="actionSelectedElement_Correlation">
+   <property name="text">
+    <string>Selected Element Correlation</string>
+   </property>
+  </action>
   <zorder>dockWidgetParameterTableOscilogram</zorder>
  </widget>
  <customwidgets>

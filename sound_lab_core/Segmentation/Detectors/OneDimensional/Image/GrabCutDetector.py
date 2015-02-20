@@ -51,9 +51,8 @@ class GrabCutDetector(OneDimensionalElementsDetector):
         elems = []
         try:
             pxx = self.spec.matriz
-            pxx = 10*np.log10(pxx/pxx.max())
-            pxx[pxx < -100] = -100
 
+            pxx[pxx < -100] = -100
             gray = ((pxx - pxx.min()) / (pxx.max() - pxx.min()) * 255).astype(np.uint8)
 
             ret, thresh = cv2.threshold(gray,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
@@ -89,7 +88,8 @@ class GrabCutDetector(OneDimensionalElementsDetector):
                 bnd = bounds[i-1]
                 regionBounds = (bnd[0].start, bnd[0].stop, bnd[1].start, bnd[1].stop)
                 if regionBounds[1] - regionBounds[0] >= min_size_x and regionBounds[3] - regionBounds[2] >= min_size_y:
-                    elems.append((regionBounds[0],regionBounds[1]))
+                    elems.append((self.spec.from_spec_to_osc(regionBounds[0]),
+                                  self.spec.from_spec_to_osc(regionBounds[1])))
 
         except Exception as ex:
             elems = []
