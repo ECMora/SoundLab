@@ -94,16 +94,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         elements = [e for e in self.elements if start <= e.indexFrom <= end or start <= e.indexTo <= end]
 
         for i in range(len(self.elements)):
-            # oscilogram elements are cleared by graph so are not in axes
-            # for item, visible in self.elements[i].time_element.visual_widgets():
-            #     if item in self.axesOscilogram.items():
-            #         self.axesOscilogram.removeItem(item)
-
-            for item, visible in self.elements[i].spectral_element.visual_widgets():
-                # if item in self.axesSpecgram.viewBox.childItems():
-                #     self.axesSpecgram.viewBox.removeItem(item)
-
-                self.elements[i].spectral_element.translate_time_freq_coords(self.from_osc_to_spec, self.get_freq_index)
+            self.elements[i].spectral_element.translate_time_freq_coords(self.from_osc_to_spec, self.get_freq_index)
 
         # add the visible elements
         for i in range(len(elements)):

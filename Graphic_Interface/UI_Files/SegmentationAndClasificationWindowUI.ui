@@ -101,6 +101,9 @@
        <property name="toolTip">
         <string>Oscilogram elements  meditions</string>
        </property>
+       <property name="editTriggers">
+        <set>QAbstractItemView::NoEditTriggers</set>
+       </property>
       </widget>
      </item>
     </layout>
@@ -609,13 +612,6 @@
    <property name="checked">
     <bool>true</bool>
    </property>
-  <action name="actionCross_correlation">
-   <property name="icon">
-    <iconset resource="resources/icons.qrc">
-     <normaloff>:/myappicons/cross-correlation.png</normaloff>:/myappicons/cross-correlation.png</iconset>
-   </property>
-   <property name="text">
-    <string>Cross-correlation</string>
    <property name="text">
     <string>Temporal Parameters</string>
    </property>
@@ -629,6 +625,15 @@
    </property>
    <property name="text">
     <string>Spectral Parameters</string>
+   </property>
+  </action>
+  <action name="actionCross_correlation">
+   <property name="icon">
+    <iconset>
+     <normaloff>:/myappicons/cross-correlation.png</normaloff>:/myappicons/cross-correlation.png</iconset>
+   </property>
+   <property name="text">
+    <string>Cross-correlation</string>
    </property>
   </action>
   <zorder>dockWidgetParameterTableOscilogram</zorder>

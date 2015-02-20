@@ -298,8 +298,10 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
 
             {u'name': unicode(self.tr(u'Spectrogram Settings')), u'type': u'group', u'children': [
                 {u'name': unicode(self.tr(u'Frequency(kHz)')), u'type': u'group', u'children': [
-                    {u'name': unicode(self.tr(u'Min')), u'type': u'float', u'value': self.workSpace.spectrogramWorkspace.minY/1000.0, u'step': 1},
-                    {u'name': unicode(self.tr(u'Max')), u'type': u'float', u'value': self.workSpace.spectrogramWorkspace.maxY/1000.0, u'step': 1},
+                    {u'name': unicode(self.tr(u'Min')), u'type': u'float', u'limits': (0, 300),
+                     u'value': self.workSpace.spectrogramWorkspace.minY/1000.0, u'step': 1},
+                    {u'name': unicode(self.tr(u'Max')), u'type': u'float', u'limits': (0, 300),
+                     u'value': self.workSpace.spectrogramWorkspace.maxY/1000.0, u'step': 1},
                 ]},
                 {u'name': unicode(self.tr(u'FFT size')), u'type': u'list', u'default': 512,
                  u'values': [(u"128", 128), (u"256", 256),

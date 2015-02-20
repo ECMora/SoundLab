@@ -86,6 +86,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
         self.dockWidgetParameterTableOscilogram.setVisible(False)
         self.tableParameterOscilogram.setSelectionBehavior(QAbstractItemView.SelectRows)
+        self.tableParameterOscilogram.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
         # add the context menu actions to the widget
         self.__addContextMenuActions()
@@ -574,19 +575,19 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
                 self.setProgressBarVisibility(True)
                 self.updateDetectionProgressBar(0)
 
-                # set the detection as the 80% of the segmentation,
+                # set the detection as the 60% of the segmentation,
                 # parameter measurements and classification time
                 self.segmentManager.detector.detectionProgressChanged.connect(
-                    lambda x: self.updateDetectionProgressBar(x * 0.8))
+                    lambda x: self.updateDetectionProgressBar(x * 0.6))
 
                 # execute the detection
                 self.segmentManager.detectElements()
                 self.widget.elements = self.segmentManager.elements
-                self.updateDetectionProgressBar(80)
+                self.updateDetectionProgressBar(60)
 
                 # measure the parameters over elements detected
                 self.segmentManager.measureParameters()
-                self.updateDetectionProgressBar(95)
+                self.updateDetectionProgressBar(90)
 
                 # update the measured data on the two dimensional opened windows
                 for wnd in self.two_dim_windows:
@@ -615,6 +616,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         self.tableParameterOscilogram.setRowCount(self.segmentManager.rowCount)
         self.tableParameterOscilogram.setColumnCount(self.segmentManager.columnCount)
         self.tableParameterOscilogram.setHorizontalHeaderLabels(self.segmentManager.columnNames)
+        self.tableParameterOscilogram.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
         # update every x,y position
         for i in range(self.segmentManager.rowCount):
@@ -629,6 +631,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         # connect the table selection with the selection of an element
         self.tableParameterOscilogram.cellPressed.connect(self.selectElement)
         self.tableParameterOscilogram.resizeColumnsToContents()
+        self.tableParameterOscilogram.resizeRowsToContents()
 
     # endregion
 

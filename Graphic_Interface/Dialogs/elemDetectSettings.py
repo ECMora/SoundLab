@@ -72,10 +72,9 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
                           u'type': u'group', u'children':[]})
         params = [
             {u'name': unicode(self.tr(u'Segmentation')),
-             u'type': u'group', u'children': list_param, u'expanded': False
-            },
+             u'type': u'group', u'children': list_param},
             {u'name': unicode(self.tr(u'Classification')),
-             u'type': u'group', u'children':
+             u'type': u'group', u'expanded': False, u'children':
                 [{u'name': unicode(self.tr(u'Method')),
                   u'type': u'list',
                   u'values': classification_adapters}]
@@ -160,7 +159,6 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
                         if method_settings:
                             param_settings.addChild(method_settings)
 
-                        print(parameter.name())
                     except Exception as ex:
                         print(ex.message)
 

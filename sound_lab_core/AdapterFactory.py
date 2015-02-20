@@ -1,6 +1,8 @@
 from PyQt4.QtCore import QObject
 from sound_lab_core.ParametersMeasurement.Adapters import *
 from sound_lab_core.Segmentation.Detectors.Adapters import *
+from sound_lab_core.Segmentation.Detectors.Adapters.IntervalMaxMeanDetectorAdapter import IntervalMaxMeanDetectorAdapter
+from sound_lab_core.Segmentation.Detectors.Adapters.IntervalRmsDetectorAdapter import IntervalRmsDetectorAdapter
 
 
 class AdapterFactory(QObject):
@@ -88,6 +90,8 @@ class SegmentationAdapterFactory(AdapterFactory):
         self.adapters = [
             (u'Manual', ManualDetectorAdapter(parent)),
             (u'Envelope Abs Decay', AbsDecayEnvelopeDetectorAdapter(parent)),
+            (u'Interval Rms', IntervalRmsDetectorAdapter(parent)),
+            (u'Interval Max Mean', IntervalMaxMeanDetectorAdapter(parent)),
             (u'Watershed', WatershedDetectorAdapter(parent)),
             (u'Adaptive Threshold', AdaptThreshDetectorAdapter(parent)),
             (u'GrabCut', GrabCutDetectorAdapter(parent))
