@@ -32,9 +32,16 @@ class ZoomTool(SignalVisualizerTool):
 
             self.widget.setCursor(QCursor(QtCore.Qt.SizeHorCursor))
 
-            t0 = round(rgn[0] * 1.0 / self.widget.signal.samplingRate,self.DECIMAL_PLACES)
-            t1 = round(rgn[1] * 1.0 / self.widget.signal.samplingRate,self.DECIMAL_PLACES)
-            dt = round(t1 - t0, self.DECIMAL_PLACES)
+            decimal_places = self.DECIMAL_PLACES
+
+            interval = (rgn[1] - rgn[0]) * 1.0 / self.widget.signal.samplingRate
+
+            if interval < 0.01:
+                decimal_places = 6
+
+            t0 = round(rgn[0] * 1.0 / self.widget.signal.samplingRate, decimal_places)
+            t1 = round(rgn[1] * 1.0 / self.widget.signal.samplingRate, decimal_places)
+            dt = round(t1 - t0, decimal_places +1)
             self.detectedData = [("t0", t0),
                                  ("t1", t1),
                                  ("dt", dt)

@@ -21,7 +21,6 @@ class DuettoSoundLab(QMainWindow, Ui_MainWindow):
 
 
 def valid_license():
-    return True
     try:
         drives = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T",
                   "U", "V", "W", "X", "Y", "Z"]
@@ -35,6 +34,16 @@ def valid_license():
     except Exception as e:
         pass
     return False
+
+
+def check_license():
+    if not valid_license():
+        finish()
+
+
+def finish():
+    QMessageBox.warning(QMessageBox(), "Error", invalid_license_message)
+    sys.exit(0)
 
 
 def load_app_style(qApp=None, style_file=None):
@@ -99,12 +108,12 @@ if __name__ == '__main__':
     # load_language_translations(app)
 
     # ______ Little testing for language
-    locale = QLocale.system().name()
-    qtTranslator = QTranslator()
-
-    # install localization if any exists
-    if qtTranslator.load(locale, "I18n\\"):
-        app.installTranslator(qtTranslator)
+    # locale = QLocale.system().name()
+    # qtTranslator = QTranslator()
+    #
+    # # install localization if any exists
+    # if qtTranslator.load(locale, "I18n\\"):
+    #     app.installTranslator(qtTranslator)
     # ______________________________________
 
     workspace_path = os.path.join("Utils", WORK_SPACE_FILE_NAME)
@@ -124,6 +133,9 @@ if __name__ == '__main__':
 
     # dmw.languageChanged.connect(lambda data: load_language_translations(app, data))
     dmw.styleChanged.connect(lambda data: load_app_style(app, data))
+
+    license_checker_timer = QTimer()
+    license_checker_timer.timeout.connect(check_license)
 
     # region Start Splash Screen Window
     # path = os.path.join(os.path.join("Utils", "PresentationVideo"), "duettoinit.mp4")
@@ -150,8 +162,8 @@ if __name__ == '__main__':
         # start the Qt main loop execution, exiting from this script
         # with the same return code of Qt application
         dmw.show()
+        license_checker_timer.start(1000)
         sys.exit(app.exec_())
 
     else:
-        QMessageBox.warning(QMessageBox(), "Error", invalid_license_message)
-        sys.exit(0)
+        finish()

@@ -1,6 +1,5 @@
 #  -*- coding: utf-8 -*-
 from PyQt4 import QtCore
-from kiva.fonttools.fontTools.ttLib.tables._n_a_m_e import table__n_a_m_e
 from pyqtgraph.parametertree.parameterTypes import ListParameter
 from pyqtgraph.parametertree import Parameter, ParameterTree
 from PyQt4.QtGui import QMessageBox, QActionGroup, QAction
@@ -1750,8 +1749,6 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
     # endregion
 
     #  region Folder Files UP and DOWN manipulation
-    # a way to browse for the signal files of a folder
-    # by a simple and user friendly mechanism
     @pyqtSlot()
     def on_actionFile_Up_triggered(self):
         """
@@ -1778,8 +1775,8 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         operation_increment = -1 if fileUp else 1
 
         if len(self.filesInFolder) > 0:
-            # if the current file signal is not the last on the folder
-            self.filesInFolderIndex = (self.filesInFolderIndex + operation_increment) % len(self.filesInFolder)
+            self.filesInFolderIndex = (self.filesInFolderIndex + operation_increment) % \
+                                      len(self.filesInFolder)
 
             #  try to open the file in the new signal file path
             file_path = self.filesInFolder[self.filesInFolderIndex]

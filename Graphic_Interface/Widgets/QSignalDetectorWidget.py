@@ -288,7 +288,8 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         """
         start, end = self.selectedRegion
 
-        if end == start or len(self.elements) == 0:
+        if end == start or len(self.elements) == 0 or \
+           (start == self.mainCursor.min and end == self.mainCursor.max):
             return None
 
         # create a list with start index of each element

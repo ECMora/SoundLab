@@ -375,7 +375,7 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         self.signalPlayer.stop()
         self.removePlayerLine()
         #  if the previous status was RECORDING then we have
-        #  to stop the timer and draw the new signal on both controls.
+        #  to stop the licence_checker_timer and draw the new signal on both controls.
         if prevStatus == self.signalPlayer.RECORDING:
             self.axesSpecgram.setRecordMode(False)
 
@@ -431,7 +431,7 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         #  update oscillogram time (ms) interval for drawing the recorded section
         updateTime = 15
 
-        #  starting the update record timer
+        #  starting the update record licence_checker_timer
         self._recordTimer.start(updateTime)
         #  self.createPlayerLine(self.mainCursor.minThresholdLa  bel)
 

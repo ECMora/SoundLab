@@ -19,8 +19,16 @@ class SpectrogramZoomTool(SpectrogramTool):
         if abs(minx - event.x()) < self.PIXELS_OF_CURSORS_CHANGES or \
                         abs(maxx - event.x()) < self.PIXELS_OF_CURSORS_CHANGES:
             self.widget.setCursor(QCursor(QtCore.Qt.SizeHorCursor))
-            t0 = round(rgn[0] * 1.0 / self.widget.signal.samplingRate, self.DECIMAL_PLACES)
-            t1 = round(rgn[1] * 1.0 / self.widget.signal.samplingRate,self.DECIMAL_PLACES)
+
+            decimal_places = self.DECIMAL_PLACES
+
+            interval = (rgn[1] - rgn[0]) * 1.0 / self.widget.signal.samplingRate
+
+            if interval < 0.01:
+                decimal_places = 6
+
+            t0 = round(rgn[0] * 1.0 / self.widget.signal.samplingRate, decimal_places)
+            t1 = round(rgn[1] * 1.0 / self.widget.signal.samplingRate, decimal_places)
             dt = t0 - t1
             self.detectedData = [("t0", t0),
                                  ("t1", t1),
