@@ -6,8 +6,8 @@ from sound_lab_core.Segmentation.Detectors.Adapters.IntervalRmsDetectorAdapter i
 
 
 class AdapterFactory(QObject):
-    def __init__(self, parent=None):
-        QObject.__init__(self, parent)
+    def __init__(self):
+        QObject.__init__(self)
         # list of (name, adapter)
         self.adapters = []
 
@@ -48,25 +48,25 @@ class ParameterGroup:
 
 
 class ParametersAdapterFactory(QObject):
-    def __init__(self, parent=None):
+    def __init__(self):
         QObject.__init__(self)
 
         time_params_adapters = [
-            (u'Start Time', StartTimeParameterAdapter(parent)),
-            (u'End Time', EndTimeParameterAdapter(parent)),
-            (u'Duration', DurationTimeParameterAdapter(parent))]
+            (u'Start Time', StartTimeParameterAdapter()),
+            (u'End Time', EndTimeParameterAdapter()),
+            (u'Duration', DurationTimeParameterAdapter())]
         wave_params_adapters = [
-            (u'RMS', RmsTimeParameterAdapter(parent)),
-            (u'PeakToPeak', PeakToPeakParameterAdapter(parent)),
-            (u'StartToMax', StartToMaxTimeParameterAdapter(parent))]
+            (u'RMS', RmsTimeParameterAdapter()),
+            (u'PeakToPeak', PeakToPeakParameterAdapter()),
+            (u'StartToMax', StartToMaxTimeParameterAdapter())]
         spectral_params_adapters = [
-            (u'PeakFreq', PeakFreqParameterAdapter(parent)),
-            (u'MaxFreq', MaxFreqParameterAdapter(parent)),
-            (u'MinFreq', MinFreqParameterAdapter(parent)),
-            (u'BandWidth', BandWidthParameterAdapter(parent)),
-            (u'PeaksAbove', PeaksAboveParameterAdapter(parent))]
+            (u'PeakFreq', PeakFreqParameterAdapter()),
+            (u'MaxFreq', MaxFreqParameterAdapter()),
+            (u'MinFreq', MinFreqParameterAdapter()),
+            (u'BandWidth', BandWidthParameterAdapter()),
+            (u'PeaksAbove', PeaksAboveParameterAdapter())]
 
-        self.parameter_groups = [ParameterGroup(unicode(self.tr(u"Time Parameters")),time_params_adapters),
+        self.parameter_groups = [ParameterGroup(unicode(self.tr(u"Time Parameters")), time_params_adapters),
                                  ParameterGroup(unicode(self.tr(u"Wave Parameters")), wave_params_adapters),
                                  ParameterGroup(unicode(self.tr(u"Spectral Parameters")), spectral_params_adapters),
                                  ]
@@ -84,24 +84,22 @@ class ParametersAdapterFactory(QObject):
 
 
 class SegmentationAdapterFactory(AdapterFactory):
-    def __init__(self, parent=None):
-        AdapterFactory.__init__(self, parent)
+    def __init__(self):
+        AdapterFactory.__init__(self)
 
         self.adapters = [
-            (u'Manual', ManualDetectorAdapter(parent)),
-            (u'Envelope Abs Decay', AbsDecayEnvelopeDetectorAdapter(parent)),
-            (u'Interval Rms', IntervalRmsDetectorAdapter(parent)),
-            (u'Interval Max Mean', IntervalMaxMeanDetectorAdapter(parent)),
-            (u'Watershed', WatershedDetectorAdapter(parent)),
-            (u'Adaptive Threshold', AdaptThreshDetectorAdapter(parent)),
-            (u'GrabCut', GrabCutDetectorAdapter(parent))
+            (u'Manual', ManualDetectorAdapter()),
+            (u'Envelope Abs Decay', AbsDecayEnvelopeDetectorAdapter()),
+            (u'Interval Rms', IntervalRmsDetectorAdapter()),
+            (u'Interval Max Mean', IntervalMaxMeanDetectorAdapter()),
+            (u'Watershed', WatershedDetectorAdapter()),
+            (u'Adaptive Threshold', AdaptThreshDetectorAdapter()),
+            (u'GrabCut', GrabCutDetectorAdapter())
         ]
 
 
 class ClassificationAdapterFactory(AdapterFactory):
-    def __init__(self, parent=None):
-        AdapterFactory.__init__(self, parent)
+    def __init__(self):
+        AdapterFactory.__init__(self)
 
-        self.adapters = [
-            (u'Manual', None)
-        ]
+        self.adapters = [(u'Manual', None)]

@@ -1,6 +1,8 @@
 #  -*- coding: utf-8 -*-
 from PyQt4.QtCore import QObject, pyqtSignal
 from PyQt4 import QtGui
+import pyqtgraph as pg
+from PyQt4.QtGui import QFont
 
 
 class VisualElement(QObject):
@@ -18,6 +20,9 @@ class VisualElement(QObject):
     # region CONSTANTS
     #  decimal places to round the measurements
     DECIMAL_PLACES = 4
+
+    # the font size for text labels
+    FONT_SIZE = 13
 
     # different colors for the even and odds rows in the parameter table and segment colors.
     COLOR_ODD = QtGui.QColor(0, 0, 255, 100)
@@ -40,6 +45,12 @@ class VisualElement(QObject):
 
         # the visual elements that show text
         self.visual_text = []
+        font = QFont()
+        font.setPointSize(self.FONT_SIZE)
+
+        self.text_number = pg.TextItem(str(number), color=(255, 255, 255), anchor=(0.5, 0.5))
+        self.text_number.setFont(font)
+        self.visual_text.append([self.text_number, True])
 
         # the visual components that show the elements representation
         self.visual_figures = []
@@ -64,6 +75,7 @@ class VisualElement(QObject):
 
     def setNumber(self, n):
         self._number = n
+        self.text_number.setText(str(n))
 
     def visual_widgets(self):
         """
@@ -90,9 +102,8 @@ class VisualElement(QObject):
         """
         self.elementClicked.emit(self.number - 1)
 
-    def addParameterItem(self, parameter_item):
+    def add_parameter_item(self, parameter_item):
         """
-
         :param parameter_item: the new parameter item to visualize
         :return:
         """

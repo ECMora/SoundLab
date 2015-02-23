@@ -29,9 +29,9 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         self._detector = None
         self._classifier = None
 
-        self._parameterAdapterFactory = ParametersAdapterFactory(self)
-        self._segmentationAdapterFactory = SegmentationAdapterFactory(self)
-        self._classificationAdapterFactory = ClassificationAdapterFactory(self)
+        self._parameterAdapterFactory = ParametersAdapterFactory()
+        self._segmentationAdapterFactory = SegmentationAdapterFactory()
+        self._classificationAdapterFactory = ClassificationAdapterFactory()
 
         self.parameter_measurement_paramTree = ParameterTree()
         self.parameter_measurementParamTree = None

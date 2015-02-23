@@ -7,5 +7,5 @@ class IntervalRmsDetectorAdapter(IntervalDetectorAdapter):
     Adapter class for the start time parameter.
     """
 
-    def __init__(self, parent):
-        IntervalDetectorAdapter.__init__(self, parent)
+    def __init__(self):
+        IntervalDetectorAdapter.__init__(self)

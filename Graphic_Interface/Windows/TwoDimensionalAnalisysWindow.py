@@ -56,7 +56,7 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         self.setupUi(self)
 
         # initialization settings for the plot widget
-        self.configureWidget()
+        self.configure_widget()
 
         self.segmentManager = segmentManager
 
@@ -70,11 +70,11 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         # if no selection element then -1
         self.selectedElementIndex = -1
 
-        self.createParameterTreeOptions(self.segmentManager.parameterColumnNames)
+        self.create_parameter_tree(self.segmentManager.parameterColumnNames)
 
         self.show()
 
-    def configureWidget(self):
+    def configure_widget(self):
         """
         Set a group of initial configuration on the visualization widget
         :return:
@@ -84,13 +84,13 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         self.widget.setMouseEnabled(x=False, y=False)
         self.widget.setMenuEnabled(False)
         self.widget.enableAutoRange()
-        self.widget.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
 
+        self.widget.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
         self.widget.addAction(self.actionHide_Show_Settings)
         self.widget.addAction(self.actionSaveGraphImage)
         self.widget.addAction(self.actionMark_Selected_Elements_As)
 
-    def createParameterTreeOptions(self, parameterColumnNames):
+    def create_parameter_tree(self, parameterColumnNames):
         """
         Create the parameter tree with the visual options according to the
         measured parameters.
@@ -99,11 +99,12 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         """
         if len(parameterColumnNames) == 0:
             return
+
         # the X axis posible params names
-        xaxis = [unicode(x) for x in parameterColumnNames]
+        x_axis = [unicode(x) for x in parameterColumnNames]
 
         # get two initial random parameters to visualize in x and y axis
-        x, y = random.randint(0, len(xaxis) / 2), random.randint(len(xaxis) / 2, len(xaxis) - 1)
+        x, y = random.randint(0, len(x_axis) / 2), random.randint(len(x_axis) / 2, len(x_axis) - 1)
 
         # set the layout for the widget
         lay1 = QtGui.QVBoxLayout()
@@ -114,11 +115,11 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
             {u'name': unicode(self.tr(u'X Axis Parameter Settings')), u'type': u'group', u'children':
                 [{u'name': unicode(self.tr(u'X Axis')), u'type': u'list', u'value': x,
                   # the possible values to select for graph in the X axis (name,index)
-                  u'default': x, u'values': [(name, i) for i, name in enumerate(xaxis)]}]},
+                  u'default': x, u'values': [(name, i) for i, name in enumerate(x_axis)]}]},
             {u'name': unicode(self.tr(u'Y Axis Parameter Settings')), u'type': u'group', u'children':
                 [{u'name': unicode(self.tr(u'Y Axis')), u'type': u'list', u'value': y,
                   # the possible values to select for graph in the Y axis (name,index)
-                  u'default': y, u'values': [(name, i) for i, name in enumerate(xaxis)]}]},
+                  u'default': y, u'values': [(name, i) for i, name in enumerate(x_axis)]}]},
             {u'name': unicode(self.tr(u'Color')), u'type': u'color', u'value': "00F"},
             {u'name': unicode(self.tr(u'Figures Size')), u'type': u'int', u'value': 15},
             {u'name': unicode(self.tr(u'Figures Shape')), u'type': u'list', u'value': "o",
@@ -151,13 +152,13 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
 
     # region Graph Managing
 
-    def loadData(self, segmentManager):
+    def load_data(self, segment_manager):
         """
         Load a new detection data. Update the graph and the internal variables
         from the segment manager.
         :return:
         """
-        self.deselectElement()
+        self.deselect_element()
 
         # removes the old combo with the old measurements
         # the x axis old measurements
@@ -175,17 +176,17 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         self.ParamTree.param(unicode(self.tr(u'X Axis Parameter Settings'))).addChild(
             Parameter.create(**{u'name': unicode(self.tr(u'X Axis')), u'type': u'list', u'value': 0,
                                 u'default': 0, u'values':
-                [(name, i) for i, name in enumerate(segmentManager.parameterColumnNames)]}))
+                                [(name, i) for i, name in enumerate(segment_manager.parameterColumnNames)]}))
 
         # the y axis new measurements
         self.ParamTree.param(unicode(self.tr(u'Y Axis Parameter Settings'))).addChild(
             Parameter.create(**{u'name': unicode(self.tr(u'Y Axis')), u'type': u'list', u'value': 0,
                                 u'default': 0, u'values':
-                [(name, i) for i, name in enumerate(segmentManager.parameterColumnNames)]}))
+                                [(name, i) for i, name in enumerate(segment_manager.parameterColumnNames)]}))
 
         self.plot()
 
-    def updateData(self, segmentManager):
+    def update_data(self, segmentManager):
         """
         Update the data from the segment manager where a change is made
         on the amount of elements(someone(s) is(are) deleted(added)) but the parameters measured
@@ -226,11 +227,11 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         fig_size = self.ParamTree.param(unicode(self.tr(u'Figures Size'))).value()
 
         # get the values x,y of each element according to the measured parameter selected in each axis
-        x_coords = [e[x_axis_index] for e in self.segmentManager.measuredParameters]
-        y_coords = [e[y_axis_index] for e in self.segmentManager.measuredParameters]
+        x_cords = [e[x_axis_index] for e in self.segmentManager.measuredParameters]
+        y_cords = [e[y_axis_index] for e in self.segmentManager.measuredParameters]
 
-        xmin, xmax = min(x_coords), max(x_coords)
-        ymin, ymax = min(y_coords), max(y_coords)
+        xmin, xmax = min(x_cords), max(x_cords)
+        ymin, ymax = min(y_cords), max(y_cords)
 
         # space in x and y axis for center the visible elements and set the
         # visible range a little more bigger than just the area that enclose them
@@ -238,8 +239,8 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         yshift = (ymax - ymin) * 0.15  # 15 % up and down
 
         # create the scatter plot with the values
-        self.scatter_plot = pg.ScatterPlotItem(x=x_coords, y=y_coords,
-                                               data=numpy.arange(len(x_coords)),
+        self.scatter_plot = pg.ScatterPlotItem(x=x_cords, y=y_cords,
+                                               data=numpy.arange(len(x_cords)),
                                                size=fig_size, symbol=shape, brush=(pg.mkBrush(color)))
 
         # connect the signals for selection item on the plot
@@ -271,7 +272,7 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
 
     # region Elements Selection
 
-    def selectElement(self, index):
+    def select_element(self, index):
         """
         Select the element at index 'index' in the graph.
         If index is outside of the elements count range nothing is do it.
@@ -299,7 +300,7 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         # update the state variable of last selected element
         self.selectedElementIndex = index
 
-    def deselectElement(self):
+    def deselect_element(self):
         """
         Deselect the element currently selected (if any) on the graph.
         :return:
@@ -322,7 +323,7 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         :param y:
         :return:
         """
-        self.selectElement(y[0].data())
+        self.select_element(y[0].data())
         self.elementSelected.emit(y[0].data())
 
     # endregion

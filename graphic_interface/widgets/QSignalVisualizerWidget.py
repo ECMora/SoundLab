@@ -749,6 +749,9 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         :param updateSpecgram:
         :return:
         """
+        # if not self.isVisible():
+        #     return
+
         # ensure that the region to graph is inside the signal limits
         self.mainCursor.max = min(self.mainCursor.max, self.signal.length)
         self.mainCursor.min = max(self.mainCursor.min, 0)

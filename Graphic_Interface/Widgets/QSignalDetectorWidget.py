@@ -25,9 +25,6 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
     # the brush that is used to draw the selected region or Element
     SELECTED_ELEMENT_BRUSH = pg.mkBrush(QtGui.QColor(255, 0, 0, 200))
-
-    # the number of elements visible by default when a detection is made (efficiency)
-    VISIBLE_ELEMENTS_COUNT = 5
     # endregion
 
     def __init__(self, parent):

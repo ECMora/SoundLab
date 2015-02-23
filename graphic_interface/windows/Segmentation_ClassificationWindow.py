@@ -82,7 +82,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         # connect the signals on the widget for new detected data by its tools
         # and to select the element in the table. Binding the element click to the table
         self.widget.toolDataDetected.connect(self.updateStatusBar)
-        self.widget.elementClicked.connect(self.selectElement)
+        self.widget.elementClicked.connect(self.select_element)
 
         self.dockWidgetParameterTableOscilogram.setVisible(False)
         self.tableParameterOscilogram.setSelectionBehavior(QAbstractItemView.SelectRows)
@@ -93,7 +93,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
         # create the progress bar that is showed while the detection is made
         self.windowProgressDetection = QProgressBar(self)
-        self.setProgressBarVisibility(False)
+        self.set_progress_bar_visibility(False)
 
         # array of windows with two dimensional graphs.
         self.two_dim_windows = []
@@ -228,7 +228,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         wnd = TwoDimensionalAnalisysWindow(self, self.segmentManager)
 
         # connect the signals for update the new two dim window actions
-        wnd.elementSelected.connect(self.selectElement)
+        wnd.elementSelected.connect(self.select_element)
         wnd.elementsClasiffied.connect(self.elementsClasification)
 
         # load the workspace in the new two dimensional window
@@ -237,7 +237,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
         # if any previous windows was opened then update in the new one the selected element
         if len(self.two_dim_windows) > 0:
-            wnd.selectElement(self.two_dim_windows[0].selectedElementIndex)
+            wnd.select_element(self.two_dim_windows[0].selectedElementIndex)
 
         # add the new window to the current opened windows
         self.two_dim_windows.append(wnd)
@@ -412,7 +412,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
             self.segmentManager.delete_elements(start_removed_index, end_removed_index)
 
             for wnd in self.two_dim_windows:
-                wnd.updateData(self.segmentManager)
+                wnd.update_data(self.segmentManager)
 
         # deselect the elements on the widget
         self.on_actionDeselect_Elements_triggered()
@@ -432,7 +432,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         self.segmentManager.add_element(self.widget.elements[element_added_index], element_added_index)
 
         for wnd in self.two_dim_windows:
-            wnd.loadData(self.segmentManager)
+            wnd.load_data(self.segmentManager)
 
     @pyqtSlot()
     def on_actionDeselect_Elements_triggered(self):
@@ -446,9 +446,9 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         for wnd in self.two_dim_windows:
             wnd.deselect_element()
 
-            # the table remains equal as before for efficiency (do not update for deselect)
+        # the table remains equal as before for efficiency (do not update for deselect)
 
-    def selectElement(self, element_index, column=0):
+    def select_element(self, element_index, column=0):
         """
         Callback that is executed for update the element that is selected.
         An element is selected by the user ad must be updated in all visible representations
@@ -511,7 +511,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
             dialog = CrossCorrelationDialog(self, self.widget, file_name,
                                              self.TABLE_ROW_COLOR_ODD, self.TABLE_ROW_COLOR_EVEN)
             self._cross_correlation_windows.append(dialog)
-            dialog.elementSelected.connect(self.selectElement)
+            dialog.elementSelected.connect(self.select_element)
             dialog.show()
 
     @pyqtSlot()
@@ -526,14 +526,14 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
                                          self.TABLE_ROW_COLOR_ODD, self.TABLE_ROW_COLOR_EVEN)
 
         self._cross_correlation_windows.append(dialog)
-        dialog.elementSelected.connect(self.selectElement)
+        dialog.elementSelected.connect(self.select_element)
         dialog.show()
 
     # endregion
 
     # region Detection
 
-    def updateDetectionProgressBar(self, x):
+    def update_detection_progress_bar(self, x):
         """
         update the detection progress bar.
         detection progress bar provides a visible interface
@@ -543,7 +543,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         """
         self.windowProgressDetection.setValue(x)
 
-    def setProgressBarVisibility(self, visibility=True):
+    def set_progress_bar_visibility(self, visibility=True):
         """
         Show the progress bar in the middle of the widget.
         Used when a high time demanding task is going to be made to
@@ -585,26 +585,26 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
                 self.segmentManager.measurerList = elementsDetectorDialog.get_measurer_list()
                 # todo get the classification object
 
-                self.setProgressBarVisibility(True)
-                self.updateDetectionProgressBar(0)
+                self.set_progress_bar_visibility(True)
+                self.update_detection_progress_bar(0)
 
                 # set the detection as the 60% of the segmentation,
                 # parameter measurements and classification time
                 self.segmentManager.detector.detectionProgressChanged.connect(
-                    lambda x: self.updateDetectionProgressBar(x * 0.6))
+                    lambda x: self.update_detection_progress_bar(x * 0.6))
 
                 # execute the detection
                 self.segmentManager.detect_elements()
                 self.widget.elements = self.segmentManager.elements
-                self.updateDetectionProgressBar(60)
+                self.update_detection_progress_bar(60)
 
                 # measure the parameters over elements detected
                 self.segmentManager.measureParameters()
-                self.updateDetectionProgressBar(90)
+                self.update_detection_progress_bar(90)
 
                 # update the measured data on the two dimensional opened windows
                 for wnd in self.two_dim_windows:
-                    wnd.loadData(self.segmentManager)
+                    wnd.load_data(self.segmentManager)
 
             # refresh changes
             self.widget.graph()
@@ -614,8 +614,8 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
             self.update_parameter_table()
 
         # complete the progress of detection and hide the progress bar
-        self.updateDetectionProgressBar(100)
-        self.setProgressBarVisibility(False)
+        self.update_detection_progress_bar(100)
+        self.set_progress_bar_visibility(False)
 
     def update_parameter_table(self):
         """
@@ -642,7 +642,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
                 self.tableParameterOscilogram.setItem(i, j, item)
 
         # connect the table selection with the selection of an element
-        self.tableParameterOscilogram.cellPressed.connect(self.selectElement)
+        self.tableParameterOscilogram.cellPressed.connect(self.select_element)
         self.tableParameterOscilogram.resizeColumnsToContents()
         self.tableParameterOscilogram.resizeRowsToContents()
 
@@ -674,29 +674,33 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
             self.on_actionTemporal_Figures_triggered(update_widget=False)
             self.on_actionTemporal_Parameters_triggered(update_widget=True)
         else:
+            self.widget.change_elements_visibility(visibility, VisualElement.Parameters,
+                                                   oscilogram_items=True, update=True)
             self.widget.change_elements_visibility(visibility, VisualElement.Text, oscilogram_items=True)
             self.widget.change_elements_visibility(visibility, VisualElement.Figures, oscilogram_items=True)
-            self.widget.change_elements_visibility(visibility, VisualElement.Parameters, oscilogram_items=True)
 
         self.actionTemporal_Figures.setEnabled(visibility)
         self.actionTemporal_Numbers.setEnabled(visibility)
         self.actionTemporal_Parameters.setEnabled(visibility)
 
     @pyqtSlot()
-    def on_actionTemporal_Figures_triggered(self,update_widget=True):
-        self.widget.change_elements_visibility(self.actionTemporal_Figures.isChecked(), VisualElement.Figures, oscilogram_items=True, update=update_widget)
+    def on_actionTemporal_Figures_triggered(self, update_widget=True):
+        self.widget.change_elements_visibility(self.actionTemporal_Figures.isChecked(), VisualElement.Figures,
+                                               oscilogram_items=True, update=update_widget)
 
     @pyqtSlot()
-    def on_actionTemporal_Parameters_triggered(self,update_widget=True):
-        self.widget.change_elements_visibility(self.actionTemporal_Figures.isChecked(), VisualElement.Parameters, oscilogram_items=True, update=update_widget)
+    def on_actionTemporal_Parameters_triggered(self, update_widget=True):
+        self.widget.change_elements_visibility(self.actionTemporal_Figures.isChecked(), VisualElement.Parameters,
+                                               oscilogram_items=True, update=update_widget)
 
     @pyqtSlot()
-    def on_actionTemporal_Numbers_triggered(self,update_widget=True):
+    def on_actionTemporal_Numbers_triggered(self, update_widget=True):
         """
         Change visibility of the numbers of the detected segments on the oscilogram graph
 
         """
-        self.widget.change_elements_visibility(self.actionTemporal_Numbers.isChecked(), VisualElement.Text, oscilogram_items=True, update=update_widget)
+        self.widget.change_elements_visibility(self.actionTemporal_Numbers.isChecked(), VisualElement.Text,
+                                               oscilogram_items=True, update=update_widget)
 
     @pyqtSlot()
     def on_actionSpectral_Elements_triggered(self):
@@ -710,9 +714,9 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
             self.on_actionSpectral_Figures_triggered(update_widget=False)
             self.on_actionSpectral_Parameters_triggered(update_widget=True)
         else:
-            self.widget.change_elements_visibility(visibility, VisualElement.Text, oscilogram_items=False)
             self.widget.change_elements_visibility(visibility, VisualElement.Figures, oscilogram_items=False)
             self.widget.change_elements_visibility(visibility, VisualElement.Parameters, oscilogram_items=False)
+            self.widget.change_elements_visibility(visibility, VisualElement.Text, oscilogram_items=False, update=True)
 
         self.actionSpectral_Numbers.setEnabled(visibility)
         self.actionSpectral_Figures.setEnabled(visibility)
@@ -721,11 +725,13 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
     @pyqtSlot()
     def on_actionSpectral_Figures_triggered(self,update_widget=True):
-        self.widget.change_elements_visibility(self.actionSpectral_Figures.isChecked(), VisualElement.Figures, oscilogram_items=False, update=update_widget)
+        self.widget.change_elements_visibility(self.actionSpectral_Figures.isChecked(), VisualElement.Figures,
+                                               oscilogram_items=False, update=update_widget)
 
     @pyqtSlot()
     def on_actionSpectral_Parameters_triggered(self,update_widget=True):
-        self.widget.change_elements_visibility(self.actionSpectral_Parameters.isChecked(), VisualElement.Parameters, oscilogram_items=False, update=update_widget)
+        self.widget.change_elements_visibility(self.actionSpectral_Parameters.isChecked(), VisualElement.Parameters,
+                                               oscilogram_items=False, update=update_widget)
 
     @pyqtSlot()
     def on_actionSpectral_Numbers_triggered(self,update_widget=True):
@@ -733,7 +739,8 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         Change visibility of the numbers of the detected segments on the oscilogram graph
 
         """
-        self.widget.change_elements_visibility(self.actionSpectral_Numbers.isChecked(), VisualElement.Text, oscilogram_items=False, update=update_widget)
+        self.widget.change_elements_visibility(self.actionSpectral_Numbers.isChecked(), VisualElement.Text,
+                                               oscilogram_items=False, update=update_widget)
 
     # endregion
 

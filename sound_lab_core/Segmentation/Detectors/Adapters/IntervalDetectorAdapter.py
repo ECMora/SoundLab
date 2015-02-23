@@ -9,8 +9,8 @@ class IntervalDetectorAdapter(SoundLabAdapter):
     Adapter class for the start time parameter.
     """
 
-    def __init__(self, parent):
-        SoundLabAdapter.__init__(self, parent)
+    def __init__(self):
+        SoundLabAdapter.__init__(self)
 
         settings = [
             {u'name': unicode(self.tr(u'Threshold (dB)')), u'type': u'float', u'value': -40.00, u'step': 1, u'limits': (-120, 0)},
@@ -49,4 +49,5 @@ class IntervalDetectorAdapter(SoundLabAdapter):
         self.threshold_dB = threshold
         self.min_size_ms = min_size
         self.merge_factor = merge_factor
+
         return IntervalRmsDetector(signal, self.threshold_dB, self.min_size_ms,self.merge_factor)

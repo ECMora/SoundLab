@@ -9,8 +9,8 @@ class GrabCutDetectorAdapter(ImageDetectorAdapter):
     Adapter class for the start time parameter.
     """
 
-    def __init__(self, parent):
-        ImageDetectorAdapter.__init__(self, parent)
+    def __init__(self):
+        ImageDetectorAdapter.__init__(self)
 
     def get_instance(self,signal):
         """

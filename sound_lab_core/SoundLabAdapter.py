@@ -9,11 +9,11 @@ class SoundLabAdapter(QObject):
     parameter measurement into the visual interface
     """
 
-    def __init__(self, parent):
+    def __init__(self):
         """
         The class must have a constructor receiving one parameter: the QObject's parent.
         """
-        QObject.__init__(self, parent)
+        QObject.__init__(self)
 
     def get_instance(self):
         """

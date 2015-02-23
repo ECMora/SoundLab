@@ -10,8 +10,8 @@ class AbsDecayEnvelopeDetectorAdapter(SoundLabAdapter):
     Adapter class for the start time parameter.
     """
 
-    def __init__(self, parent):
-        SoundLabAdapter.__init__(self, parent)
+    def __init__(self):
+        SoundLabAdapter.__init__(self)
 
         settings = [
             {u'name': unicode(self.tr(u'Threshold (dB)')), u'type': u'float', u'value': -40.00, u'step': 1, u'limits': (-120, 0)},
@@ -30,8 +30,6 @@ class AbsDecayEnvelopeDetectorAdapter(SoundLabAdapter):
         self.merge_factor = 5
 
         self.settings = Parameter.create(name=u'Settings', type=u'group', children=settings)
-
-        self.settings.sigTreeStateChanged.connect(self.apply_settings_change)
 
     def get_settings(self):
         """
@@ -69,6 +67,3 @@ class AbsDecayEnvelopeDetectorAdapter(SoundLabAdapter):
         self.merge_factor = merge_factor
         return AbsDecayEnvelopeDetector(signal, self.decay_ms, self.threshold_dB, self.min_size_ms,
                                         self.merge_factor, self.soft_factor)
-
-    def apply_settings_change(self,parameter, changes):
-        print(changes)

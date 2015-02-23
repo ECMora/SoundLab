@@ -9,8 +9,8 @@ class ManualDetectorAdapter(SoundLabAdapter):
     Adapter class for the start time parameter.
     """
 
-    def __init__(self, parent):
-        SoundLabAdapter.__init__(self, parent)
+    def __init__(self):
+        SoundLabAdapter.__init__(self)
 
-    def get_instance(self,signal):
+    def get_instance(self, signal):
         return ManualDetector(signal)

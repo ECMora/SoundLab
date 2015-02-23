@@ -10,8 +10,8 @@ class PeakFreqParameterAdapter(SoundLabAdapter):
     Adapter class for the peak freq parameter.
     """
 
-    def __init__(self, parent):
-        SoundLabAdapter.__init__(self, parent)
+    def __init__(self):
+        SoundLabAdapter.__init__(self)
 
     def get_instance(self):
         return PeakFreqParameter()

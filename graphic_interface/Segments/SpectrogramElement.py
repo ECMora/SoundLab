@@ -1,4 +1,3 @@
-from PyQt4.QtGui import QFont
 import pyqtgraph as pg
 import numpy as np
 from graphic_interface.segments.VisualElement import VisualElement
@@ -7,6 +6,9 @@ from graphic_interface.segments.parameter_items.spectral_parameter_items.Spectra
 
 
 class SpectrogramElement(VisualElement):
+    """
+    The spectral visual representation of a detected segment
+    """
 
     def __init__(self, signal, indexFrom, indexTo, number=0):
         """
@@ -19,14 +21,8 @@ class SpectrogramElement(VisualElement):
         max_freq = signal.samplingRate / 2.0
 
         # the visible text for number
-        self.text_number = pg.TextItem(str(number), color=(255, 255, 255), anchor=(0.5, 0.5))
-        # (time, freq)
         self.text_number_pos = self.indexFrom / 2.0 + self.indexTo / 2.0, max_freq * 0.9
         self.text_number.setPos(self.text_number_pos[0], self.text_number_pos[1])
-
-        font = QFont()
-        font.setPointSize(13)
-        self.text_number.setFont(font)
 
         # Define positions of nodes
         self.element_region_pos = np.array([
@@ -42,7 +38,6 @@ class SpectrogramElement(VisualElement):
 
         # update the visual representation
         self.visual_figures.append([self.element_region, True])  # item visibility
-        self.visual_text.append([self.text_number, True])
 
     def setNumber(self, n):
         """
@@ -51,16 +46,13 @@ class SpectrogramElement(VisualElement):
         @param n: The new index
         """
         VisualElement.setNumber(self, n)
-
-        self.text_number.setText(str(n))
-
         self.element_region.setData(pen=pg.mkPen(self.color, width=3))
 
-    def addParameterItem(self, parameter_item):
+    def add_parameter_item(self, parameter_item):
         if not isinstance(parameter_item, SpectralParameterVisualItem):
             raise Exception("Invalid type argument. parameter_item must be of type SpectralParameterVisualItem")
 
-        VisualElement.addParameterItem(self, parameter_item)
+        VisualElement.add_parameter_item(self, parameter_item)
 
     def translate_time_freq_coords(self, translate_time_function=None, translate_freq_function=None):
         """

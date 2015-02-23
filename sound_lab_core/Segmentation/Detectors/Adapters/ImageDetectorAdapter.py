@@ -9,8 +9,8 @@ class ImageDetectorAdapter(SoundLabAdapter):
     """
     """
 
-    def __init__(self, parent):
-        SoundLabAdapter.__init__(self, parent)
+    def __init__(self):
+        SoundLabAdapter.__init__(self)
 
         settings = [
             {u'name': unicode(self.tr(u'Min Size (ms)')), u'type': u'float', u'value': 2.00, u'step': 1, u'limits': (0, 30000)},
@@ -20,7 +20,6 @@ class ImageDetectorAdapter(SoundLabAdapter):
         self.min_size_kHz = 2
 
         self.settings = Parameter.create(name=u'Settings', type=u'group', children=settings)
-        self.settings.sigTreeStateChanged.connect(self.apply_settings_change)
 
     def update_instance_variables(self):
         """
@@ -39,13 +38,9 @@ class ImageDetectorAdapter(SoundLabAdapter):
 
         self.min_size_ms = min_size_ms
         self.min_size_kHz = min_size_kHz
-        print(self.min_size_ms,self.min_size_kHz)
 
     def get_settings(self):
         """
         returns a Parameter Tree with the options of the abs decay detector
         """
         return self.settings
-
-    def apply_settings_change(self,parameter, changes):
-        print(changes)

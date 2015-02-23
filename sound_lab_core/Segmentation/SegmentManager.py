@@ -288,11 +288,11 @@ class SegmentManager(QObject):
                 measure_method = parameter_adapter.get_instance()
                 self.measuredParameters[index, j] = measure_method.measure(element)
 
+                # raise the parameter visual item if any
                 visual_item = parameter_adapter.get_visual_item()
                 if visual_item:
                     visual_item.set_data(self.signal, self.elements[index], self.measuredParameters[index, j])
-
-                self.segmentParameterMeasured.emit(index, visual_item)
+                    self.segmentParameterMeasured.emit(index, visual_item)
 
             except Exception as e:
                 # if some error is raised set a default value

@@ -65,17 +65,17 @@ class DetectedSoundLabElement(QObject):
 
     # endregion
 
-    def addParameterItem(self, parameter_item):
+    def add_parameter_item(self, parameter_item):
         """
         Add a parameter item into the visual element representation
         :param parameter_item: A measured parameter visualization item
         :return:
         """
         if isinstance(parameter_item, TimeParameterVisualItem):
-            self.time_element.addParameterItem(parameter_item)
+            self.time_element.add_parameter_item(parameter_item)
 
         elif isinstance(parameter_item, SpectralParameterVisualItem):
-            self.spectral_element.addParameterItem(parameter_item)
+            self.spectral_element.add_parameter_item(parameter_item)
 
     def setNumber(self, n):
         """
