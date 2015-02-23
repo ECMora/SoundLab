@@ -24,8 +24,6 @@ class IntervalDetectorAdapter(SoundLabAdapter):
 
         self.settings = Parameter.create(name=u'Settings', type=u'group', children=settings)
 
-        self.settings.sigTreeStateChanged.connect(self.apply_settings_change)
-
     def get_settings(self):
         """
         returns a Parameter Tree with the options of the abs decay detector

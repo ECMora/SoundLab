@@ -231,7 +231,7 @@ class Ui_MainWindow(object):
         self.actionSignalName.setObjectName(_fromUtf8("actionSignalName"))
         self.actionDelete_Selected_Elements = QtGui.QAction(MainWindow)
         icon19 = QtGui.QIcon()
-        icon19.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/deleteElements.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon19.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/delete_elements.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionDelete_Selected_Elements.setIcon(icon19)
         self.actionDelete_Selected_Elements.setObjectName(_fromUtf8("actionDelete_Selected_Elements"))
         self.actionDeselect_Elements = QtGui.QAction(MainWindow)

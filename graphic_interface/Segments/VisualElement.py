@@ -5,7 +5,8 @@ from PyQt4 import QtGui
 
 class VisualElement(QObject):
     """
-
+    The base class for all the visual elements from segmentation
+    and parameter measurement. A visual element may contain multiple visual items
     """
 
     # region SIGNALS
@@ -21,9 +22,14 @@ class VisualElement(QObject):
     # different colors for the even and odds rows in the parameter table and segment colors.
     COLOR_ODD = QtGui.QColor(0, 0, 255, 100)
     COLOR_EVEN = QtGui.QColor(0, 255, 0, 100)
-    # endregion
 
+    # classes of visual elements,
+    # FIGURES for the elements representation visual item
+    # TEXT for the numbers and labels used
+    # PARAMETERS for the measured parameters
     Figures, Text, Parameters = range(3)
+
+    # endregion
 
     def __init__(self, number=0):
         QObject.__init__(self)
@@ -61,7 +67,7 @@ class VisualElement(QObject):
 
     def visual_widgets(self):
         """
-        all the visual items that represents this element.
+        Iterator for the visual items that contains this element.
         @return: iterator of objects of the form (object visual element, bool visibility)
         """
         for f in self.visual_figures:

@@ -8,7 +8,9 @@ from graphic_interface.Settings.Workspace import Workspace
 from graphic_interface.windows.SoundLabMainWindow import SoundLabMainWindow
 from graphic_interface.windows.PresentationSlogan.presentation import Ui_MainWindow
 
-invalid_license_message = " Valid duetto Sound Lab license is missing or trial period is over.\n" + " If you have a valid license try to open the application again, otherwise" + " contact duetto support team."
+invalid_license_message = " Valid duetto Sound Lab license is missing or trial period is over.\n" + \
+                          " If you have a valid license try to open the application again, otherwise" + \
+                          " contact duetto support team."
 
 
 class DuettoSoundLab(QMainWindow, Ui_MainWindow):
@@ -21,6 +23,7 @@ class DuettoSoundLab(QMainWindow, Ui_MainWindow):
 
 
 def valid_license():
+    return True
     try:
         drives = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T",
                   "U", "V", "W", "X", "Y", "Z"]
@@ -37,12 +40,21 @@ def valid_license():
 
 
 def check_license():
+    """
+    Check the license validness and close the
+    app with no valid license message if the license fails
+    :return:
+    """
     if not valid_license():
         finish()
 
 
-def finish():
-    QMessageBox.warning(QMessageBox(), "Error", invalid_license_message)
+def finish(message=invalid_license_message):
+    """
+    End the application with the invalid license message
+    :return:
+    """
+    QMessageBox.warning(QMessageBox(), "Error", message)
     sys.exit(0)
 
 
@@ -136,27 +148,6 @@ if __name__ == '__main__':
 
     license_checker_timer = QTimer()
     license_checker_timer.timeout.connect(check_license)
-
-    # region Start Splash Screen Window
-    # path = os.path.join(os.path.join("Utils", "PresentationVideo"), "duettoinit.mp4")
-    # duetto_sound_lab_window = Duetto_Sound_Lab(path=path if os.path.exists(path) else "")
-
-    # def closeSplashScreenWindow():
-    #     dmw.show()
-    #     duetto_sound_lab_window.close()
-
-    # show it
-
-    # if os.path.exists(path):
-    #     # duetto_sound_lab_window.videoPlayer.finished.connect(s)
-    #     duetto_sound_lab_window.show()
-    #     # duetto_sound_lab_window.videoPlayer.play()
-    # else:
-    #     closeSplashScreenWindow()
-    #
-    # closeSplashScreenWindow()
-
-    # endregion
 
     if valid_license():
         # start the Qt main loop execution, exiting from this script

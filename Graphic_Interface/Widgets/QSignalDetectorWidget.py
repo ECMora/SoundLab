@@ -34,7 +34,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         # items to highlight elements or regions in the graph
         self.oscSelectionRegion = pg.LinearRegionItem([0, 0], movable=False, brush=self.SELECTED_ELEMENT_BRUSH)
 
-        self.specSelectionRegion = pg.LinearRegionItem([0, 0], movable=False, brush=self.SELECTED_ELEMENT_BRUSH)
+        # self.specSelectionRegion = pg.LinearRegionItem([0, 0], movable=False, brush=self.SELECTED_ELEMENT_BRUSH)
 
         # visibility of all detected elements.
         # is used when they are displayed
@@ -53,7 +53,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
     @elements.setter
     def elements(self, elements_list):
-        self.clearDetection()
+        self.clear_detection()
 
         self._elements = []
 
@@ -68,10 +68,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
             e.elementClicked.connect(lambda i: self.elementClicked.emit(i))
             e.setNumber(index+1)
 
-        # just show an interval of 5 elements visible for starting
-        if len(self.elements) > self.VISIBLE_ELEMENTS_COUNT:
-            self.mainCursor.min, self.mainCursor.max = 0, self.elements[self.VISIBLE_ELEMENTS_COUNT-1].indexTo
-            self.graph()
+        self.graph()
 
     # endregion
 
@@ -79,7 +76,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
     # region Visual Representation
 
-    def drawElements(self, oscilogramItems=None):
+    def draw_elements(self, oscilogramItems=None):
         """
         Add to the visual gui widgets the visible elements of the detected segments
         :param oscilogramItems: true if draw elements in oscilogram false for spectrogram
@@ -114,7 +111,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         self.axesSpecgram.update()
         self.axesOscilogram.update()
 
-    def removeVisualElements(self, oscilogram=True, specgram=True, elements=None):
+    def remove_visual_elements(self, oscilogram=True, specgram=True, elements=None):
         """
         Method that remove the visual representation of the elements in the widget.
         Used for remove selected elements or a group of them.
@@ -134,18 +131,19 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
                 for item, visible in elem.spectral_element.visual_widgets():
                     self.axesSpecgram.viewBox.removeItem(item)
 
-    def changeElementsVisibility(self, visibility, element_type=VisualElement.Text, oscilogramItems=None, update=True):
+    def change_elements_visibility(self, visibility, element_type=VisualElement.Text, oscilogram_items=None, update=True):
         """
         Change the visibility of the visual items
         :type update: Bool for efficiency optimization when change multiples elements visibility.
         True if must be update the widget False otherwise
-        :param visibility:
-        :param element_type:
-        :param oscilogramItems:
+        :param visibility: (bool) the new visibility of the items
+        :param element_type: The type of items to change visibility
+        :param oscilogram_items: the domain widget to change visibility. True if Oscilogram items would be changed,
+         False if spectrogram items, None if both
         """
         iterable = self.elements
-        osc_update = oscilogramItems is None or oscilogramItems
-        spec_update = oscilogramItems is None or not oscilogramItems
+        osc_update = oscilogram_items is None or oscilogram_items
+        spec_update = oscilogram_items is None or not oscilogram_items
 
         for e in iterable:
             if element_type is VisualElement.Figures:
@@ -174,9 +172,9 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
                     for x in e.spectral_element.visual_parameters_items:
                         x[1] = visibility
         if update:
-            self.drawElements()
+            self.draw_elements()
 
-    def addParameterItem(self, element_index, parameter_item):
+    def add_parameter_item(self, element_index, parameter_item):
         """
         Add a new visual item of a parameter measurement.
         :param element_index: the index of the segment measured
@@ -185,21 +183,21 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         """
         if not 0 <= element_index < len(self.elements):
             return
-        self.elements[element_index].addParameterItem(parameter_item)
-        self.drawElements()
+        self.elements[element_index].add_parameter_item(parameter_item)
+        self.draw_elements()
 
     # endregion
 
     # region Selection-Deselection
 
-    def clearDetection(self):
+    def clear_detection(self):
         """
         Clears the detected elements and their visual components from the widget
         """
-        self.removeVisualElements(oscilogram=True, specgram=True)
-        self.deselectElement()
+        self.remove_visual_elements(oscilogram=True, specgram=True)
+        self.deselect_element()
 
-    def selectElement(self, index=-1):
+    def select_element(self, index=-1):
         """
         Method that select an element in the widget
         by highlighting it. If index is in the range of [0, number_of_elements] then the
@@ -208,11 +206,11 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         :param index: the element index
         """
         if index < 0 or index >= len(self.elements):
-            self.selectRegion(0, 0)
+            self.select_region(0, 0)
             return
 
         index_from, index_to = self.elements[index].indexFrom, self.elements[index].indexTo
-        self.selectRegion(index_from, index_to)
+        self.select_region(index_from, index_to)
 
         if index_from < self.mainCursor.min or index_to > self.mainCursor.max:
             # update the interval of visualization if the element is outside the current visible region
@@ -223,17 +221,17 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
             self.mainCursor.max = min(self.signal.length, index_to + interval_size/2)
             self.graph()
 
-    def deselectElement(self):
+    def deselect_element(self):
         """
         Deselect (if any) the selected element on the widget
         :return:
         """
         # select the element at index -1
-        # (the default of the selectElement method)
+        # (the default of the select_element method)
         # to clear the selection
-        self.selectElement()
+        self.select_element()
 
-    def selectRegion(self, indexFrom, indexTo, brush=None):
+    def select_region(self, indexFrom, indexTo, brush=None):
         """
         Highlight a section in the graph.
         @param indexFrom: The start of the selected  section
@@ -241,18 +239,14 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         @param brush: optional brush to paint inside the section
         """
         # update the oscilogram
-        self.addSelectedRegionItems()
+        self.add_selected_region_items()
 
         self.oscSelectionRegion.setRegion([indexFrom, indexTo])
         self.oscSelectionRegion.setBrush(brush if brush is not None else self.SELECTED_ELEMENT_BRUSH)
 
-        # self.specSelectionRegion.setRegion([self.from_osc_to_spec(indexFrom), self.from_osc_to_spec(indexTo)])
-        # self.specSelectionRegion.setBrush(brush if brush is not None else self.SELECTED_ELEMENT_BRUSH)
-
         self.axesOscilogram.update()
-        # self.axesSpecgram.update()
 
-    def addSelectedRegionItems(self):
+    def add_selected_region_items(self):
         """
         Add to the widget the items s to mark a region.
         Those items are used when an element is selected to
@@ -265,11 +259,10 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
             # clears the items on the widget
             self.axesOscilogram.addItem(self.oscSelectionRegion)
 
-        # add the spectrogram region
-        # if self.specSelectionRegion not in self.axesSpecgram.viewBox.childItems():
-        #     self.axesSpecgram.viewBox.addItem(self.specSelectionRegion)
-
     def selected_element_signal(self):
+        """
+        :return: The (Audio) signal slice of the selected element region
+        """
         start, end = self.oscSelectionRegion.getRegion()
         if end <= start:
             return None
@@ -278,7 +271,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
     # endregion
 
-    def deleteSelectedElements(self):
+    def delete_selected_elements(self):
         """
         Deletes the elements between the selection
         (zoom cursor if zoom cursor is selected and there is a selection or
@@ -308,9 +301,9 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         selected_rgn_start, selected_rgn_end = self.oscSelectionRegion.getRegion()
 
         if start <= selected_rgn_start <= end or start <= selected_rgn_end <= end:
-            self.selectElement()
+            self.select_element()
 
-        self.removeVisualElements(elements=self.elements[indexFrom:indexTo])
+        self.remove_visual_elements(elements=self.elements[indexFrom:indexTo])
 
         # do not call the property to avoid recompute the visualization unnecessary
         self._elements = self.elements[0:indexFrom] + self.elements[indexTo:]
@@ -322,7 +315,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
         return indexFrom, indexTo - 1
 
-    def markRegionAsElement(self, interval=None, update=True):
+    def mark_region_as_element(self, interval=None, update=True):
         """
         Try to add a new element manually using the interval supplied
         if None is supplied use the current selected region as delimiters from start and end in time
@@ -339,16 +332,11 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
         sorted_arr = np.array([x.indexFrom for x in self.elements])
 
-        indexFrom, indexTo = np.searchsorted(sorted_arr, start), np.searchsorted(sorted_arr, end)
-        indexFrom -= 1 if indexFrom > 0 and start <= self.elements[indexFrom - 1].indexTo else 0
+        index_from, index_to = np.searchsorted(sorted_arr, start), np.searchsorted(sorted_arr, end)
+        index_from -= 1 if index_from > 0 and start <= self.elements[index_from - 1].indexTo else 0
 
-        # overlaps with other elements
-        if indexFrom != indexTo:
-            return None
-
-        # todo hard code instance must be used an injection of dependencies instead
         element = DetectedSoundLabElement(self.signal, start, end)
-        self.elements.insert(indexFrom, element)
+        self.elements.insert(index_from, element)
         element.elementClicked.connect(lambda i: self.elementClicked.emit(i))
 
         for index, e in enumerate(self.elements):
@@ -358,11 +346,12 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         if update:
             self.graph()
 
-        return indexFrom
+        return index_from
 
-    def saveElementsOnSignal(self):
+    def save_segments_into_signal(self):
         """
-        Store the list of (start, end) indexes of detected elements
+        Store the list of (start, end) indexes of detected elements into the
+        signal extra data.
         :return:
         """
         self.signal.extraData = [(x.indexFrom, x.indexTo) for x in self.elements]
@@ -379,7 +368,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         :return:
         """
         QSignalVisualizerWidget.updateOscillogram(self, x1, x2)
-        self.graphElements()
+        self.graph_elements()
 
     def updateSpecgram(self, x1, x2):
         """
@@ -389,7 +378,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         :return:
         """
         QSignalVisualizerWidget.updateSpecgram(self, x1, x2)
-        self.graphElements()
+        self.graph_elements()
 
     # endregion
 
@@ -399,15 +388,15 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         :return:
         """
         QSignalVisualizerWidget.graph(self)
-        self.graphElements()
+        self.graph_elements()
 
-    def graphElements(self):
+    def graph_elements(self):
         """
         Execute the logic of update the visual representation of the detected elements
         :return:
         """
         # add the region items because the parent method clears the widget
-        self.addSelectedRegionItems()
+        self.add_selected_region_items()
 
         if self.visibleElements:
-            self.drawElements()
+            self.draw_elements()

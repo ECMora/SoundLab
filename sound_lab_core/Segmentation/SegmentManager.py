@@ -192,7 +192,7 @@ class SegmentManager(QObject):
 
     # region Add-Delete Elements
 
-    def deleteElements(self, start_index, end_index):
+    def delete_elements(self, start_index, end_index):
         """
         Removes elements from the detected
         :param start_index: start index of removed elements
@@ -211,7 +211,7 @@ class SegmentManager(QObject):
 
         self.measurementsChanged.emit()
 
-    def addElement(self, element, index):
+    def add_element(self, element, index):
         """
         Add a new element at index supplied. Execute the parameter measurement over it
         :param element:  the element to add
@@ -241,12 +241,13 @@ class SegmentManager(QObject):
 
         self.measurementsChanged.emit()
 
-    def detectElements(self):
+    def detect_elements(self):
         """
-        Detect elements in the signal using the parameters.
+        Detect elements in the signal using the detector
         """
         if self.detector is None:
             return
+
         self.detector.detect()
 
         self.elements = self.detector.elements
@@ -298,11 +299,14 @@ class SegmentManager(QObject):
                 self.measuredParameters[index, j] = 0
                 print("Error measure params " + e.message)
 
-
     # endregion
 
-    def getData(self, row, col):
-        # todo (yasel) implement as indexer
+    def __getitem__(self, item):
+        if not isinstance(item, tuple) or not len(item) == 2:
+            raise Exception("Invalid Argument exception")
+
+        row, col = item
+
         if row < 0 or row >= self.rowCount:
             raise IndexError()
 

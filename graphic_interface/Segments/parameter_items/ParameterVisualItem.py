@@ -11,9 +11,7 @@ class ParameterVisualItem:
 
     def set_data(self, signal, segment, data):
         """
-        Update the visual item with the measurement data supplied
         """
-        pass
 
     def get_item(self):
         """

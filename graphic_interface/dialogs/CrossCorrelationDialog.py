@@ -6,9 +6,17 @@ import numpy as np
 from graphic_interface.windows.ui_python_files.cross_correlationDialog import Ui_cross_correlationDialog
 
 
-class Cross_correlationDialog(QDialog, Ui_cross_correlationDialog):
+class CrossCorrelationDialog(QDialog, Ui_cross_correlationDialog):
+    """
+    Dialog that shows the cross correlation algorithm
+    over a group of segments on a signal
+    """
 
+    # region SIGNALS
+    # signal raised when an element is selected
     elementSelected = pyqtSignal(int)
+
+    # endregion
 
     def __init__(self, parent, signalDetectorWidget, signal, tableColorOdd=None, tableColorEven=None):
         QDialog.__init__(self, parent)
@@ -37,7 +45,7 @@ class Cross_correlationDialog(QDialog, Ui_cross_correlationDialog):
 
         self.fill_table()
 
-    def selectElement(self, index):
+    def select_element(self, index):
         if index < self.matchTableWidget.rowCount():
             ordered_matches = self.matches
             if self.orderCheckBox.isChecked():
