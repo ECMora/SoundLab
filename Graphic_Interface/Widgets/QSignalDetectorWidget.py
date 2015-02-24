@@ -31,14 +31,10 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         # items to highlight elements or regions in the graph
         self.oscSelectionRegion = pg.LinearRegionItem([0, 0], movable=False, brush=self.SELECTED_ELEMENT_BRUSH)
 
-        # self.specSelectionRegion = pg.LinearRegionItem([0, 0], movable=False, brush=self.SELECTED_ELEMENT_BRUSH)
-
-        # visibility of all detected elements.
-        # is used when they are displayed
+        # visibility of all detected elements used when they are displayed
         self.visibleElements = True
 
-        # list of detected elements. Each element contains the object
-        # and the extra data for visualize it
+        # list of detected sound lab elements.
         self._elements = []
 
         QSignalVisualizerWidget.__init__(self, parent)

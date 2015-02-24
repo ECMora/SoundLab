@@ -1,8 +1,7 @@
 #  -*- coding: utf-8 -*-
 from PyQt4.QtCore import QObject, pyqtSignal
-from PyQt4 import QtGui
 import pyqtgraph as pg
-from PyQt4.QtGui import QFont
+from PyQt4.QtGui import QFont, QColor
 
 
 class VisualElement(QObject):
@@ -25,8 +24,8 @@ class VisualElement(QObject):
     FONT_SIZE = 13
 
     # different colors for the even and odds rows in the parameter table and segment colors.
-    COLOR_ODD = QtGui.QColor(0, 0, 255, 100)
-    COLOR_EVEN = QtGui.QColor(0, 255, 0, 100)
+    COLOR_ODD = QColor(0, 0, 255, 100)
+    COLOR_EVEN = QColor(0, 255, 0, 100)
 
     # classes of visual elements,
     # FIGURES for the elements representation visual item

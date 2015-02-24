@@ -7,17 +7,31 @@ import numpy as np
 
 class AverageFreqVisualItem(SpectralParameterVisualItem):
     """
+
     """
 
     # region CONSTANTS
+
     # the color for the pen to draw the item
     COLOR = QtGui.QColor(50, 50, 255, 255)
+
+    # the width of the line on the item
+    ELEMENT_REGION_WIDTH = 3
+
     # endregion
 
     def __init__(self, color=None, tooltip=""):
+        """
+        :param color: the color for the lines
+        :param tooltip: an optional tooltip to show
+        :return:
+        """
         SpectralParameterVisualItem.__init__(self)
+        # time limits
         self.indexFrom = 0
         self.indexTo = 0
+
+        # the freq value
         self.peak_freq_value = 0
 
         if color is not None and isinstance(color, QtGui.QColor):
@@ -43,6 +57,7 @@ class AverageFreqVisualItem(SpectralParameterVisualItem):
 
         self.peak_freq_value = int(data_kHz*1000)
 
+        # update positions
         self.peak_freq_pos = np.array([[self.indexFrom,  self.peak_freq_value],
                                        [self.indexTo,  self.peak_freq_value]])
         self.peak_freq_region.setToolTip(self.tooltip + " " + str(data_kHz) + "(kHz)")
@@ -58,5 +73,5 @@ class AverageFreqVisualItem(SpectralParameterVisualItem):
             pos[0, 1] = translate_freq_function(self.peak_freq_pos[0, 1])
             pos[1, 1] = translate_freq_function(self.peak_freq_pos[1, 1])
 
-        options = dict(size=1, symbol='d', pxMode=False, pen=(pg.mkPen(self.COLOR, width=3)))
+        options = dict(size=1, symbol='d', pxMode=False, pen=(pg.mkPen(self.COLOR, width=self.ELEMENT_REGION_WIDTH)))
         self.peak_freq_region.setData(pos=pos, adj=self.peak_freq_adj, **options)

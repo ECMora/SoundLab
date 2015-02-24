@@ -570,6 +570,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         """
         elementsDetectorDialog = ElemDetectSettingsDialog(parent=self, signal=self.widget.signal)
         elementsDetectorDialog.load_workspace(self.workSpace)
+        # elementsDetectorDialog.restore_previous_state(self.segmentManager.measurerList,)
 
         # deselect the elements before new detection
         self.on_actionDeselect_Elements_triggered()

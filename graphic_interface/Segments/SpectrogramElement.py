@@ -10,10 +10,12 @@ class SpectrogramElement(VisualElement):
     The spectral visual representation of a detected segment
     """
 
+    # region CONSTANTS
+    # the width of the lines on the element region delimiter
+    ELEMENT_REGION_WIDTH = 3
+    # endregion
+
     def __init__(self, signal, indexFrom, indexTo, number=0):
-        """
-        @return:
-        """
         VisualElement.__init__(self, number=number)
         self.indexFrom = indexFrom
         self.indexTo = indexTo
@@ -24,6 +26,8 @@ class SpectrogramElement(VisualElement):
         self.text_number_pos = self.indexFrom / 2.0 + self.indexTo / 2.0, max_freq * 0.9
         self.text_number.setPos(self.text_number_pos[0], self.text_number_pos[1])
 
+        self.element_region = pg.GraphItem()
+        self.element_region.mouseClickEvent = self.mouseClickEvent
         # Define positions of nodes
         self.element_region_pos = np.array([
             [self.indexFrom, max_freq * 0.8],
@@ -32,9 +36,6 @@ class SpectrogramElement(VisualElement):
             [self.indexTo, max_freq * 0.8]
         ])
         self.element_region_adj = np.array([[0, 1], [1, 2], [2, 3]])
-
-        self.element_region = pg.GraphItem()
-        self.element_region.mouseClickEvent = self.mouseClickEvent
 
         # update the visual representation
         self.visual_figures.append([self.element_region, True])  # item visibility
@@ -46,9 +47,12 @@ class SpectrogramElement(VisualElement):
         @param n: The new index
         """
         VisualElement.setNumber(self, n)
-        self.element_region.setData(pen=pg.mkPen(self.color, width=3))
+
+        # the color is dependent to the number
+        self.element_region.setData(pen=pg.mkPen(self.color, width=self.ELEMENT_REGION_WIDTH))
 
     def add_parameter_item(self, parameter_item):
+        # check the type of the added parameter items as SpectralParameterVisualItem
         if not isinstance(parameter_item, SpectralParameterVisualItem):
             raise Exception("Invalid type argument. parameter_item must be of type SpectralParameterVisualItem")
 
@@ -80,7 +84,7 @@ class SpectrogramElement(VisualElement):
             if translate_freq_function is not None:
                 pos[i, 1] = translate_freq_function(self.element_region_pos[i, 1])
         
-        options = dict(size=1, symbol='d', pxMode=False, pen=(pg.mkPen(self.color, width=3)))
+        options = dict(size=1, symbol='d', pxMode=False, pen=(pg.mkPen(self.color, width=self.ELEMENT_REGION_WIDTH)))
         self.element_region.setData(pos=pos, adj=self.element_region_adj, **options)
 
         for item, visibility in self.visual_parameters_items:
