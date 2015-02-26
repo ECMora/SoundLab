@@ -83,11 +83,17 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
         elements = [e for e in self.elements if start <= e.indexFrom <= end or start <= e.indexTo <= end]
 
-        for i in range(len(self.elements)):
+        for i in xrange(len(self.elements)):
+            for item, visible in self.elements[i].time_element.visual_widgets():
+                self.axesOscilogram.removeItem(item)
+
+            for item, visible in self.elements[i].spectral_element.visual_widgets():
+                self.axesSpecgram.viewBox.removeItem(item)
+
             self.elements[i].spectral_element.translate_time_freq_coords(self.from_osc_to_spec, self.get_freq_index)
 
         # add the visible elements
-        for i in range(len(elements)):
+        for i in xrange(len(elements)):
             if not self.elements[i].visible:
                 continue
 
@@ -179,6 +185,15 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         self.elements[element_index].add_parameter_item(parameter_item)
         self.draw_elements()
 
+    def add_segmentation_items(self, items):
+        """
+        Add a group of visual items that illustrates
+        the segmentation process and settings
+        :param items: the visual items of segmentation
+        :return:
+        """
+        pass
+
     # endregion
 
     # region Selection-Deselection
@@ -193,7 +208,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
     def select_element(self, index=-1):
         """
         Method that select an element in the widget
-        by highlighting it. If index is in the range of [0, number_of_elements] then the
+        by highlighting it. If index is in the xrange of [0, number_of_elements] then the
         the element at index "index" would be selected.
         Otherwise the selection would be cleared.
         :param index: the element index
@@ -355,7 +370,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
     def updateOscillogram(self, x1, x2):
         """
-        Method invoked when the oscilogram range change
+        Method invoked when the oscilogram xrange change
         :param x1: start index of the interval changed
         :param x2: end index of the interval changed
         :return:
@@ -365,7 +380,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
     def updateSpecgram(self, x1, x2):
         """
-        Method invoked when the spectrogram range change
+        Method invoked when the spectrogram xrange change
         :param x1: start index of the interval changed
         :param x2: end index of the interval changed
         :return:

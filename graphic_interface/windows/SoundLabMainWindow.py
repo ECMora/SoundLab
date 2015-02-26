@@ -15,7 +15,7 @@ from graphic_interface.Settings.WorkTheme import WorkTheme
 from graphic_interface.windows.BatchWindow import BatchWindow
 from graphic_interface.windows.ParameterList import DuettoListParameterItem
 from graphic_interface.windows.OneDimensionalAnalysisWindow import OneDimensionalAnalysisWindow
-from Segmentation_ClassificationWindow import Segmentation_ClassificationWindow
+from SegmentationClassificationWindow import SegmentationClassificationWindow
 from ui_python_files.MainWindow import Ui_DuettoMainWindow
 from graphic_interface.dialogs import *
 from graphic_interface.widgets.signal_visualizer_tools.SignalVisualizerTool import Tools
@@ -781,7 +781,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
                                       self.tr(u"Use the splitter to divide it"))
             return
 
-        seg_window = Segmentation_ClassificationWindow(parent=self, signal=signal)
+        seg_window = SegmentationClassificationWindow(parent=self, signal=signal)
 
         # if was loaded the same signal on segmentation window give the file path (if any) to save options
         if signal.length == self.widget.signal.length:

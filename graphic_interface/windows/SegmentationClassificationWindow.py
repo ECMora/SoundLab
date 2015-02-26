@@ -15,7 +15,7 @@ from PyQt4.QtGui import QFileDialog, QAbstractItemView, QActionGroup, QMessageBo
     QProgressBar, QColor, QAction, QTableWidgetItem
 
 
-class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
+class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
     """
     Window that process the segmentation and classification of a signal
     Contains a QSignalDetectorWidget that wrapper several functionality
@@ -140,7 +140,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         Add the context menu actions into the widget in the creation process of the window
         :return:
         """
-        separator, separator1, separator2, separator3, separator4 = [QAction(self) for _ in range(5)]
+        separator, separator1, separator2, separator3, separator4 = [QAction(self) for _ in xrange(5)]
 
         for sep in [separator, separator1, separator2, separator3, separator4]:
             sep.setSeparator(True)
@@ -324,14 +324,14 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         """
         # write headers into the document
         headers = [str(tableParameter.takeHorizontalHeaderItem(pos).text()) for pos in
-                   range(tableParameter.columnCount())]
+                   xrange(tableParameter.columnCount())]
 
         for index, header in enumerate(headers):
             ws.write(0, index, header, self.EXCEL_STYLE_HEADER)
 
         # write data into the document
-        for i in range(1, tableParameter.model().rowCount() + 1):
-            for j in range(tableParameter.model().columnCount()):
+        for i in xrange(1, tableParameter.model().rowCount() + 1):
+            for j in xrange(tableParameter.model().columnCount()):
                 if tableParameter.item(i - 1, j):
                     ws.write(i, j, str(tableParameter.item(i - 1, j).data(Qt.DisplayRole).toString()),
                              self.EXCEL_STYLE_BODY)
@@ -468,7 +468,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
             wnd.select_element(element_index)
 
         # and in the cross-correlation windows
-        for i in range(len(self._cross_correlation_windows)):
+        for i in xrange(len(self._cross_correlation_windows)):
             wnd = self._cross_correlation_windows[i]
             if wnd.isHidden():
                 del self._cross_correlation_windows[i]
@@ -570,7 +570,7 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         """
         elementsDetectorDialog = ElemDetectSettingsDialog(parent=self, signal=self.widget.signal)
         elementsDetectorDialog.load_workspace(self.workSpace)
-        # elementsDetectorDialog.restore_previous_state(self.segmentManager.measurerList,)
+        elementsDetectorDialog.restore_previous_state(self.segmentManager.measurerList, self.segmentManager.detector)
 
         # deselect the elements before new detection
         self.on_actionDeselect_Elements_triggered()
@@ -633,8 +633,8 @@ class Segmentation_ClassificationWindow(SoundLabWindow, Ui_MainWindow):
         self.tableParameterOscilogram.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
         # update every x,y position
-        for i in range(self.segmentManager.rowCount):
-            for j in range(self.segmentManager.columnCount):
+        for i in xrange(self.segmentManager.rowCount):
+            for j in xrange(self.segmentManager.columnCount):
                 # set the result to a table item and save it on the table
                 item = QTableWidgetItem(unicode(self.segmentManager[i, j]))
 
