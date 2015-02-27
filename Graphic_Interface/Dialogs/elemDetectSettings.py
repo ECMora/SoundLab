@@ -43,7 +43,7 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
 
         self.detect()
 
-    def restore_previous_state(self, parameter_adapters, segmentation_adapter, classification_adapter):
+    def restore_previous_state(self, parameter_adapters, segmentation_adapter=None, classification_adapter=None):
         """
         Restore the dialog previous selected data to avoid lose of previous selected parameters
         :param parameter_adapters: The list of parameters adapters previously selected
@@ -51,7 +51,17 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         :param classification_adapter: The classification adapter previously selected
         :return:
         """
-        pass
+        # todo include classification
+        parameters_groups = self.param_measurement_tree.children()
+
+        # mark as selected the parameter if is included in the supplied ones
+        for group in parameters_groups:
+            for parameter in group.children():
+                adapter = self.parameterAdapterFactory.get_adapter(parameter.name())
+                if any([type(adapter) == type(p) for p in parameter_adapters]):
+                    parameter.param(unicode(self.tr(u'Measure'))).setValue(True)
+
+                    # segmentation method
 
     def create_parameter_trees(self):
         """
@@ -89,7 +99,7 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
                 [{u'name': unicode(self.tr(u'Method')),
                   u'type': u'list',
                   u'values': classification_adapters}]
-             }]
+            }]
 
         self.segmentation_classification_tree = Parameter.create(
             name=unicode(self.tr(u'Segmentation-Classification')), type=u'group', children=params)
@@ -106,19 +116,23 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         # set the segmentation and classification parameters
         self.param_measurement_tree = Parameter.create(name=unicode(self.tr(u'Parameter Measurements')), type=u'group')
 
+        # create a group for each parameter group category
         for parameter_group in self.parameterAdapterFactory.parameter_groups:
             parameter_group_tree = Parameter.create(name=unicode(self.tr(unicode(parameter_group.name))),
                                                     type=u'group', expanded=False)
 
+            # for each group category add all the parameters on that category
             for adapter_name in parameter_group.adapters_names():
                 group = Parameter.create(name=unicode(self.tr(unicode(adapter_name))),
                                          type=u'group', expanded=False)
 
-                measure = Parameter.create(name=unicode(self.tr(u'Measure')), type=u'bool', default=False,
-                                           value=False)
-                group.addChild(measure)
+                # the measure/ not measure check box to select parameter for measurement
+                measure = Parameter.create(name=unicode(self.tr(u'Measure')), type=u'bool', default=False, value=False)
 
+                # get the parameter settings if any (Parameter tree interface of the parameter adapter)
                 param_settings = parameter_group.get_adapter(adapter_name).get_settings()
+
+                group.addChild(measure)
 
                 if param_settings is not None:
                     group.addChild(param_settings)
@@ -154,35 +168,45 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         :param changes:
         :return:
         """
+        # block signals because there is changes that involve tree updates
+        # (select a segmentation method with settings that must be added into the tree by example)
         self.segmentation_classification_tree.blockSignals(True)
 
         for parameter, _, value in changes:
-            if parameter in self.segmentation_classification_tree.param(unicode(self.tr(u'Segmentation'))). \
-                            param(unicode(self.tr(u'Method Settings'))).children():
-                pass
-            else:
-                if isinstance(value, bool) and value:
-                    # add the parameter settings
-                    try:
-                        adapter = self.segmentationAdapterFactory.get_adapter(parameter.name())
 
-                        param_settings = self.segmentation_classification_tree.param(
-                            unicode(self.tr(u'Segmentation'))).\
-                            param(unicode(self.tr(u'Method Settings')))
+            # if the value is bool then is the selection of the segmentation or classification method
+            # if the change came from the segmentation or classification method settings
+            # then continue (each method would take care about it's settings)
+            # todo include the classification
+            if isinstance(value, bool) and value and\
+                parameter not in self.segmentation_classification_tree.param(unicode(self.tr(u'Segmentation'))). \
+                    param(unicode(self.tr(u'Method Settings'))).children():
+                try:
+                    # the parameter changed is has the method name
+                    adapter = self.segmentationAdapterFactory.get_adapter(parameter.name())
 
-                        param_settings.clearChildren()
+                    # change the method settings if any (Parameter tree interface of adapter)
+                    param_settings = self.segmentation_classification_tree.param(
+                        unicode(self.tr(u'Segmentation'))).param(unicode(self.tr(u'Method Settings')))
 
-                        method_settings = adapter.get_settings()
-                        if method_settings:
-                            param_settings.addChild(method_settings)
+                    param_settings.clearChildren()
 
-                    except Exception as ex:
-                        print(ex.message)
+                    method_settings = adapter.get_settings()
+                    if method_settings:
+                        param_settings.addChild(method_settings)
 
-                    # set to false the others segmentation methods
-                    for p in self.segmentation_classification_tree.param(unicode(self.tr(u'Segmentation'))).children():
-                        if p.type() == u"bool" and p.name() != parameter.name():
-                            p.setValue(False)
+                except Exception as ex:
+                    print(ex.message)
+
+                params_to_update = self.segmentation_classification_tree.param(
+                    unicode(self.tr(u'Segmentation'))).children()
+
+                params_to_update = [p for p in params_to_update if p.type() == u"bool" and
+                                    p.name() != parameter.name()]
+
+                # set to false the others segmentation methods (radio button behavior, only select one method)
+                for p in params_to_update:
+                    p.setValue(False)
 
         self.segmentation_classification_tree.blockSignals(False)
         self.detect()
@@ -205,13 +229,16 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
     def parameterAdapterFactory(self):
         return self._parameterAdapterFactory
 
+
     @property
     def segmentationAdapterFactory(self):
         return self._segmentationAdapterFactory
 
+
     @property
     def classificationAdapterFactory(self):
         return self._classificationAdapterFactory
+
 
     # endregion
 
@@ -220,9 +247,8 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
     @property
     def detector(self):
         """
-        :return: The selected detector to perform segmentation
-        """
-        # create manually the detector
+            :return: The selected detector to perform segmentation
+            """
         try:
             detector_name = ""
             for parameter in self.segmentation_classification_tree.param(unicode(self.tr(u'Segmentation'))).children():
@@ -238,6 +264,7 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
             print("Fail to get the detector instance. " + e.message)
             detector_instance = None
 
+        # create manually the detector if fails
         self._detector = detector_instance if detector_instance is not None else ManualDetector(self.widget.signal)
 
         return self._detector
@@ -248,8 +275,8 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
 
     def get_measurer_list(self):
         """
-        :return: The list of selected parameters to measure
-        """
+            :return: The list of selected parameters adapters to measure
+            """
         parameters_groups = self.param_measurement_tree.children()
 
         parameters_list = []
@@ -274,10 +301,10 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
 
     def detect(self):
         """
-        Perform the detection on the small signal to visualize an
-        approximation of the detection algorithm
-        :return:
-        """
+            Perform the detection on the small signal to visualize an
+            approximation of the detection algorithm
+            :return:
+            """
         self.widget.elements = self.detector.detect()
 
         self.widget.graph()

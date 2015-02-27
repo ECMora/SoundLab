@@ -67,3 +67,6 @@ class AbsDecayEnvelopeDetectorAdapter(SoundLabAdapter):
         self.merge_factor = merge_factor
         return AbsDecayEnvelopeDetector(signal, self.decay_ms, self.threshold_dB, self.min_size_ms,
                                         self.merge_factor, self.soft_factor)
+
+    def get_visual_item(self):
+        pass
