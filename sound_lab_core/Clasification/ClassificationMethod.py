@@ -7,5 +7,5 @@ class ClassificationMethod:
             raise TypeError("classificationData is not of type ClassificationData")
         self.data = classificationData
 
-    def classify(self,vector):
+    def classify(self, vector):
         pass

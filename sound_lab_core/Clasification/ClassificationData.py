@@ -4,7 +4,7 @@ from PyQt4.QtCore import pyqtSignal, QObject
 
 class ClassificationData(QObject):
     """
-    Class that handles the clasiffication
+    Class that handles the classification
     """
 
     # region SIGNALS
@@ -114,7 +114,7 @@ class ClassificationVector:
 
     def __init__(self, data, category, value):
         """
-        @param data: "Parameter measured" --> Medition Value
+        @param data: "Parameter measured" -->  Value
         """
         if not isinstance(data,dict):
             raise Exception("Invalid Arguments")
