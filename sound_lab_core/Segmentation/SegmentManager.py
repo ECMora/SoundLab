@@ -17,6 +17,8 @@ class SegmentManager(QObject):
     # raise the segment index and the parameter visual item associated
     segmentParameterMeasured = pyqtSignal(int, object)
 
+    # signal raised while detection is been made. Raise the percent of detection progress.
+    detectionProgressChanged = pyqtSignal(int)
     # endregion
 
     def __init__(self):
@@ -24,7 +26,7 @@ class SegmentManager(QObject):
         # the classifier object that would be used on segments classification
         self._classifier = None
 
-        # the detector object that would be used on segments detection
+        # the detector adapter object that would be used on segments detection
         self._detector = None
 
         # the parameter measurer adapter list
@@ -110,13 +112,12 @@ class SegmentManager(QObject):
         return self.parameterColumnNames + self.classificationColumnNames
 
     @property
-    def detector(self):
+    def detector_adapter(self):
         return self._detector
 
-    @detector.setter
-    def detector(self, value):
+    @detector_adapter.setter
+    def detector_adapter(self, value):
         self._detector = value
-        self._detector.signal = self.signal
 
     @property
     def signal(self):
@@ -245,12 +246,14 @@ class SegmentManager(QObject):
         """
         Detect elements in the signal using the detector
         """
-        if self.detector is None:
-            return
 
-        self.detector.detect()
+        detector = self.detector_adapter.get_instance(self.signal)
 
-        self.elements = self.detector.elements
+        detector.detectionProgressChanged.connect(lambda x: self.detectionProgressChanged.emit(x))
+
+        detector.detect()
+
+        self.elements = detector.elements
 
     # endregion
 

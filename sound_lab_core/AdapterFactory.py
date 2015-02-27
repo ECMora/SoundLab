@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from PyQt4.QtCore import QObject
 from sound_lab_core.ParametersMeasurement.Adapters import *
 from sound_lab_core.Segmentation.Detectors.Adapters import *
@@ -54,11 +55,14 @@ class ParametersAdapterFactory(QObject):
         time_params_adapters = [
             (u'Start Time', StartTimeParameterAdapter()),
             (u'End Time', EndTimeParameterAdapter()),
-            (u'Duration', DurationTimeParameterAdapter())]
+            (u'Duration', DurationTimeParameterAdapter()),
+            (u'Entropy', EntropyTimeParameterAdapter())]
+
         wave_params_adapters = [
             (u'RMS', RmsTimeParameterAdapter()),
             (u'PeakToPeak', PeakToPeakParameterAdapter()),
             (u'StartToMax', StartToMaxTimeParameterAdapter())]
+
         spectral_params_adapters = [
             (u'PeakFreq', PeakFreqParameterAdapter()),
             (u'MaxFreq', MaxFreqParameterAdapter()),

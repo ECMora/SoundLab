@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from PyQt4.QtCore import QObject
 from pyqtgraph.parametertree import Parameter
 
@@ -37,3 +38,12 @@ class SoundLabAdapter(QObject):
         :return:
         """
         return None
+
+    def restore_settings(self, adapter_copy):
+        """
+        Load into the settings of the current adapter the ones of the
+        adapter supplied
+        :param adapter_copy: the adapter to load settings for
+        :return:
+        """
+        pass

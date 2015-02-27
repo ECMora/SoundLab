@@ -4,6 +4,6 @@ from StartTimeParameterAdapter import StartTimeParameterAdapter
 from DurationTimeParameterAdapter import DurationTimeParameterAdapter
 from RmsTimeParameterAdapter import RmsTimeParameterAdapter
 from PeakToPeakParameterAdapter import PeakToPeakParameterAdapter
-
+from EntropyTimeParameterAdapter import EntropyTimeParameterAdapter
 
 

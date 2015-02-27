@@ -26,8 +26,6 @@ class ImageDetectorAdapter(SoundLabAdapter):
 
         :return:
         """
-        min_size_ms = 2
-        min_size_kHz = 2
         try:
             min_size_ms = self.settings.param(unicode(self.tr(u'Min Size (ms)'))).value()
             min_size_kHz = self.settings.param(unicode(self.tr(u'Min Size (kHz)'))).value()
@@ -44,3 +42,14 @@ class ImageDetectorAdapter(SoundLabAdapter):
         returns a Parameter Tree with the options of the abs decay detector
         """
         return self.settings
+
+    def restore_settings(self, adapter_copy):
+        if not isinstance(adapter_copy, SoundLabAdapter) or \
+                not isinstance(adapter_copy, ImageDetectorAdapter):
+            raise Exception("Invalid type exception.")
+
+        # get the settings from the copy
+        adapter_copy.get_instance(None)
+
+        self.settings.param(unicode(self.tr(u'Min Size (ms)'))).setValue(adapter_copy.min_size_ms)
+        self.settings.param(unicode(self.tr(u'Min Size (kHz)'))).setValue(adapter_copy.min_size_kHz)

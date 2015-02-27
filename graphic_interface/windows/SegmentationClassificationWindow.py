@@ -570,7 +570,7 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         """
         elementsDetectorDialog = ElemDetectSettingsDialog(parent=self, signal=self.widget.signal)
         elementsDetectorDialog.load_workspace(self.workSpace)
-        elementsDetectorDialog.restore_previous_state(self.segmentManager.measurerList, self.segmentManager.detector)
+        elementsDetectorDialog.restore_previous_state(self.segmentManager.measurerList, self.segmentManager.detector_adapter)
 
         # deselect the elements before new detection
         self.on_actionDeselect_Elements_triggered()
@@ -581,7 +581,7 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
                 # parameter measurements and classification concrete implementations
 
                 # get the detector from dialog selection
-                self.segmentManager.detector = elementsDetectorDialog.detector
+                self.segmentManager.detector_adapter = elementsDetectorDialog.detector
 
                 self.segmentManager.measurerList = elementsDetectorDialog.get_measurer_list()
                 # todo get the classification object
@@ -591,7 +591,7 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
                 # set the detection as the 60% of the segmentation,
                 # parameter measurements and classification time
-                self.segmentManager.detector.detectionProgressChanged.connect(
+                self.segmentManager.detectionProgressChanged.connect(
                     lambda x: self.update_detection_progress_bar(x * 0.6))
 
                 # execute the detection

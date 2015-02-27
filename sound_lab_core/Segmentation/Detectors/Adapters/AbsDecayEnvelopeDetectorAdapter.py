@@ -51,13 +51,8 @@ class AbsDecayEnvelopeDetectorAdapter(SoundLabAdapter):
             merge_factor = self.settings.param(unicode(self.tr(u'Merge Factor (%)'))).value()
 
         except Exception as ex:
-            threshold = -40
-            min_size = 2
-            threshold2 = 0
-            decay = 1
-            soft_factor = 6
-            merge_factor = 5
-
+            threshold, threshold2, min_size = -40, 0, 2
+            decay, soft_factor, merge_factor = 1, 6, 5
 
         self.threshold_dB = threshold
         self.min_size_ms = min_size
@@ -65,8 +60,22 @@ class AbsDecayEnvelopeDetectorAdapter(SoundLabAdapter):
         self.threshold2_dB = threshold2
         self.soft_factor = soft_factor
         self.merge_factor = merge_factor
+
         return AbsDecayEnvelopeDetector(signal, self.decay_ms, self.threshold_dB, self.min_size_ms,
                                         self.merge_factor, self.soft_factor)
 
-    def get_visual_item(self):
-        pass
+    def restore_settings(self, adapter_copy):
+        if not isinstance(adapter_copy, SoundLabAdapter) or \
+                not isinstance(adapter_copy, AbsDecayEnvelopeDetectorAdapter):
+            raise Exception("Invalid type exception.")
+
+        # get the settings from the copy
+        adapter_copy.get_instance(None)
+
+        self.settings.param(unicode(self.tr(u'Threshold (dB)'))).setValue(adapter_copy.threshold_dB)
+        self.settings.param(unicode(self.tr(u'Min Size (ms)'))).setValue(adapter_copy.min_size_ms)
+        self.settings.param(unicode(self.tr(u'Threshold 2(dB)'))).setValue(adapter_copy.threshold2_dB)
+        self.settings.param(unicode(self.tr(u'Decay (ms)'))).setValue(adapter_copy.decay_ms)
+        self.settings.param(unicode(self.tr(u'Soft Factor'))).setValue(adapter_copy.soft_factor)
+        self.settings.param(unicode(self.tr(u'Merge Factor (%)'))).setValue(adapter_copy.merge_factor)
+

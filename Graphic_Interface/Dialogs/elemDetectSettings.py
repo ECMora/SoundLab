@@ -54,14 +54,26 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         # todo include classification
         parameters_groups = self.param_measurement_tree.children()
 
-        # mark as selected the parameter if is included in the supplied ones
+        # parameters adapters
         for group in parameters_groups:
             for parameter in group.children():
-                adapter = self.parameterAdapterFactory.get_adapter(parameter.name())
-                if any([type(adapter) == type(p) for p in parameter_adapters]):
-                    parameter.param(unicode(self.tr(u'Measure'))).setValue(True)
+                adapter = self.parameter_adapter_factory.get_adapter(parameter.name())
+                for p in parameter_adapters:
+                    if type(adapter) == type(p):
+                        parameter.param(unicode(self.tr(u'Measure'))).setValue(True)
+                        adapter.restore_settings(p)
+                        break
 
-                    # segmentation method
+        # segmentation method
+        for parameter in self.segmentation_classification_tree.param(unicode(self.tr(u'Segmentation'))).children():
+            if parameter.type() == u"bool":
+                detector_name = parameter.name()
+                adapter = self.segmentation_adapter_factory.get_adapter(detector_name)
+                if type(adapter) == type(segmentation_adapter):
+                    adapter.restore_settings(segmentation_adapter)
+                    parameter.setValue(True)
+
+
 
     def create_parameter_trees(self):
         """
@@ -77,11 +89,11 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
     def create_segmentation_classification_param_tree(self):
 
         # get the adapters for segmentation methods
-        segmentation_adapters = self.segmentationAdapterFactory.adapters_names()
+        segmentation_adapters = self.segmentation_adapter_factory.adapters_names()
         segmentation_adapters = [(self.tr(unicode(t)), t) for t in segmentation_adapters]
 
         # get the adapters for classification methods
-        classification_adapters = self.classificationAdapterFactory.adapters_names()
+        classification_adapters = self.classification_adapter_factory.adapters_names()
         classification_adapters = [(self.tr(t), t) for t in classification_adapters]
 
         # the list of segmentation adapters check boxes to select method (radio buttons unavailable)
@@ -117,7 +129,7 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         self.param_measurement_tree = Parameter.create(name=unicode(self.tr(u'Parameter Measurements')), type=u'group')
 
         # create a group for each parameter group category
-        for parameter_group in self.parameterAdapterFactory.parameter_groups:
+        for parameter_group in self.parameter_adapter_factory.parameter_groups:
             parameter_group_tree = Parameter.create(name=unicode(self.tr(unicode(parameter_group.name))),
                                                     type=u'group', expanded=False)
 
@@ -183,7 +195,7 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
                     param(unicode(self.tr(u'Method Settings'))).children():
                 try:
                     # the parameter changed is has the method name
-                    adapter = self.segmentationAdapterFactory.get_adapter(parameter.name())
+                    adapter = self.segmentation_adapter_factory.get_adapter(parameter.name())
 
                     # change the method settings if any (Parameter tree interface of adapter)
                     param_settings = self.segmentation_classification_tree.param(
@@ -226,19 +238,16 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
 
     # region  Factory Adapters Properties
     @property
-    def parameterAdapterFactory(self):
+    def parameter_adapter_factory(self):
         return self._parameterAdapterFactory
 
-
     @property
-    def segmentationAdapterFactory(self):
+    def segmentation_adapter_factory(self):
         return self._segmentationAdapterFactory
 
-
     @property
-    def classificationAdapterFactory(self):
+    def classification_adapter_factory(self):
         return self._classificationAdapterFactory
-
 
     # endregion
 
@@ -247,8 +256,8 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
     @property
     def detector(self):
         """
-            :return: The selected detector to perform segmentation
-            """
+        :return: The selected detector adapter to perform segmentation
+        """
         try:
             detector_name = ""
             for parameter in self.segmentation_classification_tree.param(unicode(self.tr(u'Segmentation'))).children():
@@ -256,27 +265,21 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
                     detector_name = parameter.name()
                     break
 
-            adapter = self.segmentationAdapterFactory.get_adapter(detector_name)
-
-            detector_instance = adapter.get_instance(self.widget.signal)
+            adapter = self.segmentation_adapter_factory.get_adapter(detector_name)
 
         except Exception as e:
             print("Fail to get the detector instance. " + e.message)
-            detector_instance = None
+            adapter = ManualDetectorAdapter()
 
         # create manually the detector if fails
-        self._detector = detector_instance if detector_instance is not None else ManualDetector(self.widget.signal)
+        self._detector = adapter
 
         return self._detector
 
-    @detector.setter
-    def detector(self, value):
-        self._detector = value
-
     def get_measurer_list(self):
         """
-            :return: The list of selected parameters adapters to measure
-            """
+        :return: The list of selected parameters adapters to measure
+        """
         parameters_groups = self.param_measurement_tree.children()
 
         parameters_list = []
@@ -284,7 +287,7 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
             parameters_list.extend(group.children())
 
         # get just the parameter selected by user to be measured
-        parameters_adapters_list = [self.parameterAdapterFactory.get_adapter(x.name()) for x in parameters_list
+        parameters_adapters_list = [self.parameter_adapter_factory.get_adapter(x.name()) for x in parameters_list
                                     if x.param(unicode(self.tr(u'Measure'))).value()]
 
         return parameters_adapters_list
@@ -293,18 +296,14 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
     def classifier(self):
         return self._classifier
 
-    @classifier.setter
-    def classifier(self, value):
-        self._classifier = value
-
     # endregion
 
     def detect(self):
         """
-            Perform the detection on the small signal to visualize an
-            approximation of the detection algorithm
-            :return:
-            """
-        self.widget.elements = self.detector.detect()
-
+        Perform the detection on the small signal to visualize an
+        approximation of the detection algorithm
+        :return:
+        """
+        detector = self.detector.get_instance(self.widget.signal)
+        self.widget.elements = detector.detect()
         self.widget.graph()
