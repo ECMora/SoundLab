@@ -225,9 +225,9 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         # create manually the detector
         try:
             detector_name = ""
-            for p in self.segmentation_classification_tree.param(unicode(self.tr(u'Segmentation'))).children():
-                if p.type() == u"bool" and p.value():
-                    detector_name = p.name()
+            for parameter in self.segmentation_classification_tree.param(unicode(self.tr(u'Segmentation'))).children():
+                if parameter.type() == u"bool" and parameter.value():
+                    detector_name = parameter.name()
                     break
 
             adapter = self.segmentationAdapterFactory.get_adapter(detector_name)
