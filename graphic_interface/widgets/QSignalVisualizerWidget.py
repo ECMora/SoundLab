@@ -894,9 +894,6 @@ class QSignalVisualizerWidget(QtGui.QWidget):
 
         self.graph()
 
-    def insertPinkNoise(self, ms, type, Fc, Fl, Fu):
-        raise NotImplementedError()
-
     def modulate(self,function="normalize", fade="IN"):
         """
 

@@ -1,8 +1,8 @@
 from PyQt4 import QtGui, QtCore
 import pyqtgraph as pg
 import numpy as np
-from graphic_interface.segments.DetectedSoundLabElement import DetectedSoundLabElement
-from graphic_interface.segments.VisualElement import VisualElement
+from graphic_interface.segment_visualzation.DetectedSoundLabElement import DetectedSoundLabElement
+from graphic_interface.segment_visualzation.VisualElement import VisualElement
 from QSignalVisualizerWidget import QSignalVisualizerWidget
 from sound_lab_core.Elements.OneDimensionalElements.OneDimensionalElement import OneDimensionalElement
 
@@ -25,6 +25,9 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
     # the brush that is used to draw the selected region or Element
     SELECTED_ELEMENT_BRUSH = pg.mkBrush(QtGui.QColor(255, 0, 0, 200))
+
+    # the number of elements visible by default when a detection is made (efficiency)
+    VISIBLE_ELEMENTS_COUNT = 20
 
     # endregion
 
@@ -62,7 +65,9 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
             e.elementClicked.connect(lambda i: self.elementClicked.emit(i))
             e.setNumber(index+1)
 
-        self.graph()
+        # just show an interval of a fixed amount of elements visible for starting
+        if len(self.elements) > self.VISIBLE_ELEMENTS_COUNT:
+            self.mainCursor.min, self.mainCursor.max = 0, self.elements[self.VISIBLE_ELEMENTS_COUNT-1].indexTo
 
     # endregion
 
@@ -85,28 +90,26 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         elements = [e for e in self.elements if start <= e.indexFrom <= end or start <= e.indexTo <= end]
 
         for i in xrange(len(self.elements)):
-            for item, visible in self.elements[i].time_element.visual_widgets():
-                self.axesOscilogram.removeItem(item)
-
-            for item, visible in self.elements[i].spectral_element.visual_widgets():
-                self.axesSpecgram.viewBox.removeItem(item)
-
             self.elements[i].spectral_element.translate_time_freq_coords(self.from_osc_to_spec, self.get_freq_index)
 
         # add the visible elements
         for i in xrange(len(elements)):
-            if not self.elements[i].visible:
+            if not elements[i].visible:
                 continue
 
             if self.visibleOscilogram and osc:
                 for item, visible in elements[i].time_element.visual_widgets():
                     if visible and item not in self.axesOscilogram.items():
                         self.axesOscilogram.addItem(item)
+                    elif not visible:
+                        self.axesOscilogram.removeItem(item)
 
             if self.visibleSpectrogram and spec:
                 for item, visible in elements[i].spectral_element.visual_widgets():
                     if visible and item not in self.axesSpecgram.viewBox.childItems():
                         self.axesSpecgram.viewBox.addItem(item)
+                    elif not visible:
+                        self.axesSpecgram.viewBox.removeItem(item)
 
         self.axesSpecgram.update()
         self.axesOscilogram.update()
@@ -174,7 +177,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         if update:
             self.draw_elements()
 
-    def add_parameter_item(self, element_index, parameter_item):
+    def add_visual_item(self, element_index, parameter_item):
         """
         Add a new visual item of a parameter measurement.
         :param element_index: the index of the segment measured
@@ -183,8 +186,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         """
         if not 0 <= element_index < len(self.elements):
             return
-        self.elements[element_index].add_parameter_item(parameter_item)
-        self.draw_elements()
+        self.elements[element_index].add_visual_item(parameter_item)
 
     def add_segmentation_items(self, items):
         """
@@ -228,7 +230,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
             # move the interval to make completely visible the element selected
             self.mainCursor.min = max(0, index_from - interval_size/2)
             self.mainCursor.max = min(self.signal.length, index_to + interval_size/2)
-            self.graph()
+            self.update()
 
     def deselect_element(self):
         """
@@ -320,7 +322,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         for i, x in enumerate(self.elements):
             x.setNumber(i + 1)
 
-        self.graph()
+        self.update()
 
         return indexFrom, indexTo - 1
 

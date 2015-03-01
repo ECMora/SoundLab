@@ -6,7 +6,7 @@ from pyqtgraph.parametertree import Parameter
 
 class ManualDetectorAdapter(SoundLabAdapter):
     """
-    Adapter class for the start time parameter.
+    Adapter class for the manual detector.
     """
 
     def __init__(self):

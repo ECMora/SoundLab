@@ -24,24 +24,31 @@ class OneDimensionalElementsDetector(ElementsDetector):
         """
         pass
 
-    def mergeIntervals(self, elements_array, distancefactor=50):
+    def merge_intervals(self, elements_array, distance_factor=50):
         """
         Merge into one interval two elements with no more than  distance factor distance between them
         """
-        result = []
         if elements_array is None or len(elements_array) == 0:
             return []
 
-        current = elements_array[0]
-        for tuple in elements_array[1:]:
-            if (tuple[0] - current[1]) * 100.0 / (tuple[1] - current[0]) < distancefactor:
-                current = (current[0], tuple[1])
+        change = True
+        while change:
+            change = False
+            current = elements_array[0]
+            result = []
 
-            else:
-                result.append(current)
-                current = tuple
-        result.append(current)
-        return result
+            for t in elements_array[1:]:
+                if (t[0] - current[1]) * 100.0 / (t[1] - current[0]) < distance_factor:
+                    current = (current[0], t[1])
+                    change = True
+                else:
+                    result.append(current)
+                    current = t
+
+            result.append(current)
+            elements_array = result
+
+        return elements_array
 
     def localMax(self, data, threshold=0, positives=None):
         """
@@ -67,4 +74,4 @@ class OneDimensionalElementsDetector(ElementsDetector):
                 indexes.append(i)
                 values.append(data[i])
 
-        return array(indexes),array(values)
+        return array(indexes), array(values)

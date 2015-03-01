@@ -89,7 +89,7 @@ def local_naive_max_detector(self, data, threshold, minSize, merge_factor):
         self.progress(30)
 
     if merge_factor > 0:
-        detected = self.mergeIntervals(detected, merge_factor)
+        detected = self.merge_intervals(detected, merge_factor)
 
     return detected
 
@@ -127,7 +127,7 @@ def local_hold_detector(self, data, threshold, minSize, merge_factor):
     if self.progress is not None:
         self.progress(25)
 
-    intervals = self.mergeIntervals(intervals, merge_factor)
+    intervals = self.merge_intervals(intervals, merge_factor)
 
     if self.progress is not None:
         self.progress(30)
@@ -180,7 +180,7 @@ def local_max_percent_detector(self, data, threshold, minSize, merge_factor, end
     if self.progress is not None:
         self.progress(25)
 
-    intervals = self.mergeIntervals(intervals, merge_factor)
+    intervals = self.merge_intervals(intervals, merge_factor)
 
     if self.progress is not None:
         self.progress(30)

@@ -1,8 +1,8 @@
 import pyqtgraph as pg
 import numpy as np
-from graphic_interface.segments.VisualElement import VisualElement
-from graphic_interface.segments.parameter_items.spectral_parameter_items.SpectralParameterVisualItem import \
-    SpectralParameterVisualItem
+from graphic_interface.segment_visualzation.VisualElement import VisualElement
+from graphic_interface.segment_visualzation.parameter_items.spectral_parameter_items.SpectralParameterVisualItem import \
+    SpectralVisualItemWrapper
 
 
 class SpectrogramElement(VisualElement):
@@ -52,9 +52,9 @@ class SpectrogramElement(VisualElement):
         self.element_region.setData(pen=pg.mkPen(self.color, width=self.ELEMENT_REGION_WIDTH))
 
     def add_parameter_item(self, parameter_item):
-        # check the type of the added parameter items as SpectralParameterVisualItem
-        if not isinstance(parameter_item, SpectralParameterVisualItem):
-            raise Exception("Invalid type argument. parameter_item must be of type SpectralParameterVisualItem")
+        # check the type of the added parameter items as SpectralVisualItemWrapper
+        if not isinstance(parameter_item, SpectralVisualItemWrapper):
+            raise Exception("Invalid type argument. parameter_item must be of type SpectralVisualItemWrapper")
 
         VisualElement.add_parameter_item(self, parameter_item)
 

@@ -1,0 +1,2 @@
+from ManualClassifierAdapter import ManualClassifierAdapter
+

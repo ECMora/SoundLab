@@ -5,6 +5,7 @@ from pyqtgraph.parametertree import Parameter, ParameterTree
 from graphic_interface.windows.ui_python_files.detectElementsDialog import Ui_Dialog
 from Utils.Utils import small_signal
 from sound_lab_core.AdapterFactory import *
+from sound_lab_core.Clasification.Adapters.ManualClassifierAdapter import ManualClassifierAdapter
 from sound_lab_core.Segmentation.Detectors.ManualDetector import ManualDetector
 
 
@@ -73,8 +74,6 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
                     adapter.restore_settings(segmentation_adapter)
                     parameter.setValue(True)
 
-
-
     def create_parameter_trees(self):
         """
         Create the ParameterTree with the options of the dialog.
@@ -103,21 +102,24 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         # the method settings
         list_param.append({u'name': unicode(self.tr(u'Method Settings')), u'type': u'group', u'children': []})
 
-        params = [
-            {u'name': unicode(self.tr(u'Segmentation')),
-             u'type': u'group', u'children': list_param},
-            {u'name': unicode(self.tr(u'Classification')),
-             u'type': u'group', u'expanded': False, u'children':
-                [{u'name': unicode(self.tr(u'Method')),
-                  u'type': u'list',
-                  u'values': classification_adapters}]
-            }]
+        # the list of classification adapters check boxes to select method (radio buttons unavailable)
+        list_classification = [{u'name': unicode(x[1]), u'type': u'bool', u'value': False, u'default': False}
+                      for x in classification_adapters]
+
+        # the method settings
+        list_classification.append({u'name': unicode(self.tr(u'Method Settings')), u'type': u'group', u'children': []})
+
+        params = [{u'name': unicode(self.tr(u'Segmentation')),
+                   u'type': u'group', u'children': list_param},
+                  {u'name': unicode(self.tr(u'Classification')),
+                   u'type': u'group', u'children': list_classification}]
 
         self.segmentation_classification_tree = Parameter.create(
             name=unicode(self.tr(u'Segmentation-Classification')), type=u'group', children=params)
-
         self.segmentation_classification_tree.param(unicode(self.tr(u'Segmentation'))). \
             sigTreeStateChanged.connect(self.segmentation_changed)
+        self.segmentation_classification_tree.param(unicode(self.tr(u'Classification'))). \
+            sigTreeStateChanged.connect(self.classification_changed)
 
         # create and set initial properties
         self.segmentation_classification_tree_widget.setAutoScroll(True)
@@ -223,6 +225,54 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         self.segmentation_classification_tree.blockSignals(False)
         self.detect()
 
+    def classification_changed(self, param, changes):
+        """
+        Process a change into the parameter tree of classification
+        :param param:
+        :param changes:
+        :return:
+        """
+        # block signals because there is changes that involve tree updates
+        # (select a segmentation method with settings that must be added into the tree by example)
+        self.segmentation_classification_tree.blockSignals(True)
+
+        for parameter, _, value in changes:
+
+            # if the value is bool then is the selection of the segmentation or classification method
+            # if the change came from the segmentation or classification method settings
+            # then continue (each method would take care about it's settings)
+            if isinstance(value, bool) and value and\
+                parameter not in self.segmentation_classification_tree.param(unicode(self.tr(u'Classification'))). \
+                    param(unicode(self.tr(u'Method Settings'))).children():
+                try:
+                    # the parameter changed is has the method name
+                    adapter = self.classification_adapter_factory.get_adapter(parameter.name())
+
+                    # change the method settings if any (Parameter tree interface of adapter)
+                    param_settings = self.segmentation_classification_tree.param(
+                        unicode(self.tr(u'Classification'))).param(unicode(self.tr(u'Method Settings')))
+
+                    param_settings.clearChildren()
+
+                    method_settings = adapter.get_settings()
+                    if method_settings:
+                        param_settings.addChild(method_settings)
+
+                except Exception as ex:
+                    print(ex.message)
+
+                params_to_update = self.segmentation_classification_tree.param(
+                    unicode(self.tr(u'Classification'))).children()
+
+                params_to_update = [p for p in params_to_update if p.type() == u"bool" and
+                                    p.name() != parameter.name()]
+
+                # set to false the others segmentation methods (radio button behavior, only select one method)
+                for p in params_to_update:
+                    p.setValue(False)
+
+        self.segmentation_classification_tree.blockSignals(False)
+
     # endregion
 
     # region WorkSpace
@@ -252,29 +302,37 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
     # endregion
 
     # region Detector, Parameter Measurers and Classifier
+    def _get_adapter(self, param_tree_name, adapter_factory, default_adapter_class):
+        try:
+            name = ""
+            parameters = self.segmentation_classification_tree.param(unicode(self.tr(param_tree_name))).children()
+            for parameter in parameters:
+                if parameter.type() == u"bool" and parameter.value():
+                    name = parameter.name()
+                    break
+
+            adapter = adapter_factory.get_adapter(name)
+
+        except Exception as e:
+            print("Fail to get the adapter instance. In " + param_tree_name + " " + e.message)
+            adapter = default_adapter_class()
+        return adapter
 
     @property
     def detector(self):
         """
         :return: The selected detector adapter to perform segmentation
         """
-        try:
-            detector_name = ""
-            for parameter in self.segmentation_classification_tree.param(unicode(self.tr(u'Segmentation'))).children():
-                if parameter.type() == u"bool" and parameter.value():
-                    detector_name = parameter.name()
-                    break
-
-            adapter = self.segmentation_adapter_factory.get_adapter(detector_name)
-
-        except Exception as e:
-            print("Fail to get the detector instance. " + e.message)
-            adapter = ManualDetectorAdapter()
-
-        # create manually the detector if fails
-        self._detector = adapter
+        self._detector = self._get_adapter(u'Segmentation', self.segmentation_adapter_factory, ManualDetectorAdapter)
 
         return self._detector
+
+    @property
+    def classifier(self):
+        self._classifier = self._get_adapter(u'Classification', self.classification_adapter_factory,
+                                             ManualClassifierAdapter)
+
+        return self._classifier
 
     def get_measurer_list(self):
         """
@@ -291,10 +349,6 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
                                     if x.param(unicode(self.tr(u'Measure'))).value()]
 
         return parameters_adapters_list
-
-    @property
-    def classifier(self):
-        return self._classifier
 
     # endregion
 

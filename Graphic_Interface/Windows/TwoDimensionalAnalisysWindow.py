@@ -7,7 +7,7 @@ from pyqtgraph.parametertree import Parameter, ParameterTree
 import pyqtgraph as pg
 from PyQt4 import QtGui, QtCore
 from Utils.Utils import save_image
-from graphic_interface.dialogs.EditCategoriesDialog import EditCategoriesDialog
+from graphic_interface.dialogs.ManualClassificationDialog import ManualClassificationDialog
 from graphic_interface.windows.ui_python_files.Two_Dimensional_AnalisysWindowUI import Ui_TwoDimensionalWindow
 
 
@@ -25,8 +25,8 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
 
     # Signal raised when a selection of elements are manually classified.
     # raise the classification indexes of the elements as a list and
-    # the dict of Category,value for each one
-    elementsClasiffied = QtCore.Signal(list, dict)
+    # the ClassificationData for each one
+    elementsClassified = QtCore.Signal(list, object)
 
     # endregion
 
@@ -389,13 +389,11 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
                              y1 <= x.pos().y() <= y2]
 
         if len(selected_elements) == 0:
-            QtGui.QMessageBox.warning(QtGui.QMessageBox(), "Warning", "There is no element selected.")
+            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Warning"), self.tr(u"There is no element selected."))
             return
 
         # get the selection
-        editCategDialogWindow = EditCategoriesDialog(self.segmentManager.classificationData,
-                                                     selectionOnly=True)
+        classification_dialog = ManualClassificationDialog()
+        classification_dialog.exec_()
 
-        editCategDialogWindow.exec_()
-
-        self.elementsClasiffied.emit(selected_elements, editCategDialogWindow.classification)
+        self.elementsClassified.emit(selected_elements, classification_dialog.get_classification())

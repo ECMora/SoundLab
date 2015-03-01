@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from graphic_interface.segments.parameter_items.spectral_parameter_items.AverageFreqVisualItem import \
+from graphic_interface.segment_visualzation.parameter_items.spectral_parameter_items.AverageFreqVisualItem import \
     AverageFreqVisualItem
 from sound_lab_core.ParametersMeasurement.Adapters.FreqParametersadapters.FreqParameterAdapter import \
     FreqParameterAdapter

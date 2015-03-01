@@ -1,124 +1,77 @@
 # -*- coding: utf-8 -*-
-from PyQt4.QtCore import pyqtSignal, QObject
+from Utils.db.DB_ORM import Genera, Family, Specie
 
 
-class ClassificationData(QObject):
+class ClassificationData:
     """
-    Class that handles the classification
+    Class that represents the classification or identification
+    of a detected segment.
+    Contains the (partial if identification) taxonomic classification of
+    the segment.
     """
 
-    # region SIGNALS
-
-    # Signal raised when a new category was added.
-    # raises str --> name of new category
-    categoryAdded = pyqtSignal(str)
-
-    # Signal raised when a new value was added into a category.
-    # raise a tuple (str,str) --> category,value
-    valueAdded = pyqtSignal(str, str)
-
-    # Signal raised when a value is removed from a category.
-    # raise a tuple (str,str) --> category,value
-    valueRemoved = pyqtSignal(str, str)
-
-    # endregion
-
-    def __init__(self, trainingData=None, categories=None):
+    def __init__(self, specie=None, genus=None, family=None):
         """
-
-        @param trainingData: list of ClassificationVector for training
-        @param categories: dict of category --> list of values example {"Specie":["Homo Sapiens","Mormoops blainvillei"]}
-        @raise Exception:
-        """
-        QObject.__init__(self)
-
-        # set the training data
-        # TODO establecer la via de almacenamiento y recuperacion de vectores de entrenamiento
-        trainingData = [] if trainingData is None else trainingData
-
-        # set the categories
-        default = {"Location": ["Cuba", "Mexico", "EEUU", "Colombia", "Brasil"],
-                   "Taxa": ["Birds", "Mammals"]}
-        categories = default if categories is None else categories
-
-        if any([not isinstance(x, ClassificationVector) for x in trainingData]) or\
-           categories is None or not isinstance(categories, dict):
-            raise Exception("Invalid Arguments")
-
-        self.data = trainingData
-        self.categories = categories
-
-    def addCategory(self, category):
-        """
-
-        :param category:
+        create the classification-identification object.
+        :param specie: The specie of the segment
+        :param genus: The genus of the specie of the segment
+        :param family: The family of the specie of the segment
+        :param taxa: The taxa of the specie of the segment
         :return:
         """
-        if not category in self.categories:
-            self.categories[category] = []
-            self.categoryAdded.emit(category)
-            return True
-        return False
+        if specie is not None and not isinstance(specie, Specie):
+            raise Exception("Invalid argument type (specie must be of tye Specie).")
+        if genus is not None and not isinstance(genus, Genera):
+            raise Exception("Invalid argument type (genus must be of tye Genera).")
+        if family is not None and not isinstance(family, Family):
+            raise Exception("Invalid argument type (family must be of tye Family).")
 
-    def addValue(self, category, value):
+        self.specie = None
+        self.genus = None
+        self.family = None
+
+        if specie is not None:
+            self.specie = specie
+            self.genus = self.specie.genus
+            self.family = self.genus.family
+
+        elif genus is not None:
+            self.genus = genus
+            self.family = self.genus.family
+
+        else:
+            self.family = family
+
+        if self.specie != specie or self.family != family or self.genus != genus:
+            raise Exception("Invalid arguments. The relationship between the classification taxonomy is incorrect")
+
+    def get_image(self):
         """
-        Add a new value (if not exist) into a category.
-        If category not exist is created.
-        :param category: Category name
-        :param value: category value
-        :return:
+        :return: the image associated with the specie of the classification
         """
-        if category not in self.categories:
-            self.categories[category] = [value]
+        if self.specie is None:
+            return None
+        return self.specie.image
 
-        if not value in self.categories[category]:
-            self.categories[category].append(value)
-            self.valueAdded.emit(category,value)
-            return True
-        return False
+    def __str__(self):
+        if self.specie:
+            return self.specie.name_spa
+        if self.genus:
+            return "Genus: " + str(self.genus)
+        if self.family:
+            return "Family: " + str(self.family)
+        return "No Classified"
 
-    def removeValue(self, category, value):
-        """
+    def get_full_description(self):
+        desc = ""
+        if self.specie:
+            desc += "Specie: " + str(self.specie) + "\n"
+        if self.genus:
+            desc += "Genus: " + str(self.genus) + "\n"
+        if self.family:
+            desc += "Family: " + str(self.family) + "\n"
 
-        :param category:
-        :param value:
-        :return:
-        """
-        if category in self.categories and value in self.categories[category]:
-            self.categories[category].remove(value)
-            self.valueRemoved.emit(category,value)
-            return True
-        return False
+        if not desc:
+            desc = "No identified"
 
-    def getvalues(self, category):
-        return self.categories[category] if category in self.categories else []
-
-    def addTrainingVector(self, vector):
-        """
-
-        :param vector:
-        :raise Exception:
-        """
-        if not isinstance(vector,ClassificationVector):
-            raise Exception("Invalid Arguments")
-        self.data.append(vector)
-
-        if not vector.category in self.categories:
-            self.categories[vector.category] = [vector.value]
-
-        elif not vector.value in self.categories[vector.category]:
-            self.categories[vector.category].append(vector.value)
-
-
-class ClassificationVector:
-
-    def __init__(self, data, category, value):
-        """
-        @param data: "Parameter measured" -->  Value
-        """
-        if not isinstance(data,dict):
-            raise Exception("Invalid Arguments")
-
-        self.data = data
-        self.category = category
-        self.value = value
+        return desc

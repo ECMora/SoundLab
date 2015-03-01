@@ -1,11 +1,11 @@
 #  -*- coding: utf-8 -*-
 from PyQt4.QtCore import pyqtSignal, QObject
-from graphic_interface.segments.OscilogramElement import OscilogramElement
-from graphic_interface.segments.SpectrogramElement import SpectrogramElement
-from graphic_interface.segments.parameter_items.spectral_parameter_items.SpectralParameterVisualItem import \
-    SpectralParameterVisualItem
-from graphic_interface.segments.parameter_items.time_parameter_items.TimeParameterVisualItem import \
-    TimeParameterVisualItem
+from graphic_interface.segment_visualzation.OscilogramElement import OscilogramElement
+from graphic_interface.segment_visualzation.SpectrogramElement import SpectrogramElement
+from graphic_interface.segment_visualzation.parameter_items.spectral_parameter_items.SpectralParameterVisualItem import \
+    SpectralVisualItemWrapper
+from graphic_interface.segment_visualzation.parameter_items.time_parameter_items.TimeParameterVisualItem import \
+    TimeVisualItemWrapper
 
 
 class DetectedSoundLabElement(QObject):
@@ -65,16 +65,16 @@ class DetectedSoundLabElement(QObject):
 
     # endregion
 
-    def add_parameter_item(self, parameter_item):
+    def add_visual_item(self, parameter_item):
         """
         Add a parameter item into the visual element representation
         :param parameter_item: A measured parameter visualization item
         :return:
         """
-        if isinstance(parameter_item, TimeParameterVisualItem):
+        if isinstance(parameter_item, TimeVisualItemWrapper):
             self.time_element.add_parameter_item(parameter_item)
 
-        elif isinstance(parameter_item, SpectralParameterVisualItem):
+        elif isinstance(parameter_item, SpectralVisualItemWrapper):
             self.spectral_element.add_parameter_item(parameter_item)
 
     def setNumber(self, n):

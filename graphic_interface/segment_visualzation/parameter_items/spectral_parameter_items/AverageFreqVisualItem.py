@@ -1,11 +1,11 @@
 # -*- coding: utf-8 -*-
 from PyQt4 import QtGui
-from graphic_interface.segments.parameter_items.spectral_parameter_items.SpectralParameterVisualItem import SpectralParameterVisualItem
+from graphic_interface.segment_visualzation.parameter_items.spectral_parameter_items.SpectralParameterVisualItem import SpectralVisualItemWrapper
 import pyqtgraph as pg
 import numpy as np
 
 
-class AverageFreqVisualItem(SpectralParameterVisualItem):
+class AverageFreqVisualItem(SpectralVisualItemWrapper):
     """
 
     """
@@ -26,7 +26,7 @@ class AverageFreqVisualItem(SpectralParameterVisualItem):
         :param tooltip: an optional tooltip to show
         :return:
         """
-        SpectralParameterVisualItem.__init__(self)
+        SpectralVisualItemWrapper.__init__(self)
         # time limits
         self.indexFrom = 0
         self.indexTo = 0

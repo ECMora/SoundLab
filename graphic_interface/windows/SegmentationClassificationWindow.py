@@ -3,12 +3,12 @@ import os
 import xlwt
 from PyQt4.QtCore import pyqtSlot, Qt
 from SoundLabWindow import SoundLabWindow
-from graphic_interface.segments.VisualElement import VisualElement
+from graphic_interface.segment_visualzation.VisualElement import VisualElement
 from duetto.audio_signals.AudioSignal import AudioSignal
 from graphic_interface.dialogs.CrossCorrelationDialog import CrossCorrelationDialog
 from ..dialogs.elemDetectSettings import ElemDetectSettingsDialog
 from sound_lab_core.Segmentation.SegmentManager import SegmentManager
-from ..dialogs.EditCategoriesDialog import EditCategoriesDialog
+from ..dialogs.ManualClassificationDialog import ManualClassificationDialog
 from TwoDimensionalAnalisysWindow import TwoDimensionalAnalisysWindow
 from ui_python_files.SegmentationAndClasificationWindowUI import Ui_MainWindow
 from PyQt4.QtGui import QFileDialog, QAbstractItemView, QActionGroup, QMessageBox, \
@@ -65,7 +65,7 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         # the object that handles the measuring of parameters and manage the segments
         self.segmentManager = SegmentManager()
         self.segmentManager.measurementsChanged.connect(lambda: self.update_parameter_table())
-        self.segmentManager.segmentParameterMeasured.connect(self.widget.add_parameter_item)
+        self.segmentManager.segmentVisualItemAdded.connect(self.widget.add_visual_item)
 
         # set the signal to the widget
         self.widget.signal = signal
@@ -229,7 +229,8 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
         # connect the signals for update the new two dim window actions
         wnd.elementSelected.connect(self.select_element)
-        wnd.elementsClasiffied.connect(self.elementsClasification)
+        wnd.elementsClassified.connect(lambda indexes_list, classification_list:
+                                       self.segmentManager.set_manual_elements_classification(indexes_list, classification_list))
 
         # load the workspace in the new two dimensional window
         if self.workSpace:
@@ -486,17 +487,8 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         in which could be classified a segment.
         """
         # create and open the dialog to edit the classification categories
-        edit_categ_dialog = EditCategoriesDialog(self.segmentManager.classificationData)
+        edit_categ_dialog = ManualClassificationDialog()
         edit_categ_dialog.exec_()
-
-    def elementsClasification(self, indexes_list, dictionary):
-        """
-        Update the classification of the detected elements on the table manually
-        :param indexes_list: the indexes of the classified elements
-        :param dictionary: the dictionary with the values of each category
-        :return:
-        """
-        self.segmentManager.classifyElements(indexes_list, dictionary)
 
     @pyqtSlot()
     def on_actionCross_correlation_triggered(self):
@@ -570,7 +562,9 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         """
         elementsDetectorDialog = ElemDetectSettingsDialog(parent=self, signal=self.widget.signal)
         elementsDetectorDialog.load_workspace(self.workSpace)
-        elementsDetectorDialog.restore_previous_state(self.segmentManager.measurerList, self.segmentManager.detector_adapter)
+        elementsDetectorDialog.restore_previous_state(self.segmentManager.measurerList,
+                                                      self.segmentManager.detector_adapter,
+                                                      self.segmentManager.classifier_adapter)
 
         # deselect the elements before new detection
         self.on_actionDeselect_Elements_triggered()
@@ -582,33 +576,39 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
                 # get the detector from dialog selection
                 self.segmentManager.detector_adapter = elementsDetectorDialog.detector
-
+                self.segmentManager.classifier_adapter = elementsDetectorDialog.classifier
                 self.segmentManager.measurerList = elementsDetectorDialog.get_measurer_list()
-                # todo get the classification object
 
-                self.set_progress_bar_visibility(True)
                 self.update_detection_progress_bar(0)
+                self.set_progress_bar_visibility(True)
 
-                # set the detection as the 60% of the segmentation,
+                # set the detection as the 50% of the segmentation,
                 # parameter measurements and classification time
                 self.segmentManager.detectionProgressChanged.connect(
-                    lambda x: self.update_detection_progress_bar(x * 0.6))
+                    lambda x: self.update_detection_progress_bar(x * 0.5))
 
                 # execute the detection
                 self.segmentManager.detect_elements()
+                self.update_detection_progress_bar(50)
+
                 self.widget.elements = self.segmentManager.elements
-                self.update_detection_progress_bar(60)
+
+                self.segmentManager.measureParametersProgressChanged.connect(
+                    lambda x: self.update_detection_progress_bar(70 + x * 0.2))
 
                 # measure the parameters over elements detected
-                self.segmentManager.measureParameters()
+                self.segmentManager.measure_parameters()
                 self.update_detection_progress_bar(90)
+
+                # measure the parameters over elements detected
+                self.segmentManager.classify_elements()
+                self.update_detection_progress_bar(98)
 
                 # update the measured data on the two dimensional opened windows
                 for wnd in self.two_dim_windows:
                     wnd.load_data(self.segmentManager)
 
-            # refresh changes
-            self.widget.graph()
+                self.widget.graph()
 
         except Exception as e:
             print("detection errors: " + e.message)

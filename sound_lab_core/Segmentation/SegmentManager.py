@@ -1,7 +1,6 @@
 from PyQt4.QtCore import QObject, pyqtSignal
 import numpy as np
 from duetto.audio_signals import AudioSignal
-from sound_lab_core.Clasification.ClassificationData import ClassificationData
 
 
 class SegmentManager(QObject):
@@ -11,14 +10,21 @@ class SegmentManager(QObject):
     """
 
     # region SIGNALS
+
+    # signal raised when the measurements of the segments change
     measurementsChanged = pyqtSignal()
 
     # signal raised when a parameter is measured on a segment
-    # raise the segment index and the parameter visual item associated
-    segmentParameterMeasured = pyqtSignal(int, object)
+    # raise the segment index and the visual item associated
+    segmentVisualItemAdded = pyqtSignal(int, object)
 
     # signal raised while detection is been made. Raise the percent of detection progress.
     detectionProgressChanged = pyqtSignal(int)
+
+    # signal raised while the parameters are being computed.
+    # raise the percent of the parameter measuring process.
+    measureParametersProgressChanged = pyqtSignal(int)
+
     # endregion
 
     def __init__(self):
@@ -38,19 +44,13 @@ class SegmentManager(QObject):
         # the signal in which would be detected the elements
         self._signal = None
 
-        # set the connections for the classification data to
-        # update when is added, changed or deleted a value or category
-        self.classificationData = ClassificationData()
-        self.classificationData.valueAdded.connect(self.classificationCategoryValueAdded)
-        self.classificationData.valueRemoved.connect(self.classificationCategoryValueRemove)
-        self.classificationData.categoryAdded.connect(self.classificationCategoryAdded)
-
         # stores the measured parameters of the detected elements
         # has dimensions len(Elements) * len(_measurerList)
         self.measuredParameters = np.array([])
 
-        # stores the classification data that are present in the table of meditions
-        self.classificationTableData = self.classificationTableData = [[]]
+        # stores the classification data that are present in the table of measurements
+        # list of ClassificationData
+        self.classificationTableData = []
 
     # region Properties
 
@@ -85,9 +85,8 @@ class SegmentManager(QObject):
 
         self.measuredParameters = np.zeros(rows * cols).reshape((rows, cols))
 
-        self.classificationTableData = [[self.tr(u"No Identified")
-                                         for _ in self.classificationColumnNames]
-                                        for _ in range(len(self._elements))]
+        self.classificationTableData = [None for _ in self._elements]
+
         self.measurementsChanged.emit()
 
     @property
@@ -96,8 +95,7 @@ class SegmentManager(QObject):
         The names of the columns of classification data
         :return:
         """
-        return [k for k in self.classificationData.categories if
-                len(self.classificationData.getvalues(k)) > 0]
+        return [self.tr(u"Family"), self.tr(u"Genera"), self.tr(u"Specie")]
     
     @property
     def parameterColumnNames(self):
@@ -137,11 +135,11 @@ class SegmentManager(QObject):
         self._signal = new_signal
 
     @property
-    def classifier(self):
+    def classifier_adapter(self):
         return self._classifier
 
-    @classifier.setter
-    def classifier(self, classifier):
+    @classifier_adapter.setter
+    def classifier_adapter(self, classifier):
         self._classifier = classifier
 
     @property
@@ -156,42 +154,75 @@ class SegmentManager(QObject):
 
     # region Classification
 
-    def classifyElements(self, indexes_list, dictionary):
+    def set_manual_elements_classification(self, indexes_list, classification):
         """
         Set the elements classification manually.
         :param indexes_list: the indexes of classified elements
-        :param dictionary: the dict with the values for each category of classification
-        the values ae applied to all the elements that have indexes in indexes_list
+        :param classification: the value for classification.
+        the values are applied to all the elements that have indexes in indexes_list.
         :return:
         """
         indexes_list = [x for x in indexes_list if 0 <= x < self.rowCount]
 
         for i in indexes_list:
-            for column, category in enumerate(self.classificationColumnNames):
-                if category in dictionary:
-                    self.classificationTableData[i][column] = dictionary[category]
+            self.update_classification_visual_item(i, classification)
+            self.classificationTableData[i] = classification
 
         self.measurementsChanged.emit()
 
-    def classificationCategoryValueAdded(self, category, value):
-        # print("In Category "+category+" was added the value: "+value)
-        pass
+    def classify_elements(self):
+        """
+        Execute the classification for all the detected elements with the current classifier.
+        :return:
+        """
+        # get the classification parameters and classifier
+        classifier = self.classifier_adapter.get_instance()
+        parameter_vector = self.get_parameter_measured_vector()
 
-    def classificationCategoryValueRemove(self, category, value):
-        for i, elem in enumerate(self.classificationTableData):
-            for j, l in enumerate(elem):
-                if l[0] == category and l[1] == value:
-                    self.classificationTableData[i][j] = self.tr(u"No Identified")
-
-    def classificationCategoryAdded(self, category):
-        for i, elem in enumerate(self.classificationTableData):
-            self.classificationTableData[i].append(self.tr(u"No Identified"))
+        # classify each element
+        for i in xrange(len(self.elements)):
+            self._classify_element(element_index=i, classifier=classifier,
+                                   parameter_vector=parameter_vector)
 
         self.measurementsChanged.emit()
+
+    def _classify_element(self, element_index, classifier=None, parameter_vector=None):
+        """
+        Helper method that classify a single element.
+        :param element_index: The index of the element to classify
+        :param classifier: the classifier instance if any (If None the classifier would be computed)
+        :param parameter_vector: the vector of parameters to supply to the classifier
+        (If None the vector would be computed)
+        :return:
+        """
+        # get the classification parameters and method
+        classifier = classifier if classifier is not None else self.classifier_adapter.get_instance()
+        parameter_vector = parameter_vector if parameter_vector is not None else self.get_parameter_measured_vector()
+
+        # classify
+        classification_value = classifier.classify(self.elements[element_index], parameter_vector)
+        self.classificationTableData[element_index] = classification_value
+
+        self.update_classification_visual_item(element_index, classification_value)
+
+    def update_classification_visual_item(self, element_index, classification_value):
+        # update the visualization
+        visual_item = self.classifier_adapter.get_visual_item()
+        if visual_item:
+            visual_item.set_data(self.signal, self.elements[element_index], classification_value)
+            self.segmentVisualItemAdded.emit(element_index, visual_item)
+
+    def get_parameter_measured_vector(self):
+        """
+        Method that compute the parameter of vectors that must be supplied to the
+        classifiers to performs the classification process
+        :return: the vector
+        """
+        return []
 
     # endregion
 
-    # region Add-Delete Elements
+    # region Detection
 
     def delete_elements(self, start_index, end_index):
         """
@@ -232,8 +263,8 @@ class SegmentManager(QObject):
                                                       np.array([np.zeros(len(self.measurerList))]),
                                                       self.measuredParameters[index:]))
 
-            self.classificationTableData.insert(index, [self.tr(u"No Identified")
-                                                        for _ in self.classificationColumnNames])
+            self.classificationTableData.insert(index, None)
+            self._classify_element(index)
 
             self.elements.insert(index, element)
 
@@ -259,7 +290,7 @@ class SegmentManager(QObject):
 
     # region Measurements
 
-    def measureParameters(self):
+    def measure_parameters(self):
         """
         :param tableParameterOscilogram:
         :param paramsTomeasure:
@@ -267,13 +298,17 @@ class SegmentManager(QObject):
         :return:
         """
 
+        self.measureParametersProgressChanged.emit(0)
+
         if len(self.measurerList) == 0:
             return
 
         for i in range(self.rowCount):
             self._measure(self.elements[i], i)
+            self.measureParametersProgressChanged.emit(100.0/self.rowCount)
 
         self.measurementsChanged.emit()
+        self.measureParametersProgressChanged.emit(100)
 
     def _measure(self, element, index):
         """
@@ -295,7 +330,7 @@ class SegmentManager(QObject):
                 visual_item = parameter_adapter.get_visual_item()
                 if visual_item:
                     visual_item.set_data(self.signal, self.elements[index], self.measuredParameters[index, j])
-                    self.segmentParameterMeasured.emit(index, visual_item)
+                    self.segmentVisualItemAdded.emit(index, visual_item)
 
             except Exception as e:
                 # if some error is raised set a default value
@@ -316,4 +351,20 @@ class SegmentManager(QObject):
         if col < len(self.measurerList):
             return self.measuredParameters[row, col]
 
-        return self.classificationTableData[row][col - len(self.measurerList)]
+        # the order of the classification taxonomy may change
+        classification = self.classificationTableData[row]
+        if classification is None:
+            return self.tr(u"No Identified")
+
+        index = col - len(self.measurerList)
+
+        if index == 0:
+            # family
+            return self.tr(u"No Identified") if classification.family is None else classification.family
+
+        elif index == 1:
+            # genera
+            return self.tr(u"No Identified") if classification.genus is None else classification.genus
+
+        # specie
+        return self.tr(u"No Identified") if classification.specie is None else classification.specie

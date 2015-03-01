@@ -55,7 +55,7 @@ class VisualElement(QObject):
         self.visual_figures = []
 
         # the visual components that show the measured parameters representation
-        # list of (ParameterVisualItem, bool)
+        # list of (VisualItemWrapper, bool)
         self.visual_parameters_items = []
 
         # the number of this element for visualization and ordering options

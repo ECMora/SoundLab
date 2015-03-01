@@ -93,14 +93,14 @@ class AbsDecayEnvelopeDetector(OneDimensionalElementsDetector):
         # create envelope
         envelope = self.abs_decay_averaged_envelope(data, decay, self.softfactor)
 
-        self.detectionProgressChanged.emit(80)
+        self.detectionProgressChanged.emit(70)
 
         regions = mlab.contiguous_regions(envelope > threshold)
 
-        self.detectionProgressChanged.emit(85)
+        self.detectionProgressChanged.emit(80)
 
         if self.merge_factor > 0:
-            regions = self.mergeIntervals(regions, self.merge_factor)
+            regions = self.merge_intervals(regions, self.merge_factor)
 
         self.detectionProgressChanged.emit(90)
 
@@ -139,7 +139,7 @@ class AbsDecayEnvelopeDetector(OneDimensionalElementsDetector):
             current = rectified[i]
             i += 1
             if i % progress_step == 0:
-                self.detectionProgressChanged.emit(10 + (i / progress_step) * 7)
+                self.detectionProgressChanged.emit(10 + (i / progress_step) * 6)
 
         arr[-1] = current
 

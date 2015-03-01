@@ -76,7 +76,7 @@ class IntervalDetector(OneDimensionalElementsDetector):
 
         f_interval = lambda ind: function(data[ind - minSize / 2:ind + minSize / 2])
 
-        detected = np.array([f_interval(i) for i in np.arange(minSize / 2, data.size, minSize / 2)])
+        detected = np.array([f_interval(i) for i in xrange(minSize / 2, data.size, minSize / 2)])
 
         self.detectionProgressChanged.emit(50)
 
@@ -85,12 +85,12 @@ class IntervalDetector(OneDimensionalElementsDetector):
         else:
             detected = mlab.contiguous_regions(detected < threshold)
 
-        self.detectionProgressChanged.emit(70)
+        self.detectionProgressChanged.emit(80)
 
         detected = [((x[0]) * minSize / 2, (x[1]) * minSize / 2) for x in detected if x[1] > 1 + x[0]]
 
         if merge_factor > 0:
-            detected = self.mergeIntervals(detected, merge_factor)
+            detected = self.merge_intervals(detected, merge_factor)
 
         return detected
 

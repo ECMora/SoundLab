@@ -1,7 +1,7 @@
 import pyqtgraph as pg
-from graphic_interface.segments.VisualElement import VisualElement
-from graphic_interface.segments.parameter_items.time_parameter_items.TimeParameterVisualItem import \
-    TimeParameterVisualItem
+from graphic_interface.segment_visualzation.VisualElement import VisualElement
+from graphic_interface.segment_visualzation.parameter_items.time_parameter_items.TimeParameterVisualItem import \
+    TimeVisualItemWrapper
 
 
 class OscilogramElement(VisualElement):
@@ -27,16 +27,17 @@ class OscilogramElement(VisualElement):
         self.element_region = pg.LinearRegionItem([self.indexFrom, self.indexTo],
                                                   movable=False,brush=(pg.mkBrush(self.color)))
         self.element_region.mouseClickEvent = self.mouseClickEvent
+
         self.visual_figures.append([self.element_region, True])
 
     def add_parameter_item(self, parameter_item):
         """
         Add a new measured parameter visual item into the time representation of the segment
-        :param parameter_item: The TimeParameterVisualItem to add
+        :param parameter_item: The TimeVisualItemWrapper to add
         :return:
         """
-        if not isinstance(parameter_item, TimeParameterVisualItem):
-            raise Exception("Invalid type argument. parameter_item must be of type TimeParameterVisualItem")
+        if not isinstance(parameter_item, TimeVisualItemWrapper):
+            raise Exception("Invalid type argument. parameter_item must be of type TimeVisualItemWrapper")
 
         VisualElement.add_parameter_item(self, parameter_item)
 

@@ -113,6 +113,12 @@ if __name__ == '__main__':
     setConfigOptions(useWeave=False)
 
     app = QApplication(sys.argv)
+    app.setEffectEnabled(Qt.UI_FadeMenu)
+    app.setEffectEnabled(Qt.UI_AnimateCombo)
+    app.setEffectEnabled(Qt.UI_AnimateMenu)
+    app.setEffectEnabled(Qt.UI_AnimateToolBox)
+    app.setEffectEnabled(Qt.UI_AnimateTooltip)
+
 
     args = sys.argv[1] if len(sys.argv) > 1 else ''
 

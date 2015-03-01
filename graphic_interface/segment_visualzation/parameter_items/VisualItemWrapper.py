@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
 
-class ParameterVisualItem:
+class VisualItemWrapper:
     """
-    Represent the visual item from a parameter measurement action.
+    Represent a visual item.
     """
 
     def __init__(self):
@@ -14,7 +14,7 @@ class ParameterVisualItem:
         set the parameter measurement data to visualize it
         signal: Audio Signal in which the measurement was made.
         segment: The segment on the signal in which the measurement was made.
-        data: (dict) the measurement data.
+        data: value of the measurement data.
         """
         pass
 
