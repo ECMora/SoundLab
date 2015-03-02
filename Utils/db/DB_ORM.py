@@ -8,6 +8,7 @@ import os
 
 
 Base = declarative_base()
+# os.getcwd() is the folder where the file .pyw is
 db_path = os.path.join(os.getcwd(), "Utils", "db")
 
 
@@ -36,7 +37,7 @@ class Genera(Base):
     __tablename__ = 'Genera'
     genus_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     family_id = Column(Integer, ForeignKey('Families.family_id'), nullable=False)
-    family = relationship(Family)
+    family = relationship(Family, backref='genus')
     name = Column(String(50), nullable=False)
     details = Column(Text(250), nullable=False)
     # endregion
@@ -58,7 +59,7 @@ class Specie(Base):
 
     specie_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
     genus_id = Column(Integer, ForeignKey('Genera.genus_id'), nullable=False)
-    genus = relationship(Genera)
+    genus = relationship(Genera, backref='species')
     picture = Column(String(50), nullable=True)
     name = Column(String(50), nullable=False)
     name_eng = Column(String(50), nullable=False)

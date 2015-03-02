@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from PyQt4.QtCore import QRect
-from PyQt4.QtGui import QPixmap
+from PyQt4.QtGui import QPixmap, QImage
+import numpy as np
 from graphic_interface.segment_visualzation.parameter_items.time_parameter_items.TimeParameterVisualItem import \
     TimeVisualItemWrapper
 import pyqtgraph as pg
@@ -26,18 +27,26 @@ class ClassificationVisualItem(TimeVisualItemWrapper):
 
         # set the image as background
         pixmap = classification_value.get_image()
+
         if pixmap is None:
             return
+
         image = pixmap.toImage()
         if image is None:
             return
 
-        image_array = pg.imageToArray(image)
+        ptr = image.bits()
+        ptr.setsize(image.byteCount())
+        arr = np.asarray(ptr)
+        h, w = image.height(), image.width()
+        depth = image.byteCount() / (w * h)
+        image_array = arr.reshape((h, w, depth))
+
         self.classification_item.setImage(image_array)
 
         # set the position of the item
         left = segment.indexFrom + (segment.indexTo - segment.indexFrom) / 3.0
-        top = signal.minimumValue + (signal.maximumValue - signal.minimumValue) / 4.0
+        top = signal.minimumValue + (signal.maximumValue - signal.minimumValue) / 5.0
         width = (segment.indexTo - segment.indexFrom) / 3.0
-        heigth = (signal.maximumValue - signal.minimumValue) / 4.0
-        self.classification_item.setRect(QRect(left, top, width, heigth))
+        height = (signal.maximumValue - signal.minimumValue) / 5.0
+        self.classification_item.setRect(QRect(left, top, width, height))

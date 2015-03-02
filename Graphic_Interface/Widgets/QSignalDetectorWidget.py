@@ -187,6 +187,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         if not 0 <= element_index < len(self.elements):
             return
         self.elements[element_index].add_visual_item(parameter_item)
+        self.update()
 
     def add_segmentation_items(self, items):
         """

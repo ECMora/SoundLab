@@ -10,10 +10,3 @@ class ClassifierAdapter(SoundLabAdapter):
     def __init__(self):
         SoundLabAdapter.__init__(self)
 
-    def get_visual_item(self):
-        """
-        The instance of the visual item to include in the visual widgets
-        to visualize the segment Classification (if any)
-        :return:
-        """
-        return ClassificationVisualItem()

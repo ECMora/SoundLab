@@ -154,6 +154,12 @@ class SegmentManager(QObject):
 
     # region Classification
 
+    def segment_classification(self, segment_index):
+        if not 0<= segment_index < len(self.elements):
+            raise Exception("Index out of range")
+
+        return self.classificationTableData[segment_index]
+
     def set_manual_elements_classification(self, indexes_list, classification):
         """
         Set the elements classification manually.

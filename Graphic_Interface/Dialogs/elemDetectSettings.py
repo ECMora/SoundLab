@@ -116,10 +116,14 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
 
         self.segmentation_classification_tree = Parameter.create(
             name=unicode(self.tr(u'Segmentation-Classification')), type=u'group', children=params)
+
         self.segmentation_classification_tree.param(unicode(self.tr(u'Segmentation'))). \
-            sigTreeStateChanged.connect(self.segmentation_changed)
+            sigTreeStateChanged.connect(lambda param, changes:
+                                        self.segmentation_classification_changed(param, changes, u'Segmentation'))
+
         self.segmentation_classification_tree.param(unicode(self.tr(u'Classification'))). \
-            sigTreeStateChanged.connect(self.classification_changed)
+            sigTreeStateChanged.connect(lambda param, changes:
+                                        self.segmentation_classification_changed(param, changes, u'Classification'))
 
         # create and set initial properties
         self.segmentation_classification_tree_widget.setAutoScroll(True)
@@ -175,7 +179,7 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         layout2.addWidget(self.parameter_tree_widget)
         self.parameter_measurement_settings.setLayout(layout2)
 
-    def segmentation_changed(self, param, changes):
+    def segmentation_classification_changed(self, param, changes, param_tree_name):
         """
         Process a change into the parameter tree of segmentation
         :param param:
@@ -193,7 +197,7 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
             # then continue (each method would take care about it's settings)
             # todo include the classification
             if isinstance(value, bool) and value and\
-                parameter not in self.segmentation_classification_tree.param(unicode(self.tr(u'Segmentation'))). \
+                parameter not in self.segmentation_classification_tree.param(unicode(self.tr(param_tree_name))). \
                     param(unicode(self.tr(u'Method Settings'))).children():
                 try:
                     # the parameter changed is has the method name
@@ -201,7 +205,7 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
 
                     # change the method settings if any (Parameter tree interface of adapter)
                     param_settings = self.segmentation_classification_tree.param(
-                        unicode(self.tr(u'Segmentation'))).param(unicode(self.tr(u'Method Settings')))
+                        unicode(self.tr(param_tree_name))).param(unicode(self.tr(u'Method Settings')))
 
                     param_settings.clearChildren()
 
@@ -213,7 +217,7 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
                     print(ex.message)
 
                 params_to_update = self.segmentation_classification_tree.param(
-                    unicode(self.tr(u'Segmentation'))).children()
+                    unicode(self.tr(param_tree_name))).children()
 
                 params_to_update = [p for p in params_to_update if p.type() == u"bool" and
                                     p.name() != parameter.name()]
@@ -224,54 +228,6 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
 
         self.segmentation_classification_tree.blockSignals(False)
         self.detect()
-
-    def classification_changed(self, param, changes):
-        """
-        Process a change into the parameter tree of classification
-        :param param:
-        :param changes:
-        :return:
-        """
-        # block signals because there is changes that involve tree updates
-        # (select a segmentation method with settings that must be added into the tree by example)
-        self.segmentation_classification_tree.blockSignals(True)
-
-        for parameter, _, value in changes:
-
-            # if the value is bool then is the selection of the segmentation or classification method
-            # if the change came from the segmentation or classification method settings
-            # then continue (each method would take care about it's settings)
-            if isinstance(value, bool) and value and\
-                parameter not in self.segmentation_classification_tree.param(unicode(self.tr(u'Classification'))). \
-                    param(unicode(self.tr(u'Method Settings'))).children():
-                try:
-                    # the parameter changed is has the method name
-                    adapter = self.classification_adapter_factory.get_adapter(parameter.name())
-
-                    # change the method settings if any (Parameter tree interface of adapter)
-                    param_settings = self.segmentation_classification_tree.param(
-                        unicode(self.tr(u'Classification'))).param(unicode(self.tr(u'Method Settings')))
-
-                    param_settings.clearChildren()
-
-                    method_settings = adapter.get_settings()
-                    if method_settings:
-                        param_settings.addChild(method_settings)
-
-                except Exception as ex:
-                    print(ex.message)
-
-                params_to_update = self.segmentation_classification_tree.param(
-                    unicode(self.tr(u'Classification'))).children()
-
-                params_to_update = [p for p in params_to_update if p.type() == u"bool" and
-                                    p.name() != parameter.name()]
-
-                # set to false the others segmentation methods (radio button behavior, only select one method)
-                for p in params_to_update:
-                    p.setValue(False)
-
-        self.segmentation_classification_tree.blockSignals(False)
 
     # endregion
 
@@ -306,6 +262,7 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         try:
             name = ""
             parameters = self.segmentation_classification_tree.param(unicode(self.tr(param_tree_name))).children()
+
             for parameter in parameters:
                 if parameter.type() == u"bool" and parameter.value():
                     name = parameter.name()

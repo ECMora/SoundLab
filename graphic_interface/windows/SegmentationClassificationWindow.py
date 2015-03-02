@@ -7,12 +7,13 @@ from graphic_interface.segment_visualzation.VisualElement import VisualElement
 from duetto.audio_signals.AudioSignal import AudioSignal
 from graphic_interface.dialogs.CrossCorrelationDialog import CrossCorrelationDialog
 from ..dialogs.elemDetectSettings import ElemDetectSettingsDialog
+from graphic_interface.windows.EffectWindow import EffectWindow
 from sound_lab_core.Segmentation.SegmentManager import SegmentManager
 from ..dialogs.ManualClassificationDialog import ManualClassificationDialog
 from TwoDimensionalAnalisysWindow import TwoDimensionalAnalisysWindow
 from ui_python_files.SegmentationAndClasificationWindowUI import Ui_MainWindow
 from PyQt4.QtGui import QFileDialog, QAbstractItemView, QActionGroup, QMessageBox, \
-    QProgressBar, QColor, QAction, QTableWidgetItem
+    QProgressBar, QColor, QAction, QTableWidgetItem, QCursor
 
 
 class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
@@ -58,6 +59,9 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
             raise Exception("The signal to analyze must be of type AudioSignal")
 
         self.configureToolBarActionsGroups()
+
+        # the window to present user friendly messages
+        self.effect_window = EffectWindow(parent=self)
 
         # the segmentation window do not allow to record a signal
         self.actionRecord.setEnabled(False)
@@ -475,6 +479,18 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
                 del self._cross_correlation_windows[i]
             else:
                 wnd.select_element(element_index)
+
+        # show the image if the element is classified
+        classification = self.segmentManager.segment_classification(element_index)
+        image = classification.get_image()
+        self.effect_window.set_image(image)
+
+        # cursor = QCursor()
+        # x, y = cursor.pos().x(), cursor.pos().y()
+        # self.effect_window.move(x, y)
+        #
+        # self.effect_window.setWindowOpacity(1)
+        # self.effect_window.fade()
 
     # endregion
 

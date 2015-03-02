@@ -63,20 +63,28 @@ class IntervalDetector(OneDimensionalElementsDetector):
 
         return self.elements
 
-    def interval_detector(self, data, threshold, minSize, merge_factor, function, comparer_greater_threshold=True):
+    def interval_detector(self, data, threshold, min_size, merge_factor, function, comparer_greater_threshold=True):
         """
         if comparer_greater_threshold then the intervals > threshold else intervals < threshold would be acepted
         """
 
-        minSize = int(minSize)
-        if minSize == 0:
-            minSize = len(data) / 1000
+        min_size = int(min_size)
+        if min_size == 0:
+            min_size = self.signal.samplingRate / 1000
 
         self.detectionProgressChanged.emit(5)
 
-        f_interval = lambda ind: function(data[ind - minSize / 2:ind + minSize / 2])
+        # arr_size = len(xrange(min_size / 2, data.size - min_size / 2, min_size / 2))
+        arr_size = ((data.size * 2) / min_size)
+        detected = np.zeros(arr_size)
+        k = min_size / 2
+        progress_rate = arr_size / 10
 
-        detected = np.array([f_interval(i) for i in xrange(minSize / 2, data.size, minSize / 2)])
+        for i in xrange(1, arr_size):
+            detected[i-1] = function(data[(i - 1) * k: i * k])
+
+            if i % progress_rate == 0:
+                self.detectionProgressChanged.emit(5 + 4.5*(i/progress_rate))
 
         self.detectionProgressChanged.emit(50)
 
@@ -87,21 +95,16 @@ class IntervalDetector(OneDimensionalElementsDetector):
 
         self.detectionProgressChanged.emit(80)
 
-        detected = [((x[0]) * minSize / 2, (x[1]) * minSize / 2) for x in detected if x[1] > 1 + x[0]]
+        detected = [((x[0]) * min_size / 2, (x[1]) * min_size / 2) for x in detected if x[1] > 1 + x[0]]
 
         if merge_factor > 0:
             detected = self.merge_intervals(detected, merge_factor)
 
         return detected
 
-    def detect_elements(self, data, threshold, minSize, merge_factor):
-        def function(d):
-            ind, vals = self.localMax(d)
-            x = 0
-            if len(vals) > 0:
-                vals = np.array(vals, dtype=long)
-                x = sqrt(sum(vals ** 2) / vals.size)
-            return x
+    def function(self, d):
+        return 0
 
-        return self.interval_detector(data, threshold, minSize, merge_factor, function)
+    def detect_elements(self, data, threshold, minSize, merge_factor):
+        return self.interval_detector(data, threshold, minSize, merge_factor, self.function)
 

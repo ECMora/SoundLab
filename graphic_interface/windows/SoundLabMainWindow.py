@@ -49,7 +49,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
 
     # the maxThresholdLabel duration of signal that is possible to process
     # with the segmentation and classification window (in seconds)
-    MAX_SIGNAL_DURATION_ALLOWED_SEG = 60
+    MAX_SIGNAL_DURATION_ALLOWED_SEG = 180
 
     #  Width and height of the dock window of visual options
     SETTINGS_WINDOW_WIDTH = 340

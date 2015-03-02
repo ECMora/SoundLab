@@ -25,7 +25,7 @@ class OscilogramElement(VisualElement):
 
         # the time region limits
         self.element_region = pg.LinearRegionItem([self.indexFrom, self.indexTo],
-                                                  movable=False,brush=(pg.mkBrush(self.color)))
+                                                  movable=False, brush=(pg.mkBrush(self.color)))
         self.element_region.mouseClickEvent = self.mouseClickEvent
 
         self.visual_figures.append([self.element_region, True])
