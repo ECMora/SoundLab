@@ -18,9 +18,6 @@ Complexity-1: No new-code activity
 * (Hiram) Testing widget spectrogram
 * (Hiram) Testing Segmentation Window
 
-* (Gabriela) Testing One dim transform Window
-* (Gabriela) Testing widget signal visualizer
-
 -----------------------------------------------------------
 
 Complexity-2: Small-to-medium code changes
