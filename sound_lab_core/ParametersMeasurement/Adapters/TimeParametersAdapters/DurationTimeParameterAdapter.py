@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from Utils.db.DB_ORM import get_db_session, Parameter
+from Utils.db.DB_ORM import DB, Parameter
 from sound_lab_core.ParametersMeasurement.Adapters.ParameterAdapter import ParameterAdapter
 from sound_lab_core.ParametersMeasurement.TimeParameters.DurationTimeParameter import DurationTimeParameter
 
@@ -15,7 +15,7 @@ class DurationTimeParameterAdapter(ParameterAdapter):
     def _get_orm_mapper(self):
         # get the db object mapper
         try:
-            db_session = get_db_session()
+            db_session = DB.db_session()
             parameters_list = db_session.query(Parameter).filter(Parameter.name == "Duration(s)").all()
             if db_session:
                 self.db_mapper = parameters_list[0]

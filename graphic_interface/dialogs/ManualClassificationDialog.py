@@ -1,7 +1,7 @@
 from PyQt4 import QtGui
 from graphic_interface.windows.ui_python_files import ManualClassificationDialog as classification_dialog
 from sound_lab_core.Clasification.ClassificationData import ClassificationData
-from Utils.db.DB_ORM import Specie, Genera, Family, get_db_session
+from Utils.db.DB_ORM import Specie, Genera, Family, DB
 
 
 class ManualClassificationDialog(classification_dialog.Ui_Dialog, QtGui.QDialog):
@@ -11,7 +11,7 @@ class ManualClassificationDialog(classification_dialog.Ui_Dialog, QtGui.QDialog)
 
     # region CONSTANTS
 
-    session = get_db_session()
+    session = DB.db_session()
     species = [x for x in session.query(Specie)]
     genus = [x for x in session.query(Genera)]
     families = [x for x in session.query(Family)]

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from PyQt4.QtCore import *
+from PyQt4.QtCore import QTimer
+
 
 class LimitedTimer(QTimer):
 
@@ -18,7 +19,7 @@ class LimitedTimer(QTimer):
                 self.stop_callback()
                 self.stop_callback = None
 
-    def startLimited(self,ms,times=-1):
+    def start_limited(self, ms, times=-1):
         """
         Starts a timer with  intervals of ms  and stop after times  executions
         :param ms: the interval for the timer in ms
@@ -28,7 +29,7 @@ class LimitedTimer(QTimer):
             self.__timeLimit = times
             def check():
                 self.check_stop_condition()
-                self.__times+=1
+                self.__times += 1
             self.timeout.connect(check)
         self.start(ms)
 

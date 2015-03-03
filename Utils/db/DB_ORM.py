@@ -178,30 +178,20 @@ class Measurement(Base):
     measurement_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
 
     parameter_id = Column(Integer, ForeignKey('Parameter.parameter_id'), nullable=False)
-    parameter = relationship(Parameter, backref='measurements', uselist=True,
-                             single_parent=True, cascade='delete-orphan, delete, all')
+    # parameter = relationship(Parameter, backref='measurements', uselist=True
+    #                          ,cascade='delete, all')
 
     segment_id = Column(Integer, ForeignKey('Segment.segment_id'), nullable=False)
-    segment = relationship(Segment, backref='measurements', uselist=True,
-                           single_parent=True, cascade='delete-orphan, delete, all')
+    # segment = relationship(Segment, backref='measurements', uselist=True,
+    #                        cascade='delete, all')
 
     value = Column(Float(), nullable=False, default=0)
     # endregion
 
 
-def get_db_session():
-    """
-    Gets a session to query against the db
-    :return:
-    """
-    session = None
+class DB:
 
-    def _get_db_session(db_session):
-        if db_session is None:
-            db = create_engine('sqlite:///' + os.path.join(db_path, "duetto_local_db.s3db"))
-            db_session = orm.scoped_session(orm.sessionmaker(bind=db))
-        return db_session
-
-    return _get_db_session(session)
+    db = create_engine('sqlite:///' + os.path.join(db_path, "duetto_local_db.s3db"))
+    db_session = orm.scoped_session(orm.sessionmaker(bind=db))
 
 

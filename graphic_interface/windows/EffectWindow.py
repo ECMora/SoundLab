@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-from PyQt4.QtGui import *
-from PyQt4.QtCore import *
+from PyQt4.QtCore import QRect,Qt
+from PyQt4.QtGui import QGraphicsView, QGraphicsScene, QPixmap
 import random
 from LimitedTimer import LimitedTimer
 
 
 class EffectWindow(QGraphicsView):
-    def __init__(self, parent=None, sound=None, back_image=None):
+    def __init__(self, parent=None, back_image=None):
         super(EffectWindow, self).__init__(parent)
         self.setWindowFlags(Qt.SplashScreen)
         self.scene = QGraphicsScene(self)
@@ -17,8 +17,6 @@ class EffectWindow(QGraphicsView):
             assert isinstance(back_image, QPixmap)
             self.set_image(back_image)
 
-        self.sound = sound
-        self.activeSounds = []
         self.setGeometry(QRect(self.x(), self.y(), 100, 100))
         self.show()
 
@@ -37,23 +35,18 @@ class EffectWindow(QGraphicsView):
         timer = LimitedTimer(self)
         timer.setInterval(time_interval)
         timer.timeout.connect(_blink)
-        timer.startLimited(time_interval, time_limit / time_interval)
+        timer.start_limited(time_interval, time_limit / time_interval)
         return self
 
-    def fade(self, time=1000, out=True):
+    def fade(self, time=1500, out=True):
         """
         :param time:  the time to  completely execute the fade in ms
         :param out: fade out or in. out by default
        """
-
-        def _fade():
-            step = -0.01 if out else 0.01
-            self.setWindowOpacity(self.windowOpacity() + step)
-
         self.setWindowOpacity(1 if out else 0)
         timer = LimitedTimer(self)
-        timer.timeout.connect(_fade)
-        timer.startLimited(time / 100.0, 100)
+        timer.timeout.connect(lambda: self.setWindowOpacity(self.windowOpacity() + -0.01 if out else 0.01))
+        timer.start_limited(time / 100.0, 100)
         return self
 
     def vibrate(self, time_limit=1000):
@@ -66,7 +59,7 @@ class EffectWindow(QGraphicsView):
 
         timer = LimitedTimer(self)
         timer.timeout.connect(_move)
-        timer.startLimited(time_limit / 100.0, 100)
+        timer.start_limited(time_limit / 100.0, 100)
         return self
 
 

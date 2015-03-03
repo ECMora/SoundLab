@@ -1,6 +1,6 @@
 from PyQt4.QtCore import QObject, pyqtSignal
 import numpy as np
-from Utils.db.DB_ORM import Segment, get_db_session, Measurement
+from Utils.db.DB_ORM import Segment, DB, Measurement
 from duetto.audio_signals import AudioSignal
 
 
@@ -44,6 +44,7 @@ class SegmentManager(QObject):
 
         # the db representation of the elements
         self.segments_db_objects = []
+        self.db_session = DB.db_session()
 
         # the signal in which would be detected the elements
         self._signal = None
@@ -66,14 +67,20 @@ class SegmentManager(QObject):
     def elements(self, elements_list):
         self._elements = elements_list
 
-        # todo remove the object from db
-        self.segments_db_objects = [Segment() for _ in self._elements]
-
         try:
-            db_session = get_db_session()
+            # remove unidentified segments from db
+            for x in self.segments_db_objects:
+                if x.specie is None and x.genus is None and x.family is None:
+                    self.db_session.delete(x)
+            self.db_session.commit()
+
+            self.segments_db_objects = [Segment() for _ in self._elements]
+
+            # add the new segments
             for s in self.segments_db_objects:
-                db_session.add(s)
-            db_session.commit()
+                self.db_session.add(s)
+
+            self.db_session.commit()
 
         except Exception as ex:
             print("segment creation error" + ex.message)
@@ -172,7 +179,7 @@ class SegmentManager(QObject):
     # region Classification
 
     def segment_classification(self, segment_index):
-        if not 0<= segment_index < len(self.elements):
+        if not 0 <= segment_index < len(self.elements):
             raise Exception("Index out of range")
 
         return self.classificationTableData[segment_index]
@@ -190,6 +197,7 @@ class SegmentManager(QObject):
         for i in indexes_list:
             self.update_classification_visual_item(i, classification)
             self.classificationTableData[i] = classification
+            self.save_identification_on_db(i, classification)
 
         self.measurementsChanged.emit()
 
@@ -200,10 +208,10 @@ class SegmentManager(QObject):
         """
         # get the classification parameters and classifier
         classifier = self.classifier_adapter.get_instance()
-        parameter_vector = self.get_parameter_measured_vector()
 
         # classify each element
         for i in xrange(len(self.elements)):
+            parameter_vector = [(x, self.measuredParameters[i, j]) for j, x in enumerate(self.measurerList)]
             self._classify_element(element_index=i, classifier=classifier,
                                    parameter_vector=parameter_vector)
 
@@ -220,11 +228,14 @@ class SegmentManager(QObject):
         """
         # get the classification parameters and method
         classifier = classifier if classifier is not None else self.classifier_adapter.get_instance()
-        parameter_vector = parameter_vector if parameter_vector is not None else self.get_parameter_measured_vector()
+        parameter_vector = parameter_vector if parameter_vector is not None else []
 
         # classify
         classification_value = classifier.classify(self.elements[element_index], parameter_vector)
         self.classificationTableData[element_index] = classification_value
+
+        # save on db
+        self.save_identification_on_db(element_index, classification_value)
 
         self.update_classification_visual_item(element_index, classification_value)
 
@@ -234,14 +245,6 @@ class SegmentManager(QObject):
         if visual_item:
             visual_item.set_data(self.signal, self.elements[element_index], classification_value)
             self.segmentVisualItemAdded.emit(element_index, visual_item)
-
-    def get_parameter_measured_vector(self):
-        """
-        Method that compute the parameter of vectors that must be supplied to the
-        classifiers to performs the classification process
-        :return: the vector
-        """
-        return []
 
     # endregion
 
@@ -264,7 +267,11 @@ class SegmentManager(QObject):
 
         self._elements = self.elements[:start_index] + self.elements[end_index+1:]
 
-        # todo remove from database or not
+        for x in self.segments_db_objects[start_index:end_index]:
+            if x.specie is None and x.genus is None and x.family is None:
+                self.db_session.delete(x)
+        self.db_session.commit()
+
         self.segments_db_objects = self.segments_db_objects[:start_index] + self.segments_db_objects[end_index + 1:]
 
         self.measurementsChanged.emit()
@@ -293,6 +300,12 @@ class SegmentManager(QObject):
             self._classify_element(index)
 
             self.elements.insert(index, element)
+
+            new_segment = Segment()
+            self.db_session.add(new_segment)
+            self.db_session.commit()
+
+            self.segments_db_objects.insert(index, new_segment)
 
         # measure parameters
         self._measure(element, index)
@@ -331,7 +344,7 @@ class SegmentManager(QObject):
 
         for i in range(self.rowCount):
             self._measure(self.elements[i], i)
-            self.measureParametersProgressChanged.emit(100.0/self.rowCount)
+            self.measureParametersProgressChanged.emit((i+1) * 100.0/self.rowCount)
 
         self.measurementsChanged.emit()
         self.measureParametersProgressChanged.emit(100)
@@ -366,6 +379,9 @@ class SegmentManager(QObject):
                 # if some error is raised set a default value
                 self.measuredParameters[index, j] = 0
                 print("Error measure params " + e.message)
+    # endregion
+
+    # region DB interaction
 
     def save_measurement_on_db(self, segment, parameter, value):
         """
@@ -378,17 +394,31 @@ class SegmentManager(QObject):
         if segment is None or parameter is None:
             return
         try:
-            print(segment.segment_id)
-            db_session = get_db_session()
-            db_session.add(Measurement(segment_id=segment.segment_id,
-                                       parameter_id=parameter.parameter_id,
-                                       value=value))
-            db_session.commit()
+            measure = Measurement(segment_id=segment.segment_id, parameter_id=parameter.parameter_id, value=value)
+
+            self.db_session.add(measure)
+            self.db_session.commit()
+
         except Exception as ex:
             print("db connection error. " + ex.message)
 
+    def save_identification_on_db(self, element_index, classification):
+        if not 0 <= element_index < len(self.elements):
+            raise Exception()
+        try:
+            if classification.specie:
+                self.segments_db_objects[element_index].specie = classification.specie
+            elif classification.genus:
+                self.segments_db_objects[element_index].genus = classification.genus
+            elif classification.family:
+                self.segments_db_objects[element_index].family = classification.family
 
-        # endregion
+            self.db_session.commit()
+
+        except Exception as ex:
+            print("db connection error. " + ex.message)
+
+    # endregion
 
     def __getitem__(self, item):
         if not isinstance(item, tuple) or not len(item) == 2:

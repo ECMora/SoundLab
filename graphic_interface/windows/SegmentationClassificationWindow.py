@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import xlwt
-from PyQt4.QtCore import pyqtSlot, Qt
+from PyQt4.QtCore import pyqtSlot, Qt, QPoint
 from SoundLabWindow import SoundLabWindow
 from graphic_interface.segment_visualzation.VisualElement import VisualElement
 from duetto.audio_signals.AudioSignal import AudioSignal
@@ -486,9 +486,11 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         if image:
             self.effect_window.set_image(image)
 
-            cursor = QCursor()
-            x, y = cursor.pos().x(), cursor.pos().y()
-            self.effect_window.move(x, y)
+            element = self.widget.elements[element_index]
+            x = element.indexFrom + (element.indexTo - element.indexFrom)/2.0
+            x = x * self.widget.width() * 1.0 / self.widget.get_visible_region()
+            self.effect_window.move(self.widget.mapToGlobal(
+                QPoint(x - self.effect_window.width()/2.0, (self.widget.height() - self.effect_window.height()) / 2.0)))
 
             self.effect_window.setWindowOpacity(1)
             self.effect_window.fade()
