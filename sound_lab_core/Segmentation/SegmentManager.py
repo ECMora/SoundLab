@@ -1,5 +1,6 @@
 from PyQt4.QtCore import QObject, pyqtSignal
 import numpy as np
+from Utils.db.DB_ORM import Segment, get_db_session, Measurement
 from duetto.audio_signals import AudioSignal
 
 
@@ -41,6 +42,9 @@ class SegmentManager(QObject):
         # the detected elements
         self._elements = []
 
+        # the db representation of the elements
+        self.segments_db_objects = []
+
         # the signal in which would be detected the elements
         self._signal = None
 
@@ -61,6 +65,19 @@ class SegmentManager(QObject):
     @elements.setter
     def elements(self, elements_list):
         self._elements = elements_list
+
+        # todo remove the object from db
+        self.segments_db_objects = [Segment() for _ in self._elements]
+
+        try:
+            db_session = get_db_session()
+            for s in self.segments_db_objects:
+                db_session.add(s)
+            db_session.commit()
+
+        except Exception as ex:
+            print("segment creation error" + ex.message)
+
         self.recompute_element_table()
 
     @property
@@ -247,6 +264,9 @@ class SegmentManager(QObject):
 
         self._elements = self.elements[:start_index] + self.elements[end_index+1:]
 
+        # todo remove from database or not
+        self.segments_db_objects = self.segments_db_objects[:start_index] + self.segments_db_objects[end_index + 1:]
+
         self.measurementsChanged.emit()
 
     def add_element(self, element, index):
@@ -338,12 +358,37 @@ class SegmentManager(QObject):
                     visual_item.set_data(self.signal, self.elements[index], self.measuredParameters[index, j])
                     self.segmentVisualItemAdded.emit(index, visual_item)
 
+                # try to store the parameter measurement on db
+                self.save_measurement_on_db(self.segments_db_objects[index],
+                                            parameter_adapter.get_db_orm_mapper(),
+                                            self.measuredParameters[index, j])
             except Exception as e:
                 # if some error is raised set a default value
                 self.measuredParameters[index, j] = 0
                 print("Error measure params " + e.message)
 
-    # endregion
+    def save_measurement_on_db(self, segment, parameter, value):
+        """
+        Store on db the measurment of a parameter over a segmen
+        :param segment:
+        :param parameter:
+        :param value:
+        :return:
+        """
+        if segment is None or parameter is None:
+            return
+        try:
+            print(segment.segment_id)
+            db_session = get_db_session()
+            db_session.add(Measurement(segment_id=segment.segment_id,
+                                       parameter_id=parameter.parameter_id,
+                                       value=value))
+            db_session.commit()
+        except Exception as ex:
+            print("db connection error. " + ex.message)
+
+
+        # endregion
 
     def __getitem__(self, item):
         if not isinstance(item, tuple) or not len(item) == 2:

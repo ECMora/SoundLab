@@ -1,10 +1,11 @@
+from sound_lab_core.ParametersMeasurement.Adapters.ParameterAdapter import ParameterAdapter
 from sound_lab_core.SoundLabAdapter import SoundLabAdapter
 from pyqtgraph.parametertree import Parameter
 
 
-class FreqParameterAdapter(SoundLabAdapter):
+class FreqParameterAdapter(ParameterAdapter):
     def __init__(self):
-        SoundLabAdapter.__init__(self)
+        ParameterAdapter.__init__(self)
         settings = [
             {u'name': unicode(self.tr(u'Threshold (dB)')), u'type': u'int', u'value': -20.00, u'step': 1,
              u'limits': (-100, 0)},

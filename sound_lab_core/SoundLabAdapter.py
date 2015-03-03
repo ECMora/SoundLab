@@ -16,6 +16,16 @@ class SoundLabAdapter(QObject):
         """
         QObject.__init__(self)
 
+        # the db object mapper in the orm
+        self.db_mapper = None
+
+    def get_db_orm_mapper(self):
+        """
+        :return: The class that maps this adapter to it's
+        sql db representation if any
+        """
+        return self.db_mapper
+
     def get_instance(self):
         """
         Gets a new get_instance of the corresponding adapted object .

@@ -27,7 +27,10 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
     SELECTED_ELEMENT_BRUSH = pg.mkBrush(QtGui.QColor(255, 0, 0, 200))
 
     # the number of elements visible by default when a detection is made (efficiency)
-    VISIBLE_ELEMENTS_COUNT = 20
+    VISIBLE_ELEMENTS_COUNT = 1000
+
+    # the min size in pixels that must have an element to be visualized
+    MIN_ELEMENT_WIDTH_PIXELS = 1
 
     # endregion
 
@@ -71,9 +74,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
     # endregion
 
-    # region Elements
-
-    # region Visual Representation
+    # region Elements Visual Representation
 
     def draw_elements(self, oscilogramItems=None):
         """
@@ -87,29 +88,39 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         # just update the visualization of visible elements
         start, end = self.mainCursor.min, self.mainCursor.max
 
+        # get the visible elements
         elements = [e for e in self.elements if start <= e.indexFrom <= end or start <= e.indexTo <= end]
 
+        # removes all the elements
         for i in xrange(len(self.elements)):
+            for item, visible in self.elements[i].time_element.visual_widgets():
+                self.axesOscilogram.removeItem(item)
+            for item, visible in self.elements[i].spectral_element.visual_widgets():
+                self.axesSpecgram.viewBox.removeItem(item)
+
             self.elements[i].spectral_element.translate_time_freq_coords(self.from_osc_to_spec, self.get_freq_index)
 
-        # add the visible elements
+        widget_scene_width = self.axesOscilogram.viewRect().width()
+        widget_pixel_width = self.axesOscilogram.width() * 1.0
+
+        elements = [e for e in elements if
+                    (e.indexTo - e.indexFrom) * widget_pixel_width /
+                    widget_scene_width > self.MIN_ELEMENT_WIDTH_PIXELS]
+
+        # add just the visible elements
         for i in xrange(len(elements)):
             if not elements[i].visible:
                 continue
 
             if self.visibleOscilogram and osc:
                 for item, visible in elements[i].time_element.visual_widgets():
-                    if visible and item not in self.axesOscilogram.items():
+                    if visible:
                         self.axesOscilogram.addItem(item)
-                    elif not visible:
-                        self.axesOscilogram.removeItem(item)
 
             if self.visibleSpectrogram and spec:
                 for item, visible in elements[i].spectral_element.visual_widgets():
-                    if visible and item not in self.axesSpecgram.viewBox.childItems():
+                    if visible:
                         self.axesSpecgram.viewBox.addItem(item)
-                    elif not visible:
-                        self.axesSpecgram.viewBox.removeItem(item)
 
         self.axesSpecgram.update()
         self.axesOscilogram.update()
@@ -187,6 +198,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         if not 0 <= element_index < len(self.elements):
             return
         self.elements[element_index].add_visual_item(parameter_item)
+        # todo add into the widgets
         self.update()
 
     def add_segmentation_items(self, items):
@@ -200,7 +212,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
     # endregion
 
-    # region Selection-Deselection
+    # region Elements Selection-Deselection
 
     def clear_detection(self):
         """
@@ -231,7 +243,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
             # move the interval to make completely visible the element selected
             self.mainCursor.min = max(0, index_from - interval_size/2)
             self.mainCursor.max = min(self.signal.length, index_to + interval_size/2)
-            self.update()
+            self.graph_elements()
 
     def deselect_element(self):
         """
@@ -282,6 +294,8 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         return self.signal.copy(start, end)
 
     # endregion
+
+    # region Elements Add-Delete-Save
 
     def delete_selected_elements(self):
         """

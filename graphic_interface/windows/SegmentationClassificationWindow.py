@@ -483,14 +483,15 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         # show the image if the element is classified
         classification = self.segmentManager.segment_classification(element_index)
         image = classification.get_image()
-        self.effect_window.set_image(image)
+        if image:
+            self.effect_window.set_image(image)
 
-        # cursor = QCursor()
-        # x, y = cursor.pos().x(), cursor.pos().y()
-        # self.effect_window.move(x, y)
-        #
-        # self.effect_window.setWindowOpacity(1)
-        # self.effect_window.fade()
+            cursor = QCursor()
+            x, y = cursor.pos().x(), cursor.pos().y()
+            self.effect_window.move(x, y)
+
+            self.effect_window.setWindowOpacity(1)
+            self.effect_window.fade()
 
     # endregion
 
