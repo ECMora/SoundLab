@@ -408,6 +408,12 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
     # endregion
 
+    def get_visible_region(self):
+        """
+        :return: The region that is visible in signal oscilogram coordinates
+        """
+        return self.mainCursor.max - self.mainCursor.min
+
     def graph(self):
         """
         Refresh the widgets visual elements and graphs

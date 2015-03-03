@@ -361,7 +361,7 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         :return:
         """
         fname = unicode(QFileDialog.getSaveFileName(self, self.tr(u"Save two dimensional graph as an Image"),
-                                                    u"two-dim-graph-Duetto-Image" + unicode(self.widget.signal.name),
+                                                    u"two-dim-graph-Duetto-Image",
                                                     u"*.jpg"))
         save_image(self.widget, fname)
 
