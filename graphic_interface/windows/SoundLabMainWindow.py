@@ -9,7 +9,7 @@ from duetto.audio_signals.Synthesizer import Synthesizer
 from duetto.signal_processing.filter_signal_processors.frequency_domain_filters import BandPassFilter, HighPassFilter, \
     BandStopFilter, LowPassFilter
 from duetto.dimensional_transformations.two_dimensional_transforms.Spectrogram.WindowFunctions import WindowFunction
-from Utils.Utils import *
+from utils.Utils import *
 from graphic_interface.widgets.QSignalVisualizerWidget import QSignalVisualizerWidget
 from graphic_interface.Settings.WorkTheme import WorkTheme
 from graphic_interface.windows.BatchWindow import BatchWindow
@@ -90,14 +90,14 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         self.configureNoOpenedWidget()
         self.configureToolBarActionsGroups()
 
-        # get all the themes that are in the static folder for themes ("Utils\Themes\")
-        app_themes = folder_files(os.path.join("Utils", "Themes"), extensions=[".dth"])
+        # get all the themes that are in the static folder for themes ("utils\themes\")
+        app_themes = folder_files(os.path.join("utils", "themes"), extensions=[".dth"])
 
         # get all the styles that are in the static folder for styles ("styles\")
-        app_styles = folder_files("styles", extensions=[".qss"])
+        app_styles = folder_files(os.path.join("utils", "styles"), extensions=[".qss"])
 
         # get all the languages translations that are in the static folder for languagues ("I18n\")
-        app_languagues = folder_files("I18n", extensions=[".qm"])
+        app_languagues = folder_files(os.path.join("utils", "I18n"), extensions=[".qm"])
 
         # user interface to manipulate several visual parameters
         # and display options of the application theme.
@@ -785,7 +785,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
 
         # if was loaded the same signal on segmentation window give the file path (if any) to save options
         if signal.length == self.widget.signal.length:
-            seg_window.setSignalFile(self.widget.signalFilePath)
+            seg_window.set_signal_file(self.widget.signalFilePath)
 
         # load the theme and clear the undo redo actions in the current window.
         seg_window.load_workspace(self.workSpace)
@@ -801,7 +801,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         selected_theme = self.settingsParameterTree.param(unicode(self.tr(u'Themes'))).param(
             unicode(self.tr(u'Theme Selected'))).value()
 
-        theme_path = os.path.join("Utils", "Themes", selected_theme + ".dth")
+        theme_path = os.path.join("utils", "themes", selected_theme + ".dth")
 
         serialize(theme_path, self.workSpace.workTheme)
 
@@ -811,7 +811,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         Save to disc the current theme with the visual options.
         """
         filename = QFileDialog.getSaveFileName(parent=self, caption=self.tr(u"Save Theme"),
-                                               directory=os.path.join(u"Utils", u"Themes"),
+                                               directory=os.path.join(u"utils", u"themes"),
                                                filter=self.tr(u"duetto Theme Files") + u"(*.dth);;All Files (*)")
         if filename:
             serialize(filename, self.workSpace.workTheme)
@@ -821,7 +821,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         """
         Load a new theme (previously saved) from disc.
         """
-        filename = QFileDialog.getOpenFileName(parent=self, directory=os.path.join(u"Utils", u"Themes"),
+        filename = QFileDialog.getOpenFileName(parent=self, directory=os.path.join(u"utils", u"themes"),
                                                caption=self.tr(u"Load Theme"),
                                                filter=self.tr(u"duetto Theme Files") + u" (*.dth);;All Files (*)")
 
@@ -1434,7 +1434,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
             self.save_signal_if_modified(event, signal_index=i)
 
         # save the workspace options
-        workspace_path = os.path.join("Utils", WORK_SPACE_FILE_NAME)
+        workspace_path = os.path.join("utils", WORK_SPACE_FILE_NAME)
         serialize(workspace_path, self.workSpace)
 
         #  close the window

@@ -4,7 +4,7 @@ from PyQt4.QtCore import pyqtSignal, QObject
 from PyQt4.QtGui import QApplication
 from duetto.audio_signals.Synthesizer import Synthesizer
 from duetto.signal_processing.EditionSignalProcessor import EditionSignalProcessor
-from Utils.Utils import FLOATING_POINT_EPSILON
+from utils.Utils import FLOATING_POINT_EPSILON
 from duetto.signal_processing.CommonSignalProcessor import CommonSignalProcessor
 from duetto.signal_processing.filter_signal_processors.frequency_domain_filters import *
 import numpy as np

@@ -1,5 +1,5 @@
 #  -*- coding: utf-8 -*-
-from Utils.Utils import *
+from utils.Utils import *
 from duetto.audio_signals import openSignal
 from duetto.audio_signals.audio_signals_stream_readers.FileManager import FileManager
 from ui_python_files.BatchWindow import Ui_MainWindow

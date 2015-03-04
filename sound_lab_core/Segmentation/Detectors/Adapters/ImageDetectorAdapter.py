@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-from sound_lab_core.Segmentation.Detectors.OneDimensional.Image.AdaptThreshDetector import \
-    AdaptThreshDetector
 from sound_lab_core.SoundLabAdapter import SoundLabAdapter
 from pyqtgraph.parametertree import Parameter
 

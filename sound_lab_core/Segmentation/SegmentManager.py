@@ -1,6 +1,6 @@
 from PyQt4.QtCore import QObject, pyqtSignal
 import numpy as np
-from Utils.db.DB_ORM import Segment, DB, Measurement
+from utils.db.DB_ORM import Segment, DB, Measurement
 from duetto.audio_signals import AudioSignal
 
 

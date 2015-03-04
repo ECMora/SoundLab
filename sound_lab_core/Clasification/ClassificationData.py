@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from Utils.db.DB_ORM import Genera, Family, Specie
+from utils.db.DB_ORM import Genera, Family, Specie
 
 
 class ClassificationData:

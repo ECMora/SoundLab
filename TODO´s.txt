@@ -21,42 +21,27 @@ Complexity-1: No new-code activity
 -----------------------------------------------------------
 
 Complexity-2: Small-to-medium code changes
-+ Si hay seleccion temporal (*o espectral), que el play solo reproduzca lo seleccionado... no pasa asi en "solo espectrograma".
-+ El Undo no funciona despues de Cortar.
-+ Revisar cursores: Ej. en rectangular, cambiar dF para el final... despues de mostrar quien es fmin y fmax.
 
-* Customize the axes on the amount of ticks and the scale used (possibly by context menu) with an dynamic suggested scale
-* Addition of Custom Rich Dock Widgets to the duetto API and use them on the windows
 * User manage of the height relation  between the two widgets (osc and spec) when are  both visible
 * Fix zoom bug. Mouse move heavy computation
 * Resampling
-* Mejorar el icono: tanto en el programa como en la barra de tareas de windows.
 * Añadir un Control de Volumen para Playback.
-* En los Settings, lograr que se vea el cuadro alrededor del boton que se destaca con el mouse.
 * En escalas temporales con mucho zoom, ajustar la sensibilidad de los cursores para poder medir siempre algun valor y no se quede en 0.
-* Hacer corresponder las ventanas de seleccion temporal de oscilo y espectro en grandes resoluciones temporales.
-* Arreglar identificacion de ejes y numeros. Mostrar numeros "significativos".
-* Normalizar espectrograma.
-* Chequear que cuando se modifique un parametro en una ventana y se cambie temporalmente de ventana, ese valor se mantenga modificado.
-* Si utilizamos cortar, mantener los valores de las escalas de amplitud.
-* En el Pointer cursor hay que presionar para leer la frequencia? En los cursores dejar fijas las posiciones de los parametros que se miden.
-
++ translation of app
 -----------------------------------------------------------
 
 Complexity-3: Large code changes and/or multiple code files tasks
 
-- (Gabi, Carlos) Transformations completion
-- (Gabi, Carlos) Transformation interaction with the main window to select intervals
-* Transformation Tools implementation
++ db support for segments, classification methods and parameters
+* implementation of classification methods (ANN, Decision Trees, KNN)
+* implementation of parameters measurements and locations of measurements
+* improve performance on parameters measurements
++ improve performance on elements visualization
+* include segmentation visual elements to interact with the method
 
 -----------------------------------------------------------
 
 Complexity-4: New Code Design and Infrastructure implementation
 
-- Detector widget implementation.
-- Design Segmentation by polymorphic methods
-- Design Elements detection and parameter measurement
-- Design Classification
-+ Batch window implementation
 
 -------------------------------------------- ---------------

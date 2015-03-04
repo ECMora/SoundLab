@@ -4,7 +4,7 @@ import os
 from PyQt4.QtCore import pyqtSignal, pyqtSlot, Qt
 from PyQt4.QtGui import QAbstractItemView, QFileDialog
 import time
-from Utils.Utils import DECIMAL_PLACES, folder_files as getFolderFiles
+from utils.Utils import DECIMAL_PLACES, folder_files as getFolderFiles
 from duetto.audio_signals.AudioSignalPlayer import AudioSignalPlayer
 from duetto.audio_signals import openSignal
 from graphic_interface.windows.ui_python_files.BrowseFilesWindow import Ui_BrowseFilesWindow

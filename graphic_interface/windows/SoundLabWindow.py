@@ -3,7 +3,7 @@ from PyQt4.QtCore import pyqtSlot
 import PyQt4.QtCore as QtCore
 from PyQt4.QtGui import QActionGroup, QFileDialog
 from PyQt4 import QtGui
-from Utils.Utils import save_image, DECIMAL_PLACES
+from utils.Utils import save_image, DECIMAL_PLACES
 from graphic_interface.Settings.Workspace import Workspace
 from graphic_interface.widgets.signal_visualizer_tools.SignalVisualizerTool import Tools
 

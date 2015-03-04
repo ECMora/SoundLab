@@ -3,7 +3,7 @@ import matplotlib.mlab as mlab
 import numpy as np
 from sound_lab_core.Segmentation.Detectors.OneDimensional.OneDimensionalElementsDetector import \
     OneDimensionalElementsDetector
-from Utils.Utils import fromdB
+from utils.Utils import fromdB
 
 
 class IntervalDetector(OneDimensionalElementsDetector):
@@ -76,9 +76,10 @@ class IntervalDetector(OneDimensionalElementsDetector):
 
         # arr_size = len(xrange(min_size / 2, data.size - min_size / 2, min_size / 2))
         arr_size = ((data.size * 2) / min_size)
+
         detected = np.zeros(arr_size)
         k = min_size / 2
-        progress_rate = arr_size / 10
+        progress_rate = arr_size / 10.0
 
         for i in xrange(1, arr_size):
             detected[i-1] = function(data[(i - 1) * k: i * k])

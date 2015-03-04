@@ -107,4 +107,5 @@ class ClassificationAdapterFactory(AdapterFactory):
     def __init__(self):
         AdapterFactory.__init__(self)
 
-        self.adapters = [(u'Manual',  ManualClassifierAdapter())]
+        self.adapters = [(u'Manual',  ManualClassifierAdapter()),
+                         (u'KNN', KNNClassifierAdapter())]

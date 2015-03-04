@@ -2,9 +2,10 @@
 from PyQt4 import QtGui
 from PyQt4.QtGui import QDialog
 from pyqtgraph.parametertree import Parameter, ParameterTree
+from scipy.stats.distributions import semicircular_gen
 from graphic_interface.windows.ui_python_files.detectElementsDialog import Ui_Dialog
-from Utils.Utils import small_signal
-from sound_lab_core.AdapterFactory import *
+from utils.Utils import small_signal
+from sound_lab_core.AdapterFactories import *
 from sound_lab_core.Clasification.Adapters.ManualClassifierAdapter import ManualClassifierAdapter
 from sound_lab_core.Segmentation.Detectors.ManualDetector import ManualDetector
 
@@ -52,7 +53,6 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         :param classification_adapter: The classification adapter previously selected
         :return:
         """
-        # todo include classification
         parameters_groups = self.param_measurement_tree.children()
 
         # parameters adapters
@@ -66,13 +66,34 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
                         break
 
         # segmentation method
-        for parameter in self.segmentation_classification_tree.param(unicode(self.tr(u'Segmentation'))).children():
+        self._restore_method(segmentation_adapter, self.segmentation_adapter_factory, u'Segmentation')
+
+        # classification method
+        self._restore_method(classification_adapter, self.classification_adapter_factory, u'Classification')
+
+    def _restore_method(self, adapter, adapter_factory, method_name):
+        """
+        Restore the segmentation or classification adpater previously used
+        (user friendly restore of previous values of the dialog)
+        :param adapter: the adapter (segmentation or classification adapter)
+        :param method_name: the method name (one of 'Segmentation', 'Classification')
+        :return:
+        """
+        if not adapter:
+            return
+        self.segmentation_classification_tree.blockSignals(True)
+
+        for parameter in self.segmentation_classification_tree.param(unicode(self.tr(method_name))).children():
             if parameter.type() == u"bool":
                 detector_name = parameter.name()
-                adapter = self.segmentation_adapter_factory.get_adapter(detector_name)
-                if type(adapter) == type(segmentation_adapter):
-                    adapter.restore_settings(segmentation_adapter)
+                adapter = adapter_factory.get_adapter(detector_name)
+                if type(adapter) == type(adapter):
+                    adapter.restore_settings(adapter)
                     parameter.setValue(True)
+                else:
+                    parameter.setValue(False)
+
+        self.segmentation_classification_tree.blockSignals(False)
 
     def create_parameter_trees(self):
         """
@@ -280,15 +301,14 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         """
         :return: The selected detector adapter to perform segmentation
         """
-        self._detector = self._get_adapter(u'Segmentation', self.segmentation_adapter_factory, ManualDetectorAdapter)
-
+        self._detector = self._get_adapter(u'Segmentation', self.segmentation_adapter_factory,
+                                           ManualDetectorAdapter)
         return self._detector
 
     @property
     def classifier(self):
         self._classifier = self._get_adapter(u'Classification', self.classification_adapter_factory,
                                              ManualClassifierAdapter)
-
         return self._classifier
 
     def get_measurer_list(self):

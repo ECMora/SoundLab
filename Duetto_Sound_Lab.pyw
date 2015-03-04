@@ -3,7 +3,7 @@ from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 import os, hashlib
 import sys
-from Utils.Utils import deserialize, WORK_SPACE_FILE_NAME
+from utils.Utils import deserialize, WORK_SPACE_FILE_NAME
 from graphic_interface.Settings.Workspace import Workspace
 from graphic_interface.windows.SoundLabMainWindow import SoundLabMainWindow
 from graphic_interface.windows.PresentationSlogan.presentation import Ui_MainWindow
@@ -78,7 +78,7 @@ def load_app_style(qApp=None, style_file=None):
         print("error loading app style. " + ex.message)
 
 
-def load_language_translations(app=None, translation_file=None):
+def load_language_translations(app=None, translation_file=None, window=None):
     """
     Load the language I18n to an app.
     :param app:  The QApplication to load the language.
@@ -93,7 +93,8 @@ def load_language_translations(app=None, translation_file=None):
             translator = QTranslator()
             if translator.load(translation_file):
                 app.installTranslator(translator)
-
+                if window:
+                    window.retranslateUi(window)
             return
         else:
             locale = QLocale.system().name()
@@ -149,7 +150,7 @@ if __name__ == '__main__':
 
     dmw = SoundLabMainWindow(signal_path=args, workSpace=workSpace)
 
-    # dmw.languageChanged.connect(lambda data: load_language_translations(app, data))
+    dmw.languageChanged.connect(lambda data: load_language_translations(app, data, dmw))
     dmw.styleChanged.connect(lambda data: load_app_style(app, data))
 
     license_checker_timer = QTimer()

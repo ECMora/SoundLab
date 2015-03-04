@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from math import sqrt
-from Utils.Utils import DECIMAL_PLACES
+from utils.Utils import DECIMAL_PLACES
 from sound_lab_core.ParametersMeasurement.ParameterMeasurer import ParameterMeasurer
 
 

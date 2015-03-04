@@ -24,10 +24,13 @@ class WatershedDetector(OneDimensionalElementsDetector):
     @signal.setter
     def signal(self, new_signal):
         self._signal = new_signal
-        self.spec = Spectrogram(new_signal, 512, 500, WindowFunction.Hamming)
-        self.spec.recomputeSpectrogram()
+        if new_signal:
+            self.spec = Spectrogram(new_signal, 512, 500, WindowFunction.Hamming)
+            self.spec.recomputeSpectrogram()
 
     def detect(self, indexFrom=0, indexTo=-1):
+        if not self.signal:
+            return []
         indexTo = self.signal.length if indexTo == -1 else indexTo
 
         min_size_x = int(self.min_size_ms * self.signal.samplingRate / 1000.0)

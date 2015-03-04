@@ -247,7 +247,7 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         # add the new window to the current opened windows
         self.two_dim_windows.append(wnd)
 
-    def clearTwoDimensionalWindows(self):
+    def clear_two_dim_windows(self):
         """
         Close the two dimensional windows and clear the list of two dim windows
         :return:
@@ -283,7 +283,7 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
                 wb = xlwt.Workbook()
                 ws = wb.add_sheet("Elements Measurements")
-                self.writeData(ws, self.tableParameterOscilogram)
+                self.write_data(ws, self.tableParameterOscilogram)
                 wb.save(file_name)
 
             except Exception as ex:
@@ -312,7 +312,7 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
                 self.widget.save(file_name)
                 self.widget.signalFilePath = file_name
 
-    def setSignalFile(self, file_path=''):
+    def set_signal_file(self, file_path=''):
         """
         Update the data of the current signal file path origin in the widget
         (if any)
@@ -321,7 +321,7 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         """
         self.widget.signalFilePath = file_path
 
-    def writeData(self, ws, tableParameter):
+    def write_data(self, ws, tableParameter):
         """
         Write the data from the table into an excel file stylesheet.
         :param ws:WorkSheet object from xwlt module for interacts with excell files.
@@ -388,7 +388,7 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
                 # get the file name to save the meditions
                 self.on_actionMeditions_triggered()
 
-            self.clearTwoDimensionalWindows()
+            self.clear_two_dim_windows()
 
     # endregion
 

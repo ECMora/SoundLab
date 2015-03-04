@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from Utils.db.DB_ORM import DB, Parameter
+from utils.db.DB_ORM import DB, Parameter
 from sound_lab_core.ParametersMeasurement.Adapters.ParameterAdapter import ParameterAdapter
 from sound_lab_core.ParametersMeasurement.TimeParameters.DurationTimeParameter import DurationTimeParameter
 

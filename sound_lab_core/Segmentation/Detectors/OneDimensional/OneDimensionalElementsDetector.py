@@ -31,24 +31,19 @@ class OneDimensionalElementsDetector(ElementsDetector):
         if elements_array is None or len(elements_array) == 0:
             return []
 
-        change = True
-        while change:
-            change = False
-            current = elements_array[0]
-            result = []
+        result = [elements_array[0]]
 
-            for t in elements_array[1:]:
+        for t in elements_array[1:]:
+            while len(result) > 0:
+                current = result.pop()
                 if (t[0] - current[1]) * 100.0 / (t[1] - current[0]) < distance_factor:
-                    current = (current[0], t[1])
-                    change = True
+                    t = (current[0], t[1])
                 else:
                     result.append(current)
-                    current = t
+                    break
+            result.append(t)
 
-            result.append(current)
-            elements_array = result
-
-        return elements_array
+        return result
 
     def localMax(self, data, threshold=0, positives=None):
         """

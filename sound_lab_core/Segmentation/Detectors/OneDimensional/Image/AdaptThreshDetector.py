@@ -24,8 +24,9 @@ class AdaptThreshDetector(OneDimensionalElementsDetector):
     @signal.setter
     def signal(self, new_signal):
         self._signal = new_signal
-        self.spec = Spectrogram(new_signal, 512, 500, WindowFunction.Hamming)
-        self.spec.recomputeSpectrogram()
+        if new_signal:
+            self.spec = Spectrogram(new_signal, 512, 500, WindowFunction.Hamming)
+            self.spec.recomputeSpectrogram()
 
     def detect(self, indexFrom=0, indexTo=-1):
         indexTo = self.signal.length if indexTo == -1 else indexTo
@@ -50,6 +51,8 @@ class AdaptThreshDetector(OneDimensionalElementsDetector):
 
     def detect_elements(self,data, min_size_x, min_size_y):
         elems = []
+        if not self.signal:
+            return elems
         try:
             img = self.spec.matriz
             img = np.power(10, img/10.0)

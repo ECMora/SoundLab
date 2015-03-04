@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from Utils.Utils import DECIMAL_PLACES
+from utils.Utils import DECIMAL_PLACES
 from matplotlib import mlab
 import numpy as np
 from scipy.ndimage import label

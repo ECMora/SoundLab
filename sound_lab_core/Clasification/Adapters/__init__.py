@@ -1,2 +1,3 @@
 from ManualClassifierAdapter import ManualClassifierAdapter
+from KNNClassifierAdapter import KNNClassifierAdapter
 

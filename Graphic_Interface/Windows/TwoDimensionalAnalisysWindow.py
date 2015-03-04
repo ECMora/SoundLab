@@ -6,7 +6,7 @@ import numpy
 from pyqtgraph.parametertree import Parameter, ParameterTree
 import pyqtgraph as pg
 from PyQt4 import QtGui, QtCore
-from Utils.Utils import save_image
+from utils.Utils import save_image
 from graphic_interface.dialogs.ManualClassificationDialog import ManualClassificationDialog
 from graphic_interface.windows.ui_python_files.Two_Dimensional_AnalisysWindowUI import Ui_TwoDimensionalWindow
 
