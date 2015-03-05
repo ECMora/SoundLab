@@ -160,25 +160,25 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         """
         self.deselect_element()
 
-        # removes the old combo with the old measurements
-        # the x axis old measurements
+        # removes the old combo with the old parameters
+        # the x axis old parameters
         self.ParamTree.param(unicode(self.tr(u'X Axis Parameter Settings'))).removeChild(
             self.ParamTree.param(unicode(self.tr(u'X Axis Parameter Settings'))).
             param(unicode(self.tr(u'X Axis'))))
 
-        # the y axis old measurements
+        # the y axis old parameters
         self.ParamTree.param(unicode(self.tr(u'Y Axis Parameter Settings'))).removeChild(
             self.ParamTree.param(unicode(self.tr(u'Y Axis Parameter Settings'))).
             param(unicode(self.tr(u'Y Axis'))))
 
-        # create the new combo for the new measurements
-        # the x axis new measurements
+        # create the new combo for the new parameters
+        # the x axis new parameters
         self.ParamTree.param(unicode(self.tr(u'X Axis Parameter Settings'))).addChild(
             Parameter.create(**{u'name': unicode(self.tr(u'X Axis')), u'type': u'list', u'value': 0,
                                 u'default': 0, u'values':
                                 [(name, i) for i, name in enumerate(segment_manager.parameterColumnNames)]}))
 
-        # the y axis new measurements
+        # the y axis new parameters
         self.ParamTree.param(unicode(self.tr(u'Y Axis Parameter Settings'))).addChild(
             Parameter.create(**{u'name': unicode(self.tr(u'Y Axis')), u'type': u'list', u'value': 0,
                                 u'default': 0, u'values':

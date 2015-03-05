@@ -11,6 +11,7 @@ class EffectWindow(QGraphicsView):
         self.setWindowFlags(Qt.SplashScreen)
         self.scene = QGraphicsScene(self)
 
+        self.timer = LimitedTimer(self)
         self.setWindowOpacity(0)
         self.setScene(self.scene)
         if back_image is not None:
@@ -32,10 +33,9 @@ class EffectWindow(QGraphicsView):
         def _blink():
             self.setWindowOpacity(1 - self.windowOpacity())
 
-        timer = LimitedTimer(self)
-        timer.setInterval(time_interval)
-        timer.timeout.connect(_blink)
-        timer.start_limited(time_interval, time_limit / time_interval)
+        self.timer.setInterval(time_interval)
+        self.timer.timeout.connect(_blink)
+        self.timer.start_limited(time_interval, time_limit / time_interval)
         return self
 
     def fade(self, time=1500, out=True):
@@ -44,9 +44,8 @@ class EffectWindow(QGraphicsView):
         :param out: fade out or in. out by default
        """
         self.setWindowOpacity(1 if out else 0)
-        timer = LimitedTimer(self)
-        timer.timeout.connect(lambda: self.setWindowOpacity(self.windowOpacity() + -0.01 if out else 0.01))
-        timer.start_limited(time / 100.0, 100)
+        self.timer.timeout.connect(lambda: self.setWindowOpacity(self.windowOpacity() + -0.01 if out else 0.01))
+        self.timer.start_limited(time / 100.0, 100)
         return self
 
     def vibrate(self, time_limit=1000):

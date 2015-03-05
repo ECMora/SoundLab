@@ -16,5 +16,5 @@ class PeakFreqParameterAdapter(SoundLabAdapter):
     def get_instance(self):
         return PeakFreqParameter()
 
-    def get_visual_item(self):
-        return AverageFreqVisualItem(QtGui.QColor(255, 50, 50, 255), tooltip=self.tr(u"Peak Freq"))
+    def get_visual_items(self):
+        return [AverageFreqVisualItem(QtGui.QColor(255, 50, 50, 255), tooltip=self.tr(u"Peak Freq"))]

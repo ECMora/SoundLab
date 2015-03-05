@@ -15,5 +15,5 @@ class PeakToPeakParameterAdapter(ParameterAdapter):
     def get_instance(self):
         return PeakToPeakParameter()
 
-    def get_visual_item(self):
-        return PeakToPeakVisualItem()
+    def get_visual_items(self):
+        return [PeakToPeakVisualItem()]

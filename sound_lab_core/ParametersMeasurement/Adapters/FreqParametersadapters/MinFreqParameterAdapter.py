@@ -18,6 +18,6 @@ class MinFreqParameterAdapter(FreqParameterAdapter):
         self.compute_settings()
         return MinFreqParameter(threshold=self.threshold,total=self.total)
 
-    def get_visual_item(self):
-        return AverageFreqVisualItem(tooltip=self.tr(u"Min Freq") + u" at " + unicode(self.threshold) + u"dB->")
+    def get_visual_items(self):
+        return [AverageFreqVisualItem(tooltip=self.tr(u"Min Freq") + u" at " + unicode(self.threshold) + u"dB->")]
 

@@ -8,5 +8,5 @@ class Classifier:
     def __init__(self, name=""):
         self.name = name
 
-    def classify(self, segment, param_vector):
+    def classify(self, segment):
         pass

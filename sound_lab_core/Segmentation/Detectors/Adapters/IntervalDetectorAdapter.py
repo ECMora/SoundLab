@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from sound_lab_core.Segmentation.Detectors.OneDimensional.IntervalMethods.IntervalRmsDetector import IntervalRmsDetector
 from sound_lab_core.SoundLabAdapter import SoundLabAdapter
 from pyqtgraph.parametertree import Parameter
 
@@ -30,7 +29,7 @@ class IntervalDetectorAdapter(SoundLabAdapter):
         """
         return self.settings
 
-    def get_instance(self, signal):
+    def update_instance_variables(self):
         """
         Gets a new get_instance of the corresponding parameter measurement.
         :return: A new get_instance of the corresponding parameter measurement class
@@ -48,8 +47,6 @@ class IntervalDetectorAdapter(SoundLabAdapter):
         self.threshold_dB = threshold
         self.min_size_ms = min_size
         self.merge_factor = merge_factor
-
-        return IntervalRmsDetector(signal, self.threshold_dB, self.min_size_ms,self.merge_factor)
 
     def restore_settings(self, adapter_copy):
         if not isinstance(adapter_copy, SoundLabAdapter) or \

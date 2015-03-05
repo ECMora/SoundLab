@@ -41,13 +41,13 @@ class SoundLabAdapter(QObject):
         """
         return None
 
-    def get_visual_item(self):
+    def get_visual_items(self):
         """
-        The instance of the visual item to include in the visual widgets
+        The list of the visual items to include in the visual widgets
         to visualize the Object instance (if any)
         :return:
         """
-        return None
+        return []
 
     def restore_settings(self, adapter_copy):
         """

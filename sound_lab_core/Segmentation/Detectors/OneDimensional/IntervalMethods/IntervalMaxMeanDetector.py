@@ -1,5 +1,3 @@
-from math import sqrt
-import numpy as np
 from sound_lab_core.Segmentation.Detectors.OneDimensional.IntervalMethods.IntervalDetector import IntervalDetector
 
 

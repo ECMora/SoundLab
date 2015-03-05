@@ -17,7 +17,7 @@ class VisualElement(QObject):
     # endregion
 
     # region CONSTANTS
-    #  decimal places to round the measurements
+    #  decimal places to round the parameters
     DECIMAL_PLACES = 4
 
     # the font size for text labels

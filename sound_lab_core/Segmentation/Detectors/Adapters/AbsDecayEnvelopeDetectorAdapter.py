@@ -3,6 +3,7 @@ from sound_lab_core.Segmentation.Detectors.OneDimensional.EnvelopeMethods.AbsDec
     AbsDecayEnvelopeDetector
 from sound_lab_core.SoundLabAdapter import SoundLabAdapter
 from pyqtgraph.parametertree import Parameter
+import pyqtgraph as pg
 
 
 class AbsDecayEnvelopeDetectorAdapter(SoundLabAdapter):
@@ -78,4 +79,8 @@ class AbsDecayEnvelopeDetectorAdapter(SoundLabAdapter):
         self.settings.param(unicode(self.tr(u'Decay (ms)'))).setValue(adapter_copy.decay_ms)
         self.settings.param(unicode(self.tr(u'Soft Factor'))).setValue(adapter_copy.soft_factor)
         self.settings.param(unicode(self.tr(u'Merge Factor (%)'))).setValue(adapter_copy.merge_factor)
+
+    def get_visual_items(self):
+        return []
+
 

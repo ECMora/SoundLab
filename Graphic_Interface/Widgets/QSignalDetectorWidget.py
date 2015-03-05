@@ -41,6 +41,9 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         # visibility of all detected elements used when they are displayed
         self.visibleElements = True
 
+        # the visual items for segmentation
+        self.segmentation_visual_items = []
+
         # list of detected sound lab elements.
         self._elements = []
 
@@ -103,6 +106,14 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         widget_scene_width = self.axesOscilogram.viewRect().width()
         widget_pixel_width = self.axesOscilogram.width() * 1.0
 
+        # heuristic for the amount of visible elements
+        if len(elements) * 1.0 / self.width() > 1:
+            # more elements that pixels
+            self.MIN_ELEMENT_WIDTH_PIXELS = 2
+        else:
+            # less elements that pixels
+            self.MIN_ELEMENT_WIDTH_PIXELS = 1
+
         elements = [e for e in elements if
                     (e.indexTo - e.indexFrom) * widget_pixel_width /
                     widget_scene_width > self.MIN_ELEMENT_WIDTH_PIXELS]
@@ -121,6 +132,12 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
                 for item, visible in elements[i].spectral_element.visual_widgets():
                     if visible:
                         self.axesSpecgram.viewBox.addItem(item)
+
+        # visualize the segmentation items
+        if self.visibleOscilogram and osc:
+            for item, visible in self.segmentation_visual_items:
+                if visible:
+                    self.axesOscilogram.addItem(item)
 
         self.axesSpecgram.update()
         self.axesOscilogram.update()
@@ -188,16 +205,18 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         if update:
             self.draw_elements()
 
-    def add_visual_item(self, element_index, parameter_item):
+    def add_visual_items(self, element_index, parameter_items):
         """
         Add a new visual item of a parameter measurement.
         :param element_index: the index of the segment measured
-        :param parameter_item: the parameter item to visualize
+        :param parameter_items: the list of parameter items to visualize
         :return:
         """
         if not 0 <= element_index < len(self.elements):
             return
-        self.elements[element_index].add_visual_item(parameter_item)
+        for item in parameter_items:
+            self.elements[element_index].add_visual_item(item)
+
         # todo add into the widgets
         self.update()
 
@@ -208,7 +227,17 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         :param items: the visual items of segmentation
         :return:
         """
-        pass
+        # visualize the segmentation items
+
+        for item, visible in self.segmentation_visual_items:
+            self.axesOscilogram.removeItem(item)
+
+        self.segmentation_visual_items = [(item,True) for item in items]
+
+        if self.visibleOscilogram:
+            for item, visible in self.segmentation_visual_items:
+                if visible:
+                    self.axesOscilogram.addItem(item)
 
     # endregion
 
@@ -243,7 +272,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
             # move the interval to make completely visible the element selected
             self.mainCursor.min = max(0, index_from - interval_size/2)
             self.mainCursor.max = min(self.signal.length, index_to + interval_size/2)
-            self.graph_elements()
+            self.graph()
 
     def deselect_element(self):
         """
@@ -337,7 +366,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         for i, x in enumerate(self.elements):
             x.setNumber(i + 1)
 
-        self.update()
+        self.repaint()
 
         return indexFrom, indexTo - 1
 

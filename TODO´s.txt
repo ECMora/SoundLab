@@ -34,8 +34,8 @@ Complexity-3: Large code changes and/or multiple code files tasks
 
 + db support for segments, classification methods and parameters
 * implementation of classification methods (ANN, Decision Trees, KNN)
-* implementation of parameters measurements and locations of measurements
-* improve performance on parameters measurements
+* implementation of parameters parameters and locations of parameters
+* improve performance on parameters parameters
 + improve performance on elements visualization
 * include segmentation visual elements to interact with the method
 

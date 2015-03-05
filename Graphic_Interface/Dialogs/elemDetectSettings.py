@@ -65,6 +65,22 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
                         adapter.restore_settings(p)
                         break
 
+        # for parameter in self.segmentation_classification_tree.param(unicode(self.tr(u'Segmentation'))).children():
+        #     if parameter.type() == u"bool":
+        #         detector_name = parameter.name()
+        #         adapter = self.segmentation_adapter_factory.get_adapter(detector_name)
+        #         if type(adapter) == type(segmentation_adapter):
+        #             adapter.restore_settings(segmentation_adapter)
+        #             parameter.setValue(True)
+
+        # for parameter in self.segmentation_classification_tree.param(unicode(self.tr(u'Classification'))).children():
+        #     if parameter.type() == u"bool":
+        #         classifier_name = parameter.name()
+        #         adapter = self.classification_adapter_factory.get_adapter(classifier_name)
+        #         if type(adapter) == type(classification_adapter):
+        #             adapter.restore_settings(classification_adapter)
+        #             parameter.setValue(True)
+
         # segmentation method
         self._restore_method(segmentation_adapter, self.segmentation_adapter_factory, u'Segmentation')
 
@@ -81,25 +97,20 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         """
         if not adapter:
             return
-        self.segmentation_classification_tree.blockSignals(True)
 
         for parameter in self.segmentation_classification_tree.param(unicode(self.tr(method_name))).children():
             if parameter.type() == u"bool":
-                detector_name = parameter.name()
-                adapter = adapter_factory.get_adapter(detector_name)
-                if type(adapter) == type(adapter):
-                    adapter.restore_settings(adapter)
+                adapter_name = parameter.name()
+                method_adapter = adapter_factory.get_adapter(adapter_name)
+                if type(adapter) == type(method_adapter):
+                    method_adapter.restore_settings(adapter)
                     parameter.setValue(True)
-                else:
-                    parameter.setValue(False)
-
-        self.segmentation_classification_tree.blockSignals(False)
 
     def create_parameter_trees(self):
         """
         Create the ParameterTree with the options of the dialog.
         The ParameterTree contains the combo box of
-        the active parameters measurements and to select.
+        the active parameters parameters and to select.
         :return:
         """
         self.create_segmentation_classification_param_tree()
@@ -140,11 +151,13 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
 
         self.segmentation_classification_tree.param(unicode(self.tr(u'Segmentation'))). \
             sigTreeStateChanged.connect(lambda param, changes:
-                                        self.segmentation_classification_changed(param, changes, u'Segmentation'))
+                                        self.segmentation_classification_changed(param, changes, u'Segmentation',
+                                                                                 self.segmentation_adapter_factory))
 
         self.segmentation_classification_tree.param(unicode(self.tr(u'Classification'))). \
             sigTreeStateChanged.connect(lambda param, changes:
-                                        self.segmentation_classification_changed(param, changes, u'Classification'))
+                                        self.segmentation_classification_changed(param, changes, u'Classification',
+                                                                                 self.classification_adapter_factory))
 
         # create and set initial properties
         self.segmentation_classification_tree_widget.setAutoScroll(True)
@@ -200,7 +213,7 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         layout2.addWidget(self.parameter_tree_widget)
         self.parameter_measurement_settings.setLayout(layout2)
 
-    def segmentation_classification_changed(self, param, changes, param_tree_name):
+    def segmentation_classification_changed(self, param, changes, param_tree_name, adapter_factory):
         """
         Process a change into the parameter tree of segmentation
         :param param:
@@ -216,13 +229,12 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
             # if the value is bool then is the selection of the segmentation or classification method
             # if the change came from the segmentation or classification method settings
             # then continue (each method would take care about it's settings)
-            # todo include the classification
             if isinstance(value, bool) and value and\
                 parameter not in self.segmentation_classification_tree.param(unicode(self.tr(param_tree_name))). \
                     param(unicode(self.tr(u'Method Settings'))).children():
                 try:
                     # the parameter changed is has the method name
-                    adapter = self.segmentation_adapter_factory.get_adapter(parameter.name())
+                    adapter = adapter_factory.get_adapter(parameter.name())
 
                     # change the method settings if any (Parameter tree interface of adapter)
                     param_settings = self.segmentation_classification_tree.param(
@@ -335,6 +347,11 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         approximation of the detection algorithm
         :return:
         """
+
         detector = self.detector.get_instance(self.widget.signal)
+        visual_items = self.detector.get_visual_items()
+
         self.widget.elements = detector.detect()
+        self.widget.add_segmentation_items(visual_items)
+
         self.widget.graph()

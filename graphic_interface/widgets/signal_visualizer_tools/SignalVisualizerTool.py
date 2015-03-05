@@ -46,7 +46,7 @@ class SignalVisualizerTool(QtCore.QObject):
     # action with a mouse cursor. Is used to reduce the unnecessary gui widget refresh
     PIXELS_OF_CURSORS_CHANGES = 5
 
-    # The decimal places to round the numerical measurements made by the tool
+    # The decimal places to round the numerical parameters made by the tool
     DECIMAL_PLACES = 2
 
     # endregion

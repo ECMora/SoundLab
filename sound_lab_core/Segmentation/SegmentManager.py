@@ -12,12 +12,12 @@ class SegmentManager(QObject):
 
     # region SIGNALS
 
-    # signal raised when the measurements of the segments change
+    # signal raised when the parameters of the segments change
     measurementsChanged = pyqtSignal()
 
     # signal raised when a parameter is measured on a segment
-    # raise the segment index and the visual item associated
-    segmentVisualItemAdded = pyqtSignal(int, object)
+    # raise the segment index and the list of visual items associated
+    segmentVisualItemAdded = pyqtSignal(int, list)
 
     # signal raised while detection is been made. Raise the percent of detection progress.
     detectionProgressChanged = pyqtSignal(int)
@@ -53,7 +53,7 @@ class SegmentManager(QObject):
         # has dimensions len(Elements) * len(_measurerList)
         self.measuredParameters = np.array([])
 
-        # stores the classification data that are present in the table of measurements
+        # stores the classification data that are present in the table of parameters
         # list of ClassificationData
         self.classificationTableData = []
 
@@ -103,7 +103,7 @@ class SegmentManager(QObject):
         measured parameters
         :return:
         """
-        # clear the measurements
+        # clear the parameters
         rows = len(self.elements)
         cols = len(self.measurerList)
 
@@ -197,7 +197,7 @@ class SegmentManager(QObject):
         for i in indexes_list:
             self.update_classification_visual_item(i, classification)
             self.classificationTableData[i] = classification
-            self.save_identification_on_db(i, classification)
+            self.add_identification_on_db(i, classification)
 
         self.measurementsChanged.emit()
 
@@ -209,15 +209,22 @@ class SegmentManager(QObject):
         # get the classification parameters and classifier
         classifier = self.classifier_adapter.get_instance()
 
+        # get the classification parameters and method
+        classifier = classifier if classifier is not None else self.classifier_adapter.get_instance()
+        classifier.parameters = self.measurerList
+
         # classify each element
         for i in xrange(len(self.elements)):
+            # parameter adapter, value
             parameter_vector = [(x, self.measuredParameters[i, j]) for j, x in enumerate(self.measurerList)]
             self._classify_element(element_index=i, classifier=classifier,
                                    parameter_vector=parameter_vector)
 
+        self.db_session.commit()
+
         self.measurementsChanged.emit()
 
-    def _classify_element(self, element_index, classifier=None, parameter_vector=None):
+    def _classify_element(self, element_index, classifier, parameter_vector):
         """
         Helper method that classify a single element.
         :param element_index: The index of the element to classify
@@ -226,25 +233,37 @@ class SegmentManager(QObject):
         (If None the vector would be computed)
         :return:
         """
-        # get the classification parameters and method
-        classifier = classifier if classifier is not None else self.classifier_adapter.get_instance()
-        parameter_vector = parameter_vector if parameter_vector is not None else []
 
-        # classify
         classification_value = classifier.classify(self.elements[element_index], parameter_vector)
         self.classificationTableData[element_index] = classification_value
 
         # save on db
-        self.save_identification_on_db(element_index, classification_value)
+        self.add_identification_on_db(element_index, classification_value)
 
+        # update visualization
         self.update_classification_visual_item(element_index, classification_value)
 
     def update_classification_visual_item(self, element_index, classification_value):
         # update the visualization
-        visual_item = self.classifier_adapter.get_visual_item()
+        self.update_elements_visual_items(self.classifier_adapter, element_index, classification_value)
+        visual_item = self.classifier_adapter.get_visual_items()
         if visual_item:
             visual_item.set_data(self.signal, self.elements[element_index], classification_value)
             self.segmentVisualItemAdded.emit(element_index, visual_item)
+
+    def update_elements_visual_items(self, adapter, element_index, value):
+        """
+        Method that raises the signal segmentVisualItemAdded
+        with the according visual items founded for an specific
+        detected element.
+        :return:
+        """
+        visual_items = adapter.get_visual_items()
+        if visual_items:
+            for item in visual_items:
+                item.set_data(self.signal, self.elements[element_index], value)
+
+            self.segmentVisualItemAdded.emit(element_index, visual_items)
 
     # endregion
 
@@ -353,7 +372,7 @@ class SegmentManager(QObject):
         """
         Measure the list of parameters over the element supplied
         :param element: The element to measure
-        :param index: The element index on the table of measurements
+        :param index: The element index on the table of parameters
         :return:
         """
         if not 0 <= index < self.rowCount:
@@ -366,26 +385,27 @@ class SegmentManager(QObject):
                 self.measuredParameters[index, j] = measure_method.measure(element)
 
                 # raise the parameter visual item if any
-                visual_item = parameter_adapter.get_visual_item()
-                if visual_item:
-                    visual_item.set_data(self.signal, self.elements[index], self.measuredParameters[index, j])
-                    self.segmentVisualItemAdded.emit(index, visual_item)
+                self.update_elements_visual_items(parameter_adapter, index, self.measuredParameters[index, j])
 
                 # try to store the parameter measurement on db
-                self.save_measurement_on_db(self.segments_db_objects[index],
+                self.add_measurement_on_db(self.segments_db_objects[index],
                                             parameter_adapter.get_db_orm_mapper(),
                                             self.measuredParameters[index, j])
             except Exception as e:
                 # if some error is raised set a default value
                 self.measuredParameters[index, j] = 0
                 print("Error measure params " + e.message)
+
+        self.db_session.commit()
+
     # endregion
 
     # region DB interaction
 
-    def save_measurement_on_db(self, segment, parameter, value):
+    def add_measurement_on_db(self, segment, parameter, value):
         """
-        Store on db the measurment of a parameter over a segmen
+        adds to the db the measurement of a parameter over a segment.
+        Must be called commit after to make persistent the changes
         :param segment:
         :param parameter:
         :param value:
@@ -397,12 +417,18 @@ class SegmentManager(QObject):
             measure = Measurement(segment_id=segment.segment_id, parameter_id=parameter.parameter_id, value=value)
 
             self.db_session.add(measure)
-            self.db_session.commit()
 
         except Exception as ex:
             print("db connection error. " + ex.message)
 
-    def save_identification_on_db(self, element_index, classification):
+    def add_identification_on_db(self, element_index, classification):
+        """
+        Adds the identification of a segment in the database.
+        Must call commit after to make persistent the changes
+        :param element_index:
+        :param classification:
+        :return:
+        """
         if not 0 <= element_index < len(self.elements):
             raise Exception()
         try:
@@ -412,8 +438,6 @@ class SegmentManager(QObject):
                 self.segments_db_objects[element_index].genus = classification.genus
             elif classification.family:
                 self.segments_db_objects[element_index].family = classification.family
-
-            self.db_session.commit()
 
         except Exception as ex:
             print("db connection error. " + ex.message)

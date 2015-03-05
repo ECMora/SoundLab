@@ -178,11 +178,11 @@ class Measurement(Base):
     measurement_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
 
     parameter_id = Column(Integer, ForeignKey('Parameter.parameter_id'), nullable=False)
-    # parameter = relationship(Parameter, backref='measurements', uselist=True
+    # parameter = relationship(Parameter, backref='parameters', uselist=True
     #                          ,cascade='delete, all')
 
     segment_id = Column(Integer, ForeignKey('Segment.segment_id'), nullable=False)
-    # segment = relationship(Segment, backref='measurements', uselist=True,
+    # segment = relationship(Segment, backref='parameters', uselist=True,
     #                        cascade='delete, all')
 
     value = Column(Float(), nullable=False, default=0)

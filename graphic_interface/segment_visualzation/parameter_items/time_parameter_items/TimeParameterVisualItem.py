@@ -4,7 +4,7 @@ from graphic_interface.segment_visualzation.parameter_items.VisualItemWrapper im
 
 class TimeVisualItemWrapper(VisualItemWrapper):
     """
-    Represents the visual parameter items for time measurements (oscilogram)
+    Represents the visual parameter items for time parameters (oscilogram)
     """
 
     def __init__(self, index_from=0, index_to=0):

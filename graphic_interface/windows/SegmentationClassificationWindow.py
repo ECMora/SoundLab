@@ -25,7 +25,7 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
     Provides a table for visualization of segment and measures,
     A two dimensional window to graph two measured params. One for each axis.
     Options for selection and visualization of segments
-    Provides options for save the measurements to excel.
+    Provides options for save the parameters to excel.
     """
 
     # region CONSTANTS
@@ -62,6 +62,8 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
         # the window to present user friendly messages
         self.effect_window = EffectWindow(parent=self)
+        # in a invisible position by default
+        self.effect_window.move(QPoint(-100, -100))
 
         # the segmentation window do not allow to record a signal
         self.actionRecord.setEnabled(False)
@@ -69,7 +71,7 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         # the object that handles the measuring of parameters and manage the segments
         self.segmentManager = SegmentManager()
         self.segmentManager.measurementsChanged.connect(lambda: self.update_parameter_table())
-        self.segmentManager.segmentVisualItemAdded.connect(self.widget.add_visual_item)
+        self.segmentManager.segmentVisualItemAdded.connect(self.widget.add_visual_items)
 
         # set the signal to the widget
         self.widget.signal = signal
@@ -165,7 +167,7 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
                 self.actionSpectogram,
                 separator,
 
-                # measurements manipulation actions
+                # parameters manipulation actions
                 self.actionMeditions,
                 self.actionView_Parameters,
                 self.actionAddElement,
@@ -272,7 +274,7 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         :param table: The table with the parameter to save into excel
         :return:
         """
-        file_name = unicode(QFileDialog.getSaveFileName(self, self.tr(u"Save measurements as excel file"),
+        file_name = unicode(QFileDialog.getSaveFileName(self, self.tr(u"Save parameters as excel file"),
                                                         os.path.join(self.workSpace.lastOpenedFolder,
                                                                      str(self.widget.signalName) + ".xls"), "*.xls"))
 
@@ -368,7 +370,7 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         """
 
         mbox = QMessageBox(QMessageBox.Question, self.tr(u"Save meditions"),
-                           self.tr(u"Do you want to save the measurements of " + unicode(self.widget.signalName)),
+                           self.tr(u"Do you want to save the parameters of " + unicode(self.widget.signalName)),
                            QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel, self)
 
         # if there is a measurement made and parameters measured that could be saved
@@ -462,7 +464,7 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         :param column: parameter provided to reuse this method as callback of
         the event selected cell in the QTableWidget. Useless in this application context.
         """
-        # select the element in the table of measurements
+        # select the element in the table of parameters
         self.tableParameterOscilogram.selectRow(element_index)
 
         # in the widget...
@@ -590,8 +592,9 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
         try:
             if elementsDetectorDialog.exec_():
+                elementsDetectorDialog.setVisible(False)
                 # the detection dialog is a factory of segmentation,
-                # parameter measurements and classification concrete implementations
+                # parameter parameters and classification concrete implementations
 
                 # get the detector from dialog selection
                 self.segmentManager.detector_adapter = elementsDetectorDialog.detector
@@ -602,7 +605,7 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
                 self.set_progress_bar_visibility(True)
 
                 # set the detection as the 50% of the segmentation,
-                # parameter measurements and classification time
+                # parameter parameters and classification time
                 self.segmentManager.detectionProgressChanged.connect(
                     lambda x: self.update_detection_progress_bar(x * 0.5))
 
