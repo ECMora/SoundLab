@@ -7,6 +7,7 @@ from utils.Utils import deserialize, WORK_SPACE_FILE_NAME
 from graphic_interface.Settings.Workspace import Workspace
 from graphic_interface.windows.SoundLabMainWindow import SoundLabMainWindow
 from graphic_interface.windows.PresentationSlogan.presentation import Ui_MainWindow
+from utils.db.DB_ORM import clean_db
 
 invalid_license_message = " Valid duetto Sound Lab license is missing or trial period is over.\n" + \
                           " If you have a valid license try to open the application again, otherwise" + \
@@ -137,6 +138,11 @@ if __name__ == '__main__':
 
     workspace_path = os.path.join("Utils", WORK_SPACE_FILE_NAME)
     workSpace = None
+    try:
+        clean_db()
+
+    except Exception as ex:
+        print("Error cleaning the db. " + ex.message)
 
     if os.path.exists(workspace_path):
         workSpace = deserialize(workspace_path)

@@ -19,16 +19,12 @@ class ParameterAdapter(SoundLabAdapter):
         :return:
         """
         # get the db object mapper
-
         try:
             db_session = DB.db_session()
             parameter_name = self.get_instance().name
-            parameters_list = db_session.query(Parameter).filter(Parameter.name == parameter_name).all()
-            if db_session:
-                self.db_mapper = parameters_list[0]
+            for param in db_session.query(Parameter).filter(Parameter.name == parameter_name).all():
+                return param
 
         except Exception as ex:
-            print("db connection error. " + ex.message)
-            self.db_mapper = None
-
-        return self.db_mapper
+            print("db connection error. Parameter" + ex.message)
+            return None

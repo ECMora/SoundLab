@@ -42,7 +42,10 @@ class ClassificationData:
         else:
             self.family = family
 
-        if self.specie != specie or self.family != family or self.genus != genus:
+        if self.specie != specie or \
+           (family is not None and self.family != family) or \
+           (genus is not None and self.genus != genus):
+
             raise Exception("Invalid arguments. The relationship between the classification taxonomy is incorrect")
 
     def get_image(self):

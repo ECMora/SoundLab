@@ -199,6 +199,7 @@ class SegmentManager(QObject):
             self.classificationTableData[i] = classification
             self.add_identification_on_db(i, classification)
 
+        self.db_session.commit()
         self.measurementsChanged.emit()
 
     def classify_elements(self):
@@ -216,7 +217,7 @@ class SegmentManager(QObject):
         # classify each element
         for i in xrange(len(self.elements)):
             # parameter adapter, value
-            parameter_vector = [(x, self.measuredParameters[i, j]) for j, x in enumerate(self.measurerList)]
+            parameter_vector = [self.measuredParameters[i, j] for j, x in enumerate(self.measurerList)]
             self._classify_element(element_index=i, classifier=classifier,
                                    parameter_vector=parameter_vector)
 
@@ -224,7 +225,7 @@ class SegmentManager(QObject):
 
         self.measurementsChanged.emit()
 
-    def _classify_element(self, element_index, classifier, parameter_vector):
+    def _classify_element(self, element_index, classifier=None, parameter_vector=None, commit_changes=False):
         """
         Helper method that classify a single element.
         :param element_index: The index of the element to classify
@@ -233,6 +234,9 @@ class SegmentManager(QObject):
         (If None the vector would be computed)
         :return:
         """
+        classifier = classifier if classifier is not None else self.classifier_adapter.get_instance()
+        parameter_vector = parameter_vector if parameter_vector is not None else \
+            [self.measuredParameters[element_index, j] for j in xrange(len(self.measurerList))]
 
         classification_value = classifier.classify(self.elements[element_index], parameter_vector)
         self.classificationTableData[element_index] = classification_value
@@ -242,6 +246,9 @@ class SegmentManager(QObject):
 
         # update visualization
         self.update_classification_visual_item(element_index, classification_value)
+
+        if commit_changes:
+            self.db_session.commit()
 
     def update_classification_visual_item(self, element_index, classification_value):
         # update the visualization
@@ -316,7 +323,7 @@ class SegmentManager(QObject):
                                                       self.measuredParameters[index:]))
 
             self.classificationTableData.insert(index, None)
-            self._classify_element(index)
+            self._classify_element(index, commit_changes=True)
 
             self.elements.insert(index, element)
 
@@ -327,7 +334,7 @@ class SegmentManager(QObject):
             self.segments_db_objects.insert(index, new_segment)
 
         # measure parameters
-        self._measure(element, index)
+        self._measure(element, index, commit_changes=True)
 
         self.measurementsChanged.emit()
 
@@ -365,10 +372,11 @@ class SegmentManager(QObject):
             self._measure(self.elements[i], i)
             self.measureParametersProgressChanged.emit((i+1) * 100.0/self.rowCount)
 
+        self.db_session.commit()
         self.measurementsChanged.emit()
         self.measureParametersProgressChanged.emit(100)
 
-    def _measure(self, element, index):
+    def _measure(self, element, index, commit_changes=True):
         """
         Measure the list of parameters over the element supplied
         :param element: The element to measure
@@ -389,14 +397,15 @@ class SegmentManager(QObject):
 
                 # try to store the parameter measurement on db
                 self.add_measurement_on_db(self.segments_db_objects[index],
-                                            parameter_adapter.get_db_orm_mapper(),
-                                            self.measuredParameters[index, j])
+                                           parameter_adapter.get_db_orm_mapper(),
+                                           self.measuredParameters[index, j])
             except Exception as e:
                 # if some error is raised set a default value
                 self.measuredParameters[index, j] = 0
                 print("Error measure params " + e.message)
 
-        self.db_session.commit()
+        if commit_changes:
+            self.db_session.commit()
 
     # endregion
 
@@ -419,7 +428,7 @@ class SegmentManager(QObject):
             self.db_session.add(measure)
 
         except Exception as ex:
-            print("db connection error. " + ex.message)
+            print("db connection error. Measurements. " + ex.message)
 
     def add_identification_on_db(self, element_index, classification):
         """
@@ -439,8 +448,10 @@ class SegmentManager(QObject):
             elif classification.family:
                 self.segments_db_objects[element_index].family = classification.family
 
+            self.db_session.add(self.segments_db_objects[element_index])
+
         except Exception as ex:
-            print("db connection error. " + ex.message)
+            print("db connection error. Segments. " + ex.message)
 
     # endregion
 

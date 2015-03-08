@@ -104,7 +104,17 @@ class AbsDecayEnvelopeDetector(OneDimensionalElementsDetector):
 
         self.detectionProgressChanged.emit(90)
 
-        return [c for c in regions if (c[1] - c[0]) > min_size]
+        # d = {}
+        result = []
+        for i, c in enumerate(regions):
+            if (c[1] - c[0]) > min_size:
+                # d[i] = c
+                result.append(c)
+
+        # values = d.values()
+        # values.sort(lambda x, y: x[0] <= y[0])
+        # return values
+        return result
 
     def abs_decay_averaged_envelope(self, data, decay=1, softfactor=6, envelope_type="sin"):
         """

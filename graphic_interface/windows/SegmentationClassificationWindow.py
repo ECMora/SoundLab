@@ -7,7 +7,7 @@ from graphic_interface.segment_visualzation.VisualElement import VisualElement
 from duetto.audio_signals.AudioSignal import AudioSignal
 from graphic_interface.dialogs.CrossCorrelationDialog import CrossCorrelationDialog
 from ..dialogs.elemDetectSettings import ElemDetectSettingsDialog
-from graphic_interface.windows.EffectWindow import EffectWindow
+from graphic_interface.windows.ToastWidget import ToastWidget
 from sound_lab_core.Segmentation.SegmentManager import SegmentManager
 from ..dialogs.ManualClassificationDialog import ManualClassificationDialog
 from TwoDimensionalAnalisysWindow import TwoDimensionalAnalisysWindow
@@ -61,7 +61,8 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         self.configureToolBarActionsGroups()
 
         # the window to present user friendly messages
-        self.effect_window = EffectWindow(parent=self)
+        self.effect_window = ToastWidget(parent=self)
+
         # in a invisible position by default
         self.effect_window.move(QPoint(-100, -100))
 
@@ -483,19 +484,35 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
                 wnd.select_element(element_index)
 
         # show the image if the element is classified
-        classification = self.segmentManager.segment_classification(element_index)
-        image = classification.get_image()
-        if image:
-            self.effect_window.set_image(image)
+        try:
 
-            element = self.widget.elements[element_index]
-            x = element.indexFrom + (element.indexTo - element.indexFrom)/2.0
-            x = x * self.widget.width() * 1.0 / self.widget.get_visible_region()
-            self.effect_window.move(self.widget.mapToGlobal(
-                QPoint(x - self.effect_window.width()/2.0, (self.widget.height() - self.effect_window.height()) / 2.0)))
+            classification = self.segmentManager.segment_classification(element_index)
+            image = classification.get_image()
 
-            self.effect_window.setWindowOpacity(1)
-            self.effect_window.fade()
+            if image:
+                self.show_image_on_element(element_index, image)
+
+        except Exception as ex:
+            pass
+
+    def show_image_on_element(self, element_index, image):
+        """
+        show a toast with the specie image (if any and if is identified) of
+        the element at element index position
+        :param element_index:
+        :return:
+        """
+        toast = ToastWidget(self)
+        toast.set_image(image)
+
+        element = self.widget.elements[element_index]
+        x = element.indexFrom + (element.indexTo - element.indexFrom)/2.0
+        x = x * self.widget.width() * 1.0 / self.widget.get_visible_region()
+        toast.move(self.widget.mapToGlobal(
+            QPoint(x - self.effect_window.width()/2.0,
+                   (self.widget.height() - self.effect_window.height()) / 2.0)))
+
+        toast.disappear()
 
     # endregion
 
@@ -564,7 +581,7 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         :return:
         """
         if visibility:
-            width, height = self.widget.width(), self.widget.height()
+            width, height = self.width(), self.height()
             x, y = self.widget.x(), self.widget.y()
             progress_bar_height = height / 20.0
 
@@ -613,16 +630,16 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
                 self.segmentManager.detect_elements()
                 self.update_detection_progress_bar(50)
 
+                # put the elements detected into the widget to visualize them
                 self.widget.elements = self.segmentManager.elements
 
+                # measure the parameters over elements detected
                 self.segmentManager.measureParametersProgressChanged.connect(
                     lambda x: self.update_detection_progress_bar(70 + x * 0.2))
-
-                # measure the parameters over elements detected
                 self.segmentManager.measure_parameters()
                 self.update_detection_progress_bar(90)
 
-                # measure the parameters over elements detected
+                # classify detected elements
                 self.segmentManager.classify_elements()
                 self.update_detection_progress_bar(98)
 
@@ -744,7 +761,6 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         self.actionSpectral_Numbers.setEnabled(visibility)
         self.actionSpectral_Figures.setEnabled(visibility)
         self.actionSpectral_Parameters.setEnabled(visibility)
-
 
     @pyqtSlot()
     def on_actionSpectral_Figures_triggered(self,update_widget=True):

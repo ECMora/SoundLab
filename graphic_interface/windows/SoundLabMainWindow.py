@@ -69,7 +69,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         :param signal_path: Optional Signal path to open
         :return:
         """
-        SoundLabWindow.__init__(self,parent)
+        SoundLabWindow.__init__(self, parent)
         self.setupUi(self)
 
         # the histogram of the signal spectrogram

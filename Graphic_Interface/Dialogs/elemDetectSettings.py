@@ -176,7 +176,7 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
             # for each group category add all the parameters on that category
             for adapter_name in parameter_group.adapters_names():
                 group = Parameter.create(name=unicode(self.tr(unicode(adapter_name))),
-                                         type=u'group', expanded=False)
+                                         type=u'group', expanded=True)
 
                 # the measure/ not measure check box to select parameter for measurement
                 measure = Parameter.create(name=unicode(self.tr(u'Measure')), type=u'bool', default=False, value=False)

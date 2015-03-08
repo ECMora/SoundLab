@@ -15,6 +15,10 @@ class TwoDPlotWidget(pg.PlotWidget):
     def __init__(self,parent=None):
         pg.PlotWidget.__init__(self, parent)
 
+        plot_item = self.getPlotItem()
+        view_box = plot_item.getViewBox()
+        view_box.mouseDragEvent = lambda ev, axis=0: False
+
         # variables for rectangular selection manipulation
         self.mousePressed = False
         self.lastPoint = QPoint(0, 0)

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from sqlalchemy import Column, Integer, ForeignKey, String, Text, Boolean, Float, Date, func
+from sqlalchemy import Column, Integer, ForeignKey, String, Text, Boolean, Float, Date, func, and_
 from sqlalchemy import create_engine, orm
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, backref
@@ -8,7 +8,9 @@ import os
 
 
 Base = declarative_base()
-db_path = os.path.join(os.getcwd(), "Utils", "db")
+
+db_path = os.path.join(os.getcwd(), "utils", "db")
+# db_path = "../../../utils/db"
 
 
 class Family(Base):
@@ -178,12 +180,12 @@ class Measurement(Base):
     measurement_id = Column(Integer, primary_key=True, nullable=False, autoincrement=True)
 
     parameter_id = Column(Integer, ForeignKey('Parameter.parameter_id'), nullable=False)
-    # parameter = relationship(Parameter, backref='parameters', uselist=True
+    parameter = relationship(Parameter, backref='measurements')
     #                          ,cascade='delete, all')
 
     segment_id = Column(Integer, ForeignKey('Segment.segment_id'), nullable=False)
-    # segment = relationship(Segment, backref='parameters', uselist=True,
-    #                        cascade='delete, all')
+    segment = relationship(Segment, backref='measurements')\
+    # , uselist=True,cascade='delete, all')
 
     value = Column(Float(), nullable=False, default=0)
     # endregion
@@ -192,6 +194,25 @@ class Measurement(Base):
 class DB:
 
     db = create_engine('sqlite:///' + os.path.join(db_path, "duetto_local_db.s3db"))
+    # db.echo = True
     db_session = orm.scoped_session(orm.sessionmaker(bind=db))
 
 
+def clean_db():
+    """
+    removes the unidentified segments
+    or those that have less than two measurments of the db
+    :return:
+    """
+    session = DB.db_session
+    useless_segments = session.query(Segment)
+
+    # remove the unidentified and not measured segments
+    for segment in useless_segments.all():
+        if len(segment.measurements) < 2 or \
+                (segment.specie is None and segment.genus is None and segment.family is None):
+            for measure in segment.measurements:
+                session.delete(measure)
+            session.delete(segment)
+
+    session.commit()

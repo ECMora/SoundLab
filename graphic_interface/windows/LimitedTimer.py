@@ -27,9 +27,11 @@ class LimitedTimer(QTimer):
         """
         if times > 0:
             self.__timeLimit = times
+
             def check():
                 self.check_stop_condition()
                 self.__times += 1
+
             self.timeout.connect(check)
         self.start(ms)
 

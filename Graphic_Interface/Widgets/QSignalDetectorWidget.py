@@ -96,10 +96,14 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
         # removes all the elements
         for i in xrange(len(self.elements)):
-            for item, visible in self.elements[i].time_element.visual_widgets():
-                self.axesOscilogram.removeItem(item)
-            for item, visible in self.elements[i].spectral_element.visual_widgets():
-                self.axesSpecgram.viewBox.removeItem(item)
+            try:
+                for item, visible in self.elements[i].time_element.visual_widgets():
+                    self.axesOscilogram.removeItem(item)
+                for item, visible in self.elements[i].spectral_element.visual_widgets():
+                    self.axesSpecgram.viewBox.removeItem(item)
+
+            except Exception as ex:
+                print(ex.message)
 
             self.elements[i].spectral_element.translate_time_freq_coords(self.from_osc_to_spec, self.get_freq_index)
 
@@ -107,12 +111,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         widget_pixel_width = self.axesOscilogram.width() * 1.0
 
         # heuristic for the amount of visible elements
-        if len(elements) * 1.0 / self.width() > 1:
-            # more elements that pixels
-            self.MIN_ELEMENT_WIDTH_PIXELS = 2
-        else:
-            # less elements that pixels
-            self.MIN_ELEMENT_WIDTH_PIXELS = 1
+        self.MIN_ELEMENT_WIDTH_PIXELS = 2 if len(elements) * 1.0 / self.width() > 1 else 1
 
         elements = [e for e in elements if
                     (e.indexTo - e.indexFrom) * widget_pixel_width /
@@ -139,8 +138,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
                 if visible:
                     self.axesOscilogram.addItem(item)
 
-        self.axesSpecgram.update()
-        self.axesOscilogram.update()
+        self.repaint()
 
     def remove_visual_elements(self, oscilogram=True, specgram=True, elements=None):
         """
@@ -154,13 +152,17 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         elements = elements if elements is not None else self.elements
         elements = [e for e in elements if e is not None]  # validate that e is instance of Element class
 
-        for elem in elements:
-            if oscilogram:
-                for item, visible in elem.time_element.visual_widgets():
-                    self.axesOscilogram.removeItem(item)
-            if specgram:
-                for item, visible in elem.spectral_element.visual_widgets():
-                    self.axesSpecgram.viewBox.removeItem(item)
+        try:
+            for elem in elements:
+                if oscilogram:
+                    for item, visible in elem.time_element.visual_widgets():
+                        self.axesOscilogram.removeItem(item)
+                if specgram:
+                    for item, visible in elem.spectral_element.visual_widgets():
+                        self.axesSpecgram.viewBox.removeItem(item)
+
+        except Exception as ex:
+            print(ex.message)
 
     def change_elements_visibility(self, visibility, element_type=VisualElement.Text, oscilogram_items=None, update=True):
         """
@@ -366,7 +368,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         for i, x in enumerate(self.elements):
             x.setNumber(i + 1)
 
-        self.repaint()
+        self.draw_elements()
 
         return indexFrom, indexTo - 1
 

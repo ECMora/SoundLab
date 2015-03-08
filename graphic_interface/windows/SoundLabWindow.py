@@ -17,7 +17,7 @@ class SoundLabWindow(QtGui.QMainWindow):
 
     # region Initialize
 
-    def __init__(self,parent):
+    def __init__(self, parent):
         """
         """
         QtGui.QMainWindow.__init__(self, parent)
