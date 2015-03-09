@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from sqlalchemy import Column, Integer, ForeignKey, String, Text, Boolean, Float, Date, func, and_
-from sqlalchemy import create_engine, orm
+from sqlalchemy import create_engine, orm, and_
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, backref
 from PyQt4.QtGui import QPixmap
@@ -192,27 +192,53 @@ class Measurement(Base):
 
 
 class DB:
+    """
+    DB class that provides a unique connexion into db
+    """
 
+    # the sngine to request db
     db = create_engine('sqlite:///' + os.path.join(db_path, "duetto_local_db.s3db"))
-    # db.echo = True
-    db_session = orm.scoped_session(orm.sessionmaker(bind=db))
+
+    # the db session to use to request the db
+    _db_session = orm.scoped_session(orm.sessionmaker(bind=db))
+
+    def get_db_session(self, new_session=False):
+        """
+        Method that returns
+        """
+        if new_session:
+            try:
+                self._db_session.commit()
+                self._db_session = orm.scoped_session(orm.sessionmaker(bind=self.db))
+
+            except Exception as ex:
+                print("Error getting the new Db session. " + ex.message)
+
+        return self._db_session
 
 
 def clean_db():
     """
     removes the unidentified segments
-    or those that have less than two measurments of the db
+    or those that have less than two measurements of the db
     :return:
     """
-    session = DB.db_session
-    useless_segments = session.query(Segment)
+    session = DB().get_db_session()
+    useless_segments = session.query(Segment).filter(and_(Segment.identified_specie_id == None,
+                                                         Segment.identified_genus_id == None,
+                                                         Segment.identified_family_id == None))
+    try:
 
-    # remove the unidentified and not measured segments
-    for segment in useless_segments.all():
-        if len(segment.measurements) < 2 or \
-                (segment.specie is None and segment.genus is None and segment.family is None):
-            for measure in segment.measurements:
-                session.delete(measure)
-            session.delete(segment)
+        # remove the unidentified and not measured segments
+        for segment in useless_segments.all():
+            if len(segment.measurements) < 2:
 
-    session.commit()
+                # must delete on cascade
+                for measure in segment.measurements:
+                    session.delete(measure)
+                session.delete(segment)
+
+        session.commit()
+
+    except Exception as ex:
+        print("Error cleaning the db. " + ex.message)

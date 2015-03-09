@@ -9,7 +9,9 @@ class ElementsDetector(QObject):
     """
 
     #  region SIGNALS
-    #  signal raised while detection is been made. Raise the percent of detection progress.
+
+    #  signal raised while detection is been made.
+    # Raise the percent of detection progress.
     detectionProgressChanged = pyqtSignal(int)
 
     # endregion
@@ -23,7 +25,7 @@ class ElementsDetector(QObject):
         """
         The method that detect the elements in the signal and storage into the corresponding list
         """
-        pass
+        return self.elements
 
 
 

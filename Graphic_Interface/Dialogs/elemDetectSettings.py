@@ -2,12 +2,11 @@
 from PyQt4 import QtGui
 from PyQt4.QtGui import QDialog
 from pyqtgraph.parametertree import Parameter, ParameterTree
-from scipy.stats.distributions import semicircular_gen
+
 from graphic_interface.windows.ui_python_files.detectElementsDialog import Ui_Dialog
 from utils.Utils import small_signal
 from sound_lab_core.AdapterFactories import *
 from sound_lab_core.Clasification.Adapters.ManualClassifierAdapter import ManualClassifierAdapter
-from sound_lab_core.Segmentation.Detectors.ManualDetector import ManualDetector
 
 
 class ElemDetectSettingsDialog(QDialog, Ui_Dialog):

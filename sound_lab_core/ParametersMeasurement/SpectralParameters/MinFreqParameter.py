@@ -16,7 +16,6 @@ class MinFreqParameter(ParameterMeasurer):
         self.threshold = threshold
         self.total = total
 
-
     def measure(self, segment):
         Pxx, freqs = mlab.psd(segment.signal.data[segment.indexFrom:segment.indexTo], Fs=segment.signal.samplingRate,noverlap=128 )
         value = np.amax(Pxx) * np.power(10,self.threshold/10.0)

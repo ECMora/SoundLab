@@ -44,7 +44,7 @@ class SegmentManager(QObject):
 
         # the db representation of the elements
         self.segments_db_objects = []
-        self.db_session = DB.db_session()
+        self.db_session = DB().get_db_session()
 
         # the signal in which would be detected the elements
         self._signal = None
@@ -68,12 +68,6 @@ class SegmentManager(QObject):
         self._elements = elements_list
 
         try:
-            # remove unidentified segments from db
-            for x in self.segments_db_objects:
-                if x.specie is None and x.genus is None and x.family is None:
-                    self.db_session.delete(x)
-            self.db_session.commit()
-
             self.segments_db_objects = [Segment() for _ in self._elements]
 
             # add the new segments
@@ -88,12 +82,12 @@ class SegmentManager(QObject):
         self.recompute_element_table()
 
     @property
-    def measurerList(self):
+    def measurer_adapters(self):
         return self._measurerList
 
-    @measurerList.setter
-    def measurerList(self, new_measurerList):
-        self._measurerList = new_measurerList
+    @measurer_adapters.setter
+    def measurer_adapters(self, new_measurer_adapters):
+        self._measurerList = new_measurer_adapters
         self.recompute_element_table()
 
     def recompute_element_table(self):
@@ -105,7 +99,7 @@ class SegmentManager(QObject):
         """
         # clear the parameters
         rows = len(self.elements)
-        cols = len(self.measurerList)
+        cols = len(self.measurer_adapters)
 
         self.measuredParameters = np.zeros(rows * cols).reshape((rows, cols))
 
@@ -127,7 +121,7 @@ class SegmentManager(QObject):
         The names of the columns of parameters.
         :return:
         """
-        return [x.get_instance().name for x in self.measurerList]
+        return [x.get_instance().name for x in self.measurer_adapters]
 
     @property
     def columnNames(self):
@@ -172,7 +166,7 @@ class SegmentManager(QObject):
 
     @property
     def columnCount(self):
-        return len(self.measurerList) + len(self.classificationColumnNames)
+        return len(self.measurer_adapters) + len(self.classificationColumnNames)
 
     # endregion
 
@@ -188,16 +182,16 @@ class SegmentManager(QObject):
         """
         Set the elements classification manually.
         :param indexes_list: the indexes of classified elements
-        :param classification: the value for classification.
+        :param classification: the value for classification Data.
         the values are applied to all the elements that have indexes in indexes_list.
         :return:
         """
-        indexes_list = [x for x in indexes_list if 0 <= x < self.rowCount]
 
         for i in indexes_list:
-            self.update_classification_visual_item(i, classification)
-            self.classificationTableData[i] = classification
-            self.add_identification_on_db(i, classification)
+            if 0 <= i < self.rowCount:
+                self.update_classification_visual_item(i, classification)
+                self.classificationTableData[i] = classification
+                self.add_identification_on_db(i, classification)
 
         self.db_session.commit()
         self.measurementsChanged.emit()
@@ -212,12 +206,12 @@ class SegmentManager(QObject):
 
         # get the classification parameters and method
         classifier = classifier if classifier is not None else self.classifier_adapter.get_instance()
-        classifier.parameters = self.measurerList
+        classifier.parameters = self.measurer_adapters
 
         # classify each element
         for i in xrange(len(self.elements)):
             # parameter adapter, value
-            parameter_vector = [self.measuredParameters[i, j] for j, x in enumerate(self.measurerList)]
+            parameter_vector = [self.measuredParameters[i, j] for j, x in enumerate(self.measurer_adapters)]
             self._classify_element(element_index=i, classifier=classifier,
                                    parameter_vector=parameter_vector)
 
@@ -236,7 +230,7 @@ class SegmentManager(QObject):
         """
         classifier = classifier if classifier is not None else self.classifier_adapter.get_instance()
         parameter_vector = parameter_vector if parameter_vector is not None else \
-            [self.measuredParameters[element_index, j] for j in xrange(len(self.measurerList))]
+            [self.measuredParameters[element_index, j] for j in xrange(len(self.measurer_adapters))]
 
         classification_value = classifier.classify(self.elements[element_index], parameter_vector)
         self.classificationTableData[element_index] = classification_value
@@ -251,6 +245,12 @@ class SegmentManager(QObject):
             self.db_session.commit()
 
     def update_classification_visual_item(self, element_index, classification_value):
+        """
+
+        :param element_index:
+        :param classification_value:
+        :return:
+        """
         # update the visualization
         self.update_elements_visual_items(self.classifier_adapter, element_index, classification_value)
         visual_item = self.classifier_adapter.get_visual_items()
@@ -293,11 +293,6 @@ class SegmentManager(QObject):
 
         self._elements = self.elements[:start_index] + self.elements[end_index+1:]
 
-        for x in self.segments_db_objects[start_index:end_index]:
-            if x.specie is None and x.genus is None and x.family is None:
-                self.db_session.delete(x)
-        self.db_session.commit()
-
         self.segments_db_objects = self.segments_db_objects[:start_index] + self.segments_db_objects[end_index + 1:]
 
         self.measurementsChanged.emit()
@@ -319,7 +314,7 @@ class SegmentManager(QObject):
         else:
             # add the element
             self.measuredParameters = np.concatenate((self.measuredParameters[:index],
-                                                      np.array([np.zeros(len(self.measurerList))]),
+                                                      np.array([np.zeros(len(self.measurer_adapters))]),
                                                       self.measuredParameters[index:]))
 
             self.classificationTableData.insert(index, None)
@@ -365,7 +360,7 @@ class SegmentManager(QObject):
 
         self.measureParametersProgressChanged.emit(0)
 
-        if len(self.measurerList) == 0:
+        if len(self.measurer_adapters) == 0:
             return
 
         for i in range(self.rowCount):
@@ -386,7 +381,7 @@ class SegmentManager(QObject):
         if not 0 <= index < self.rowCount:
             raise IndexError()
 
-        for j, parameter_adapter in enumerate(self.measurerList):
+        for j, parameter_adapter in enumerate(self.measurer_adapters):
             try:
                 # compute the param with the function
                 measure_method = parameter_adapter.get_instance()
@@ -428,7 +423,8 @@ class SegmentManager(QObject):
             self.db_session.add(measure)
 
         except Exception as ex:
-            print("db connection error. Measurements. " + ex.message)
+            print("db connexion error. Measurements. " + ex.message)
+            self.db_session = DB().get_db_session(new_session=True)
 
     def add_identification_on_db(self, element_index, classification):
         """
@@ -451,7 +447,8 @@ class SegmentManager(QObject):
             self.db_session.add(self.segments_db_objects[element_index])
 
         except Exception as ex:
-            print("db connection error. Segments. " + ex.message)
+            print("db connexion error. Segments. " + ex.message)
+            self.db_session = DB.get_session(new_session=True)
 
     # endregion
 
@@ -464,7 +461,7 @@ class SegmentManager(QObject):
         if row < 0 or row >= self.rowCount:
             raise IndexError()
 
-        if col < len(self.measurerList):
+        if col < len(self.measurer_adapters):
             return self.measuredParameters[row, col]
 
         # the order of the classification taxonomy may change
@@ -472,7 +469,7 @@ class SegmentManager(QObject):
         if classification is None:
             return self.tr(u"No Identified")
 
-        index = col - len(self.measurerList)
+        index = col - len(self.measurer_adapters)
 
         if index == 0:
             # family

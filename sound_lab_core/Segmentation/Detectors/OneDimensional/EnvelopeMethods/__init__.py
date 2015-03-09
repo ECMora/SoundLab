@@ -74,7 +74,7 @@ def envelope_frecuency_increased_detector(self):
 # region Point to Point Methods
 
 def local_naive_max_detector(self, data, threshold, minSize, merge_factor):
-    indexes, vals = self.localMax(data)
+    indexes, vals = self.local_max(data)
     if self.progress is not None:
         self.progress(10)
     detected = mlab.contiguous_regions(vals > threshold)
@@ -139,7 +139,7 @@ def local_max_percent_detector(self, data, threshold, minSize, merge_factor, end
     """
     the intervals that has a proportion of ots maxThresholdLabel above threshold
     """
-    indexes, vals = self.localMax(data)
+    indexes, vals = self.local_max(data)
     global_proportion = where(vals >= threshold)[0].size * 1.0 / vals.size
     i = 0
     start = -1

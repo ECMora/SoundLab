@@ -11,16 +11,24 @@ class ManualClassificationDialog(classification_dialog.Ui_Dialog, QtGui.QDialog)
 
     # region CONSTANTS
 
-    session = DB.db_session()
-    species = [x for x in session.query(Specie)]
-    genus = [x for x in session.query(Genera)]
-    families = [x for x in session.query(Family)]
+    # db session to use
+    session = DB().get_db_session()
+
+    # the species list
+    species = session.query(Specie).all()
+
+    # the genus list
+    genus = session.query(Genera).all()
+
+    # the families list
+    families = session.query(Family).all()
 
     # endregion
 
     def __init__(self):
         QtGui.QDialog.__init__(self)
         self.setupUi(self)
+
         # state of the combos update values from a change index signal
         # (avoid recursive calls when updating the others dependent combos)
         self.updating_combos = False
@@ -43,9 +51,9 @@ class ManualClassificationDialog(classification_dialog.Ui_Dialog, QtGui.QDialog)
         self.family_cbox.addItems(family_names)
 
         # set the hierarchy of the taxonomy into the como boxes selection
-        self.specie_cbox.currentIndexChanged.connect(self.specie__selected_index_changed)
-        self.genus_cbox.currentIndexChanged.connect(self.genus__selected_index_changed)
-        self.family_cbox.currentIndexChanged.connect(self.family__selected_index_changed)
+        self.specie_cbox.currentIndexChanged.connect(self.specie_selected_index_changed)
+        self.genus_cbox.currentIndexChanged.connect(self.genus_selected_index_changed)
+        self.family_cbox.currentIndexChanged.connect(self.family_selected_index_changed)
 
     def deselect_all(self):
         """
@@ -55,9 +63,9 @@ class ManualClassificationDialog(classification_dialog.Ui_Dialog, QtGui.QDialog)
         self.specie_cbox.setCurrentIndex(0)
         self.genus_cbox.setCurrentIndex(0)
         self.family_cbox.setCurrentIndex(0)
-        self.set_specie_image(0)
+        self.specie_image_lbl.clear()
 
-    def start_selected_index_changed_process(self):
+    def changing_selected_index(self):
         """
         :return: True if the process is started False otherwise
         (False if there is another selected_index_changed_process
@@ -71,55 +79,65 @@ class ManualClassificationDialog(classification_dialog.Ui_Dialog, QtGui.QDialog)
 
         return True
 
-    def specie__selected_index_changed(self, index):
-        if not self.start_selected_index_changed_process():
+    # region Taxonomic changing combos indexes
+
+    def specie_selected_index_changed(self, index):
+        if not self.changing_selected_index():
             return
 
-        genus_index = self.genus.index(self.species[index-1].genus)
+        if index > 0:
+            genus_index = self.genus.index(self.species[index-1].genus)
 
-        if genus_index >= 0:
-            self.genus_cbox.setCurrentIndex(genus_index + 1)
+            if genus_index >= 0:
+                self.genus_cbox.setCurrentIndex(genus_index + 1)
 
-        family_index = self.families.index(self.species[index-1].genus.family)
+            family_index = self.families.index(self.species[index-1].genus.family)
 
-        if family_index >= 0:
-            self.family_cbox.setCurrentIndex(family_index + 1)
+            if family_index >= 0:
+                self.family_cbox.setCurrentIndex(family_index + 1)
 
-        self.specie_cbox.setCurrentIndex(index)
-        self.set_specie_image(index)
+            self.specie_cbox.setCurrentIndex(index)
+            self.set_specie_image(index-1)
 
         self.updating_combos = False
 
-    def genus__selected_index_changed(self, index):
-        if not self.start_selected_index_changed_process():
+    def genus_selected_index_changed(self, index):
+        if not self.changing_selected_index():
             return
 
-        family_index = self.families.index(self.genus[index-1].family)
+        if index > 0:
+            family_index = self.families.index(self.genus[index-1].family)
 
-        if family_index >= 0:
-            self.family_cbox.setCurrentIndex(family_index + 1)
+            if family_index >= 0:
+                self.family_cbox.setCurrentIndex(family_index + 1)
 
-        self.genus_cbox.setCurrentIndex(index)
+            self.genus_cbox.setCurrentIndex(index)
+
         self.updating_combos = False
 
-    def family__selected_index_changed(self, index):
-        if not self.start_selected_index_changed_process():
+    def family_selected_index_changed(self, index):
+        if not self.changing_selected_index():
             return
-
-        self.family_cbox.setCurrentIndex(index)
+        if index > 0:
+            self.family_cbox.setCurrentIndex(index)
         self.updating_combos = False
+
+    # endregion
 
     def set_specie_image(self, specie_index):
         """
-
+        Method that sets the specie image if any specie is selected
         :param specie_index:
         :return:
         """
-        image = None if specie_index == 0 else self.species[specie_index-1].image
+        try:
+            image = self.species[specie_index].image
 
-        image = QtGui.QPixmap() if image is None else image.scaled(self.specie_image_lbl.width(), self.specie_image_lbl.height())
+            self.specie_image_lbl.setPixmap(image.scaled(self.specie_image_lbl.width(),
+                                                         self.specie_image_lbl.height()))
 
-        self.specie_image_lbl.setPixmap(image)
+        except Exception as ex:
+            print("Error setting the specie image. " + ex.message)
 
     def get_classification(self):
         """

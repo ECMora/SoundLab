@@ -3,7 +3,8 @@
 
 class VisualItemWrapper:
     """
-    Represent a visual item.
+    Represent a visual item to visualize inside a sound Lab Detected Element
+    as representation of a measured parameter
     """
 
     def __init__(self):

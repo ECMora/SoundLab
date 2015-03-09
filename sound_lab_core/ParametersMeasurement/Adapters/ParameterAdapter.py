@@ -18,9 +18,10 @@ class ParameterAdapter(SoundLabAdapter):
         object db orm representation if any
         :return:
         """
-        # get the db object mapper
+        # get the db object mapper for the parameter
         try:
-            db_session = DB.db_session()
+            db_session = DB().get_db_session()
+            # find by name
             parameter_name = self.get_instance().name
             for param in db_session.query(Parameter).filter(Parameter.name == parameter_name).all():
                 return param

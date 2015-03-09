@@ -53,11 +53,8 @@ class IntervalDetector(OneDimensionalElementsDetector):
 
         self.detectionProgressChanged.emit(90)
 
-        self.elements = [None for _ in elems]
         one_dim_class = self.get_one_dimensional_class()
-
-        for i, c in enumerate(elems):
-            self.elements[i] = one_dim_class(self.signal, c[0], c[1])
+        self.elements = [one_dim_class(self.signal, c[0], c[1]) for c in elems]
 
         self.detectionProgressChanged.emit(100)
 
@@ -74,29 +71,18 @@ class IntervalDetector(OneDimensionalElementsDetector):
 
         self.detectionProgressChanged.emit(5)
 
-        # arr_size = len(xrange(min_size / 2, data.size - min_size / 2, min_size / 2))
         arr_size = ((data.size * 2) / min_size)
 
-        detected = np.zeros(arr_size)
         k = min_size / 2
-        progress_rate = arr_size / 10.0
-
-        for i in xrange(1, arr_size):
-            detected[i-1] = function(data[(i - 1) * k: i * k])
-
-            if i % progress_rate == 0:
-                self.detectionProgressChanged.emit(5 + 4.5*(i/progress_rate))
+        detected = np.array([0 if i == 0 else function(data[(i - 1) * k: i * k]) for i in xrange(arr_size)])
 
         self.detectionProgressChanged.emit(50)
 
-        if comparer_greater_threshold:
-            detected = mlab.contiguous_regions(detected > threshold)
-        else:
-            detected = mlab.contiguous_regions(detected < threshold)
+        detected = mlab.contiguous_regions(detected > threshold if comparer_greater_threshold else detected < threshold)
 
         self.detectionProgressChanged.emit(80)
 
-        detected = [((x[0]) * min_size / 2, (x[1]) * min_size / 2) for x in detected if x[1] > 1 + x[0]]
+        detected = [((x[0] - 1) * min_size / 2, (x[1]) * min_size / 2) for x in detected if x[1] > 1 + x[0]]
 
         if merge_factor > 0:
             detected = self.merge_intervals(detected, merge_factor)

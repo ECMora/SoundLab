@@ -7,7 +7,7 @@ class IntervalMaxMeanDetector(IntervalDetector):
         IntervalDetector.__init__(self, signal,threshold_db, min_size_ms, merge_factor)
 
     def function(self, d):
-        return self.localMax(d)[1].mean()
+        return self.local_max(d)[1].mean()
 
     def detect_elements(self, data, threshold, minSize, merge_factor):
         return self.interval_detector(data, threshold, minSize, merge_factor, self.function)

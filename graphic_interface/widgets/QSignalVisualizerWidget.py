@@ -303,7 +303,8 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         if abs(osc_max_x - spec_max_x) > 1 or abs(osc_min_x - spec_min_x) > 1:
             if oscilogram_update and (min_x_spec != spec_min_x or max_x_spec != spec_max_x):
                 self.axesSpecgram.gui_user_tool.zoomRegion.setRegion([min_x_spec, max_x_spec])
-                self.signalIntervalSelected.emit(osc_min_x,osc_max_x)
+                self.signalIntervalSelected.emit(osc_min_x, osc_max_x)
+
             elif not oscilogram_update and (spec_min_x != osc_min_x or spec_max_x != osc_max_x):
                 self.axesOscilogram.gui_user_tool.zoomRegion.setRegion([spec_min_x, spec_max_x])
                 self.signalIntervalSelected.emit(spec_min_x, spec_max_x)
@@ -330,7 +331,7 @@ class QSignalVisualizerWidget(QtGui.QWidget):
     #   endregion
 
     #  region Sound
-    #  manages the reproduction of the signal
+
     def play(self):
         """
         Start to play the current signal.
@@ -339,7 +340,7 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         Audio Device is unavailable.
         """
         start, end = self.selectedRegion
-        self.addPlayerLine(start, end)
+        self.add_player_line(start, end)
         self.signalPlayer.play(start, end, self.playSpeed)
 
     def setPlayLoopEnabled(self, enabled):
@@ -373,7 +374,7 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         prevStatus = self.signalPlayer.playStatus
         #  stopping the player
         self.signalPlayer.stop()
-        self.removePlayerLine()
+        self.remove_player_line()
         #  if the previous status was RECORDING then we have
         #  to stop the licence_checker_timer and draw the new signal on both controls.
         if prevStatus == self.signalPlayer.RECORDING:
@@ -408,9 +409,9 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         """
         if newSignal:
             self.signal = AudioSignal(self.signal.samplingRate, self.signal.bitDepth, self.signal.channelCount)
-        #  Here we try to record and in
-        #   case of any IO device exception occurs then
-        #  we just stop recording immediately.
+
+        #  Here we try to record. In case of any IO device exception
+        #  stop recording immediately.
         try:
             self.axesSpecgram.setRecordMode(True)
             self.signalPlayer.record()
@@ -423,7 +424,7 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         except Exception as ex:
             self.stop()
             self.signal = Synthesizer.generateSilence(samplingRate=self.signal.samplingRate,
-                                                       bitDepth=self.signal.bitDepth, duration=1)
+                                                      bitDepth=self.signal.bitDepth, duration=1)
             self.graph()
             print(ex.message)
             raise ex
@@ -442,7 +443,7 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         """
         self.signalPlayer.pause()
 
-    def addPlayerLine(self, initial_value, end_value):
+    def add_player_line(self, initial_value, end_value):
         """
         create the line to show on widgets osc and spec
         when the signal is been played as a way to
@@ -469,7 +470,7 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         if self.playerLineSpec not in self.axesSpecgram.viewBox.addedItems:
             self.axesSpecgram.viewBox.addItem(self.playerLineSpec)
 
-    def removePlayerLine(self):
+    def remove_player_line(self):
         """
         Remove the player lines of the widgets
         is used when the lines shouldn't be visible because the play has ended.
@@ -480,7 +481,13 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         if self.playerLineSpec in self.axesSpecgram.viewBox.addedItems:
             self.axesSpecgram.viewBox.removeItem(self.playerLineSpec)
 
-    def notifyPlayingCursor(self, frame):
+    def update_playing_line(self, frame):
+        """
+        Updates the value of the player line
+        with the latest play position.
+        :param frame:
+        :return:
+        """
         # draw the line in the axes
         if frame < self.playerLineEnd:
             self.playerLineOsc.setValue(frame)
@@ -632,8 +639,8 @@ class QSignalVisualizerWidget(QtGui.QWidget):
                 self.stop()
 
         self.signalPlayer = AudioSignalPlayer(self._signal)
-        self.signalPlayer.playing.connect(self.notifyPlayingCursor)
-        self.signalPlayer.playingDone.connect(self.removePlayerLine)
+        self.signalPlayer.playing.connect(self.update_playing_line)
+        self.signalPlayer.playingDone.connect(self.remove_player_line)
 
         #  the edition object that manages cut and paste options
         self.editionSignalProcessor = EditionSignalProcessor(self._signal)

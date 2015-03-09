@@ -23,7 +23,7 @@ class ParameterMeasurer:
 
     @name.setter
     def name(self, new_name):
-        if not isinstance(new_name, (str,unicode)):
+        if not isinstance(new_name, (str, unicode)):
             raise Exception("Invalid type for name. Must be str or unicode.")
 
         self._name = new_name

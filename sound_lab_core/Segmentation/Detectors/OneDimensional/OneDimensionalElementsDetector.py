@@ -6,15 +6,22 @@ from sound_lab_core.Segmentation.Detectors.ElementsDetector import ElementsDetec
 
 class OneDimensionalElementsDetector(ElementsDetector):
 
-    def __init__(self, signal):
+    def __init__(self, signal, one_dimensional_class=OneDimensionalElement):
+        """
+        :param signal: The signal in wchich would be detected the elements
+        :param one_dimensional_class: The dependency injection for the
+        one dimensional element to use
+        :return:
+        """
         ElementsDetector.__init__(self, signal)
+        self.one_dimensional_class = one_dimensional_class
 
     def get_one_dimensional_class(self):
         """
         The instance of the detected one dimensional elements
         :return:
         """
-        return OneDimensionalElement
+        return self.one_dimensional_class
 
     def detect(self, indexFrom=0, indexTo=-1):
         """
@@ -22,7 +29,7 @@ class OneDimensionalElementsDetector(ElementsDetector):
         :param indexTo:
         :return:
         """
-        pass
+        return self.elements
 
     def merge_intervals(self, elements_array, distance_factor=50):
         """
@@ -45,28 +52,14 @@ class OneDimensionalElementsDetector(ElementsDetector):
 
         return result
 
-    def localMax(self, data, threshold=0, positives=None):
+    def local_max(self, data):
         """
-        Identify the local  (positives or not) maxThresholdLabel that are above threshold
+        Identify the local  (positives or not) max that are above threshold
         :param data:  Array of int with the signal data information
-        :param threshold:
-        :param positives: Searh for local max positives
         :return:
         """
-        indexes = []
-        values = []
-        data = array(data)
+        data = abs(array(data))
 
-        if positives is not None and positives:
-            data = where(data >= threshold, data, 0)
-        elif positives is not None:
-            data = where(data < -threshold, data, 0)
-
-        data = abs(data)
-
-        for i in range(1,data.size-1):
-            if (data[i] > data[i - 1] and data[i] > data[i + 1]) or (data[i] == data[i - 1] == data[i + 1]):
-                indexes.append(i)
-                values.append(data[i])
-
-        return array(indexes), array(values)
+        indexes = [i for i in xrange(1, data.size - 1) if ((data[i] > data[i - 1]) and (data[i] > data[i + 1])) or
+                                                          (data[i] == data[i - 1] == data[i + 1])]
+        return array(indexes), data[indexes]

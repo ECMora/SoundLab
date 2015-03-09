@@ -8,13 +8,12 @@ from utils.Utils import fromdB
 
 class AbsDecayEnvelopeDetector(OneDimensionalElementsDetector):
 
-    def __init__(self, signal, decay_ms=1, threshold_db=-40, min_size_ms=1, merge_factor=5, soft_factor=5):
+    def __init__(self, signal, decay_ms=1, threshold_db=-40, min_size_ms=1, merge_factor=5):
         OneDimensionalElementsDetector.__init__(self, signal)
 
         self._decay = decay_ms
         self._threshold = threshold_db
         self._merge_factor = merge_factor
-        self._soft_factor = soft_factor
         self._min_size = min_size_ms
 
     # region Properties
@@ -34,14 +33,6 @@ class AbsDecayEnvelopeDetector(OneDimensionalElementsDetector):
     @merge_factor.setter
     def merge_factor(self, value):
         self._merge_factor = value
-
-    @property
-    def softfactor(self):
-        return self._soft_factor
-
-    @softfactor.setter
-    def softfactor(self, value):
-        self._soft_factor = value
 
     @property
     def min_size(self):
@@ -74,24 +65,22 @@ class AbsDecayEnvelopeDetector(OneDimensionalElementsDetector):
 
         self.detectionProgressChanged.emit(90)
 
-        self.elements = [None for _ in elems]
         one_dim_class = self.get_one_dimensional_class()
 
-        for i, c in enumerate(elems):
-            self.elements[i] = one_dim_class(self.signal, c[0], c[1])
+        self.elements = [one_dim_class(self.signal, c[0], c[1]) for c in elems]
 
         self.detectionProgressChanged.emit(100)
 
         return self.elements
 
-    def envelope_detector(self,data, threshold, decay, min_size):
+    def envelope_detector(self, data, threshold, decay, min_size):
         """
         data is a numpy array
         minSize is the minThresholdLabel amplitude of an element
         merge_factor is the % of separation between 2 elements that is assumed as one (merge the 2 into one)
         """
         # create envelope
-        envelope = self.abs_decay_averaged_envelope(data, decay, self.softfactor)
+        envelope = self.abs_decay_averaged_envelope(data, decay)
 
         self.detectionProgressChanged.emit(70)
 
@@ -104,35 +93,28 @@ class AbsDecayEnvelopeDetector(OneDimensionalElementsDetector):
 
         self.detectionProgressChanged.emit(90)
 
-        # d = {}
-        result = []
-        for i, c in enumerate(regions):
-            if (c[1] - c[0]) > min_size:
-                # d[i] = c
-                result.append(c)
+        return [c for c in regions if (c[1] - c[0]) > min_size]
 
-        # values = d.values()
-        # values.sort(lambda x, y: x[0] <= y[0])
-        # return values
-        return result
-
-    def abs_decay_averaged_envelope(self, data, decay=1, softfactor=6, envelope_type="sin"):
+    def abs_decay_averaged_envelope(self, data, decay=1, envelope_type="sin"):
         """
         decay is the min number of samples in data that separates two elements
         """
 
-        rectified = array(abs(data))
+        rectified = map(abs, array(data))
 
         self.detectionProgressChanged.emit(10)
 
-        i = 1
         arr = zeros(len(rectified), dtype=int32)
         current = rectified[0]
         fall_init = None
         progress_step = len(arr) / 10
 
-        while i < len(arr):
-            if fall_init is not None:
+        for i in xrange(1, len(arr)):
+            if fall_init is None:
+                fall_init = i - 1 if rectified[i] < current else None
+                arr[i - 1] = current
+
+            else:
                 value = rectified[fall_init]
                 if envelope_type == "lineal":
                     value -= rectified[fall_init] * (i - fall_init) / decay  # lineal
@@ -143,16 +125,11 @@ class AbsDecayEnvelopeDetector(OneDimensionalElementsDetector):
 
                 arr[i - 1] = max(value, rectified[i])
                 fall_init = None if (value <= rectified[i] or i - fall_init >= decay) else fall_init
-            else:
-                fall_init = i - 1 if rectified[i] < current else None
-                arr[i - 1] = current
+
             current = rectified[i]
-            i += 1
             if i % progress_step == 0:
                 self.detectionProgressChanged.emit(10 + (i / progress_step) * 6)
 
         arr[-1] = current
 
-        if softfactor > 1:
-            return array([mean(arr[i - softfactor:i]) for i, _ in enumerate(arr, start=softfactor)])
         return arr

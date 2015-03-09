@@ -9,7 +9,7 @@ class IntervalRmsDetector(IntervalDetector):
         IntervalDetector.__init__(self, signal,threshold_db, min_size_ms, merge_factor)
 
     def function(self, data):
-        ind, vals = self.localMax(data)
+        ind, vals = self.local_max(data)
         x = 0
         if len(vals) > 0:
             vals = np.array(vals, dtype=long)

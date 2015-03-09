@@ -29,14 +29,14 @@ class TrainingVectorClassifier(Classifier):
         Classifier.__init__(self, name)
 
         # the current training vectors list to make classification
-        # each element on list is a Training Vector
-        # measured.
+        # each element on list is a Training Vector measured.
         self.training_vectors = None
 
-        # the list of parameter adapter that would be used for classification
+        # the list of parameter adapters that would be used in classification
         self._parameters = []
 
-        self.db_session = DB.db_session
+        # the session to request the db for training vectors
+        self.db_session = DB().get_db_session()
 
     @property
     def parameters(self):
@@ -44,7 +44,12 @@ class TrainingVectorClassifier(Classifier):
 
     @parameters.setter
     def parameters(self, parameter_measurements_list):
-        # order by id
+        """
+        Set the list of parameter adapters used.
+        :param parameter_measurements_list:
+        :return:
+        """
+        # order parameters by db id to normalize their use
         params_ids = [x.get_db_orm_mapper().parameter_id for x in parameter_measurements_list]
         params_to_sort = [(parameter_measurements_list[i], params_ids[i]) for i in xrange(len(params_ids))]
         params_to_sort.sort(lambda x, y: 1 if x[1] < y[1] else 1)
@@ -54,8 +59,7 @@ class TrainingVectorClassifier(Classifier):
 
     def get_training_vectors(self):
         """
-        load from db the training vectors according to the
-        parameters list supplied
+        load from db the training vectors according to the parameter adapters list
         :return:
         """
         if len(self.parameters) == 0:
@@ -63,7 +67,7 @@ class TrainingVectorClassifier(Classifier):
 
         vectors = []
         try:
-            parameter_ids = set(map(lambda p: p.get_db_orm_mapper().parameter_id, self.parameters))
+            parameter_ids = set(map(lambda param: param.get_db_orm_mapper().parameter_id, self.parameters))
 
             # get the db parameter values for the parameters list
             for x in self.db_session.query(Segment).\
