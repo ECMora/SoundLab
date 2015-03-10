@@ -1,5 +1,6 @@
 from sound_lab_core.Clasification.ClassificationData import ClassificationData
 from sound_lab_core.Clasification.Classifiers.TrainingVectorClassifier import TrainingVectorClassifier, TrainingVector
+import heapq as heap
 
 
 class KNNClassifier(TrainingVectorClassifier):
@@ -54,16 +55,18 @@ class KNNClassifier(TrainingVectorClassifier):
             param_vector = TrainingVector(values=param_vector)
 
             # measure the distance to each of the training vectors
-            distance_array = [self.distance(param_vector, x) for x in self.training_vectors]
+            priority_queue = []
 
-            # sort to get the first k_value
-            sorted_array = [(distance_array[i], self.training_vectors[i]) for i in xrange(len(distance_array))]
-            sorted_array.sort(lambda x, y: 1 if x[0] < y[0] else 1)
+            for vector in self.training_vectors:
+                if len(priority_queue) < self.k_value:
+                    heap.heappush(priority_queue, self.distance(param_vector, vector))
 
-            if self.k_value > len(sorted_array):
-                return self.get_classification([x[1] for x in sorted_array])
+                else:
+                    heap.heappushpop(priority_queue, self.distance(param_vector, vector))
 
-            return self.get_classification([sorted_array[i][1] for i in xrange(self.k_value)])
+            indexes = [k for k in xrange(len(priority_queue))]
+
+            return self.get_classification([self.training_vectors[i] for i in indexes])
 
         except Exception as ex:
             print("Errors on KNN classification. " + ex.message)

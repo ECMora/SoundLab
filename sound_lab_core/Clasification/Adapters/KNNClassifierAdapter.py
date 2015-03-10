@@ -50,7 +50,7 @@ class KNNClassifierAdapter(ClassifierAdapter):
         """
         return self.settings
 
-    def get_instance(self, signal):
+    def get_instance(self):
         """
         Gets a new get_instance
         """

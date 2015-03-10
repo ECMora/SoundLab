@@ -59,17 +59,12 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         self.clear_detection()
 
         self._elements = []
+        self._elements = map(lambda c: DetectedSoundLabElement(c.signal, c.indexFrom, c.indexTo), elements_list)
 
-        # get the elements detected by the detector
-        for index, c in enumerate(elements_list):
-            if not isinstance(c, OneDimensionalElement):
-                continue
-
-            e = DetectedSoundLabElement(c.signal, c.indexFrom, c.indexTo, index)
-            self._elements.append(e)
+        for index, e in enumerate(self._elements):
             # connect the click event of an element with the signal of the widget
             e.elementClicked.connect(lambda i: self.elementClicked.emit(i))
-            e.setNumber(index+1)
+            e.setNumber(index + 1)
 
         # just show an interval of a fixed amount of elements visible for starting
         if len(self.elements) > self.VISIBLE_ELEMENTS_COUNT:
@@ -111,7 +106,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         widget_pixel_width = self.axesOscilogram.width() * 1.0
 
         # heuristic for the amount of visible elements
-        self.MIN_ELEMENT_WIDTH_PIXELS = 2 if len(elements) * 1.0 / self.width() > 1 else 1
+        self.MIN_ELEMENT_WIDTH_PIXELS = 3 if len(elements) * 1.0 / self.width() > 1 else 1
 
         elements = [e for e in elements if
                     (e.indexTo - e.indexFrom) * widget_pixel_width /
@@ -229,17 +224,18 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         :param items: the visual items of segmentation
         :return:
         """
-        # visualize the segmentation items
-
+        # visualize the segmentation items !!JUST ON OSCILOGRAM BY NOW!!
         for item, visible in self.segmentation_visual_items:
             self.axesOscilogram.removeItem(item)
 
-        self.segmentation_visual_items = [(item,True) for item in items]
+        self.segmentation_visual_items = [(item, True) for item in items]
 
         if self.visibleOscilogram:
             for item, visible in self.segmentation_visual_items:
                 if visible:
                     self.axesOscilogram.addItem(item)
+
+        self.update()
 
     # endregion
 

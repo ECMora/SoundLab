@@ -57,6 +57,8 @@ class ParametersAdapterFactory(QObject):
             (u'Start Time', StartTimeParameterAdapter()),
             (u'End Time', EndTimeParameterAdapter()),
             (u'Duration', DurationTimeParameterAdapter()),
+            (u'Zero Cross Rate', ZeroCrossRateParameterAdapter()),
+            (u'Local Max Mean', LocalMaxMeanParameterAdapter()),
             (u'Entropy', EntropyTimeParameterAdapter())]
 
         wave_params_adapters = [

@@ -45,7 +45,7 @@ class IntervalDetector(OneDimensionalElementsDetector):
     def detect(self, indexFrom=0, indexTo=-1):
         indexTo = self.signal.length if indexTo == -1 else indexTo
 
-        threshold = fromdB(self.threshold, 0, self.signal.maximumValue)
+        threshold = fromdB(self.threshold, 0, max(self.signal.data))
 
         min_size = int(self.min_size * self.signal.samplingRate / 1000.0)
 

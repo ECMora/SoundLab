@@ -17,4 +17,6 @@ class IntervalRmsDetectorAdapter(IntervalDetectorAdapter):
         :return: A new get_instance of the corresponding parameter measurement class
         """
         self.update_instance_variables()
+        self.signal_max_value = max(signal.data)
+
         return IntervalRmsDetector(signal, self.threshold_dB, self.min_size_ms, self.merge_factor)

@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
+from PyQt4 import QtGui
 from PyQt4.QtCore import QObject
-from pyqtgraph.parametertree import Parameter
+import pyqtgraph as pg
 
 
 class SoundLabAdapter(QObject):
@@ -9,6 +10,16 @@ class SoundLabAdapter(QObject):
     support for segmentation classification and
     parameter measurement into the visual interface
     """
+
+    # region CONSTANTS
+
+    # the color for the pen to draw visual items
+    COLOR = pg.mkColor(QtGui.QColor(200, 50, 50, 255))
+
+    # the width for the line on the visual items
+    VISUAL_ITEM_LINE_WIDTH = 2
+
+    # endregion
 
     def __init__(self):
         """

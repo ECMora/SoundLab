@@ -15,6 +15,13 @@ class PeakFreqParameter(ParameterMeasurer):
         self.name = "PeakFreq(kHz)"
 
     def measure(self, segment):
-        Pxx, freqs = mlab.psd(segment.signal.data[segment.indexFrom:segment.indexTo], Fs=segment.signal.samplingRate,noverlap=128)
+        # frequency_params is a tuple Pxx, freqs shared by all the frequency parameters
+        # on their measurements
+        if "frequency_params" not in segment.memory_dict:
+            Pxx, freqs = mlab.psd(segment.signal.data[segment.indexFrom:segment.indexTo],
+                                  Fs=segment.signal.samplingRate, noverlap=128)
+            segment.memory_dict["frequency_params"] = (Pxx, freqs)
+
+        Pxx, freqs = segment.memory_dict["frequency_params"]
         index = argmax(Pxx)
         return round((freqs[index] - freqs[index] % 10) / 1000.0, DECIMAL_PLACES)

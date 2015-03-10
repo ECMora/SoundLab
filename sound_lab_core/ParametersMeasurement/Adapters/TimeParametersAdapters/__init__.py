@@ -5,5 +5,7 @@ from DurationTimeParameterAdapter import DurationTimeParameterAdapter
 from RmsTimeParameterAdapter import RmsTimeParameterAdapter
 from PeakToPeakParameterAdapter import PeakToPeakParameterAdapter
 from EntropyTimeParameterAdapter import EntropyTimeParameterAdapter
+from ZeroCrossRateAdapter import ZeroCrossRateParameterAdapter
+from LocalMaxMeanAdapter import LocalMaxMeanParameterAdapter
 
 
