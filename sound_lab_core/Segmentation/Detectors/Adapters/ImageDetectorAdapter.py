@@ -41,13 +41,13 @@ class ImageDetectorAdapter(SoundLabAdapter):
         """
         return self.settings
 
-    def restore_settings(self, adapter_copy):
+    def restore_settings(self, adapter_copy, signal):
         if not isinstance(adapter_copy, SoundLabAdapter) or \
                 not isinstance(adapter_copy, ImageDetectorAdapter):
             raise Exception("Invalid type exception.")
 
         # get the settings from the copy
-        adapter_copy.get_instance(None)
+        adapter_copy.get_instance(signal)
 
         self.settings.param(unicode(self.tr(u'Min Size (ms)'))).setValue(adapter_copy.min_size_ms)
         self.settings.param(unicode(self.tr(u'Min Size (kHz)'))).setValue(adapter_copy.min_size_kHz)

@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1092</width>
-    <height>440</height>
+    <width>905</width>
+    <height>437</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -68,44 +68,6 @@
      </layout>
     </widget>
    </item>
-   <item row="0" column="1" rowspan="2" colspan="2">
-    <widget class="QDockWidget" name="dock_parameter_measurement">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Maximum" vsizetype="Expanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
-     </property>
-     <property name="minimumSize">
-      <size>
-       <width>250</width>
-       <height>84</height>
-      </size>
-     </property>
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="styleSheet">
-      <string notr="true"/>
-     </property>
-     <property name="floating">
-      <bool>false</bool>
-     </property>
-     <property name="features">
-      <set>QDockWidget::AllDockWidgetFeatures</set>
-     </property>
-     <property name="windowTitle">
-      <string>Parameter Measurements</string>
-     </property>
-     <widget class="QWidget" name="parameter_measurement_settings">
-      <zorder>dock_segm_classif</zorder>
-      <zorder>dock_segm_classif</zorder>
-     </widget>
-    </widget>
-   </item>
    <item row="1" column="4">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="sizePolicy">
@@ -144,6 +106,41 @@
      </property>
      <property name="minimumSize">
       <size>
+       <width>300</width>
+       <height>84</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>524287</width>
+       <height>524287</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
+     <property name="floating">
+      <bool>false</bool>
+     </property>
+     <property name="features">
+      <set>QDockWidget::DockWidgetMovable</set>
+     </property>
+     <property name="windowTitle">
+      <string>Segmentation and Classification Settings</string>
+     </property>
+     <widget class="QWidget" name="segmentation_classification_settings"/>
+    </widget>
+   </item>
+   <item row="0" column="1">
+    <widget class="QDockWidget" name="dock_parameter_measurement">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Maximum" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
+     <property name="minimumSize">
+      <size>
        <width>250</width>
        <height>84</height>
       </size>
@@ -161,12 +158,12 @@
       <bool>false</bool>
      </property>
      <property name="features">
-      <set>QDockWidget::AllDockWidgetFeatures</set>
+      <set>QDockWidget::DockWidgetMovable</set>
      </property>
      <property name="windowTitle">
-      <string>Segmentation and Classification Settings</string>
+      <string>Parameter Measurements</string>
      </property>
-     <widget class="QWidget" name="segmentation_classification_settings"/>
+     <widget class="QWidget" name="parameter_measurement_settings"/>
     </widget>
    </item>
   </layout>

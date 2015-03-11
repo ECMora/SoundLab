@@ -1408,6 +1408,8 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
                                     self.tr(u"Sampling rate should be less than") + u" " + unicode(
                                         self.MAX_SAMPLING_RATE))
 
+        self.updateSignalPropertiesLabel(self.widget.signal)
+
     # endregion
 
     #  region Open, Close and Save

@@ -19,28 +19,28 @@ class KNNClassifierAdapter(ClassifierAdapter):
                                                                      Segment.genus != None,
                                                                      Segment.family != None)).count()
 
-        if training_vector_count < 10:
+        if training_vector_count <= 10:
             # from 10 to 50 steps of 5
-            start, stop, step, selected = 1, 10, 1, 10
+            start, stop, step, selected = 1, training_vector_count, 1, min(training_vector_count, 10)
 
         elif training_vector_count < 100:
             # from 10 to 50 steps of 5
-            start, stop, step, selected = 10, 50, 5, 10
+            start, stop, step, selected = 10, min(training_vector_count, 50), 5, 10
 
         elif training_vector_count < 1000:
             # from 50 to 300 steps of 10
-            start, stop, step, selected = 50, 300, 10, 50
+            start, stop, step, selected = 50, min(training_vector_count, 300), 10, 50
 
         else:
             # from 200 to 500 steps of 20
-            start, stop, step, selected = 200, 500, 20, 200
+            start, stop, step, selected = 200, min(training_vector_count, 500), 20, 200
 
         k_list = [(unicode(x), x) for x in xrange(start, stop, step)]
         settings = [{u'name': unicode(self.tr(u'K-Value')), u'type': u'list', u'default': selected,
                      u'values': k_list,
                      u'value': unicode(selected)}]
 
-        self.k_value = 10
+        self.k_value = selected
 
         self.settings = Parameter.create(name=u'Settings', type=u'group', children=settings)
 
@@ -64,11 +64,11 @@ class KNNClassifierAdapter(ClassifierAdapter):
 
         return KNNClassifier(self.k_value)
 
-    def restore_settings(self, adapter_copy):
+    def restore_settings(self, adapter_copy, signal):
         if not isinstance(adapter_copy, ClassifierAdapter) or \
                 not isinstance(adapter_copy, KNNClassifierAdapter):
             raise Exception("Invalid type exception.")
 
         # get the settings from the copy
-        adapter_copy.get_instance(None)
+        adapter_copy.get_instance()
         self.settings.param(unicode(self.tr(u'K-Value'))).setValue(adapter_copy.k_value)

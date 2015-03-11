@@ -37,11 +37,13 @@ class AbsDecayEnvelopeDetectorAdapter(SoundLabAdapter):
         self.settings = Parameter.create(name=u'Settings', type=u'group', children=settings)
 
         # visual items
+        self.signal_max_value = 2 ** 16
+
         # the time region limits
-        self.threshold_line_item = pg.InfiniteLine(angle=0, pos=2000, movable=True,
+        self.threshold_line_item = pg.InfiniteLine(angle=0, movable=True, pos=fromdB(self.threshold_dB, 0,
+                                                                                     self.signal_max_value),
                                                    pen=pg.mkPen(color=self.COLOR, width=self.VISUAL_ITEM_LINE_WIDTH))
 
-        self.signal_max_value = 2**16
         self.settings.param(unicode(self.tr(u'Threshold (dB)'))).sigValueChanged.connect(
             lambda parameter: self.threshold_line_item.setValue(fromdB(parameter.value(), 0, self.signal_max_value)))
 
@@ -80,13 +82,13 @@ class AbsDecayEnvelopeDetectorAdapter(SoundLabAdapter):
         return AbsDecayEnvelopeDetector(signal, self.decay_ms, self.threshold_dB, self.threshold2_dB,
                                         self.threshold3_dB, self.min_size_ms, self.merge_factor)
 
-    def restore_settings(self, adapter_copy):
+    def restore_settings(self, adapter_copy, signal):
         if not isinstance(adapter_copy, SoundLabAdapter) or \
                 not isinstance(adapter_copy, AbsDecayEnvelopeDetectorAdapter):
             raise Exception("Invalid type exception.")
 
         # get the settings from the copy
-        adapter_copy.get_instance(None)
+        adapter_copy.get_instance(signal)
 
         self.settings.param(unicode(self.tr(u'Threshold (dB)'))).setValue(adapter_copy.threshold_dB)
         self.settings.param(unicode(self.tr(u'Min Size (ms)'))).setValue(adapter_copy.min_size_ms)

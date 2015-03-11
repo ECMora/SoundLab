@@ -14,7 +14,7 @@ class SoundLabAdapter(QObject):
     # region CONSTANTS
 
     # the color for the pen to draw visual items
-    COLOR = pg.mkColor(QtGui.QColor(200, 50, 50, 255))
+    COLOR = pg.mkColor(QtGui.QColor(255, 20, 20, 255))
 
     # the width for the line on the visual items
     VISUAL_ITEM_LINE_WIDTH = 2
@@ -60,10 +60,11 @@ class SoundLabAdapter(QObject):
         """
         return []
 
-    def restore_settings(self, adapter_copy):
+    def restore_settings(self, adapter_copy, signal):
         """
         Load into the settings of the current adapter the ones of the
         adapter supplied
+        :type signal: AudioSignal
         :param adapter_copy: the adapter to load settings for
         :return:
         """

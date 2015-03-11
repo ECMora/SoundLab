@@ -59,13 +59,13 @@ class IntervalDetectorAdapter(SoundLabAdapter):
         self.min_size_ms = min_size
         self.merge_factor = merge_factor
 
-    def restore_settings(self, adapter_copy):
+    def restore_settings(self, adapter_copy, signal):
         if not isinstance(adapter_copy, SoundLabAdapter) or \
                 not isinstance(adapter_copy, IntervalDetectorAdapter):
             raise Exception("Invalid type exception.")
 
         # get the settings from the copy
-        adapter_copy.get_instance(None)
+        adapter_copy.get_instance(signal)
         self.settings.param(unicode(self.tr(u'Threshold (dB)'))).setValue(adapter_copy.threshold_dB)
         self.settings.param(unicode(self.tr(u'Min Size (ms)'))).setValue(adapter_copy.min_size_ms)
         self.settings.param(unicode(self.tr(u'Merge Factor (%)'))).setValue(adapter_copy.merge_factor)

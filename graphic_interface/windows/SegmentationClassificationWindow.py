@@ -156,6 +156,12 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
         self.widget.createContextCursor(
             [
+                # parameters manipulation actions
+                self.actionMeditions,
+                self.actionView_Parameters,
+                self.actionAddElement,
+                separator2,
+
                 # Zoom Actions
                 self.actionZoomIn,
                 self.actionZoom_out,
@@ -168,12 +174,6 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
                 self.actionSpectogram,
                 separator,
 
-                # parameters manipulation actions
-                self.actionMeditions,
-                self.actionView_Parameters,
-                self.actionAddElement,
-                separator2,
-
                 # change tools actions
                 self.actionZoom_Cursor,
                 self.actionPointer_Cursor,
@@ -184,8 +184,8 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
                 self.actionDeselect_Elements,
                 self.actionDelete_Selected_Elements,
                 self.actionSelectedElement_Correlation,
+                self.actionClassify,
                 separator4
-
                 ])
         # endregion
 
@@ -236,8 +236,9 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
         # connect the signals for update the new two dim window actions
         wnd.elementSelected.connect(self.select_element)
-        wnd.elementsClassified.connect(lambda indexes_list, classification_list:
-                                       self.segmentManager.set_manual_elements_classification(indexes_list, classification_list))
+        wnd.elementsClassified.connect(lambda indexes_list, classification:
+                                       self.segmentManager.set_manual_elements_classification(indexes_list,
+                                                                                              classification))
 
         # load the workspace in the new two dimensional window
         if self.workSpace:
@@ -407,15 +408,19 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         """
 
         # delete the elements on the widget and get the indexes for update
-        deleted_elements = self.widget.delete_selected_elements()
+        deleted_elements = self.widget.selected_elements_interval()
+
+        self.widget.delete_selected_elements()
 
         if deleted_elements is None:
             return
 
         start_removed_index, end_removed_index = deleted_elements
 
-        if start_removed_index is not None and start_removed_index >= 0 \
-                and end_removed_index < self.segmentManager.rowCount:
+        if start_removed_index is not None \
+           and start_removed_index >= 0 \
+           and end_removed_index < self.segmentManager.rowCount:
+
             # updates the detected elements
             self.segmentManager.delete_elements(start_removed_index, end_removed_index)
 
@@ -495,6 +500,47 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         except Exception as ex:
             pass
 
+    @pyqtSlot()
+    def on_actionSelectedElement_Correlation_triggered(self):
+        signal = self.widget.selected_element_signal()
+        if not signal:
+            QMessageBox.warning(QMessageBox(), self.tr(u"Error"),
+                                self.tr(u"There is no selected element."))
+            return
+
+        dialog = CrossCorrelationDialog(self, self.widget, signal,
+                                        self.TABLE_ROW_COLOR_ODD, self.TABLE_ROW_COLOR_EVEN)
+
+        self._cross_correlation_windows.append(dialog)
+        dialog.elementSelected.connect(self.select_element)
+        dialog.show()
+
+    @pyqtSlot()
+    def on_actionClassify_triggered(self):
+        """
+        Open the classification dialog for update the categories and values
+        in which could be classified a segment.
+        """
+        # create and open the dialog to edit the classification categories
+        selection = self.widget.selected_elements_interval()
+
+        if selection is None:
+            QMessageBox.warning(QMessageBox(), self.tr(u"Warning"),
+                                self.tr(u"There is no selection made."))
+            return
+
+        index_from, index_to = selection
+        classification_dialog = ManualClassificationDialog()
+        if classification_dialog.exec_():
+            classification = classification_dialog.get_classification()
+
+            self.segmentManager.set_manual_elements_classification(range(index_from, index_to + 1),
+                                                                   classification)
+
+    # endregion
+
+    # region Classification
+
     def show_image_on_element(self, element_index, image):
         """
         show a toast with the specie image (if any and if is identified) of
@@ -506,27 +552,13 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         toast.set_image(image)
 
         element = self.widget.elements[element_index]
-        x = element.indexFrom + (element.indexTo - element.indexFrom)/2.0
+        x = element.indexFrom + (element.indexTo - element.indexFrom) / 2.0
         x = x * self.widget.width() * 1.0 / self.widget.get_visible_region()
         toast.move(self.widget.mapToGlobal(
-            QPoint(x - self.effect_window.width()/2.0,
+            QPoint(x - self.effect_window.width() / 2.0,
                    (self.widget.height() - self.effect_window.height()) / 2.0)))
 
         toast.disappear()
-
-    # endregion
-
-    # region Classification
-
-    @pyqtSlot()
-    def on_actionClassification_Settings_triggered(self):
-        """
-        Open the classification dialog for update the categories and values
-        in which could be classified a segment.
-        """
-        # create and open the dialog to edit the classification categories
-        edit_categ_dialog = ManualClassificationDialog()
-        edit_categ_dialog.exec_()
 
     @pyqtSlot()
     def on_actionCross_correlation_triggered(self):
@@ -543,21 +575,6 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
             self._cross_correlation_windows.append(dialog)
             dialog.elementSelected.connect(self.select_element)
             dialog.show()
-
-    @pyqtSlot()
-    def on_actionSelectedElement_Correlation_triggered(self):
-        signal = self.widget.selected_element_signal()
-        if not signal:
-            QMessageBox.warning(QMessageBox(), self.tr(u"Error"),
-                                self.tr(u"There is no selected element."))
-            return
-
-        dialog = CrossCorrelationDialog(self, self.widget, signal,
-                                         self.TABLE_ROW_COLOR_ODD, self.TABLE_ROW_COLOR_EVEN)
-
-        self._cross_correlation_windows.append(dialog)
-        dialog.elementSelected.connect(self.select_element)
-        dialog.show()
 
     # endregion
 
