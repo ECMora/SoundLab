@@ -231,12 +231,10 @@ def clean_db():
 
         # remove the unidentified and not measured segments
         for segment in useless_segments.all():
-            if len(segment.measurements) < 2:
-
-                # must delete on cascade
-                for measure in segment.measurements:
-                    session.delete(measure)
-                session.delete(segment)
+            # must delete on cascade
+            for measure in segment.measurements:
+                session.delete(measure)
+            session.delete(segment)
 
         session.commit()
 

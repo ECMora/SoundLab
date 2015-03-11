@@ -64,22 +64,6 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
                         adapter.restore_settings(p)
                         break
 
-        # for parameter in self.segmentation_classification_tree.param(unicode(self.tr(u'Segmentation'))).children():
-        #     if parameter.type() == u"bool":
-        #         detector_name = parameter.name()
-        #         adapter = self.segmentation_adapter_factory.get_adapter(detector_name)
-        #         if type(adapter) == type(segmentation_adapter):
-        #             adapter.restore_settings(segmentation_adapter)
-        #             parameter.setValue(True)
-
-        # for parameter in self.segmentation_classification_tree.param(unicode(self.tr(u'Classification'))).children():
-        #     if parameter.type() == u"bool":
-        #         classifier_name = parameter.name()
-        #         adapter = self.classification_adapter_factory.get_adapter(classifier_name)
-        #         if type(adapter) == type(classification_adapter):
-        #             adapter.restore_settings(classification_adapter)
-        #             parameter.setValue(True)
-
         # segmentation method
         self._restore_method(segmentation_adapter, self.segmentation_adapter_factory, u'Segmentation')
 
@@ -102,7 +86,7 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
                 adapter_name = parameter.name()
                 method_adapter = adapter_factory.get_adapter(adapter_name)
                 if type(adapter) == type(method_adapter):
-                    method_adapter.restore_settings(adapter)
+                    method_adapter.restore_settings(adapter, self.widget.signal)
                     parameter.setValue(True)
 
     def create_parameter_trees(self):

@@ -324,16 +324,14 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
     # region Elements Add-Delete-Save
 
-    def delete_selected_elements(self):
+    def selected_elements_interval(self):
         """
-        Deletes the elements between the selection
-        (zoom cursor if zoom cursor is selected and there is a selection or
-        the visible interval otherwise)
-        @return: the tuple (x,y) of init and end of the interval deleted.
-        If no element is deleted returns None
+        :return: tuple of int (start, end) with the indexes of start and end
+        selected elements or None if no selection is made.
         """
         start, end = self.selectedRegion
 
+        # if no area is selected
         if end == start or len(self.elements) == 0 or \
            (start == self.mainCursor.min and end == self.mainCursor.max):
             return None
@@ -348,7 +346,25 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         indexFrom -= 1 if indexFrom > 0 and start <= self.elements[indexFrom - 1].indexTo else 0
 
         if indexTo < indexFrom or indexTo > len(self.elements):
-            return -1, -1
+            return None
+
+        return indexFrom, indexTo - 1
+
+    def delete_selected_elements(self):
+        """
+        Deletes the elements between the selection
+        (zoom cursor if zoom cursor is selected and there is a selection or
+        the visible interval otherwise)
+        @return: the tuple (x,y) of init and end of the interval deleted.
+        If no element is deleted returns None
+        """
+        start, end = self.selectedRegion
+        selection = self.selected_elements_interval()
+
+        if selection is None:
+            return
+
+        indexFrom, indexTo = selection
 
         # remove the selected region Element if is contained on the removed elements region
         selected_rgn_start, selected_rgn_end = self.oscSelectionRegion.getRegion()
@@ -356,17 +372,15 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         if start <= selected_rgn_start <= end or start <= selected_rgn_end <= end:
             self.select_element()
 
-        self.remove_visual_elements(elements=self.elements[indexFrom:indexTo])
+        self.remove_visual_elements(elements=self.elements[indexFrom:indexTo + 1])
 
-        # do not call the property to avoid recompute the visualization unnecessary
-        self._elements = self.elements[0:indexFrom] + self.elements[indexTo:]
+        # do not call the property to avoid recompute the unnecessary visualization
+        self._elements = self.elements[0:indexFrom] + self.elements[indexTo + 1:]
 
         for i, x in enumerate(self.elements):
             x.setNumber(i + 1)
 
         self.draw_elements()
-
-        return indexFrom, indexTo - 1
 
     def mark_region_as_element(self, interval=None, update=True):
         """

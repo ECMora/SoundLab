@@ -143,12 +143,20 @@
    </widget>
    <widget class="QMenu" name="menuDetection">
     <property name="title">
-     <string>Detection</string>
+     <string>Elements</string>
     </property>
+    <widget class="QMenu" name="menuSelected_Elements">
+     <property name="title">
+      <string>Selected Elements</string>
+     </property>
+     <addaction name="actionDelete_Selected_Elements"/>
+     <addaction name="actionDeselect_Elements"/>
+     <addaction name="actionClassify"/>
+    </widget>
     <addaction name="actionDetection"/>
-    <addaction name="actionDelete_Selected_Elements"/>
-    <addaction name="actionDeselect_Elements"/>
     <addaction name="actionAddElement"/>
+    <addaction name="separator"/>
+    <addaction name="menuSelected_Elements"/>
    </widget>
    <widget class="QMenu" name="menuTools">
     <property name="title">
@@ -157,13 +165,6 @@
     <addaction name="actionZoom_Cursor"/>
     <addaction name="actionPointer_Cursor"/>
     <addaction name="actionRectangular_Cursor"/>
-   </widget>
-   <widget class="QMenu" name="menuClasification">
-    <property name="title">
-     <string>Classification</string>
-    </property>
-    <addaction name="actionClassification_Settings"/>
-    <addaction name="actionCross_correlation"/>
    </widget>
    <widget class="QMenu" name="menuExport">
     <property name="title">
@@ -178,14 +179,13 @@
      <addaction name="actionCombined_Image"/>
     </widget>
     <addaction name="actionMeditions"/>
-    <addaction name="menuGraph_Images"/>
     <addaction name="actionSound_File_Segmentation"/>
+    <addaction name="menuGraph_Images"/>
    </widget>
-   <addaction name="menuExport"/>
    <addaction name="menuDetection"/>
-   <addaction name="menuClasification"/>
-   <addaction name="menuTools"/>
+   <addaction name="menuExport"/>
    <addaction name="menuParameters"/>
+   <addaction name="menuTools"/>
   </widget>
   <action name="actionZoomIn">
    <property name="icon">
@@ -351,14 +351,6 @@
     <string>Ctrl+D</string>
    </property>
   </action>
-  <action name="actionView_Threshold">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Threshold</string>
-   </property>
-  </action>
   <action name="actionTemporal_Elements">
    <property name="checkable">
     <bool>true</bool>
@@ -420,14 +412,6 @@
    </property>
    <property name="text">
     <string>Sub Elements Peaks</string>
-   </property>
-  </action>
-  <action name="actionElements_Peaks">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Elements Peaks</string>
    </property>
   </action>
   <action name="actionOsc_Image">
@@ -526,11 +510,11 @@
   </action>
   <action name="actionDelete_Selected_Elements">
    <property name="icon">
-    <iconset resource="resources/icons.qrc">
+    <iconset>
      <normaloff>:/myappicons/deleteElements.png</normaloff>:/myappicons/deleteElements.png</iconset>
    </property>
    <property name="text">
-    <string>Delete Selected Elements</string>
+    <string>Delete</string>
    </property>
   </action>
   <action name="actionDeselect_Elements">
@@ -539,7 +523,7 @@
      <normaloff>:/myappicons/deselectElements.png</normaloff>:/myappicons/deselectElements.png</iconset>
    </property>
    <property name="text">
-    <string>Deselect Elements</string>
+    <string>Deselect</string>
    </property>
   </action>
   <action name="actionTwo_Dimensional_Graphs">
@@ -602,7 +586,7 @@
      <normaloff>:/myappicons/225.ico</normaloff>:/myappicons/225.ico</iconset>
    </property>
    <property name="text">
-    <string>Sound File Segmentation</string>
+    <string>Save Segmentation on Signal</string>
    </property>
   </action>
   <action name="actionTemporal_Parameters">
@@ -639,6 +623,11 @@
   <action name="actionSelectedElement_Correlation">
    <property name="text">
     <string>Selected Element Correlation</string>
+   </property>
+  </action>
+  <action name="actionClassify">
+   <property name="text">
+    <string>Classify</string>
    </property>
   </action>
   <zorder>dockWidgetParameterTableOscilogram</zorder>
