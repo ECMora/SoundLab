@@ -56,19 +56,23 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
     @elements.setter
     def elements(self, elements_list):
-        self.clear_detection()
+        self.deselect_element()
+        import time
 
-        self._elements = []
-        self._elements = map(lambda c: DetectedSoundLabElement(c.signal, c.indexFrom, c.indexTo), elements_list)
+        t = time.time()
 
-        for index, e in enumerate(self._elements):
-            # connect the click event of an element with the signal of the widget
-            e.elementClicked.connect(lambda i: self.elementClicked.emit(i))
-            e.setNumber(index + 1)
+        function_get_elements = lambda i: DetectedSoundLabElement(elements_list[i].signal,
+                                                                  elements_list[i].indexFrom,
+                                                                  elements_list[i].indexTo,
+                                                                  i + 1, self.elementClicked.emit)
+
+        self._elements = map(function_get_elements, xrange(len(elements_list)))
 
         # just show an interval of a fixed amount of elements visible for starting
         if len(self.elements) > self.VISIBLE_ELEMENTS_COUNT:
-            self.mainCursor.min, self.mainCursor.max = 0, self.elements[self.VISIBLE_ELEMENTS_COUNT-1].indexTo
+            self.mainCursor.min, self.mainCursor.max = 0, self.elements[self.VISIBLE_ELEMENTS_COUNT - 1].indexTo
+
+        print("Time consuming on creation of elements: " + str(time.time() - t))
 
     # endregion
 
@@ -80,6 +84,10 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         :param oscilogramItems: true if draw elements in oscilogram false for spectrogram
         None for both
         """
+        import time
+
+        t = time.time()
+
         osc = oscilogramItems is None or oscilogramItems
         spec = oscilogramItems is None or not oscilogramItems
 
@@ -89,17 +97,12 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         # get the visible elements
         elements = [e for e in self.elements if start <= e.indexFrom <= end or start <= e.indexTo <= end]
 
-        # removes all the elements
+        # removes all the elements on spectrogram
         for i in xrange(len(self.elements)):
-            try:
-                for item, visible in self.elements[i].time_element.visual_widgets():
-                    self.axesOscilogram.removeItem(item)
-                for item, visible in self.elements[i].spectral_element.visual_widgets():
-                    self.axesSpecgram.viewBox.removeItem(item)
+            for item, visible in self.elements[i].spectral_element.visual_widgets():
+                self.axesSpecgram.viewBox.removeItem(item)
 
-            except Exception as ex:
-                print(ex.message)
-
+            # recompute the locations of the spectrogram elements
             self.elements[i].spectral_element.translate_time_freq_coords(self.from_osc_to_spec, self.get_freq_index)
 
         widget_scene_width = self.axesOscilogram.viewRect().width()
@@ -112,11 +115,8 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
                     (e.indexTo - e.indexFrom) * widget_pixel_width /
                     widget_scene_width > self.MIN_ELEMENT_WIDTH_PIXELS]
 
-        # add just the visible elements
+        # add osc elements
         for i in xrange(len(elements)):
-            if not elements[i].visible:
-                continue
-
             if self.visibleOscilogram and osc:
                 for item, visible in elements[i].time_element.visual_widgets():
                     if visible:
@@ -134,6 +134,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
                     self.axesOscilogram.addItem(item)
 
         self.repaint()
+        print("Time consuming on drawing elements: " + str(time.time() - t))
 
     def remove_visual_elements(self, oscilogram=True, specgram=True, elements=None):
         """
@@ -159,7 +160,8 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         except Exception as ex:
             print(ex.message)
 
-    def change_elements_visibility(self, visibility, element_type=VisualElement.Text, oscilogram_items=None, update=True):
+    def change_elements_visibility(self, visibility, element_type=VisualElement.Text, oscilogram_items=None,
+                                   update=True):
         """
         Change the visibility of the visual items
         :type update: Bool for efficiency optimization when change multiples elements visibility.
@@ -268,8 +270,8 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
             interval_size = self.mainCursor.max - self.mainCursor.min
 
             # move the interval to make completely visible the element selected
-            self.mainCursor.min = max(0, index_from - interval_size/2)
-            self.mainCursor.max = min(self.signal.length, index_to + interval_size/2)
+            self.mainCursor.min = max(0, index_from - interval_size / 2)
+            self.mainCursor.max = min(self.signal.length, index_to + interval_size / 2)
             self.graph()
 
     def deselect_element(self):
@@ -333,7 +335,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
         # if no area is selected
         if end == start or len(self.elements) == 0 or \
-           (start == self.mainCursor.min and end == self.mainCursor.max):
+                (start == self.mainCursor.min and end == self.mainCursor.max):
             return None
 
         # create a list with start index of each element
@@ -404,10 +406,10 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
         element = DetectedSoundLabElement(self.signal, start, end)
         self.elements.insert(index_from, element)
-        element.elementClicked.connect(lambda i: self.elementClicked.emit(i))
+        element.set_element_clicked_callback(lambda i: self.elementClicked.emit(i))
 
         for index, e in enumerate(self.elements):
-            e.setNumber(index+1)
+            e.setNumber(index + 1)
 
         # variable used for efficiency when add multiple elements
         if update:

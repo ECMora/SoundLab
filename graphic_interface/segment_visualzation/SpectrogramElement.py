@@ -10,11 +10,6 @@ class SpectrogramElement(VisualElement):
     The spectral visual representation of a detected segment
     """
 
-    # region CONSTANTS
-    # the width of the lines on the element region delimiter
-    ELEMENT_REGION_WIDTH = 3
-    # endregion
-
     def __init__(self, signal, indexFrom, indexTo, number=0):
         VisualElement.__init__(self, number=number)
         self.indexFrom = indexFrom
@@ -49,7 +44,7 @@ class SpectrogramElement(VisualElement):
         VisualElement.setNumber(self, n)
 
         # the color is dependent to the number
-        self.element_region.setData(pen=pg.mkPen(self.color, width=self.ELEMENT_REGION_WIDTH))
+        self.element_region.setData(pen=self.pen)
 
     def add_parameter_item(self, parameter_item):
         # check the type of the added parameter items as SpectralVisualItemWrapper
@@ -84,7 +79,7 @@ class SpectrogramElement(VisualElement):
             if translate_freq_function is not None:
                 pos[i, 1] = translate_freq_function(self.element_region_pos[i, 1])
         
-        options = dict(size=1, symbol='d', pxMode=False, pen=(pg.mkPen(self.color, width=self.ELEMENT_REGION_WIDTH)))
+        options = dict(size=1, symbol='d', pxMode=False, pen=self.pen)
         self.element_region.setData(pos=pos, adj=self.element_region_adj, **options)
 
         for item, visibility in self.visual_parameters_items:

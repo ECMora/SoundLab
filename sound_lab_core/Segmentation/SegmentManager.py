@@ -341,8 +341,11 @@ class SegmentManager(QObject):
         detector = self.detector_adapter.get_instance(self.signal)
 
         detector.detectionProgressChanged.connect(lambda x: self.detectionProgressChanged.emit(x))
+        import time
+        t = time.time()
 
         detector.detect()
+        print("Time consuming detecting " + str(len(detector.elements)) + " elements: " + str(time.time() - t))
 
         self.elements = detector.elements
 

@@ -8,32 +8,35 @@ from graphic_interface.segment_visualzation.parameter_items.time_parameter_items
     TimeVisualItemWrapper
 
 
-class DetectedSoundLabElement(QObject):
+class DetectedSoundLabElement:
     """
     Class that represents a detected signal element.
     Contains the visual elements of time and spectral domains
     """
 
-    # region SIGNALS
-    # called when the element is clicked
-    # raise the index of the element (number)
-    elementClicked = pyqtSignal(int)
-    # endregion
-
-    def __init__(self, signal, index_from, index_to, number=0):
-        QObject.__init__(self)
+    def __init__(self, signal, index_from, index_to, number=0, callback=None):
         self.signal = signal
+
+        # callback to execute when the element is clicked. Signals are not used for efficiency
+        self.elementClicked = lambda i: i if callback is None else callback
 
         # the time domain visual element
         self._time_element = OscilogramElement(signal, index_from, index_to, number)
-        self._time_element.elementClicked.connect(lambda i: self.elementClicked.emit(i))
+        self._time_element.set_element_clicked_callback(self.elementClicked)
 
         # the spectral domain visual element
         self._spectral_element = SpectrogramElement(signal, index_from, index_to, number)
-        self._spectral_element.elementClicked.connect(lambda i: self.elementClicked.emit(i))
+        self._spectral_element.set_element_clicked_callback(self.elementClicked)
+
+    def set_element_clicked_callback(self, callback):
+        """
+
+        :param callback:
+        :return:
+        """
+        self.elementClicked = callback if callback is not None else self.elementClicked
 
     # region Properties
-
     @property
     def visible(self):
         """
