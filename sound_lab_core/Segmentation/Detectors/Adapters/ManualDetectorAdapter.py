@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-from sound_lab_core.Segmentation.Detectors.ManualDetector import ManualDetector
+from sound_lab_core.Segmentation.Detectors.OneDimensional.ManualDetector import ManualDetector
 from sound_lab_core.SoundLabAdapter import SoundLabAdapter
-from pyqtgraph.parametertree import Parameter
 
 
 class ManualDetectorAdapter(SoundLabAdapter):

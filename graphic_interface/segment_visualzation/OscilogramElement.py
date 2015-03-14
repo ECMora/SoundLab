@@ -11,13 +11,12 @@ class OscilogramElement(VisualElement):
 
     def __init__(self, signal, indexFrom, indexTo, number=0):
         """
-
-
         :type indexFrom: object
         :type signal: AudioSignal
         @return:
         """
         VisualElement.__init__(self, number=number)
+
         self.indexFrom = indexFrom
         self.indexTo = indexTo
 
@@ -25,7 +24,8 @@ class OscilogramElement(VisualElement):
 
         # the time region limits
         self.element_region = pg.LinearRegionItem([self.indexFrom, self.indexTo],
-                                                  movable=False, brush=(pg.mkBrush(self.color)))
+                                                  movable=False, brush=self.brush)
+
         self.element_region.mouseClickEvent = self.mouseClickEvent
 
         self.visual_figures.append([self.element_region, True])
@@ -48,4 +48,4 @@ class OscilogramElement(VisualElement):
         @param n: The new index
         """
         VisualElement.setNumber(self, n)
-        self.element_region.setBrush(pg.mkBrush(self.color))
+        self.element_region.setBrush(self.brush)

@@ -140,3 +140,5 @@ def getScaledValue(value, scales, scale_step):
     :return:
     """
     pass
+
+

@@ -3,7 +3,7 @@ from PyQt4 import QtCore
 from pyqtgraph.parametertree.parameterTypes import ListParameter
 from pyqtgraph.parametertree import Parameter, ParameterTree
 from PyQt4.QtGui import QMessageBox, QActionGroup, QAction
-from PyQt4.QtCore import pyqtSlot, QMimeData, pyqtSignal, SIGNAL
+from PyQt4.QtCore import pyqtSlot, QMimeData, pyqtSignal
 from duetto.audio_signals import openSignal
 from duetto.audio_signals.Synthesizer import Synthesizer
 from duetto.signal_processing.filter_signal_processors.frequency_domain_filters import BandPassFilter, HighPassFilter, \
@@ -93,20 +93,16 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         # get all the themes that are in the static folder for themes ("utils\themes\")
         app_themes = folder_files(os.path.join("utils", "themes"), extensions=[".dth"])
 
-        # get all the styles that are in the static folder for styles ("styles\")
+        # get all the styles that are in the static folder for styles ("utils\styles\")
         app_styles = folder_files(os.path.join("utils", "styles"), extensions=[".qss"])
 
-        # get all the languages translations that are in the static folder for languagues ("I18n\")
-        app_languagues = folder_files(os.path.join("utils", "I18n"), extensions=[".qm"])
+        # get all the languages translations that are in the static folder for languages ("utils\I18n\")
+        app_languages = folder_files(os.path.join("utils", "I18n"), extensions=[".qm"])
 
         # user interface to manipulate several visual parameters
         # and display options of the application theme.
-        #  Is used a parameter tree to present to the user the visual options
-        #  region Parameter Tree definition
-
-        #  create the tree,  and connect
-        self.settingsParameterTree = self.__getSettings(app_styles, app_languagues, app_themes)
-
+        # Is used a parameter tree to present to the user the visual options
+        self.settingsParameterTree = self.__getSettings(app_styles, app_languages, app_themes)
         self.settingsParameterTree.sigTreeStateChanged.connect(self.paramTreeChanged)
 
         self.parameterTreeWidget = ParameterTree()
@@ -114,8 +110,6 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         self.parameterTreeWidget.setFixedWidth(self.SETTINGS_WINDOW_WIDTH)
         self.parameterTreeWidget.setHeaderHidden(True)
         self.parameterTreeWidget.setParameters(self.settingsParameterTree, showTop=False)
-
-        #  endregion
 
         self.addSignalTab(Synthesizer.generateSilence(duration=1))
 
@@ -137,7 +131,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         #  accept drops to open signals by drop
         self.setAcceptDrops(True)
 
-        # close the signal of the opening to statr with no opened signals
+        # close the signal of the opening to start with no opened signals
         self.tabOpenedSignals.removeTab(0)
 
         # set the values for start with no opened signals
@@ -379,7 +373,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
                  ]}
             ]
              }
-            #,  RESERVED FOR FUTURE USE
+            # ,  RESERVED FOR FUTURE USE
             # {u'name': unicode(self.tr(u'Detection Visual Settings')), u'type': u'group', u'children': [
             #     {u'name': unicode(self.tr(u'Measurement Location')), u'type': u'group', u'children': [
             #         {u'name': unicode(self.tr(u'Start')), u'type': u'color',
@@ -1413,6 +1407,8 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
                 QMessageBox.warning(QMessageBox(), self.tr(u"Error"),
                                     self.tr(u"Sampling rate should be less than") + u" " + unicode(
                                         self.MAX_SAMPLING_RATE))
+
+        self.updateSignalPropertiesLabel(self.widget.signal)
 
     # endregion
 

@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 from sound_lab_core.Segmentation.Detectors.Adapters.IntervalDetectorAdapter import IntervalDetectorAdapter
-from sound_lab_core.Segmentation.Detectors.OneDimensional.IntervalMethods.IntervalRmsDetector import IntervalRmsDetector
+from sound_lab_core.Segmentation.Detectors.OneDimensional.IntervalMethods.IntervalPowerSpectrumDetector import \
+    IntervalPowerSpectrumDetector
 
 
-class IntervalRmsDetectorAdapter(IntervalDetectorAdapter):
+class IntervalPowerSpectrumDetectorAdapter(IntervalDetectorAdapter):
     """
     Adapter class for the start time parameter.
     """
@@ -19,4 +20,4 @@ class IntervalRmsDetectorAdapter(IntervalDetectorAdapter):
         self.update_instance_variables()
         self.signal_max_value = max(signal.data)
 
-        return IntervalRmsDetector(signal, self.threshold_dB, self.min_size_ms, self.merge_factor)
+        return IntervalPowerSpectrumDetector(signal, self.threshold_dB, self.min_size_ms, self.merge_factor)

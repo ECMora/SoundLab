@@ -26,27 +26,27 @@ class ClassificationVisualItem(TimeVisualItemWrapper):
         self.classification_item.setToolTip(classification_value.get_full_description())
 
         # set the image as background
-        pixmap = classification_value.get_image()
+        # pixmap = classification_value.get_image()
+        #
+        # if pixmap is None:
+        #     return
+        #
+        # image = pixmap.toImage()
+        # if image is None:
+        #     return
 
-        if pixmap is None:
-            return
-
-        image = pixmap.toImage()
-        if image is None:
-            return
-
-        ptr = image.bits()
-        ptr.setsize(image.byteCount())
-        arr = np.asarray(ptr)
-        h, w = image.height(), image.width()
-        depth = image.byteCount() / (w * h)
-        image_array = arr.reshape((h, w, depth))
-
-        self.classification_item.setImage(image_array)
-
-        # set the position of the item
-        left = segment.indexFrom + (segment.indexTo - segment.indexFrom) / 3.0
-        top = signal.minimumValue + (signal.maximumValue - signal.minimumValue) / 5.0
-        width = (segment.indexTo - segment.indexFrom) / 3.0
-        height = (signal.maximumValue - signal.minimumValue) / 5.0
-        self.classification_item.setRect(QRect(left, top, width, height))
+        # ptr = image.bits()
+        # ptr.setsize(image.byteCount())
+        # arr = np.asarray(ptr)
+        # h, w = image.height(), image.width()
+        # depth = image.byteCount() / (w * h)
+        # image_array = arr.reshape((h, w, depth))
+        #
+        # self.classification_item.setImage(image_array)
+        #
+        # # set the position of the item
+        # left = segment.indexFrom + (segment.indexTo - segment.indexFrom) / 3.0
+        # top = signal.minimumValue + (signal.maximumValue - signal.minimumValue) / 5.0
+        # width = (segment.indexTo - segment.indexFrom) / 3.0
+        # height = (signal.maximumValue - signal.minimumValue) / 5.0
+        # self.classification_item.setRect(QRect(left, top, width, height))

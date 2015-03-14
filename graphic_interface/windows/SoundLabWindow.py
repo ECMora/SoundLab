@@ -340,14 +340,17 @@ class SoundLabWindow(QtGui.QMainWindow):
     @pyqtSlot()
     def on_actionCut_triggered(self):
         self.widget.cut()
+        self.updateSignalPropertiesLabel(self.widget.signal)
 
     @pyqtSlot()
     def on_actionCopy_triggered(self):
         self.widget.copy()
 
+
     @pyqtSlot()
     def on_actionPaste_triggered(self):
         self.widget.paste()
+        self.updateSignalPropertiesLabel(self.widget.signal)
 
     #  endregion
 

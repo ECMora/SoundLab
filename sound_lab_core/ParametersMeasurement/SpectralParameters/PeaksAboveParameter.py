@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from utils.Utils import DECIMAL_PLACES
 from matplotlib import mlab
 import numpy as np
 from scipy.ndimage import label
@@ -17,7 +16,13 @@ class PeaksAboveParameter(ParameterMeasurer):
         self.threshold = threshold
 
     def measure(self, segment):
-        Pxx, freqs = mlab.psd(segment.signal.data[segment.indexFrom:segment.indexTo], Fs=segment.signal.samplingRate,noverlap=128)
+        # frequency_params is a tuple Pxx, freqs shared by all the frequency parameters
+        # on their measurements
+        if "frequency_params" not in segment.memory_dict:
+            Pxx, freqs = mlab.psd(segment.signal.data[segment.indexFrom:segment.indexTo], Fs=segment.signal.samplingRate,noverlap=128)
+            segment.memory_dict["frequency_params"] = (Pxx, freqs)
+
+        Pxx, freqs = segment.memory_dict["frequency_params"]
         value = np.amax(Pxx) * np.power(10, self.threshold/10.0)
         _, cnt_regions = label(Pxx >= value)
         return cnt_regions

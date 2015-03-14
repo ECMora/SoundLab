@@ -3,25 +3,23 @@ from PyQt4.QtCore import QObject, pyqtSignal
 import pyqtgraph as pg
 from PyQt4.QtGui import QFont, QColor
 
+# the font size for text labels
+FONT_SIZE = 13
+FONT = QFont("Arial", pointSize=FONT_SIZE)
 
-class VisualElement(QObject):
+
+class VisualElement:
     """
     The base class for all the visual elements from segmentation
     and parameter measurement. A visual element may contain multiple visual items
     """
 
-    # region SIGNALS
-    # called when the element is clicked
-    #  raise the index of the element (number)
-    elementClicked = pyqtSignal(int)
-    # endregion
-
     # region CONSTANTS
     #  decimal places to round the parameters
     DECIMAL_PLACES = 4
 
-    # the font size for text labels
-    FONT_SIZE = 13
+    # the width of the lines on the element region delimiter
+    ELEMENT_REGION_WIDTH = 3
 
     # different colors for the even and odds rows in the parameter table and segment colors.
     COLOR_ODD = QColor(0, 0, 255, 100)
@@ -33,10 +31,17 @@ class VisualElement(QObject):
     # PARAMETERS for the measured parameters
     Figures, Text, Parameters = range(3)
 
+    brush_odd = pg.mkBrush(COLOR_ODD)
+    brush_even = pg.mkBrush(COLOR_EVEN)
+
+    pen_odd = pg.mkPen(COLOR_ODD, width=ELEMENT_REGION_WIDTH)
+    pen_even = pg.mkPen(COLOR_EVEN, width=ELEMENT_REGION_WIDTH)
+
     # endregion
 
     def __init__(self, number=0):
-        QObject.__init__(self)
+        # callback to execute when the element is clicked. Signals are not used for efficiency
+        self.elementClicked = lambda i: i
 
         # the optional data interesting for the transform ej name, parameters, etc
         # visual options for plotting the element
@@ -44,11 +49,9 @@ class VisualElement(QObject):
 
         # the visual elements that show text
         self.visual_text = []
-        font = QFont()
-        font.setPointSize(self.FONT_SIZE)
 
         self.text_number = pg.TextItem(str(number), color=(255, 255, 255), anchor=(0.5, 0.5))
-        self.text_number.setFont(font)
+        self.text_number.setFont(FONT)
         self.visual_text.append([self.text_number, True])
 
         # the visual components that show the elements representation
@@ -61,12 +64,28 @@ class VisualElement(QObject):
         # the number of this element for visualization and ordering options
         self._number = number
 
+    def set_element_clicked_callback(self, callback):
+        """
+
+        :param callback:
+        :return:
+        """
+        self.elementClicked = callback if callback is not None else self.elementClicked
+
     @property
     def color(self):
         """
         :return: the current element visual color
         """
         return self.COLOR_ODD if self.number % 2 == 0 else self.COLOR_EVEN
+
+    @property
+    def brush(self):
+        return self.brush_odd if self.number % 2 == 0 else self.brush_even
+
+    @property
+    def pen(self):
+        return self.pen_odd if self.number % 2 == 0 else self.pen_even
 
     @property
     def number(self):
@@ -99,7 +118,7 @@ class VisualElement(QObject):
         in the visual figures of the element
         @param event: The event raised
         """
-        self.elementClicked.emit(self.number - 1)
+        self.elementClicked(self.number - 1)
 
     def add_parameter_item(self, parameter_item):
         """

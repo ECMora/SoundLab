@@ -13,3 +13,11 @@ class Element:
     def __init__(self, signal):
         # the signal in which this elements is defined
         self.signal = signal
+
+        # dict to store extra information for memoize pattern implementation
+        # example: Parameter measurement data for efficiency improvement
+        self._memory_dict = {}
+
+    @property
+    def memory_dict(self):
+        return self._memory_dict
