@@ -1,5 +1,3 @@
-from math import sqrt
-import numpy as np
 from sound_lab_core.Segmentation.Detectors.OneDimensional.IntervalMethods.IntervalDetector import IntervalDetector
 
 
@@ -11,9 +9,9 @@ class IntervalRmsDetector(IntervalDetector):
     def function(self, data, step, total):
         IntervalDetector.function(self, data, step, total)
 
-        ind, vals = self.local_max(data)
-        x = 0
-        if len(vals) > 0:
-            vals = np.array(vals, dtype=long)
-            x = sqrt(sum(vals ** 2) / vals.size)
-        return x
+        _, values = self.local_max(data)
+
+        if len(values) == 0:
+            return 0
+
+        return (values ** 2).sum() ** 0.5 / values.size

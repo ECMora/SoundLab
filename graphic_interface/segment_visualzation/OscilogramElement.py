@@ -1,5 +1,6 @@
 import pyqtgraph as pg
 from graphic_interface.segment_visualzation.VisualElement import VisualElement
+from graphic_interface.segment_visualzation.VisualItemsCache import VisualItemsCache
 from graphic_interface.segment_visualzation.parameter_items.time_parameter_items.TimeParameterVisualItem import \
     TimeVisualItemWrapper
 
@@ -23,12 +24,15 @@ class OscilogramElement(VisualElement):
         self.text_number.setPos(self.indexFrom / 2.0 + self.indexTo / 2.0, 0.75 * signal.maximumValue)
 
         # the time region limits
-        self.element_region = pg.LinearRegionItem([self.indexFrom, self.indexTo],
-                                                  movable=False, brush=self.brush)
+        self.element_region = VisualItemsCache().get_region_item(self.indexFrom, self.indexTo, self.brush)
 
         self.element_region.mouseClickEvent = self.mouseClickEvent
 
         self.visual_figures.append([self.element_region, True])
+
+    def release_resources(self):
+        VisualItemsCache().release_text_item(self.text_number)
+        VisualItemsCache().release_region_item(self.element_region)
 
     def add_parameter_item(self, parameter_item):
         """

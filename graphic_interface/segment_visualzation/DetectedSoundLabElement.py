@@ -14,11 +14,11 @@ class DetectedSoundLabElement:
     Contains the visual elements of time and spectral domains
     """
 
-    def __init__(self, signal, index_from, index_to, number=0, callback=None):
+    def __init__(self, signal, index_from, index_to, number=0, signal_callback=None):
         self.signal = signal
 
         # callback to execute when the element is clicked. Signals are not used for efficiency
-        self.elementClicked = lambda i: i if callback is None else callback
+        self.elementClicked = signal_callback
 
         # the time domain visual element
         self._time_element = OscilogramElement(signal, index_from, index_to, number)
@@ -27,6 +27,10 @@ class DetectedSoundLabElement:
         # the spectral domain visual element
         self._spectral_element = SpectrogramElement(signal, index_from, index_to, number)
         self._spectral_element.set_element_clicked_callback(self.elementClicked)
+
+    def release_resources(self):
+        self.time_element.release_resources()
+        self.spectral_element.release_resources()
 
     def set_element_clicked_callback(self, callback):
         """

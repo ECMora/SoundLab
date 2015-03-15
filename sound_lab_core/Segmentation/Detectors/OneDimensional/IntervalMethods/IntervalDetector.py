@@ -66,6 +66,9 @@ class IntervalDetector(OneDimensionalElementsDetector):
 
         return self.elements
 
+    def get_threshold_level(self, data):
+        return fromdB(self.threshold, 0, max(data))
+
     def interval_detector(self, data, min_size, merge_factor, function):
 
         min_size = int(min_size)
@@ -79,7 +82,7 @@ class IntervalDetector(OneDimensionalElementsDetector):
         k = min_size / 2
         detected = np.array([0 if i == 0 else function(data[(i - 1) * k: i * k], i, arr_size) for i in xrange(arr_size)])
 
-        threshold = fromdB(self.threshold, 0, max(detected))
+        threshold = self.get_threshold_level(detected)
 
         self.detectionProgressChanged.emit(75)
 

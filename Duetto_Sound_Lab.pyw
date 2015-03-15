@@ -3,6 +3,7 @@ from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 import os, hashlib
 import sys
+from graphic_interface.segment_visualzation.VisualItemsCache import VisualItemsCache
 from utils.Utils import deserialize, WORK_SPACE_FILE_NAME
 from graphic_interface.Settings.Workspace import Workspace
 from graphic_interface.windows.SoundLabMainWindow import SoundLabMainWindow
@@ -77,6 +78,15 @@ def load_app_style(qApp=None, style_file=None):
 
     except Exception as ex:
         print("error loading app style. " + ex.message)
+
+
+def create_visual_item_cache(count=300):
+    """
+
+    :return:
+    """
+
+    VisualItemsCache().create_items(count)
 
 
 def load_language_translations(app=None, translation_file=None, window=None):
@@ -167,6 +177,12 @@ if __name__ == '__main__':
         # with the same return code of Qt application
         dmw.show()
         license_checker_timer.start(1000)
+        # create 300 items
+        QTimer.singleShot(1000, create_visual_item_cache)
+
+        # create 300 more
+        QTimer.singleShot(2000, create_visual_item_cache)
+
         sys.exit(app.exec_())
 
     else:

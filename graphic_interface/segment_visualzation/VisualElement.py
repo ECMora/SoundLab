@@ -1,11 +1,7 @@
 #  -*- coding: utf-8 -*-
-from PyQt4.QtCore import QObject, pyqtSignal
 import pyqtgraph as pg
-from PyQt4.QtGui import QFont, QColor
-
-# the font size for text labels
-FONT_SIZE = 13
-FONT = QFont("Arial", pointSize=FONT_SIZE)
+from PyQt4.QtGui import QColor
+from graphic_interface.segment_visualzation.VisualItemsCache import VisualItemsCache
 
 
 class VisualElement:
@@ -41,18 +37,15 @@ class VisualElement:
 
     def __init__(self, number=0):
         # callback to execute when the element is clicked. Signals are not used for efficiency
-        self.elementClicked = lambda i: i
+        self.elementClicked = None
 
         # the optional data interesting for the transform ej name, parameters, etc
         # visual options for plotting the element
         self.visible = True
 
         # the visual elements that show text
-        self.visual_text = []
-
-        self.text_number = pg.TextItem(str(number), color=(255, 255, 255), anchor=(0.5, 0.5))
-        self.text_number.setFont(FONT)
-        self.visual_text.append([self.text_number, True])
+        self.text_number = VisualItemsCache().get_text_item(number)
+        self.visual_text = [[self.text_number, True]]
 
         # the visual components that show the elements representation
         self.visual_figures = []
@@ -118,7 +111,8 @@ class VisualElement:
         in the visual figures of the element
         @param event: The event raised
         """
-        self.elementClicked(self.number - 1)
+        if self.elementClicked:
+            self.elementClicked.emit(self.number - 1)
 
     def add_parameter_item(self, parameter_item):
         """
