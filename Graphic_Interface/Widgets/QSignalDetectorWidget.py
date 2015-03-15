@@ -60,11 +60,15 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         import time
 
         t = time.time()
+        # release the resources of visual items
+
+        for e in self._elements:
+            e.release_resources()
 
         function_get_elements = lambda i: DetectedSoundLabElement(elements_list[i].signal,
                                                                   elements_list[i].indexFrom,
                                                                   elements_list[i].indexTo,
-                                                                  i + 1, self.elementClicked.emit)
+                                                                  i + 1, self.elementClicked)
 
         self._elements = map(function_get_elements, xrange(len(elements_list)))
 
