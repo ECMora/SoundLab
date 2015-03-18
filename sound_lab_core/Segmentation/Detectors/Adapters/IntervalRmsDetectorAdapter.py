@@ -19,4 +19,5 @@ class IntervalRmsDetectorAdapter(IntervalDetectorAdapter):
         self.update_instance_variables()
         self.signal_max_value = max(signal.data)
 
-        return IntervalRmsDetector(signal, self.threshold_dB, self.min_size_ms, self.merge_factor)
+        return IntervalRmsDetector(signal, self.threshold_dB, self.threshold2_dB,
+                                   self.threshold3_dB, self.min_size_ms, self.merge_factor)

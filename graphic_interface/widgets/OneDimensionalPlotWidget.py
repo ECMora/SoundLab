@@ -133,7 +133,7 @@ class OneDimPlotWidget(SoundLabWidget,pg.PlotWidget):
             self.clear()
             (x, y) = self.one_dim_transform.getData(indexFrom, indexTo)
 
-            # plotting function according connecting lines between points or not
+            # plotting interval_function according connecting lines between points or not
             if self.lines:
                 self.plot(x, y, pen=self.plot_color, clear=True)
             else:

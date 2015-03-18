@@ -54,7 +54,7 @@ class PointerCursorTool(SignalVisualizerTool):
                                 ]
         else:
             self.detectedData = [("Amp(%)", round(info[1], self.DECIMAL_PLACES)),
-                                 ("Time", round(info[0],self.DECIMAL_PLACES))
+                                 ("Time", round(info[0], self.DECIMAL_PLACES))
                                 ]
 
         # raise the signal of detection data

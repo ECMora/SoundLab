@@ -5,12 +5,13 @@ from utils.Utils import fromdB
 
 class IntervalPowerSpectrumDetector(IntervalDetector):
 
-    def __init__(self, signal, threshold_db=-40, min_size_ms=1, merge_factor=5):
-        IntervalDetector.__init__(self, signal, threshold_db, min_size_ms, merge_factor)
+    def __init__(self, signal, threshold_db=-40, threshold2_db=0, threshold3_db=0, min_size_ms=1, merge_factor=5):
+        IntervalDetector.__init__(self, signal, threshold_db, threshold2_db, threshold3_db,
+                                  min_size_ms, merge_factor)
 
     def get_threshold_level(self, data):
         return fromdB(self.threshold, 0, max(self.signal.data))
 
-    def function(self, d, step, total):
-        IntervalDetector.function(self, d, step, total)
+    def interval_function(self, d, step, total):
+        IntervalDetector.interval_function(self, d, step, total)
         return max(fft(d))

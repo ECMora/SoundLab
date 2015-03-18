@@ -15,7 +15,7 @@ class SignalVisualizerTool(QtCore.QObject):
     Base class for the tools used in the QSignalVisualizerWidget.
     Encapsulates method for user interaction with the visual controls.
     All the signal_visualizer_tools must manage the gui events
-    corresponding to its function
+    corresponding to its interval_function
     """
 
     # region SIGNALS

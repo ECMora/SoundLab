@@ -21,10 +21,13 @@ class VisualElement:
     COLOR_ODD = QColor(0, 0, 255, 100)
     COLOR_EVEN = QColor(0, 255, 0, 100)
 
+    # static reference
+    visual_items_cache = None
+
     # classes of visual elements,
-    # FIGURES for the elements representation visual item
-    # TEXT for the numbers and labels used
-    # PARAMETERS for the measured parameters
+    # FIGURES ----- for elements representation visual item
+    # TEXT -------- for numbers and labels used
+    # PARAMETERS -- for measured parameters
     Figures, Text, Parameters = range(3)
 
     brush_odd = pg.mkBrush(COLOR_ODD)
@@ -39,12 +42,15 @@ class VisualElement:
         # callback to execute when the element is clicked. Signals are not used for efficiency
         self.elementClicked = None
 
+        if VisualElement.visual_items_cache is None:
+            VisualElement.visual_items_cache = VisualItemsCache()
+
         # the optional data interesting for the transform ej name, parameters, etc
         # visual options for plotting the element
         self.visible = True
 
         # the visual elements that show text
-        self.text_number = VisualItemsCache().get_text_item(number)
+        self.text_number = VisualElement.visual_items_cache.get_text_item(number)
         self.visual_text = [[self.text_number, True]]
 
         # the visual components that show the elements representation
@@ -59,7 +65,6 @@ class VisualElement:
 
     def set_element_clicked_callback(self, callback):
         """
-
         :param callback:
         :return:
         """

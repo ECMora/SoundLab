@@ -15,6 +15,10 @@ class IntervalDetectorAdapter(SoundLabAdapter):
 
         settings = [
             {u'name': unicode(self.tr(u'Threshold (dB)')), u'type': u'float', u'value': -20.00, u'step': 1, u'limits': (-120, 0)},
+            {u'name': unicode(self.tr(u'Threshold Start(dB)')), u'type': u'int', u'value': 0.00, u'step': 1,
+             u'limits': (-120, 0)},
+            {u'name': unicode(self.tr(u'Threshold End(dB)')), u'type': u'int', u'value': 0.00, u'step': 1,
+             u'limits': (-120, 0)},
             {u'name': unicode(self.tr(u'Min Size (ms)')), u'type': u'float', u'value': 2.00, u'step': 1, u'limits': (0, 30000)},
             {u'name': unicode(self.tr(u'Merge Factor (%)')), u'type': u'int', u'value': 5.00, u'step': 1,
              u'limits': (0, 50)}]
@@ -22,6 +26,8 @@ class IntervalDetectorAdapter(SoundLabAdapter):
         self.threshold_dB = -20
         self.min_size_ms = 2
         self.merge_factor = 5
+        self.threshold2_dB = 0
+        self.threshold3_dB = 0
 
         self.settings = Parameter.create(name=u'Settings', type=u'group', children=settings)
 
@@ -49,15 +55,18 @@ class IntervalDetectorAdapter(SoundLabAdapter):
             threshold = self.settings.param(unicode(self.tr(u'Threshold (dB)'))).value()
             min_size = self.settings.param(unicode(self.tr(u'Min Size (ms)'))).value()
             merge_factor = self.settings.param(unicode(self.tr(u'Merge Factor (%)'))).value()
+            threshold2 = self.settings.param(unicode(self.tr(u'Threshold Start(dB)'))).value()
+            threshold3 = self.settings.param(unicode(self.tr(u'Threshold End(dB)'))).value()
 
         except Exception as ex:
-            threshold = -20
-            min_size = 2
-            merge_factor = 5
+            threshold, threshold2, threshold3 = -20, 0, 0
+            min_size, merge_factor = 2, 5
 
         self.threshold_dB = threshold
         self.min_size_ms = min_size
         self.merge_factor = merge_factor
+        self.threshold2_dB = threshold2
+        self.threshold3_dB = threshold3
 
     def restore_settings(self, adapter_copy, signal):
         if not isinstance(adapter_copy, SoundLabAdapter) or \
@@ -67,6 +76,8 @@ class IntervalDetectorAdapter(SoundLabAdapter):
         # get the settings from the copy
         adapter_copy.get_instance(signal)
         self.settings.param(unicode(self.tr(u'Threshold (dB)'))).setValue(adapter_copy.threshold_dB)
+        self.settings.param(unicode(self.tr(u'Threshold Start(dB)'))).setValue(adapter_copy.threshold2_dB)
+        self.settings.param(unicode(self.tr(u'Threshold End(dB)'))).setValue(adapter_copy.threshold3_dB)
         self.settings.param(unicode(self.tr(u'Min Size (ms)'))).setValue(adapter_copy.min_size_ms)
         self.settings.param(unicode(self.tr(u'Merge Factor (%)'))).setValue(adapter_copy.merge_factor)
 

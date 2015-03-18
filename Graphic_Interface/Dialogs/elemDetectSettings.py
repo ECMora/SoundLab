@@ -61,7 +61,7 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
                 for p in parameter_adapters:
                     if type(adapter) == type(p):
                         parameter.param(unicode(self.tr(u'Measure'))).setValue(True)
-                        adapter.restore_settings(p, self.widget.signal)
+                        adapter.restore_settings(p)
                         break
 
         # segmentation method

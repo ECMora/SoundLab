@@ -1,7 +1,5 @@
-import pyqtgraph as pg
 import numpy as np
 from graphic_interface.segment_visualzation.VisualElement import VisualElement
-from graphic_interface.segment_visualzation.VisualItemsCache import VisualItemsCache
 from graphic_interface.segment_visualzation.parameter_items.spectral_parameter_items.SpectralParameterVisualItem import \
     SpectralVisualItemWrapper
 
@@ -22,9 +20,10 @@ class SpectrogramElement(VisualElement):
         self.text_number_pos = self.indexFrom / 2.0 + self.indexTo / 2.0, max_freq * 0.9
         self.text_number.setPos(self.text_number_pos[0], self.text_number_pos[1])
 
-        self.element_region = VisualItemsCache().get_graph_item()
+        self.element_region = VisualElement.visual_items_cache.get_graph_item()
 
         self.element_region.mouseClickEvent = self.mouseClickEvent
+
         # Define positions of nodes
         self.element_region_pos = np.array([
             [self.indexFrom, max_freq * 0.8],
@@ -39,9 +38,8 @@ class SpectrogramElement(VisualElement):
         self.visual_figures.append([self.element_region, True])  # item visibility
 
     def release_resources(self):
-        VisualItemsCache().release_text_item(self.text_number)
-        VisualItemsCache().release_graph_item(self.element_region)
-
+        VisualElement.visual_items_cache.release_text_item(self.text_number)
+        VisualElement.visual_items_cache.release_graph_item(self.element_region)
 
     def setNumber(self, n):
         """
@@ -51,7 +49,7 @@ class SpectrogramElement(VisualElement):
         """
         VisualElement.setNumber(self, n)
 
-        # the color is dependent to the number
+        # the color is dependent of number
         self.element_region.setData(pen=self.pen)
 
     def add_parameter_item(self, parameter_item):

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import xlwt
-from PyQt4.QtCore import pyqtSlot, Qt, QPoint
+from PyQt4.QtCore import pyqtSlot, Qt, QPoint, QTimer
 from SoundLabWindow import SoundLabWindow
 from graphic_interface.segment_visualzation.VisualElement import VisualElement
 from duetto.audio_signals.AudioSignal import AudioSignal
@@ -571,7 +571,7 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
                                                 filter=self.tr(u"Wave Files") + u"(*.wav);;All Files(*)")
         if file_name:
             dialog = CrossCorrelationDialog(self, self.widget, file_name,
-                                             self.TABLE_ROW_COLOR_ODD, self.TABLE_ROW_COLOR_EVEN)
+                                            self.TABLE_ROW_COLOR_ODD, self.TABLE_ROW_COLOR_EVEN)
             self._cross_correlation_windows.append(dialog)
             dialog.elementSelected.connect(self.select_element)
             dialog.show()

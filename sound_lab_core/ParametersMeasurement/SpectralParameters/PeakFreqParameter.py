@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from matplotlib import mlab
 from numpy import argmax
+from numpy.fft import fft
 from sound_lab_core.ParametersMeasurement.ParameterMeasurer import ParameterMeasurer
 from sound_lab_core.ParametersMeasurement.SpectralParameters import DECIMAL_PLACES
 
@@ -23,5 +24,6 @@ class PeakFreqParameter(ParameterMeasurer):
             segment.memory_dict["frequency_params"] = (Pxx, freqs)
 
         Pxx, freqs = segment.memory_dict["frequency_params"]
+
         index = argmax(Pxx)
         return round((freqs[index] - freqs[index] % 10) / 1000.0, DECIMAL_PLACES)
