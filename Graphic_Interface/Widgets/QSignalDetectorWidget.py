@@ -1,9 +1,11 @@
 from PyQt4 import QtGui, QtCore
+from PyQt4.QtGui import QColor
 import pyqtgraph as pg
 import numpy as np
 from graphic_interface.segment_visualzation.DetectedSoundLabElement import DetectedSoundLabElement
 from graphic_interface.segment_visualzation.VisualElement import VisualElement
 from QSignalVisualizerWidget import QSignalVisualizerWidget
+from graphic_interface.segment_visualzation.VisualItemsCache import VisualItemsCache
 from sound_lab_core.Elements.OneDimensionalElements.OneDimensionalElement import OneDimensionalElement
 
 
@@ -23,6 +25,11 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
     # region CONSTANTS
 
+    # the pen for no visible items groups draw
+    NO_VISIBLE_ELEMENTS_PEN = pg.mkPen(QColor(255, 0, 0, 100), width=3)
+
+    visual_items_cache = None
+
     # the brush that is used to draw the selected region or Element
     SELECTED_ELEMENT_BRUSH = pg.mkBrush(QtGui.QColor(255, 0, 0, 200))
 
@@ -30,13 +37,16 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
     VISIBLE_ELEMENTS_COUNT = 1000
 
     # the min size in pixels that must have an element to be visualized
-    MIN_ELEMENT_WIDTH_PIXELS = 1
+    MIN_ELEMENT_WIDTH_PIXELS = 5
 
     # endregion
 
     def __init__(self, parent):
         # items to highlight elements or regions in the graph
         self.oscSelectionRegion = pg.LinearRegionItem([0, 0], movable=False, brush=self.SELECTED_ELEMENT_BRUSH)
+
+        if self.visual_items_cache is None:
+            self.visual_items_cache = VisualItemsCache()
 
         # visibility of all detected elements used when they are displayed
         self.visibleElements = True
@@ -61,9 +71,10 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
         t = time.time()
         # release the resources of visual items
-
         for e in self._elements:
             e.release_resources()
+            for item, visible in e.spectral_element.visual_widgets():
+                self.axesSpecgram.viewBox.removeItem(item)
 
         function_get_elements = lambda i: DetectedSoundLabElement(elements_list[i].signal,
                                                                   elements_list[i].indexFrom,
@@ -101,7 +112,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         # get the visible elements
         elements = [e for e in self.elements if start <= e.indexFrom <= end or start <= e.indexTo <= end]
 
-        # removes all the elements on spectrogram
+        # removes all the elements on spectrogram (not oscilogram because it's cleared on graph)
         for i in xrange(len(self.elements)):
             for item, visible in self.elements[i].spectral_element.visual_widgets():
                 self.axesSpecgram.viewBox.removeItem(item)
@@ -109,16 +120,15 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
             # recompute the locations of the spectrogram elements
             self.elements[i].spectral_element.translate_time_freq_coords(self.from_osc_to_spec, self.get_freq_index)
 
+        # filter to get just the truly visible elements based on pixels width
         widget_scene_width = self.axesOscilogram.viewRect().width()
         widget_pixel_width = self.axesOscilogram.width() * 1.0
-
-        # heuristic for the amount of visible elements
-        self.MIN_ELEMENT_WIDTH_PIXELS = 3 if len(elements) * 1.0 / self.width() > 1 else 1
 
         elements = [e for e in elements if
                     (e.indexTo - e.indexFrom) * widget_pixel_width /
                     widget_scene_width > self.MIN_ELEMENT_WIDTH_PIXELS]
 
+        # region Add Elements to Widgets
         # add osc elements
         for i in xrange(len(elements)):
             if self.visibleOscilogram and osc:
@@ -137,8 +147,63 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
                 if visible:
                     self.axesOscilogram.addItem(item)
 
+        # endregion
+
+        # add items for continuous groups (more than 2) of no visible detected elements
+        visible_elements_indexes = [e.number - 1 for e in elements]
+
+        no_visible_elements_items_tuples = [(visible_elements_indexes[i-1], visible_elements_indexes[i]) for i in xrange(1, len(elements)) if
+                                             visible_elements_indexes[i] - visible_elements_indexes[i - 1] > 2]
+
+        for start, end in no_visible_elements_items_tuples:
+            osc_items, spec_items = self.get_no_visible_visual_items(start, end)
+
+            for item in osc_items:
+                self.axesOscilogram.addItem(item)
+
+            for item in spec_items:
+                self.axesSpecgram.viewBox.addItem(item)
+
         self.repaint()
+
         print("Time consuming on drawing elements: " + str(time.time() - t))
+
+    def get_no_visible_visual_items(self, start, end):
+        """
+        Computes and returns the visual items to represents
+        :param start: index of the start elements on invisible region
+        :param end: index of the end elements on invisible region
+        :return: tuple of (list, list) with the visual elements for the group
+        of no visible elements in the range [start, end] for oscilogram
+        and spectrogram widgets respectively
+        """
+
+        start_pos, end_pos = self.elements[start].indexFrom, self.elements[end].indexTo
+        start_position = start_pos + (end_pos - start_pos) / 10
+        end_position = end_pos - (end_pos - start_pos) / 10
+
+        max_value = self.signal.maximumValue
+
+        text_item = self.visual_items_cache.get_text_item()
+        text_item.setText(" (" + str(start) + "..." + str(end) + ") ")
+        text_item.setPos(start_position / 2.0 + end_position / 2.0,
+                         0.75 * max_value)
+
+        # graph_item = self.visual_items_cache.get_graph_item()
+        #
+        # # Define positions of nodes
+        # graph_pos = np.array([
+        #     [start_position, max_value * 0.8],
+        #     [start_position, max_value * 0.85],
+        #     [end_position, max_value * 0.85],
+        #     [end_position, max_value * 0.8]
+        # ])
+
+        # graph_adj = np.array([[0, 1], [1, 2], [2, 3]])
+        # options = dict(size=1, symbol='d', pxMode=False, pen=self.NO_VISIBLE_ELEMENTS_PEN)
+        # graph_item.setData(pos=graph_pos, adj=graph_adj, **options)
+
+        return [text_item], []
 
     def remove_visual_elements(self, oscilogram=True, specgram=True, elements=None):
         """
