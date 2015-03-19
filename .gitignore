@@ -4,3 +4,4 @@
 .idea/
 *.orig
 *.ini
+*.s3db
