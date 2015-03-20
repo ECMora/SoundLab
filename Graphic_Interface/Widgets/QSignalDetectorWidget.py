@@ -6,7 +6,6 @@ from graphic_interface.segment_visualzation.DetectedSoundLabElement import Detec
 from graphic_interface.segment_visualzation.VisualElement import VisualElement
 from QSignalVisualizerWidget import QSignalVisualizerWidget
 from graphic_interface.segment_visualzation.VisualItemsCache import VisualItemsCache
-from sound_lab_core.Elements.OneDimensionalElements.OneDimensionalElement import OneDimensionalElement
 
 
 class QSignalDetectorWidget(QSignalVisualizerWidget):
@@ -74,7 +73,8 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         for e in self._elements:
             e.release_resources()
             for item, visible in e.spectral_element.visual_widgets():
-                self.axesSpecgram.viewBox.removeItem(item)
+                if item in self.axesSpecgram.viewBox.children():
+                    self.axesSpecgram.viewBox.removeItem(item)
 
         function_get_elements = lambda i: DetectedSoundLabElement(elements_list[i].signal,
                                                                   elements_list[i].indexFrom,
@@ -115,7 +115,8 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         # removes all the elements on spectrogram (not oscilogram because it's cleared on graph)
         for i in xrange(len(self.elements)):
             for item, visible in self.elements[i].spectral_element.visual_widgets():
-                self.axesSpecgram.viewBox.removeItem(item)
+                if item in self.axesSpecgram.viewBox.children():
+                    self.axesSpecgram.viewBox.removeItem(item)
 
             # recompute the locations of the spectrogram elements
             self.elements[i].spectral_element.translate_time_freq_coords(self.from_osc_to_spec, self.get_freq_index)
@@ -150,13 +151,13 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         # endregion
 
         # add items for continuous groups (more than 2) of no visible detected elements
-        visible_elements_indexes = [e.number - 1 for e in elements]
+        visible_elements_indexes = [e.number for e in elements]
 
         no_visible_elements_items_tuples = [(visible_elements_indexes[i-1], visible_elements_indexes[i]) for i in xrange(1, len(elements)) if
                                              visible_elements_indexes[i] - visible_elements_indexes[i - 1] > 2]
 
         for start, end in no_visible_elements_items_tuples:
-            osc_items, spec_items = self.get_no_visible_visual_items(start, end)
+            osc_items, spec_items = self.get_no_visible_visual_items(start, end - 1)
 
             for item in osc_items:
                 self.axesOscilogram.addItem(item)
@@ -185,23 +186,23 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         max_value = self.signal.maximumValue
 
         text_item = self.visual_items_cache.get_text_item()
-        text_item.setText(" (" + str(start) + "..." + str(end) + ") ")
+        text_item.setText("(" + str(start) + "..." + str(end) + ")")
         text_item.setPos(start_position / 2.0 + end_position / 2.0,
                          0.75 * max_value)
 
-        # graph_item = self.visual_items_cache.get_graph_item()
-        #
-        # # Define positions of nodes
-        # graph_pos = np.array([
-        #     [start_position, max_value * 0.8],
-        #     [start_position, max_value * 0.85],
-        #     [end_position, max_value * 0.85],
-        #     [end_position, max_value * 0.8]
-        # ])
+        graph_item = self.visual_items_cache.get_graph_item()
 
-        # graph_adj = np.array([[0, 1], [1, 2], [2, 3]])
-        # options = dict(size=1, symbol='d', pxMode=False, pen=self.NO_VISIBLE_ELEMENTS_PEN)
-        # graph_item.setData(pos=graph_pos, adj=graph_adj, **options)
+        # Define positions of nodes
+        graph_pos = np.array([
+            [start_position, max_value * 0.8],
+            [start_position, max_value * 0.85],
+            [end_position, max_value * 0.85],
+            [end_position, max_value * 0.8]
+        ])
+
+        graph_adj = np.array([[0, 1], [1, 2], [2, 3]])
+        options = dict(size=1, symbol='d', pxMode=False, pen=self.NO_VISIBLE_ELEMENTS_PEN)
+        graph_item.setData(pos=graph_pos, adj=graph_adj, **options)
 
         return [text_item], []
 
@@ -473,7 +474,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         index_from, index_to = np.searchsorted(sorted_arr, start), np.searchsorted(sorted_arr, end)
         index_from -= 1 if index_from > 0 and start <= self.elements[index_from - 1].indexTo else 0
 
-        element = DetectedSoundLabElement(self.signal, start, end)
+        element = DetectedSoundLabElement(self.signal, start, end, signal_callback=self.elementClicked)
         self.elements.insert(index_from, element)
         element.set_element_clicked_callback(lambda i: self.elementClicked.emit(i))
 
