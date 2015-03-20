@@ -28,14 +28,14 @@ class VisualItemsCache:
         free_region_items_queue = deque()
 
         # initial Items Count
-        INITIAL_REGION_ITEMS_COUNT = 500
+        INITIAL_REGION_ITEMS_COUNT = 1000
 
         INITIAL_TEXT_ITEMS_COUNT = INITIAL_REGION_ITEMS_COUNT * 2
 
         INITIAL_GRAPH_ITEMS_COUNT = INITIAL_REGION_ITEMS_COUNT
 
         # the number of new items to add if the list of free items is empty
-        ITEMS_GROWING_NUMBER = 300
+        ITEMS_GROWING_NUMBER = 500
 
         # endregion
 

@@ -650,6 +650,8 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
                 # put the elements detected into the widget to visualize them
                 self.widget.elements = self.segmentManager.elements
 
+                self.widget.graph()
+
                 # measure the parameters over elements detected
                 self.segmentManager.measureParametersProgressChanged.connect(
                     lambda x: self.update_detection_progress_bar(70 + x * 0.2))
@@ -664,7 +666,7 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
                 for wnd in self.two_dim_windows:
                     wnd.load_data(self.segmentManager)
 
-                self.widget.graph()
+
 
         except Exception as e:
             print("detection errors: " + e.message)

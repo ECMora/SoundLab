@@ -435,10 +435,11 @@ class SegmentManager(QObject):
         """
         if segment is None or parameter is None:
             return
-        try:
-            measure = Measurement(segment_id=segment.segment_id, parameter_id=parameter.parameter_id, value=value)
 
-            self.db_session.add(measure)
+        try:
+            self.db_session.add(Measurement(segment_id=segment.segment_id,
+                                            parameter_id=parameter.parameter_id,
+                                            value=value))
 
         except Exception as ex:
             print("db connexion error. Measurements. " + ex.message)

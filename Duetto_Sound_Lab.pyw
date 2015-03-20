@@ -167,7 +167,7 @@ if __name__ == '__main__':
         license_checker_timer.start(1000)
 
         # create items
-        create_visual_item_cache()
+        QTimer.singleShot(1000, create_visual_item_cache)
 
         sys.exit(app.exec_())
 
