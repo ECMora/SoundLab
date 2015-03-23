@@ -75,15 +75,15 @@ class VisualElement:
         """
         :return: the current element visual color
         """
-        return self.COLOR_ODD if self.number % 2 == 0 else self.COLOR_EVEN
+        return VisualElement.COLOR_ODD if self.number % 2 == 0 else VisualElement.COLOR_EVEN
 
     @property
     def brush(self):
-        return self.brush_odd if self.number % 2 == 0 else self.brush_even
+        return VisualElement.brush_odd if self.number % 2 == 0 else VisualElement.brush_even
 
     @property
     def pen(self):
-        return self.pen_odd if self.number % 2 == 0 else self.pen_even
+        return VisualElement.pen_odd if self.number % 2 == 0 else VisualElement.pen_even
 
     @property
     def number(self):

@@ -641,40 +641,44 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
                 # set the detection as the 50% of the segmentation,
                 # parameter parameters and classification time
                 self.segmentManager.detectionProgressChanged.connect(
-                    lambda x: self.update_detection_progress_bar(x * 0.5))
+                    lambda x: self.update_detection_progress_bar(x * 0.85))
 
                 # execute the detection
                 self.segmentManager.detect_elements()
-                self.update_detection_progress_bar(50)
+                self.update_detection_progress_bar(85)
 
                 # put the elements detected into the widget to visualize them
                 self.widget.elements = self.segmentManager.elements
 
-                self.widget.graph()
-
-                # measure the parameters over elements detected
-                self.segmentManager.measureParametersProgressChanged.connect(
-                    lambda x: self.update_detection_progress_bar(70 + x * 0.2))
-                self.segmentManager.measure_parameters()
-                self.update_detection_progress_bar(90)
-
-                # classify detected elements
-                self.segmentManager.classify_elements()
-                self.update_detection_progress_bar(98)
-
-                # update the measured data on the two dimensional opened windows
-                for wnd in self.two_dim_windows:
-                    wnd.load_data(self.segmentManager)
-
-
+                QTimer.singleShot(10, self.measure_parameters_and_classify)
 
         except Exception as e:
             print("detection errors: " + e.message)
             self.update_parameter_table()
 
+        self.widget.graph()
+
         # complete the progress of detection and hide the progress bar
         self.update_detection_progress_bar(100)
         self.set_progress_bar_visibility(False)
+
+    def measure_parameters_and_classify(self):
+        """
+        Measure the parameters over the detected elements and
+        performs the classification of them
+        :return:
+        """
+        # measure the parameters over elements detected
+        # self.segmentManager.measureParametersProgressChanged.connect(
+        # lambda x: self.update_detection_progress_bar(70 + x * 0.2))
+        self.segmentManager.measure_parameters()
+
+        # classify detected elements
+        self.segmentManager.classify_elements()
+
+        # update the measured data on the two dimensional opened windows
+        for wnd in self.two_dim_windows:
+            wnd.load_data(self.segmentManager)
 
     def update_parameter_table(self):
         """
@@ -813,3 +817,4 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         # update workspace on every window
         for wnd in self.two_dim_windows:
             wnd.load_workspace(self.workSpace)
+

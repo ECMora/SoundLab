@@ -404,7 +404,6 @@ class SegmentManager(QObject):
             try:
                 # compute the param with the interval_function
                 self.measuredParameters[index, j] = measure_methods[j].measure(element)
-
                 # raise the parameter visual item if any
                 self.update_elements_visual_items(parameter_adapter, index, self.measuredParameters[index, j])
 
@@ -490,13 +489,11 @@ class SegmentManager(QObject):
 
         index = col - len(self.measurer_adapters)
 
-        if index == 0:
-            # family
-            return self.tr(u"No Identified") if classification.family is None else classification.family
+        if index == 0 and classification.family is not None:
+            return classification.family
 
-        elif index == 1:
-            # genera
-            return self.tr(u"No Identified") if classification.genus is None else classification.genus
+        elif index == 1 and classification.genus is not None:
+            return classification.genus
 
         # specie
         return self.tr(u"No Identified") if classification.specie is None else classification.specie

@@ -2,10 +2,6 @@ from PyQt4.QtGui import QFont
 import pyqtgraph as pg
 from collections import deque
 
-# the font size for text labels
-FONT_SIZE = 13
-FONT = QFont("Arial", pointSize=FONT_SIZE)
-
 
 class VisualItemsCache:
     """
@@ -18,7 +14,10 @@ class VisualItemsCache:
 
         # region CONSTANTS
 
-        # the queue with free items
+        # the font size for text labels
+        FONT_SIZE = 13
+        FONT = QFont("Arial", pointSize=FONT_SIZE)  # the queue with free items
+
         free_text_items_queue = deque()
 
         # the queue with free items
@@ -111,7 +110,7 @@ class VisualItemsCache:
             # create the text items
             for i in xrange(n):
                 text_item = pg.TextItem("0", color=(255, 255, 255), anchor=(0.5, 0.5))
-                text_item.setFont(FONT)
+                text_item.setFont(self.FONT)
                 self.free_text_items_queue.append(text_item)
 
         def add_region_items(self, n=None):

@@ -34,7 +34,7 @@ class PeaksAboveParameterAdapter(SoundLabAdapter):
 
         return PeaksAboveParameter(threshold=self.threshold)
 
-    def restore_settings(self, adapter_copy):
+    def restore_settings(self, adapter_copy, signal):
         if not isinstance(adapter_copy, SoundLabAdapter) or \
            not isinstance(adapter_copy, PeaksAboveParameterAdapter):
             raise Exception("Invalid type exception.")
