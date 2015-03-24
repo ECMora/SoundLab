@@ -34,6 +34,7 @@ class ParameterMeasurer:
         """
         Abstract method that performs the measure of the
         parameter over the supplied segment.
+        :type data: numpy array with the signal
         :param segment:
         :return:
         """

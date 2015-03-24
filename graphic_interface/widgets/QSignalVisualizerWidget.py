@@ -1,23 +1,16 @@
 # -*- coding: utf-8 -*-
 import os
+import pyqtgraph as pg
 from PyQt4 import QtGui
 from duetto.audio_signals import openSignal
-import pyqtgraph as pg
 from PyQt4.QtCore import QTimer, Qt
-from duetto.audio_signals.AudioSignalPlayer import AudioSignalPlayer
 from duetto.audio_signals.AudioSignal import AudioSignal
+from duetto.audio_signals.AudioSignalPlayer import AudioSignalPlayer
+from duetto.audio_signals.audio_signals_stream_readers.FileManager import FileManager
 from SoundLabOscillogramWidget import SoundLabOscillogramWidget
 from SoundLabSpectrogramWidget import SoundLabSpectrogramWidget
-from duetto.audio_signals.audio_signals_stream_readers.FileManager import FileManager
 from duetto.signal_processing.filter_signal_processors.FilterSignalProcessor import FilterSignalProcessor
-from graphic_interface.widgets.signal_visualizer_tools.SignalVisualizerTool import Tools
-from graphic_interface.widgets.signal_visualizer_tools.NoTool import NoTool
-from graphic_interface.widgets.signal_visualizer_tools.OscilogramTools.ZoomTool import ZoomTool as OscilogramZoomTool
-from graphic_interface.widgets.signal_visualizer_tools.OscilogramTools.RectangularCursorTool import RectangularCursorTool as OscilogramRectangularCursorTool
-from graphic_interface.widgets.signal_visualizer_tools.OscilogramTools.PointerCursorTool import PointerCursorTool as OscilogramPointerTool
-from graphic_interface.widgets.signal_visualizer_tools.SpectrogramTools.SpectrogramZoomTool import SpectrogramZoomTool
-from graphic_interface.widgets.signal_visualizer_tools.SpectrogramTools.PointerCursorTool import PointerCursorTool as SpectrogramPointerTool
-from graphic_interface.widgets.signal_visualizer_tools.SpectrogramTools.RectangularCursorTool import RectangularCursorTool as SpectrogramRectangularCursorTool
+from graphic_interface.widgets.signal_visualizer_tools import *
 from graphic_interface.widgets.undo_redo_actions.UndoRedoActions import *
 
 
@@ -111,7 +104,6 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         self.horizontalScrollBar.setOrientation(QtCore.Qt.Horizontal)
         self.horizontalScrollBar.valueChanged.connect(self.scrollBarRangeChanged)
 
-        self.signalPlayer = None
         self.editionSignalProcessor = None
         self.commonSignalProcessor = None
 
@@ -215,9 +207,8 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         :param x2: the end limit of the new visible interval in signal data array indexes
         :return:
         """
-        self.axesSpecgram.changeRange(x1,x2)
-        self.mainCursor.min = x1
-        self.mainCursor.max = x2
+        self.axesSpecgram.changeRange(x1, x2)
+        self.mainCursor.min, self.mainCursor.max = x1, x2
         self.updateScrollbar()
 
     # endregion
@@ -328,9 +319,10 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         :return:
         """
         self.undoRedoManager.redo()
-    #   endregion
 
-    #  region Sound
+    # endregion
+
+    # region Sound
 
     def play(self):
         """
@@ -372,9 +364,11 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         :return:
         """
         prevStatus = self.signalPlayer.playStatus
-        #  stopping the player
+
+        # stopping the player
         self.signalPlayer.stop()
         self.remove_player_line()
+
         #  if the previous status was RECORDING then we have
         #  to stop the licence_checker_timer and draw the new signal on both controls.
         if prevStatus == self.signalPlayer.RECORDING:
@@ -387,15 +381,16 @@ class QSignalVisualizerWidget(QtGui.QWidget):
 
     def on_newDataRecorded(self):
         """
-        This function is called when on every tick count of the record timer
+        This interval_function is called when on every tick count of the record timer
         to update the oscillogram with the new data recorded.
         """
         #  the player read from the record stream
         self.signalPlayer.readFromStream()
+
         # update the current view interval of the recording signal
         if self.signal.length > 0:
-            self.mainCursor.max = self.signal.length
 
+            self.mainCursor.max = self.signal.length
             # draw the last signal second
             self.mainCursor.min = max(0, self.signal.length - self.signal.samplingRate)
             self.graph()
@@ -445,14 +440,12 @@ class QSignalVisualizerWidget(QtGui.QWidget):
 
     def add_player_line(self, initial_value, end_value):
         """
-        create the line to show on widgets osc and spec
-        when the signal is been played as a way to
-        know what section of the signal is been listened.
-        The line (two lines, one for each widget)
-        is added into every widget and updated
-        it's value while the sound is played.
-        :param initial_value: the initial value of the line in signal data indexes. (osc coordinates)
-        the initial value of where the play start.
+        create the line to show on widgets osc and spec when the signal is been played
+        as a way to know what section of the signal is been listened.
+        The line (two lines, one for each widget) is added into every widget
+        and updated it's value while the sound is played.
+        :param initial_value: the initial value of the line in signal data indexes.
+        (osc coordinates) the initial value of where the play start.
         :return:
         """
         if not isinstance(initial_value, int):
@@ -697,6 +690,7 @@ class QSignalVisualizerWidget(QtGui.QWidget):
     #  endregion
 
     #  region Zoom in,out, none
+
     def zoomIn(self):
         """
         Make a zoom in to the current visualized region of the signal.
@@ -747,18 +741,12 @@ class QSignalVisualizerWidget(QtGui.QWidget):
 
     #  endregion
 
-    #  region GRAPH
+    # region GRAPH
 
     def graph(self):
         """
         Update the two widgets visualizations
-        :param updateOscilogram:
-        :param updateSpecgram:
-        :return:
         """
-        # if not self.isVisible():
-        #     return
-
         # ensure that the region to graph is inside the signal limits
         self.mainCursor.max = min(self.mainCursor.max, self.signal.length)
         self.mainCursor.min = max(self.mainCursor.min, 0)
@@ -1092,11 +1080,6 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         elif tool == Tools.NoTool:
             self.axesOscilogram.changeTool(NoTool)
             self.axesSpecgram.changeTool(NoTool)
-
-        #  elif tool == Tools.RectangularEraser:
-        #      self.axesSpecgram.changeTool(tool)
-        #      self.axesOscilogram.changeTool(tool)
-        # update the current selected tool
 
         self.__selectedTool = tool
 

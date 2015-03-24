@@ -14,7 +14,7 @@ class Element:
         # the signal in which this elements is defined
         self.signal = signal
 
-        # dict to store extra information for memoize pattern implementation
+        # dict to store extra information for memorize pattern implementation
         # example: Parameter measurement data for efficiency improvement
         self._memory_dict = {}
 

@@ -38,7 +38,7 @@ class FreqParameterAdapter(ParameterAdapter):
         self.threshold = threshold
         self.total = total
 
-    def restore_settings(self, adapter_copy):
+    def restore_settings(self, adapter_copy, signal):
         if not isinstance(adapter_copy, SoundLabAdapter) or \
            not isinstance(adapter_copy, FreqParameterAdapter):
             raise Exception("Invalid type exception.")

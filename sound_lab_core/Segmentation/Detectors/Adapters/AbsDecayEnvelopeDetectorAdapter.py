@@ -8,22 +8,19 @@ from utils.Utils import fromdB
 
 
 class AbsDecayEnvelopeDetectorAdapter(SoundLabAdapter):
-    """
-    Adapter class for the start time parameter.
-    """
 
     def __init__(self):
         SoundLabAdapter.__init__(self)
 
         settings = [
+            {u'name': unicode(self.tr(u'Decay (ms)')), u'type': u'float', u'value': 1.00, u'step': 0.5,
+             u'limits': (0, 10000)},
             {u'name': unicode(self.tr(u'Threshold (dB)')), u'type': u'float', u'value': -20.00, u'step': 1, u'limits': (-120, 0)},
             {u'name': unicode(self.tr(u'Threshold Start(dB)')), u'type': u'int', u'value': 0.00, u'step': 1, u'limits': (-120, 0)},
             {u'name': unicode(self.tr(u'Threshold End(dB)')), u'type': u'int', u'value': 0.00, u'step': 1,
              u'limits': (-120, 0)},
             {u'name': unicode(self.tr(u'Min Size (ms)')), u'type': u'float', u'value': 2.00, u'step': 1,
              u'limits': (0, 30000)},
-            {u'name': unicode(self.tr(u'Decay (ms)')), u'type': u'float', u'value': 1.00, u'step': 0.5,
-             u'limits': (0, 10000)},
             {u'name': unicode(self.tr(u'Merge Factor (%)')), u'type': u'int', u'value': 5.00, u'step': 1,
              u'limits': (0, 50)}]
 

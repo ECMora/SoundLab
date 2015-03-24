@@ -192,7 +192,7 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
 
             self.ParamTree.param(u'Settings').addChild(lines)
 
-            # connecting the signals to the change handler function
+            # connecting the signals to the change handler interval_function
             self.ParamTree.param(u'Settings').param(u'Connect points').sigTreeStateChanged.connect(self.connectLinesChanged)
             self._transform_paramTree.sigTreeStateChanged.connect(self.changeTransformSettings)
             self._yRange_paramTree.sigTreeStateChanged.connect(self.changeYRangeSettings)

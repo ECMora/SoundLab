@@ -1,140 +1,189 @@
 from PyQt4.QtGui import QFont
 import pyqtgraph as pg
-
-# the font size for text labels
-FONT_SIZE = 13
-FONT = QFont("Arial", pointSize=FONT_SIZE)
+from collections import deque
 
 
 class VisualItemsCache:
     """
-    Static class that handles the chache for the visual elements
-    Keep a set of visual element to reuse them if necessary for efficiency
+    Static class that handles the cache for the visual elements
+    Keep in memory a set of visual element to reuse them if necessary for efficiency
+    Singleton pattern.
     """
 
+<<<<<<< HEAD
     # region CONSTANTS
 
     free_visual_items_stack = []
+=======
+    class __Singleton:
 
-    # initial Items Count
-    INITIAL_REGION_ITEMS_COUNT = 500
+        # region CONSTANTS
 
-    INITIAL_TEXT_ITEMS_COUNT = INITIAL_REGION_ITEMS_COUNT * 2
+        # the font size for text labels
+        FONT_SIZE = 13
+        FONT = QFont("Arial", pointSize=FONT_SIZE)  # the queue with free items
+>>>>>>> e5490303e36141b6c2390fa4e5b98656a863a4f5
 
-    INITIAL_GRAPH_ITEMS_COUNT = INITIAL_REGION_ITEMS_COUNT
+        free_text_items_queue = deque()
 
-    # the number of new items to add if the list of free items is empty
-    ITEMS_GROWING_NUMBER = 100
+        # the queue with free items
+        free_graph_items_queue = deque()
 
-    # endregion
+        # the queue with free items
+        free_region_items_queue = deque()
 
-    # region Release Items
+        # initial Items Count
+        INITIAL_REGION_ITEMS_COUNT = 1000
 
+        INITIAL_TEXT_ITEMS_COUNT = INITIAL_REGION_ITEMS_COUNT * 2
+
+        INITIAL_GRAPH_ITEMS_COUNT = INITIAL_REGION_ITEMS_COUNT
+
+<<<<<<< HEAD
     def release_visual_item(self, item):
         if item in self.graph_items:
             self.graph_items[item] = False
             self.free_graph_items_stack.append(item)
+=======
+        # the number of new items to add if the list of free items is empty
+        ITEMS_GROWING_NUMBER = 500
+>>>>>>> e5490303e36141b6c2390fa4e5b98656a863a4f5
 
-    def release_text_item(self, item):
-        if item in self.text_items:
-            self.text_items[item] = False
-            self.free_text_items_stack.append(item)
+        # endregion
 
-    def release_region_item(self, item):
-        if item in self.region_items:
-            self.region_items[item] = False
-            self.free_region_items_stack.append(item)
+        def __init__(self):
+            self.create_items()
 
-    # endregion
+        # region Release Items
 
-    # region Get Items
+        def release_graph_item(self, item):
+            self.free_graph_items_queue.append(item)
 
-    def get_text_item(self, number):
-        if len(self.free_text_items_stack) == 0:
-            self.add_text_items(self.ITEMS_GROWING_NUMBER)
+        def release_text_item(self, item):
+            self.free_text_items_queue.append(item)
 
-        item = self.free_text_items_stack.pop()
-        item.setText(str(number))
-        return item
+        def release_region_item(self, item):
+            self.free_region_items_queue.append(item)
 
-    def get_region_item(self, index_from, index_to, brush):
-        if len(self.free_region_items_stack) == 0:
-            self.add_region_items(self.ITEMS_GROWING_NUMBER)
+        # endregion
 
-        item = self.free_region_items_stack.pop()
-        item.setRegion((index_from, index_to))
-        item.setBrush(brush)
-        return item
+        # region Get Items
 
-    def get_graph_item(self):
-        """
+        def get_text_item(self, number=0):
+            """
 
-        :return:
-        """
-        if len(self.free_graph_items_stack) == 0:
-            self.add_graph_items(self.ITEMS_GROWING_NUMBER)
+            :param number:
+            :return:
+            """
+            if len(self.free_text_items_queue) == 0:
+                self.add_text_items(self.ITEMS_GROWING_NUMBER)
 
-        return self.free_graph_items_stack.pop()
+            # return the text item requested
+            item = self.free_text_items_queue.pop()
+            item.setText(str(number))
+            return item
 
-    # endregion
+        def get_region_item(self, index_from, index_to, brush):
+            """
 
-    # region Create Items
+            :param index_from:
+            :param index_to:
+            :param brush:
+            :return:
+            """
+            if len(self.free_region_items_queue) == 0:
+                self.add_region_items(self.ITEMS_GROWING_NUMBER)
 
-    def add_text_items(self, n=None):
-        """
+            # return the region item requested
+            item = self.free_region_items_queue.pop()
+            item.setRegion((index_from, index_to))
+            item.setBrush(brush)
+            return item
 
-        :param n: The number of items to add
-        :return:
-        """
-        n = n if n is not None else self.INITIAL_TEXT_ITEMS_COUNT
+        def get_graph_item(self):
+            """
+            :return: A graph item.
+            """
+            if len(self.free_graph_items_queue) == 0:
+                self.add_graph_items(self.ITEMS_GROWING_NUMBER)
 
-        # create the text items
-        for i in xrange(n):
-            text_item = pg.TextItem("0", color=(255, 255, 255), anchor=(0.5, 0.5))
-            text_item.setFont(FONT)
-            self.text_items[text_item] = False
-            self.free_text_items_stack.append(text_item)
+            return self.free_graph_items_queue.pop()
 
-    def add_region_items(self, n=None):
-        """
+        # endregion
 
-        :param n: The number of items to add
-        :return:
-        """
-        n = n if n is not None else self.INITIAL_REGION_ITEMS_COUNT
+        # region Create Items
 
-        # create the region items
-        for i in xrange(n):
-            region_item = pg.LinearRegionItem([0, 0], movable=False)
-            self.region_items[region_item] = False
-            self.free_region_items_stack.append(region_item)
+        def add_text_items(self, n=None):
+            """
+            :param n: The number of items to add
+            :return:
+            """
+            n = n if n is not None else self.INITIAL_TEXT_ITEMS_COUNT
 
-    def add_graph_items(self, n=None):
-        """
+            # create the text items
+            for i in xrange(n):
+                text_item = pg.TextItem("0", color=(255, 255, 255), anchor=(0.5, 0.5))
+                text_item.setFont(self.FONT)
+                self.free_text_items_queue.append(text_item)
 
-        :param n: The number of items to add
-        :return:
-        """
-        n = n if n is not None else self.INITIAL_GRAPH_ITEMS_COUNT
+        def add_region_items(self, n=None):
+            """
 
-        # create the graph items
-        for i in xrange(n):
-            graph_item = pg.GraphItem()
-            self.graph_items[graph_item] = False
-            self.free_graph_items_stack.append(graph_item)
+            :param n: The number of items to add
+            :return:
+            """
+            n = n if n is not None else self.INITIAL_REGION_ITEMS_COUNT
 
-    # endregion
+            # create the region items
+            for i in xrange(n):
+                region_item = pg.LinearRegionItem([0, 0], movable=False)
+                self.free_region_items_queue.append(region_item)
 
-    def create_items(self, n=None):
-        """
-        :return:
-        """
+        def add_graph_items(self, n=None):
+            """
 
-        # create the text items
-        self.add_text_items(n)
+            :param n: The number of items to add
+            :return:
+            """
+            n = n if n is not None else self.INITIAL_GRAPH_ITEMS_COUNT
 
-        # create the region items
-        self.add_region_items(n)
+            # create the graph items
+            for i in xrange(n):
+                graph_item = pg.GraphItem()
+                self.free_graph_items_queue.append(graph_item)
 
-        # create the graph items
-        self.add_graph_items(n)
+        # endregion
+
+        def create_items(self, n=None):
+            """
+            :return:
+            """
+            # create the text items
+            self.add_text_items(n)
+
+            # create the region items
+            self.add_region_items(n)
+
+            # create the graph items
+            self.add_graph_items(n)
+
+    # storage for the instance reference
+    __instance = None
+
+    def __init__(self):
+        """ Create singleton instance """
+        # Check whether we already have an instance
+        if VisualItemsCache.__instance is None:
+            # Create and remember instance
+            VisualItemsCache.__instance = VisualItemsCache.__Singleton()
+
+        # Store instance reference as the only member in the handle
+        self.__dict__['_VisualItemsCache__instance'] = VisualItemsCache.__instance
+
+    def __getattr__(self, attr):
+        """ Delegate access to implementation """
+        return getattr(self.__instance, attr)
+
+    def __setattr__(self, attr, value):
+        """ Delegate access to implementation """
+        return setattr(self.__instance, attr, value)

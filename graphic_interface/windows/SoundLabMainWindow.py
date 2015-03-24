@@ -1252,7 +1252,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
                 self.widget.normalize(factor)
 
             else:
-                # scale by using a function
+                # scale by using a interval_function
                 function = scaleDialogWindow.cboxModulationType.currentText()
                 fade = u"IN" if scaleDialogWindow.rbuttonFadeIn.isChecked() else u"OUT"
                 self.widget.modulate(function, fade)
@@ -1918,7 +1918,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         actions = [QAction(action_text(x), self) for x in self.workSpace.recentFiles]
 
         # set manually the actions for each recent file action (issues when use a for and
-        # update the lambda function, keep reference to the same value for all the actions)
+        # update the lambda interval_function, keep reference to the same value for all the actions)
         if len(actions) >= 1:
             actions[0].setData(self.workSpace.recentFiles[0])
             actions[0].triggered.connect(lambda: self._open(actions[0].data().toString()))

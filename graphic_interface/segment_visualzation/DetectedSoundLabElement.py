@@ -41,6 +41,11 @@ class DetectedSoundLabElement:
         self.elementClicked = callback if callback is not None else self.elementClicked
 
     # region Properties
+
+    @property
+    def number(self):
+        return self._time_element.number
+
     @property
     def visible(self):
         """

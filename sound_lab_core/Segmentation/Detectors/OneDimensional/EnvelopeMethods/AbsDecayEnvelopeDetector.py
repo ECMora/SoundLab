@@ -1,6 +1,6 @@
 from math import pi, sin
 import matplotlib.mlab as mlab
-from numpy import zeros, array, int32, mean
+from numpy import zeros, int32
 from sound_lab_core.Segmentation.Detectors.OneDimensional.OneDimensionalElementsDetector import \
     OneDimensionalElementsDetector
 from utils.Utils import fromdB
@@ -8,16 +8,12 @@ from utils.Utils import fromdB
 
 class AbsDecayEnvelopeDetector(OneDimensionalElementsDetector):
 
-    def __init__(self, signal, decay_ms=1, threshold_db=-40, threshold2_db=-40, threshold3_db=-40,
+    def __init__(self, signal, decay_ms=1, threshold_db=-40, threshold2_db=0, threshold3_db=0,
                  min_size_ms=1, merge_factor=5):
-        OneDimensionalElementsDetector.__init__(self, signal)
+        OneDimensionalElementsDetector.__init__(self, signal, threshold_db, threshold2_db, threshold3_db,
+                                                min_size_ms, merge_factor)
 
         self._decay_ms = decay_ms
-        self._threshold = threshold_db
-        self._threshold2 = threshold2_db
-        self._threshold3 = threshold3_db
-        self._merge_factor = merge_factor
-        self._min_size = min_size_ms
 
     # region Properties
 
@@ -29,56 +25,12 @@ class AbsDecayEnvelopeDetector(OneDimensionalElementsDetector):
     def decay(self, value):
         self._decay_ms = value
 
-    @property
-    def merge_factor(self):
-        return self._merge_factor
-
-    @merge_factor.setter
-    def merge_factor(self, value):
-        self._merge_factor = value
-
-    @property
-    def min_size(self):
-        return self._min_size
-
-    @min_size.setter
-    def min_size(self, value):
-        self._min_size = value
-
-    @property
-    def threshold(self):
-        return self._threshold
-
-    @threshold.setter
-    def threshold(self, value):
-        self._threshold = value
-
-    @property
-    def threshold2(self):
-        return self._threshold2
-
-    @threshold2.setter
-    def threshold2(self, value):
-        self._threshold2 = value
-
-    @property
-    def threshold3(self):
-        return self._threshold3
-
-    @threshold3.setter
-    def threshold3(self, value):
-        self._threshold3 = value
-
     # endregion
 
     def detect(self, indexFrom=0, indexTo=-1):
         indexTo = self.signal.length if indexTo == -1 else indexTo
 
         threshold = fromdB(self.threshold, 0, max(self.signal.data))
-        # threshold2 = fromdB(self.threshold2, 0, max(self.signal.data))
-        # threshold3 = fromdB(self.threshold3, 0, max(self.signal.data))
-
-        min_size = int(self.min_size * self.signal.samplingRate / 1000.0)
 
         decay = int(self.decay * self.signal.samplingRate / 1000)
 
@@ -88,33 +40,15 @@ class AbsDecayEnvelopeDetector(OneDimensionalElementsDetector):
 
         self.detectionProgressChanged.emit(65)
 
-        if self.threshold2 < 0 or self.threshold3 < 0:
-            # use both thresholds start and end
-            result = []
-            for e in elems:
-                max_amplitude = max(envelope[e[0]: e[1]])
-                start_threshold_db = fromdB(self.threshold2, 0, max_amplitude)
-                end_threshold_db = fromdB(self.threshold3, 0, max_amplitude)
-
-                # find start
-                while envelope[e[0]] > start_threshold_db and e[0] > 0:
-                    e = e[0] - 1, e[1]
-
-                # find end
-                while envelope[e[1]] > end_threshold_db and e[1] < len(envelope):
-                    e = e[0], e[1] + 1
-
-                result.append(e)
-            elems = result
+        self.detect_elements_start_end_thresholds(elems, envelope)
 
         self.detectionProgressChanged.emit(80)
 
-        if self.merge_factor > 0:
-            elems = self.merge_intervals(elems, self.merge_factor)
+        elems = self.merge_intervals(elems)
 
         self.detectionProgressChanged.emit(90)
 
-        elems = [c for c in elems if (c[1] - c[0]) > min_size]
+        elems = self.filter_by_min_size(elems)
 
         self.detectionProgressChanged.emit(95)
 
@@ -125,6 +59,10 @@ class AbsDecayEnvelopeDetector(OneDimensionalElementsDetector):
         self.detectionProgressChanged.emit(100)
 
         return self.elements
+
+    def filter_by_min_size(self, elements):
+        min_size = int(self.min_size * self.signal.samplingRate / 1000.0)
+        return [c for c in elements if (c[1] - c[0]) > min_size]
 
     def envelope_detector(self, data, threshold, decay):
         """

@@ -304,7 +304,7 @@ class SegmentManager(QObject):
         :param index: the index to insert the element at
         :return:
         """
-        if not 0 <= index <= self.rowCount:
+        if not 0 <= index < self.rowCount:
             raise IndexError()
 
         if self.rowCount == 0:
@@ -341,6 +341,7 @@ class SegmentManager(QObject):
         detector = self.detector_adapter.get_instance(self.signal)
 
         detector.detectionProgressChanged.connect(lambda x: self.detectionProgressChanged.emit(x))
+
         import time
         t = time.time()
 
@@ -362,19 +363,27 @@ class SegmentManager(QObject):
         """
 
         self.measureParametersProgressChanged.emit(0)
+        import time
+
+        t = time.time()
 
         if len(self.measurer_adapters) == 0:
             return
 
-        for i in range(self.rowCount):
-            self._measure(self.elements[i], i)
+        measure_methods = [parameter_adapter.get_instance() for parameter_adapter in self.measurer_adapters]
+        orm_parameters_mappers = [parameter_adapter.get_db_orm_mapper() for parameter_adapter in self.measurer_adapters]
+
+        for i in xrange(self.rowCount):
+            self._measure(self.elements[i], i, measure_methods, orm_parameters_mappers)
             self.measureParametersProgressChanged.emit((i+1) * 100.0/self.rowCount)
+
+        print("Time consuming measurement parameters: " + str(time.time() - t))
 
         self.db_session.commit()
         self.measurementsChanged.emit()
         self.measureParametersProgressChanged.emit(100)
 
-    def _measure(self, element, index, commit_changes=True):
+    def _measure(self, element, index, measure_methods=None, orm_parameters_mappers=None, commit_changes=False):
         """
         Measure the list of parameters over the element supplied
         :param element: The element to measure
@@ -384,18 +393,23 @@ class SegmentManager(QObject):
         if not 0 <= index < self.rowCount:
             raise IndexError()
 
+        if measure_methods is None:
+            measure_methods = [parameter_adapter.get_instance() for parameter_adapter in self.measurer_adapters]
+
+        if orm_parameters_mappers is None:
+            orm_parameters_mappers = [parameter_adapter.get_db_orm_mapper() for parameter_adapter in
+                                      self.measurer_adapters]
+
         for j, parameter_adapter in enumerate(self.measurer_adapters):
             try:
-                # compute the param with the function
-                measure_method = parameter_adapter.get_instance()
-                self.measuredParameters[index, j] = measure_method.measure(element)
-
+                # compute the param with the interval_function
+                self.measuredParameters[index, j] = measure_methods[j].measure(element)
                 # raise the parameter visual item if any
                 self.update_elements_visual_items(parameter_adapter, index, self.measuredParameters[index, j])
 
                 # try to store the parameter measurement on db
                 self.add_measurement_on_db(self.segments_db_objects[index],
-                                           parameter_adapter.get_db_orm_mapper(),
+                                           orm_parameters_mappers[j],
                                            self.measuredParameters[index, j])
             except Exception as e:
                 # if some error is raised set a default value
@@ -420,10 +434,11 @@ class SegmentManager(QObject):
         """
         if segment is None or parameter is None:
             return
-        try:
-            measure = Measurement(segment_id=segment.segment_id, parameter_id=parameter.parameter_id, value=value)
 
-            self.db_session.add(measure)
+        try:
+            self.db_session.add(Measurement(segment_id=segment.segment_id,
+                                            parameter_id=parameter.parameter_id,
+                                            value=value))
 
         except Exception as ex:
             print("db connexion error. Measurements. " + ex.message)
@@ -474,13 +489,11 @@ class SegmentManager(QObject):
 
         index = col - len(self.measurer_adapters)
 
-        if index == 0:
-            # family
-            return self.tr(u"No Identified") if classification.family is None else classification.family
+        if index == 0 and classification.family is not None:
+            return classification.family
 
-        elif index == 1:
-            # genera
-            return self.tr(u"No Identified") if classification.genus is None else classification.genus
+        elif index == 1 and classification.genus is not None:
+            return classification.genus
 
         # specie
         return self.tr(u"No Identified") if classification.specie is None else classification.specie

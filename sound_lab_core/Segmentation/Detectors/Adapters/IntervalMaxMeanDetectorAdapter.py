@@ -20,4 +20,5 @@ class IntervalMaxMeanDetectorAdapter(IntervalDetectorAdapter):
         self.update_instance_variables()
         self.signal_max_value = max(signal.data)
 
-        return IntervalMaxMeanDetector(signal, self.threshold_dB, self.min_size_ms, self.merge_factor)
+        return IntervalMaxMeanDetector(signal, self.threshold_dB, self.threshold2_dB,
+                                       self.threshold3_dB, self.min_size_ms, self.merge_factor)
