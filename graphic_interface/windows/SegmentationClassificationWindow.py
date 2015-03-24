@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import xlwt
-from PyQt4.QtCore import pyqtSlot, Qt, QPoint
+from PyQt4.QtCore import pyqtSlot, Qt, QPoint, QTimer
 from SoundLabWindow import SoundLabWindow
 from graphic_interface.segment_visualzation.VisualElement import VisualElement
 from duetto.audio_signals.AudioSignal import AudioSignal
@@ -641,30 +641,21 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
                 # set the detection as the 50% of the segmentation,
                 # parameter parameters and classification time
                 self.segmentManager.detectionProgressChanged.connect(
-                    lambda x: self.update_detection_progress_bar(x * 0.5))
+                    lambda x: self.update_detection_progress_bar(x * 0.85))
 
                 # execute the detection
                 self.segmentManager.detect_elements()
-                self.update_detection_progress_bar(50)
+                self.update_detection_progress_bar(85)
 
                 # put the elements detected into the widget to visualize them
                 self.widget.elements = self.segmentManager.elements
 
-                # measure the parameters over elements detected
-                self.segmentManager.measureParametersProgressChanged.connect(
-                    lambda x: self.update_detection_progress_bar(70 + x * 0.2))
-                self.segmentManager.measure_parameters()
-                self.update_detection_progress_bar(90)
-
-                # classify detected elements
-                self.segmentManager.classify_elements()
-                self.update_detection_progress_bar(98)
-
-                # update the measured data on the two dimensional opened windows
-                for wnd in self.two_dim_windows:
-                    wnd.load_data(self.segmentManager)
-
                 self.widget.graph()
+
+                # measure the parameters over elements detected
+                # self.segmentManager.measureParametersProgressChanged.connect(
+                #     lambda x: self.update_detection_progress_bar(85 + x * 0.1))
+                QTimer.singleShot(1, self.measure_parameters_and_classify)
 
         except Exception as e:
             print("detection errors: " + e.message)
@@ -673,6 +664,18 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         # complete the progress of detection and hide the progress bar
         self.update_detection_progress_bar(100)
         self.set_progress_bar_visibility(False)
+
+    def measure_parameters_and_classify(self):
+        self.segmentManager.measure_parameters()
+        # self.update_detection_progress_bar(95)
+
+        # classify detected elements
+        self.segmentManager.classify_elements()
+        # self.update_detection_progress_bar(98)
+
+        # update the measured data on the two dimensional opened windows
+        for wnd in self.two_dim_windows:
+            wnd.load_data(self.segmentManager)
 
     def update_parameter_table(self):
         """
