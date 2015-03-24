@@ -14,17 +14,7 @@ class VisualItemsCache:
 
     # region CONSTANTS
 
-    # dict with the visual text items. key: TextItem value: bool (true if currently used)
-    text_items = {}
-    free_text_items_stack = []
-
-    # dict with the visual graph items. key: TextItem value: bool (true if currently used)
-    graph_items = {}
-    free_graph_items_stack = []
-
-    # dict with the visual region items. key: TextItem value: bool (true if currently used)
-    region_items = {}
-    free_region_items_stack = []
+    free_visual_items_stack = []
 
     # initial Items Count
     INITIAL_REGION_ITEMS_COUNT = 500
@@ -40,7 +30,7 @@ class VisualItemsCache:
 
     # region Release Items
 
-    def release_graph_item(self, item):
+    def release_visual_item(self, item):
         if item in self.graph_items:
             self.graph_items[item] = False
             self.free_graph_items_stack.append(item)
