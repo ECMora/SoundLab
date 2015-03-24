@@ -1,6 +1,7 @@
-from graphic_interface.segment_visualzation.VisualElement import VisualElement
-from graphic_interface.segment_visualzation.parameter_items.time_parameter_items.TimeParameterVisualItem import \
+from graphic_interface.segment_visualization.VisualElement import VisualElement
+from graphic_interface.segment_visualization.parameter_items.time_parameter_items.TimeParameterVisualItem import \
     TimeVisualItemWrapper
+import pyqtgraph as pg
 
 
 class OscilogramElement(VisualElement):
@@ -14,23 +15,15 @@ class OscilogramElement(VisualElement):
         :type signal: AudioSignal
         @return:
         """
-        VisualElement.__init__(self, number=number)
-
-        self.indexFrom = indexFrom
-        self.indexTo = indexTo
-
-        self.text_number.setPos(self.indexFrom / 2.0 + self.indexTo / 2.0, 0.75 * signal.maximumValue)
+        VisualElement.__init__(self, number=number, signal=signal, indexFrom=indexFrom, indexTo=indexTo)
 
         # the time region limits
-        self.element_region = VisualElement.visual_items_cache.get_region_item(self.indexFrom, self.indexTo, self.brush)
+        self.element_region = pg.LinearRegionItem((self._indexFrom, self._indexTo), movable=False, brush=self.brush)
 
         self.element_region.mouseClickEvent = self.mouseClickEvent
+        self._update_items_pos()
 
         self.visual_figures.append([self.element_region, True])
-
-    def release_resources(self):
-        VisualElement.visual_items_cache.release_text_item(self.text_number)
-        VisualElement.visual_items_cache.release_region_item(self.element_region)
 
     def add_parameter_item(self, parameter_item):
         """
@@ -42,6 +35,11 @@ class OscilogramElement(VisualElement):
             raise Exception("Invalid type argument. parameter_item must be of type TimeVisualItemWrapper")
 
         VisualElement.add_parameter_item(self, parameter_item)
+
+    def _update_items_pos(self):
+        self.text_number.setPos(self._indexFrom / 2.0 + self._indexTo / 2.0, 0.75 * self.signal.maximumValue)
+        self.element_region.setRegion((self._indexFrom, self._indexTo))
+        self.element_region.setBrush(self.brush)
 
     def setNumber(self, n):
         """

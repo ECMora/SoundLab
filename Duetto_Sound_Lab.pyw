@@ -7,7 +7,7 @@ from utils.Utils import deserialize, WORK_SPACE_FILE_NAME
 from graphic_interface.Settings.Workspace import Workspace
 from graphic_interface.windows.SoundLabMainWindow import SoundLabMainWindow
 from graphic_interface.windows.PresentationSlogan.presentation import Ui_MainWindow
-from graphic_interface.segment_visualzation.VisualItemsCache import VisualItemsCache
+from graphic_interface.segment_visualization.VisualItemsCache import VisualItemsCache
 from utils.db.DB_ORM import clean_db
 
 invalid_license_message = " Valid duetto Sound Lab license is missing or trial period is over.\n" + \

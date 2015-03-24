@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from graphic_interface.segment_visualzation.parameter_items.time_parameter_items.PeakToPeakVisualItem import PeakToPeakVisualItem
+from graphic_interface.segment_visualization.parameter_items.time_parameter_items.PeakToPeakVisualItem import PeakToPeakVisualItem
 from sound_lab_core.ParametersMeasurement.Adapters.ParameterAdapter import ParameterAdapter
 from sound_lab_core.ParametersMeasurement.TimeParameters.PeakToPeakParameter import PeakToPeakParameter
 

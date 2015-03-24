@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from PyQt4 import QtGui
-from graphic_interface.segment_visualzation.parameter_items.spectral_parameter_items.AverageFreqVisualItem import AverageFreqVisualItem
+from graphic_interface.segment_visualization.parameter_items.spectral_parameter_items.AverageFreqVisualItem import AverageFreqVisualItem
 from sound_lab_core.ParametersMeasurement.SpectralParameters.PeakFreqParameter import PeakFreqParameter
 from sound_lab_core.SoundLabAdapter import SoundLabAdapter
 

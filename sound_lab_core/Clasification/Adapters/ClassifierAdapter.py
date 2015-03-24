@@ -1,4 +1,4 @@
-from graphic_interface.segment_visualzation.classification_items.ClassificationVisualItem import ClassificationVisualItem
+from graphic_interface.segment_visualization.classification_items.ClassificationVisualItem import ClassificationVisualItem
 from sound_lab_core.SoundLabAdapter import SoundLabAdapter
 
 

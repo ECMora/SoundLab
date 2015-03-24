@@ -1,7 +1,8 @@
 import numpy as np
-from graphic_interface.segment_visualzation.VisualElement import VisualElement
-from graphic_interface.segment_visualzation.parameter_items.spectral_parameter_items.SpectralParameterVisualItem import \
+from graphic_interface.segment_visualization.VisualElement import VisualElement
+from graphic_interface.segment_visualization.parameter_items.spectral_parameter_items.SpectralParameterVisualItem import \
     SpectralVisualItemWrapper
+import pyqtgraph as pg
 
 
 class SpectrogramElement(VisualElement):
@@ -10,36 +11,29 @@ class SpectrogramElement(VisualElement):
     """
 
     def __init__(self, signal, indexFrom, indexTo, number=0):
-        VisualElement.__init__(self, number=number)
-        self.indexFrom = indexFrom
-        self.indexTo = indexTo
+        VisualElement.__init__(self, number=number, signal=signal,indexFrom=indexFrom, indexTo=indexTo)
 
-        max_freq = signal.samplingRate / 2.0
-
-        # the visible text for number
-        self.text_number_pos = self.indexFrom / 2.0 + self.indexTo / 2.0, max_freq * 0.9
-        self.text_number.setPos(self.text_number_pos[0], self.text_number_pos[1])
-
-        self.element_region = VisualElement.visual_items_cache.get_graph_item()
-
+        self.element_region = pg.GraphItem()
         self.element_region.mouseClickEvent = self.mouseClickEvent
 
         # Define positions of nodes
-        self.element_region_pos = np.array([
-            [self.indexFrom, max_freq * 0.8],
-            [self.indexFrom, max_freq * 0.85],
-            [self.indexTo, max_freq * 0.85],
-            [self.indexTo, max_freq * 0.8]
-        ])
-
+        self.element_region_pos = np.array([])
         self.element_region_adj = np.array([[0, 1], [1, 2], [2, 3]])
+        self._update_items_pos()
 
         # update the visual representation
         self.visual_figures.append([self.element_region, True])  # item visibility
 
-    def release_resources(self):
-        VisualElement.visual_items_cache.release_text_item(self.text_number)
-        VisualElement.visual_items_cache.release_graph_item(self.element_region)
+    def _update_items_pos(self):
+        self.text_number_pos = self._indexFrom / 2.0 + self._indexTo / 2.0, self.signal.samplingRate * 0.9 / 2.0
+        self.text_number.setPos(self.text_number_pos[0], self.text_number_pos[1])
+        max_freq = self.signal.samplingRate / 2.0
+        self.element_region_pos = np.array([
+            [self._indexFrom, max_freq * 0.8],
+            [self._indexFrom, max_freq * 0.85],
+            [self._indexTo, max_freq * 0.85],
+            [self._indexTo, max_freq * 0.8]
+        ])
 
     def setNumber(self, n):
         """

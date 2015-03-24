@@ -1,7 +1,7 @@
 #  -*- coding: utf-8 -*-
 import pyqtgraph as pg
 from PyQt4.QtGui import QColor
-from graphic_interface.segment_visualzation.VisualItemsCache import VisualItemsCache
+from PyQt4.QtGui import QFont
 
 
 class VisualElement:
@@ -11,6 +11,10 @@ class VisualElement:
     """
 
     # region CONSTANTS
+    # the font size for text labels
+    FONT_SIZE = 13
+    FONT = QFont("Arial", pointSize=FONT_SIZE)  # the queue with free items
+
     #  decimal places to round the parameters
     DECIMAL_PLACES = 4
 
@@ -20,9 +24,6 @@ class VisualElement:
     # different colors for the even and odds rows in the parameter table and segment colors.
     COLOR_ODD = QColor(0, 0, 255, 100)
     COLOR_EVEN = QColor(0, 255, 0, 100)
-
-    # static reference
-    visual_items_cache = None
 
     # classes of visual elements,
     # FIGURES ----- for elements representation visual item
@@ -38,19 +39,21 @@ class VisualElement:
 
     # endregion
 
-    def __init__(self, number=0):
+    def __init__(self, number=0, signal=None,indexFrom=0, indexTo=0):
         # callback to execute when the element is clicked. Signals are not used for efficiency
         self.elementClicked = None
+        self.signal = signal
 
-        if VisualElement.visual_items_cache is None:
-            VisualElement.visual_items_cache = VisualItemsCache()
+        self._indexFrom = indexFrom
+        self._indexTo = indexTo
 
         # the optional data interesting for the transform ej name, parameters, etc
         # visual options for plotting the element
         self.visible = True
 
         # the visual elements that show text
-        self.text_number = VisualElement.visual_items_cache.get_text_item(number)
+        self.text_number = pg.TextItem(str(number), color=(255, 255, 255), anchor=(0.5, 0.5))
+        self.text_number.setFont(self.FONT)
         self.visual_text = [[self.text_number, True]]
 
         # the visual components that show the elements representation
@@ -68,7 +71,27 @@ class VisualElement:
         :param callback:
         :return:
         """
-        self.elementClicked = callback if callback is not None else self.elementClicked
+        self.elementClicked = callback
+
+    def _update_items_pos(self):
+        """
+        Update visual items variables from a change on signal or bounds
+        :return:
+        """
+        pass
+
+    def set_bounds(self, index_from, index_to):
+        self._indexFrom = index_from
+        self._indexTo = index_to
+        self._update_items_pos()
+
+    @property
+    def indexFrom(self):
+        return self._indexFrom
+
+    @property
+    def indexTo(self):
+        return self._indexTo
 
     @property
     def color(self):

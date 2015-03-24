@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from PyQt4 import QtGui
-from graphic_interface.segment_visualzation.parameter_items.spectral_parameter_items.SpectralParameterVisualItem import SpectralVisualItemWrapper
+from graphic_interface.segment_visualization.parameter_items.spectral_parameter_items.SpectralParameterVisualItem import SpectralVisualItemWrapper
 import pyqtgraph as pg
 import numpy as np
 

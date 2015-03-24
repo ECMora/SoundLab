@@ -3,7 +3,7 @@ import os
 import xlwt
 from PyQt4.QtCore import pyqtSlot, Qt, QPoint, QTimer
 from SoundLabWindow import SoundLabWindow
-from graphic_interface.segment_visualzation.VisualElement import VisualElement
+from graphic_interface.segment_visualization.VisualElement import VisualElement
 from duetto.audio_signals.AudioSignal import AudioSignal
 from graphic_interface.dialogs.CrossCorrelationDialog import CrossCorrelationDialog
 from ..dialogs.elemDetectSettings import ElemDetectSettingsDialog
@@ -649,37 +649,20 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
                 # put the elements detected into the widget to visualize them
                 self.widget.elements = self.segmentManager.elements
-
-<<<<<<< HEAD
                 self.widget.graph()
-=======
-                QTimer.singleShot(10, self.measure_parameters_and_classify)
->>>>>>> e5490303e36141b6c2390fa4e5b98656a863a4f5
 
                 # measure the parameters over elements detected
-                # self.segmentManager.measureParametersProgressChanged.connect(
-                #     lambda x: self.update_detection_progress_bar(85 + x * 0.1))
-                QTimer.singleShot(1, self.measure_parameters_and_classify)
+                QTimer.singleShot(50, self.measure_parameters_and_classify)
 
         except Exception as e:
             print("detection errors: " + e.message)
             self.update_parameter_table()
-
-        self.widget.graph()
 
         # complete the progress of detection and hide the progress bar
         self.update_detection_progress_bar(100)
         self.set_progress_bar_visibility(False)
 
     def measure_parameters_and_classify(self):
-<<<<<<< HEAD
-        self.segmentManager.measure_parameters()
-        # self.update_detection_progress_bar(95)
-
-        # classify detected elements
-        self.segmentManager.classify_elements()
-        # self.update_detection_progress_bar(98)
-=======
         """
         Measure the parameters over the detected elements and
         performs the classification of them
@@ -692,7 +675,6 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
         # classify detected elements
         self.segmentManager.classify_elements()
->>>>>>> e5490303e36141b6c2390fa4e5b98656a863a4f5
 
         # update the measured data on the two dimensional opened windows
         for wnd in self.two_dim_windows:

@@ -2,7 +2,7 @@
 from PyQt4.QtCore import QRect
 from PyQt4.QtGui import QPixmap, QImage
 import numpy as np
-from graphic_interface.segment_visualzation.parameter_items.time_parameter_items.TimeParameterVisualItem import \
+from graphic_interface.segment_visualization.parameter_items.time_parameter_items.TimeParameterVisualItem import \
     TimeVisualItemWrapper
 import pyqtgraph as pg
 from sound_lab_core.Clasification.ClassificationData import ClassificationData

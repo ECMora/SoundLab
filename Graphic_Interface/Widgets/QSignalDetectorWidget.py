@@ -2,10 +2,10 @@ from PyQt4 import QtGui, QtCore
 from PyQt4.QtGui import QColor
 import pyqtgraph as pg
 import numpy as np
-from graphic_interface.segment_visualzation.DetectedSoundLabElement import DetectedSoundLabElement
-from graphic_interface.segment_visualzation.VisualElement import VisualElement
+from graphic_interface.segment_visualization.DetectedSoundLabElement import DetectedSoundLabElement
+from graphic_interface.segment_visualization.VisualElement import VisualElement
 from QSignalVisualizerWidget import QSignalVisualizerWidget
-from graphic_interface.segment_visualzation.VisualItemsCache import VisualItemsCache
+from graphic_interface.segment_visualization.VisualItemsCache import VisualItemsCache
 
 
 class QSignalDetectorWidget(QSignalVisualizerWidget):
@@ -25,7 +25,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
     # region CONSTANTS
 
     # the pen for no visible items groups draw
-    NO_VISIBLE_ELEMENTS_PEN = pg.mkPen(QColor(255, 0, 0, 100), width=3)
+    NO_VISIBLE_ELEMENTS_PEN = pg.mkPen(QColor(255, 0, 0, 255), width=3)
 
     visual_items_cache = None
 
@@ -70,22 +70,14 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
         t = time.time()
         # release the resources of visual items
-        for e in self._elements:
-            e.release_resources()
-            for item, visible in e.spectral_element.visual_widgets():
-                if item in self.axesSpecgram.viewBox.allChildren():
-                    self.axesSpecgram.viewBox.removeItem(item)
+        self.release_items()
 
-        function_get_elements = lambda i: DetectedSoundLabElement(elements_list[i].signal,
-                                                                  elements_list[i].indexFrom,
-                                                                  elements_list[i].indexTo,
-                                                                  i + 1, self.elementClicked)
+        function_get_elements = lambda i: self.visual_items_cache.get_visual_item(elements_list[i].signal,
+                                                                                  elements_list[i].indexFrom,
+                                                                                  elements_list[i].indexTo,
+                                                                                  i + 1, self.elementClicked)
 
         self._elements = map(function_get_elements, xrange(len(elements_list)))
-
-        # just show an interval of a fixed amount of elements visible for starting
-        if len(self.elements) > self.VISIBLE_ELEMENTS_COUNT:
-            self.mainCursor.min, self.mainCursor.max = 0, self.elements[self.VISIBLE_ELEMENTS_COUNT - 1].indexTo
 
         print("Time consuming on creation of elements: " + str(time.time() - t))
 
@@ -110,7 +102,10 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         start, end = self.mainCursor.min, self.mainCursor.max
 
         # get the visible elements
-        elements = [e for e in self.elements if start <= e.indexFrom <= end or start <= e.indexTo <= end]
+        elements = [e for e in self.elements
+                    if (isinstance(e, DetectedSoundLabElement) and start <= e.indexFrom <= end or start <= e.indexTo <= end)
+                    or (isinstance(e, tuple) and start <= e[0] <= end or start <= e[1] <= end)]
+
 
         # removes all the elements on spectrogram (not oscilogram because it's cleared on graph)
         for i in xrange(len(self.elements)):
@@ -174,26 +169,25 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
         max_value = self.signal.maximumValue
 
-        text_item = self.visual_items_cache.get_text_item()
-        text_item.setText("(" + str(start + 2) + "..." + str(end) + ")")
-        text_item.setPos(start_position / 2.0 + end_position / 2.0,
-                         0.75 * max_value)
+        text_item = pg.TextItem("(" + str(start + 2) + "..." + str(end) + ")", color=(255, 255, 255),
+                                anchor=(0.5, 0.5))
+        text_item.setPos(start_position / 2.0 + end_position / 2.0, 0.75 * max_value)
 
-        # graph_item = self.visual_items_cache.get_graph_item()
-        #
-        # # Define positions of nodes
-        # graph_pos = np.array([
-        #     [start_position, max_value * 0.8],
-        #     [start_position, max_value * 0.85],
-        #     [end_position, max_value * 0.85],
-        #     [end_position, max_value * 0.8]
-        # ])
-        #
-        # graph_adj = np.array([[0, 1], [1, 2], [2, 3]])
-        # options = dict(size=1, symbol='d', pxMode=False, pen=self.NO_VISIBLE_ELEMENTS_PEN)
-        # graph_item.setData(pos=graph_pos, adj=graph_adj, **options)
+        graph_item = pg.GraphItem()
 
-        return [text_item], []
+        # Define positions of nodes
+        graph_pos = np.array([
+            [start_position, max_value * 0.8],
+            [start_position, max_value * 0.85],
+            [end_position, max_value * 0.85],
+            [end_position, max_value * 0.8]
+        ])
+
+        graph_adj = np.array([[0, 1], [1, 2], [2, 3]])
+        options = dict(size=1, symbol='d', pxMode=False, pen=self.NO_VISIBLE_ELEMENTS_PEN)
+        graph_item.setData(pos=graph_pos, adj=graph_adj, **options)
+
+        return [text_item, graph_item], []
 
     def add_elements_items(self, elements, osc, spec):
         """
@@ -239,7 +233,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         all the self.elements if None
         """
         elements = elements if elements is not None else self.elements
-        elements = [e for e in elements if e is not None]  # validate that e is instance of Element class
+        elements = [e for e in elements if e is not None and isinstance(e, DetectedSoundLabElement)]
 
         try:
             for elem in elements:
@@ -264,7 +258,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         :param oscilogram_items: the domain widget to change visibility. True if Oscilogram items would be changed,
          False if spectrogram items, None if both
         """
-        iterable = self.elements
+        iterable = [e for e in self.elements if isinstance(e, DetectedSoundLabElement)]
         osc_update = oscilogram_items is None or oscilogram_items
         spec_update = oscilogram_items is None or not oscilogram_items
         changes = False
@@ -479,12 +473,31 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         self.remove_visual_elements(elements=self.elements[indexFrom:indexTo + 1])
 
         # do not call the property to avoid recompute the unnecessary visualization
+        # release items
+        self.release_items(indexFrom, indexTo)
         self._elements = self.elements[0:indexFrom] + self.elements[indexTo + 1:]
 
         for i, x in enumerate(self.elements):
             x.setNumber(i + 1)
 
         self.draw_elements()
+
+    def release_items(self, indexFrom=None, indexTo=None):
+        """
+        Release the visual items between the indexes supplied
+        :param indexFrom: inclusive lower bound
+        :param indexTo: inclusive upper bound
+        :return:
+        """
+        indexFrom = indexFrom if indexFrom is not None else 0
+        indexTo = indexTo if indexTo is not None else len(self._elements) - 1
+
+        for e in self._elements[indexFrom: indexTo+1]:
+            if isinstance(e, DetectedSoundLabElement):
+                self.visual_items_cache.release_visual_item(e)
+                for item, visible in e.spectral_element.visual_widgets():
+                    if item in self.axesSpecgram.viewBox.allChildren():
+                        self.axesSpecgram.viewBox.removeItem(item)
 
     def mark_region_as_element(self, interval=None, update=True):
         """

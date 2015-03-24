@@ -1,10 +1,9 @@
 #  -*- coding: utf-8 -*-
-from PyQt4.QtCore import pyqtSignal, QObject
-from graphic_interface.segment_visualzation.OscilogramElement import OscilogramElement
-from graphic_interface.segment_visualzation.SpectrogramElement import SpectrogramElement
-from graphic_interface.segment_visualzation.parameter_items.spectral_parameter_items.SpectralParameterVisualItem import \
+from graphic_interface.segment_visualization.OscilogramElement import OscilogramElement
+from graphic_interface.segment_visualization.SpectrogramElement import SpectrogramElement
+from graphic_interface.segment_visualization.parameter_items.spectral_parameter_items.SpectralParameterVisualItem import \
     SpectralVisualItemWrapper
-from graphic_interface.segment_visualzation.parameter_items.time_parameter_items.TimeParameterVisualItem import \
+from graphic_interface.segment_visualization.parameter_items.time_parameter_items.TimeParameterVisualItem import \
     TimeVisualItemWrapper
 
 
@@ -17,20 +16,17 @@ class DetectedSoundLabElement:
     def __init__(self, signal, index_from, index_to, number=0, signal_callback=None):
         self.signal = signal
 
-        # callback to execute when the element is clicked. Signals are not used for efficiency
-        self.elementClicked = signal_callback
-
         # the time domain visual element
         self._time_element = OscilogramElement(signal, index_from, index_to, number)
-        self._time_element.set_element_clicked_callback(self.elementClicked)
 
         # the spectral domain visual element
         self._spectral_element = SpectrogramElement(signal, index_from, index_to, number)
-        self._spectral_element.set_element_clicked_callback(self.elementClicked)
 
-    def release_resources(self):
-        self.time_element.release_resources()
-        self.spectral_element.release_resources()
+        self.set_element_clicked_callback(signal_callback)
+
+    def set_bounds(self, index_from, index_to):
+        self.time_element.set_bounds(index_from, index_to)
+        self.spectral_element.set_bounds(index_from, index_to)
 
     def set_element_clicked_callback(self, callback):
         """
@@ -38,7 +34,9 @@ class DetectedSoundLabElement:
         :param callback:
         :return:
         """
-        self.elementClicked = callback if callback is not None else self.elementClicked
+        # callback to execute when the element is clicked. Signals are not used for efficiency
+        self._time_element.set_element_clicked_callback(callback)
+        self._spectral_element.set_element_clicked_callback(callback)
 
     # region Properties
 
@@ -59,6 +57,11 @@ class DetectedSoundLabElement:
         self.time_element.visible = value
         self.spectral_element.visible = value
 
+    def set_signal(self, value):
+        # set the visibility of the two domain representations
+        self.time_element.signal = value
+        self.spectral_element.signal = value
+
     @property
     def indexFrom(self):
         return self.time_element.indexFrom
@@ -66,6 +69,7 @@ class DetectedSoundLabElement:
     @property
     def indexTo(self):
         return self.time_element.indexTo
+
 
     @property
     def spectral_element(self):

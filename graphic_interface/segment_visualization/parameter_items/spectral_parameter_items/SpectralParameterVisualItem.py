@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from graphic_interface.segment_visualzation.parameter_items.VisualItemWrapper import VisualItemWrapper
+from graphic_interface.segment_visualization.parameter_items.VisualItemWrapper import VisualItemWrapper
 
 
 class SpectralVisualItemWrapper(VisualItemWrapper):
