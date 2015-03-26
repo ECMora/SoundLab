@@ -3,7 +3,7 @@ from PyQt4.QtGui import *
 from PyQt4.QtCore import *
 import os, hashlib
 import sys
-from utils.Utils import deserialize, WORK_SPACE_FILE_NAME
+from utils.Utils import deserialize, WORK_SPACE_FILE_NAME, CallableStartThread
 from graphic_interface.Settings.Workspace import Workspace
 from graphic_interface.windows.SoundLabMainWindow import SoundLabMainWindow
 from graphic_interface.windows.PresentationSlogan.presentation import Ui_MainWindow
@@ -81,13 +81,7 @@ def load_app_style(qApp=None, style_file=None):
 
 
 def create_visual_item_cache():
-    import time
-
-    t = time.time()
-
     VisualItemsCache()
-
-    print(time.time() - t)
 
 
 def load_language_translations(app=None, translation_file=None, window=None):
@@ -161,13 +155,11 @@ if __name__ == '__main__':
     license_checker_timer.timeout.connect(check_license)
 
     if valid_license():
-        # start the Qt main loop execution, exiting from this script
-        # with the same return code of Qt application
-        dmw.show()
         license_checker_timer.start(1000)
 
         # create items
-        QTimer.singleShot(1000, create_visual_item_cache)
+        create_visual_item_cache()
+        dmw.show()
 
         sys.exit(app.exec_())
 

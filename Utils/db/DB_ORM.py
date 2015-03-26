@@ -206,15 +206,7 @@ class DB:
         """
         Method that returns
         """
-        if new_session:
-            try:
-                self._db_session.commit()
-                self._db_session = orm.scoped_session(orm.sessionmaker(bind=self.db))
-
-            except Exception as ex:
-                print("Error getting the new Db session. " + ex.message)
-
-        return self._db_session
+        return orm.scoped_session(orm.sessionmaker(bind=self.db)) if new_session else self._db_session
 
 
 def clean_db():

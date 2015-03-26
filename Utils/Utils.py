@@ -2,6 +2,7 @@
 import os
 import pickle
 from math import log10
+from PyQt4.QtCore import QThread
 from numpy import argmax
 from PyQt4 import QtGui
 from PyQt4.QtGui import QFileDialog
@@ -142,3 +143,10 @@ def getScaledValue(value, scales, scale_step):
     pass
 
 
+class CallableStartThread(QThread):
+    def __init__(self, parent=None, function=None):
+        QThread.__init__(self, parent)
+        self.function = function if function is not None else lambda : None
+
+    def run(self):
+        self.function()

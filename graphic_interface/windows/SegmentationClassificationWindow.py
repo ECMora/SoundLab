@@ -2,6 +2,8 @@
 import os
 import xlwt
 from PyQt4.QtCore import pyqtSlot, Qt, QPoint, QTimer
+from PyQt4.QtGui import QFileDialog, QAbstractItemView, QActionGroup, QMessageBox, \
+    QProgressBar, QColor, QAction, QTableWidgetItem
 from SoundLabWindow import SoundLabWindow
 from graphic_interface.segment_visualization.VisualElement import VisualElement
 from duetto.audio_signals.AudioSignal import AudioSignal
@@ -12,8 +14,7 @@ from sound_lab_core.Segmentation.SegmentManager import SegmentManager
 from ..dialogs.ManualClassificationDialog import ManualClassificationDialog
 from TwoDimensionalAnalisysWindow import TwoDimensionalAnalisysWindow
 from ui_python_files.SegmentationAndClasificationWindowUI import Ui_MainWindow
-from PyQt4.QtGui import QFileDialog, QAbstractItemView, QActionGroup, QMessageBox, \
-    QProgressBar, QColor, QAction, QTableWidgetItem, QCursor
+from utils.Utils import CallableStartThread
 
 
 class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
@@ -29,6 +30,8 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
     """
 
     # region CONSTANTS
+    process_thread = CallableStartThread()
+
     # different colors for the even and odds rows in the parameter table and segment colors.
     TABLE_ROW_COLOR_ODD = QColor(0, 0, 255, 150)
     TABLE_ROW_COLOR_EVEN = QColor(0, 255, 0, 150)
@@ -72,7 +75,7 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         # the object that handles the measuring of parameters and manage the segments
         self.segmentManager = SegmentManager()
         self.segmentManager.measurementsChanged.connect(lambda: self.update_parameter_table())
-        self.segmentManager.segmentVisualItemAdded.connect(self.widget.add_visual_items)
+        self.segmentManager.segmentVisualItemAdded.connect(self.widget.add_parameter_visual_items)
 
         # set the signal to the widget
         self.widget.signal = signal
@@ -647,12 +650,15 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
                 self.segmentManager.detect_elements()
                 self.update_detection_progress_bar(85)
 
+                import time
+                t = time.time()
                 # put the elements detected into the widget to visualize them
                 self.widget.elements = self.segmentManager.elements
                 self.widget.graph()
+                print("Time consuming on drawing elements: " + str(time.time() - t))
 
                 # measure the parameters over elements detected
-                QTimer.singleShot(50, self.measure_parameters_and_classify)
+                QTimer.singleShot(100,self.measure_parameters_and_classify)
 
         except Exception as e:
             print("detection errors: " + e.message)
@@ -738,9 +744,9 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
             self.on_actionTemporal_Parameters_triggered(update_widget=True)
         else:
             self.widget.change_elements_visibility(visibility, VisualElement.Parameters,
-                                                   oscilogram_items=True, update=True)
-            self.widget.change_elements_visibility(visibility, VisualElement.Text, oscilogram_items=True)
-            self.widget.change_elements_visibility(visibility, VisualElement.Figures, oscilogram_items=True)
+                                                   oscgram_items=True, update=True)
+            self.widget.change_elements_visibility(visibility, VisualElement.Text, oscgram_items=True)
+            self.widget.change_elements_visibility(visibility, VisualElement.Figures, oscgram_items=True)
 
         self.actionTemporal_Figures.setEnabled(visibility)
         self.actionTemporal_Numbers.setEnabled(visibility)
@@ -749,12 +755,12 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
     @pyqtSlot()
     def on_actionTemporal_Figures_triggered(self, update_widget=True):
         self.widget.change_elements_visibility(self.actionTemporal_Figures.isChecked(), VisualElement.Figures,
-                                               oscilogram_items=True, update=update_widget)
+                                               oscgram_items=True, update=update_widget)
 
     @pyqtSlot()
     def on_actionTemporal_Parameters_triggered(self, update_widget=True):
         self.widget.change_elements_visibility(self.actionTemporal_Figures.isChecked(), VisualElement.Parameters,
-                                               oscilogram_items=True, update=update_widget)
+                                               oscgram_items=True, update=update_widget)
 
     @pyqtSlot()
     def on_actionTemporal_Numbers_triggered(self, update_widget=True):
@@ -763,7 +769,7 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
         """
         self.widget.change_elements_visibility(self.actionTemporal_Numbers.isChecked(), VisualElement.Text,
-                                               oscilogram_items=True, update=update_widget)
+                                               oscgram_items=True, update=update_widget)
 
     @pyqtSlot()
     def on_actionSpectral_Elements_triggered(self):
@@ -777,9 +783,9 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
             self.on_actionSpectral_Figures_triggered(update_widget=False)
             self.on_actionSpectral_Parameters_triggered(update_widget=True)
         else:
-            self.widget.change_elements_visibility(visibility, VisualElement.Figures, oscilogram_items=False)
-            self.widget.change_elements_visibility(visibility, VisualElement.Parameters, oscilogram_items=False)
-            self.widget.change_elements_visibility(visibility, VisualElement.Text, oscilogram_items=False, update=True)
+            self.widget.change_elements_visibility(visibility, VisualElement.Figures, oscgram_items=False)
+            self.widget.change_elements_visibility(visibility, VisualElement.Parameters, oscgram_items=False)
+            self.widget.change_elements_visibility(visibility, VisualElement.Text, oscgram_items=False, update=True)
 
         self.actionSpectral_Numbers.setEnabled(visibility)
         self.actionSpectral_Figures.setEnabled(visibility)
@@ -788,12 +794,12 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
     @pyqtSlot()
     def on_actionSpectral_Figures_triggered(self,update_widget=True):
         self.widget.change_elements_visibility(self.actionSpectral_Figures.isChecked(), VisualElement.Figures,
-                                               oscilogram_items=False, update=update_widget)
+                                               oscgram_items=False, update=update_widget)
 
     @pyqtSlot()
     def on_actionSpectral_Parameters_triggered(self,update_widget=True):
         self.widget.change_elements_visibility(self.actionSpectral_Parameters.isChecked(), VisualElement.Parameters,
-                                               oscilogram_items=False, update=update_widget)
+                                               oscgram_items=False, update=update_widget)
 
     @pyqtSlot()
     def on_actionSpectral_Numbers_triggered(self,update_widget=True):
@@ -802,7 +808,7 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
         """
         self.widget.change_elements_visibility(self.actionSpectral_Numbers.isChecked(), VisualElement.Text,
-                                               oscilogram_items=False, update=update_widget)
+                                               oscgram_items=False, update=update_widget)
 
     # endregion
 
@@ -817,4 +823,3 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         # update workspace on every window
         for wnd in self.two_dim_windows:
             wnd.load_workspace(self.workSpace)
-
