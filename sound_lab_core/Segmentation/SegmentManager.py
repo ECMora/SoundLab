@@ -409,9 +409,8 @@ class SegmentManager(QObject):
                 self.update_elements_visual_items(parameter_adapter, index, self.measuredParameters[index, j])
 
                 # try to store the parameter measurement on db
-                self.add_measurement_on_db(self.segments_db_objects[index],
-                                            orm_parameters_mappers[j],
-                                            self.measuredParameters[index, j])
+                self.add_measurement_on_db(self.segments_db_objects[index], orm_parameters_mappers[j],
+                                           self.measuredParameters[index, j])
             except Exception as e:
                 # if some error is raised set a default value
                 self.measuredParameters[index, j] = 0

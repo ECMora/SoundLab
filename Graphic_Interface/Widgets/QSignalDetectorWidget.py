@@ -194,10 +194,15 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         """
         import time
         t = time.time()
-
+        visible_elements_changed = True if elements is None else False
         elements = elements if elements is not None else self.get_visible_elements()
 
-        self.remove_visual_elements(oscilogram=draw_oscilogram, specgram=draw_specgram, elements=elements)
+        self.remove_visual_elements(oscilogram=draw_oscilogram, specgram=draw_specgram)
+
+        if visible_elements_changed:
+            # add no_visible_items_osc item, visibility
+            self.no_visible_items = [item for start, end in self._get_no_visible_visual_items_tuples(elements)
+                                     for item in self.get_no_visible_visual_item(start, end)[0]]
 
         self.add_visual_elements(elements, draw_oscilogram, draw_specgram)
 
@@ -243,11 +248,21 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         elements indexes that are not visible Ej [(0,5),(9,11)]
         means that elements from 0 to 5  and from 9 to 11 are invisible
         """
+        # if no detected elemnts
         if len(self.elements) == 0:
             return []
 
+        elems = [x.indexFrom if isinstance(x, DetectedSoundLabElement) else x[0] for x in self.elements]
+        elems = [i for i in xrange(len(elems)) if self.mainCursor.min <= elems[i] <= self.mainCursor.max]
+        if len(elems) == 0:
+            return []
+
+        first_visible_elem_index = elems[0]
+        last_visible_elem_index = elems[len(elems) - 1]
+
+        # if no visible elements
         if len(elements) == 0:
-            return [(0, len(self.elements) - 1)]
+            return [(first_visible_elem_index + 1, last_visible_elem_index - 1)]
 
         visible_elements_indexes = [e.number - 1 for e in elements]
 
@@ -256,12 +271,12 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
                                             if visible_elements_indexes[i] - visible_elements_indexes[i - 1] > 1]
 
         # include the interval of start if the first element is no visible
-        if visible_elements_indexes[0] > 0:
-            no_visible_elements_items_tuples.append((0, visible_elements_indexes[0]))
+        if visible_elements_indexes[0] > first_visible_elem_index:
+            no_visible_elements_items_tuples.append((first_visible_elem_index + 1, visible_elements_indexes[0]))
 
         # include the interval of end if the last element is no visible
-        if visible_elements_indexes[len(visible_elements_indexes) - 1] < len(self.elements) - 1:
-            no_visible_elements_items_tuples.append((visible_elements_indexes[-1] + 1, len(self.elements) - 1))
+        if visible_elements_indexes[len(visible_elements_indexes) - 1] < last_visible_elem_index:
+            no_visible_elements_items_tuples.append((visible_elements_indexes[-1] + 1, last_visible_elem_index - 1))
 
         return no_visible_elements_items_tuples
 
@@ -320,10 +335,6 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         """
 
         segmentation_items = [x[0] for x in self.segmentation_visual_items if x[1]]
-
-        # add no_visible_items_osc item, visibility
-        self.no_visible_items = [item for start, end in self._get_no_visible_visual_items_tuples(elements)
-                                 for item in self.get_no_visible_visual_item(start, end)[0]]
 
         segmentation_items.extend(self.no_visible_items)
 
@@ -517,7 +528,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         # do not call the property to avoid recompute the unnecessary visualization release items
         self._elements = self.elements[0:indexFrom] + self.elements[indexTo + 1:]
         self._update_elements_numbers()
-        self.graph()
+        self.draw_elements()
 
     def mark_region_as_element(self, interval=None, update=True):
         """
@@ -547,8 +558,6 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         if update:
             self._update_elements_numbers()
             self.draw_elements()
-            self.axesOscilogram.repaint()
-            self.axesSpecgram.repaint()
 
         return index_from
 
