@@ -55,7 +55,7 @@ class TrainingVectorClassifier(Classifier):
         params_to_sort.sort(lambda x, y: 1 if x[1] < y[1] else 1)
 
         self._parameters = [x[0] for x in params_to_sort]
-        self.training_vectors = self.get_training_vectors()
+        # self.training_vectors = self.get_training_vectors()
 
     def get_training_vectors(self):
         """

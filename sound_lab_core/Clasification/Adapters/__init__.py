@@ -1,3 +1,4 @@
 from ManualClassifierAdapter import ManualClassifierAdapter
 from KNNClassifierAdapter import KNNClassifierAdapter
+from NeuralNetsAdapter import NeuralNetsAdapter
 

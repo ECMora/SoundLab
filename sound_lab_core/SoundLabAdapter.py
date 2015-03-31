@@ -69,3 +69,10 @@ class SoundLabAdapter(QObject):
         :return:
         """
         pass
+
+    def classifier_parameters(self):
+        """
+        The list of the measured parameters needed to the specified classifier
+        :return:
+        """
+        pass
