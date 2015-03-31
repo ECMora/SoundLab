@@ -165,7 +165,7 @@ class OneDimensionalElementsDetector(ElementsDetector):
         """
         data = abs(array(data))
 
-        indexes = [i for i in xrange(1, data.size - 1) if ((data[i] > data[i - 1]) and (data[i] > data[i + 1])) or
+        indexes = [i for i in xrange(1, data.size - 1) if (data[i - 1] < data[i] > data[i + 1]) or
                                                           (data[i] == data[i - 1] == data[i + 1])]
 
         return array(indexes), data[indexes]

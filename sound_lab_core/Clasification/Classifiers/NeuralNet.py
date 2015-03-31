@@ -1,12 +1,13 @@
 import os
 from neurolab.trans import LogSig, SoftMax, TanSig, PureLin
 from neurolab.train import train_bfgs, train_gdm, train_rprop, train_gdx
-from neurolab.error import MSE, SSE, MAE, CEE, SAE
+from neurolab.error import MSE, SSE, MAE,  SAE #,CEE
 from neurolab.layer import Perceptron
 from neurolab.init import initnw, InitRand
 from neurolab.core import Net
 import numpy as np
 import pickle
+
 
 class TransfFunctions:
     """
@@ -17,6 +18,7 @@ class TransfFunctions:
     TANH = TanSig
     LIN = PureLin
 
+
 class TrainMethods:
     """
     Enum class for neurolab train functions wrapper
@@ -26,6 +28,7 @@ class TrainMethods:
     RPROP = train_rprop
     BFGS = train_bfgs
 
+
 class ErrorFunctions:
     """
     Enum class for neurolab error functions wrapper
@@ -33,8 +36,9 @@ class ErrorFunctions:
     MSE = MSE
     SSE = SSE
     SAE = SAE
-    CEE = CEE
+    CEE = 10 #CEE
     MAE = MAE
+
 
 # TODO set the max and min values
 class NeuralNet():
@@ -72,7 +76,7 @@ class NeuralNet():
 
         self._net = Net(minmax, net_co, layers, connect, trainf, errorf())
 
-    #region Save and Load
+    # region Save and Load
 
     @staticmethod
     def save(serializable_object, filename):
@@ -95,9 +99,9 @@ class NeuralNet():
         with open(filename, 'rb') as f:
             return pickle.load(f)
 
-    #endregion
+    # endregion
 
-    #region Params and classes Properties
+    # region Params and classes Properties
 
     @property
     def classes(self):
@@ -115,7 +119,7 @@ class NeuralNet():
         """
         return self._params
 
-    #endregion
+    # endregion
 
     def getClassifierInfo(self):
         return {u'params' : self._params, u'classes': self._classes}

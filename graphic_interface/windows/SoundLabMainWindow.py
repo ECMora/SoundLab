@@ -2,7 +2,7 @@
 from PyQt4 import QtCore
 from pyqtgraph.parametertree.parameterTypes import ListParameter
 from pyqtgraph.parametertree import Parameter, ParameterTree
-from PyQt4.QtGui import QMessageBox, QActionGroup, QAction
+from PyQt4.QtGui import QMessageBox, QActionGroup, QAction, QFileDialog
 from PyQt4.QtCore import pyqtSlot, QMimeData, pyqtSignal
 from duetto.audio_signals import openSignal
 from duetto.audio_signals.Synthesizer import Synthesizer

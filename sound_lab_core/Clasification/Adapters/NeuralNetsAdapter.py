@@ -14,7 +14,6 @@ class NeuralNetsAdapter(ClassifierAdapter):
     NNdir = "./sound_lab_core/Clasification/Classifiers/Neural Nets/"
     NETWORKS = ['family', 'specie', 'genus']
 
-
     def __init__(self):
 
         ClassifierAdapter.__init__(self)

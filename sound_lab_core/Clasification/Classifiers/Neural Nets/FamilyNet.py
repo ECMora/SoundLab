@@ -1,9 +1,8 @@
-import Utilities as ut
 import numpy as np
-from sound_lab_core.Clasification.Classifiers.NeuralNet import TransfFunctions, TrainMethods, ErrorFunctions, NeuralNet
 
+import Utilities as ut
+from sound_lab_core.Clasification.Classifiers.NeuralNet import TransfFunctions, ErrorFunctions, NeuralNet
 from sound_lab_core.ParametersMeasurement.Adapters.TimeParametersAdapters.DurationTimeParameterAdapter import DurationTimeParameterAdapter
-
 from sound_lab_core.ParametersMeasurement.Adapters.TimeParametersAdapters.LocalMaxMeanAdapter import LocalMaxMeanParameterAdapter
 from sound_lab_core.ParametersMeasurement.Adapters.TimeParametersAdapters.PeakToPeakParameterAdapter import PeakToPeakParameterAdapter
 from sound_lab_core.ParametersMeasurement.Adapters.TimeParametersAdapters.RmsTimeParameterAdapter import RmsTimeParameterAdapter
@@ -14,6 +13,7 @@ from sound_lab_core.ParametersMeasurement.Adapters.FreqParametersadapters.MaxFre
 from sound_lab_core.ParametersMeasurement.Adapters.FreqParametersadapters.MinFreqParameterAdapter import MinFreqParameterAdapter
 from sound_lab_core.ParametersMeasurement.Adapters.FreqParametersadapters.PeakFreqParameterAdapter import PeakFreqParameterAdapter
 from sound_lab_core.ParametersMeasurement.Adapters.FreqParametersadapters.PeaksAboveParameterAdapter import PeaksAboveParameterAdapter
+
 
 classes = ['FL', 'FMC', 'FMCa', 'FML']
 

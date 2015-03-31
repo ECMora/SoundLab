@@ -1,5 +1,6 @@
 from sound_lab_core.Segmentation.Detectors.OneDimensional.IntervalMethods.IntervalDetector import IntervalDetector
 from numpy.fft import fft
+import numpy as np
 from utils.Utils import fromdB
 
 
@@ -12,6 +13,6 @@ class IntervalPowerSpectrumDetector(IntervalDetector):
     def get_threshold_level(self, data):
         return fromdB(self.threshold, 0, max(self.signal.data))
 
-    def interval_function(self, d, step, total):
-        IntervalDetector.interval_function(self, d, step, total)
-        return max(fft(d))
+    def interval_function(self, data, step, total):
+        IntervalDetector.interval_function(self, data, step, total)
+        return np.sum(np.abs(fft(data)))

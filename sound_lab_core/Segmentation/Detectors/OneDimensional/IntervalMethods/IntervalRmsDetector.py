@@ -1,4 +1,4 @@
-from numpy.ma import sqrt
+from numpy import sqrt, mean, square
 from sound_lab_core.Segmentation.Detectors.OneDimensional.IntervalMethods.IntervalDetector import IntervalDetector
 
 
@@ -10,5 +10,4 @@ class IntervalRmsDetector(IntervalDetector):
 
     def interval_function(self, data, step, total):
         IntervalDetector.interval_function(self, data, step, total)
-        ind, vals = self.local_max(data)
-        return 0 if len(vals) == 0 else sqrt(sum(vals ** 2) / vals.size)
+        return sqrt(mean(square(data.astype("int32"))))

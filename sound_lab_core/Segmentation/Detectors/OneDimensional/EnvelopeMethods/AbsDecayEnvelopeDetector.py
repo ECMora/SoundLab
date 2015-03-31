@@ -1,6 +1,7 @@
 from math import pi, sin
 import matplotlib.mlab as mlab
 from numpy import zeros, int32
+import numpy as np
 from sound_lab_core.Segmentation.Detectors.OneDimensional.OneDimensionalElementsDetector import \
     OneDimensionalElementsDetector
 from utils.Utils import fromdB
@@ -82,26 +83,29 @@ class AbsDecayEnvelopeDetector(OneDimensionalElementsDetector):
         decay is the min number of samples in data that separates two elements
         """
 
-        rectified = map(abs, data)
+        rectified = np.abs(data)
 
         self.detectionProgressChanged.emit(10)
 
-        result = zeros(len(rectified), dtype=int32)
+        result = zeros(rectified.size, dtype=int32)
         current = rectified[0]
-        fall_init, value, progress_step = None, 0, len(result) / 10
+        fall_init, value, progress_step = None, 0, result.size / 10
 
-        lineal = lambda array, index, start, decay: array[start] - array[start] * (index - start) / decay
-        sin_function = lambda array, index, start, decay: array[start] * sin(((index - start) * 1.0 * pi) / (decay * 2) + pi / 2)
-        cuadratic = lambda array, index, start, decay: array[start] * (1 - ((index - start) * 1.0) / decay) ** 2
+        lineal = lambda first_value, index, start, decay: first_value - first_value * (index - start) / decay
+        sin_function = lambda first_value, index, start, decay: first_value * sin(((index - start) * 1.0 * pi) / (decay * 2) + pi / 2)
+        cuadratic = lambda first_value, index, start, decay: first_value * (1 - ((index - start) * 1.0) / decay) ** 2
         function = lineal if envelope_type == "lineal" else (sin_function if envelope_type == "sin" else cuadratic)
 
-        for i in xrange(1, len(result)):
+        for i in xrange(1, result.size):
             if fall_init is None:
-                fall_init = i - 1 if rectified[i] < current else None
+                if rectified[i] < current:
+                    fall_init = i - 1
+                    value = function(rectified[i - 1], i, i - 1, decay)
 
             else:
-                value = function(rectified, i, fall_init, decay)
-                fall_init = None if (value <= rectified[i] or i - fall_init >= decay) else fall_init
+                value = function(rectified[fall_init], i, fall_init, decay)
+
+            fall_init = None if (value <= rectified[i] or i - fall_init >= decay) else fall_init
 
             result[i - 1] = current if fall_init is None else max(value, rectified[i])
             current = rectified[i]
@@ -109,5 +113,4 @@ class AbsDecayEnvelopeDetector(OneDimensionalElementsDetector):
                 self.detectionProgressChanged.emit(10 + (i / progress_step) * 6)
 
         result[-1] = current
-
         return result
