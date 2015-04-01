@@ -105,7 +105,7 @@ class AbsDecayEnvelopeDetector(OneDimensionalElementsDetector):
             else:
                 value = function(rectified[fall_init], i, fall_init, decay)
 
-            fall_init = None if (value <= rectified[i] or i - fall_init >= decay) else fall_init
+                fall_init = None if (value <= rectified[i] or i - fall_init >= decay) else fall_init
 
             result[i - 1] = current if fall_init is None else max(value, rectified[i])
             current = rectified[i]

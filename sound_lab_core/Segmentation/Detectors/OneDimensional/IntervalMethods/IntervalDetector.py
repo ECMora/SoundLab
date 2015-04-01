@@ -1,4 +1,3 @@
-from math import sqrt
 import matplotlib.mlab as mlab
 import numpy as np
 from sound_lab_core.Segmentation.Detectors.OneDimensional.OneDimensionalElementsDetector import \

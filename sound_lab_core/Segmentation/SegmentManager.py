@@ -1,5 +1,6 @@
 from PyQt4.QtCore import QObject, pyqtSignal
 import numpy as np
+from utils.Utils import CallableStartThread
 from utils.db.DB_ORM import Segment, DB, Measurement
 from duetto.audio_signals import AudioSignal
 
@@ -345,9 +346,18 @@ class SegmentManager(QObject):
         import time
         t = time.time()
 
-        detector.detect()
+        self.thread = CallableStartThread(self._detect_elements(detector))
+        self.thread.start()
+        # self._detect_elements(detector)
+
         print("Time consuming detecting " + str(len(detector.elements)) + " elements: " + str(time.time() - t))
 
+    def _detect_elements(self, detector):
+        """
+        execute the detection of the elements
+        :return:
+        """
+        detector.detect()
         self.elements = detector.elements
 
     # endregion
@@ -383,9 +393,12 @@ class SegmentManager(QObject):
         self.measurementsChanged.emit()
         self.measureParametersProgressChanged.emit(100)
 
-    def _measure(self, element, index, measure_methods=None, orm_parameters_mappers=None, commit_changes=False):
+    def _measure(self, element, index, measure_methods=None, orm_parameters_mappers=None, commit_changes=False,
+                 update_visual_items_and_db=True):
         """
         Measure the list of parameters over the element supplied
+        :param update_visual_items_and_db: True if the visual items of measurements and the db session
+        would be updated False otherwise. Efficiency improvement
         :param element: The element to measure
         :param index: The element index on the table of parameters
         :return:
@@ -405,12 +418,13 @@ class SegmentManager(QObject):
                 # compute the param with the interval_function
                 self.measuredParameters[index, j] = measure_methods[j].measure(element)
 
-                # raise the parameter visual item if any
-                self.update_elements_visual_items(parameter_adapter, index, self.measuredParameters[index, j])
+                if update_visual_items_and_db:
+                    # raise the parameter visual item if any
+                    self.update_elements_visual_items(parameter_adapter, index, self.measuredParameters[index, j])
 
-                # try to store the parameter measurement on db
-                self.add_measurement_on_db(self.segments_db_objects[index], orm_parameters_mappers[j],
-                                           self.measuredParameters[index, j])
+                    # try to store the parameter measurement on db
+                    self.add_measurement_on_db(self.segments_db_objects[index], orm_parameters_mappers[j],
+                                               self.measuredParameters[index, j])
             except Exception as e:
                 # if some error is raised set a default value
                 self.measuredParameters[index, j] = 0

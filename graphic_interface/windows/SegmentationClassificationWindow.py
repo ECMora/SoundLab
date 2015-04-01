@@ -672,6 +672,8 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         # classify detected elements
         self.segmentManager.classify_elements()
 
+        self.widget.graph()
+
         self.update_parameter_table()
 
         # update the measured data on the two dimensional opened windows

@@ -5,6 +5,7 @@ from sound_lab_core.Clasification.Adapters.ClassifierAdapter import ClassifierAd
 from sound_lab_core.Clasification.Classifiers import NeuralNet
 from sound_lab_core.Clasification.Classifiers.NeuralNetsClassifier import NeuralNetsClassifier
 
+
 # check classifiers params property
 class NeuralNetsAdapter(ClassifierAdapter):
     """
@@ -45,12 +46,12 @@ class NeuralNetsAdapter(ClassifierAdapter):
         genus = self._classifiers['genus'] is not None
         specie = self._classifiers['specie'] is not None
 
-        settings = [{  u'name': u'Family', u'type': u'bool', 'enabled': family ,u'default': family,
-                       u'value':family},
-                    {  u'name': u'Genus', u'type': u'bool', 'enabled': genus ,u'default': genus,
-                       u'value':genus},
-                    {  u'name': u'Specie', u'type': u'bool', 'enabled': specie ,u'default': specie,
-                       u'value':specie},
+        settings = [{u'name': u'Family', u'type': u'bool', 'enabled': family ,u'default': family,
+                    u'value':family},
+                    {u'name': u'Genus', u'type': u'bool', 'enabled': genus ,u'default': genus,
+                     u'value':genus},
+                    {u'name': u'Specie', u'type': u'bool', 'enabled': specie ,u'default': specie,
+                    u'value':specie},
                     {'name': u'Information', 'type': 'text', 'value': unicode(self.get_classifiers_info())},
                     {'name': u'More', 'type': 'action'}]
 
@@ -69,7 +70,6 @@ class NeuralNetsAdapter(ClassifierAdapter):
 
     def classifier_parameters(self):
         return self._params
-
 
     def get_settings(self):
         return self.settings

@@ -2,6 +2,7 @@ from sound_lab_core.Clasification.Classifiers.TrainingVectorClassifier import Tr
 from sound_lab_core.Clasification.ClassificationData import ClassificationData
 import numpy as np
 
+
 # TODO set the training vectors according the context classifier parameters
 class NeuralNetsClassifier(TrainingVectorClassifier):
 
@@ -62,7 +63,6 @@ class NeuralNetsClassifier(TrainingVectorClassifier):
         vector = []
 
         for param in classSet:
-
             try:
                 index = self._params.index(param)
                 vector.append(vectorSet[index])

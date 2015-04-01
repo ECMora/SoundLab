@@ -2,8 +2,8 @@
 from PyQt4 import QtGui
 from PyQt4.QtGui import QDialog
 from pyqtgraph.parametertree import Parameter, ParameterTree
-
 from graphic_interface.windows.ui_python_files.detectElementsDialog import Ui_Dialog
+from sound_lab_core.Clasification.Adapters.ClassifierAdapter import ClassifierAdapter
 from utils.Utils import small_signal
 from sound_lab_core.AdapterFactories import *
 from sound_lab_core.Clasification.Adapters.ManualClassifierAdapter import ManualClassifierAdapter
@@ -218,6 +218,8 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
                 try:
                     # the parameter changed is has the method name
                     adapter = adapter_factory.get_adapter(parameter.name())
+                    if isinstance(adapter, ClassifierAdapter):
+                        print("Classifier adapter")
 
                     # change the method settings if any (Parameter tree interface of adapter)
                     param_settings = self.segmentation_classification_tree.param(
