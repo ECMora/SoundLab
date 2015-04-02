@@ -126,9 +126,12 @@ class PointerCursorTool(SignalVisualizerTool):
         :return:
         """
         # remove the item of pointer on the widget and the cursor shape
-        self.widget.removeItem(self.pointerCursor)
+        if self.pointerCursor in self.widget.items():
+            self.widget.removeItem(self.pointerCursor)
+
         self.widget.setCursor(QCursor(QtCore.Qt.ArrowCursor))
 
     def enable(self):
-        self.widget.addItem(self.pointerCursor)
+        if self.pointerCursor not in self.widget.items():
+            self.widget.addItem(self.pointerCursor)
 

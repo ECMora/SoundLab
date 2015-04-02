@@ -92,10 +92,12 @@ class RectangularCursorTool(SpectrogramTool):
                and self.rectRegion['y'][1] >= y >= self.rectRegion['y'][0]
 
     def disable(self):
-        self.widget.viewBox.removeItem(self.rectangularCursor)
+        if self.rectangularCursor in self.widget.viewBox.allChildren():
+            self.widget.viewBox.removeItem(self.rectangularCursor)
 
     def enable(self):
-        self.widget.viewBox.addItem(self.rectangularCursor)
+        if self.rectangularCursor not in self.widget.viewBox.allChildren():
+            self.widget.viewBox.addItem(self.rectangularCursor)
 
 
 

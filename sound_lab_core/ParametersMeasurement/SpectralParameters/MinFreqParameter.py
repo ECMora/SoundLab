@@ -1,20 +1,18 @@
 # -*- coding: utf-8 -*-
 from matplotlib import mlab
 import numpy as np
-from sound_lab_core.ParametersMeasurement.ParameterMeasurer import ParameterMeasurer
 from sound_lab_core.ParametersMeasurement.SpectralParameters import DECIMAL_PLACES
+from sound_lab_core.ParametersMeasurement.SpectralParameters.FreqParameter import FreqParameter
 
 
-class MinFreqParameter(ParameterMeasurer):
+class MinFreqParameter(FreqParameter):
     """
     Class that measure the min freq parameter on a segment
     """
 
     def __init__(self, threshold=-20, total=True):
-        ParameterMeasurer.__init__(self)
+        FreqParameter.__init__(self,threshold, total)
         self.name = "MinFreq(kHz)"
-        self.threshold = threshold
-        self.total = total
 
     def measure(self, segment):
         # frequency_params is a tuple Pxx, freqs shared by all the frequency parameters

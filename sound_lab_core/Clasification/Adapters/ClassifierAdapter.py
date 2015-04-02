@@ -1,4 +1,3 @@
-from graphic_interface.segment_visualization.classification_items.ClassificationVisualItem import ClassificationVisualItem
 from sound_lab_core.SoundLabAdapter import SoundLabAdapter
 
 
@@ -10,3 +9,9 @@ class ClassifierAdapter(SoundLabAdapter):
     def __init__(self):
         SoundLabAdapter.__init__(self)
 
+    def classifier_parameters(self):
+        """
+        The list of the measured parameters needed to the specified classifier
+        :return:
+        """
+        return []

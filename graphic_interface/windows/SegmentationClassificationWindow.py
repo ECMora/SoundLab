@@ -74,7 +74,8 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
         # the object that handles the measuring of parameters and manage the segments
         self.segmentManager = SegmentManager()
-        self.segmentManager.measurementsChanged.connect(lambda: self.update_parameter_table())
+        self.segmentManager.measurementsChanged.connect(self.update_parameter_table)
+        self.segmentManager.detectionProgressChanged.connect(lambda x: self.update_detection_progress_bar(x * 0.9))
         self.segmentManager.segmentVisualItemAdded.connect(self.widget.add_parameter_visual_items)
 
         # set the signal to the widget
@@ -493,7 +494,6 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
         # show the image if the element is classified
         try:
-
             classification = self.segmentManager.segment_classification(element_index)
             image = classification.get_image()
 
@@ -557,8 +557,8 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         element = self.widget.elements[element_index]
         x = element.indexFrom + (element.indexTo - element.indexFrom) / 2.0
         x = x * self.widget.width() * 1.0 / self.widget.get_visible_region()
-        toast.move(self.widget.mapToGlobal(
-            QPoint(x - self.effect_window.width() / 2.0,
+
+        toast.move(self.widget.mapToGlobal( QPoint(x - self.effect_window.width() / 2.0,
                    (self.widget.height() - self.effect_window.height()) / 2.0)))
 
         toast.disappear()
@@ -641,24 +641,16 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
                 self.update_detection_progress_bar(0)
                 self.set_progress_bar_visibility(True)
 
-                # set the detection as the 50% of the segmentation,
-                # parameter parameters and classification time
-                self.segmentManager.detectionProgressChanged.connect(
-                    lambda x: self.update_detection_progress_bar(x * 0.85))
-
                 # execute the detection
                 self.segmentManager.detect_elements()
-                self.update_detection_progress_bar(85)
+                self.update_detection_progress_bar(90)
 
-                import time
-                t = time.time()
                 # put the elements detected into the widget to visualize them
                 self.widget.elements = self.segmentManager.elements
                 self.widget.graph()
-                print("Time consuming on drawing elements: " + str(time.time() - t))
 
                 # measure the parameters over elements detected
-                QTimer.singleShot(100,self.measure_parameters_and_classify)
+                QTimer.singleShot(100, self.measure_parameters_and_classify)
 
         except Exception as e:
             print("detection errors: " + e.message)
@@ -675,12 +667,14 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         :return:
         """
         # measure the parameters over elements detected
-        # self.segmentManager.measureParametersProgressChanged.connect(
-        # lambda x: self.update_detection_progress_bar(70 + x * 0.2))
         self.segmentManager.measure_parameters()
 
         # classify detected elements
         self.segmentManager.classify_elements()
+
+        self.widget.graph()
+
+        self.update_parameter_table()
 
         # update the measured data on the two dimensional opened windows
         for wnd in self.two_dim_windows:

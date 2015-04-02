@@ -52,6 +52,9 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         # maybe the parameter for an element is supplied when its instance are not yet computed
         self.parameters_items = []
 
+        # the items for no visible elements list of tuples (item, visibility)
+        self.no_visible_items = []
+
         # list of detected sound lab elements.
         self._elements = []
 
@@ -157,8 +160,13 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         for item in items:
             item[1] = visibility
 
+        # update visibility for no visible elements items
+        if element_type == VisualElement.Figures:
+            for item_visible in self.no_visible_items:
+                item_visible[1] = visibility
+
         if update:
-            self.draw_elements(osc_update, spec_update, elements=[e for e in self.elements if isinstance(e,DetectedSoundLabElement)])
+            self.graph()
 
     # endregion
 
@@ -182,10 +190,15 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         """
         import time
         t = time.time()
-
+        visible_elements_changed = True if elements is None else False
         elements = elements if elements is not None else self.get_visible_elements()
 
-        self.remove_visual_elements(oscilogram=draw_oscilogram, specgram=draw_specgram, elements=elements)
+        self.remove_visual_elements(oscilogram=draw_oscilogram, specgram=draw_specgram)
+
+        if visible_elements_changed:
+            # add no_visible_items_osc item, visibility
+            self.no_visible_items = [[item, True] for start, end in self._get_no_visible_visual_items_tuples(elements)
+                                     for item in self.get_no_visible_visual_item(start, end)[0]]
 
         self.add_visual_elements(elements, draw_oscilogram, draw_specgram)
 
@@ -227,26 +240,39 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         Computes the start, end of the no visible elements group representation
         to visualize
         :param elements: The current visible elements
-        :return: List of tuples (start, end) in indexes of detected elements
+        :return: List of tuples (start, end) in indexes of detected elements with the positions of the
+        elements indexes that are not visible Ej [(0,5),(9,11)]
+        means that elements from 0 to 5  and from 9 to 11 are invisible
         """
+        # if no detected elemnts
+        if len(self.elements) == 0:
+            return []
+
+        elems = [x.indexFrom if isinstance(x, DetectedSoundLabElement) else x[0] for x in self.elements]
+        elems = [i for i in xrange(len(elems)) if self.mainCursor.min <= elems[i] <= self.mainCursor.max]
+        if len(elems) == 0:
+            return []
+
+        first_visible_elem_index = elems[0]
+        last_visible_elem_index = elems[len(elems) - 1]
+
+        # if no visible elements
+        if len(elements) == 0:
+            return [(first_visible_elem_index + 1, last_visible_elem_index - 1)]
+
         visible_elements_indexes = [e.number - 1 for e in elements]
 
-        min_elems = 3
-        no_visible_elements_items_tuples = []
-        if len(elements) == 0 and len(self.elements) > 1:
-            no_visible_elements_items_tuples = [(0, len(self.elements) - 1)]
-        #
-        # elif visible_elements_indexes[0] < min_elems:
-        # no_visible_elements_items_tuples = [(1, visible_elements_indexes[0] - 1)]
+        no_visible_elements_items_tuples = [(visible_elements_indexes[i - 1] + 1, visible_elements_indexes[i] - 1)
+                                            for i in xrange(1, len(elements))
+                                            if visible_elements_indexes[i] - visible_elements_indexes[i - 1] > 1]
 
-        no_visible_elements_items_tuples.extend([(visible_elements_indexes[i - 1], visible_elements_indexes[i])
-                                                 for i in xrange(1, len(elements)) if
-                                                 visible_elements_indexes[i] - visible_elements_indexes[
-                                                     i - 1] >= min_elems])
+        # include the interval of start if the first element is no visible
+        if visible_elements_indexes[0] > first_visible_elem_index:
+            no_visible_elements_items_tuples.append((first_visible_elem_index + 1, visible_elements_indexes[0]))
 
-        # if len(visible_elements_indexes) > 0 and visible_elements_indexes[-1] + min_elems <= len(self.elements):
-        #     # if the last element is not visible
-        #     no_visible_elements_items_tuples.append((elements[-1] + 1, len(self.elements)))
+        # include the interval of end if the last element is no visible
+        if visible_elements_indexes[len(visible_elements_indexes) - 1] < last_visible_elem_index:
+            no_visible_elements_items_tuples.append((visible_elements_indexes[-1] + 1, last_visible_elem_index - 1))
 
         return no_visible_elements_items_tuples
 
@@ -259,14 +285,24 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         of no visible elements in the range [start, end] for oscilogram
         and spectrogram widgets respectively
         """
+        osc_items, spec_items = [], []
 
-        start_position, end_position = self._get_element(start).indexFrom, self._get_element(end).indexTo
+        # viewRange of plotWidget [[xmin, xmax], [ymin, ymax]]
+        x_max = self.axesOscilogram.viewRange()[0][1]
+
+        start_position = self._get_element(start).indexTo if start > 0 else 0
+        end_position = self._get_element(end).indexFrom if end < len(self.elements) - 1 else x_max
 
         max_value = self.signal.maximumValue
 
-        text_item = pg.TextItem("(" + str(start + 2) + "..." + str(end) + ")", color=(255, 255, 255),
-                                anchor=(0.5, 0.5))
-        text_item.setPos(start_position / 2.0 + end_position / 2.0, 0.75 * max_value)
+        widget_scene_width, widget_pixel_width = self.axesOscilogram.viewRect().width(), self.axesOscilogram.width() * 1.0
+
+        # pixel_visible_text
+        if (end_position - start_position) * widget_pixel_width / widget_scene_width > 30:
+            text = "(" + str(start + 1) + "..." + str(end + 1) + ")" if end > start else "(" + str(start + 1) + ")"
+            text_item = pg.TextItem(text, color=(255, 255, 255), anchor=(0.5, 0.5))
+            text_item.setPos(start_position / 2.0 + end_position / 2.0, 0.75 * max_value)
+            osc_items.append(text_item)
 
         graph_item = pg.GraphItem()
 
@@ -281,8 +317,9 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         graph_adj = np.array([[0, 1], [1, 2], [2, 3]])
         options = dict(size=1, symbol='d', pxMode=False, pen=self.NO_VISIBLE_ELEMENTS_PEN)
         graph_item.setData(pos=graph_pos, adj=graph_adj, **options)
+        osc_items.append(graph_item)
 
-        return [text_item, graph_item], []
+        return osc_items, spec_items
 
     def add_visual_elements(self, elements, osc, spec):
         """
@@ -294,9 +331,8 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         """
 
         segmentation_items = [x[0] for x in self.segmentation_visual_items if x[1]]
-        # add no_visible_items_osc
-        segmentation_items.extend([item for start, end in self._get_no_visible_visual_items_tuples(elements)
-                                   for item in self.get_no_visible_visual_item(start, end)[0]])
+
+        segmentation_items.extend([item for item, visible in self.no_visible_items if visible])
 
         osc_items = [x[0] for e in elements for x in e.time_element.visual_widgets()
                      if x[1]] if self.visibleOscilogram and osc else []
@@ -308,9 +344,9 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         spec_items = set([x[0] for e in elements for x in e.spectral_element.visual_widgets() if x[1]]\
                           if self.visibleSpectrogram and spec else [])
 
-        osc_items_to_add = osc_items #.difference(set(self.axesOscilogram.items()))
+        osc_items_to_add = osc_items.difference(set(self.axesOscilogram.items()))
 
-        spec_items_to_add = spec_items #.difference(set(self.axesSpecgram.viewBox.allChildren()))
+        spec_items_to_add = spec_items.difference(set(self.axesSpecgram.viewBox.allChildren()))
 
         for item in osc_items_to_add:
             self.axesOscilogram.addItem(item)
@@ -334,6 +370,9 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
                                                for elem in elements
                                                for item, visible in elem.time_element.visual_widgets()
                                                if visible and item in self.axesOscilogram.items()]
+
+        osc_items.extend([item for item, visible in self.no_visible_items if visible])
+
         spec_items = [] if not specgram else [item
                                               for elem in elements
                                               for item, visible in elem.spectral_element.visual_widgets()
@@ -359,7 +398,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
             for item in parameter_items:
                 self.elements[element_index].add_visual_item(item)
 
-        self.draw_elements(elements=[self.elements[element_index]])
+            # self.draw_elements(elements=[self.elements[element_index]])
 
         self.parameters_items[element_index].extend(parameter_items)
 
@@ -403,6 +442,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
         index_from, index_to = self._get_element(index).indexFrom, self._get_element(index).indexTo
         self.oscSelectionRegion.setRegion((index_from, index_to))
+        self.axesOscilogram.update()
 
         # update the interval of visualization if the element is outside the current visible region
         if index_from < self.mainCursor.min or index_to > self.mainCursor.max:
@@ -483,9 +523,9 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
         # do not call the property to avoid recompute the unnecessary visualization release items
         self._elements = self.elements[0:indexFrom] + self.elements[indexTo + 1:]
+        self.parameters_items = self.parameters_items[0:indexFrom] + self.parameters_items[indexTo + 1:]
         self._update_elements_numbers()
-        self.axesOscilogram.repaint()
-        self.axesSpecgram.repaint()
+        self.draw_elements()
 
     def mark_region_as_element(self, interval=None, update=True):
         """
@@ -510,13 +550,12 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         # insert the new element
         element = self.visual_items_cache.get_visual_item(self.signal, start, end, 0, self.elementClicked)
         self.elements.insert(index_from, element)
+        self.parameters_items.insert(index_from, [[], True])
 
         # update the widget
         if update:
             self._update_elements_numbers()
-            self.draw_elements(elements=[element])
-            self.axesOscilogram.repaint()
-            self.axesSpecgram.repaint()
+            self.draw_elements()
 
         return index_from
 

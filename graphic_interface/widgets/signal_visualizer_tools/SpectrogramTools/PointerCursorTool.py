@@ -58,11 +58,13 @@ class PointerCursorTool(SpectrogramTool):
         self.mousePressed = False
 
     def disable(self):
-        self.widget.viewBox.removeItem(self.pointerCursor)
+        if self.pointerCursor in self.widget.viewBox.allChildren():
+            self.widget.viewBox.removeItem(self.pointerCursor)
         self.widget.setCursor(QCursor(QtCore.Qt.ArrowCursor))
 
     def enable(self):
-        self.widget.viewBox.addItem(self.pointerCursor)
+        if self.pointerCursor not in self.widget.viewBox.allChildren():
+            self.widget.viewBox.addItem(self.pointerCursor)
 
 
 

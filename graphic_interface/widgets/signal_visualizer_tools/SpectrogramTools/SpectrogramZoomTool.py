@@ -15,6 +15,7 @@ class SpectrogramZoomTool(SpectrogramTool):
     def mouseMoveEvent(self, event):
         pg.GraphicsView.mouseMoveEvent(self.widget.graphics_view, event)
         rgn = self.zoomRegion.getRegion()
+
         minx, maxx = self.fromClientToCanvas(rgn[0]), self.fromClientToCanvas(rgn[1])
         if abs(minx - event.x()) < self.PIXELS_OF_CURSORS_CHANGES or \
                         abs(maxx - event.x()) < self.PIXELS_OF_CURSORS_CHANGES:
@@ -26,14 +27,11 @@ class SpectrogramZoomTool(SpectrogramTool):
 
             if interval < 0.01:
                 decimal_places = 6
-
-            t0 = round(rgn[0] * 1.0 / self.widget.signal.samplingRate, decimal_places)
-            t1 = round(rgn[1] * 1.0 / self.widget.signal.samplingRate, decimal_places)
-            dt = t0 - t1
-            self.detectedData = [("t0", t0),
-                                 ("t1", t1),
-                                 ("dt", dt)
-            ]
+            #               getFreqTimeAndIntensity -->       [time, frequency]
+            t0 = round(self.getFreqTimeAndIntensity(rgn[0], 0)[0],             decimal_places)
+            t1 = round(self.getFreqTimeAndIntensity(rgn[1], 0)[0],             decimal_places)
+            dt = t1 - t0
+            self.detectedData = [("t0", t0), ("t1", t1), ("dt", dt)]
             self.detectedDataChanged.emit(self.detectedData)
 
         elif self.mouseInsideZoomArea(event.x()):
@@ -88,8 +86,10 @@ class SpectrogramZoomTool(SpectrogramTool):
         return rgn[0] <= xIndex <= rgn[1]
 
     def disable(self):
-        self.widget.viewBox.removeItem(self.zoomRegion)
+        if self.zoomRegion in self.widget.viewBox.allChildren():
+            self.widget.viewBox.removeItem(self.zoomRegion)
         self.widget.setCursor(QCursor(QtCore.Qt.ArrowCursor))
 
     def enable(self):
-        self.widget.viewBox.addItem(self.zoomRegion)
+        if self.zoomRegion not in self.widget.viewBox.allChildren():
+            self.widget.viewBox.addItem(self.zoomRegion)

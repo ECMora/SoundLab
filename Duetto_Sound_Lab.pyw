@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
+import os
+import hashlib
+import sys
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
-import os, hashlib
-import sys
 from utils.Utils import deserialize, WORK_SPACE_FILE_NAME, CallableStartThread
 from graphic_interface.Settings.Workspace import Workspace
 from graphic_interface.windows.SoundLabMainWindow import SoundLabMainWindow
@@ -10,9 +11,9 @@ from graphic_interface.windows.PresentationSlogan.presentation import Ui_MainWin
 from graphic_interface.segment_visualization.VisualItemsCache import VisualItemsCache
 from utils.db.DB_ORM import clean_db
 
-invalid_license_message = " Valid duetto Sound Lab license is missing or trial period is over.\n" + \
+invalid_license_message = " A valid duetto Sound Lab license is missing or your trial period is over.\n" + \
                           " If you have a valid license try to open the application again, otherwise" + \
-                          " contact duetto support team."
+                          " contact duetto support team for information."
 
 
 class DuettoSoundLab(QMainWindow, Ui_MainWindow):

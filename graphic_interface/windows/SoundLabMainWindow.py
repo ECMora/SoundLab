@@ -2,7 +2,7 @@
 from PyQt4 import QtCore
 from pyqtgraph.parametertree.parameterTypes import ListParameter
 from pyqtgraph.parametertree import Parameter, ParameterTree
-from PyQt4.QtGui import QMessageBox, QActionGroup, QAction
+from PyQt4.QtGui import QMessageBox, QActionGroup, QAction, QFileDialog
 from PyQt4.QtCore import pyqtSlot, QMimeData, pyqtSignal
 from duetto.audio_signals import openSignal
 from duetto.audio_signals.Synthesizer import Synthesizer
@@ -49,7 +49,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
 
     # the maxThresholdLabel duration of signal that is possible to process
     # with the segmentation and classification window (in seconds)
-    MAX_SIGNAL_DURATION_ALLOWED_SEG = 600
+    MAX_SIGNAL_DURATION_ALLOWED_SEG = 1200
 
     #  Width and height of the dock window of visual options
     SETTINGS_WINDOW_WIDTH = 340

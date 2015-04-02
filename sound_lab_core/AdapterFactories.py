@@ -94,10 +94,10 @@ class SegmentationAdapterFactory(AdapterFactory):
 
         self.adapters = [
             (u'Manual', ManualDetectorAdapter()),
-            (u'Envelope Abs Decay', AbsDecayEnvelopeDetectorAdapter()),
+            (u'Interval Power Spectrum', IntervalPowerSpectrumDetectorAdapter()),
             (u'Interval Rms', IntervalRmsDetectorAdapter()),
             (u'Interval Max Mean', IntervalMaxMeanDetectorAdapter()),
-            (u'Interval Power Spectrum', IntervalPowerSpectrumDetectorAdapter()),
+            (u'Envelope Abs Decay', AbsDecayEnvelopeDetectorAdapter()),
             (u'Watershed', WatershedDetectorAdapter()),
             (u'Adaptive Threshold', AdaptThreshDetectorAdapter()),
             (u'GrabCut', GrabCutDetectorAdapter())
@@ -109,4 +109,5 @@ class ClassificationAdapterFactory(AdapterFactory):
         AdapterFactory.__init__(self)
 
         self.adapters = [(u'Manual',  ManualClassifierAdapter()),
-                         (u'KNN', KNNClassifierAdapter())]
+                         (u'KNN', KNNClassifierAdapter()),
+                         (u'Neural Nets', NeuralNetsAdapter())]

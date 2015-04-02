@@ -1,4 +1,3 @@
-from math import sqrt
 import matplotlib.mlab as mlab
 import numpy as np
 from sound_lab_core.Segmentation.Detectors.OneDimensional.OneDimensionalElementsDetector import \
@@ -7,7 +6,6 @@ from utils.Utils import fromdB
 
 
 class IntervalDetector(OneDimensionalElementsDetector):
-
     # region CONSTANTS
 
     # the number of calls to the interval_function method before send a
@@ -58,14 +56,15 @@ class IntervalDetector(OneDimensionalElementsDetector):
         return fromdB(self.threshold, 0, max(data))
 
     def get_acoustic_processing(self, data):
-        min_size = max(1, int(self.min_size * self.signal.samplingRate / 1000.0))
+        min_size = max(2, int(self.min_size * self.signal.samplingRate / 1000.0))
 
         arr_size = data.size * 2 / min_size
 
         k = min_size / 2
 
-        interval_acoustic_processing = np.array([0 if i == 0 else self.interval_function(data[(i - 1) * k: i * k], i, arr_size)
-                                       for i in xrange(arr_size)])
+        interval_acoustic_processing = np.array(
+            [0 if i == 0 else self.interval_function(data[(i - 1) * k: i * k], i, arr_size)
+             for i in xrange(arr_size)])
 
         threshold = self.get_threshold_level(interval_acoustic_processing)
 
@@ -89,7 +88,7 @@ class IntervalDetector(OneDimensionalElementsDetector):
         :param total: the total steps of the interval_function calls
         :return:
         """
-        self.detectionProgressChanged.emit(5 + step * 70.0/total)
+        self.detectionProgressChanged.emit(5 + step * 70.0 / total)
 
     def interval_function(self, data, step, total):
         """
