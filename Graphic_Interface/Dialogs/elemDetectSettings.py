@@ -218,8 +218,8 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
                 try:
                     # the parameter changed is has the method name
                     adapter = adapter_factory.get_adapter(parameter.name())
-                    if isinstance(adapter, ClassifierAdapter):
-                        print("Classifier adapter")
+
+                    print(type(adapter))
 
                     # change the method settings if any (Parameter tree interface of adapter)
                     param_settings = self.segmentation_classification_tree.param(
