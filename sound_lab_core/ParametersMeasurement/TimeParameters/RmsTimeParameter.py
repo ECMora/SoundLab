@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
-import numpy as np
+from math import sqrt
 from utils.Utils import DECIMAL_PLACES
 from sound_lab_core.ParametersMeasurement.ParameterMeasurer import ParameterMeasurer
-
+import numpy as np
 
 class RmsTimeParameter(ParameterMeasurer):
     """
@@ -15,6 +15,5 @@ class RmsTimeParameter(ParameterMeasurer):
 
     def measure(self, segment):
         indexFrom, indexTo = segment.indexFrom, segment.indexTo
-
         return np.round(np.sqrt(np.mean(np.square(segment.signal.data[indexFrom:indexTo] /
-                        np.amax(segment.signal.maximumValue)))), DECIMAL_PLACES)
+                                                 float(segment.signal.maximumValue)))), DECIMAL_PLACES)
