@@ -72,19 +72,18 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
 
     def _restore_method(self, adapter, adapter_factory, method_name):
         """
-        Restore the segmentation or classification adpater previously used
+        Restore the segmentation or classification adapter previously used
         (user friendly restore of previous values of the dialog)
         :param adapter: the adapter (segmentation or classification adapter)
         :param method_name: the method name (one of 'Segmentation', 'Classification')
         :return:
         """
-        if not adapter:
-            return
 
         for parameter in self.segmentation_classification_tree.param(unicode(self.tr(method_name))).children():
             if parameter.type() == u"bool":
                 adapter_name = parameter.name()
                 method_adapter = adapter_factory.get_adapter(adapter_name)
+
                 if type(adapter) == type(method_adapter):
                     method_adapter.restore_settings(adapter, self.widget.signal)
                     parameter.setValue(True)
@@ -119,7 +118,7 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
 
         # the list of classification adapters check boxes to select method (radio buttons unavailable)
         list_classification = [{u'name': unicode(x[1]), u'type': u'bool', u'value': False, u'default': False}
-                      for x in classification_adapters]
+                                for x in classification_adapters]
 
         # the method settings
         list_classification.append({u'name': unicode(self.tr(u'Method Settings')), u'type': u'group', u'children': []})
@@ -218,8 +217,6 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
                 try:
                     # the parameter changed is has the method name
                     adapter = adapter_factory.get_adapter(parameter.name())
-
-                    print(type(adapter))
 
                     # change the method settings if any (Parameter tree interface of adapter)
                     param_settings = self.segmentation_classification_tree.param(

@@ -43,6 +43,9 @@ class SegmentManager(QObject):
         # the detected elements
         self._elements = []
 
+        # the thread to perform the segmentation with
+        self.thread = None
+
         # the db representation of the elements
         self.segments_db_objects = []
         self.db_session = DB().get_db_session()

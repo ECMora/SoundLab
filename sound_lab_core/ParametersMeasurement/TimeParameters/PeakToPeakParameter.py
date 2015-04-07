@@ -6,7 +6,7 @@ from sound_lab_core.ParametersMeasurement.ParameterMeasurer import ParameterMeas
 
 class PeakToPeakParameter(ParameterMeasurer):
     """
-    Class that measure the start time paramter on a segment
+    Class that measure the start time parameter on a segment
     """
 
     def __init__(self):
@@ -14,5 +14,5 @@ class PeakToPeakParameter(ParameterMeasurer):
         self.name = "PeekToPeek(V)"
 
     def measure(self, segment):
-        return round(np.ptp(segment.signal.data[segment.indexFrom:segment.indexTo]) *
-                     1.0 / segment.signal.maximumValue, DECIMAL_PLACES)
+        return np.round(np.ptp(segment.signal.data[segment.indexFrom:segment.indexTo] /
+                            float(segment.signal.maximumValue)), DECIMAL_PLACES)

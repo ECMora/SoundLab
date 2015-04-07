@@ -53,6 +53,7 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         :param signal: the signal to visualize for segmentation and classification
         :return:
         """
+
         # set the visual variables and methods from ancestor's
         SoundLabWindow.__init__(self, parent)
         self.setupUi(self)
@@ -112,9 +113,9 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
         self.showMaximized()
 
-        self.restorePreviousSession()
+        self.try_restore_previous_session()
 
-    def restorePreviousSession(self):
+    def try_restore_previous_session(self):
         """
         Restore (if any) the previous session with this file.
         That means detected elements, measured parameters etc that are saved on the signal
@@ -379,10 +380,10 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
                            self.tr(u"Do you want to save the parameters of " + unicode(self.widget.signalName)),
                            QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel, self)
 
+        self.widget.stop()
         # if there is a measurement made and parameters measured that could be saved
         if self.tableParameterOscilogram.rowCount() > 0:
             # if the signal was playing must be stopped
-            self.widget.stop()
 
             result = mbox.exec_()
             # get the user decision
@@ -558,7 +559,7 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         x = element.indexFrom + (element.indexTo - element.indexFrom) / 2.0
         x = x * self.widget.width() * 1.0 / self.widget.get_visible_region()
 
-        toast.move(self.widget.mapToGlobal( QPoint(x - self.effect_window.width() / 2.0,
+        toast.move(self.widget.mapToGlobal(QPoint(x - self.effect_window.width() / 2.0,
                    (self.widget.height() - self.effect_window.height()) / 2.0)))
 
         toast.disappear()

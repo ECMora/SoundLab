@@ -19,7 +19,7 @@ class AveragePowSpecHandler(OneDimensionalHandler):
 
         :type transform: AveragePowSpec
         """
-        return [            {u'name': unicode(self.tr(u'FFT size')), u'type': u'list', u'default': 512,
+        return [{u'name': unicode(self.tr(u'FFT size')), u'type': u'list', u'default': 512,
                       u'values': [(u"16", 16), (u"32", 32), (u"64", 64), (u"128", 128), (u"256", 256), (u"512", 512), (u"1024", 1024),(u"2048", 2048), (u"4096", 4096), (u"8192", 8192), (u"16384", 16384)],
                       u'value': transform.NFFT},
                      {u'name': unicode(self.tr(u'FFT window')), u'type': u'list',

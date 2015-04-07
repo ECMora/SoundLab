@@ -19,7 +19,7 @@ class VisualItemsCache:
         free_visual_items_queue = deque()
 
         # initial Items Count
-        INITIAL_ITEMS_COUNT = 300
+        INITIAL_ITEMS_COUNT = 250
 
         # the number of new items to add if the list of free items is empty
         ITEMS_GROWING_NUMBER = 50
