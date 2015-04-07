@@ -8,40 +8,47 @@ duetto Sound Lab Tasks
 
 Complexity-1: No new-code activity
 
-* (Yasel) Comment Widgets tools
-* (Yasel) Comment One dim Transform Window
-* (Yasel) Testing widget signal detector
-
-* (Carlos)Testing widget oscilogram
-* (Carlos)Testing Widgets tools
-
-* (Hiram) Testing widget spectrogram
-* (Hiram) Testing Segmentation Window
+- - - - (May of 2015) - - - -
+* User Manual
+* Styles improvement
+* Testing and searching of bugs
+* Translation of strings with Translator
 
 -----------------------------------------------------------
 
 Complexity-2: Small-to-medium code changes
-
-* User manage of the height relation  between the two widgets (osc and spec) when are  both visible
+- - - - (April 2015) - - - -
 * Fix zoom bug. Mouse move heavy computation
-* Resampling
-* Añadir un Control de Volumen para Playback.
-* En escalas temporales con mucho zoom, ajustar la sensibilidad de los cursores para poder medir siempre algun valor y no se quede en 0.
-+ translation of app
+* Fix other bugs.
+* customize the
 -----------------------------------------------------------
 
 Complexity-3: Large code changes and/or multiple code files tasks
 
-+ db support for segments, classification methods and parameters
-* implementation of classification methods (ANN, Decision Trees, KNN)
-* implementation of parameters parameters and locations of parameters
-* improve performance on parameters parameters
-+ improve performance on elements visualization
-* include segmentation visual elements to interact with the method
+* improve parameters speed processing time
+* improve segmentation speed
+* implementation of classification methods (ANN)
 
 -----------------------------------------------------------
 
-Complexity-4: New Code Design and Infrastructure implementation
+Complexity-4: New Code Design and Infrastructure Implementation
+
+                  (Second version of Sound Lab)
+            - - - - (June, July 2015 to ...) - - - -
+
+* Design of extra modules.
+    * Tools                         (Gabriela)
+    * Synthesizer                   (Carlos)
+    * One dimensional Transforms    (Gabriela)
+    * Filters                       (Hiram - Yasel)
+    * Audio Formats and Compression (Carlos)
+    * Parameter Measurement         (Gabriela - Hiram - Carlos - Yasel)
+    * Segmentation                  (Hiram - Yasel)
+    * Classification                (Gabriela - Hiram - Carlos - Yasel)
+    * Spectral Representation       (?)
+
 
 
 -------------------------------------------- ---------------
+Busqueda
+    Librerias de compresion de audio.

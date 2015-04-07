@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from PyQt4.QtCore import pyqtSlot
 import PyQt4.QtCore as QtCore
-from PyQt4.QtGui import QActionGroup, QFileDialog
+from PyQt4.QtGui import QActionGroup, QFileDialog, QSlider
 from PyQt4 import QtGui
 from utils.Utils import save_image, DECIMAL_PLACES
 from graphic_interface.Settings.Workspace import Workspace
@@ -35,6 +35,14 @@ class SoundLabWindow(QtGui.QMainWindow):
         self.tools_actions = QActionGroup(self)
         self.save_images_actions = QActionGroup(self)
 
+        # play volume bar
+        self.volume_bar = QSlider(QtCore.Qt.Horizontal, self)
+        self.volume_bar.setToolTip(self.tr(u"Volume bar for Play."))
+        self.volume_bar.setMaximumWidth(100)
+        self.volume_bar.setRange(0, 300)
+        self.volume_bar.setValue(100)
+        self.volume_bar.valueChanged.connect(self.change_volume)
+
         # text edit for the signal name on the toolbar
         self.signalNameLineEdit = QtGui.QLineEdit(self)
         self.signalNameLineEdit.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Minimum))
@@ -60,7 +68,11 @@ class SoundLabWindow(QtGui.QMainWindow):
                                     self.actionRecord, self.actionPlayLoop, sep2]
         for act in play_record_actions_list:
             act.setActionGroup(self.play_record_actions)
+
+        self.toolBar.addWidget(self.volume_bar)
+
         # endregion
+
 
         # region widgets visibility actions
         widgets_visibility_actions_list = [self.actionOscilogram, self.actionSpectogram, self.actionCombined,
@@ -289,7 +301,12 @@ class SoundLabWindow(QtGui.QMainWindow):
     # endregion
 
     #  region Play, Pause, Stop, Record
-    # delegate in the widget the reproduction actions
+    # delegate in the widget reproduction actions
+    def change_volume(self, volume):
+        # change volume in the player of the widget
+        if self.widget:
+            self.widget.change_volume(volume)
+        self.updateStatusBar(self.tr(u"The volume has been changed to "+unicode(volume) + u"%."), 1000)
 
     @pyqtSlot()
     def on_actionPlay_Sound_triggered(self):
@@ -356,12 +373,15 @@ class SoundLabWindow(QtGui.QMainWindow):
 
     # endregion
 
-    def updateStatusBar(self, line):
+    def updateStatusBar(self, line, time=None):
         """
         Set a new message in the status bar of the window.
         :param line: string with the line to show in the status bar
         """
-        self.statusbar.showMessage(line)
+        if time is None:
+            self.statusbar.showMessage(line)
+        else:
+            self.statusbar.showMessage(line, time)
 
     def updateSignalPropertiesLabel(self, signal):
         """

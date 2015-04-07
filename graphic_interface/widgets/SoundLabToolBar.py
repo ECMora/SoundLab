@@ -57,7 +57,7 @@ class SoundLabToolBarWidget(QtGui.QToolBar):
         manager_act.setCheckable(True)
 
         # add into the toolbar
-        self.actions_groups.append(GroupActionManager(manager_act,actionGroup))
+        self.actions_groups.append(GroupActionManager(manager_act, actionGroup))
 
         # connect to the change of visible state to customize the action group
         manager_act.toggled.connect(lambda checked_state: self.changeActionsVisibility(

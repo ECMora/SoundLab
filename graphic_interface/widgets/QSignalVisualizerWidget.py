@@ -323,6 +323,13 @@ class QSignalVisualizerWidget(QtGui.QWidget):
     # endregion
 
     # region Sound
+    def change_volume(self, volume):
+        """
+        Change the volume of play for the signal.
+        :param volume: int [0, 100] of the volume in %
+        :return:
+        """
+        self.signalPlayer.volume = volume
 
     def play(self):
         """
