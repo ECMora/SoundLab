@@ -3,6 +3,7 @@ from pyqtgraph.parametertree import Parameter
 from sqlalchemy import or_
 from sound_lab_core.Clasification.Adapters.ClassifierAdapter import ClassifierAdapter
 from sound_lab_core.Clasification.Classifiers.KNNClassifier import KNNClassifier
+from sound_lab_core.ParametersMeasurement.Adapters import DurationTimeParameterAdapter
 from utils.db.DB_ORM import Segment, DB
 
 
@@ -43,6 +44,13 @@ class KNNClassifierAdapter(ClassifierAdapter):
         self.k_value = selected
 
         self.settings = Parameter.create(name=u'Settings', type=u'group', children=settings)
+
+    def classifier_parameters(self):
+        """
+        The list of the measured parameters needed to the specified classifier
+        :return:
+        """
+        return [DurationTimeParameterAdapter()]
 
     def get_settings(self):
         """

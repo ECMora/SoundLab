@@ -3,10 +3,13 @@ from PyQt4 import QtGui
 from PyQt4.QtGui import QDialog
 from pyqtgraph.parametertree import Parameter, ParameterTree
 from graphic_interface.windows.ui_python_files.detectElementsDialog import Ui_Dialog
-from sound_lab_core.Clasification.Adapters.ClassifierAdapter import ClassifierAdapter
 from utils.Utils import small_signal
 from sound_lab_core.AdapterFactories import *
-from sound_lab_core.Clasification.Adapters.ManualClassifierAdapter import ManualClassifierAdapter
+from sound_lab_core.Clasification.Adapters import *
+
+
+# tuples of classifiers (get a tuple of all an not of super class because bug on isinstance)
+classifiers_tuple = (KNNClassifierAdapter, ManualClassifierAdapter, NeuralNetsAdapter)
 
 
 class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
@@ -52,6 +55,20 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         :param classification_adapter: The classification adapter previously selected
         :return:
         """
+        # parameters
+        self._restore_parameters(parameter_adapters)
+
+        # segmentation method
+        self._restore_method(segmentation_adapter, self.segmentation_adapter_factory, u'Segmentation')
+
+        # classification method
+        self._restore_method(classification_adapter, self.classification_adapter_factory, u'Classification')
+
+    def _restore_parameters(self, parameter_adapters):
+        """
+        restore the parameters adapters selected
+        :return:
+        """
         parameters_groups = self.param_measurement_tree.children()
 
         # parameters adapters
@@ -63,12 +80,6 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
                         parameter.param(unicode(self.tr(u'Measure'))).setValue(True)
                         adapter.restore_settings(p, self.widget.signal)
                         break
-
-        # segmentation method
-        self._restore_method(segmentation_adapter, self.segmentation_adapter_factory, u'Segmentation')
-
-        # classification method
-        self._restore_method(classification_adapter, self.classification_adapter_factory, u'Classification')
 
     def _restore_method(self, adapter, adapter_factory, method_name):
         """
@@ -215,7 +226,7 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
                 parameter not in self.segmentation_classification_tree.param(unicode(self.tr(param_tree_name))). \
                     param(unicode(self.tr(u'Method Settings'))).children():
                 try:
-                    # the parameter changed is has the method name
+                    # the parameter changed has the method name
                     adapter = adapter_factory.get_adapter(parameter.name())
 
                     # change the method settings if any (Parameter tree interface of adapter)
@@ -227,6 +238,10 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
                     method_settings = adapter.get_settings()
                     if method_settings:
                         param_settings.addChild(method_settings)
+
+                    if isinstance(adapter, classifiers_tuple):
+                        self._restore_parameters(adapter.classifier_parameters())
+
 
                 except Exception as ex:
                     print(ex.message)

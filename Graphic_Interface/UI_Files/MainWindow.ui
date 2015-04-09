@@ -126,10 +126,10 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
    <widget class="QMenu" name="menuFile">
     <property name="geometry">
      <rect>
-      <x>119</x>
-      <y>154</y>
-      <width>210</width>
-      <height>385</height>
+      <x>36</x>
+      <y>139</y>
+      <width>171</width>
+      <height>394</height>
      </rect>
     </property>
     <property name="autoFillBackground">
@@ -162,7 +162,7 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
     <addaction name="actionOpen"/>
     <addaction name="actionBrowse"/>
     <addaction name="actionOpen_Selection"/>
-    <addaction name="menuRecentSignals"/>
+    <addaction name="separator"/>
     <addaction name="actionSave"/>
     <addaction name="actionSaveAs"/>
     <addaction name="actionSave_selected_interval_as"/>
@@ -172,6 +172,7 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
     <addaction name="actionSaveThemeAs"/>
     <addaction name="separator"/>
     <addaction name="menuSave_Images"/>
+    <addaction name="menuRecentSignals"/>
     <addaction name="actionClose"/>
     <addaction name="actionExit"/>
     <addaction name="separator"/>
@@ -183,10 +184,11 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
     <property name="title">
      <string>Tools</string>
     </property>
+    <addaction name="actionFull_Screen"/>
+    <addaction name="separator"/>
     <addaction name="actionZoomIn"/>
     <addaction name="actionZoom_out"/>
     <addaction name="actionZoom_out_entire_file"/>
-    <addaction name="actionFull_Screen"/>
     <addaction name="separator"/>
     <addaction name="actionZoom_Cursor"/>
     <addaction name="actionPointer_Cursor"/>
@@ -200,14 +202,6 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
     <property name="title">
      <string>Edit</string>
     </property>
-    <widget class="QMenu" name="menuGenerate">
-     <property name="title">
-      <string>Insert</string>
-     </property>
-     <addaction name="actionInsert_Silence"/>
-     <addaction name="actionGenerate_White_Noise"/>
-     <addaction name="actionGenerate_Pink_Noise"/>
-    </widget>
     <addaction name="actionUndo"/>
     <addaction name="actionRedo"/>
     <addaction name="separator"/>
@@ -215,17 +209,14 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
     <addaction name="actionCut"/>
     <addaction name="actionPaste"/>
     <addaction name="separator"/>
+    <addaction name="actionSmart_Scale"/>
     <addaction name="actionPositive_Values"/>
     <addaction name="actionNegative_Values"/>
     <addaction name="actionChange_Sign"/>
     <addaction name="separator"/>
     <addaction name="action_Reverse"/>
     <addaction name="actionSilence"/>
-    <addaction name="separator"/>
     <addaction name="actionFilter"/>
-    <addaction name="actionSmart_Scale"/>
-    <addaction name="separator"/>
-    <addaction name="menuGenerate"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="styleSheet">
@@ -234,14 +225,15 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
     <property name="title">
      <string>Analysis</string>
     </property>
+    <addaction name="actionSettings"/>
     <addaction name="actionOscilogram"/>
     <addaction name="actionSpectogram"/>
     <addaction name="actionCombined"/>
+    <addaction name="separator"/>
     <addaction name="actionOneDimensionalTransformation"/>
     <addaction name="actionBatchProcessing"/>
-    <addaction name="separator"/>
-    <addaction name="actionSettings"/>
     <addaction name="actionSegmentation_And_Clasification"/>
+    <addaction name="separator"/>
    </widget>
    <widget class="QMenu" name="menuSound">
     <property name="styleSheet">
@@ -266,14 +258,14 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
      <addaction name="action4x"/>
      <addaction name="action8x"/>
     </widget>
+    <addaction name="menuPlay_Speed"/>
     <addaction name="actionSound_Devices"/>
     <addaction name="separator"/>
-    <addaction name="menuPlay_Speed"/>
-    <addaction name="separator"/>
     <addaction name="actionPlay_Sound"/>
-    <addaction name="actionStop_Sound"/>
     <addaction name="actionPause_Sound"/>
+    <addaction name="actionStop_Sound"/>
     <addaction name="actionRecord"/>
+    <addaction name="actionPlayLoop"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuEdit"/>
@@ -450,7 +442,7 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
      <normaloff>:/myappicons/02049_26x26.png</normaloff>:/myappicons/02049_26x26.png</iconset>
    </property>
    <property name="text">
-    <string>Play Sound</string>
+    <string>Play</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+P</string>
@@ -462,7 +454,7 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
      <normaloff>:/myappicons/02051_26x26.png</normaloff>:/myappicons/02051_26x26.png</iconset>
    </property>
    <property name="text">
-    <string>Stop Sound</string>
+    <string>Stop</string>
    </property>
   </action>
   <action name="actionPause_Sound">
@@ -471,7 +463,7 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
      <normaloff>:/myappicons/pausa.png</normaloff>:/myappicons/pausa.png</iconset>
    </property>
    <property name="text">
-    <string>Pause Sound</string>
+    <string>Pause</string>
    </property>
    <property name="shortcut">
     <string>P</string>
@@ -483,7 +475,7 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
      <normaloff>:/myappicons/zoom_26x26.png</normaloff>:/myappicons/zoom_26x26.png</iconset>
    </property>
    <property name="text">
-    <string>Zoom out entire file</string>
+    <string>Zoom None</string>
    </property>
   </action>
   <action name="actionSaveAs">
@@ -543,7 +535,7 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
      <normaloff>:/myappicons/ColorSync Utility.png</normaloff>:/myappicons/ColorSync Utility.png</iconset>
    </property>
    <property name="text">
-    <string>Settings</string>
+    <string>Visual Settings</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Space</string>
@@ -592,7 +584,7 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
   </action>
   <action name="actionSmart_Scale">
    <property name="text">
-    <string>Change Volume</string>
+    <string>Amplitude Modulation</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+A</string>
@@ -614,7 +606,7 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
      <normaloff>:/myappicons/Process Viewer.png</normaloff>:/myappicons/Process Viewer.png</iconset>
    </property>
    <property name="text">
-    <string>Segmentation And Clasification</string>
+    <string>Segmentation - Classification</string>
    </property>
   </action>
   <action name="actionGenerate_Pink_Noise">
@@ -624,7 +616,7 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
   </action>
   <action name="actionSaveThemeAs">
    <property name="text">
-    <string>Save theme as...</string>
+    <string>Save Theme as...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+T</string>
@@ -632,7 +624,7 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
   </action>
   <action name="actionLoadTheme">
    <property name="text">
-    <string>Load theme</string>
+    <string>Load Theme</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+T</string>
@@ -853,7 +845,7 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
      <normaloff>:/myappicons/225.ico</normaloff>:/myappicons/225.ico</iconset>
    </property>
    <property name="text">
-    <string>Save selected interval as...</string>
+    <string>Save selection as...</string>
    </property>
   </action>
   <action name="actionClose">
@@ -946,7 +938,7 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
      <normaloff>:/myappicons/81.ico</normaloff>:/myappicons/81.ico</iconset>
    </property>
    <property name="text">
-    <string>Open Selection</string>
+    <string>Open selection</string>
    </property>
   </action>
   <action name="actionSwitchPlayStatus">
@@ -976,7 +968,7 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
      <normaloff>:/myappicons/Behavior.png</normaloff>:/myappicons/Behavior.png</iconset>
    </property>
    <property name="text">
-    <string>PlayLoop</string>
+    <string>Play loop</string>
    </property>
    <property name="toolTip">
     <string>Play Loop</string>

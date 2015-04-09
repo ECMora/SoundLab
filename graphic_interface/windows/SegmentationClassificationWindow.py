@@ -70,7 +70,7 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         # in a invisible position by default
         self.effect_window.move(QPoint(-100, -100))
 
-        # the segmentation window do not allow to record a signal
+        # the segmentation window do not allow to record a signal (for now...)
         self.actionRecord.setEnabled(False)
 
         # the object that handles the measuring of parameters and manage the segments
@@ -693,7 +693,6 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         self.tableParameterOscilogram.setRowCount(self.segmentManager.rowCount)
         self.tableParameterOscilogram.setColumnCount(self.segmentManager.columnCount)
         self.tableParameterOscilogram.setHorizontalHeaderLabels(self.segmentManager.columnNames)
-        self.tableParameterOscilogram.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
         # update every x,y position
         for i in xrange(self.segmentManager.rowCount):
@@ -787,17 +786,17 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         self.actionSpectral_Parameters.setEnabled(visibility)
 
     @pyqtSlot()
-    def on_actionSpectral_Figures_triggered(self,update_widget=True):
+    def on_actionSpectral_Figures_triggered(self, update_widget=True):
         self.widget.change_elements_visibility(self.actionSpectral_Figures.isChecked(), VisualElement.Figures,
                                                oscgram_items=False, update=update_widget)
 
     @pyqtSlot()
-    def on_actionSpectral_Parameters_triggered(self,update_widget=True):
+    def on_actionSpectral_Parameters_triggered(self, update_widget=True):
         self.widget.change_elements_visibility(self.actionSpectral_Parameters.isChecked(), VisualElement.Parameters,
                                                oscgram_items=False, update=update_widget)
 
     @pyqtSlot()
-    def on_actionSpectral_Numbers_triggered(self,update_widget=True):
+    def on_actionSpectral_Numbers_triggered(self, update_widget=True):
         """
         Change visibility of the numbers of the detected segments on the oscilogram graph
 

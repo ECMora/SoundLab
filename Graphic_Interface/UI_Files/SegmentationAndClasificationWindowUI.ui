@@ -123,7 +123,9 @@
      <string>View</string>
     </property>
     <addaction name="actionView_Parameters"/>
+    <addaction name="actionFull_Screen"/>
     <addaction name="separator"/>
+    <addaction name="actionTwo_Dimensional_Graphs"/>
     <addaction name="actionZoomIn"/>
     <addaction name="actionZoom_out"/>
     <addaction name="actionZoom_out_entire_file"/>
@@ -138,25 +140,17 @@
     <addaction name="actionSpectral_Figures"/>
     <addaction name="actionSpectral_Parameters"/>
     <addaction name="separator"/>
-    <addaction name="actionTwo_Dimensional_Graphs"/>
-    <addaction name="actionFull_Screen"/>
    </widget>
    <widget class="QMenu" name="menuDetection">
     <property name="title">
      <string>Elements</string>
     </property>
-    <widget class="QMenu" name="menuSelected_Elements">
-     <property name="title">
-      <string>Selected Elements</string>
-     </property>
-     <addaction name="actionDelete_Selected_Elements"/>
-     <addaction name="actionDeselect_Elements"/>
-     <addaction name="actionClassify"/>
-    </widget>
-    <addaction name="actionDetection"/>
     <addaction name="actionAddElement"/>
+    <addaction name="actionDetection"/>
     <addaction name="separator"/>
-    <addaction name="menuSelected_Elements"/>
+    <addaction name="actionDelete_Selected_Elements"/>
+    <addaction name="actionClassify"/>
+    <addaction name="actionDeselect_Elements"/>
    </widget>
    <widget class="QMenu" name="menuTools">
     <property name="title">
@@ -325,7 +319,7 @@
      <normaloff>:/myappicons/Excel.png</normaloff>:/myappicons/Excel.png</iconset>
    </property>
    <property name="text">
-    <string>Measurements</string>
+    <string>Measurements as excell</string>
    </property>
   </action>
   <action name="actionView_Parameters">
@@ -345,7 +339,7 @@
      <normaloff>:/myappicons/Process Viewer.png</normaloff>:/myappicons/Process Viewer.png</iconset>
    </property>
    <property name="text">
-    <string>Detect Elements</string>
+    <string>Detect</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+D</string>
@@ -574,7 +568,7 @@
      <normaloff>:/myappicons/add.png</normaloff>:/myappicons/add.png</iconset>
    </property>
    <property name="text">
-    <string>AddElement</string>
+    <string>Add</string>
    </property>
    <property name="toolTip">
     <string>Mark Selected Region As Element</string>
@@ -586,7 +580,7 @@
      <normaloff>:/myappicons/225.ico</normaloff>:/myappicons/225.ico</iconset>
    </property>
    <property name="text">
-    <string>Save Segmentation on Signal</string>
+    <string>Save Segmentation on file</string>
    </property>
   </action>
   <action name="actionTemporal_Parameters">

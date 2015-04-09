@@ -69,7 +69,7 @@ class SoundLabWindow(QtGui.QMainWindow):
         for act in play_record_actions_list:
             act.setActionGroup(self.play_record_actions)
 
-        self.toolBar.addWidget(self.volume_bar)
+        #self.toolBar.addWidget(self.volume_bar)
 
         # endregion
 
