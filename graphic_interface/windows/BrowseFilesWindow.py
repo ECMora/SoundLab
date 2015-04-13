@@ -14,7 +14,7 @@ from scipy.io import wavfile
 from numpy.compat import asbytes
 
 
-# temporal method to read the metadata of a wav file
+# method to read the metadata of a wav file
 # would be included in api later
 def read_wav_metadata(stream):
     """
@@ -114,7 +114,7 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
     def filesSelected(self):
         """
         Get the files that are selected
-        :return: list of tupple (filename, index on table's rows)
+        :return: list of tuple (filename, index on table's rows)
         """
         files = []
 
@@ -311,12 +311,16 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
 
         files_selected_indexes = [x[1] for x in self.filesSelected()]
 
+        # if no selected files select first file if up and last file if down
+        if len(files_selected_indexes) == 0:
+            files_selected_indexes = [len(self.folderFiles) if up else -1]
+
         # start at the index of the
         # next file to the last selected (the next unselected index) if 'up'
         # or the index before the first selected (the previous unselected index) if not 'up'
-        start_index = files_selected_indexes[-1] + 1 if up else files_selected_indexes[0] - 1
-        end_index = len(self.folderFiles) if up else -1
-        step = 1 if up else -1
+        start_index = files_selected_indexes[0] - 1 if up else files_selected_indexes[-1] + 1
+        end_index = -1 if up else len(self.folderFiles)
+        step = -1 if up else 1
 
         for i in range(start_index, end_index, step):
             if self.files_tablewidget.item(i, 0).checkState() == Qt.Unchecked:

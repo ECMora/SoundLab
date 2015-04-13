@@ -36,7 +36,7 @@ class SoundLabWindow(QtGui.QMainWindow):
         self.save_images_actions = QActionGroup(self)
 
         # play volume bar
-        self.volume_bar = QSlider(QtCore.Qt.Horizontal, self)
+        self.volume_bar = QSlider(QtCore.Qt.Horizontal)
         self.volume_bar.setToolTip(self.tr(u"Volume bar for Play."))
         self.volume_bar.setMaximumWidth(100)
         self.volume_bar.setRange(0, 300)
@@ -69,10 +69,9 @@ class SoundLabWindow(QtGui.QMainWindow):
         for act in play_record_actions_list:
             act.setActionGroup(self.play_record_actions)
 
-        #self.toolBar.addWidget(self.volume_bar)
+        # self.toolBar.addWidget(self.volume_bar)
 
         # endregion
-
 
         # region widgets visibility actions
         widgets_visibility_actions_list = [self.actionOscilogram, self.actionSpectogram, self.actionCombined,
@@ -113,7 +112,7 @@ class SoundLabWindow(QtGui.QMainWindow):
 
         # add to the customizable sound lab toolbar
         for act in actions_groups:
-            # addActionGroup(actionGroup, name)
+            # method sig addActionGroup(actionGroup, name)
             self.toolBar.addActionGroup(act[0], act[1])
 
         # add the label for signal name (and edit line) that always wil be visible as an option

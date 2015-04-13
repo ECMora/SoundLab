@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\BatchWindow.ui'
 #
-# Created: Mon Apr 06 14:34:53 2015
+# Created: Mon Apr 13 15:02:17 2015
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,12 +17,13 @@ except AttributeError:
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         MainWindow.setObjectName(_fromUtf8("MainWindow"))
-        MainWindow.resize(390, 329)
+        MainWindow.resize(394, 329)
         self.centralwidget = QtGui.QWidget(MainWindow)
         self.centralwidget.setObjectName(_fromUtf8("centralwidget"))
         self.gridLayout = QtGui.QGridLayout(self.centralwidget)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
         self.pushButtonInputFolder = QtGui.QPushButton(self.centralwidget)
+        self.pushButtonInputFolder.setMaximumSize(QtCore.QSize(40, 16777215))
         self.pushButtonInputFolder.setStyleSheet(_fromUtf8(""))
         self.pushButtonInputFolder.setFlat(False)
         self.pushButtonInputFolder.setObjectName(_fromUtf8("pushButtonInputFolder"))
@@ -49,6 +50,7 @@ class Ui_MainWindow(object):
         self.spboxSplitTime.setObjectName(_fromUtf8("spboxSplitTime"))
         self.gridLayout.addWidget(self.spboxSplitTime, 2, 2, 1, 1)
         self.pushButtonOutputFolder = QtGui.QPushButton(self.centralwidget)
+        self.pushButtonOutputFolder.setMaximumSize(QtCore.QSize(40, 16777215))
         self.pushButtonOutputFolder.setStyleSheet(_fromUtf8(""))
         self.pushButtonOutputFolder.setObjectName(_fromUtf8("pushButtonOutputFolder"))
         self.gridLayout.addWidget(self.pushButtonOutputFolder, 2, 1, 1, 1)
@@ -71,7 +73,7 @@ class Ui_MainWindow(object):
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
-        MainWindow.setWindowTitle(QtGui.QApplication.translate("MainWindow", "MainWindow", None, QtGui.QApplication.UnicodeUTF8))
+        MainWindow.setWindowTitle(QtGui.QApplication.translate("MainWindow", "Batch Window", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButtonInputFolder.setText(QtGui.QApplication.translate("MainWindow", "...", None, QtGui.QApplication.UnicodeUTF8))
         self.lineeditFilePath.setText(QtGui.QApplication.translate("MainWindow", "Select the folder of input audio files", None, QtGui.QApplication.UnicodeUTF8))
         self.lineEditOutputFolder.setText(QtGui.QApplication.translate("MainWindow", "Select the folder of output procesed files", None, QtGui.QApplication.UnicodeUTF8))

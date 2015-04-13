@@ -571,6 +571,9 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
                              segm_transf_actions, self.save_images_actions, processing_actions, play_speed_actions]:
             self.signalDependingActions.extend(action_group.actions())
 
+        # the record action always  active even when there is no signals open
+        self.signalDependingActions.remove(self.actionRecord)
+
     def setSignalActionsEnabledState(self, enable_state=True):
         """
         Set the enabled state to the action that depends of at least one signal
@@ -1853,17 +1856,23 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
 
     @pyqtSlot()
     def on_actionRecord_triggered(self):
-        mbox = QtGui.QMessageBox(QtGui.QMessageBox.Question, self.tr(u"Record"),
-                                 self.tr(u"Do you want to append recording to the existing "
-                                         + self.widget.signalName + u" signal?"),
-                                 QtGui.QMessageBox.Yes | QtGui.QMessageBox.No, self)
-        result = mbox.exec_()
+        new_signal = False
+
+        if not self.widget:
+            self.addSignalTab(Synthesizer.generateSilence(duration=1))
+
+        else:
+            mbox = QtGui.QMessageBox(QtGui.QMessageBox.Question, self.tr(u"Record"), self.tr(u"Do you want to append "
+                                     u"recording to the existing " + self.widget.signalName + u" signal?"),
+                                     QtGui.QMessageBox.Yes | QtGui.QMessageBox.No, self)
+            result = mbox.exec_()
+            new_signal = (result == QtGui.QMessageBox.No)
 
         try:
-            self.widget.record(newSignal=(result == QtGui.QMessageBox.No))
-            if result == QtGui.QMessageBox.No:
-                self.signalNameLineEdit.setText(self.widget.signalName)
+            self.widget.record(newSignal=new_signal)
 
+            if not new_signal:
+                self.signalNameLineEdit.setText(self.widget.signalName)
 
         except Exception as ex:
             QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
