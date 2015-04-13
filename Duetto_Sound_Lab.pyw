@@ -81,13 +81,11 @@ def load_app_style(qApp=None, style_file=None):
         print("error loading app style. " + ex.message)
 
 
-def create_visual_item_cache():
-    VisualItemsCache()
-
-
 def load_language_translations(app=None, translation_file=None, window=None):
     """
     Load the language I18n to an app.
+    :type window: the window to load the language in
+    :type translation_file: the name of the translation file 
     :param app:  The QApplication to load the language.
     :return:
     """
@@ -156,10 +154,11 @@ if __name__ == '__main__':
     license_checker_timer.timeout.connect(check_license)
 
     if valid_license():
-        license_checker_timer.start(1000)
+        # check license every 10 seconds
+        license_checker_timer.start(10000)
 
         # create items
-        create_visual_item_cache()
+        VisualItemsCache()
         dmw.show()
 
         sys.exit(app.exec_())
