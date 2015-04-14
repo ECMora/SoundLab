@@ -38,7 +38,7 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
         SoundLabWidget.__init__(self)
 
         # region parche para capturar los eventos visuales del control
-        # TODO averiguar por que razon no se envian los eventos correctamente al widget
+        # TODO find why the events aren't sent properly to the widget
         self.graphics_view.mouseMoveEvent = self.mouseMoveEvent
         self.graphics_view.mouseReleaseEvent = self.mouseReleaseEvent
         self.graphics_view.mouseDoubleClickEvent = self.mouseDoubleClickEvent
@@ -208,7 +208,6 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
     # endregion
 
     def graph(self, indexFrom=0, indexTo=-1):
-
         indexTo = indexTo if (indexTo >= 0 and indexTo > indexFrom) else self.signal.length
 
         SpectrogramWidget.graph(self, indexFrom, indexTo)

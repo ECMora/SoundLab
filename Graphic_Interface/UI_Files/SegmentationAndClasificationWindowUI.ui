@@ -81,7 +81,6 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionClassification_Settings"/>
    <addaction name="actionCross_correlation"/>
   </widget>
   <widget class="QDockWidget" name="dockWidgetParameterTableOscilogram">
@@ -527,15 +526,6 @@
    </property>
    <property name="text">
     <string>Two Dimensional Graphs</string>
-   </property>
-  </action>
-  <action name="actionClassification_Settings">
-   <property name="icon">
-    <iconset resource="resources/icons.qrc">
-     <normaloff>:/myappicons/ColorSync Utility.png</normaloff>:/myappicons/ColorSync Utility.png</iconset>
-   </property>
-   <property name="text">
-    <string>Edit Categories</string>
    </property>
   </action>
   <action name="actionRecord">

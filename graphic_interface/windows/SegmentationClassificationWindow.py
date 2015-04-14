@@ -742,9 +742,9 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
             self.widget.change_elements_visibility(visibility, VisualElement.Text, oscgram_items=True)
             self.widget.change_elements_visibility(visibility, VisualElement.Figures, oscgram_items=True)
 
-        self.actionTemporal_Figures.setEnabled(visibility)
-        self.actionTemporal_Numbers.setEnabled(visibility)
-        self.actionTemporal_Parameters.setEnabled(visibility)
+        for x in [self.actionTemporal_Figures, self.actionTemporal_Numbers, self.actionTemporal_Parameters]:
+            x.setEnabled(visibility)
+
 
     @pyqtSlot()
     def on_actionTemporal_Figures_triggered(self, update_widget=True):
@@ -781,9 +781,8 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
             self.widget.change_elements_visibility(visibility, VisualElement.Parameters, oscgram_items=False)
             self.widget.change_elements_visibility(visibility, VisualElement.Text, oscgram_items=False, update=True)
 
-        self.actionSpectral_Numbers.setEnabled(visibility)
-        self.actionSpectral_Figures.setEnabled(visibility)
-        self.actionSpectral_Parameters.setEnabled(visibility)
+        for x in [self.actionSpectral_Numbers, self.actionSpectral_Figures, self.actionSpectral_Parameters]:
+            x.setEnabled(visibility)
 
     @pyqtSlot()
     def on_actionSpectral_Figures_triggered(self, update_widget=True):

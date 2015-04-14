@@ -61,6 +61,14 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         QSignalVisualizerWidget.__init__(self, parent)
 
     # region Elements Property
+
+    @property
+    def sorted_elements_start_indexes(self):
+        """
+        :return: the list of sorted start indexes of elements as list of ints
+        """
+        return [x.indexFrom if isinstance(x, DetectedSoundLabElement) else x[0] for x in self.elements]
+
     @property
     def elements(self):
         return self._elements
@@ -88,12 +96,11 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
         # if the element is not a DetectedSoundLab instance then create it
         if not isinstance(self.elements[index], DetectedSoundLabElement):
-            self.elements[index] = self.visual_items_cache.get_visual_item(self.signal, self.elements[index][0],
+            self.elements[index] = self.visual_items_cache.get_visual_item(self.signal,
+                                                                           self.elements[index][0],
                                                                            self.elements[index][1],
                                                                            index + 1, self.elementClicked)
-
             # add parameter items if any
-
             for param in self.parameters_items[index]:
                 self.elements[index].add_visual_item(param)
 
@@ -188,8 +195,6 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         :param oscilogramItems: true if draw elements in oscilogram false for spectrogram
         None for both
         """
-        import time
-        t = time.time()
         visible_elements_changed = True if elements is None else False
         elements = elements if elements is not None else self.get_visible_elements()
 
@@ -206,8 +211,6 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         for e in self.elements:
             if isinstance(e, DetectedSoundLabElement):
                 e.spectral_element.translate_time_freq_coords(self.from_osc_to_spec, self.get_freq_index)
-
-        print("DRAWING elements: " + str(time.time() - t))
 
     # endregion
 
@@ -244,11 +247,11 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         elements indexes that are not visible Ej [(0,5),(9,11)]
         means that elements from 0 to 5  and from 9 to 11 are invisible
         """
-        # if no detected elemnts
+        # if no detected elements
         if len(self.elements) == 0:
             return []
 
-        elems = [x.indexFrom if isinstance(x, DetectedSoundLabElement) else x[0] for x in self.elements]
+        elems = self.sorted_elements_start_indexes
         elems = [i for i in xrange(len(elems)) if self.mainCursor.min <= elems[i] <= self.mainCursor.max]
         if len(elems) == 0:
             return []
@@ -363,20 +366,17 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         :param elements: the elements that would be (visually) removed.
         all the self.elements if None
         """
-        elements = elements if elements is not None else [e for e in self.elements
-                                                          if isinstance(e, DetectedSoundLabElement)]
+        # get the elements to remove
+        elements = [e for e in self.elements if isinstance(e, DetectedSoundLabElement)] if elements is None else elements
 
-        osc_items = [] if not oscilogram else [item
-                                               for elem in elements
-                                               for item, visible in elem.time_element.visual_widgets()
-                                               if visible and item in self.axesOscilogram.items()]
+        # get the osc and spec visual items of the elements to remove them
+        osc_items = [item for elem in elements for item, visible in elem.time_element.visual_widgets()
+                     if visible and item in self.axesOscilogram.items()] if oscilogram else []
 
         osc_items.extend([item for item, visible in self.no_visible_items if visible])
 
-        spec_items = [] if not specgram else [item
-                                              for elem in elements
-                                              for item, visible in elem.spectral_element.visual_widgets()
-                                              if visible and item in self.axesSpecgram.viewBox.allChildren()]
+        spec_items = [item for elem in elements for item, visible in elem.spectral_element.visual_widgets()
+                      if visible and item in self.axesSpecgram.viewBox.allChildren()] if specgram else []
 
         for item in osc_items:
             self.axesOscilogram.removeItem(item)
@@ -394,13 +394,14 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         if not 0 <= element_index < len(self.elements):
             return
 
-        if isinstance(self.elements[element_index], DetectedSoundLabElement):
-            for item in parameter_items:
-                self.elements[element_index].add_visual_item(item)
-
-            # self.draw_elements(elements=[self.elements[element_index]])
-
         self.parameters_items[element_index].extend(parameter_items)
+
+        if not isinstance(self.elements[element_index], DetectedSoundLabElement):
+            return
+
+        # if the element at index is visible as detected sound la elements add the items
+        for item in parameter_items:
+            self.elements[element_index].add_visual_item(item)
 
     def add_segmentation_items(self, items):
         """
@@ -483,7 +484,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
             return None
 
         # create a list with start index of each element
-        sorted_arr = np.array([x.indexFrom if isinstance(x, DetectedSoundLabElement) else x[0] for x in self.elements])
+        sorted_arr = np.array(self.sorted_elements_start_indexes)
 
         # binary search of the interval
         indexFrom, indexTo = np.searchsorted(sorted_arr, start), np.searchsorted(sorted_arr, end)
@@ -543,7 +544,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
             return None
 
         # get the index of insertion on the sorted array of elements
-        sorted_arr = np.array([x.indexFrom if isinstance(x, DetectedSoundLabElement) else x[0] for x in self.elements])
+        sorted_arr = np.array(self.sorted_elements_start_indexes)
         index_from, index_to = np.searchsorted(sorted_arr, start), np.searchsorted(sorted_arr, end)
         index_from -= 1 if index_from > 0 and start <= self._get_element(index_from - 1).indexTo else 0
 

@@ -7,8 +7,7 @@ class SoundLabWidget:
     """
     Widget that encapsulate the logic of a sound lab widget.
     Provide user interaction through mouse events to the different tools
-    used on the system.
-    Is defined to use as an abstract class.
+    used on the system. Is defined to use as an abstract class.
     Each sound lab widget implementation is divided into the logic and the
     gui interaction. the gui interaction is made by a graphic tool and the current class
     handle it. Provide a way to change the tool and react to the gui events
@@ -50,7 +49,7 @@ class SoundLabWidget:
     def leaveEvent(self, QEvent):
         # avoid the zoom tool to be disabled in just one widget
         if self.gui_user_tool is not None and \
-           not isinstance(self.gui_user_tool,(ZoomTool,SpectrogramZoomTool)):
+           not isinstance(self.gui_user_tool, (ZoomTool, SpectrogramZoomTool)):
             self.gui_user_tool.disable()
 
     def enterEvent(self, QEvent):
@@ -105,9 +104,8 @@ class SoundLabWidget:
             str_pad = " " * (len(value_str) - self.DATA_TOOL_STR_LENGTH)
             detected_data += str(atr_name) + ": " + str_pad + value_str + " "
 
-        # raise the detected data as signal
-        # the definition of the signal must be in every descendant widget
-        # (python issues to solve)
+        # raise the detected data as signal the definition of the signal must
+        # be in every descendant widget (python issues to solve)
         self.toolDataDetected.emit(detected_data)
 
     def load_workspace(self, workspace, forceUpdate=False):

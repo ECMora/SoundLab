@@ -37,6 +37,7 @@ class QSignalVisualizerWidget(QtGui.QWidget):
     # signal raised when the name of the signal is changed by code
     # raise the new name
     signalNameChanged = pyqtSignal(str)
+
     # endregion
 
     # region CONSTANTS
@@ -83,8 +84,8 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         self.__selectedTool = Tools.NoTool
 
         #  synchronization of the change range in the axes
-        self.axesSpecgram.rangeChanged.connect(self.updateOscillogram)
-        self.axesOscilogram.rangeChanged.connect(self.updateSpecgram)
+        self.axesSpecgram.rangeChanged.connect(lambda x1, x2: self._update_widget_range(self.axesOscilogram, x1, x2))
+        self.axesOscilogram.rangeChanged.connect(lambda x1, x2: self._update_widget_range(self.axesSpecgram, x1, x2))
 
         self.axesSpecgram.signalChanged.connect(lambda x1, x2: self.axesOscilogram.updateSignal(x1, x2))
         self.axesOscilogram.signalChanged.connect(lambda x1, x2: self.axesSpecgram.updateSignal(x1, x2))
@@ -183,31 +184,16 @@ class QSignalVisualizerWidget(QtGui.QWidget):
 
     # region Widgets synchronization
 
-    def updateOscillogram(self, x1, x2):
+    def _update_widget_range(self, widget, x1, x2):
         """
-        Update the visible range of the
-        oscilogram when the signal visible range
-        has changed.
+        Update the rancge of visibility of the oscilogram or spectrogram
+        widgets.
+        :param widget: The widget type to update. axesOscilogram or axesSpectrogram
         :param x1: the start limit of the new visible interval in signal data array indexes
         :param x2: the end limit of the new visible interval in signal data array indexes
         :return:
         """
-
-        self.axesOscilogram.changeRange(x1, x2)
-        self.mainCursor.min = x1
-        self.mainCursor.max = x2
-        self.updateScrollbar()
-
-    def updateSpecgram(self, x1, x2):
-        """
-        Update the visible range of the
-        spectrogram when the signal visible range
-        has changed.
-        :param x1: the start limit of the new visible interval in signal data array indexes
-        :param x2: the end limit of the new visible interval in signal data array indexes
-        :return:
-        """
-        self.axesSpecgram.changeRange(x1, x2)
+        widget.changeRange(x1, x2)
         self.mainCursor.min, self.mainCursor.max = x1, x2
         self.updateScrollbar()
 
@@ -323,6 +309,7 @@ class QSignalVisualizerWidget(QtGui.QWidget):
     # endregion
 
     # region Sound
+
     def change_volume(self, volume):
         """
         Change the volume of play for the signal.
@@ -496,6 +483,7 @@ class QSignalVisualizerWidget(QtGui.QWidget):
     #  endregion
 
     #  region Properties
+
     @property
     def signalName(self):
         """
@@ -1030,6 +1018,7 @@ class QSignalVisualizerWidget(QtGui.QWidget):
     #  endregion
 
     # region WorkSpace
+
     @property
     def oscilogramWorkSpace(self):
         """
