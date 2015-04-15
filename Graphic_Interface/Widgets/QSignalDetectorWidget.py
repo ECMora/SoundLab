@@ -41,8 +41,8 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         # items to highlight elements or regions in the graph
         self.oscSelectionRegion = pg.LinearRegionItem([0, 0], movable=False, brush=self.SELECTED_ELEMENT_BRUSH)
 
-        if self.visual_items_cache is None:
-            self.visual_items_cache = VisualItemsCache()
+        if QSignalDetectorWidget.visual_items_cache is None:
+            QSignalDetectorWidget.visual_items_cache = VisualItemsCache()
 
         # the visual items for segmentation
         self.segmentation_visual_items = []
@@ -83,7 +83,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         self._elements = [(e.indexFrom, e.indexTo) for e in elements_list]
         self.parameters_items = [[] for _ in self._elements]
 
-    def _get_element(self, index):
+    def get_element(self, index):
         """
         Return a detected element as DetectedSoundLab instance.
         The objects on list of detected elements could be tuples or detected elements
@@ -96,7 +96,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
         # if the element is not a DetectedSoundLab instance then create it
         if not isinstance(self.elements[index], DetectedSoundLabElement):
-            self.elements[index] = self.visual_items_cache.get_visual_item(self.signal,
+            self.elements[index] = QSignalDetectorWidget.visual_items_cache.get_visual_item(self.signal,
                                                                            self.elements[index][0],
                                                                            self.elements[index][1],
                                                                            index + 1, self.elementClicked)
@@ -140,7 +140,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         :return: The visible elements that match the visibility rules (pixel size and interval)
         """
         # get the visible elements
-        return [self._get_element(i) for i in xrange(len(self.elements))
+        return [self.get_element(i) for i in xrange(len(self.elements))
                 if self._is_element_visible(self.elements[i])]
 
     def change_elements_visibility(self, visibility, element_type=VisualElement.Text, oscgram_items=None, update=True):
@@ -173,7 +173,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
                 item_visible[1] = visibility
 
         if update:
-            self.graph()
+            self.draw_elements()
 
     # endregion
 
@@ -235,7 +235,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         # release items
         for i in xrange(index_from, index_to + 1):
             if isinstance(self.elements[i], DetectedSoundLabElement):
-                self.visual_items_cache.release_visual_item(self.elements[i])
+                QSignalDetectorWidget.visual_items_cache.release_visual_item(self.elements[i])
                 self.elements[i] = (self.elements[i].indexFrom, self.elements[i].indexTo)
 
     def _get_no_visible_visual_items_tuples(self, elements):
@@ -293,8 +293,8 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         # viewRange of plotWidget [[xmin, xmax], [ymin, ymax]]
         x_max = self.axesOscilogram.viewRange()[0][1]
 
-        start_position = self._get_element(start).indexTo if start > 0 else 0
-        end_position = self._get_element(end).indexFrom if end < len(self.elements) - 1 else x_max
+        start_position = self.get_element(start).indexTo if start > 0 else 0
+        end_position = self.get_element(end).indexFrom if end < len(self.elements) - 1 else x_max
 
         max_value = self.signal.maximumValue
 
@@ -441,7 +441,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
             self.axesOscilogram.update()
             return
 
-        index_from, index_to = self._get_element(index).indexFrom, self._get_element(index).indexTo
+        index_from, index_to = self.get_element(index).indexFrom, self.get_element(index).indexTo
         self.oscSelectionRegion.setRegion((index_from, index_to))
         self.axesOscilogram.update()
 
@@ -490,7 +490,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         indexFrom, indexTo = np.searchsorted(sorted_arr, start), np.searchsorted(sorted_arr, end)
 
         # if the region selected starts before the previous element finish then include it
-        indexFrom -= 1 if indexFrom > 0 and start <= self._get_element(indexFrom - 1).indexTo else 0
+        indexFrom -= 1 if indexFrom > 0 and start <= self.get_element(indexFrom - 1).indexTo else 0
 
         if indexTo < indexFrom or indexTo > len(self.elements):
             return None
@@ -546,10 +546,10 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         # get the index of insertion on the sorted array of elements
         sorted_arr = np.array(self.sorted_elements_start_indexes)
         index_from, index_to = np.searchsorted(sorted_arr, start), np.searchsorted(sorted_arr, end)
-        index_from -= 1 if index_from > 0 and start <= self._get_element(index_from - 1).indexTo else 0
+        index_from -= 1 if index_from > 0 and start <= self.get_element(index_from - 1).indexTo else 0
 
         # insert the new element
-        element = self.visual_items_cache.get_visual_item(self.signal, start, end, 0, self.elementClicked)
+        element = QSignalDetectorWidget.visual_items_cache.get_visual_item(self.signal, start, end, 0, self.elementClicked)
         self.elements.insert(index_from, element)
         self.parameters_items.insert(index_from, [[], True])
 

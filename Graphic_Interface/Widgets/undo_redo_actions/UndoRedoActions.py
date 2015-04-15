@@ -360,13 +360,13 @@ class PasteAction(UndoRedoAction):
         self.signal = signal
         self.start = start
         self.end = end
-        self.editionProcesor = EditionSignalProcessor(self.signal)
+        self.editionProcessor = EditionSignalProcessor(self.signal)
 
     def undo(self):
-        self.editionProcesor.cut(self.start, self.end)
+        self.editionProcessor.cut(self.start, self.end)
 
     def redo(self):
-        self.editionProcesor.paste(self.start)
+        self.editionProcessor.paste(self.start)
 
 # endregion
 
