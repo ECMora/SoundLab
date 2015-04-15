@@ -74,9 +74,6 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         # the cursor for the visualization of a piece of the signal
         self.mainCursor = IntervalCursor(0, 0)
 
-        #  the zoom cursor
-        self.zoomCursor = IntervalCursor(0, 0)
-
         self.undoRedoManager = UndoRedoManager()
         self.undoRedoManager.actionExec.connect(lambda x: self.graph())
 
@@ -664,12 +661,9 @@ class QSignalVisualizerWidget(QtGui.QWidget):
 
             index_from_zoom, index_to_zoom = max(index_from, index_from_zoom), min(index_to, index_to_zoom)
 
-            if index_from < index_from_zoom < index_to_zoom:
-                index_from = index_from_zoom
+            index_from = index_from_zoom if index_from < index_from_zoom else index_from
 
-            if index_from_zoom < index_to_zoom < index_to:
-                # get the start of the region
-                index_to = index_to_zoom
+            index_to = index_to_zoom if index_to_zoom < index_to else index_to
 
         return int(index_from), int(index_to)
 
@@ -802,6 +796,7 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         """
         #  get the current signal selection interval
         start, end = self.selectedRegion
+        print(start, end)
         self.editionSignalProcessor.paste(start)
         self.undoRedoManager.add(PasteAction(self.signal, start, end))
         self.graph()

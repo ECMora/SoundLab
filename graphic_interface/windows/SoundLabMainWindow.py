@@ -9,8 +9,10 @@ from duetto.audio_signals.Synthesizer import Synthesizer
 from duetto.signal_processing.filter_signal_processors.frequency_domain_filters import BandPassFilter, HighPassFilter, \
     BandStopFilter, LowPassFilter
 from duetto.dimensional_transformations.two_dimensional_transforms.Spectrogram.WindowFunctions import WindowFunction
+from graphic_interface.segment_visualization.VisualItemsCache import VisualItemsCache
 from utils.Utils import *
 from graphic_interface.widgets.QSignalVisualizerWidget import QSignalVisualizerWidget
+from graphic_interface.widgets.QSignalDetectorWidget import QSignalDetectorWidget
 from graphic_interface.Settings.WorkTheme import WorkTheme
 from graphic_interface.windows.BatchWindow import BatchWindow
 from graphic_interface.windows.ParameterList import DuettoListParameterItem
@@ -71,6 +73,8 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         """
         SoundLabWindow.__init__(self, parent)
         self.setupUi(self)
+
+        QSignalDetectorWidget.visual_items_cache = VisualItemsCache()
 
         # the histogram of the signal spectrogram
         self.histogram = None
@@ -778,14 +782,13 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
                                       self.tr(u"Use the splitter to divide it"))
             return
 
-        seg_window = SegmentationClassificationWindow(parent=self, signal=signal)
+        seg_window = SegmentationClassificationWindow(parent=self, signal=signal, workspace=self.workSpace)
 
         # if was loaded the same signal on segmentation window give the file path (if any) to save options
         if signal.length == self.widget.signal.length:
             seg_window.set_signal_file(self.widget.signalFilePath)
 
         # load the theme and clear the undo redo actions in the current window.
-        seg_window.load_workspace(self.workSpace)
         self.widget.undoRedoManager.clear()
 
     #  region WorkSpace

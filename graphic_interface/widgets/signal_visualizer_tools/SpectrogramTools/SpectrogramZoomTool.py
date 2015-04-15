@@ -63,7 +63,10 @@ class SpectrogramZoomTool(SpectrogramTool):
                 return
             indexFrom = int(self.widget.from_spec_to_osc(rgn[0]))
             indexTo = int(self.widget.from_spec_to_osc(rgn[1]))
+
             self.rangeChanged.emit(indexFrom, indexTo, 0, 0)
+
+            self.zoomRegion.setRegion((0, 0))
 
     def mouseReleaseEvent(self, event):
         self.mousePressed = False

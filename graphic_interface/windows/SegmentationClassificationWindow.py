@@ -46,7 +46,7 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
     # region Initialize
 
-    def __init__(self, parent, signal):
+    def __init__(self, parent, signal, workspace=None):
         """
         Create a the window of segmentation and classification.
         :param parent: the parent widget if any
@@ -107,9 +107,12 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         self.windowProgressDetection = QProgressBar(self)
         self.set_progress_bar_visibility(False)
 
-        # array of windows with two dimensional graphs.
+        # array of windows with two dimensional graphs
         self.two_dim_windows = []
         self._cross_correlation_windows = []
+
+        if workspace is not None:
+            self.load_workspace(workspace)
 
         self.showMaximized()
 
@@ -143,9 +146,12 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         result = mbox.exec_()
 
         if result == QMessageBox.Yes:
-            for element in elements:
-                self.widget.mark_region_as_element(element, update=False)
-                self.widget.graph()
+            for i, e in enumerate(elements):
+                self.segmentManager.add_element(i, e[0], e[1])
+
+            self.widget.elements = self.segmentManager.elements
+            self.measure_parameters_and_classify()
+            self.widget.graph()
 
     def __addContextMenuActions(self):
         """
@@ -447,7 +453,9 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         if element_added_index is None:
             return
 
-        self.segmentManager.add_element(self.widget.elements[element_added_index], element_added_index)
+        element = self.widget.get_element(element_added_index)
+
+        self.segmentManager.add_element(element_added_index, element.indexFrom, element.indexTo)
 
         for wnd in self.two_dim_windows:
             wnd.load_data(self.segmentManager)
