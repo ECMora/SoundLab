@@ -2,7 +2,7 @@
 import os
 import pickle
 from math import log10
-from PyQt4.QtCore import QThread
+from PyQt4.QtCore import QThread, pyqtSignal
 from numpy import argmax
 from PyQt4 import QtGui
 from duetto.audio_signals.Synthesizer import Synthesizer
@@ -144,11 +144,24 @@ def getScaledValue(value, scales, scale_step):
 
 class CallableStartThread(QThread):
     """
-    A thread started by a function supplied
+    A segmentation_thread started by a function supplied
     """
+
     def __init__(self, parent=None, function=None):
         QThread.__init__(self, parent)
         self.function = function if function is not None else lambda : None
 
+
+class SegmentationThread(QThread):
+
+    # SIGNALS
+    # signal raised when the segmentation
+    segmentationFinished = pyqtSignal(list)
+
+    def __init__(self, parent=None, detector=None):
+        QThread.__init__(self, parent)
+        self.detector = detector
+
     def run(self):
-        self.function()
+        self.detector.detect()
+        self.segmentationFinished.emit(self.detector.elements)

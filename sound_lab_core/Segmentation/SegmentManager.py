@@ -3,7 +3,7 @@ import numpy as np
 from sound_lab_core.Segmentation.Detectors.Adapters import ManualDetectorAdapter
 from sound_lab_core.Clasification.Adapters import ManualClassifierAdapter
 from sound_lab_core.Elements.OneDimensionalElements.OneDimensionalElement import OneDimensionalElement
-from utils.Utils import CallableStartThread
+from utils.Utils import SegmentationThread
 from utils.db.DB_ORM import Segment, DB, Measurement
 from duetto.audio_signals import AudioSignal
 
@@ -22,6 +22,9 @@ class SegmentManager(QObject):
     # signal raised when a parameter is measured on a segment
     # raise the segment index and the list of visual items associated
     segmentVisualItemAdded = pyqtSignal(int, list)
+
+    # signal raised when the segmentation has finished
+    segmentationFinished = pyqtSignal()
 
     # signal raised while detection is been made. Raise the percent of detection progress.
     detectionProgressChanged = pyqtSignal(int)
@@ -46,12 +49,8 @@ class SegmentManager(QObject):
         # the detected elements
         self._elements = []
 
-        # the thread to perform the segmentation with
-        self.thread = None
-
-        # the db representation of the elements
-        # self.segments_db_objects = []
-        # self.db_session = DB().get_db_session()
+        # the segmentation_thread to perform the segmentation with
+        self.segmentation_thread = None
 
         # the signal in which would be detected the elements
         self._signal = None
@@ -77,18 +76,6 @@ class SegmentManager(QObject):
         :return:
         """
         self._elements = elements_list
-
-        # try:
-        #     # self.segments_db_objects = [Segment() for _ in self._elements]
-        #
-        #     # add the new segments
-        #     # for s in self.segments_db_objects:
-        #     #     self.db_session.add(s)
-        #     #
-        #     # self.db_session.commit()
-        #
-        # except Exception as ex:
-        #     print("segment creation error" + ex.message)
 
         self.recompute_element_table()
 
@@ -202,7 +189,6 @@ class SegmentManager(QObject):
             if 0 <= i < self.rowCount:
                 self.update_classification_visual_item(i, classification)
                 self.classificationTableData[i] = classification
-                self.add_identification_on_db(i, classification)
 
         # self.db_session.commit()
         self.measurementsChanged.emit()
@@ -230,7 +216,7 @@ class SegmentManager(QObject):
 
         self.measurementsChanged.emit()
 
-    def _classify_element(self, element_index, classifier=None, parameter_vector=None, commit_changes=False):
+    def _classify_element(self, element_index, classifier=None, parameter_vector=None):
         """
         Helper method that classify a single element.
         :param element_index: The index of the element to classify
@@ -246,14 +232,9 @@ class SegmentManager(QObject):
         classification_value = classifier.classify(self.elements[element_index], parameter_vector)
         self.classificationTableData[element_index] = classification_value
 
-        # save on db
-        self.add_identification_on_db(element_index, classification_value)
-
         # update visualization
         self.update_classification_visual_item(element_index, classification_value)
 
-        # if commit_changes:
-        #     self.db_session.commit()
 
     def update_classification_visual_item(self, element_index, classification_value):
         """
@@ -304,8 +285,6 @@ class SegmentManager(QObject):
 
         self._elements = self.elements[:start_index] + self.elements[end_index+1:]
 
-        # self.segments_db_objects = self.segments_db_objects[:start_index] + self.segments_db_objects[end_index + 1:]
-
         self.measurementsChanged.emit()
 
     def add_element(self, index, index_from, index_to):
@@ -336,14 +315,9 @@ class SegmentManager(QObject):
             self.classificationTableData.insert(index, None)
             self._elements.insert(index, element)
 
-            # new_segment = Segment()
-            # self.db_session.add(new_segment)
-            # self.db_session.commit()
-            # self.segments_db_objects.insert(index, new_segment)
-
         # measure parameters
-        self._measure(element, index, commit_changes=True)
-        self._classify_element(index, commit_changes=True)
+        self._measure(element, index)
+        self._classify_element(index)
 
         self.measurementsChanged.emit()
 
@@ -356,22 +330,17 @@ class SegmentManager(QObject):
 
         detector.detectionProgressChanged.connect(lambda x: self.detectionProgressChanged.emit(x))
 
-        import time
-        t = time.time()
+        self.segmentation_thread = SegmentationThread(parent=None, detector=detector)
+        self.segmentation_thread.finished.connect(self._get_elements)
+        self.segmentation_thread.start()
 
-        self.thread = CallableStartThread(self._detect_elements(detector))
-        self.thread.start()
-        # self._detect_elements(detector)
-
-        print("Time consuming detecting " + str(len(detector.elements)) + " elements: " + str(time.time() - t))
-
-    def _detect_elements(self, detector):
+    def _get_elements(self):
         """
         execute the detection of the elements
         :return:
         """
-        detector.detect()
-        self.elements = detector.elements
+        self.elements = self.segmentation_thread.detector.elements
+        self.segmentationFinished.emit()
 
     # endregion
 
@@ -406,8 +375,7 @@ class SegmentManager(QObject):
         self.measurementsChanged.emit()
         self.measureParametersProgressChanged.emit(100)
 
-    def _measure(self, element, index, measure_methods=None, orm_parameters_mappers=None, commit_changes=False,
-                 update_visual_items_and_db=True):
+    def _measure(self, element, index, measure_methods=None, orm_parameters_mappers=None):
         """
         Measure the list of parameters over the element supplied
         :param update_visual_items_and_db: True if the visual items of measurements and the db session
@@ -416,6 +384,7 @@ class SegmentManager(QObject):
         :param index: The element index on the table of parameters
         :return:
         """
+
         if not 0 <= index < self.rowCount:
             raise IndexError()
 
@@ -431,70 +400,24 @@ class SegmentManager(QObject):
                 # compute the param with the interval_function
                 self.measuredParameters[index, j] = measure_methods[j].measure(element)
 
-                if update_visual_items_and_db:
-                    # raise the parameter visual item if any
-                    self.update_elements_visual_items(parameter_adapter, index, self.measuredParameters[index, j])
+                # raise the parameter visual item if any
+                self.update_elements_visual_items(parameter_adapter, index, self.measuredParameters[index, j])
 
-                    # try to store the parameter measurement on db
-                    # self.add_measurement_on_db(self.segments_db_objects[index], orm_parameters_mappers[j],
-                    #                            self.measuredParameters[index, j])
             except Exception as e:
                 # if some error is raised set a default value
                 self.measuredParameters[index, j] = 0
                 print("Error measure params " + e.message)
 
-        # if commit_changes:
-        #     self.db_session.commit()
-
     # endregion
 
     # region DB interaction
 
-    def add_measurement_on_db(self, segment, parameter, value):
+    def save_data_on_db(self):
         """
-        adds to the db the measurement of a parameter over a segment.
-        Must be called commit after to make persistent the changes
-        :param segment:
-        :param parameter:
-        :param value:
+        Save on db the data of detected segments, measurements and classification made.
         :return:
         """
-        if segment is None or parameter is None:
-            return
-
-        # try:
-        #     self.db_session.add(Measurement(segment_id=segment.segment_id,
-        #                                     parameter_id=parameter.parameter_id,
-        #                                     value=value))
-        #
-        # except Exception as ex:
-        #     print("db connexion error. Measurements. " + ex.message)
-            # self.db_session = DB().get_db_session(new_session=True)
-
-    def add_identification_on_db(self, element_index, classification):
-        """
-        Adds the identification of a segment in the database.
-        Must call commit after to make persistent the changes
-        :param element_index:
-        :param classification:
-        :return:
-        """
-        if not 0 <= element_index < len(self.elements):
-            raise Exception()
-
-        # try:
-        #     if classification.specie:
-        #         self.segments_db_objects[element_index].specie = classification.specie
-        #     elif classification.genus:
-        #         self.segments_db_objects[element_index].genus = classification.genus
-        #     elif classification.family:
-        #         self.segments_db_objects[element_index].family = classification.family
-        #
-        #     # self.db_session.add(self.segments_db_objects[element_index])
-        #
-        # except Exception as ex:
-        #     print("db connexion error. Segments. " + ex.message)
-        #     # self.db_session = DB.get_session(new_session=True)
+        pass
 
     # endregion
 

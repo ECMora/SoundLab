@@ -301,6 +301,8 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
                 self.write_data(ws, self.tableParameterOscilogram)
                 wb.save(file_name)
 
+                self.segmentManager.save_data_on_db()
+
             except Exception as ex:
                 print("Error saving the excel file. " + ex.message)
 
@@ -627,6 +629,12 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         """
         Method that execute the detection
         """
+
+        # there is an on going detection been made
+        if self.windowProgressDetection.isVisible():
+            QMessageBox.warning(QMessageBox(), self.tr(u"Error"), self.tr(u"There is an on going detection in progress."))
+            return
+
         elementsDetectorDialog = ElemDetectSettingsDialog(parent=self, signal=self.widget.signal)
         elementsDetectorDialog.load_workspace(self.workSpace)
         elementsDetectorDialog.restore_previous_state(self.segmentManager.measurer_adapters,
@@ -651,23 +659,30 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
                 self.set_progress_bar_visibility(True)
 
                 # execute the detection
+                self.segmentManager.segmentationFinished.connect(self.segmentation_finished)
                 self.segmentManager.detect_elements()
-                self.update_detection_progress_bar(90)
-
-                # put the elements detected into the widget to visualize them
-                self.widget.elements = self.segmentManager.elements
-                self.widget.graph()
-
-                # measure the parameters over elements detected
-                QTimer.singleShot(100, self.measure_parameters_and_classify)
 
         except Exception as e:
             print("detection errors: " + e.message)
-            self.update_parameter_table()
+            self.update_detection_progress_bar(100)
+            self.set_progress_bar_visibility(False)
 
-        # complete the progress of detection and hide the progress bar
+    def segmentation_finished(self):
+        """
+        Callback to execute when the segmentation segmentation_thread finished.
+        :return:
+        """
+        self.update_detection_progress_bar(90)
+
+        # put the elements detected into the widget to visualize them
+        self.widget.elements = self.segmentManager.elements
+        self.widget.graph()
+
         self.update_detection_progress_bar(100)
         self.set_progress_bar_visibility(False)
+
+        # measure the parameters over elements detected
+        QTimer.singleShot(100, self.measure_parameters_and_classify)
 
     def measure_parameters_and_classify(self):
         """
@@ -681,6 +696,8 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         # classify detected elements
         self.segmentManager.classify_elements()
 
+        # must be refreshed the widget because the parameter measurement includes
+        # visual items into the graph
         self.widget.graph()
 
         self.update_parameter_table()
