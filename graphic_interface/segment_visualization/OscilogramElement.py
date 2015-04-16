@@ -23,7 +23,7 @@ class OscilogramElement(VisualElement):
         self.element_region.mouseClickEvent = self.mouseClickEvent
         self._update_items_pos()
 
-        self.visual_figures.append([self.element_region, True])
+        self.visual_figures.append(self.element_region)
 
     def add_parameter_item(self, parameter_item):
         """

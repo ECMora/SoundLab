@@ -8,7 +8,7 @@ from sound_lab_core.AdapterFactories import *
 from sound_lab_core.Clasification.Adapters import *
 
 
-# tuples of classifiers (get a tuple of all an not of super class because bug on isinstance)
+# tuples of classifiers (get a tuple of all an not of super class because a bug on isinstance method)
 classifiers_tuple = (KNNClassifierAdapter, ManualClassifierAdapter, NeuralNetsAdapter)
 
 

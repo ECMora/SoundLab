@@ -41,7 +41,7 @@ class VisualItemsCache:
             if len(self.free_visual_items_queue) == 0:
                 self.add_visual_items(self.ITEMS_GROWING_NUMBER)
 
-            # return the text item requested
+            # return the item requested
             item = self.free_visual_items_queue.pop()
             item.set_signal(signal)
             item.set_bounds(index_from, index_to)

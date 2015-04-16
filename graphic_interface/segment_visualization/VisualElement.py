@@ -39,7 +39,7 @@ class VisualElement:
 
     # endregion
 
-    def __init__(self, number=0, signal=None,indexFrom=0, indexTo=0):
+    def __init__(self, number=0, signal=None, indexFrom=0, indexTo=0):
         # callback to execute when the element is clicked. Signals are not used for efficiency
         self.elementClicked = None
         self.signal = signal
@@ -54,13 +54,12 @@ class VisualElement:
         # the visual elements that show text
         self.text_number = pg.TextItem(str(number), color=(255, 255, 255), anchor=(0.5, 0.5))
         self.text_number.setFont(self.FONT)
-        self.visual_text = [[self.text_number, True]]
+        self.visual_text = [self.text_number]
 
         # the visual components that show the elements representation
         self.visual_figures = []
 
         # the visual components that show the measured parameters representation
-        # list of (VisualItemWrapper, bool)
         self.visual_parameters_items = []
 
         # the number of this element for visualization and ordering options
@@ -84,6 +83,8 @@ class VisualElement:
         self._indexFrom = index_from
         self._indexTo = index_to
         self._update_items_pos()
+
+    # region Properties
 
     @property
     def indexFrom(self):
@@ -112,6 +113,8 @@ class VisualElement:
     def number(self):
         return self._number
 
+    # endregion
+
     def setNumber(self, n):
         self._number = n
         self.text_number.setText(str(n))
@@ -127,11 +130,11 @@ class VisualElement:
         for t in self.visual_text:
             yield t
 
-        for t, visibility in self.visual_parameters_items:
+        for t in self.visual_parameters_items:
             # if the parameter has an item to show
             item = t.get_item()
             if item:
-                yield item, visibility
+                yield item
 
     def mouseClickEvent(self, event):
         """
@@ -148,4 +151,4 @@ class VisualElement:
         :return:
         """
         # visible by default
-        self.visual_parameters_items.append([parameter_item, True])
+        self.visual_parameters_items.append(parameter_item)

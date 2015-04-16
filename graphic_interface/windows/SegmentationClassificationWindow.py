@@ -9,6 +9,7 @@ from graphic_interface.segment_visualization.VisualElement import VisualElement
 from duetto.audio_signals.AudioSignal import AudioSignal
 from graphic_interface.dialogs.CrossCorrelationDialog import CrossCorrelationDialog
 from ..dialogs.elemDetectSettings import ElemDetectSettingsDialog
+from graphic_interface.widgets.QSignalDetectorWidget import VisualItemsVisibility
 from graphic_interface.windows.ToastWidget import ToastWidget
 from sound_lab_core.Segmentation.SegmentManager import SegmentManager
 from ..dialogs.ManualClassificationDialog import ManualClassificationDialog
@@ -737,10 +738,7 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
     # endregion
 
     # region Visual Elements
-    # The visual elements are the objects that display information about detected
-    # segments. Those elements are visible on the graphs (Oscilogram and spectrogram)
-    # They are divided by its definitions and purposes and user can change visibility
-    # of a subset of them
+
     @pyqtSlot()
     def on_actionView_Parameters_triggered(self):
         """
@@ -757,38 +755,31 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         This method allows to change its visibility
         """
         visibility = self.actionTemporal_Elements.isChecked()
-        if visibility:
-            self.on_actionTemporal_Numbers_triggered(update_widget=False)
-            self.on_actionTemporal_Figures_triggered(update_widget=False)
-            self.on_actionTemporal_Parameters_triggered(update_widget=True)
-        else:
-            self.widget.change_elements_visibility(visibility, VisualElement.Parameters,
-                                                   oscgram_items=True, update=True)
-            self.widget.change_elements_visibility(visibility, VisualElement.Text, oscgram_items=True)
-            self.widget.change_elements_visibility(visibility, VisualElement.Figures, oscgram_items=True)
+
+        self.widget.visual_items_visibility.oscilogram_items_visible = visibility
+        self.widget.graph()
 
         for x in [self.actionTemporal_Figures, self.actionTemporal_Numbers, self.actionTemporal_Parameters]:
             x.setEnabled(visibility)
 
+    @pyqtSlot()
+    def on_actionTemporal_Figures_triggered(self):
+        self.widget.visual_items_visibility.oscilogram_figures_visible = self.actionTemporal_Figures.isChecked()
+        self.widget.graph()
 
     @pyqtSlot()
-    def on_actionTemporal_Figures_triggered(self, update_widget=True):
-        self.widget.change_elements_visibility(self.actionTemporal_Figures.isChecked(), VisualElement.Figures,
-                                               oscgram_items=True, update=update_widget)
+    def on_actionTemporal_Parameters_triggered(self):
+        self.widget.visual_items_visibility.oscilogram_parameters_visible = self.actionTemporal_Parameters.isChecked()
+        self.widget.graph()
 
     @pyqtSlot()
-    def on_actionTemporal_Parameters_triggered(self, update_widget=True):
-        self.widget.change_elements_visibility(self.actionTemporal_Figures.isChecked(), VisualElement.Parameters,
-                                               oscgram_items=True, update=update_widget)
-
-    @pyqtSlot()
-    def on_actionTemporal_Numbers_triggered(self, update_widget=True):
+    def on_actionTemporal_Numbers_triggered(self):
         """
         Change visibility of the numbers of the detected segments on the oscilogram graph
 
         """
-        self.widget.change_elements_visibility(self.actionTemporal_Numbers.isChecked(), VisualElement.Text,
-                                               oscgram_items=True, update=update_widget)
+        self.widget.visual_items_visibility.oscilogram_text_visible = self.actionTemporal_Numbers.isChecked()
+        self.widget.graph()
 
     @pyqtSlot()
     def on_actionSpectral_Elements_triggered(self):
@@ -797,36 +788,31 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         This method allows to change its visibility
         """
         visibility = self.actionSpectral_Elements.isChecked()
-        if visibility:
-            self.on_actionSpectral_Numbers_triggered(update_widget=False)
-            self.on_actionSpectral_Figures_triggered(update_widget=False)
-            self.on_actionSpectral_Parameters_triggered(update_widget=True)
-        else:
-            self.widget.change_elements_visibility(visibility, VisualElement.Figures, oscgram_items=False)
-            self.widget.change_elements_visibility(visibility, VisualElement.Parameters, oscgram_items=False)
-            self.widget.change_elements_visibility(visibility, VisualElement.Text, oscgram_items=False, update=True)
+
+        self.widget.visual_items_visibility.spectrogram_items_visible = visibility
+        self.widget.graph()
 
         for x in [self.actionSpectral_Numbers, self.actionSpectral_Figures, self.actionSpectral_Parameters]:
             x.setEnabled(visibility)
 
     @pyqtSlot()
-    def on_actionSpectral_Figures_triggered(self, update_widget=True):
-        self.widget.change_elements_visibility(self.actionSpectral_Figures.isChecked(), VisualElement.Figures,
-                                               oscgram_items=False, update=update_widget)
+    def on_actionSpectral_Figures_triggered(self):
+        self.widget.visual_items_visibility.spectrogram_figures_visible = self.actionSpectral_Figures.isChecked()
+        self.widget.graph()
 
     @pyqtSlot()
-    def on_actionSpectral_Parameters_triggered(self, update_widget=True):
-        self.widget.change_elements_visibility(self.actionSpectral_Parameters.isChecked(), VisualElement.Parameters,
-                                               oscgram_items=False, update=update_widget)
+    def on_actionSpectral_Parameters_triggered(self):
+        self.widget.visual_items_visibility.spectrogram_parameters_visible = self.actionSpectral_Parameters.isChecked()
+        self.widget.graph()
 
     @pyqtSlot()
-    def on_actionSpectral_Numbers_triggered(self, update_widget=True):
+    def on_actionSpectral_Numbers_triggered(self):
         """
         Change visibility of the numbers of the detected segments on the oscilogram graph
 
         """
-        self.widget.change_elements_visibility(self.actionSpectral_Numbers.isChecked(), VisualElement.Text,
-                                               oscgram_items=False, update=update_widget)
+        self.widget.visual_items_visibility.spectrogram_text_visible = self.actionSpectral_Numbers.isChecked()
+        self.widget.graph()
 
     # endregion
 

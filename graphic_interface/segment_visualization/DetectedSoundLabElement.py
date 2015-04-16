@@ -30,7 +30,6 @@ class DetectedSoundLabElement:
 
     def set_element_clicked_callback(self, callback):
         """
-
         :param callback:
         :return:
         """

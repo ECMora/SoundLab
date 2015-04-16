@@ -81,8 +81,8 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         self.__selectedTool = Tools.NoTool
 
         #  synchronization of the change range in the axes
-        self.axesSpecgram.rangeChanged.connect(lambda x1, x2: self._update_widget_range(self.axesOscilogram, x1, x2))
-        self.axesOscilogram.rangeChanged.connect(lambda x1, x2: self._update_widget_range(self.axesSpecgram, x1, x2))
+        self.axesSpecgram.rangeChanged.connect(lambda x1, x2: self.update_widget_range(self.axesOscilogram, x1, x2))
+        self.axesOscilogram.rangeChanged.connect(lambda x1, x2: self.update_widget_range(self.axesSpecgram, x1, x2))
 
         self.axesSpecgram.signalChanged.connect(lambda x1, x2: self.axesOscilogram.updateSignal(x1, x2))
         self.axesOscilogram.signalChanged.connect(lambda x1, x2: self.axesSpecgram.updateSignal(x1, x2))
@@ -181,7 +181,7 @@ class QSignalVisualizerWidget(QtGui.QWidget):
 
     # region Widgets synchronization
 
-    def _update_widget_range(self, widget, x1, x2):
+    def update_widget_range(self, widget, x1, x2):
         """
         Update the rancge of visibility of the oscilogram or spectrogram
         widgets.

@@ -22,7 +22,7 @@ class SpectrogramElement(VisualElement):
         self._update_items_pos()
 
         # update the visual representation
-        self.visual_figures.append([self.element_region, True])  # item visibility
+        self.visual_figures.append(self.element_region)  # item visibility
 
     def _update_items_pos(self):
         self.text_number_pos = self._indexFrom / 2.0 + self._indexTo / 2.0, self.signal.samplingRate * 0.9 / 2.0
@@ -82,5 +82,5 @@ class SpectrogramElement(VisualElement):
         options = dict(size=1, symbol='d', pxMode=False, pen=self.pen)
         self.element_region.setData(pos=pos, adj=self.element_region_adj, **options)
 
-        for item, visibility in self.visual_parameters_items:
+        for item in self.visual_parameters_items:
             item.translate_time_freq_coords(translate_time_function, translate_freq_function)
