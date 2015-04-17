@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\SegmentationAndClasificationWindowUI.ui'
 #
-# Created: Tue Apr 14 14:24:18 2015
+# Created: Fri Apr 17 08:55:13 2015
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -279,9 +279,6 @@ class Ui_MainWindow(object):
         self.menuParameters.addAction(self.actionFull_Screen)
         self.menuParameters.addSeparator()
         self.menuParameters.addAction(self.actionTwo_Dimensional_Graphs)
-        self.menuParameters.addAction(self.actionZoomIn)
-        self.menuParameters.addAction(self.actionZoom_out)
-        self.menuParameters.addAction(self.actionZoom_out_entire_file)
         self.menuParameters.addSeparator()
         self.menuParameters.addAction(self.actionTemporal_Elements)
         self.menuParameters.addAction(self.actionTemporal_Numbers)
@@ -294,11 +291,15 @@ class Ui_MainWindow(object):
         self.menuParameters.addAction(self.actionSpectral_Parameters)
         self.menuParameters.addSeparator()
         self.menuDetection.addAction(self.actionAddElement)
+        self.menuDetection.addAction(self.actionDelete_Selected_Elements)
         self.menuDetection.addAction(self.actionDetection)
         self.menuDetection.addSeparator()
-        self.menuDetection.addAction(self.actionDelete_Selected_Elements)
         self.menuDetection.addAction(self.actionClassify)
         self.menuDetection.addAction(self.actionDeselect_Elements)
+        self.menuTools.addAction(self.actionZoomIn)
+        self.menuTools.addAction(self.actionZoom_out)
+        self.menuTools.addAction(self.actionZoom_out_entire_file)
+        self.menuTools.addSeparator()
         self.menuTools.addAction(self.actionZoom_Cursor)
         self.menuTools.addAction(self.actionPointer_Cursor)
         self.menuTools.addAction(self.actionRectangular_Cursor)
@@ -310,8 +311,8 @@ class Ui_MainWindow(object):
         self.menuExport.addAction(self.menuGraph_Images.menuAction())
         self.menuBar.addAction(self.menuDetection.menuAction())
         self.menuBar.addAction(self.menuExport.menuAction())
-        self.menuBar.addAction(self.menuParameters.menuAction())
         self.menuBar.addAction(self.menuTools.menuAction())
+        self.menuBar.addAction(self.menuParameters.menuAction())
 
         self.retranslateUi(MainWindow)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
@@ -344,7 +345,7 @@ class Ui_MainWindow(object):
         self.actionPaste.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+V", None, QtGui.QApplication.UnicodeUTF8))
         self.actionCut.setText(QtGui.QApplication.translate("MainWindow", "Cut", None, QtGui.QApplication.UnicodeUTF8))
         self.actionCut.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+X", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionMeditions.setText(QtGui.QApplication.translate("MainWindow", "Measurements as excell", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionMeditions.setText(QtGui.QApplication.translate("MainWindow", "Measurements as Excel", None, QtGui.QApplication.UnicodeUTF8))
         self.actionView_Parameters.setText(QtGui.QApplication.translate("MainWindow", "Parameters", None, QtGui.QApplication.UnicodeUTF8))
         self.actionView_Parameters.setShortcut(QtGui.QApplication.translate("MainWindow", "Ctrl+Space", None, QtGui.QApplication.UnicodeUTF8))
         self.actionDetection.setText(QtGui.QApplication.translate("MainWindow", "Detect", None, QtGui.QApplication.UnicodeUTF8))
@@ -374,7 +375,7 @@ class Ui_MainWindow(object):
         self.actionPlayLoop.setToolTip(QtGui.QApplication.translate("MainWindow", "Play Loop", None, QtGui.QApplication.UnicodeUTF8))
         self.actionAddElement.setText(QtGui.QApplication.translate("MainWindow", "Add", None, QtGui.QApplication.UnicodeUTF8))
         self.actionAddElement.setToolTip(QtGui.QApplication.translate("MainWindow", "Mark Selected Region As Element", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionSound_File_Segmentation.setText(QtGui.QApplication.translate("MainWindow", "Save Segmentation on file", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSound_File_Segmentation.setText(QtGui.QApplication.translate("MainWindow", "Segmentation on file", None, QtGui.QApplication.UnicodeUTF8))
         self.actionTemporal_Parameters.setText(QtGui.QApplication.translate("MainWindow", "Temporal Parameters", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSpectral_Parameters.setText(QtGui.QApplication.translate("MainWindow", "Spectral Parameters", None, QtGui.QApplication.UnicodeUTF8))
         self.actionCross_correlation.setText(QtGui.QApplication.translate("MainWindow", "Cross-correlation", None, QtGui.QApplication.UnicodeUTF8))

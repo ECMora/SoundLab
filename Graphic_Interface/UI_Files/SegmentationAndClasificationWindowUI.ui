@@ -125,9 +125,6 @@
     <addaction name="actionFull_Screen"/>
     <addaction name="separator"/>
     <addaction name="actionTwo_Dimensional_Graphs"/>
-    <addaction name="actionZoomIn"/>
-    <addaction name="actionZoom_out"/>
-    <addaction name="actionZoom_out_entire_file"/>
     <addaction name="separator"/>
     <addaction name="actionTemporal_Elements"/>
     <addaction name="actionTemporal_Numbers"/>
@@ -145,9 +142,9 @@
      <string>Elements</string>
     </property>
     <addaction name="actionAddElement"/>
+    <addaction name="actionDelete_Selected_Elements"/>
     <addaction name="actionDetection"/>
     <addaction name="separator"/>
-    <addaction name="actionDelete_Selected_Elements"/>
     <addaction name="actionClassify"/>
     <addaction name="actionDeselect_Elements"/>
    </widget>
@@ -155,6 +152,10 @@
     <property name="title">
      <string>Tools</string>
     </property>
+    <addaction name="actionZoomIn"/>
+    <addaction name="actionZoom_out"/>
+    <addaction name="actionZoom_out_entire_file"/>
+    <addaction name="separator"/>
     <addaction name="actionZoom_Cursor"/>
     <addaction name="actionPointer_Cursor"/>
     <addaction name="actionRectangular_Cursor"/>
@@ -177,8 +178,8 @@
    </widget>
    <addaction name="menuDetection"/>
    <addaction name="menuExport"/>
-   <addaction name="menuParameters"/>
    <addaction name="menuTools"/>
+   <addaction name="menuParameters"/>
   </widget>
   <action name="actionZoomIn">
    <property name="icon">
@@ -318,7 +319,7 @@
      <normaloff>:/myappicons/Excel.png</normaloff>:/myappicons/Excel.png</iconset>
    </property>
    <property name="text">
-    <string>Measurements as excell</string>
+    <string>Measurements as Excel</string>
    </property>
   </action>
   <action name="actionView_Parameters">
@@ -570,7 +571,7 @@
      <normaloff>:/myappicons/225.ico</normaloff>:/myappicons/225.ico</iconset>
    </property>
    <property name="text">
-    <string>Save Segmentation on file</string>
+    <string>Segmentation on file</string>
    </property>
   </action>
   <action name="actionTemporal_Parameters">
