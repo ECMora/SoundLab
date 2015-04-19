@@ -32,6 +32,10 @@
      <layout class="QGridLayout" name="gridLayout">
       <item row="1" column="0">
        <widget class="QRadioButton" name="rbuttonNormalize">
+        <property name="toolTip">
+         <string>Normalize the samples to a max level of amplitude in %.
+(Keeps the samples relation)</string>
+        </property>
         <property name="styleSheet">
          <string notr="true">background-color: rgb(255, 255, 255);</string>
         </property>
@@ -83,6 +87,9 @@
       </item>
       <item row="0" column="0">
        <widget class="QRadioButton" name="rbuttonConst">
+        <property name="toolTip">
+         <string>Modulate amplitude multiplying signals samples by a constant value in dB</string>
+        </property>
         <property name="styleSheet">
          <string notr="true">background-color: rgb(255, 255, 255);</string>
         </property>
@@ -93,6 +100,9 @@
       </item>
       <item row="4" column="0">
        <widget class="QRadioButton" name="rbuttonFadeOut">
+        <property name="toolTip">
+         <string>Amplitude modulation by function in fade out way.</string>
+        </property>
         <property name="styleSheet">
          <string notr="true">background-color: rgb(255, 255, 255);</string>
         </property>
@@ -138,6 +148,9 @@
       </item>
       <item row="2" column="0">
        <widget class="QRadioButton" name="rbuttonFadeIn">
+        <property name="toolTip">
+         <string>Amplitude modulation by function in fade in way.</string>
+        </property>
         <property name="styleSheet">
          <string notr="true">background-color: rgb(255, 255, 255);</string>
         </property>

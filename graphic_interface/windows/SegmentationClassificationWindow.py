@@ -5,11 +5,9 @@ from PyQt4.QtCore import pyqtSlot, Qt, QPoint, QTimer
 from PyQt4.QtGui import QFileDialog, QAbstractItemView, QActionGroup, QMessageBox, \
     QProgressBar, QColor, QAction, QTableWidgetItem
 from SoundLabWindow import SoundLabWindow
-from graphic_interface.segment_visualization.VisualElement import VisualElement
 from duetto.audio_signals.AudioSignal import AudioSignal
 from graphic_interface.dialogs.CrossCorrelationDialog import CrossCorrelationDialog
 from ..dialogs.elemDetectSettings import ElemDetectSettingsDialog
-from graphic_interface.widgets.QSignalDetectorWidget import VisualItemsVisibility
 from graphic_interface.windows.ToastWidget import ToastWidget
 from sound_lab_core.Segmentation.SegmentManager import SegmentManager
 from ..dialogs.ManualClassificationDialog import ManualClassificationDialog
@@ -31,7 +29,6 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
     """
 
     # region CONSTANTS
-    process_thread = CallableStartThread()
 
     # different colors for the even and odds rows in the parameter table and segment colors.
     TABLE_ROW_COLOR_ODD = QColor(0, 0, 255, 150)
@@ -39,10 +36,9 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
     # stylesheet to use on excel file saved
     EXCEL_STYLE_HEADER = xlwt.easyxf('font: name Times New Roman, color-index black, bold on, height 300')
-    EXCEL_STYLE_BODY = xlwt.easyxf('font: name Times New Roman, color-index black, height 220',
-                                   num_format_str='#,# # 0.00')
-    EXCEL_STYLE_COPYRIGHT = xlwt.easyxf('font: name Arial, color-index pale_blue, height 250, italic on',
-                                        num_format_str='# ,# # 0.00')
+    EXCEL_STYLE_BODY = xlwt.easyxf('font: name Times New Roman, color-index black, height 220', num_format_str='#,# # 0.00')
+    EXCEL_STYLE_COPYRIGHT = xlwt.easyxf('font: name Arial, color-index pale_blue, height 250, italic on', num_format_str='# ,# # 0.00')
+
     # endregion
 
     # region Initialize
@@ -64,12 +60,6 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
             raise Exception("The signal to analyze must be of type AudioSignal")
 
         self.configureToolBarActionsGroups()
-
-        # the window to present user friendly messages
-        self.effect_window = ToastWidget(parent=self)
-
-        # in a invisible position by default
-        self.effect_window.move(QPoint(-100, -100))
 
         # the segmentation window do not allow to record a signal (for now...)
         self.actionRecord.setEnabled(False)
@@ -94,7 +84,7 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
         # connect the signals on the widget for new detected data by its tools
         # and to select the element in the table. Binding the element click to the table
-        self.widget.toolDataDetected.connect(self.updateStatusBar)
+        self.widget.toolDataDetected.connect(self.update_status_bar)
         self.widget.elementClicked.connect(self.select_element)
 
         self.dockWidgetParameterTableOscilogram.setVisible(False)
@@ -339,31 +329,29 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         """
         self.widget.signalFilePath = file_path
 
-    def write_data(self, ws, tableParameter):
+    def write_data(self, ws, table_parameter):
         """
         Write the data from the table into an excel file stylesheet.
         :param ws:WorkSheet object from xwlt module for interacts with excell files.
-        :param tableParameter: QTableWidget with the information of the data to save.
+        :param table_parameter: QTableWidget with the information of the data to save.
         """
         # write headers into the document
-        headers = [str(tableParameter.takeHorizontalHeaderItem(pos).text()) for pos in
-                   xrange(tableParameter.columnCount())]
+        headers = [str(table_parameter.takeHorizontalHeaderItem(pos).text()) for pos in
+                   xrange(table_parameter.columnCount())]
 
         for index, header in enumerate(headers):
             ws.write(0, index, header, self.EXCEL_STYLE_HEADER)
 
         # write data into the document
-        for i in xrange(1, tableParameter.model().rowCount() + 1):
-            for j in xrange(tableParameter.model().columnCount()):
-                if tableParameter.item(i - 1, j):
-                    ws.write(i, j, str(tableParameter.item(i - 1, j).data(Qt.DisplayRole).toString()),
-                             self.EXCEL_STYLE_BODY)
-                else:
-                    ws.write(i, j, unicode(self.tr(u"No Identified")), self.EXCEL_STYLE_BODY)
+        for i in xrange(1, table_parameter.model().rowCount() + 1):
+            for j in xrange(table_parameter.model().columnCount()):
+                cell_data = str(table_parameter.item(i - 1, j).data(Qt.DisplayRole).toString())
+
+                ws.write(i, j, cell_data, self.EXCEL_STYLE_BODY)
 
         # ws object must be part of a Work book that would be saved later
-        ws.write(tableParameter.model().rowCount() + 3, 0, unicode(self.tr(u"duetto-Sound Lab")),
-                 self.EXCEL_STYLE_COPYRIGHT)
+        ws.write(table_parameter.model().rowCount() + 3, 0,
+                 unicode(self.tr(u"duetto-Sound Lab")), self.EXCEL_STYLE_COPYRIGHT)
 
     # endregion
 
@@ -385,17 +373,18 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         :return:
         """
 
-        mbox = QMessageBox(QMessageBox.Question, self.tr(u"Save meditions"),
+        mbox = QMessageBox(QMessageBox.Question, self.tr(u"Save measurements"),
                            self.tr(u"Do you want to save the parameters of " + unicode(self.widget.signalName)),
                            QMessageBox.Yes | QMessageBox.No | QMessageBox.Cancel, self)
 
+        # if the signal was playing must be stopped
         self.widget.stop()
+
         # if there is a measurement made and parameters measured that could be saved
         if self.tableParameterOscilogram.rowCount() > 0:
-            # if the signal was playing must be stopped
 
             result = mbox.exec_()
-            # get the user decision
+            # get the user decision about save
             if result == QMessageBox.Cancel:
                 # cancel the close
                 event.ignore()
@@ -403,7 +392,7 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
             elif result == QMessageBox.Yes:
                 # save the measured data as excel
-                # get the file name to save the meditions
+                # get the file name to save the measurements
                 self.on_actionMeditions_triggered()
 
             self.clear_two_dim_windows()
@@ -420,7 +409,6 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         or the visible area otherwise.
         :return:
         """
-
         # delete the elements on the widget and get the indexes for update
         deleted_elements = self.widget.selected_elements_interval()
 
@@ -431,8 +419,7 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
         start_removed_index, end_removed_index = deleted_elements
 
-        if start_removed_index is not None \
-           and start_removed_index >= 0 \
+        if start_removed_index is not None and start_removed_index >= 0 \
            and end_removed_index < self.segmentManager.rowCount:
 
             # updates the detected elements
@@ -506,11 +493,12 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
         # show the image if the element is classified
         try:
-            classification = self.segmentManager.segment_classification(element_index)
+            classification = self.segmentManager.get_segment_classification(element_index)
             image = classification.get_image()
-
             if image:
                 self.show_image_on_element(element_index, image)
+
+            self.update_status_bar(classification.get_full_description())
 
         except Exception as ex:
             pass
@@ -519,12 +507,10 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
     def on_actionSelectedElement_Correlation_triggered(self):
         signal = self.widget.selected_element_signal()
         if not signal:
-            QMessageBox.warning(QMessageBox(), self.tr(u"Error"),
-                                self.tr(u"There is no selected element."))
+            QMessageBox.warning(QMessageBox(), self.tr(u"Error"), self.tr(u"There is no selected element."))
             return
 
-        dialog = CrossCorrelationDialog(self, self.widget, signal,
-                                        self.TABLE_ROW_COLOR_ODD, self.TABLE_ROW_COLOR_EVEN)
+        dialog = CrossCorrelationDialog(self, self.widget, signal, self.TABLE_ROW_COLOR_ODD, self.TABLE_ROW_COLOR_EVEN)
 
         self._cross_correlation_windows.append(dialog)
         dialog.elementSelected.connect(self.select_element)
@@ -540,17 +526,15 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         selection = self.widget.selected_elements_interval()
 
         if selection is None:
-            QMessageBox.warning(QMessageBox(), self.tr(u"Warning"),
-                                self.tr(u"There is no selection made."))
+            QMessageBox.warning(QMessageBox(), self.tr(u"Warning"), self.tr(u"There is no selection made."))
             return
 
         index_from, index_to = selection
         classification_dialog = ManualClassificationDialog()
+
         if classification_dialog.exec_():
             classification = classification_dialog.get_classification()
-
-            self.segmentManager.set_manual_elements_classification(range(index_from, index_to + 1),
-                                                                   classification)
+            self.segmentManager.set_manual_elements_classification(xrange(index_from, index_to + 1), classification)
 
     # endregion
 
@@ -563,15 +547,16 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         :param element_index:
         :return:
         """
-        toast = ToastWidget(self)
-        toast.set_image(image)
+        toast = ToastWidget(self, back_image=image, width=100, heigth=100)
 
-        element = self.widget.elements[element_index]
-        x = element.indexFrom + (element.indexTo - element.indexFrom) / 2.0
-        x = x * self.widget.width() * 1.0 / self.widget.get_visible_region()
+        element = self.segmentManager.elements[element_index]
+        min_x, max_x = self.widget.get_visible_region()
 
-        toast.move(self.widget.mapToGlobal(QPoint(x - self.effect_window.width() / 2.0,
-                   (self.widget.height() - self.effect_window.height()) / 2.0)))
+        x = element.indexFrom - min_x + (element.indexTo - element.indexFrom) / 2.0
+        x = x * self.widget.width() * 1.0 / (max_x - min_x)
+
+        toast.move(self.widget.mapToGlobal(QPoint(x - toast.width() / 2.0,
+                   (self.widget.height() - toast.height()) / 2.0)))
 
         toast.disappear()
 

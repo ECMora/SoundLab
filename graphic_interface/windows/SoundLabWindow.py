@@ -35,7 +35,7 @@ class SoundLabWindow(QtGui.QMainWindow):
         self.tools_actions = QActionGroup(self)
         self.save_images_actions = QActionGroup(self)
 
-        # play volume bar
+        # play volume bar (disabled for now)
         self.volume_bar = QSlider(QtCore.Qt.Horizontal)
         self.volume_bar.setToolTip(self.tr(u"Volume bar for Play."))
         self.volume_bar.setMaximumWidth(100)
@@ -45,8 +45,11 @@ class SoundLabWindow(QtGui.QMainWindow):
 
         # text edit for the signal name on the toolbar
         self.signalNameLineEdit = QtGui.QLineEdit(self)
+        self.signalNameLineEdit.setToolTip(self.tr(u"Signal name."))
         self.signalNameLineEdit.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Minimum))
+
         self.signalPropertiesTextLabel = QtGui.QLabel(self)
+        self.signalPropertiesTextLabel.setToolTip(self.tr(u"Signal properties."))
         self.signalPropertiesTextLabel.setAlignment(QtCore.Qt.AlignRight)
         self.signalPropertiesTextLabel.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum))
 
@@ -183,15 +186,15 @@ class SoundLabWindow(QtGui.QMainWindow):
         Save to disc the image of the oscilogram graph.
         :return:
         """
-        if self.widget.visibleOscilogram:
-            fname = unicode(QFileDialog.getSaveFileName(self, self.tr(u"Save oscilogram graph as an Image"),
-                                                u"oscilogram-Duetto-Image", u"*.jpg"))
-            save_image(self.widget.axesOscilogram, fname)
-
-        else:
+        if not self.widget.visibleOscilogram:
             QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
                                       self.tr(u"The Oscilogram plot widget is not visible.") + u"\n" + self.tr(
                                           u"You should see the data that you are going to save."))
+            return
+
+        fname = unicode(QFileDialog.getSaveFileName(self, self.tr(u"Save oscilogram graph as an Image"),
+                                                u"oscilogram-Duetto-Image", u"*.jpg"))
+        save_image(self.widget.axesOscilogram, fname)
 
     @pyqtSlot()
     def on_actionSpecgram_Image_triggered(self):
@@ -199,14 +202,15 @@ class SoundLabWindow(QtGui.QMainWindow):
         Save to disc the image of the spectrogram graph.
         :return:
         """
-        if self.widget.visibleSpectrogram:
-            fname = unicode(QFileDialog.getSaveFileName(self, self.tr(u"Save specgram graph as an Image"),
-                                                u"specgram-Duetto-Image", u"*.jpg"))
-            save_image(self.widget.axesSpecgram, fname)
-        else:
+        if not self.widget.visibleSpectrogram:
             QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
-                                      self.tr(u"The Espectrogram plot widget is not visible.") + " \n" + self.tr(
+                                      self.tr(u"The Spectrogram plot widget is not visible.") + " \n" + self.tr(
                                           u"You should see the data that you are going to save."))
+            return
+
+        path = unicode(QFileDialog.getSaveFileName(self, self.tr(u"Save specgram graph as an Image"),
+                                                    u"specgram-Duetto-Image", u"*.jpg"))
+        save_image(self.widget.axesSpecgram, path)
 
     @pyqtSlot()
     def on_actionCombined_Image_triggered(self):
@@ -215,14 +219,14 @@ class SoundLabWindow(QtGui.QMainWindow):
         visualization graphs.
         :return:
         """
-        if self.widget.visibleOscilogram and self.widget.visibleSpectrogram:
-            fname = unicode(QFileDialog.getSaveFileName(self, self.tr(u"Save graph as an Image"),
-                                                u"Duetto-Image", u"*.jpg"))
-            save_image(self.widget, fname)
-        else:
+        if not self.widget.visibleOscilogram or not self.widget.visibleSpectrogram:
             QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
                                       self.tr(u"One of the plot widgets is not visible.") + " \n" + self.tr(
                                           u"You should see the data that you are going to save."))
+            return
+
+        path = unicode(QFileDialog.getSaveFileName(self, self.tr(u"Save graph as an Image"), u"Graph Image", u"*.jpg"))
+        save_image(self.widget, path)
 
     #  endregion
 
@@ -305,7 +309,7 @@ class SoundLabWindow(QtGui.QMainWindow):
         # change volume in the player of the widget
         if self.widget:
             self.widget.change_volume(volume)
-        self.updateStatusBar(self.tr(u"The volume has been changed to "+unicode(volume) + u"%."), 1000)
+        self.update_status_bar(self.tr(u"The volume has been changed to "+unicode(volume) + u"%."), 1000)
 
     @pyqtSlot()
     def on_actionPlay_Sound_triggered(self):
@@ -362,7 +366,6 @@ class SoundLabWindow(QtGui.QMainWindow):
     def on_actionCopy_triggered(self):
         self.widget.copy()
 
-
     @pyqtSlot()
     def on_actionPaste_triggered(self):
         self.widget.paste()
@@ -372,15 +375,15 @@ class SoundLabWindow(QtGui.QMainWindow):
 
     # endregion
 
-    def updateStatusBar(self, line, time=None):
+    def update_status_bar(self, line, time_ms=None):
         """
         Set a new message in the status bar of the window.
+        :type time: the time that the line message wouold be visible in status bar.
         :param line: string with the line to show in the status bar
         """
-        if time is None:
-            self.statusbar.showMessage(line)
-        else:
-            self.statusbar.showMessage(line, time)
+        time_ms = 1500 if time_ms is None else time_ms
+
+        self.statusbar.showMessage(line, time_ms)
 
     def updateSignalPropertiesLabel(self, signal):
         """
@@ -390,9 +393,7 @@ class SoundLabWindow(QtGui.QMainWindow):
         # action signal is a place in the tool bar to show the current signal name
         self.signalNameLineEdit.setText(signal.name)
 
-        sr = signal.samplingRate
-        bit_depth = signal.bitDepth
-        channels = signal.channelCount
+        sr, bit_depth, channels = signal.samplingRate, signal.bitDepth, signal.channelCount
 
         properties = u"    " + \
                      u" <b>" + self.tr(u"Sampling Rate: ") + u"</b>" + unicode(sr) + u"  " + \

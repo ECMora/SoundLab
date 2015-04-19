@@ -129,7 +129,8 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         self.filesInFolder = []
         self.getFolderFiles(self.workSpace.lastOpenedFile)
 
-        #  the list of one dimensional processing windows opened by the user.
+        #  the list of (widget, window) of one dimensional processing windows and its
+        #  signal analizer widget opened by the user. (multiples signals may be opened)
         self.one_dim_windows = []
 
         #  accept drops to open signals by drop
@@ -646,7 +647,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         self.widget.signalIntervalSelected.connect(self.updateOneDimWindow)
 
         # connect for data display
-        self.widget.toolDataDetected.connect(self.updateStatusBar)
+        self.widget.toolDataDetected.connect(self.update_status_bar)
 
         # add context menu actions
         self.addWidgetContextMenuActions()
@@ -1952,6 +1953,18 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
             actions[4].triggered.connect(lambda: self._open(actions[4].data().toString()))
 
         self.menuRecentSignals.addActions(actions)
+
+    def re_translate(self):
+        """
+        Retranslate the window user visible strings when the language has changed
+        :return:
+        """
+        # translate the current window
+        self.retranslateUi(self)
+
+        # re translate the opened windows
+        for widget, window in self.one_dim_windows:
+            window.retranslateUi(window)
 
     @pyqtSlot()
     def on_actionSettings_triggered(self):

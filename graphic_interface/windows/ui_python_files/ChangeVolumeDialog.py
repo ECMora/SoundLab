@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\ChangeVolumeDialog.ui'
+# Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\ChangeVolumeDialog.ui'
 #
-# Created: Wed Apr 08 14:33:25 2015
+# Created: Sat Apr 18 18:27:00 2015
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -80,15 +80,20 @@ class Ui_Dialog(object):
 
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "Amplitude Modulation", None, QtGui.QApplication.UnicodeUTF8))
+        self.rbuttonNormalize.setToolTip(QtGui.QApplication.translate("Dialog", "Normalize the samples to a max level of amplitude in %.\n"
+"(Keeps the samples relation)", None, QtGui.QApplication.UnicodeUTF8))
         self.rbuttonNormalize.setText(QtGui.QApplication.translate("Dialog", "Normalize", None, QtGui.QApplication.UnicodeUTF8))
         self.spinboxNormalizePercent.setSuffix(QtGui.QApplication.translate("Dialog", "%", None, QtGui.QApplication.UnicodeUTF8))
         self.spinboxConstValue.setSuffix(QtGui.QApplication.translate("Dialog", "dB", None, QtGui.QApplication.UnicodeUTF8))
+        self.rbuttonConst.setToolTip(QtGui.QApplication.translate("Dialog", "Modulate amplitude multiplying signals samples by a constant value in dB", None, QtGui.QApplication.UnicodeUTF8))
         self.rbuttonConst.setText(QtGui.QApplication.translate("Dialog", "Constant", None, QtGui.QApplication.UnicodeUTF8))
+        self.rbuttonFadeOut.setToolTip(QtGui.QApplication.translate("Dialog", "Amplitude modulation by function in fade out way.", None, QtGui.QApplication.UnicodeUTF8))
         self.rbuttonFadeOut.setText(QtGui.QApplication.translate("Dialog", "Fade Out", None, QtGui.QApplication.UnicodeUTF8))
         self.cboxModulationType.setItemText(0, QtGui.QApplication.translate("Dialog", "Linear", None, QtGui.QApplication.UnicodeUTF8))
         self.cboxModulationType.setItemText(1, QtGui.QApplication.translate("Dialog", "sin", None, QtGui.QApplication.UnicodeUTF8))
         self.cboxModulationType.setItemText(2, QtGui.QApplication.translate("Dialog", "sin-sqrt", None, QtGui.QApplication.UnicodeUTF8))
         self.cboxModulationType.setItemText(3, QtGui.QApplication.translate("Dialog", "sin^2", None, QtGui.QApplication.UnicodeUTF8))
         self.cboxModulationType.setItemText(4, QtGui.QApplication.translate("Dialog", "cuadratic", None, QtGui.QApplication.UnicodeUTF8))
+        self.rbuttonFadeIn.setToolTip(QtGui.QApplication.translate("Dialog", "Amplitude modulation by function in fade in way.", None, QtGui.QApplication.UnicodeUTF8))
         self.rbuttonFadeIn.setText(QtGui.QApplication.translate("Dialog", "Fade In", None, QtGui.QApplication.UnicodeUTF8))
 

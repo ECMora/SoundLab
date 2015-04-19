@@ -126,8 +126,8 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
    <widget class="QMenu" name="menuFile">
     <property name="geometry">
      <rect>
-      <x>36</x>
-      <y>139</y>
+      <x>134</x>
+      <y>223</y>
       <width>171</width>
       <height>394</height>
      </rect>
@@ -297,6 +297,9 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
      <height>524287</height>
     </size>
    </property>
+   <property name="toolTip">
+    <string>Visual Settigns Area</string>
+   </property>
    <property name="styleSheet">
     <string notr="true">background-color: rgb(255, 255, 255);</string>
    </property>
@@ -341,6 +344,9 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
    </property>
    <property name="text">
     <string>Open</string>
+   </property>
+   <property name="toolTip">
+    <string>Open Signals</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
@@ -422,6 +428,9 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
    </property>
    <property name="text">
     <string>New</string>
+   </property>
+   <property name="toolTip">
+    <string>New signal</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+N</string>

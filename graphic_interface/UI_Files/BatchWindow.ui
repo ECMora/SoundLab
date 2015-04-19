@@ -13,6 +13,9 @@
   <property name="windowTitle">
    <string>Batch Window</string>
   </property>
+  <property name="toolTip">
+   <string>The batch window allow to execute a processing over multiples signal files.</string>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="1">
@@ -22,6 +25,9 @@
         <width>40</width>
         <height>16777215</height>
        </size>
+      </property>
+      <property name="toolTip">
+       <string>Explore for input folder.</string>
       </property>
       <property name="styleSheet">
        <string notr="true"/>
@@ -36,6 +42,9 @@
     </item>
     <item row="0" column="0">
      <widget class="QLineEdit" name="lineeditFilePath">
+      <property name="toolTip">
+       <string>Input files folder to process in batch.</string>
+      </property>
       <property name="styleSheet">
        <string notr="true"/>
       </property>
@@ -49,6 +58,9 @@
     </item>
     <item row="2" column="0">
      <widget class="QLineEdit" name="lineEditOutputFolder">
+      <property name="toolTip">
+       <string>Output files folder to process in batch.</string>
+      </property>
       <property name="styleSheet">
        <string notr="true"/>
       </property>
@@ -62,6 +74,9 @@
     </item>
     <item row="3" column="0" colspan="3">
      <widget class="QListWidget" name="listwidgetProgress">
+      <property name="toolTip">
+       <string>Progress list of messages.</string>
+      </property>
       <property name="styleSheet">
        <string notr="true"/>
       </property>
@@ -69,6 +84,9 @@
     </item>
     <item row="2" column="2">
      <widget class="QSpinBox" name="spboxSplitTime">
+      <property name="toolTip">
+       <string>The time interval for the duration of splited signals.</string>
+      </property>
       <property name="styleSheet">
        <string notr="true"/>
       </property>
@@ -94,6 +112,9 @@
         <height>16777215</height>
        </size>
       </property>
+      <property name="toolTip">
+       <string>Explore for output folder</string>
+      </property>
       <property name="styleSheet">
        <string notr="true"/>
       </property>
@@ -104,6 +125,9 @@
     </item>
     <item row="4" column="0" colspan="3">
      <widget class="QProgressBar" name="progressBarProcesed">
+      <property name="toolTip">
+       <string>Batch progress</string>
+      </property>
       <property name="styleSheet">
        <string>background-color: rgb(200, 200, 255);</string>
       </property>
@@ -114,6 +138,9 @@
     </item>
     <item row="5" column="2">
      <widget class="QPushButton" name="pushButtonStart">
+      <property name="toolTip">
+       <string>Execute Batch Process.</string>
+      </property>
       <property name="text">
        <string>Process</string>
       </property>

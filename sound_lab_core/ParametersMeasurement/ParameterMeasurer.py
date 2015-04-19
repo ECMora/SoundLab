@@ -30,6 +30,13 @@ class ParameterMeasurer:
 
     # endregion
 
+    @property
+    def default_value(self):
+        """
+        :return: The default Value for the current parameter
+        """
+        return 0
+
     def measure(self, segment):
         """
         Abstract method that performs the measure of the

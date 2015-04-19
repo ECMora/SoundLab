@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\BatchWindow.ui'
+# Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\BatchWindow.ui'
 #
-# Created: Mon Apr 13 15:02:17 2015
+# Created: Sat Apr 18 18:18:19 2015
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -74,12 +74,21 @@ class Ui_MainWindow(object):
 
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(QtGui.QApplication.translate("MainWindow", "Batch Window", None, QtGui.QApplication.UnicodeUTF8))
+        MainWindow.setToolTip(QtGui.QApplication.translate("MainWindow", "The batch window allow to execute a processing over multiples signal files.", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushButtonInputFolder.setToolTip(QtGui.QApplication.translate("MainWindow", "Explore for input folder.", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButtonInputFolder.setText(QtGui.QApplication.translate("MainWindow", "...", None, QtGui.QApplication.UnicodeUTF8))
+        self.lineeditFilePath.setToolTip(QtGui.QApplication.translate("MainWindow", "Input files folder to process in batch.", None, QtGui.QApplication.UnicodeUTF8))
         self.lineeditFilePath.setText(QtGui.QApplication.translate("MainWindow", "Select the folder of input audio files", None, QtGui.QApplication.UnicodeUTF8))
+        self.lineEditOutputFolder.setToolTip(QtGui.QApplication.translate("MainWindow", "Output files folder to process in batch.", None, QtGui.QApplication.UnicodeUTF8))
         self.lineEditOutputFolder.setText(QtGui.QApplication.translate("MainWindow", "Select the folder of output procesed files", None, QtGui.QApplication.UnicodeUTF8))
+        self.listwidgetProgress.setToolTip(QtGui.QApplication.translate("MainWindow", "Progress list of messages.", None, QtGui.QApplication.UnicodeUTF8))
+        self.spboxSplitTime.setToolTip(QtGui.QApplication.translate("MainWindow", "The time interval for the duration of splited signals.", None, QtGui.QApplication.UnicodeUTF8))
         self.spboxSplitTime.setSuffix(QtGui.QApplication.translate("MainWindow", "sec", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushButtonOutputFolder.setToolTip(QtGui.QApplication.translate("MainWindow", "Explore for output folder", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButtonOutputFolder.setText(QtGui.QApplication.translate("MainWindow", "...", None, QtGui.QApplication.UnicodeUTF8))
+        self.progressBarProcesed.setToolTip(QtGui.QApplication.translate("MainWindow", "Batch progress", None, QtGui.QApplication.UnicodeUTF8))
         self.progressBarProcesed.setStyleSheet(QtGui.QApplication.translate("MainWindow", "background-color: rgb(200, 200, 255);", None, QtGui.QApplication.UnicodeUTF8))
+        self.pushButtonStart.setToolTip(QtGui.QApplication.translate("MainWindow", "Execute Batch Process.", None, QtGui.QApplication.UnicodeUTF8))
         self.pushButtonStart.setText(QtGui.QApplication.translate("MainWindow", "Process", None, QtGui.QApplication.UnicodeUTF8))
         self.label.setText(QtGui.QApplication.translate("MainWindow", "Time Interval", None, QtGui.QApplication.UnicodeUTF8))
 

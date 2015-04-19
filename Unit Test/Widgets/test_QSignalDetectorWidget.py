@@ -22,6 +22,14 @@ class TestQSignalDetectorWidget(TestCase):
     def test_draw_elements(self):
         self.fail()
 
+    def test_get_visible_region(self):
+        app = QApplication([])
+        widget = QSignalDetectorWidget(None)
+
+        self.assertEqual((widget.mainCursor.min, widget.mainCursor.max), widget.get_visible_region())
+        widget.zoomIn()
+        self.assertEqual((widget.mainCursor.min, widget.mainCursor.max), widget.get_visible_region())
+
     def test__get_no_visible_visual_items_tuples(self):
         app = QApplication([])
         widget = QSignalDetectorWidget(None)
@@ -46,7 +54,6 @@ class TestQSignalDetectorWidget(TestCase):
         app = QApplication([])
         widget = QSignalDetectorWidget(None)
         elements = [OneDimensionalElement(None, 5 * x, 10 * x) for x in range(10)]
-        print([(5 * x, 10 * x) for x in range(10)])
         widget.elements = elements
         widget.mainCursor.min, widget.mainCursor.max = 0, 100
         widget.zoomCursor.min, widget.zoomCursor.max = 0, 100

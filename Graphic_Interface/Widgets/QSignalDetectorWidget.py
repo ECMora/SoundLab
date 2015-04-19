@@ -244,8 +244,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         :return: The visible elements that match the visibility rules (pixel size and interval)
         """
         # get the visible elements
-        return [self.get_element(i) for i in xrange(len(self.elements))
-                if self._is_element_visible(self.elements[i])]
+        return [self.get_element(i) for i in xrange(len(self.elements)) if self._is_element_visible(self.elements[i])]
 
     # endregion
 
@@ -404,8 +403,9 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
         osc_items = self.segmentation_visual_items + self.no_visible_items
 
-        # add oscilogram items
+        # add oscilogram items if visible
         if self.visibleOscilogram and osc and self.visual_items_visibility.oscilogram_items_visible:
+
             if self.visual_items_visibility.oscilogram_text_visible:
                 osc_items.extend([x for e in elements for x in e.time_element.visual_text])
 
@@ -417,8 +417,9 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
         spec_items = []
 
-        # add spectrogram items
+        # add spectrogram items if visible
         if self.visibleSpectrogram and spec and self.visual_items_visibility.spectrogram_items_visible:
+
             if self.visual_items_visibility.spectrogram_text_visible:
                 spec_items.extend([x for e in elements for x in e.spectral_element.visual_text])
 
@@ -568,15 +569,15 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         sorted_arr = np.array(self.sorted_elements_start_indexes)
 
         # binary search of the interval
-        indexFrom, indexTo = np.searchsorted(sorted_arr, start), np.searchsorted(sorted_arr, end)
+        index_from, index_to = np.searchsorted(sorted_arr, start), np.searchsorted(sorted_arr, end)
 
         # if the region selected starts before the previous element finish then include it
-        indexFrom -= 1 if indexFrom > 0 and start <= self.get_element(indexFrom - 1).indexTo else 0
+        index_from -= 1 if index_from > 0 and start <= self.get_element(index_from - 1).indexTo else 0
 
-        if indexTo < indexFrom or indexTo > len(self.elements):
+        if index_to < index_from or index_to > len(self.elements):
             return None
 
-        return indexFrom, indexTo - 1
+        return index_from, index_to - 1
 
     # endregion
 
@@ -600,12 +601,12 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         if start <= selected_rgn_start <= end or start <= selected_rgn_end <= end:
             self.select_element()
 
-        indexFrom, indexTo = selection
-        self.release_items(indexFrom, indexTo)
+        index_from, index_to = selection
+        self.release_items(index_from, index_to)
 
         # do not call the property to avoid recompute the unnecessary visualization release items
-        self._elements = self.elements[0:indexFrom] + self.elements[indexTo + 1:]
-        self.parameters_items = self.parameters_items[0:indexFrom] + self.parameters_items[indexTo + 1:]
+        self._elements = self.elements[0:index_from] + self.elements[index_to + 1:]
+        self.parameters_items = self.parameters_items[0:index_from] + self.parameters_items[index_to + 1:]
         self._update_elements_numbers()
         self.draw_elements()
 
@@ -683,7 +684,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         """
         :return: The region that is visible in signal oscilogram coordinates
         """
-        return self.mainCursor.max - self.mainCursor.min
+        return self.mainCursor.min, self.mainCursor.max
 
     def graph(self):
         """

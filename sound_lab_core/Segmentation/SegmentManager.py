@@ -10,8 +10,9 @@ from duetto.audio_signals import AudioSignal
 
 class SegmentManager(QObject):
     """
-    Manage the parameter measurement over a group of segments.
-    Provide a table interface for segments parameter measurement and classification
+    Manage the parameter measurement ad classification over a group of segments.
+    Provide a table interface for segments parameter measurement and classification.
+    Allow to save on db the measurements made on segments.
     """
 
     # region SIGNALS
@@ -56,7 +57,7 @@ class SegmentManager(QObject):
         self._signal = None
 
         # stores the measured parameters of the detected elements
-        # has dimensions len(Elements) * len(_measurerList)
+        # has dimensions len(elements) * len(measurerList)
         self.measuredParameters = np.array([])
 
         # stores the classification data that are present in the table of parameters
@@ -170,7 +171,12 @@ class SegmentManager(QObject):
 
     # region Classification
 
-    def segment_classification(self, segment_index):
+    def get_segment_classification(self, segment_index):
+        """
+        Returnsthe classification value of the segment at index segment_index
+        :param segment_index: the index of the segment to ask for classification value
+        :return:
+        """
         if not 0 <= segment_index < len(self.elements):
             raise Exception("Index out of range")
 
@@ -184,18 +190,18 @@ class SegmentManager(QObject):
         the values are applied to all the elements that have indexes in indexes_list.
         :return:
         """
+        indexes_list = [index for index in indexes_list if 0 <= index < self.rowCount]
 
         for i in indexes_list:
-            if 0 <= i < self.rowCount:
-                self.update_classification_visual_item(i, classification)
-                self.classificationTableData[i] = classification
+            self.update_elements_visual_items(self.classifier_adapter, i, classification)
+            self.classificationTableData[i] = classification
 
-        # self.db_session.commit()
         self.measurementsChanged.emit()
 
     def classify_elements(self):
         """
-        Execute the classification for all the detected elements with the current classifier.
+        Execute the automatic classification for all the detected
+        elements with the current selected classifier.
         :return:
         """
         # get the classification parameters and classifier
@@ -207,12 +213,9 @@ class SegmentManager(QObject):
 
         # classify each element
         for i in xrange(len(self.elements)):
-            # parameter adapter, value
+            #                                     parameter adapter, value
             parameter_vector = [self.measuredParameters[i, j] for j, x in enumerate(self.measurer_adapters)]
-            self._classify_element(element_index=i, classifier=classifier,
-                                   parameter_vector=parameter_vector)
-
-        # self.db_session.commit()
+            self._classify_element(element_index=i, classifier=classifier, parameter_vector=parameter_vector)
 
         self.measurementsChanged.emit()
 
@@ -233,22 +236,7 @@ class SegmentManager(QObject):
         self.classificationTableData[element_index] = classification_value
 
         # update visualization
-        self.update_classification_visual_item(element_index, classification_value)
-
-
-    def update_classification_visual_item(self, element_index, classification_value):
-        """
-
-        :param element_index:
-        :param classification_value:
-        :return:
-        """
-        # update the visualization
         self.update_elements_visual_items(self.classifier_adapter, element_index, classification_value)
-        visual_item = self.classifier_adapter.get_visual_items()
-        if visual_item:
-            visual_item.set_data(self.signal, self.elements[element_index], classification_value)
-            self.segmentVisualItemAdded.emit(element_index, visual_item)
 
     def update_elements_visual_items(self, adapter, element_index, value):
         """
@@ -355,25 +343,17 @@ class SegmentManager(QObject):
         """
 
         self.measureParametersProgressChanged.emit(0)
-        import time
 
-        t = time.time()
+        if len(self.measurer_adapters) > 0:
+            measure_methods = [parameter_adapter.get_instance() for parameter_adapter in self.measurer_adapters]
+            orm_parameters_mappers = [parameter_adapter.get_db_orm_mapper() for parameter_adapter in self.measurer_adapters]
 
-        if len(self.measurer_adapters) == 0:
-            return
+            for i in xrange(self.rowCount):
+                self._measure(self.elements[i], i, measure_methods, orm_parameters_mappers)
+                self.measureParametersProgressChanged.emit((i+1) * 100.0/self.rowCount)
 
-        measure_methods = [parameter_adapter.get_instance() for parameter_adapter in self.measurer_adapters]
-        orm_parameters_mappers = [parameter_adapter.get_db_orm_mapper() for parameter_adapter in self.measurer_adapters]
-
-        for i in xrange(self.rowCount):
-            self._measure(self.elements[i], i, measure_methods, orm_parameters_mappers)
-            self.measureParametersProgressChanged.emit((i+1) * 100.0/self.rowCount)
-
-        print("Time consuming measurement parameters: " + str(time.time() - t))
-
-        # self.db_session.commit()
-        self.measurementsChanged.emit()
         self.measureParametersProgressChanged.emit(100)
+        self.measurementsChanged.emit()
 
     def _measure(self, element, index, measure_methods=None, orm_parameters_mappers=None):
         """
@@ -397,7 +377,7 @@ class SegmentManager(QObject):
 
         for j, parameter_adapter in enumerate(self.measurer_adapters):
             try:
-                # compute the param with the interval_function
+                # measure param
                 self.measuredParameters[index, j] = measure_methods[j].measure(element)
 
                 # raise the parameter visual item if any
@@ -405,12 +385,10 @@ class SegmentManager(QObject):
 
             except Exception as e:
                 # if some error is raised set a default value
-                self.measuredParameters[index, j] = 0
+                self.measuredParameters[index, j] = measure_methods[j].default_value
                 print("Error measure params " + e.message)
 
     # endregion
-
-    # region DB interaction
 
     def save_data_on_db(self):
         """
@@ -418,8 +396,6 @@ class SegmentManager(QObject):
         :return:
         """
         pass
-
-    # endregion
 
     def __getitem__(self, item):
         if not isinstance(item, tuple) or not len(item) == 2:

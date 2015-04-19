@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>473</width>
+    <width>522</width>
     <height>339</height>
    </rect>
   </property>
@@ -23,10 +23,16 @@
    <iconset resource="resources/icons.qrc">
     <normaloff>:/myappicons/duetto_logo.png</normaloff>:/myappicons/duetto_logo.png</iconset>
   </property>
+  <property name="toolTip">
+   <string>The browse window allow to visualize several signals and its properties. You can select one or many to open in sound Lab.</string>
+  </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="4" column="9">
      <widget class="QPushButton" name="playFile_bttn">
+      <property name="toolTip">
+       <string>Play the first of the selected signals.</string>
+      </property>
       <property name="text">
        <string>Play</string>
       </property>
@@ -41,6 +47,9 @@
     </item>
     <item row="0" column="0" colspan="9">
      <widget class="QLineEdit" name="folderPath_lineEdit">
+      <property name="toolTip">
+       <string>Input folder of signals to browse.</string>
+      </property>
       <property name="text">
        <string>Seleccione la carpeta</string>
       </property>
@@ -66,6 +75,9 @@
         <height>16777215</height>
        </size>
       </property>
+      <property name="toolTip">
+       <string>Explore folders to add signals to the currently visualized on table.</string>
+      </property>
       <property name="text">
        <string>...</string>
       </property>
@@ -73,6 +85,9 @@
     </item>
     <item row="1" column="0" rowspan="2" colspan="10">
      <widget class="QTableWidget" name="files_tablewidget">
+      <property name="toolTip">
+       <string>Table with parameters of signals to analize them.</string>
+      </property>
       <column>
        <property name="text">
         <string>Filename</string>
@@ -97,6 +112,9 @@
     </item>
     <item row="4" column="8">
      <widget class="QPushButton" name="fileDown_bttn">
+      <property name="toolTip">
+       <string>Select next signal. (Next to currently selected)</string>
+      </property>
       <property name="text">
        <string>File Down</string>
       </property>
@@ -108,6 +126,9 @@
     </item>
     <item row="4" column="7">
      <widget class="QPushButton" name="fileUp_bttn">
+      <property name="toolTip">
+       <string>Select previous signal. (Previous to currently selected)</string>
+      </property>
       <property name="text">
        <string>File Up</string>
       </property>
@@ -119,6 +140,9 @@
     </item>
     <item row="4" column="6">
      <widget class="QPushButton" name="openFile_bttn">
+      <property name="toolTip">
+       <string>Open selected signals of the table on sound Lab</string>
+      </property>
       <property name="text">
        <string>Open</string>
       </property>
@@ -130,6 +154,9 @@
     </item>
     <item row="4" column="5">
      <widget class="QPushButton" name="invertSelection_bttn">
+      <property name="toolTip">
+       <string>Invert selection of signals on table.</string>
+      </property>
       <property name="text">
        <string>Invert</string>
       </property>
@@ -137,6 +164,9 @@
     </item>
     <item row="4" column="4">
      <widget class="QPushButton" name="selectAll_bttn">
+      <property name="toolTip">
+       <string>Select all signals on table</string>
+      </property>
       <property name="text">
        <string>Select All</string>
       </property>

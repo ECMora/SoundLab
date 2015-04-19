@@ -26,9 +26,7 @@ class ClassificationData:
         if family is not None and not isinstance(family, Family):
             raise Exception("Invalid argument type (family must be of tye Family).")
 
-        self.specie = None
-        self.genus = None
-        self.family = None
+        self.specie, self.genus, self.family = None, None, None
 
         if specie is not None:
             self.specie = specie
@@ -52,9 +50,7 @@ class ClassificationData:
         """
         :return: the image associated with the specie of the classification
         """
-        if self.specie is None:
-            return None
-        return self.specie.image
+        return None if self.specie is None else self.specie.image
 
     def __str__(self):
         if self.specie:
@@ -63,18 +59,13 @@ class ClassificationData:
             return "Genus: " + str(self.genus)
         if self.family:
             return "Family: " + str(self.family)
+
         return "No Classified"
 
     def get_full_description(self):
         desc = ""
-        if self.specie:
-            desc += "Specie: " + str(self.specie) + "\n"
-        if self.genus:
-            desc += "Genus: " + str(self.genus) + "\n"
-        if self.family:
-            desc += "Family: " + str(self.family) + "\n"
-
-        if not desc:
-            desc = "No identified"
+        desc += "Specie: " + str(self.specie) + "\n" if self.specie else ""
+        desc += "Genus: " + str(self.genus) + "\n" if self.genus else ""
+        desc += "Family: " + str(self.family) + "\n" if self.family else ""
 
         return desc

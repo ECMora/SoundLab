@@ -10,7 +10,7 @@ class ToastWidget(QGraphicsView):
     A friendly interface messages. (include image, and visual effects as blinking, fade etc)
     """
 
-    def __init__(self, parent=None, back_image=None):
+    def __init__(self, parent=None, back_image=None, width=100, heigth=100):
         super(ToastWidget, self).__init__(parent)
         self.setWindowFlags(Qt.SplashScreen)
         self.scene = QGraphicsScene(self)
@@ -19,7 +19,7 @@ class ToastWidget(QGraphicsView):
 
         self.setScene(self.scene)
         self.set_image(back_image)
-        self.setGeometry(QRect(self.x(), self.y(), 100, 100))
+        self.setGeometry(QRect(self.x(), self.y(), width, heigth))
         self.show()
 
     def set_image(self, image):

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\MainWindow.ui'
+# Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\MainWindow.ui'
 #
-# Created: Wed Apr 08 14:23:02 2015
+# Created: Sat Apr 18 20:22:31 2015
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -67,7 +67,7 @@ class Ui_DuettoMainWindow(object):
         self.menubar.setStyleSheet(_fromUtf8(""))
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuFile = QtGui.QMenu(self.menubar)
-        self.menuFile.setGeometry(QtCore.QRect(36, 139, 171, 394))
+        self.menuFile.setGeometry(QtCore.QRect(134, 223, 171, 394))
         self.menuFile.setAutoFillBackground(False)
         self.menuFile.setStyleSheet(_fromUtf8(""))
         self.menuFile.setTearOffEnabled(False)
@@ -466,9 +466,11 @@ class Ui_DuettoMainWindow(object):
         self.menuView.setTitle(QtGui.QApplication.translate("DuettoMainWindow", "Analysis", None, QtGui.QApplication.UnicodeUTF8))
         self.menuSound.setTitle(QtGui.QApplication.translate("DuettoMainWindow", "Sound", None, QtGui.QApplication.UnicodeUTF8))
         self.menuPlay_Speed.setTitle(QtGui.QApplication.translate("DuettoMainWindow", "Play Speed", None, QtGui.QApplication.UnicodeUTF8))
+        self.dock_settings.setToolTip(QtGui.QApplication.translate("DuettoMainWindow", "Visual Settigns Area", None, QtGui.QApplication.UnicodeUTF8))
         self.dock_settings.setWindowTitle(QtGui.QApplication.translate("DuettoMainWindow", "Settings", None, QtGui.QApplication.UnicodeUTF8))
         self.toolBar.setWindowTitle(QtGui.QApplication.translate("DuettoMainWindow", "toolBar", None, QtGui.QApplication.UnicodeUTF8))
         self.actionOpen.setText(QtGui.QApplication.translate("DuettoMainWindow", "Open", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionOpen.setToolTip(QtGui.QApplication.translate("DuettoMainWindow", "Open Signals", None, QtGui.QApplication.UnicodeUTF8))
         self.actionOpen.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Ctrl+O", None, QtGui.QApplication.UnicodeUTF8))
         self.actionExit.setText(QtGui.QApplication.translate("DuettoMainWindow", "Exit", None, QtGui.QApplication.UnicodeUTF8))
         self.actionExit.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Esc", None, QtGui.QApplication.UnicodeUTF8))
@@ -480,6 +482,7 @@ class Ui_DuettoMainWindow(object):
         self.actionOscilogram.setText(QtGui.QApplication.translate("DuettoMainWindow", "Oscillogram", None, QtGui.QApplication.UnicodeUTF8))
         self.actionCombined.setText(QtGui.QApplication.translate("DuettoMainWindow", "Combined", None, QtGui.QApplication.UnicodeUTF8))
         self.actionNew.setText(QtGui.QApplication.translate("DuettoMainWindow", "New", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionNew.setToolTip(QtGui.QApplication.translate("DuettoMainWindow", "New signal", None, QtGui.QApplication.UnicodeUTF8))
         self.actionNew.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Ctrl+N", None, QtGui.QApplication.UnicodeUTF8))
         self.actionOneDimensionalTransformation.setText(QtGui.QApplication.translate("DuettoMainWindow", "Power Spectrum", None, QtGui.QApplication.UnicodeUTF8))
         self.actionPlay_Sound.setText(QtGui.QApplication.translate("DuettoMainWindow", "Play", None, QtGui.QApplication.UnicodeUTF8))

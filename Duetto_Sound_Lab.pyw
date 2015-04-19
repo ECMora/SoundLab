@@ -4,25 +4,15 @@ import hashlib
 import sys
 from PyQt4.QtGui import *
 from PyQt4.QtCore import *
-from utils.Utils import deserialize, WORK_SPACE_FILE_NAME, CallableStartThread
+from utils.Utils import deserialize, WORK_SPACE_FILE_NAME
 from graphic_interface.Settings.Workspace import Workspace
 from graphic_interface.windows.SoundLabMainWindow import SoundLabMainWindow
 from graphic_interface.windows.PresentationSlogan.presentation import Ui_MainWindow
-from graphic_interface.segment_visualization.VisualItemsCache import VisualItemsCache
 from utils.db.DB_ORM import clean_db
 
 invalid_license_message = " A valid duetto Sound Lab license is missing or your trial period is over.\n" + \
                           " If you have a valid license try to open the application again, otherwise" + \
                           " contact duetto support team for information."
-
-
-class DuettoSoundLab(QMainWindow, Ui_MainWindow):
-    def __init__(self, parent=None, path=""):
-        super(DuettoSoundLab, self).__init__(parent)
-        self.setupUi(self)
-        self.setWindowFlags(Qt.SplashScreen)
-        # if path != "":
-        # self.videoPlayer.load(phonon.Phonon.MediaSource(path))
 
 
 def valid_license():
@@ -90,24 +80,20 @@ def load_language_translations(app=None, translation_file=None, window=None):
     :return:
     """
     try:
-        if app is None:
+        if app is None or window is None:
             return
 
-        # load a supplied translation
-        if translation_file is not None and os.path.exists(translation_file):
-            translator = QTranslator()
-            if translator.load(translation_file):
-                app.installTranslator(translator)
-                if window:
-                    window.retranslateUi(window)
-            return
-        else:
-            locale = QLocale.system().name()
-            qt_translator = QTranslator()
+        qt_translator = QTranslator()
+        locale = QLocale.system().name()
 
-            # install localization if any exists
-            if qt_translator.load(locale, "I18n\\"):
-                app.installTranslator(qt_translator)
+        # load the supplied translation if any
+        if translation_file is not None and os.path.exists(translation_file) and qt_translator.load(translation_file):
+            app.installTranslator(qt_translator)
+            window.re_translate()
+
+        # otherwise install localization if any
+        elif qt_translator.load(locale, "I18n\\"):
+            app.installTranslator(qt_translator)
 
     except Exception as ex:
         print("error loading language I18n to the app. " + ex.message)
@@ -118,6 +104,9 @@ if __name__ == '__main__':
     # pyqtgraph option to not use weave to speed up some operations
     setConfigOptions(useWeave=False)
 
+    check_license()
+
+    # set some visual effects on the app
     app = QApplication(sys.argv)
     app.setEffectEnabled(Qt.UI_FadeMenu)
     app.setEffectEnabled(Qt.UI_AnimateCombo)
@@ -128,40 +117,33 @@ if __name__ == '__main__':
     args = sys.argv[1] if len(sys.argv) > 1 else ''
 
     workspace_path = os.path.join("Utils", WORK_SPACE_FILE_NAME)
-    workSpace = None
+
+    if not os.path.exists(workspace_path):
+        workSpace = None
+
+    else:
+        workSpace = deserialize(workspace_path)
+
+        if not isinstance(workSpace, Workspace):
+            workSpace = None
+        else:
+            load_language_translations(app, workSpace.language)
+            load_app_style(app, workSpace.style)
+
     try:
         clean_db()
 
     except Exception as ex:
         print("Error cleaning the db. " + ex.message)
 
-    if os.path.exists(workspace_path):
-        workSpace = deserialize(workspace_path)
-
-        if isinstance(workSpace, Workspace):
-
-            # load_language_translations(app, workSpace.language)
-            load_app_style(app, workSpace.style)
-        else:
-            workSpace = None
-
     dmw = SoundLabMainWindow(signal_path=args, workSpace=workSpace)
-
     dmw.languageChanged.connect(lambda data: load_language_translations(app, data, dmw))
     dmw.styleChanged.connect(lambda data: load_app_style(app, data))
 
+    # check license every 10 seconds
     license_checker_timer = QTimer()
     license_checker_timer.timeout.connect(check_license)
+    license_checker_timer.start(10000)
 
-    if valid_license():
-        # check license every 10 seconds
-        license_checker_timer.start(10000)
-
-        # create items
-        VisualItemsCache()
-        dmw.show()
-
-        sys.exit(app.exec_())
-
-    else:
-        finish()
+    dmw.show()
+    sys.exit(app.exec_())

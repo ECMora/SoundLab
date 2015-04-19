@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\BrowseFilesWindow.ui'
 #
-# Created: Sun Jan 11 16:40:02 2015
+# Created: Sat Apr 18 18:23:48 2015
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,7 +17,7 @@ except AttributeError:
 class Ui_BrowseFilesWindow(object):
     def setupUi(self, BrowseFilesWindow):
         BrowseFilesWindow.setObjectName(_fromUtf8("BrowseFilesWindow"))
-        BrowseFilesWindow.resize(473, 339)
+        BrowseFilesWindow.resize(522, 339)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -120,9 +120,14 @@ class Ui_BrowseFilesWindow(object):
 
     def retranslateUi(self, BrowseFilesWindow):
         BrowseFilesWindow.setWindowTitle(QtGui.QApplication.translate("BrowseFilesWindow", "Browse Files", None, QtGui.QApplication.UnicodeUTF8))
+        BrowseFilesWindow.setToolTip(QtGui.QApplication.translate("BrowseFilesWindow", "The browse window allow to visualize several signals and its properties. You can select one or many to open in sound Lab.", None, QtGui.QApplication.UnicodeUTF8))
+        self.playFile_bttn.setToolTip(QtGui.QApplication.translate("BrowseFilesWindow", "Play the first of the selected signals.", None, QtGui.QApplication.UnicodeUTF8))
         self.playFile_bttn.setText(QtGui.QApplication.translate("BrowseFilesWindow", "Play", None, QtGui.QApplication.UnicodeUTF8))
+        self.folderPath_lineEdit.setToolTip(QtGui.QApplication.translate("BrowseFilesWindow", "Input folder of signals to browse.", None, QtGui.QApplication.UnicodeUTF8))
         self.folderPath_lineEdit.setText(QtGui.QApplication.translate("BrowseFilesWindow", "Seleccione la carpeta", None, QtGui.QApplication.UnicodeUTF8))
+        self.folderPath_bttn.setToolTip(QtGui.QApplication.translate("BrowseFilesWindow", "Explore folders to add signals to the currently visualized on table.", None, QtGui.QApplication.UnicodeUTF8))
         self.folderPath_bttn.setText(QtGui.QApplication.translate("BrowseFilesWindow", "...", None, QtGui.QApplication.UnicodeUTF8))
+        self.files_tablewidget.setToolTip(QtGui.QApplication.translate("BrowseFilesWindow", "Table with parameters of signals to analize them.", None, QtGui.QApplication.UnicodeUTF8))
         item = self.files_tablewidget.horizontalHeaderItem(0)
         item.setText(QtGui.QApplication.translate("BrowseFilesWindow", "Filename", None, QtGui.QApplication.UnicodeUTF8))
         item = self.files_tablewidget.horizontalHeaderItem(1)
@@ -131,10 +136,15 @@ class Ui_BrowseFilesWindow(object):
         item.setText(QtGui.QApplication.translate("BrowseFilesWindow", "Creation Date", None, QtGui.QApplication.UnicodeUTF8))
         item = self.files_tablewidget.horizontalHeaderItem(3)
         item.setText(QtGui.QApplication.translate("BrowseFilesWindow", "Duration", None, QtGui.QApplication.UnicodeUTF8))
+        self.fileDown_bttn.setToolTip(QtGui.QApplication.translate("BrowseFilesWindow", "Select next signal. (Next to currently selected)", None, QtGui.QApplication.UnicodeUTF8))
         self.fileDown_bttn.setText(QtGui.QApplication.translate("BrowseFilesWindow", "File Down", None, QtGui.QApplication.UnicodeUTF8))
+        self.fileUp_bttn.setToolTip(QtGui.QApplication.translate("BrowseFilesWindow", "Select previous signal. (Previous to currently selected)", None, QtGui.QApplication.UnicodeUTF8))
         self.fileUp_bttn.setText(QtGui.QApplication.translate("BrowseFilesWindow", "File Up", None, QtGui.QApplication.UnicodeUTF8))
+        self.openFile_bttn.setToolTip(QtGui.QApplication.translate("BrowseFilesWindow", "Open selected signals of the table on sound Lab", None, QtGui.QApplication.UnicodeUTF8))
         self.openFile_bttn.setText(QtGui.QApplication.translate("BrowseFilesWindow", "Open", None, QtGui.QApplication.UnicodeUTF8))
+        self.invertSelection_bttn.setToolTip(QtGui.QApplication.translate("BrowseFilesWindow", "Invert selection of signals on table.", None, QtGui.QApplication.UnicodeUTF8))
         self.invertSelection_bttn.setText(QtGui.QApplication.translate("BrowseFilesWindow", "Invert", None, QtGui.QApplication.UnicodeUTF8))
+        self.selectAll_bttn.setToolTip(QtGui.QApplication.translate("BrowseFilesWindow", "Select all signals on table", None, QtGui.QApplication.UnicodeUTF8))
         self.selectAll_bttn.setText(QtGui.QApplication.translate("BrowseFilesWindow", "Select All", None, QtGui.QApplication.UnicodeUTF8))
         self.actionOpen.setText(QtGui.QApplication.translate("BrowseFilesWindow", "Open", None, QtGui.QApplication.UnicodeUTF8))
         self.actionFileUp.setText(QtGui.QApplication.translate("BrowseFilesWindow", "FileUp", None, QtGui.QApplication.UnicodeUTF8))

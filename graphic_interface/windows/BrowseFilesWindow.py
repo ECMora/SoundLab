@@ -102,7 +102,7 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
 
         # add the files to the table widget
         for file_path in folderFiles:
-            self.addFile(file_path)
+            self.add_file(file_path)
 
         self.files_tablewidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.selectAll_bttn.setText(self.tr(u"Select All"))
@@ -111,21 +111,17 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
 
     # region Files Handling
 
-    def filesSelected(self):
+    def files_selected(self):
         """
         Get the files that are selected
         :return: list of tuple (filename, index on table's rows)
         """
-        files = []
+        # A file is selected if its first column of the table row is selected
+        #                      file ,index
+        return [(self.folderFiles[x], x) for x in xrange(self.files_tablewidget.rowCount())
+                if self.files_tablewidget.item(x, 0).checkState() == Qt.Checked]
 
-        for x in range(self.files_tablewidget.rowCount()):
-            # if the row is selected
-            if self.files_tablewidget.item(x, 0).checkState() == Qt.Checked:
-                files.append((self.folderFiles[x], x))
-
-        return files
-
-    def addFile(self, file_path, row=-1):
+    def add_file(self, file_path, row=-1):
         """
         Add the file at file_path to the widget table
         on the specified row
@@ -235,7 +231,7 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
 
         for file_name in getFolderFiles(self.selected_folder):
             # add the new file into the table widget
-            self.addFile(file_name)
+            self.add_file(file_name)
 
     # endregion
 
@@ -248,7 +244,7 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
         it opposite. (Checked -> Unchecked and Unchecked -> Checked)
         :return:
         """
-        for x in range(self.files_tablewidget.rowCount()):
+        for x in xrange(self.files_tablewidget.rowCount()):
             # change the check state of every file item
             check_state = self.files_tablewidget.item(x, 0).checkState()
 
@@ -270,7 +266,7 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
 
         self.selectAll_bttn.setText(self.tr(u"Deselect All") if check_state == Qt.Checked else self.tr(u"Select All"))
 
-        for x in range(self.files_tablewidget.rowCount()):
+        for x in xrange(self.files_tablewidget.rowCount()):
             self.files_tablewidget.item(x, 0).setCheckState(check_state)
 
     # endregion
@@ -309,7 +305,7 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
         if len(self.folderFiles) == 0:
             return
 
-        files_selected_indexes = [x[1] for x in self.filesSelected()]
+        files_selected_indexes = [x[1] for x in self.files_selected()]
 
         # if no selected files select first file if up and last file if down
         if len(files_selected_indexes) == 0:
@@ -322,7 +318,7 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
         end_index = -1 if up else len(self.folderFiles)
         step = -1 if up else 1
 
-        for i in range(start_index, end_index, step):
+        for i in xrange(start_index, end_index, step):
             if self.files_tablewidget.item(i, 0).checkState() == Qt.Unchecked:
                 # get the first unselected, change it state and open it
                 self.files_tablewidget.item(i, 0).setCheckState(Qt.Checked)
@@ -338,7 +334,7 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
         If there is more that one file selected all are open.
         :return:
         """
-        files_selected = [x[0] for x in self.filesSelected()]
+        files_selected = [x[0] for x in self.files_selected()]
         self.openFiles.emit(files_selected)
 
         if len(files_selected) > 0:
@@ -354,16 +350,12 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
         if no selection nothing is do it.
         :return:
         """
-        files_selected = [x[0] for x in self.filesSelected()]
+        files_selected = [x[0] for x in self.files_selected()]
         if len(files_selected) == 0:
             return
 
         # play the first file
         try:
-            # players = [AudioSignalPlayer(openSignal(x)) for x in files_selected]
-            # for i in range(1, len(files_selected)):
-            #     players[i-1].playingDone.connect(players[i].play)
-            # players[0].play()
             self.player = AudioSignalPlayer(openSignal(files_selected[0]))
             self.player.play()
 

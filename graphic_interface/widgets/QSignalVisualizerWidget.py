@@ -163,13 +163,11 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         """
         self.horizontalScrollBar.blockSignals(True)
 
-        # ----------------------------------------
         self.horizontalScrollBar.setMinimum(0)
         self.horizontalScrollBar.setMaximum(self.signal.length - (self.mainCursor.max - self.mainCursor.min))
         self.horizontalScrollBar.setValue(self.mainCursor.min)
         self.horizontalScrollBar.setPageStep(self.mainCursor.max - self.mainCursor.min)
         self.horizontalScrollBar.setSingleStep((self.mainCursor.max - self.mainCursor.min) / self.SCROLL_BAR_STEP)
-        # ----------------------------------------
 
         # if zoom tool is selected update its limits here because
         # this is where all change range operations finish it's processing
@@ -315,6 +313,14 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         """
         self.signalPlayer.volume = volume
 
+    def setPlayLoopEnabled(self, enabled):
+        """
+        Define the play loop as enable or disabled
+        :param enabled: boolean. True to enable play in loop false otherwise.
+        :return:
+        """
+        self.signalPlayer.playLoop = enabled
+
     def play(self):
         """
         Start to play the current signal.
@@ -325,14 +331,6 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         start, end = self.selectedRegion
         self.add_player_line(start, end)
         self.signalPlayer.play(start, end, self.playSpeed)
-
-    def setPlayLoopEnabled(self, enabled):
-        """
-        Define the play loop as enable or disabled
-        :param enabled: boolean. True to enable play in loop false otherwise.
-        :return:
-        """
-        self.signalPlayer.playLoop = enabled
 
     def switchPlayStatus(self):
         """
@@ -796,7 +794,6 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         """
         #  get the current signal selection interval
         start, end = self.selectedRegion
-        print(start, end)
         self.editionSignalProcessor.paste(start)
         self.undoRedoManager.add(PasteAction(self.signal, start, end))
         self.graph()
@@ -888,8 +885,7 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         """
         start, end = self.selectedRegion
 
-        self.undoRedoManager.add(
-                ModulateAction(self.signal, start, end, function, fade))
+        self.undoRedoManager.add(ModulateAction(self.signal, start, end, function, fade))
 
         self.signalProcessingAction(self.commonSignalProcessor.modulate, function, fade)
 
@@ -900,8 +896,7 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         :return:
         """
         start, end = self.selectedRegion
-        self.undoRedoManager.add(
-            NormalizeAction(self.signal, start, end, factor))
+        self.undoRedoManager.add(NormalizeAction(self.signal, start, end, factor))
         self.signalProcessingAction(self.commonSignalProcessor.normalize, factor)
 
     def scale(self, factor):
@@ -911,8 +906,7 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         :return:
         """
         start, end = self.selectedRegion
-        self.undoRedoManager.add(
-            ScaleAction(self.signal, start, end, factor))
+        self.undoRedoManager.add(ScaleAction(self.signal, start, end, factor))
         self.signalProcessingAction(self.commonSignalProcessor.scale, factor)
 
     def silence(self):

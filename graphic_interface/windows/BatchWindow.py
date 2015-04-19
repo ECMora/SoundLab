@@ -8,7 +8,7 @@ from ui_python_files.BatchWindow import Ui_MainWindow
 
 class BatchWindow(QtGui.QMainWindow, Ui_MainWindow):
     """
-    Main window of the application.
+    Window that allow to execute a processing over mutiliple selected signals.
     """
 
     def __init__(self, parent=None):
@@ -19,23 +19,18 @@ class BatchWindow(QtGui.QMainWindow, Ui_MainWindow):
 
     def batch(self):
         """
-        Method that performs the batch procesing
+        Method that performs the batch processing
         :return:
         """
 
-        # get the input audio files folder
-        # and the output meditions folder
+        # get the input and output audio files folder
         directory_input = str(self.lineeditFilePath.text())
         directory_output = str(self.lineEditOutputFolder.text())
 
-        # validate the folders
-        if not os.path.isdir(directory_input):
+        # validate folders
+        if not os.path.isdir(directory_input) or not os.path.isdir(directory_output):
             QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
-                                      self.tr(u"The input path is not a directory."))
-            return
-        if not os.path.isdir(directory_output):
-            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
-                                      self.tr(u"The output path is not a directory."))
+                                      self.tr(u"The the input or output path is not a directory."))
             return
 
         sounds = folder_files(directory_input)  # the audio files to process

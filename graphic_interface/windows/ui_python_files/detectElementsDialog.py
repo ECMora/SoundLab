@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\detectElementsDialog.ui'
+# Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\detectElementsDialog.ui'
 #
-# Created: Wed Mar 11 10:30:07 2015
+# Created: Sat Apr 18 20:28:15 2015
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -18,7 +18,7 @@ class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName(_fromUtf8("Dialog"))
         Dialog.setWindowModality(QtCore.Qt.WindowModal)
-        Dialog.resize(905, 437)
+        Dialog.resize(898, 466)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -30,20 +30,13 @@ class Ui_Dialog(object):
         Dialog.setModal(False)
         self.gridLayout = QtGui.QGridLayout(Dialog)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
-        self.widget = QSignalDetectorWidget(Dialog)
-        self.widget.setEnabled(False)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.widget.sizePolicy().hasHeightForWidth())
-        self.widget.setSizePolicy(sizePolicy)
-        self.widget.setMinimumSize(QtCore.QSize(300, 200))
-        self.widget.setObjectName(_fromUtf8("widget"))
-        self.formLayout_5 = QtGui.QFormLayout(self.widget)
-        self.formLayout_5.setFieldGrowthPolicy(QtGui.QFormLayout.AllNonFixedFieldsGrow)
-        self.formLayout_5.setObjectName(_fromUtf8("formLayout_5"))
-        self.gridLayout.addWidget(self.widget, 0, 0, 2, 1)
-        self.buttonBox = QtGui.QDialogButtonBox(Dialog)
+        self.widget_2 = QtGui.QWidget(Dialog)
+        self.widget_2.setStyleSheet(_fromUtf8(""))
+        self.widget_2.setObjectName(_fromUtf8("widget_2"))
+        self.gridLayout_2 = QtGui.QGridLayout(self.widget_2)
+        self.gridLayout_2.setMargin(0)
+        self.gridLayout_2.setObjectName(_fromUtf8("gridLayout_2"))
+        self.buttonBox = QtGui.QDialogButtonBox(self.widget_2)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -55,8 +48,8 @@ class Ui_Dialog(object):
         self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
         self.buttonBox.setCenterButtons(False)
         self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
-        self.gridLayout.addWidget(self.buttonBox, 1, 4, 1, 1)
-        self.dock_segm_classif = QtGui.QDockWidget(Dialog)
+        self.gridLayout_2.addWidget(self.buttonBox, 1, 3, 1, 1)
+        self.dock_segm_classif = QtGui.QDockWidget(self.widget_2)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -71,8 +64,21 @@ class Ui_Dialog(object):
         self.segmentation_classification_settings = QtGui.QWidget()
         self.segmentation_classification_settings.setObjectName(_fromUtf8("segmentation_classification_settings"))
         self.dock_segm_classif.setWidget(self.segmentation_classification_settings)
-        self.gridLayout.addWidget(self.dock_segm_classif, 0, 3, 1, 2)
-        self.dock_parameter_measurement = QtGui.QDockWidget(Dialog)
+        self.gridLayout_2.addWidget(self.dock_segm_classif, 0, 3, 1, 1)
+        self.widget = QSignalDetectorWidget(self.widget_2)
+        self.widget.setEnabled(False)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.widget.sizePolicy().hasHeightForWidth())
+        self.widget.setSizePolicy(sizePolicy)
+        self.widget.setMinimumSize(QtCore.QSize(300, 200))
+        self.widget.setObjectName(_fromUtf8("widget"))
+        self.formLayout_5 = QtGui.QFormLayout(self.widget)
+        self.formLayout_5.setFieldGrowthPolicy(QtGui.QFormLayout.AllNonFixedFieldsGrow)
+        self.formLayout_5.setObjectName(_fromUtf8("formLayout_5"))
+        self.gridLayout_2.addWidget(self.widget, 0, 1, 1, 1)
+        self.dock_parameter_measurement = QtGui.QDockWidget(self.widget_2)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -87,7 +93,8 @@ class Ui_Dialog(object):
         self.parameter_measurement_settings = QtGui.QWidget()
         self.parameter_measurement_settings.setObjectName(_fromUtf8("parameter_measurement_settings"))
         self.dock_parameter_measurement.setWidget(self.parameter_measurement_settings)
-        self.gridLayout.addWidget(self.dock_parameter_measurement, 0, 1, 1, 1)
+        self.gridLayout_2.addWidget(self.dock_parameter_measurement, 0, 2, 1, 1)
+        self.gridLayout.addWidget(self.widget_2, 2, 0, 1, 1)
 
         self.retranslateUi(Dialog)
         QtCore.QObject.connect(self.buttonBox, QtCore.SIGNAL(_fromUtf8("accepted()")), Dialog.accept)
@@ -96,8 +103,8 @@ class Ui_Dialog(object):
 
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "Detection Settings", None, QtGui.QApplication.UnicodeUTF8))
-        self.widget.setToolTip(QtGui.QApplication.translate("Dialog", "<html><head/><body><p>Signal to learn about algorithm parameters</p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
         self.dock_segm_classif.setWindowTitle(QtGui.QApplication.translate("Dialog", "Segmentation and Classification Settings", None, QtGui.QApplication.UnicodeUTF8))
+        self.widget.setToolTip(QtGui.QApplication.translate("Dialog", "<html><head/><body><p>Signal to learn about algorithm parameters</p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
         self.dock_parameter_measurement.setWindowTitle(QtGui.QApplication.translate("Dialog", "Parameter Measurements", None, QtGui.QApplication.UnicodeUTF8))
 
 from graphic_interface.widgets.QSignalDetectorWidget import QSignalDetectorWidget

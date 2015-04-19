@@ -81,10 +81,7 @@ class Specie(Base):
 
     @property
     def image(self):
-        if not self.picture:
-            return None
-
-        return QPixmap(os.path.join(db_path, "pictures", self.picture))
+        return None if not self.picture else QPixmap(os.path.join(db_path, "pictures", self.picture))
 
     @property
     def image_url(self):
