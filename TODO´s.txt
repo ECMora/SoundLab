@@ -20,7 +20,6 @@ Complexity-2: Small-to-medium code changes
 - - - - (April 2015) - - - -
 * Fix zoom bug. Mouse move heavy computation
 * Fix other bugs.
-* customize the
 -----------------------------------------------------------
 
 Complexity-3: Large code changes and/or multiple code files tasks

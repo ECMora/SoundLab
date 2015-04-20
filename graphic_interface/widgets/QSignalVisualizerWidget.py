@@ -126,9 +126,33 @@ class QSignalVisualizerWidget(QtGui.QWidget):
 
         self.graph()
 
+    def set_widget_layout(self, oscilogram_up=True, osc_height_relation=1, spec_height_relation=1):
+        """
+        :param oscilogram_up: True if oscilogfram graph is upper spectrogram on the widget.
+        False otherwise
+        :return:
+        """
+        layout = self.layout()
+
+        first_widget = self.axesOscilogram if oscilogram_up else self.axesSpecgram
+        second_widget = self.axesSpecgram if oscilogram_up else self.axesOscilogram
+        widgets = [first_widget, second_widget, self.horizontalScrollBar]
+
+        for w in widgets:
+            layout.removeWidget(w)
+
+        for w in widgets:
+            layout.addWidget(w)
+
+        layout.setStretch(0, osc_height_relation if oscilogram_up else spec_height_relation)
+        layout.setStretch(1, spec_height_relation if oscilogram_up else osc_height_relation)
+        layout.setStretch(2, 0)
+
     def configure_widget_layout(self):
         """
         Set some initial state configurations of the widget layout
+        :type oscilogram_up: True if oscilogfram graph is upper spectrogram on the widget.
+        False otherwise
         :return:
         """
         #  grouping the oscilogram and spectrogram widgets in the control
@@ -141,7 +165,7 @@ class QSignalVisualizerWidget(QtGui.QWidget):
 
         layout.setStretch(0, 1)
         layout.setStretch(1, 1)
-        layout.setStretch(2, 1)
+        layout.setStretch(2, 0)
         self.setLayout(layout)
 
     # endregion
@@ -1032,6 +1056,10 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         """
         self.axesSpecgram.load_workspace(workspace.spectrogramWorkspace, forceUpdate)
         self.axesOscilogram.load_workspace(workspace.oscillogramWorkspace, forceUpdate)
+
+        self.set_widget_layout(workspace.oscilogram_position_up,
+                               workspace.osc_height_relation,
+                               workspace.spec_height_relation)
 
     # endregion
 

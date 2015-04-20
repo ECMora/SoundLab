@@ -337,6 +337,21 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
                  u'value': self.workSpace.workTheme.spectrogramTheme.background_color,
                  u'default': self.workSpace.workTheme.spectrogramTheme.background_color},
             ]},
+            {u'name': unicode(self.tr(u'Graphs')), u'type': u'group', u'children': [
+                {u'name': unicode(self.tr(u'Position')), u'type': u'list',
+                 u'value': self.workSpace.oscilogram_position_up,
+                 u'default': self.workSpace.oscilogram_position_up,
+                 u'values': [(u"Oscilogram Up", True), (u"Spectrogram Up", False)]},
+
+                {u'name': unicode(self.tr(u'Osc Relation')), u'type': u'int', u'step': 1,
+                 u'default': self.workSpace.osc_height_relation,
+                 u'value': self.workSpace.osc_height_relation, u"limits": (1, 10)},
+
+                {u'name': unicode(self.tr(u'Spec Relation')), u'type': u'int', u'step': 1,
+                 u'default': self.workSpace.spec_height_relation,
+                 u'value': self.workSpace.spec_height_relation, u"limits": (1, 10)},
+            ]
+            },
             {u'name': unicode(self.tr(u'Themes')), u'type': u'group', u'children': [
                 {u'name': unicode(self.tr(u'Theme Selected')), u'type': u'list',
                  u'value': self.workSpace.theme_file,
@@ -975,7 +990,6 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
                                         self.tr(u'An error occurred while loading the theme.') + u'\n' +
                                         self.tr(u'Error:') + u'\n' + unicode(e))
 
-
             elif childName == unicode(self.tr(u'Style')) + u"." + \
                     unicode(self.tr(u'Style Selected')):
                 self.workSpace.style = data
@@ -995,6 +1009,18 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
                               unicode(self.tr(u'Tab Shape')):
                 self.tabOpenedSignals.setTabShape(int(data))
                 self.workSpace.tabShape = int(data)
+
+            elif childName == unicode(self.tr(u'Graphs')) + u"." + \
+                    unicode(self.tr(u'Position')):
+                self.workSpace.oscilogram_position_up = data
+
+            elif childName == unicode(self.tr(u'Graphs')) + u"." + \
+                    unicode(self.tr(u'Osc Relation')):
+                self.workSpace.osc_height_relation = data
+
+            elif childName == unicode(self.tr(u'Graphs')) + u"." + \
+                    unicode(self.tr(u'Spec Relation')):
+                self.workSpace.spec_height_relation = data
 
         # if opened signals
         if self.widget is not None:

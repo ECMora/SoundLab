@@ -91,10 +91,12 @@ class Workspace(object):
 
     def __init__(self, oscillogramWorkspace=None, spectrogramWorkspace=None, oneDimensionalWorkspace=None,
                  detectionWorkspace=None, openedFiles=None):
+
         self.oscillogramWorkspace = oscillogramWorkspace if oscillogramWorkspace else OscillogramWorkspace()
         self.spectrogramWorkspace = spectrogramWorkspace if spectrogramWorkspace else SpectrogramWorkspace()
         self.oneDimensionalWorkspace = oneDimensionalWorkspace if oneDimensionalWorkspace else OneDimensionalWorkspace()
         self.detectionWorkspace = detectionWorkspace if detectionWorkspace else DetectionWorkspace()
+
         self.openedFiles = [] if openedFiles is None else openedFiles
         self.recentFiles = []
 
@@ -104,6 +106,11 @@ class Workspace(object):
 
         self.visibleOscilogram = True
         self.visibleSpectrogram = True
+
+        # graph position of graphs
+        self.oscilogram_position_up = True
+        self.osc_height_relation = 1
+        self.spec_height_relation = 1
 
         self.tabPosition = int(QTabWidget.North)
         self.tabShape = int(QTabWidget.Rounded)
