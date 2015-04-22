@@ -173,7 +173,7 @@ class SegmentManager(QObject):
 
     def get_segment_classification(self, segment_index):
         """
-        Returnsthe classification value of the segment at index segment_index
+        Returns the classification value of the segment at index segment_index
         :param segment_index: the index of the segment to ask for classification value
         :return:
         """

@@ -82,7 +82,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         if workSpace is not None:
             self.workSpace = workSpace
 
-        self.loadRecentFiles()
+        self.update_recent_files()
 
         # the list with all the actions that are depending
         # of at least one open signal. Are disabled if there is no open signal
@@ -146,26 +146,23 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         if signal_path != '':
             self._open(unicode(signal_path))
 
-        QtCore.QTimer.singleShot(10, self.restorePreviousSession)
+        QtCore.QTimer.singleShot(10, self.restore_previous_session)
 
         # temporal disable of sound devices change and browse until study use cases of pyaudio 2.8
         self.actionSound_Devices.setEnabled(False)
 
         self.showMaximized()
 
-    def updateHistogramWidget(self):
+    def update_histogram_widget(self):
         """
         Updates the spectrogram histogram of the selected widget signal visualizer
         into the layout of the settings dock window when the selected signal change.
         :return:
         """
-        layout = self.osc_settings_contents.layout()
-        if layout is not None:
-            layout.removeWidget(self.histogram)
+        previous_histogram = self.histogram
 
-        #  get the histogram object of the default spectrogram widget.
-        #  this histogram would be visualized outside the spectrogram widget for best
-        #  user interaction
+        # get the histogram object of the default spectrogram widget. this histogram would
+        # be visualized outside the spectrogram widget for best user interaction
         self.histogram = self.widget.histogram
         self.histogram.region.sigRegionChanged.connect(self.updateRegionTheme)
         self.histogram.gradient.sigGradientChanged.connect(self.histogramGradientChanged)
@@ -174,7 +171,12 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
 
         #  set the vertical layout of the visual options window with the
         #  param tree and the histogram color bar
-        if layout is None:
+        layout = self.osc_settings_contents.layout()
+
+        if layout is not None:
+            layout.removeWidget(previous_histogram)
+        else:
+            # the first time loaded
             layout = QtGui.QVBoxLayout()
             layout.setMargin(0)
             layout.addWidget(self.parameterTreeWidget)
@@ -186,7 +188,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         self.osc_settings_contents.setLayout(layout)
         self.dock_settings.setWidget(self.osc_settings_contents)
 
-    def restorePreviousSession(self):
+    def restore_previous_session(self):
         """
         Restore the previous session of the app.
         Re-open the last opened files
@@ -194,14 +196,12 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         """
         # if previous files open then ask to open
         if len(self.workSpace.openedFiles) > 0:
-            buttons_box = QtGui.QMessageBox.Yes | QtGui.QMessageBox.No
             mbox = QtGui.QMessageBox(QtGui.QMessageBox.Question, self.tr(u"soundLab"),
                                      self.tr(u"You left ")+self.tr(unicode(len(self.workSpace.openedFiles)))
                                      + self.tr(u"opened file(s). Do you want to restore them?"),
-                                     buttons_box, self)
-            result = mbox.exec_()
+                                     QtGui.QMessageBox.Yes | QtGui.QMessageBox.No, self)
 
-            if result == QtGui.QMessageBox.Yes:
+            if mbox.exec_() == QtGui.QMessageBox.Yes:
                 for file_path in self.workSpace.openedFiles:
                     self._open(file_path)
                     # restore if any the widgets visibility
@@ -679,7 +679,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         self.updateSignalPropertiesLabel(self.widget.signal)
 
         # connect the histogram
-        self.updateHistogramWidget()
+        self.update_histogram_widget()
 
         # update the paramtree with the values form the new widget (ampl and freq range mostly)
         self.updateWorkspaceParamTree(from_widget=True)
@@ -1615,7 +1615,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
             # add the file name to the workspace recent opened file list
             if file_path not in self.workSpace.recentFiles:
                 self.workSpace.addOpenedFile(file_path)
-                self.loadRecentFiles()
+                self.update_recent_files()
 
             # select the zoom tool as default
             self.on_actionZoom_Cursor_triggered()
@@ -1933,16 +1933,17 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         # one_dim_window.load_workspace(self.workSpace)
 
         indexFrom, indexTo = self.widget.selectedRegion
-        one_dim_window.graph(indexFrom, indexTo)
+        if indexTo > indexFrom:
+            one_dim_window.graph(indexFrom, indexTo)
 
         #  store the opened one dimensional one_dim_transform windows for handling
         self.one_dim_windows.append((self.widget, one_dim_window))
 
     #  endregion
 
-    def loadRecentFiles(self):
+    def update_recent_files(self):
         """
-        Load the recent files actions as open signal actions on Recent Files
+        Update the menu with the recent files actions as open signal actions on Recent Files
         submenu.
         :return:
         """
