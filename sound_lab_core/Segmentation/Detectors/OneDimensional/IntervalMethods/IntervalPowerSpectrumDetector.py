@@ -15,4 +15,4 @@ class IntervalPowerSpectrumDetector(IntervalDetector):
 
     def interval_function(self, data, step, total):
         IntervalDetector.interval_function(self, data, step, total)
-        return np.sum(np.abs(fft(data)))
+        return np.max(np.abs(fft(data)))

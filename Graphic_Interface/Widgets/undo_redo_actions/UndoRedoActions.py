@@ -318,55 +318,47 @@ class ResamplingAction(UndoRedoAction):
 
 # region CUT,COPY,PASTE
 
-class CutAction(UndoRedoAction):
+class CutPasteAction(UndoRedoAction):
 
-    def __init__(self,signal,start,end):
+    def __init__(self, start, end, edition_signal_processor, cut_action=True):
         UndoRedoAction.__init__(self)
-        self.signal = signal
         self.start = start
         self.end = end
-        self.editionProcesor = EditionSignalProcessor(self.signal)
+        self.cut_action = cut_action
+        self.edition_signal_processor = edition_signal_processor
 
     def undo(self):
-       self.editionProcesor.paste(self.start)
+        if self.cut_action:
+            self.edition_signal_processor.paste(self.start)
+        else:
+            self.edition_signal_processor.cut(self.start, self.end)
 
     def redo(self):
-        self.editionProcesor.cut(self.start, self.end)
+        if self.cut_action:
+            self.edition_signal_processor.cut(self.start, self.end)
+        else:
+            self.edition_signal_processor.paste(self.start)
 
 
 class CopyAction(UndoRedoAction):
-    def __init__(self, signal, start, end):
+    def __init__(self, start, end, edition_signal_processor):
         UndoRedoAction.__init__(self)
-        self.signal = signal
         self.start = start
         self.end = end
-        self.editionProcesor = EditionSignalProcessor(self.signal)
+        self.edition_signal_processor = edition_signal_processor
+
+        # get the data on clipboard before copy to restore it on undo
+        self.clipboard = self.edition_signal_processor.get_from_clipboard()
+
+        # execute copy
+        self.redo()
 
     def undo(self):
-        # clears the clipboard
-        mime_data = QtCore.QMimeData()
-        mime_data.setData("signal", QtCore.QByteArray(""))
-        clip = QApplication.clipboard()
-        clip.setMimeData(mime_data)
+        self.edition_signal_processor.copy(self.start, self.end)
 
     def redo(self):
-        self.editionProcesor.copy(self.start, self.end)
+        self.edition_signal_processor.copy(self.start, self.end)
 
-
-class PasteAction(UndoRedoAction):
-
-    def __init__(self, signal, start, end):
-        UndoRedoAction.__init__(self)
-        self.signal = signal
-        self.start = start
-        self.end = end
-        self.editionProcessor = EditionSignalProcessor(self.signal)
-
-    def undo(self):
-        self.editionProcessor.cut(self.start, self.end)
-
-    def redo(self):
-        self.editionProcessor.paste(self.start)
 
 # endregion
 

@@ -165,3 +165,14 @@ class SegmentationThread(QThread):
     def run(self):
         self.detector.detect()
         self.segmentationFinished.emit(self.detector.elements)
+
+
+class RecordThread(QThread):
+
+    def __init__(self, parent=None, player=None):
+        QThread.__init__(self, parent)
+        self.player = player
+
+    def run(self):
+        if self.player is not None:
+            self.player.record()

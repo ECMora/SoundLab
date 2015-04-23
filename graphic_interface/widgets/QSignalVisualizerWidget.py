@@ -12,6 +12,7 @@ from SoundLabSpectrogramWidget import SoundLabSpectrogramWidget
 from duetto.signal_processing.filter_signal_processors.FilterSignalProcessor import FilterSignalProcessor
 from graphic_interface.widgets.signal_visualizer_tools import *
 from graphic_interface.widgets.undo_redo_actions.UndoRedoActions import *
+from utils.Utils import RecordThread
 
 
 class IntervalCursor:
@@ -385,12 +386,16 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         #  if the previous status was RECORDING then we have
         #  to stop the licence_checker_timer and draw the new signal on both controls.
         if prevStatus == self.signalPlayer.RECORDING:
-            self.axesSpecgram.setRecordMode(False)
+            self.finish_recording()
 
-            self._recordTimer.stop()
-            self.visibleOscilogram = True
-            self.visibleSpectrogram = True
-            self.zoomNone()
+    def finish_recording(self):
+        """
+        update variables when the recording is finished
+        :return:
+        """
+        self.axesSpecgram.setRecordMode(False)
+        self._recordTimer.stop()
+        self.zoomNone()
 
     def on_newDataRecorded(self):
         """
@@ -423,9 +428,14 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         try:
             self.axesSpecgram.setRecordMode(True)
             self.signalPlayer.record()
+            # self.record_thread = RecordThread(parent=None, player=self.signalPlayer)
+            # self.record_thread.finished.connect(self.finish_recording)
+            # self.record_thread.start()
+
+
             # add a undo redo action to save the state of signal edited.
-            # reserved to future use the implementation
-            # of the redo action for return to the previous one before record
+            # reserved to future use the implementation of the redo action to
+            # return at the previous one before record
             action = RecordAction(self._signal)
             self.undoRedoManager.add(action)
 
@@ -434,15 +444,13 @@ class QSignalVisualizerWidget(QtGui.QWidget):
             self.signal = Synthesizer.generateSilence(samplingRate=self.signal.samplingRate,
                                                       bitDepth=self.signal.bitDepth, duration=1)
             self.graph()
-            print(ex.message)
             raise ex
 
         #  update oscillogram time (ms) interval for drawing the recorded section
-        updateTime = 15
+        updateTime = 50
 
-        #  starting the update record licence_checker_timer
+        #  starting the update record timer
         self._recordTimer.start(updateTime)
-        #  self.createPlayerLine(self.mainCursor.minThresholdLa  bel)
 
     def pause(self):
         """
@@ -484,6 +492,7 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         """
         if self.playerLineOsc in self.axesOscilogram.getViewBox().addedItems:
             self.axesOscilogram.getViewBox().removeItem(self.playerLineOsc)
+
         if self.playerLineSpec in self.axesSpecgram.viewBox.addedItems:
             self.axesSpecgram.viewBox.removeItem(self.playerLineSpec)
 
@@ -681,11 +690,14 @@ class QSignalVisualizerWidget(QtGui.QWidget):
                 spec_rgn = self.axesSpecgram.gui_user_tool.zoomRegion.getRegion()
                 index_from_zoom, index_to_zoom = self.from_spec_to_osc(spec_rgn[0]), self.from_spec_to_osc(spec_rgn[1])
 
+        if index_from_zoom != index_to_zoom:
             index_from_zoom, index_to_zoom = max(index_from, index_from_zoom), min(index_to, index_to_zoom)
 
             index_from = index_from_zoom if index_from < index_from_zoom else index_from
 
             index_to = index_to_zoom if index_to_zoom < index_to else index_to
+        else:
+            index_from = index_from_zoom
 
         return int(index_from), int(index_to)
 
@@ -698,6 +710,7 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         :return:
         """
         return self.axesSpecgram.histogram
+
     #  endregion
 
     #  region Zoom in,out, none
@@ -787,16 +800,7 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         # get the current signal selection interval
         start, end = self.selectedRegion
         self.editionSignalProcessor.cut(start, end)
-        self.undoRedoManager.add(CutAction(self.signal, start, end))
-        self.graph()
-
-    def _updateSignal(self, new_signal):
-        """
-        Update the signal property and the visualization in the widgets.
-        Used when a changing size undo redo action is produced.
-        :param new_signal: The new signal to visualize
-        """
-        self.signal = new_signal
+        self.undoRedoManager.add(CutPasteAction(start, end, self.editionSignalProcessor, cut_action=True))
         self.graph()
 
     def copy(self):
@@ -808,8 +812,9 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         """
         #  get the current signal selection interval
         start, end = self.selectedRegion
-        self.editionSignalProcessor.copy(start, end)
-        self.undoRedoManager.add(CopyAction(self.signal, start, end))
+
+        # the copy action perform the copy to preserv the clipboard status before copy action
+        self.undoRedoManager.add(CopyAction(start, end, self.editionSignalProcessor))
 
     def paste(self):
         """
@@ -819,7 +824,7 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         #  get the current signal selection interval
         start, end = self.selectedRegion
         self.editionSignalProcessor.paste(start)
-        self.undoRedoManager.add(PasteAction(self.signal, start, end))
+        self.undoRedoManager.add(CutPasteAction(self.signal, start, end, self.editionSignalProcessor, cut_action=False))
         self.graph()
 
     #  endregion

@@ -329,6 +329,9 @@ class SoundLabWindow(QtGui.QMainWindow):
     def on_actionStop_Sound_triggered(self):
         self.widget.stop()
 
+        # if previous status was recording the length of signal has changed and must be updated
+        self.updateSignalPropertiesLabel(self.widget.signal)
+
     @pyqtSlot()
     def on_actionPause_Sound_triggered(self):
         self.widget.pause()

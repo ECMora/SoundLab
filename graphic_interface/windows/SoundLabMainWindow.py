@@ -1895,8 +1895,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
             mbox = QtGui.QMessageBox(QtGui.QMessageBox.Question, self.tr(u"Record"), self.tr(u"Do you want to append "
                                      u"recording to the existing " + self.widget.signalName + u" signal?"),
                                      QtGui.QMessageBox.Yes | QtGui.QMessageBox.No, self)
-            result = mbox.exec_()
-            new_signal = (result == QtGui.QMessageBox.No)
+            new_signal = (mbox.exec_() == QtGui.QMessageBox.No)
 
         try:
             self.widget.record(newSignal=new_signal)
