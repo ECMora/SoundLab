@@ -6,7 +6,7 @@ from sound_lab_core.ParametersMeasurement.ParameterMeasurer import ParameterMeas
 
 class PeakToPeakParameter(ParameterMeasurer):
     """
-    Class that measure the start time parameter on a segment
+    Class that measure the Peak to Peak parameter on a segment
     """
 
     def __init__(self):

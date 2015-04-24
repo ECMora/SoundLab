@@ -5,7 +5,7 @@ from . import DECIMAL_PLACES
 
 class EntropyTimeParameter(ParameterMeasurer):
     """
-    Class that measure the start time paramter on a segment
+    Class that measure the entropy parameter on a segment
     """
 
     def __init__(self):

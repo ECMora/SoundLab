@@ -5,7 +5,7 @@ from . import DECIMAL_PLACES
 
 class DurationTimeParameter(ParameterMeasurer):
     """
-    Class that measure the start time parameter on a segment
+    Class that measure the duration time parameter on a segment
     """
 
     def __init__(self):

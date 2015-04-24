@@ -2,11 +2,13 @@
 from sound_lab_core.ParametersMeasurement.ParameterMeasurer import ParameterMeasurer
 import duetto
 
+
 class LocalMaxMeanParameter(ParameterMeasurer):
     """
     Class that measure the local max mean on a segment
     """
     DECIMAL_PLACES = 2
+
     def __init__(self):
         ParameterMeasurer.__init__(self)
         self.name = "Local Max Mean(V)"

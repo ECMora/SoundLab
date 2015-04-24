@@ -6,7 +6,7 @@ from sound_lab_core.ParametersMeasurement.ParameterMeasurer import ParameterMeas
 
 class StartToMaxTimeParameter(ParameterMeasurer):
     """
-    Class that measure the start time paramter on a segment
+    Class that measure the start to max time paramter on a segment
     """
 
     def __init__(self):

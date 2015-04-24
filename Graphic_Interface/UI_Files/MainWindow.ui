@@ -126,8 +126,8 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
    <widget class="QMenu" name="menuFile">
     <property name="geometry">
      <rect>
-      <x>134</x>
-      <y>223</y>
+      <x>15</x>
+      <y>129</y>
       <width>171</width>
       <height>394</height>
      </rect>
@@ -724,7 +724,7 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
     <string>File Up</string>
    </property>
    <property name="shortcut">
-    <string>Alt+Up</string>
+    <string>Ctrl+Up</string>
    </property>
   </action>
   <action name="actionFile_Down">
@@ -736,7 +736,7 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
     <string>File Down</string>
    </property>
    <property name="shortcut">
-    <string>Alt+Down</string>
+    <string>Ctrl+Down</string>
    </property>
   </action>
   <action name="actionOsc_Image">
@@ -954,6 +954,9 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
    <property name="text">
     <string>switchPlayStatus</string>
    </property>
+   <property name="shortcut">
+    <string>Space</string>
+   </property>
   </action>
   <action name="actionBatchProcessing">
    <property name="text">
@@ -962,10 +965,10 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
   </action>
   <action name="actionChangeTabUp">
    <property name="text">
-    <string>ChangeTabUp</string>
+    <string>Go to next signal</string>
    </property>
    <property name="shortcut">
-    <string>Alt+Right</string>
+    <string>Ctrl+Right</string>
    </property>
   </action>
   <action name="actionPlayLoop">
@@ -982,16 +985,19 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
    <property name="toolTip">
     <string>Play Loop</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+P, Ctrl+L</string>
+   </property>
   </action>
   <action name="actionChangeTabDown">
    <property name="text">
-    <string>ChangeTabDown</string>
+    <string>Go to previous signal</string>
    </property>
    <property name="toolTip">
     <string>ChangeTabDown</string>
    </property>
    <property name="shortcut">
-    <string>Alt+Left</string>
+    <string>Ctrl+Left</string>
    </property>
   </action>
   <zorder>dock_settings</zorder>

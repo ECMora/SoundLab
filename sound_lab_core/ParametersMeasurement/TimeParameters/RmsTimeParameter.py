@@ -4,9 +4,10 @@ from utils.Utils import DECIMAL_PLACES
 from sound_lab_core.ParametersMeasurement.ParameterMeasurer import ParameterMeasurer
 import numpy as np
 
+
 class RmsTimeParameter(ParameterMeasurer):
     """
-    Class that measure the start time paramter on a segment
+    Class that measure the rms parameter on a segment
     """
 
     def __init__(self):
@@ -14,6 +15,8 @@ class RmsTimeParameter(ParameterMeasurer):
         self.name = "RMS(V)"
 
     def measure(self, segment):
-        indexFrom, indexTo = segment.indexFrom, segment.indexTo
-        return np.round(np.sqrt(np.mean(np.square(segment.signal.data[indexFrom:indexTo] /
-                                                 float(segment.signal.maximumValue)))), DECIMAL_PLACES)
+        index_from, index_to = segment.indexFrom, segment.indexTo
+
+        squares = np.square(segment.signal.data[index_from:index_to] / float(segment.signal.maximumValue))
+
+        return np.round(np.sqrt(np.mean(squares)), DECIMAL_PLACES)

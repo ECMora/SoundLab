@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\MainWindow.ui'
+# Form implementation generated from reading ui file 'D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\MainWindow.ui'
 #
-# Created: Sat Apr 18 20:22:31 2015
+# Created: Thu Apr 23 08:45:24 2015
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -67,7 +67,7 @@ class Ui_DuettoMainWindow(object):
         self.menubar.setStyleSheet(_fromUtf8(""))
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuFile = QtGui.QMenu(self.menubar)
-        self.menuFile.setGeometry(QtCore.QRect(134, 223, 171, 394))
+        self.menuFile.setGeometry(QtCore.QRect(15, 129, 171, 394))
         self.menuFile.setAutoFillBackground(False)
         self.menuFile.setStyleSheet(_fromUtf8(""))
         self.menuFile.setTearOffEnabled(False)
@@ -532,9 +532,9 @@ class Ui_DuettoMainWindow(object):
         self.actionFull_Screen.setText(QtGui.QApplication.translate("DuettoMainWindow", "Full Screen", None, QtGui.QApplication.UnicodeUTF8))
         self.actionFull_Screen.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Ctrl+S, Ctrl+F", None, QtGui.QApplication.UnicodeUTF8))
         self.actionFile_Up.setText(QtGui.QApplication.translate("DuettoMainWindow", "File Up", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionFile_Up.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Alt+Up", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionFile_Up.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Ctrl+Up", None, QtGui.QApplication.UnicodeUTF8))
         self.actionFile_Down.setText(QtGui.QApplication.translate("DuettoMainWindow", "File Down", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionFile_Down.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Alt+Down", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionFile_Down.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Ctrl+Down", None, QtGui.QApplication.UnicodeUTF8))
         self.actionOsc_Image.setText(QtGui.QApplication.translate("DuettoMainWindow", "Oscilogram Image", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSpecgram_Image.setText(QtGui.QApplication.translate("DuettoMainWindow", "Spectrogram Image", None, QtGui.QApplication.UnicodeUTF8))
         self.actionCombined_Image.setText(QtGui.QApplication.translate("DuettoMainWindow", "Combined Image", None, QtGui.QApplication.UnicodeUTF8))
@@ -565,14 +565,16 @@ class Ui_DuettoMainWindow(object):
         self.actionOpenInOtherTab.setToolTip(QtGui.QApplication.translate("DuettoMainWindow", "Open In Other Tab", None, QtGui.QApplication.UnicodeUTF8))
         self.actionOpen_Selection.setText(QtGui.QApplication.translate("DuettoMainWindow", "Open selection", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSwitchPlayStatus.setText(QtGui.QApplication.translate("DuettoMainWindow", "switchPlayStatus", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSwitchPlayStatus.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Space", None, QtGui.QApplication.UnicodeUTF8))
         self.actionBatchProcessing.setText(QtGui.QApplication.translate("DuettoMainWindow", "Batch Processing", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionChangeTabUp.setText(QtGui.QApplication.translate("DuettoMainWindow", "ChangeTabUp", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionChangeTabUp.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Alt+Right", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionChangeTabUp.setText(QtGui.QApplication.translate("DuettoMainWindow", "Go to next signal", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionChangeTabUp.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Ctrl+Right", None, QtGui.QApplication.UnicodeUTF8))
         self.actionPlayLoop.setText(QtGui.QApplication.translate("DuettoMainWindow", "Play loop", None, QtGui.QApplication.UnicodeUTF8))
         self.actionPlayLoop.setToolTip(QtGui.QApplication.translate("DuettoMainWindow", "Play Loop", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionChangeTabDown.setText(QtGui.QApplication.translate("DuettoMainWindow", "ChangeTabDown", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionPlayLoop.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Ctrl+P, Ctrl+L", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionChangeTabDown.setText(QtGui.QApplication.translate("DuettoMainWindow", "Go to previous signal", None, QtGui.QApplication.UnicodeUTF8))
         self.actionChangeTabDown.setToolTip(QtGui.QApplication.translate("DuettoMainWindow", "ChangeTabDown", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionChangeTabDown.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Alt+Left", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionChangeTabDown.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Ctrl+Left", None, QtGui.QApplication.UnicodeUTF8))
 
 from graphic_interface.widgets.SoundLabToolBar import SoundLabToolBarWidget
 import icons_rc

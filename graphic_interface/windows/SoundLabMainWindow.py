@@ -258,7 +258,9 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         self.tabOpenedSignals.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
         actions = [self.actionClose, self.actionCloseAll, self.actionCloseOthers,
                    self.actionCloseUnmodified, self.actionOpenInOtherTab,
-                   self.actionOpen_Selection]
+                   self.actionOpen_Selection, self.actionChangeTabDown,
+                   self.actionChangeTabUp]
+
         for act in actions:
             self.tabOpenedSignals.addAction(act)
 
@@ -466,7 +468,11 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
             #  widgets images
             self.actionOsc_Image,
             self.actionSpecgram_Image,
-            self.actionCombined_Image
+            self.actionCombined_Image,
+
+            # move on opened signals
+            self.actionChangeTabDown,
+            self.actionChangeTabUp
         ])
         # endregion
 
@@ -787,7 +793,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
 
         index_from, index_to = self.widget.selectedRegion
 
-        if index_to > index_from:
+        if index_from > 0 and index_to < signal.length:
             signal = signal.copy(index_from, index_to)
 
         # check if the signal can be analyzed according to its

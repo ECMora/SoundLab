@@ -67,7 +67,7 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         # the object that handles the measuring of parameters and manage the segments
         self.segmentManager = SegmentManager()
         self.segmentManager.measurementsChanged.connect(self.update_parameter_table)
-        self.segmentManager.detectionProgressChanged.connect(lambda x: self.update_detection_progress_bar(x * 0.9))
+        self.segmentManager.detectionProgressChanged.connect(lambda x: self.windowProgressDetection.setValue(x * 0.9))
         self.segmentManager.segmentVisualItemAdded.connect(self.widget.add_parameter_visual_items)
 
         # set the signal to the widget
@@ -580,16 +580,6 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
     # region Detection
 
-    def update_detection_progress_bar(self, x):
-        """
-        update the detection progress bar.
-        detection progress bar provides a visible interface
-        of the execution progress of consuming time actions such detection and classification.
-
-        :param x: Value to set in the progress bar
-        """
-        self.windowProgressDetection.setValue(x)
-
     def set_progress_bar_visibility(self, visibility=True):
         """
         Show the progress bar in the middle of the widget.
@@ -597,7 +587,10 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         show to the user it's progress.
         :return:
         """
-        if visibility:
+        if not visibility:
+            self.windowProgressDetection.setVisible(False)
+
+        else:
             width, height = self.width(), self.height()
             x, y = self.widget.x(), self.widget.y()
             progress_bar_height = height / 20.0
@@ -605,8 +598,6 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
             self.windowProgressDetection.resize(width / 3.0, progress_bar_height)
             self.windowProgressDetection.move(x + width / 3.0, y + height / 2.0 + progress_bar_height / 2.0)
             self.windowProgressDetection.setVisible(True)
-        else:
-            self.windowProgressDetection.setVisible(False)
 
         self.repaint()
 
@@ -626,22 +617,17 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         elementsDetectorDialog.restore_previous_state(self.segmentManager.measurer_adapters,
                                                       self.segmentManager.detector_adapter,
                                                       self.segmentManager.classifier_adapter)
-
-        # deselect the elements before new detection
-        self.on_actionDeselect_Elements_triggered()
-
         try:
             if elementsDetectorDialog.exec_():
-                elementsDetectorDialog.setVisible(False)
                 # the detection dialog is a factory of segmentation,
                 # parameter parameters and classification concrete implementations
 
-                # get the detector from dialog selection
+                # get the segmentation, classification and parameters methods
                 self.segmentManager.detector_adapter = elementsDetectorDialog.detector
                 self.segmentManager.classifier_adapter = elementsDetectorDialog.classifier
                 self.segmentManager.measurer_adapters = elementsDetectorDialog.get_measurer_list()
 
-                self.update_detection_progress_bar(0)
+                self.windowProgressDetection.setValue(0)
                 self.set_progress_bar_visibility(True)
 
                 # execute the detection
@@ -650,7 +636,7 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
         except Exception as e:
             print("detection errors: " + e.message)
-            self.update_detection_progress_bar(100)
+            self.windowProgressDetection.setValue(100)
             self.set_progress_bar_visibility(False)
 
     def segmentation_finished(self):
@@ -658,13 +644,13 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         Callback to execute when the segmentation segmentation_thread finished.
         :return:
         """
-        self.update_detection_progress_bar(90)
+        self.windowProgressDetection.setValue(90)
 
         # put the elements detected into the widget to visualize them
         self.widget.elements = self.segmentManager.elements
         self.widget.graph()
 
-        self.update_detection_progress_bar(100)
+        self.windowProgressDetection.setValue(100)
         self.set_progress_bar_visibility(False)
 
         # measure the parameters over elements detected
@@ -682,8 +668,8 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         # classify detected elements
         self.segmentManager.classify_elements()
 
-        # must be refreshed the widget because the parameter measurement includes
-        # visual items into the graph
+        # must be refreshed the widget because the parameter measurement
+        # may include visual items into the graph
         self.widget.graph()
 
         self.update_parameter_table()

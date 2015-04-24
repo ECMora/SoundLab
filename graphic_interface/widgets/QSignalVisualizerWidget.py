@@ -696,8 +696,6 @@ class QSignalVisualizerWidget(QtGui.QWidget):
             index_from = index_from_zoom if index_from < index_from_zoom else index_from
 
             index_to = index_to_zoom if index_to_zoom < index_to else index_to
-        else:
-            index_from = index_from_zoom
 
         return int(index_from), int(index_to)
 

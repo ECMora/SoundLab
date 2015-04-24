@@ -8,12 +8,13 @@ class SoundLabAdapter(QObject):
     """
     Adapter Pattern Design implementation to bind
     support for segmentation classification and
-    parameter measurement into the visual interface
+    parameter measurement into the visual interface of trees.
     """
 
     # region CONSTANTS
 
-    # the color for the pen to draw visual items
+    # The color for the pen to create visual items
+    # from segmentation or parameter measurement
     COLOR = pg.mkColor(QtGui.QColor(255, 20, 20, 255))
 
     # the width for the line on the visual items

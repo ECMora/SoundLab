@@ -24,7 +24,6 @@ class FreqParameterAdapter(ParameterAdapter):
         return self.settings
 
     def compute_settings(self):
-        # todo improvement the way to get the calues form the param tree
         # use a try catch because the instance must be required after
         # param tree object is destroyed
         try:

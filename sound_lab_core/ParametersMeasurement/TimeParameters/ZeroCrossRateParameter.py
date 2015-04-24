@@ -5,7 +5,7 @@ import numpy as np
 
 class ZeroCrossRateParameter(ParameterMeasurer):
     """
-    Class that measure the start time parameter on a segment
+    Class that measure the zero cross rate parameter on a segment
     """
 
     DECIMAL_PLACES = 4

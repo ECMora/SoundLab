@@ -3,7 +3,6 @@ from PyQt4.QtGui import QColor
 import pyqtgraph as pg
 import numpy as np
 from graphic_interface.segment_visualization.DetectedSoundLabElement import DetectedSoundLabElement
-from graphic_interface.segment_visualization.VisualElement import VisualElement
 from QSignalVisualizerWidget import QSignalVisualizerWidget
 from graphic_interface.segment_visualization.VisualItemsCache import VisualItemsCache
 

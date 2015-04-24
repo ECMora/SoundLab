@@ -3,11 +3,19 @@ from sound_lab_core.SoundLabAdapter import SoundLabAdapter
 
 
 class ParameterAdapter(SoundLabAdapter):
+    """
+    The base of implementations for parameters
+    measurements.
+    """
 
     def __init__(self):
         SoundLabAdapter.__init__(self)
 
     def get_db_orm_mapper(self):
+        """
+        Get the db orm instance class for the current parameter
+        :return:
+        """
         if self.db_mapper is None:
             self.db_mapper = self._get_db_orm_mapper()
         return self.db_mapper

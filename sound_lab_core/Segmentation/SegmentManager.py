@@ -207,8 +207,6 @@ class SegmentManager(QObject):
         # get the classification parameters and classifier
         classifier = self.classifier_adapter.get_instance()
 
-        # get the classification parameters and method
-        classifier = classifier if classifier is not None else self.classifier_adapter.get_instance()
         classifier.parameters = self.measurer_adapters
 
         # classify each element
@@ -229,10 +227,12 @@ class SegmentManager(QObject):
         :return:
         """
         classifier = classifier if classifier is not None else self.classifier_adapter.get_instance()
+
         parameter_vector = parameter_vector if parameter_vector is not None else \
             [self.measuredParameters[element_index, j] for j in xrange(len(self.measurer_adapters))]
 
         classification_value = classifier.classify(self.elements[element_index], parameter_vector)
+
         self.classificationTableData[element_index] = classification_value
 
         # update visualization
@@ -246,11 +246,13 @@ class SegmentManager(QObject):
         :return:
         """
         visual_items = adapter.get_visual_items()
-        if visual_items:
-            for item in visual_items:
-                item.set_data(self.signal, self.elements[element_index], value)
+        if not visual_items:
+            return
 
-            self.segmentVisualItemAdded.emit(element_index, visual_items)
+        for item in visual_items:
+            item.set_data(self.signal, self.elements[element_index], value)
+
+        self.segmentVisualItemAdded.emit(element_index, visual_items)
 
     # endregion
 
@@ -264,9 +266,8 @@ class SegmentManager(QObject):
         :return:
         """
 
-        self.measuredParameters = np.concatenate(
-            (self.measuredParameters[:start_index],
-             self.measuredParameters[end_index + 1:]))
+        self.measuredParameters = np.concatenate((self.measuredParameters[:start_index],
+                                                  self.measuredParameters[end_index + 1:]))
 
         self.classificationTableData = self.classificationTableData[:start_index] +\
                                        self.classificationTableData[end_index + 1:]
@@ -284,7 +285,7 @@ class SegmentManager(QObject):
         :param index: the index to insert the element at
         :return:
         """
-        # index could be == self.rowCount if insert after all previous elements
+        # index could be equal to rowCount if insert after all previous elements
         if not 0 <= index <= self.rowCount:
             raise IndexError()
 
@@ -296,13 +297,11 @@ class SegmentManager(QObject):
 
         else:
             # add the element
+            self.classificationTableData.insert(index, None)
+            self._elements.insert(index, element)
             self.measuredParameters = np.concatenate((self.measuredParameters[:index],
                                                       np.array([np.zeros(len(self.measurer_adapters))]),
                                                       self.measuredParameters[index:]))
-
-            self.classificationTableData.insert(index, None)
-            self._elements.insert(index, element)
-
         # measure parameters
         self._measure(element, index)
         self._classify_element(index)
@@ -313,9 +312,7 @@ class SegmentManager(QObject):
         """
         Detect elements in the signal using the detector
         """
-
         detector = self.detector_adapter.get_instance(self.signal)
-
         detector.detectionProgressChanged.connect(lambda x: self.detectionProgressChanged.emit(x))
 
         self.segmentation_thread = SegmentationThread(parent=None, detector=detector)
