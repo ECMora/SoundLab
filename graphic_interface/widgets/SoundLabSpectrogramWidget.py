@@ -94,16 +94,19 @@ class SoundLabSpectrogramWidget(SoundLabWidget, SpectrogramWidget):
         :param record_mode_active: The state of the record mode
         :return:
         """
-        if record_mode_active != self.activeRecordMode:
-            # if start record mode get the signal
-            if not self.activeRecordMode:
-                self.recordModeSpectrogram.signal = self.specgramHandler.signal
+        if record_mode_active == self.activeRecordMode:
+            return
 
-            spectrogram_handler = self.specgramHandler
-            self.specgramHandler = self.recordModeSpectrogram
-            self.recordModeSpectrogram = spectrogram_handler
+        # if start record mode get the signal
+        if not self.activeRecordMode:
+            self.recordModeSpectrogram.signal = self.specgramHandler.signal
 
-            self.activeRecordMode = not self.activeRecordMode
+        # swap
+        spectrogram_handler = self.specgramHandler
+        self.specgramHandler = self.recordModeSpectrogram
+        self.recordModeSpectrogram = spectrogram_handler
+
+        self.activeRecordMode = not self.activeRecordMode
 
     # region Theme and Workspace
 

@@ -1,9 +1,9 @@
-from PyQt4.QtCore import QObject, pyqtSignal
+from PyQt4.QtCore import QObject, pyqtSignal, QThread
 import numpy as np
 from sound_lab_core.Segmentation.Detectors.Adapters import ManualDetectorAdapter
 from sound_lab_core.Clasification.Adapters import ManualClassifierAdapter
 from sound_lab_core.Elements.OneDimensionalElements.OneDimensionalElement import OneDimensionalElement
-from utils.Utils import SegmentationThread
+from utils.Utils import SegmentationThread, MeasurementThread
 from utils.db.DB_ORM import Segment, DB, Measurement
 from duetto.audio_signals import AudioSignal
 
@@ -27,12 +27,11 @@ class SegmentManager(QObject):
     # signal raised when the segmentation has finished
     segmentationFinished = pyqtSignal()
 
+    # signal raised when the measurement of parameteers and classification has finished
+    measurementsFinished = pyqtSignal()
+
     # signal raised while detection is been made. Raise the percent of detection progress.
     detectionProgressChanged = pyqtSignal(int)
-
-    # signal raised while the parameters are being computed.
-    # raise the percent of the parameter measuring process.
-    measureParametersProgressChanged = pyqtSignal(int)
 
     # endregion
 
@@ -51,7 +50,12 @@ class SegmentManager(QObject):
         self._elements = []
 
         # the segmentation_thread to perform the segmentation with
-        self.segmentation_thread = None
+        self.segmentation_thread = SegmentationThread(parent=None)
+        self.segmentation_thread.finished.connect(self._get_elements)
+
+        # the thread to perform the measurements with
+        self.measurement_thread = MeasurementThread(segment_manager=self)
+        self.measurement_thread.finished.connect(self._get_measurements)
 
         # the signal in which would be detected the elements
         self._signal = None
@@ -303,7 +307,7 @@ class SegmentManager(QObject):
                                                       np.array([np.zeros(len(self.measurer_adapters))]),
                                                       self.measuredParameters[index:]))
         # measure parameters
-        self._measure(element, index)
+        self._measure(element, index, raise_visual_items=True)
         self._classify_element(index)
 
         self.measurementsChanged.emit()
@@ -312,11 +316,13 @@ class SegmentManager(QObject):
         """
         Detect elements in the signal using the detector
         """
+        if self.segmentation_thread.isRunning():
+            return
+
         detector = self.detector_adapter.get_instance(self.signal)
         detector.detectionProgressChanged.connect(lambda x: self.detectionProgressChanged.emit(x))
 
-        self.segmentation_thread = SegmentationThread(parent=None, detector=detector)
-        self.segmentation_thread.finished.connect(self._get_elements)
+        self.segmentation_thread.detector = detector
         self.segmentation_thread.start()
 
     def _get_elements(self):
@@ -330,6 +336,27 @@ class SegmentManager(QObject):
     # endregion
 
     # region Measurements
+    def measure_parameters_and_classify(self):
+        """
+        Measure the parameters over the detected elements and
+        performs the classification of them
+        :return:
+        """
+        if not self.measurement_thread.isRunning():
+            self.measurement_thread.start()
+
+    def _get_measurements(self):
+        """
+        Callback that is called when measurement thread finish.
+        Raises the visual items for segments and emit the finish measurements signal
+        """
+        # update visual items of segments measurements
+        for i in xrange(self.rowCount):
+            for j, parameter_adapter in enumerate(self.measurer_adapters):
+                self.update_elements_visual_items(parameter_adapter, i, self.measuredParameters[i, j])
+
+        self.measurementsFinished.emit()
+        self.measurementsChanged.emit()
 
     def measure_parameters(self):
         """
@@ -338,21 +365,15 @@ class SegmentManager(QObject):
         :param elements:
         :return:
         """
+        if len(self.measurer_adapters) == 0:
+            return
 
-        self.measureParametersProgressChanged.emit(0)
+        measure_methods = [parameter_adapter.get_instance() for parameter_adapter in self.measurer_adapters]
 
-        if len(self.measurer_adapters) > 0:
-            measure_methods = [parameter_adapter.get_instance() for parameter_adapter in self.measurer_adapters]
-            orm_parameters_mappers = [parameter_adapter.get_db_orm_mapper() for parameter_adapter in self.measurer_adapters]
+        for i in xrange(self.rowCount):
+            self._measure(self.elements[i], i, measure_methods)
 
-            for i in xrange(self.rowCount):
-                self._measure(self.elements[i], i, measure_methods, orm_parameters_mappers)
-                self.measureParametersProgressChanged.emit((i+1) * 100.0/self.rowCount)
-
-        self.measureParametersProgressChanged.emit(100)
-        self.measurementsChanged.emit()
-
-    def _measure(self, element, index, measure_methods=None, orm_parameters_mappers=None):
+    def _measure(self, element, index, measure_methods=None, raise_visual_items=False):
         """
         Measure the list of parameters over the element supplied
         :param update_visual_items_and_db: True if the visual items of measurements and the db session
@@ -368,17 +389,14 @@ class SegmentManager(QObject):
         if measure_methods is None:
             measure_methods = [parameter_adapter.get_instance() for parameter_adapter in self.measurer_adapters]
 
-        if orm_parameters_mappers is None:
-            orm_parameters_mappers = [parameter_adapter.get_db_orm_mapper() for parameter_adapter in
-                                      self.measurer_adapters]
-
         for j, parameter_adapter in enumerate(self.measurer_adapters):
             try:
                 # measure param
                 self.measuredParameters[index, j] = measure_methods[j].measure(element)
 
                 # raise the parameter visual item if any
-                self.update_elements_visual_items(parameter_adapter, index, self.measuredParameters[index, j])
+                if raise_visual_items:
+                    self.update_elements_visual_items(parameter_adapter, index, self.measuredParameters[index, j])
 
             except Exception as e:
                 # if some error is raised set a default value

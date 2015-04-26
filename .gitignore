@@ -1,7 +1,7 @@
 
 *.pyc
-*.pyc
 .idea/
 *.orig
 *.ini
 *.s3db
+utils/Themes/.dth

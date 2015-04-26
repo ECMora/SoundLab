@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\MainWindow.ui'
+# Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\MainWindow.ui'
 #
-# Created: Thu Apr 23 08:45:24 2015
+# Created: Sun Apr 26 13:07:40 2015
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -446,7 +446,6 @@ class Ui_DuettoMainWindow(object):
 
         self.retranslateUi(DuettoMainWindow)
         self.tabOpenedSignals.setCurrentIndex(-1)
-        QtCore.QObject.connect(self.actionSwitchPlayStatus, QtCore.SIGNAL(_fromUtf8("triggered()")), DuettoMainWindow.switchPlayStatus)
         QtCore.QMetaObject.connectSlotsByName(DuettoMainWindow)
 
     def retranslateUi(self, DuettoMainWindow):

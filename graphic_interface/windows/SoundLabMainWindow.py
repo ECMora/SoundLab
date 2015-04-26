@@ -78,6 +78,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
 
         # the histogram of the signal spectrogram
         self.histogram = None
+        self.dock_settings.setFloating(False)
 
         if workSpace is not None:
             self.workSpace = workSpace
@@ -1255,8 +1256,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
     #  region Signal Processing Methods
     @pyqtSlot()
     def on_actionBatchProcessing_triggered(self):
-        batch_wnd = BatchWindow(self)
-        batch_wnd.show()
+        BatchWindow(self).show()
 
     @pyqtSlot()
     def on_actionPositive_Values_triggered(self):
@@ -1308,49 +1308,6 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
             # get the time in ms to insert as silence
             ms = silenceDialogWindow.insertSpinBox.value()
             self.widget.insertSilence(ms)
-
-    @pyqtSlot()
-    def on_actionGenerate_Pink_Noise_triggered(self):
-        """
-        Insert a pink noise signal on the current analyzed signal
-        :return:
-        """
-        # reuse the insert silence dialog
-        whiteNoiseDialogWindow = InsertSilenceDialog()
-
-        # change the label for the new task of insert pink noise
-        whiteNoiseDialogWindow.label.setText(self.tr(u"Select the duration in ms") + " \n" + self.tr(u"of the Pink Noise."))
-
-        # 1 second time by default
-        whiteNoiseDialogWindow.insertSpinBox.setValue(1000)
-
-        #  if whiteNoiseDialogWindow.exec_():
-        #      type_, Fc, Fl, Fu = self.filter_helper()
-        #      if type_ != None:
-        #          ms = whiteNoiseDialog.insertSpinBox.value()
-        #          start, _ = self.widget.selectedRegion
-        #          self.widget.undoRedoManager.add(
-        #              GeneratePinkNoiseAction(self.widget.signalProcessor.signal, start, ms, type_, Fc, Fl, Fu))
-        #          self.widget.insertPinkNoise(ms, type_, Fc, Fl, Fu)
-
-    @pyqtSlot()
-    def on_actionGenerate_White_Noise_triggered(self):
-        """
-        Insert a white noise signal on the current analyzed signal
-        :return:
-        """
-        # reuse the insert silence dialog
-        whiteNoiseDialogWindow = InsertSilenceDialog()
-
-        # change the label for the new task of insert white noise
-        whiteNoiseDialogWindow.label.setText(self.tr(u"Select the duration in ms") + u" \n" + self.tr(u"of the White Noise."))
-
-        # 1 second time by default
-        whiteNoiseDialogWindow.insertSpinBox.setValue(1000)
-
-        if whiteNoiseDialogWindow.exec_():
-            ms = whiteNoiseDialogWindow.insertSpinBox.value()
-            self.widget.insertWhiteNoise(ms)
 
     def filter_helper(self):
         """
@@ -1732,12 +1689,15 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         """
         self.setWindowTitle(self.tr(u"duetto-Sound Lab - ") + new_name)
         self.tabOpenedSignals.setTabText(self.tabOpenedSignals.currentIndex(), new_name)
-        if self.widget is not None:
-            self.widget.signalName = new_name
-            # change the name of the signal remove the state of opened from file system
-            # asumes the state of syntetized to save in other file
-            self.workSpace.setClosedFile(self.widget.signalFilePath)
-            self.widget.signalFilePath = None
+
+        if self.widget is None:
+            return
+
+        self.widget.signalName = new_name
+        # change the name of the signal remove the state of opened from file system
+        # assumes the state of syntetized to save in other file
+        self.workSpace.setClosedFile(self.widget.signalFilePath)
+        self.widget.signalFilePath = None
 
     def setUniqueSignalName(self, signal):
         """
@@ -1746,7 +1706,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         :return:
         """
         # if the only signal with the name of the supplied one is it self
-        if self.uniqueSignalName(signal.name):
+        if self.signalNameCount(signal.name) == 1:
             return
 
         # ask for names like signal.name(#)
@@ -1764,22 +1724,13 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         """
         return self.signalNameCount(name) > 0
 
-    def uniqueSignalName(self, name):
-        """
-        Find if there is a tab signal opened with a signal  with name 'name' and just one.
-        Find if the name 'name' is unique on the opened signals.
-        :param name: the name of the desired signal to find uniqueness.
-        :return: True if unique Flase otherwise
-        """
-        return self.signalNameCount(name) == 1
-
     def signalNameCount(self, name):
         """
         :param name: the name to ask for
         :return: Returns the number of times that a name is repeated on the opened signals names
         """
         return len([i for i in range(self.tabOpenedSignals.count())
-                  if self.tabOpenedSignals.widget(i).signalName == name])
+                    if self.tabOpenedSignals.widget(i).signalName == name])
 
     # endregion
 
@@ -2005,8 +1956,4 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         settings window with the visual theme options
         :return:
         """
-        if self.dock_settings.isVisible():
-            self.dock_settings.setVisible(False)
-        else:
-            self.dock_settings.setVisible(True)
-            self.dock_settings.setFloating(False)
+        self.dock_settings.setVisible(not self.dock_settings.isVisible())

@@ -1012,24 +1012,7 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
  <resources>
   <include location="resources/icons.qrc"/>
  </resources>
- <connections>
-  <connection>
-   <sender>actionSwitchPlayStatus</sender>
-   <signal>triggered()</signal>
-   <receiver>DuettoMainWindow</receiver>
-   <slot>switchPlayStatus()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>-1</x>
-     <y>-1</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>375</x>
-     <y>246</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
  <slots>
   <slot>switchPlayStatus()</slot>
  </slots>

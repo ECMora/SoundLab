@@ -67,6 +67,7 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         # the object that handles the measuring of parameters and manage the segments
         self.segmentManager = SegmentManager()
         self.segmentManager.measurementsChanged.connect(self.update_parameter_table)
+        self.segmentManager.measurementsFinished.connect(self.measurement_finished)
         self.segmentManager.detectionProgressChanged.connect(lambda x: self.windowProgressDetection.setValue(x * 0.9))
         self.segmentManager.segmentVisualItemAdded.connect(self.widget.add_parameter_visual_items)
 
@@ -141,7 +142,7 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
                 self.segmentManager.add_element(i, e[0], e[1])
 
             self.widget.elements = self.segmentManager.elements
-            self.measure_parameters_and_classify()
+            self.segmentManager.measure_parameters_and_classify()
             self.widget.graph()
 
     def __addContextMenuActions(self):
@@ -654,25 +655,16 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         self.set_progress_bar_visibility(False)
 
         # measure the parameters over elements detected
-        QTimer.singleShot(100, self.measure_parameters_and_classify)
+        QTimer.singleShot(50, self.segmentManager.measure_parameters_and_classify)
 
-    def measure_parameters_and_classify(self):
+    def measurement_finished(self):
         """
-        Measure the parameters over the detected elements and
-        performs the classification of them
+        Callback to execute when the measurement has finished.
         :return:
         """
-        # measure the parameters over elements detected
-        self.segmentManager.measure_parameters()
-
-        # classify detected elements
-        self.segmentManager.classify_elements()
-
         # must be refreshed the widget because the parameter measurement
         # may include visual items into the graph
         self.widget.graph()
-
-        self.update_parameter_table()
 
         # update the measured data on the two dimensional opened windows
         for wnd in self.two_dim_windows:

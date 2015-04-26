@@ -160,11 +160,38 @@ class SegmentationThread(QThread):
 
     def __init__(self, parent=None, detector=None):
         QThread.__init__(self, parent)
-        self.detector = detector
+        self._detector = detector
+
+    @property
+    def detector(self):
+        return self._detector
+
+    @detector.setter
+    def detector(self, value):
+        if self.isRunning():
+            return
+        self._detector = value
 
     def run(self):
+        if self.detector is None:
+            return
+
         self.detector.detect()
         self.segmentationFinished.emit(self.detector.elements)
+
+
+class MeasurementThread(QThread):
+
+    def __init__(self, parent=None, segment_manager=None):
+        QThread.__init__(self, parent)
+        self.segment_manager = segment_manager
+
+    def run(self):
+        # measure the parameters over elements detected
+        self.segment_manager.measure_parameters()
+
+        # classify detected elements
+        self.segment_manager.classify_elements()
 
 
 class RecordThread(QThread):

@@ -409,8 +409,8 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         if self.signal.length > 0:
 
             self.mainCursor.max = self.signal.length
-            # draw the last signal second
-            self.mainCursor.min = max(0, self.signal.length - self.signal.samplingRate)
+            # draw the last signal half second
+            self.mainCursor.min = max(0, self.signal.length - self.signal.samplingRate/2)
             self.graph()
 
     def record(self, newSignal=False):
@@ -431,7 +431,6 @@ class QSignalVisualizerWidget(QtGui.QWidget):
             # self.record_thread = RecordThread(parent=None, player=self.signalPlayer)
             # self.record_thread.finished.connect(self.finish_recording)
             # self.record_thread.start()
-
 
             # add a undo redo action to save the state of signal edited.
             # reserved to future use the implementation of the redo action to
@@ -697,7 +696,7 @@ class QSignalVisualizerWidget(QtGui.QWidget):
 
             index_to = index_to_zoom if index_to_zoom < index_to else index_to
 
-        return int(index_from), int(index_to)
+        return max(0, int(index_from)), min(self.signal.length - 1, int(index_to))
 
     @property
     def histogram(self):
@@ -798,7 +797,7 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         # get the current signal selection interval
         start, end = self.selectedRegion
         self.editionSignalProcessor.cut(start, end)
-        self.undoRedoManager.add(CutPasteAction(start, end, self.editionSignalProcessor, cut_action=True))
+        self.undoRedoManager.add(CutAction(start, end, self.editionSignalProcessor))
         self.graph()
 
     def copy(self):
@@ -810,7 +809,7 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         """
         #  get the current signal selection interval
         start, end = self.selectedRegion
-
+        self.editionSignalProcessor.copy(start, end)
         # the copy action perform the copy to preserv the clipboard status before copy action
         self.undoRedoManager.add(CopyAction(start, end, self.editionSignalProcessor))
 
@@ -822,7 +821,7 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         #  get the current signal selection interval
         start, end = self.selectedRegion
         self.editionSignalProcessor.paste(start)
-        self.undoRedoManager.add(CutPasteAction(self.signal, start, end, self.editionSignalProcessor, cut_action=False))
+        self.undoRedoManager.add(PasteAction(start, end, self.editionSignalProcessor))
         self.graph()
 
     #  endregion

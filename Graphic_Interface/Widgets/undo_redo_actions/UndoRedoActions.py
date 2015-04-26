@@ -317,44 +317,47 @@ class ResamplingAction(UndoRedoAction):
 
 
 # region CUT,COPY,PASTE
+class EditionAction(UndoRedoAction):
 
-class CutPasteAction(UndoRedoAction):
-
-    def __init__(self, start, end, edition_signal_processor, cut_action=True):
-        UndoRedoAction.__init__(self)
-        self.start = start
-        self.end = end
-        self.cut_action = cut_action
-        self.edition_signal_processor = edition_signal_processor
-
-    def undo(self):
-        if self.cut_action:
-            self.edition_signal_processor.paste(self.start)
-        else:
-            self.edition_signal_processor.cut(self.start, self.end)
-
-    def redo(self):
-        if self.cut_action:
-            self.edition_signal_processor.cut(self.start, self.end)
-        else:
-            self.edition_signal_processor.paste(self.start)
-
-
-class CopyAction(UndoRedoAction):
     def __init__(self, start, end, edition_signal_processor):
         UndoRedoAction.__init__(self)
         self.start = start
         self.end = end
         self.edition_signal_processor = edition_signal_processor
+        self.signal = self.edition_signal_processor.get_from_clipboard()
 
-        # get the data on clipboard before copy to restore it on undo
-        self.clipboard = self.edition_signal_processor.get_from_clipboard()
 
-        # execute copy
-        self.redo()
+class CutAction(EditionAction):
+
+    def __init__(self, start, end, edition_signal_processor):
+        EditionAction.__init__(self, start, end, edition_signal_processor)
 
     def undo(self):
-        self.edition_signal_processor.copy(self.start, self.end)
+        self.edition_signal_processor.paste(self.start)
+        self.edition_signal_processor.put_into_clipboard(self.signal)
+
+    def redo(self):
+        self.edition_signal_processor.cut(self.start, self.end)
+
+
+class PasteAction(EditionAction):
+
+    def __init__(self, start, end, edition_signal_processor):
+        EditionAction.__init__(self, start, end, edition_signal_processor)
+
+    def undo(self):
+        self.edition_signal_processor.cut(self.start, self.end)
+
+    def redo(self):
+        self.edition_signal_processor.paste(self.start)
+
+
+class CopyAction(EditionAction):
+    def __init__(self, start, end, edition_signal_processor):
+        EditionAction.__init__(self, start, end, edition_signal_processor)
+
+    def undo(self):
+        self.edition_signal_processor.put_into_clipboard(self.signal)
 
     def redo(self):
         self.edition_signal_processor.copy(self.start, self.end)

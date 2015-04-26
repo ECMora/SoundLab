@@ -18,8 +18,6 @@ class SoundLabWindow(QtGui.QMainWindow):
     # region Initialize
 
     def __init__(self, parent):
-        """
-        """
         QtGui.QMainWindow.__init__(self, parent)
 
         self.workSpace = Workspace()
@@ -51,7 +49,8 @@ class SoundLabWindow(QtGui.QMainWindow):
         self.signalPropertiesTextLabel = QtGui.QLabel(self)
         self.signalPropertiesTextLabel.setToolTip(self.tr(u"Signal properties."))
         self.signalPropertiesTextLabel.setAlignment(QtCore.Qt.AlignRight)
-        self.signalPropertiesTextLabel.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum))
+        self.signalPropertiesTextLabel.setSizePolicy(QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding,
+                                                                       QtGui.QSizePolicy.Minimum))
 
     # endregion
 
@@ -309,6 +308,7 @@ class SoundLabWindow(QtGui.QMainWindow):
         # change volume in the player of the widget
         if self.widget:
             self.widget.change_volume(volume)
+
         self.update_status_bar(self.tr(u"The volume has been changed to "+unicode(volume) + u"%."), 1000)
 
     @pyqtSlot()
@@ -330,13 +330,14 @@ class SoundLabWindow(QtGui.QMainWindow):
         self.widget.stop()
 
         # if previous status was recording the length of signal has changed and must be updated
-        self.updateSignalPropertiesLabel(self.widget.signal)
+        self.updateSignalPropertiesLabel()
 
     @pyqtSlot()
     def on_actionPause_Sound_triggered(self):
         self.widget.pause()
 
-    def switchPlayStatus(self):
+    @pyqtSlot()
+    def on_actionSwitchPlayStatus_triggered(self):
         """
         Change the play status of the signal from play-pause and vice versa
         :return:
@@ -352,10 +353,12 @@ class SoundLabWindow(QtGui.QMainWindow):
     @pyqtSlot()
     def on_actionUndo_triggered(self):
         self.widget.undo()
+        self.updateSignalPropertiesLabel()
 
     @pyqtSlot()
     def on_actionRedo_triggered(self):
         self.widget.redo()
+        self.updateSignalPropertiesLabel()
 
     # endregion
 
@@ -363,7 +366,7 @@ class SoundLabWindow(QtGui.QMainWindow):
     @pyqtSlot()
     def on_actionCut_triggered(self):
         self.widget.cut()
-        self.updateSignalPropertiesLabel(self.widget.signal)
+        self.updateSignalPropertiesLabel()
 
     @pyqtSlot()
     def on_actionCopy_triggered(self):
@@ -372,7 +375,7 @@ class SoundLabWindow(QtGui.QMainWindow):
     @pyqtSlot()
     def on_actionPaste_triggered(self):
         self.widget.paste()
-        self.updateSignalPropertiesLabel(self.widget.signal)
+        self.updateSignalPropertiesLabel()
 
     #  endregion
 
@@ -388,11 +391,13 @@ class SoundLabWindow(QtGui.QMainWindow):
 
         self.statusbar.showMessage(line, time_ms)
 
-    def updateSignalPropertiesLabel(self, signal):
+    def updateSignalPropertiesLabel(self, signal = None):
         """
         Updates the text of the current signal properties in toolbar.
         :return:
         """
+        signal = self.widget.signal if signal is None else signal
+
         # action signal is a place in the tool bar to show the current signal name
         self.signalNameLineEdit.setText(signal.name)
 
