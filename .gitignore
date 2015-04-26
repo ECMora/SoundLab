@@ -5,3 +5,5 @@
 *.ini
 *.s3db
 utils/Themes/.dth
+*.jpg
+
