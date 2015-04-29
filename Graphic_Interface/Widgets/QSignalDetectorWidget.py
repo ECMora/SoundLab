@@ -172,6 +172,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         """
         return [x.indexFrom if isinstance(x, DetectedSoundLabElement) else x[0] for x in self.elements]
 
+
     @property
     def elements(self):
         return self._elements
@@ -247,7 +248,16 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
     # endregion
 
-    # region Elements Draw
+    # region Elements Draw and Visual Items
+
+    def get_sound_lab_elements(self, elements):
+        """
+        Extracts the instances of sound lab elements that are on the list.
+        Make a filter on the list just selecting the instances of DetectedSoundLabElement
+        :param elements: List to search the elements in
+        :return:
+        """
+        return [e for e in elements if isinstance(e, DetectedSoundLabElement)]
 
     def _update_elements_numbers(self):
         """
@@ -257,53 +267,6 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         for i in xrange(len(self.elements)):
             if isinstance(self.elements[i], DetectedSoundLabElement):
                 self.elements[i].setNumber(i + 1)
-
-    def draw_elements(self, draw_oscilogram=True, draw_specgram=True, elements=None):
-        """
-        Add to the visual gui widgets the visible elements of the detected segments
-        :type elements: the elements to be draw. If no specified all the visible elements would be updated
-        :param oscilogramItems: true if draw elements in oscilogram false for spectrogram
-        None for both
-        """
-        elements = elements if elements is not None else self.get_visible_elements()
-
-        self.remove_visual_elements(oscilogram=draw_oscilogram, specgram=draw_specgram, elements=elements)
-
-        self.no_visible_items = [item for start, end in self._get_no_visible_visual_items_tuples(elements)
-                                      for item in self.get_no_visible_visual_item(start, end)[0]]
-
-        self.add_visual_elements(elements, draw_oscilogram, draw_specgram)
-
-        # translate the coord of the visible added items
-        for e in self.elements:
-            if isinstance(e, DetectedSoundLabElement):
-                e.spectral_element.translate_time_freq_coords(self.from_osc_to_spec, self.get_freq_index)
-
-    # endregion
-
-    # region Elements Visual Items
-
-    def release_items(self, index_from=None, index_to=None):
-        """
-        Release the visual items of the elements list
-        between the indexes supplied
-        :param indexFrom: inclusive lower bound
-        :param indexTo: inclusive upper bound
-        :return:
-        """
-
-        # the elements of the list could be a tuple or a DetectedSoundLab
-        index_from = index_from if index_from is not None else 0
-        index_to = index_to if index_to is not None else len(self._elements) - 1
-
-        self.remove_visual_elements(elements=[e for e in self.elements[index_from: index_to + 1] if
-                                              isinstance(e, DetectedSoundLabElement)])
-
-        # release items
-        for i in xrange(index_from, index_to + 1):
-            if isinstance(self.elements[i], DetectedSoundLabElement):
-                QSignalDetectorWidget.visual_items_cache.release_visual_item(self.elements[i])
-                self.elements[i] = (self.elements[i].indexFrom, self.elements[i].indexTo)
 
     def _get_no_visible_visual_items_tuples(self, elements):
         """
@@ -391,6 +354,79 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
         return osc_items, spec_items
 
+    def draw_elements(self, draw_oscilogram=True, draw_specgram=True, elements=None):
+        """
+        Add to the visual gui widgets the visible elements of the detected segments
+        :type elements: the elements to be draw. If no specified all the visible elements would be updated
+        :param oscilogramItems: true if draw elements in oscilogram false for spectrogram
+        None for both
+        """
+        elements = elements if elements is not None else self.get_visible_elements()
+
+        elements_to_remove = self.get_sound_lab_elements(self.elements)
+
+        elements_to_remove = set(elements_to_remove).difference(set(elements))
+
+        self.remove_visual_elements(oscilogram=draw_oscilogram, specgram=draw_specgram,
+                                    elements=elements_to_remove)
+
+        self.no_visible_items = [item for start, end in self._get_no_visible_visual_items_tuples(elements)
+                                      for item in self.get_no_visible_visual_item(start, end)[0]]
+
+        self.add_visual_elements(elements, draw_oscilogram, draw_specgram)
+
+        # translate the coord of the visible added items
+        for e in self.get_sound_lab_elements(self.elements):
+            e.spectral_element.translate_time_freq_coords(self.from_osc_to_spec, self.get_freq_index)
+
+    def release_items(self, index_from=None, index_to=None):
+        """
+        Release the visual items of the elements list
+        between the indexes supplied
+        :param indexFrom: inclusive lower bound
+        :param indexTo: inclusive upper bound
+        :return:
+        """
+
+        # the elements of the list could be a tuple or a DetectedSoundLab
+        index_from = index_from if index_from is not None else 0
+        index_to = index_to if index_to is not None else len(self._elements) - 1
+
+        self.remove_visual_elements(elements=self.get_sound_lab_elements(self.elements[index_from: index_to + 1]))
+
+        # release items
+        for i in xrange(index_from, index_to + 1):
+            if isinstance(self.elements[i], DetectedSoundLabElement):
+                QSignalDetectorWidget.visual_items_cache.release_visual_item(self.elements[i])
+                self.elements[i] = (self.elements[i].indexFrom, self.elements[i].indexTo)
+
+    def remove_visual_elements(self, oscilogram=True, specgram=True, elements=None):
+        """
+        Method that remove the visual representation of the elements in the widget.
+        Used for remove selected elements or a group of them.
+        :param oscilogram: Removes the oscilogram visual elements
+        :param specgram: Removes the spectrogram visual elements
+        :param elements: the elements that would be (visually) removed.
+        all the self.elements if None
+        """
+        # get the elements to remove
+        elements = self.get_sound_lab_elements(self.elements) if elements is None else elements
+
+        # get the osc and spec visual items of the elements to remove them
+        osc_items = [item for elem in elements for item in elem.time_element.visual_widgets()
+                     if item in self.axesOscilogram.items()] if oscilogram else []
+
+        osc_items.extend(self.no_visible_items)
+
+        spec_items = [item for elem in elements for item in elem.spectral_element.visual_widgets()
+                      if item in self.axesSpecgram.viewBox.allChildren()] if specgram else []
+
+        for item in osc_items:
+            self.axesOscilogram.removeItem(item)
+
+        for item in spec_items:
+            self.axesSpecgram.viewBox.removeItem(item)
+
     def add_visual_elements(self, elements, osc, spec):
         """
         Adds the elements visual representation into the widgets.
@@ -439,33 +475,6 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
         for item in spec_items_to_add:
             self.axesSpecgram.viewBox.addItem(item)
-
-    def remove_visual_elements(self, oscilogram=True, specgram=True, elements=None):
-        """
-        Method that remove the visual representation of the elements in the widget.
-        Used for remove selected elements or a group of them.
-        :param oscilogram: Removes the oscilogram visual elements
-        :param specgram: Removes the spectrogram visual elements
-        :param elements: the elements that would be (visually) removed.
-        all the self.elements if None
-        """
-        # get the elements to remove
-        elements = [e for e in self.elements if isinstance(e, DetectedSoundLabElement)] if elements is None else elements
-
-        # get the osc and spec visual items of the elements to remove them
-        osc_items = [item for elem in elements for item in elem.time_element.visual_widgets()
-                     if item in self.axesOscilogram.items()] if oscilogram else []
-
-        osc_items.extend(self.no_visible_items)
-
-        spec_items = [item for elem in elements for item in elem.spectral_element.visual_widgets()
-                      if item in self.axesSpecgram.viewBox.allChildren()] if specgram else []
-
-        for item in osc_items:
-            self.axesOscilogram.removeItem(item)
-
-        for item in spec_items:
-            self.axesSpecgram.viewBox.removeItem(item)
 
     def add_parameter_visual_items(self, element_index, parameter_items):
         """
