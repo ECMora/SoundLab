@@ -107,26 +107,27 @@ class OneDimensionalElementsDetector(ElementsDetector):
         :param acoustic_processing:
         :return:
         """
-
         if self.threshold2 < 0 or self.threshold3 < 0:
             # use both thresholds start and end
             result = []
             for element in elems:
                 max_amplitude = max(acoustic_processing[element[0]: element[1]])
+
                 start_threshold_db = fromdB(self.threshold2, 0, max_amplitude)
                 end_threshold_db = fromdB(self.threshold3, 0, max_amplitude)
 
+                start_index, end_index = element
                 # find start
-                while acoustic_processing[element[0]] > start_threshold_db and element[0] > 0:
-                    element = element[0] - 1, element[1]
+                while acoustic_processing[start_index] > start_threshold_db and start_index > 0:
+                    start_index -= 1
 
                 # find end
-                while acoustic_processing[element[1]] > end_threshold_db and element[1] < len(acoustic_processing):
-                    element = element[0], element[1] + 1
+                while acoustic_processing[end_index] > end_threshold_db and end_index < len(acoustic_processing):
+                    end_index += 1
 
-                result.append(element)
+                result.append((start_index, end_index))
 
-            elems = result
+            return result
 
         return elems
 

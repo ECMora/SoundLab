@@ -65,10 +65,10 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         self.axesSpecgram = SoundLabSpectrogramWidget(**kwargs)
         self.scrollBar = QtGui.QScrollBar(Qt.Horizontal, parent=self)
 
-        #  the internal variables to show the play line
-        #  in each widget.
         self.signalPlayer = None
         self._playSpeed = 100
+
+        # the internal variables to show the play line in each widget.
         self.playerLineOsc = pg.InfiniteLine()
         self.playerLineSpec = pg.InfiniteLine()
 
@@ -113,10 +113,6 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         self.setSelectedTool(Tools.ZoomTool)
 
         self.configure_widget_layout()
-
-        #  variables for visualization
-        self._visibleOscillogram = True
-        self._visibleSpectrogram = True
 
         self._recordTimer = QTimer(self)
         self._recordTimer.timeout.connect(self.on_newDataRecorded)
@@ -206,7 +202,7 @@ class QSignalVisualizerWidget(QtGui.QWidget):
 
     def update_widget_range(self, widget, x1, x2):
         """
-        Update the rancge of visibility of the oscilogram or spectrogram
+        Update the range of visibility of the oscilogram or spectrogram
         widgets.
         :param widget: The widget type to update. axesOscilogram or axesSpectrogram
         :param x1: the start limit of the new visible interval in signal data array indexes
@@ -582,16 +578,15 @@ class QSignalVisualizerWidget(QtGui.QWidget):
 
     @property
     def visibleOscilogram(self):
-        return self._visibleOscillogram
+        return self.axesOscilogram.isVisible()
 
     @visibleOscilogram.setter
     def visibleOscilogram(self, value):
-        self._visibleOscillogram = value
         self.axesOscilogram.setVisible(value)
 
     @property
     def visibleSpectrogram(self):
-        return self._visibleSpectrogram
+        return self.axesSpecgram.isVisible()
 
     @visibleSpectrogram.setter
     def visibleSpectrogram(self, value):
@@ -600,10 +595,7 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         :param value: Bolean with the new visibility
         :return:
         """
-        self._visibleSpectrogram = value
         self.axesSpecgram.setVisible(value)
-        # update graph to avoid the pyqtgraph
-        # widget error that do not update the axis grid lines
 
     @property
     def playSpeed(self):
@@ -633,8 +625,7 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         self._signal = new_signal
 
         #  update the main cursor to visualize and process a piece of the signal
-        self.mainCursor.min = 0
-        self.mainCursor.max = new_signal.length
+        self.mainCursor = IntervalCursor(0, new_signal.length)
 
         #  update the signal on every widget
         self.axesOscilogram.signal = new_signal
@@ -795,9 +786,7 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         else the whole inteval of current visualization is used.
         """
         # get the current signal selection interval
-        start, end = self.selectedRegion
-        self.editionSignalProcessor.cut(start, end)
-        self.undoRedoManager.add(CutAction(start, end, self.editionSignalProcessor))
+        self._edition_action(self.editionSignalProcessor.cut, CutAction)
         self.graph()
 
     def copy(self):
@@ -807,22 +796,24 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         If the zoom cursor is active then the its selection is taked.
         else the whole inteval of current visualization is used.
         """
-        #  get the current signal selection interval
-        start, end = self.selectedRegion
-        self.editionSignalProcessor.copy(start, end)
-        # the copy action perform the copy to preserv the clipboard status before copy action
-        self.undoRedoManager.add(CopyAction(start, end, self.editionSignalProcessor))
+        self._edition_action(self.editionSignalProcessor.copy, CopyAction)
 
     def paste(self):
         """
         Paste the previously copied or cutted section
         of a signal stored in clipboard.
         """
-        #  get the current signal selection interval
+        # get the current signal selection interval
         start, end = self.selectedRegion
         self.editionSignalProcessor.paste(start)
         self.undoRedoManager.add(PasteAction(start, end, self.editionSignalProcessor))
         self.graph()
+
+    def _edition_action(self, edition_method, undo_redo_action_class):
+        # get the current signal selection interval
+        start, end = self.selectedRegion
+        edition_method(start, end)
+        self.undoRedoManager.add(undo_redo_action_class(start, end, self.editionSignalProcessor))
 
     #  endregion
 

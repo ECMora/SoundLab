@@ -92,6 +92,7 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
 
         # the path of the base of the folder
         self.selected_folder = u""
+
         if len(folderFiles) > 0:
             self.selected_folder = os.path.dirname(unicode(folderFiles[0]))
         else:
@@ -335,12 +336,17 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
         :return:
         """
         files_selected = [x[0] for x in self.files_selected()]
-        self.openFiles.emit(files_selected)
 
-        if len(files_selected) > 0:
-            if self.player:
-                self.player.stop()
-            self.close()
+        if len(files_selected) == 0:
+            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Warning"),
+                                      self.tr(u"There is no file selected to open."))
+            return
+
+        if self.player:
+            self.player.stop()
+
+        self.openFiles.emit(files_selected)
+        self.close()
 
     @pyqtSlot()
     def on_actionPlay_triggered(self):
@@ -361,4 +367,3 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
 
         except Exception as ex:
             pass
-

@@ -22,7 +22,6 @@ class BatchWindow(QtGui.QMainWindow, Ui_MainWindow):
         Method that performs the batch processing
         :return:
         """
-
         # get the input and output audio files folder
         directory_input = str(self.lineeditFilePath.text())
         directory_output = str(self.lineEditOutputFolder.text())

@@ -27,11 +27,11 @@ class SoundLabWindow(QtGui.QMainWindow):
         self.statusbar.setSizeGripEnabled(False)
 
         # action groups of common actions for sound lab window
-        self.play_record_actions = QActionGroup(self)
+        self.play_record_actions        = QActionGroup(self)
         self.widgets_visibility_actions = QActionGroup(self)
-        self.zoom_actions = QActionGroup(self)
-        self.tools_actions = QActionGroup(self)
-        self.save_images_actions = QActionGroup(self)
+        self.zoom_actions               = QActionGroup(self)
+        self.tools_actions              = QActionGroup(self)
+        self.save_images_actions        = QActionGroup(self)
 
         # play volume bar (disabled for now)
         self.volume_bar = QSlider(QtCore.Qt.Horizontal)
@@ -193,7 +193,9 @@ class SoundLabWindow(QtGui.QMainWindow):
 
         fname = unicode(QFileDialog.getSaveFileName(self, self.tr(u"Save oscilogram graph as an Image"),
                                                 u"oscilogram-Duetto-Image", u"*.jpg"))
-        save_image(self.widget.axesOscilogram, fname)
+
+        if fname:
+            save_image(self.widget.axesOscilogram, fname)
 
     @pyqtSlot()
     def on_actionSpecgram_Image_triggered(self):

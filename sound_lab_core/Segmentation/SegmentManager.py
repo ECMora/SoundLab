@@ -327,7 +327,7 @@ class SegmentManager(QObject):
 
     def _get_elements(self):
         """
-        execute the detection of the elements
+        update the elements when the segmentation thread finish
         :return:
         """
         self.elements = self.segmentation_thread.detector.elements

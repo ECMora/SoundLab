@@ -12,7 +12,7 @@ class TwoDPlotWidget(pg.PlotWidget):
     by their coordinates
     """
 
-    def __init__(self,parent=None):
+    def __init__(self, parent=None):
         pg.PlotWidget.__init__(self, parent)
 
         plot_item = self.getPlotItem()
@@ -23,8 +23,8 @@ class TwoDPlotWidget(pg.PlotWidget):
         self.mousePressed = False
         self.lastPoint = QPoint(0, 0)
         self.oldX, self.oldY = 0, 0
-        self.ElementSelectionRect = QtGui.QGraphicsRectItem(QtCore.QRectF(0,0, 0, 0))
-        self.ElementSelectionRect.setPen(QtGui.QPen(QtGui.QColor(255,255,255)))
+        self.ElementSelectionRect = QtGui.QGraphicsRectItem(QtCore.QRectF(0, 0, 0, 0))
+        self.ElementSelectionRect.setPen(QtGui.QPen(QtGui.QColor(255, 255, 255)))
 
     # region Mouse Events
 
@@ -33,11 +33,10 @@ class TwoDPlotWidget(pg.PlotWidget):
         if ev.button() == QtCore.Qt.LeftButton:
             self.mousePressed = True
 
-            # get the local graph coordinate point from
-            # the pixel where the cursor was pressed
-            # update last point
-            self.lastPoint = self.getPlotItem().getViewBox().mapSceneToView(QtCore.QPointF(ev.x(),ev.y()))
-            self.ElementSelectionRect.setRect(self.lastPoint.x(),self.lastPoint.y(),0,0)
+            # get the local graph coordinate point from the pixel
+            # where the cursor was pressed update last point
+            self.lastPoint = self.getPlotItem().getViewBox().mapSceneToView(QtCore.QPointF(ev.x(), ev.y()))
+            self.ElementSelectionRect.setRect(self.lastPoint.x(), self.lastPoint.y(), 0, 0)
             self.update()
 
     def mouseReleaseEvent(self, ev):

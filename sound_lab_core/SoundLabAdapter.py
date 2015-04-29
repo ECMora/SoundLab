@@ -23,12 +23,9 @@ class SoundLabAdapter(QObject):
     # endregion
 
     def __init__(self):
-        """
-        The class must have a constructor receiving one parameter: the QObject's parent.
-        """
         QObject.__init__(self)
 
-        # the db object mapper in the orm
+        # the db object mapper in the orm if any
         self.db_mapper = None
 
     def get_db_orm_mapper(self):

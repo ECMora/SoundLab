@@ -26,60 +26,55 @@ class UndoRedoManager(QObject):
         self.__actionsList = [None] * 20
 
         # index that points into the last action processed
-        self.__actionIndex = -1
-
-    @property
-    def actionIndex(self):
-        """
-        JUST FOR TESTING OPTIONS
-        :return:
-        """
-        return self.__actionIndex
+        self.actionIndex = -1
 
     def undo(self):
         """
         Undo the last action.
         """
-        if self.__actionIndex >= 0:
-            action = self.__actionsList[self.__actionIndex]
+        if self.actionIndex >= 0:
+            action = self.__actionsList[self.actionIndex]
             if action is not None:
                 action.undo()
                 self.actionExec.emit(action)
-            self.__actionIndex -= 1
+            self.actionIndex -= 1
 
     def redo(self):
         """
         Redo the last action.
         """
-        if self.__actionIndex < self.count() - 1:
-            self.__actionIndex += 1
-            action = self.__actionsList[self.__actionIndex]
+        if self.actionIndex < self.count() - 1:
+            self.actionIndex += 1
+            action = self.__actionsList[self.actionIndex]
             if action is not None:
                 action.redo()
                 self.actionExec.emit(action)
             else:
-                self.__actionIndex -= 1
+                self.actionIndex -= 1
 
-    def add(self,action):
+    def add(self, action):
         """
         Add a new action to the object.
         @param action: The undo redo action to add.
         """
         if not isinstance(action, UndoRedoAction):
             return
-        self.__actionIndex += 1
-        if len(self.__actionsList) <= self.__actionIndex:
+        self.actionIndex += 1
+
+        if len(self.__actionsList) <= self.actionIndex:
             self.__actionsList = [self.__actionsList[i] if i < len(self.__actionsList) else None for i in range(2*len(self.__actionsList))]
-        elif self.__actionIndex > 0:
-            # borrando las acciones que antes estaban por rehacer
-            self.__actionsList[self.__actionIndex:] = [None] * (len(self.__actionsList) - self.__actionIndex)
-        self.__actionsList[self.__actionIndex] = action
+
+        elif self.actionIndex > 0:
+            # deleting all actions after current
+            self.__actionsList[self.actionIndex:] = [None] * (len(self.__actionsList) - self.actionIndex)
+
+        self.__actionsList[self.actionIndex] = action
 
     def clear(self):
         """
         Clear all the actions.
         """
-        self.__actionIndex = -1
+        self.actionIndex = -1
         self.__actionsList = [None] * 20
 
     def count(self):
@@ -324,7 +319,7 @@ class EditionAction(UndoRedoAction):
         self.start = start
         self.end = end
         self.edition_signal_processor = edition_signal_processor
-        self.signal = self.edition_signal_processor.get_from_clipboard()
+        self.previous_clipboard = self.edition_signal_processor.get_from_clipboard()
 
 
 class CutAction(EditionAction):
@@ -334,7 +329,7 @@ class CutAction(EditionAction):
 
     def undo(self):
         self.edition_signal_processor.paste(self.start)
-        self.edition_signal_processor.put_into_clipboard(self.signal)
+        self.edition_signal_processor.put_into_clipboard(self.previous_clipboard)
 
     def redo(self):
         self.edition_signal_processor.cut(self.start, self.end)
@@ -357,17 +352,16 @@ class CopyAction(EditionAction):
         EditionAction.__init__(self, start, end, edition_signal_processor)
 
     def undo(self):
-        self.edition_signal_processor.put_into_clipboard(self.signal)
+        self.edition_signal_processor.put_into_clipboard(self.previous_clipboard)
 
     def redo(self):
         self.edition_signal_processor.copy(self.start, self.end)
-
 
 # endregion
 
 
 class Absolute_ValuesAction(UndoRedoAction):
-    def __init__(self,signal,start,end,sign):
+    def __init__(self, signal, start, end, sign):
         UndoRedoAction.__init__(self)
         self.signal = signal
         self.start = start

@@ -79,16 +79,16 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         Set a group of initial configuration on the visualization widget
         :return:
         """
+        self.widget.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
         self.widget.getPlotItem().showGrid(x=True, y=True)
-        self.widget.getPlotItem().hideButtons()
         self.widget.setMouseEnabled(x=False, y=False)
+        self.widget.getPlotItem().hideButtons()
         self.widget.setMenuEnabled(False)
         self.widget.enableAutoRange()
 
-        self.widget.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
+        self.widget.addAction(self.actionMark_Selected_Elements_As)
         self.widget.addAction(self.actionHide_Show_Settings)
         self.widget.addAction(self.actionSaveGraphImage)
-        self.widget.addAction(self.actionMark_Selected_Elements_As)
 
     def create_parameter_tree(self, parameterColumnNames):
         """
@@ -100,7 +100,7 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         if len(parameterColumnNames) == 0:
             return
 
-        # the X axis posible params names
+        # the X axis possible params names
         x_axis = [unicode(x) for x in parameterColumnNames]
 
         # get two initial random parameters to visualize in x and y axis
@@ -239,8 +239,7 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         yshift = (ymax - ymin) * 0.15  # 15 % up and down
 
         # create the scatter plot with the values
-        self.scatter_plot = pg.ScatterPlotItem(x=x_cords, y=y_cords,
-                                               data=numpy.arange(len(x_cords)),
+        self.scatter_plot = pg.ScatterPlotItem(x=x_cords, y=y_cords, data=numpy.arange(len(x_cords)),
                                                size=fig_size, symbol=shape, brush=(pg.mkBrush(color)))
 
         # connect the signals for selection item on the plot
@@ -250,7 +249,7 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
 
         # draw the selected element with a different brush
         if 0 <= self.selectedElementIndex < len(elems):
-            elems[self.selectedElementIndex].setBrush(pg.mkBrush("FFF"))
+            elems[self.selectedElementIndex].setBrush(pg.mkBrush(self.SELECTED_ELEMENT_COLOR))
 
         # update font size in axis labels
         text_size = {'color': '#FFF', 'font-size': str(self.font.pointSize()) + 'pt'}
@@ -337,9 +336,8 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         """
         self.widget.setBackground(workspace.workTheme.oscillogramTheme.background_color)
 
-        xGrid, yGrid = workspace.workTheme.oscillogramTheme.gridX, workspace.workTheme.oscillogramTheme.gridY
-
-        self.widget.showGrid(x=xGrid, y=yGrid)
+        self.widget.showGrid(x=workspace.workTheme.oscillogramTheme.gridX,
+                             y=workspace.workTheme.oscillogramTheme.gridY)
 
     @pyqtSlot()
     def on_actionHide_Show_Settings_triggered(self):
@@ -363,7 +361,8 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         fname = unicode(QFileDialog.getSaveFileName(self, self.tr(u"Save two dimensional graph as an Image"),
                                                     u"two-dim-graph-Duetto-Image",
                                                     u"*.jpg"))
-        save_image(self.widget, fname)
+        if fname:
+            save_image(self.widget, fname)
 
     @pyqtSlot()
     def on_actionMark_Selected_Elements_As_triggered(self):
@@ -392,7 +391,7 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
             QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Warning"), self.tr(u"There is no element selected."))
             return
 
-        # get the selection
+        # get the taxonomic identification
         classification_dialog = ManualClassificationDialog()
         classification_dialog.exec_()
 

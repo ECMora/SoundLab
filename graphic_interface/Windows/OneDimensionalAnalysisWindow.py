@@ -258,7 +258,6 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
             if childName ==u'Max':
                 self.widget.maxY = data
 
-
         self.graph(indexFrom=self.indexFrom, indexTo=self.indexTo)
 
     # endregion
