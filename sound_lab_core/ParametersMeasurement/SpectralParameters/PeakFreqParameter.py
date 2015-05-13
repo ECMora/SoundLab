@@ -1,9 +1,7 @@
 # -*- coding: utf-8 -*-
 from matplotlib import mlab
 from numpy import argmax
-from numpy.fft import fft
 from sound_lab_core.ParametersMeasurement.ParameterMeasurer import ParameterMeasurer
-from sound_lab_core.ParametersMeasurement.SpectralParameters import DECIMAL_PLACES
 
 
 class PeakFreqParameter(ParameterMeasurer):
@@ -11,8 +9,8 @@ class PeakFreqParameter(ParameterMeasurer):
     Class that measure the peak freq parameter on a segment
     """
 
-    def __init__(self):
-        ParameterMeasurer.__init__(self)
+    def __init__(self, decimal_places=2, measurement_location=None):
+        ParameterMeasurer.__init__(self, decimal_places=decimal_places, measurement_location=measurement_location)
         self.name = "PeakFreq(kHz)"
 
     def measure(self, segment):
@@ -26,4 +24,4 @@ class PeakFreqParameter(ParameterMeasurer):
         Pxx, freqs = segment.memory_dict["frequency_params"]
 
         index = argmax(Pxx)
-        return round((freqs[index] - freqs[index] % 10) / 1000.0, DECIMAL_PLACES)
+        return round((freqs[index] - freqs[index] % 10) / 1000.0, self.decimal_places)

@@ -43,7 +43,7 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
     # region Initialize
 
-    def __init__(self, parent, signal, workspace=None):
+    def __init__(self, parent=None, signal=None, workspace=None):
         """
         Create a the window of segmentation and classification.
         :param parent: the parent widget if any

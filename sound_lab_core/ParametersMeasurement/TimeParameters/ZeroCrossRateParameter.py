@@ -8,12 +8,10 @@ class ZeroCrossRateParameter(ParameterMeasurer):
     Class that measure the zero cross rate parameter on a segment
     """
 
-    DECIMAL_PLACES = 4
-
-    def __init__(self):
-        ParameterMeasurer.__init__(self)
+    def __init__(self, decimal_places=2):
+        ParameterMeasurer.__init__(self, decimal_places=decimal_places)
         self.name = "ZeroCrossRate"
 
     def measure(self, segment):
         a = segment.signal.data[segment.indexFrom:segment.indexTo]
-        return round((len(np.where(a[:-1] * a[1:] <= 0)) * 1.0) / (a.size - 1), self.DECIMAL_PLACES)
+        return round((len(np.where(a[:-1] * a[1:] <= 0)) * 1.0) / (a.size - 1), self.decimal_places)

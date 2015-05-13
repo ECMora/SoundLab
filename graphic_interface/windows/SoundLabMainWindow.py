@@ -814,6 +814,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         # load the theme and clear the undo redo actions in the current window.
         self.widget.undoRedoManager.clear()
 
+
     #  region WorkSpace
     @pyqtSlot()
     def on_actionSaveTheme_triggered(self):

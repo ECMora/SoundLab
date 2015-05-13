@@ -3,6 +3,7 @@ from PyQt4 import QtGui
 from PyQt4.QtGui import QDialog
 from pyqtgraph.parametertree import Parameter, ParameterTree
 from graphic_interface.windows.ui_python_files.detectElementsDialog import Ui_Dialog
+from graphic_interface.windows.ParametersWindow import ParametersWindow
 from utils.Utils import small_signal
 from sound_lab_core.AdapterFactories import *
 from sound_lab_core.Clasification.Adapters import *
@@ -137,7 +138,8 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         params = [{u'name': unicode(self.tr(u'Segmentation')),
                    u'type': u'group', u'children': list_param},
                   {u'name': unicode(self.tr(u'Classification')),
-                   u'type': u'group', u'children': list_classification}]
+                   u'type': u'group', u'children': list_classification},
+                  {u'name': unicode(self.tr(u'Parameters')), u'type': u'action'}]
 
         self.segmentation_classification_tree = Parameter.create(
             name=unicode(self.tr(u'Segmentation-Classification')), type=u'group', children=params)
@@ -152,10 +154,17 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
                                         self.segmentation_classification_changed(param, changes, u'Classification',
                                                                                  self.classification_adapter_factory))
 
+        self.segmentation_classification_tree.param(unicode(self.tr(u'Parameters'))).\
+            sigActivated.connect(self.configure_parameters)
+
         # create and set initial properties
         self.segmentation_classification_tree_widget.setAutoScroll(True)
         self.segmentation_classification_tree_widget.setHeaderHidden(True)
         self.segmentation_classification_tree_widget.setParameters(self.segmentation_classification_tree)
+
+    def configure_parameters(self):
+        param_window = ParametersWindow(self)
+        param_window.show()
 
     def create_measurement_parameter_tree(self):
         # set the segmentation and classification parameters

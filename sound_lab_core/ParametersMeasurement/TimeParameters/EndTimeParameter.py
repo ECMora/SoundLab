@@ -1,16 +1,15 @@
 # -*- coding: utf-8 -*-
-from . import DECIMAL_PLACES
-from sound_lab_core.ParametersMeasurement.ParameterMeasurer import ParameterMeasurer
+from .TimeParameter import TimeParameter
 
 
-class EndTimeParameter(ParameterMeasurer):
+class EndTimeParameter(TimeParameter):
     """
     Class that measure the end time parameter on a segment
     """
 
-    def __init__(self):
-        ParameterMeasurer.__init__(self)
+    def __init__(self, decimal_places=4):
+        TimeParameter.__init__(self, decimal_places=decimal_places)
         self.name = "End(s)"
 
     def measure(self, segment):
-        return round(segment.indexTo * 1.0 / segment.signal.samplingRate, DECIMAL_PLACES)
+        return round(segment.indexTo * 1.0 / segment.signal.samplingRate, self.decimal_places)

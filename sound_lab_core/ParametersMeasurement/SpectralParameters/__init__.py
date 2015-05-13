@@ -1,1 +1,1 @@
-DECIMAL_PLACES = 2
+

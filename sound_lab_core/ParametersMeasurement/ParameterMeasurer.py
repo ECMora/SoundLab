@@ -7,7 +7,7 @@ class ParameterMeasurer:
     in segments.
     """
 
-    def __init__(self):
+    def __init__(self, decimal_places=2, measurement_location=None):
         """
         Create a parameter measurer
         :return:
@@ -16,10 +16,18 @@ class ParameterMeasurer:
         # the name of the parameter
         self._name = ""
 
-    # region Parameter Name
+        # the decimal places to round this parameter
+        self._decimal_places = decimal_places
+
+        # the location on the detected segment to perform the parameter measurement
+        self._measurement_location = measurement_location
+
+    # region Properties
+
     @property
     def name(self):
-        return self._name
+        location_name = "" if self.location is None else self.location.name
+        return self._name + "(" + location_name + ")"
 
     @name.setter
     def name(self, new_name):
@@ -27,6 +35,24 @@ class ParameterMeasurer:
             raise Exception("Invalid type for name. Must be str or unicode.")
 
         self._name = new_name
+
+    @property
+    def decimal_places(self):
+        return self._decimal_places
+
+    @decimal_places.setter
+    def decimal_places(self, new_decimal_places):
+        if not isinstance(new_decimal_places, int):
+            raise Exception("Invalid type for decimal_places. Must be int.")
+        self._decimal_places = new_decimal_places
+
+    @property
+    def location(self):
+        return self._measurement_location
+
+    @location.setter
+    def location(self, new_location):
+        self._measurement_location = new_location
 
     # endregion
 

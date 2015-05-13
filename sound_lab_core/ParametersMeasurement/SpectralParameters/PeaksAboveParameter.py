@@ -10,8 +10,8 @@ class PeaksAboveParameter(ParameterMeasurer):
     Class that measure the peaks above parameter on a segment
     """
 
-    def __init__(self, threshold=-20):
-        ParameterMeasurer.__init__(self)
+    def __init__(self, threshold=-20, decimal_places=2, measurement_location=None):
+        ParameterMeasurer.__init__(self, decimal_places=decimal_places, measurement_location=measurement_location)
         self.name = "PeaksAbove"
         self.threshold = threshold
 

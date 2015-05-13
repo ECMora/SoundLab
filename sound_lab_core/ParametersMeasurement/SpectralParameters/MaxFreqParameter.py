@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from matplotlib import mlab
 import numpy as np
-from sound_lab_core.ParametersMeasurement.SpectralParameters import DECIMAL_PLACES
 from sound_lab_core.ParametersMeasurement.SpectralParameters.FreqParameter import FreqParameter
 
 
@@ -10,8 +9,9 @@ class MaxFreqParameter(FreqParameter):
     Class that measure the max freq parameter on a segment
     """
 
-    def __init__(self, threshold=-20, total=True):
-        FreqParameter.__init__(self, threshold,total)
+    def __init__(self, threshold=-20, total=True, decimal_places=2, measurement_location=None):
+        FreqParameter.__init__(self, threshold, total, decimal_places=decimal_places,
+                               measurement_location=measurement_location)
         self.name = "MaxFreq(kHz)"
 
     def measure(self, segment):
@@ -32,4 +32,4 @@ class MaxFreqParameter(FreqParameter):
             peak_index = np.argmax(Pxx)
             below[:peak_index] = False
             max_freq_index = np.argwhere(below).min() - 1
-        return round((freqs[max_freq_index] - freqs[max_freq_index] % 10)/1000.0, DECIMAL_PLACES)
+        return round((freqs[max_freq_index] - freqs[max_freq_index] % 10)/1000.0, self.decimal_places)

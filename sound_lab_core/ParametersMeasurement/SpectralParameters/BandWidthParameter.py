@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from matplotlib import mlab
 import numpy as np
-from sound_lab_core.ParametersMeasurement.SpectralParameters import DECIMAL_PLACES
 from sound_lab_core.ParametersMeasurement.SpectralParameters.FreqParameter import FreqParameter
 
 
@@ -10,8 +9,9 @@ class BandWidthParameter(FreqParameter):
     Class that measure the band width parameter on a segment
     """
 
-    def __init__(self, threshold=-20, total=True):
-        FreqParameter.__init__(self, threshold, total)
+    def __init__(self, threshold=-20, total=True, decimal_places=2, measurement_location=None):
+        FreqParameter.__init__(self, threshold, total, decimal_places=decimal_places,
+                               measurement_location=measurement_location)
         self.name = "BandWidth(kHz)"
 
     def measure(self, segment):
@@ -39,4 +39,4 @@ class BandWidthParameter(FreqParameter):
 
         band_with = (freqs[max_freq_index] - freqs[min_freq_index])
 
-        return round((band_with - band_with % 10)/1000.0, DECIMAL_PLACES)
+        return round((band_with - band_with % 10)/1000.0, self.decimal_places)

@@ -1,18 +1,17 @@
 # -*- coding: utf-8 -*-
 import numpy as np
-from . import DECIMAL_PLACES
-from sound_lab_core.ParametersMeasurement.ParameterMeasurer import ParameterMeasurer
+from .TimeParameter import TimeParameter
 
 
-class StartToMaxTimeParameter(ParameterMeasurer):
+class StartToMaxTimeParameter(TimeParameter):
     """
     Class that measure the start to max time paramter on a segment
     """
 
-    def __init__(self):
-        ParameterMeasurer.__init__(self)
+    def __init__(self, decimal_places=4):
+        TimeParameter.__init__(self, decimal_places=decimal_places)
         self.name = "StartToMax(s)"
 
     def measure(self, segment):
         return round(np.argmax(segment.signal.data[segment.indexFrom:segment.indexTo])
-                     * 1.0 / segment.signal.samplingRate, DECIMAL_PLACES)
+                     * 1.0 / segment.signal.samplingRate, self.decimal_places)
