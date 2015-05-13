@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>561</width>
+    <width>661</width>
     <height>388</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>650</width>
+    <height>0</height>
+   </size>
   </property>
   <property name="windowTitle">
    <string>Parameters Configuration</string>
@@ -18,7 +24,7 @@
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
-    <item row="1" column="0">
+    <item row="3" column="0">
      <spacer name="horizontalSpacer">
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
@@ -31,14 +37,36 @@
       </property>
      </spacer>
     </item>
-    <item row="1" column="1">
+    <item row="3" column="1">
      <widget class="QPushButton" name="save_bttn">
       <property name="text">
        <string>Save Configuration</string>
       </property>
      </widget>
     </item>
-    <item row="0" column="0" colspan="2">
+    <item row="2" column="1">
+     <widget class="QWidget" name="settings_widget" native="true">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>250</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>400</width>
+        <height>16777215</height>
+       </size>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="0">
      <widget class="QTabWidget" name="tab_parameters">
       <property name="currentIndex">
        <number>2</number>
@@ -59,7 +87,7 @@
         <string>Spectral Parameters</string>
        </attribute>
        <layout class="QGridLayout" name="gridLayout_2">
-        <item row="0" column="0">
+        <item row="0" column="1">
          <widget class="QTableWidget" name="parameter_locations_table"/>
         </item>
        </layout>

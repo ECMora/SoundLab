@@ -246,18 +246,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         # get the visible elements
         return [self.get_element(i) for i in xrange(len(self.elements)) if self._is_element_visible(self.elements[i])]
 
-        # update visibility for no visible elements items
-        if element_type == VisualElement.Figures:
-            for item in self.no_visible_items:
-                if item in self.axesOscilogram.items() and not visibility:
-                    self.axesOscilogram.removeItem(item)
-
-                elif item not in self.axesOscilogram.items() and visibility:
-                    self.axesOscilogram.addItem(item)
-
-        if update:
-
-    # endregion  v
+    # endregion
 
     # region Elements Draw and Visual Items
 
@@ -269,7 +258,6 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         :return:
         """
         return [e for e in elements if isinstance(e, DetectedSoundLabElement)]
-        elements = elements if elements is not None else self.get_visible_elements()
 
     def _update_elements_numbers(self):
         """
@@ -289,7 +277,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         elements indexes that are not visible Ej [(0,5),(9,11)]
         means that elements from 0 to 5  and from 9 to 11 are invisible
         """
-        if len(self.elements) == 0:
+        # if no detected elements
         if len(self.elements) == 0:
             return []
 
@@ -298,8 +286,8 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         if len(elems) == 0:
             return []
 
-        if len(elements) == 0:
-            return [(0, len(self.elements) - 1)]
+        first_visible_elem_index = elems[0]
+        last_visible_elem_index = elems[len(elems) - 1]
 
         # if no visible elements
         if len(elements) == 0:
@@ -316,8 +304,8 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
             no_visible_elements_items_tuples.append((first_visible_elem_index + 1, visible_elements_indexes[0]))
 
         # include the interval of end if the last element is no visible
-        if visible_elements_indexes[len(visible_elements_indexes) - 1] < len(self.elements) - 1:
-            no_visible_elements_items_tuples.append((visible_elements_indexes[-1] + 1, len(self.elements) - 1))
+        if visible_elements_indexes[len(visible_elements_indexes) - 1] < last_visible_elem_index:
+            no_visible_elements_items_tuples.append((visible_elements_indexes[-1] + 1, last_visible_elem_index - 1))
 
         return no_visible_elements_items_tuples
 
@@ -335,8 +323,8 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         # viewRange of plotWidget [[xmin, xmax], [ymin, ymax]]
         x_max = self.axesOscilogram.viewRange()[0][1]
 
-        start_position = self._get_element(start).indexTo if start > 0 else 0
-        end_position = self._get_element(end).indexFrom if end < len(self.elements) - 1 else x_max
+        start_position = self.get_element(start).indexTo if start > 0 else 0
+        end_position = self.get_element(end).indexFrom if end < len(self.elements) - 1 else x_max
 
         max_value = self.signal.maximumValue
 
@@ -377,12 +365,6 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
         elements_to_remove = self.get_sound_lab_elements(self.elements)
 
-        # add no_visible_items_osc item, visibility
-        self.no_visible_items = [item for start, end in self._get_no_visible_visual_items_tuples(elements)
-                                 for item in self.get_no_visible_visual_item(start, end)[0]]
-
-        segmentation_items.extend(self.no_visible_items)
-
         elements_to_remove = set(elements_to_remove).difference(set(elements))
 
         self.remove_visual_elements(oscilogram=draw_oscilogram, specgram=draw_specgram,
@@ -393,11 +375,11 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
         self.add_visual_elements(elements, draw_oscilogram, draw_specgram)
 
-        osc_items_to_add = osc_items.difference(set(self.axesOscilogram.items()))
+        # translate the coord of the visible added items
         for e in self.get_sound_lab_elements(self.elements):
             e.spectral_element.translate_time_freq_coords(self.from_osc_to_spec, self.get_freq_index)
 
-        spec_items_to_add = spec_items.difference(set(self.axesSpecgram.viewBox.allChildren()))
+    def release_items(self, index_from=None, index_to=None):
         """
         Release the visual items of the elements list
         between the indexes supplied
@@ -434,9 +416,9 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         osc_items = [item for elem in elements for item in elem.time_element.visual_widgets()
                      if item in self.axesOscilogram.items()] if oscilogram else []
 
-
         osc_items.extend(self.no_visible_items)
 
+        spec_items = [item for elem in elements for item in elem.spectral_element.visual_widgets()
                       if item in self.axesSpecgram.viewBox.allChildren()] if specgram else []
 
         for item in osc_items:
@@ -506,7 +488,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
         self.parameters_items[element_index].extend(parameter_items)
 
-            self.draw_elements(elements=[self.elements[element_index]])
+        if not isinstance(self.elements[element_index], DetectedSoundLabElement):
             return
 
         # if the element at index is visible as detected sound la elements add the items
@@ -634,7 +616,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         self._elements = self.elements[0:index_from] + self.elements[index_to + 1:]
         self.parameters_items = self.parameters_items[0:index_from] + self.parameters_items[index_to + 1:]
         self._update_elements_numbers()
-        self.graph()
+        self.draw_elements()
 
     def mark_region_as_element(self, interval=None):
         """
@@ -663,7 +645,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
         # update the widget
         self._update_elements_numbers()
-            self.draw_elements()
+        self.draw_elements()
 
         return index_from
 

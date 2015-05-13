@@ -1,4 +1,6 @@
 from PyQt4.QtCore import QObject, pyqtSignal
+from Locations import *
+from sound_lab_core.ParametersMeasurement.Adapters import *
 
 
 class ParameterManager(QObject):
@@ -10,13 +12,32 @@ class ParameterManager(QObject):
     def __init__(self):
         QObject.__init__(self)
 
-        # location of measurement for the spectral parameters
-        self.locations_adapters = ["Start", "End", "Mean"]
+        # location adapters of measurement for the spectral parameters
+        self.locations_adapters = [StartMeasurementLocation(),
+                                   MeanMeasurementLocation(),
+                                   EndMeasurementLocation(),
+                                   CentreMeasurementLocation()]
 
         # adapters for each type of parameter
-        self.time_parameters_adapters = []
-        self.wave_parameters_adapters = []
-        self.spectral_parameters_adapters = ["Peak freq", "Max freq", "Min freq"]
+        self.time_parameters_adapters = [
+            (u'Start Time', StartTimeParameterAdapter()),
+            (u'End Time', EndTimeParameterAdapter()),
+            (u'Duration', DurationTimeParameterAdapter()),
+            (u'Zero Cross Rate', ZeroCrossRateParameterAdapter()),
+            (u'Local Max Mean', LocalMaxMeanParameterAdapter()),
+            (u'Entropy', EntropyTimeParameterAdapter())]
+
+        self.wave_parameters_adapters = [
+            (u'RMS', RmsTimeParameterAdapter()),
+            (u'PeakToPeak', PeakToPeakParameterAdapter()),
+            (u'StartToMax', StartToMaxTimeParameterAdapter())]
+
+        self.spectral_parameters_adapters = [
+            (u'PeakFreq', PeakFreqParameterAdapter()),
+            (u'MaxFreq', MaxFreqParameterAdapter()),
+            (u'MinFreq', MinFreqParameterAdapter()),
+            (u'BandWidth', BandWidthParameterAdapter()),
+            (u'PeaksAbove', PeaksAboveParameterAdapter())]
 
     @property
     def count(self):
