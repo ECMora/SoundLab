@@ -1,5 +1,4 @@
-from sound_lab_core.Segmentation.Detectors.OneDimensional.OneDimensionalElementsDetector import \
-    OneDimensionalElementsDetector
+from sound_lab_core.Segmentation.OneDimensional.OneDimensionalElementsDetector import OneDimensionalElementsDetector
 
 
 class ManualDetector(OneDimensionalElementsDetector):

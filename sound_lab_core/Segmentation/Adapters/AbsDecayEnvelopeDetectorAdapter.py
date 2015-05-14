@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-from sound_lab_core.Segmentation.Detectors.OneDimensional.EnvelopeMethods.AbsDecayEnvelopeDetector import \
-    AbsDecayEnvelopeDetector
-from sound_lab_core.SoundLabAdapter import SoundLabAdapter
 from pyqtgraph.parametertree import Parameter
 import pyqtgraph as pg
+
+from sound_lab_core.Segmentation.OneDimensional.EnvelopeMethods.AbsDecayEnvelopeDetector import \
+    AbsDecayEnvelopeDetector
+from sound_lab_core.SoundLabAdapter import SoundLabAdapter
 from utils.Utils import fromdB
 
 

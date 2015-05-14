@@ -1,11 +1,9 @@
 # -*- coding: utf-8 -*-
-from sound_lab_core.Segmentation.Detectors.Adapters.ImageDetectorAdapter import ImageDetectorAdapter
-from sound_lab_core.Segmentation.Detectors.OneDimensional.Image.WaterShedDetector import \
-    WatershedDetector
+from sound_lab_core.Segmentation.Adapters.ImageDetectorAdapter import ImageDetectorAdapter
+from sound_lab_core.Segmentation.OneDimensional.Image.GrabCutDetector import GrabCutDetector
 
 
-
-class WatershedDetectorAdapter(ImageDetectorAdapter):
+class GrabCutDetectorAdapter(ImageDetectorAdapter):
     """
     Adapter class for the start time parameter.
     """
@@ -20,4 +18,4 @@ class WatershedDetectorAdapter(ImageDetectorAdapter):
         """
         self.update_instance_variables()
 
-        return WatershedDetector(signal, self.min_size_ms, self.min_size_kHz)
+        return GrabCutDetector(signal, self.min_size_ms, self.min_size_kHz)

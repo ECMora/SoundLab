@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
-from sound_lab_core.Segmentation.Detectors.Adapters.ImageDetectorAdapter import ImageDetectorAdapter
-from sound_lab_core.Segmentation.Detectors.OneDimensional.Image.AdaptThreshDetector import \
-    AdaptThreshDetector
+from sound_lab_core.Segmentation.Adapters.ImageDetectorAdapter import ImageDetectorAdapter
+from sound_lab_core.Segmentation.OneDimensional.Image.WaterShedDetector import \
+    WatershedDetector
 
-class AdaptThreshDetectorAdapter(ImageDetectorAdapter):
+
+class WatershedDetectorAdapter(ImageDetectorAdapter):
     """
     Adapter class for the start time parameter.
     """
@@ -17,4 +18,5 @@ class AdaptThreshDetectorAdapter(ImageDetectorAdapter):
         :return: A new get_instance of the corresponding parameter measurement class
         """
         self.update_instance_variables()
-        return AdaptThreshDetector(signal, self.min_size_ms, self.min_size_kHz)
+
+        return WatershedDetector(signal, self.min_size_ms, self.min_size_kHz)

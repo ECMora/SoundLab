@@ -1,5 +1,6 @@
 from unittest import TestCase
-from sound_lab_core.Segmentation.Detectors.OneDimensional.OneDimensionalElementsDetector import \
+
+from sound_lab_core.Segmentation.OneDimensional.OneDimensionalElementsDetector import \
     OneDimensionalElementsDetector
 
 

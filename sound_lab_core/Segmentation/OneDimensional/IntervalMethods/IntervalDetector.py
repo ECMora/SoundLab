@@ -1,6 +1,7 @@
 import matplotlib.mlab as mlab
 import numpy as np
-from sound_lab_core.Segmentation.Detectors.OneDimensional.OneDimensionalElementsDetector import \
+
+from sound_lab_core.Segmentation.OneDimensional.OneDimensionalElementsDetector import \
     OneDimensionalElementsDetector
 from utils.Utils import fromdB
 

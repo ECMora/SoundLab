@@ -15,7 +15,7 @@ class ParametersWindow(QtGui.QMainWindow, Ui_MainWindow):
         QtGui.QMainWindow.__init__(self, parent)
         self.setupUi(self)
 
-        self.save_bttn.clicked.connect(self.close)
+        self.save_bttn.clicked.connect(self.get_parameter_list)
 
         self.parameter_tree_widget = ParameterTree()
         self.parameter_tree_widget.setAutoScroll(True)
@@ -63,20 +63,22 @@ class ParametersWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.parameter_locations_table.setRowCount(len(self.parameter_manager.locations_adapters))
         self.parameter_locations_table.setColumnCount(len(self.parameter_manager.spectral_parameters_adapters))
 
+        # load spectral params and locations
         for i in xrange(self.parameter_locations_table.rowCount()):
             for j in xrange(self.parameter_locations_table.columnCount()):
                 item = QtGui.QTableWidgetItem("")
                 item.setCheckState(Qt.Unchecked)
                 self.parameter_locations_table.setItem(i, j, item)
 
-        row_names = [x.name for x in self.parameter_manager.locations_adapters]
+        row_names = [x[0] for x in self.parameter_manager.locations_adapters]
         column_names = [x[0] for x in self.parameter_manager.spectral_parameters_adapters]
 
         self.parameter_locations_table.setVerticalHeaderLabels(row_names)
         self.parameter_locations_table.setHorizontalHeaderLabels(column_names)
+
         self.parameter_locations_table.cellClicked.connect(lambda x, y: self.select_parameter(
-            self.parameter_manager.spectral_parameters_adapters[y],
-            self.parameter_manager.locations_adapters[x]))
+            self.parameter_manager.spectral_parameters_adapters[y][1],
+            self.parameter_manager.locations_adapters[x][1]))
 
         self.parameter_locations_table.resizeColumnsToContents()
         self.parameter_locations_table.resizeRowsToContents()
@@ -103,14 +105,33 @@ class ParametersWindow(QtGui.QMainWindow, Ui_MainWindow):
         self.location_measurement_tree.clearChildren()
 
         if parameter_adapter is not None:
-            param_settings = parameter_adapter[1].get_settings()
+            param_settings = parameter_adapter.get_settings()
 
             if param_settings is not None:
                 self.param_measurement_tree.addChild(param_settings)
 
-        # if location_adapter is not None:
-        #     location_settings = location_adapter.get_settings()
-        #
-        #     if location_settings is not None:
-        #         self.location_measurement_tree.addChild(param_settings)
+        if location_adapter is not None:
+            location_settings = location_adapter.get_settings()
 
+            if location_settings is not None:
+                self.location_measurement_tree.addChild(location_settings)
+
+    def get_parameter_list(self):
+        """
+        :return: The list of parameters to measure
+        """
+        time_parameters = []
+
+        wave_parameters = []
+
+        spectral_parameters = []
+        for i in xrange(self.parameter_locations_table.rowCount()):
+            for j in xrange(self.parameter_locations_table.columnCount()):
+                if self.parameter_locations_table.item(i, j).checkState() == Qt.Checked:
+                    parameter = self.parameter_manager.spectral_parameters_adapters[j][1].get_instance()
+                    parameter.location = self.parameter_manager.locations_adapters[i][1].get_instance()
+                    spectral_parameters.append(parameter)
+
+        self.close()
+
+        return time_parameters + wave_parameters + spectral_parameters

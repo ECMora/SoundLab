@@ -1,10 +1,9 @@
 # -*- coding: utf-8 -*-
-from sound_lab_core.Segmentation.Detectors.Adapters.ImageDetectorAdapter import ImageDetectorAdapter
-from sound_lab_core.Segmentation.Detectors.OneDimensional.Image.GrabCutDetector import \
-    GrabCutDetector
+from sound_lab_core.Segmentation.Adapters.ImageDetectorAdapter import ImageDetectorAdapter
+from sound_lab_core.Segmentation.OneDimensional.Image.AdaptThreshDetector import AdaptThreshDetector
 
 
-class GrabCutDetectorAdapter(ImageDetectorAdapter):
+class AdaptThreshDetectorAdapter(ImageDetectorAdapter):
     """
     Adapter class for the start time parameter.
     """
@@ -18,5 +17,4 @@ class GrabCutDetectorAdapter(ImageDetectorAdapter):
         :return: A new get_instance of the corresponding parameter measurement class
         """
         self.update_instance_variables()
-
-        return GrabCutDetector(signal, self.min_size_ms, self.min_size_kHz)
+        return AdaptThreshDetector(signal, self.min_size_ms, self.min_size_kHz)

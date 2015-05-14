@@ -1,11 +1,11 @@
-from PyQt4.QtCore import QObject, pyqtSignal, QThread
+from PyQt4.QtCore import QObject, pyqtSignal
 import numpy as np
-from sound_lab_core.Segmentation.Detectors.Adapters import ManualDetectorAdapter
+from duetto.audio_signals import AudioSignal
+
+from sound_lab_core.Segmentation.Adapters import ManualDetectorAdapter
 from sound_lab_core.Clasification.Adapters import ManualClassifierAdapter
 from sound_lab_core.Elements.OneDimensionalElements.OneDimensionalElement import OneDimensionalElement
 from utils.Utils import SegmentationThread, MeasurementThread
-from utils.db.DB_ORM import Segment, DB, Measurement
-from duetto.audio_signals import AudioSignal
 
 
 class SegmentManager(QObject):

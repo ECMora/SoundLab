@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from sound_lab_core.Segmentation.Detectors.Adapters.IntervalDetectorAdapter import IntervalDetectorAdapter
-from sound_lab_core.Segmentation.Detectors.OneDimensional.IntervalMethods.IntervalRmsDetector import IntervalRmsDetector
+from sound_lab_core.Segmentation.OneDimensional.IntervalMethods.IntervalRmsDetector import IntervalRmsDetector
+from sound_lab_core.Segmentation.Adapters.IntervalDetectorAdapter import IntervalDetectorAdapter
 
 
 class IntervalRmsDetectorAdapter(IntervalDetectorAdapter):

@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
+from PyQt4.QtCore import QObject
+from sound_lab_core.ParametersMeasurement.Locations.MeanMeasurementLocation import MeanMeasurementLocation
 
 
-class ParameterMeasurer:
+class ParameterMeasurer(QObject):
     """
     Class that represent an object that measure parameters
     in segments.
@@ -12,6 +14,7 @@ class ParameterMeasurer:
         Create a parameter measurer
         :return:
         """
+        QObject.__init__(self)
 
         # the name of the parameter
         self._name = ""
@@ -21,6 +24,9 @@ class ParameterMeasurer:
 
         # the location on the detected segment to perform the parameter measurement
         self._measurement_location = measurement_location
+
+        if self._measurement_location is None:
+            self._measurement_location = MeanMeasurementLocation()
 
     # region Properties
 
@@ -52,9 +58,15 @@ class ParameterMeasurer:
 
     @location.setter
     def location(self, new_location):
+        if new_location is None:
+            raise Exception("Location of measurement cant be None")
+
         self._measurement_location = new_location
 
     # endregion
+
+    def __str__(self):
+        return self.name
 
     @property
     def default_value(self):

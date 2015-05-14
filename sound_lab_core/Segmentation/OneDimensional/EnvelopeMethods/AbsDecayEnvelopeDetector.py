@@ -1,8 +1,10 @@
 from math import pi, sin
+
 import matplotlib.mlab as mlab
 from numpy import zeros, int32
 import numpy as np
-from sound_lab_core.Segmentation.Detectors.OneDimensional.OneDimensionalElementsDetector import \
+
+from sound_lab_core.Segmentation.OneDimensional.OneDimensionalElementsDetector import \
     OneDimensionalElementsDetector
 from utils.Utils import fromdB
 

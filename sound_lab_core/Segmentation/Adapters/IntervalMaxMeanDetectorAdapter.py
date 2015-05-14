@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-from sound_lab_core.Segmentation.Detectors.Adapters.IntervalDetectorAdapter import IntervalDetectorAdapter
-from sound_lab_core.Segmentation.Detectors.OneDimensional.IntervalMethods.IntervalMaxMeanDetector import \
-    IntervalMaxMeanDetector
+from sound_lab_core.Segmentation.OneDimensional.IntervalMethods.IntervalMaxMeanDetector import IntervalMaxMeanDetector
+from sound_lab_core.Segmentation.Adapters.IntervalDetectorAdapter import IntervalDetectorAdapter
 
 
 class IntervalMaxMeanDetectorAdapter(IntervalDetectorAdapter):

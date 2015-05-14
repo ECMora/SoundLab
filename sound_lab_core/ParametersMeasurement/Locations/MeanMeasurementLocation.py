@@ -1,7 +1,5 @@
 from sound_lab_core.ParametersMeasurement.Locations.MeasurementLocation import MeasurementLocation
 
-__author__ = 'y.febles'
-
 
 class MeanMeasurementLocation(MeasurementLocation):
     """
@@ -11,3 +9,6 @@ class MeanMeasurementLocation(MeasurementLocation):
     def __init__(self):
         MeasurementLocation.__init__(self)
         self.name = "mean"
+
+    def get_data_array_slice(self, segment):
+        return segment.signal.data[segment.indexFrom:segment.indexTo]

@@ -1,4 +1,4 @@
-from CentreMeasurementLocation import CentreMeasurementLocation
+from CenterMeasurementLocation import CenterMeasurementLocation
 from StartMeasurementLocation import StartMeasurementLocation
 from EndMeasurementLocation import EndMeasurementLocation
 from MeanMeasurementLocation import MeanMeasurementLocation

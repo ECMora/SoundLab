@@ -1,8 +1,9 @@
 #  -*- coding: utf-8 -*-
 from numpy import *
+
+from sound_lab_core.Segmentation.ElementsDetector import ElementsDetector
 from utils.Utils import fromdB
 from sound_lab_core.Elements.OneDimensionalElements.OneDimensionalElement import OneDimensionalElement
-from sound_lab_core.Segmentation.Detectors.ElementsDetector import ElementsDetector
 
 
 class OneDimensionalElementsDetector(ElementsDetector):

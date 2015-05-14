@@ -1,6 +1,6 @@
 from PyQt4.QtCore import QObject, pyqtSignal
-from Locations import *
 from sound_lab_core.ParametersMeasurement.Adapters import *
+from sound_lab_core.ParametersMeasurement.Adapters.Locations import *
 
 
 class ParameterManager(QObject):
@@ -13,10 +13,10 @@ class ParameterManager(QObject):
         QObject.__init__(self)
 
         # location adapters of measurement for the spectral parameters
-        self.locations_adapters = [StartMeasurementLocation(),
-                                   MeanMeasurementLocation(),
-                                   EndMeasurementLocation(),
-                                   CentreMeasurementLocation()]
+        self.locations_adapters = [(u'Start', StartLocationAdapter()),
+                                   (u'Center', CenterLocationAdapter()),
+                                   (u'End', EndLocationAdapter()),
+                                   (u'Mean', MeanLocationAdapter())]
 
         # adapters for each type of parameter
         self.time_parameters_adapters = [

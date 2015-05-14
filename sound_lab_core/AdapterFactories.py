@@ -2,7 +2,7 @@
 from PyQt4.QtCore import QObject
 from sound_lab_core.Clasification.Adapters import *
 from sound_lab_core.ParametersMeasurement.Adapters import *
-from sound_lab_core.Segmentation.Detectors.Adapters import *
+from sound_lab_core.Segmentation.Adapters import *
 
 
 class AdapterFactory(QObject):

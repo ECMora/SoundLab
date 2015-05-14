@@ -1,21 +1,26 @@
+from math import ceil
+
 import numpy as np
 import cv2
-from sound_lab_core.Segmentation.Detectors.OneDimensional.OneDimensionalElementsDetector import \
-    OneDimensionalElementsDetector
 from duetto.dimensional_transformations.two_dimensional_transforms.Spectrogram.Spectrogram import Spectrogram
 from duetto.dimensional_transformations.two_dimensional_transforms.Spectrogram.WindowFunctions import WindowFunction
 from scipy.ndimage import label, find_objects
-from math import ceil
 
-class GrabCutDetector(OneDimensionalElementsDetector):
+from sound_lab_core.Segmentation.OneDimensional.OneDimensionalElementsDetector import \
+    OneDimensionalElementsDetector
 
-    def __init__(self, signal=None, min_size_ms=1, min_size_kHz=1):
+
+class WatershedDetector(OneDimensionalElementsDetector):
+
+    def __init__(self, signal, min_size_ms=1, min_size_kHz=1):
+
         self._signal = None
         self.spec = None
         self.min_size_ms = min_size_ms
         self.min_size_kHz = min_size_kHz
         self.elements = []
         self.intervalSize = 24000
+
         OneDimensionalElementsDetector.__init__(self, signal)
 
     @property
@@ -45,11 +50,12 @@ class GrabCutDetector(OneDimensionalElementsDetector):
             self.detectionProgressChanged.emit(10 + 80 * i / number_of_intervals)
 
             temp = self.detect_elements(self.signal.data, indexFrom + i * self.intervalSize,
-                                indexFrom + (i+1) * self.intervalSize, self.min_size_ms, min_size_y)
+                                        indexFrom + (i+1) * self.intervalSize, self.min_size_ms, min_size_y)
             if len(elems) > 0 and len(temp) > 0 and elems[-1][1] >= temp[0][0]:
                 elems[-1] = (elems[-1][0], temp[0][1])
                 elems.extend(temp[1:])
             elems.extend(temp)
+
 
         self.detectionProgressChanged.emit(90)
 
@@ -68,37 +74,33 @@ class GrabCutDetector(OneDimensionalElementsDetector):
         try:
             self.spec.recomputeSpectrogram(start, end)
             pxx = self.spec.matriz
-
             pxx[pxx < -100] = -100
             gray = ((pxx - pxx.min()) / (pxx.max() - pxx.min()) * 255).astype(np.uint8)
 
-            ret, thresh = cv2.threshold(gray,0,255,cv2.THRESH_BINARY+cv2.THRESH_OTSU)
-            kernel = np.ones((3,3),np.uint8)
-            opening = cv2.morphologyEx(thresh,cv2.MORPH_OPEN,kernel, iterations=2)
-            sure_bg = cv2.dilate(opening,kernel,iterations=3)
-
-            dt = cv2.distanceTransform(opening,2,3)
-            dt = np.uint8((dt - dt.min()) / (dt.max() - dt.min()) * 255).astype(np.uint8)
-
-            ret, sure_fg = cv2.threshold(dt,0, 255,cv2.THRESH_OTSU)
-            sure_fg = cv2.morphologyEx(sure_fg, cv2.MORPH_CLOSE,kernel, iterations=3)
-            sure_fg = cv2.morphologyEx(sure_fg, cv2.MORPH_OPEN,kernel, iterations=3)
-
-            mask = np.zeros(gray.shape,np.uint8)
-            mask += cv2.GC_PR_FGD
-            mask[sure_fg == 255] = cv2.GC_FGD
-            mask[sure_bg == 0] = cv2.GC_BGD
-
-            bgdModel = np.zeros((1,65),np.float64)
-            fgdModel = np.zeros((1,65),np.float64)
-
-            img = np.zeros((pxx.shape[0],pxx.shape[1],3),dtype=np.uint8)
+            img = np.zeros((pxx.shape[0], pxx.shape[1], 3), dtype=np.uint8)
             img[:, :, 0] += gray
 
-            cv2.grabCut(img,mask,None,bgdModel,fgdModel,3,cv2.GC_INIT_WITH_MASK)
-            mask = np.where((mask==2)|(mask==0),0,1).astype('uint8')
+            _, img_bin = cv2.threshold(gray, 0, 255, cv2.THRESH_OTSU)
+            img_bin = cv2.morphologyEx(img_bin, cv2.MORPH_OPEN, np.ones((3, 3), dtype=int))
+            border = cv2.dilate(img_bin, None, iterations=2)
+            border = border - cv2.erode(border, None)
 
-            lbl, ncc = label(mask)
+            dt = cv2.distanceTransform(img_bin, 2, 3)
+            dt = ((dt - dt.min()) / (dt.max() - dt.min()) * 255).astype(np.uint8)
+            dt = cv2.morphologyEx(dt, cv2.MORPH_CLOSE, np.ones((3, 3), dtype=int),iterations=3)
+            dt = cv2.morphologyEx(dt, cv2.MORPH_OPEN, np.ones((3, 3), dtype=int),iterations=3)
+            _, dt = cv2.threshold(dt, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+            lbl, ncc = label(dt)
+
+            # Completing the markers now.
+            lbl[border == 255] = ncc + 1
+
+            lbl = lbl.astype(np.int32)
+            cv2.watershed(img, lbl)
+
+            lbl[lbl == -1] = 0
+            lbl[lbl == ncc + 1] = 0
+
             bounds = find_objects(lbl)
 
             for i in xrange(1,ncc):
@@ -108,11 +110,17 @@ class GrabCutDetector(OneDimensionalElementsDetector):
                     elems.append((self.spec.from_spec_to_osc(regionBounds[0]),
                                   self.spec.from_spec_to_osc(regionBounds[1])))
 
-            elems = [e for e in elems if e[1] - e[0] >= min_size_ms]
+            temp = self.merge_intervals(elems)
+
+            elems = []
+
+            for e in temp:
+                if e[1] - e[0] >= min_size_ms:
+                    elems.append(e)
 
         except Exception as ex:
             elems = []
-            print("detection error on method Grab cut " + ex.message)
+            print("detection error on method Water Sheed " + ex.message)
 
         return elems
 
