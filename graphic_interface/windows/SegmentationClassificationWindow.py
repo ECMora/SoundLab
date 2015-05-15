@@ -615,7 +615,7 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
         elementsDetectorDialog = ElemDetectSettingsDialog(parent=self, signal=self.widget.signal)
         elementsDetectorDialog.load_workspace(self.workSpace)
-        elementsDetectorDialog.restore_previous_state(self.segmentManager.measurer_adapters,
+        elementsDetectorDialog.restore_previous_state(self.segmentManager.parameters,
                                                       self.segmentManager.detector_adapter,
                                                       self.segmentManager.classifier_adapter)
         try:
@@ -626,7 +626,7 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
                 # get the segmentation, classification and parameters methods
                 self.segmentManager.detector_adapter = elementsDetectorDialog.detector
                 self.segmentManager.classifier_adapter = elementsDetectorDialog.classifier
-                self.segmentManager.measurer_adapters = elementsDetectorDialog.get_measurer_list()
+                self.segmentManager.parameters = elementsDetectorDialog.get_measurer_list()
 
                 self.windowProgressDetection.setValue(0)
                 self.set_progress_bar_visibility(True)

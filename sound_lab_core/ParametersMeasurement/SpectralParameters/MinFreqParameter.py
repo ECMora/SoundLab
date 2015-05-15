@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from matplotlib import mlab
 import numpy as np
 from sound_lab_core.ParametersMeasurement.SpectralParameters.FreqParameter import FreqParameter
 

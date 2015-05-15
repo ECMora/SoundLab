@@ -1,15 +1,15 @@
 # -*- coding: utf-8 -*-
 from numpy import argmax
-from sound_lab_core.ParametersMeasurement.ParameterMeasurer import ParameterMeasurer
+from sound_lab_core.ParametersMeasurement.SpectralParameters.FreqParameter import SpectralParameter
 
 
-class PeakFreqParameter(ParameterMeasurer):
+class PeakFreqParameter(SpectralParameter):
     """
     Class that measure the peak freq parameter on a segment
     """
 
     def __init__(self, decimal_places=2, measurement_location=None):
-        ParameterMeasurer.__init__(self, decimal_places=decimal_places, measurement_location=measurement_location)
+        SpectralParameter.__init__(self, decimal_places=decimal_places, measurement_location=measurement_location)
         self.name = "PeakFreq(kHz)"
 
     def measure(self, segment):

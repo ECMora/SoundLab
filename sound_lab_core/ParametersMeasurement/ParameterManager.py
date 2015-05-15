@@ -6,7 +6,7 @@ from sound_lab_core.ParametersMeasurement.Adapters.Locations import *
 class ParameterManager(QObject):
     """
     Class that handles the parameter measurement configurations.
-    Its a
+    Provides the adapters for parameters creation.
     """
 
     def __init__(self):
@@ -39,16 +39,22 @@ class ParameterManager(QObject):
             (u'BandWidth', BandWidthParameterAdapter()),
             (u'PeaksAbove', PeaksAboveParameterAdapter())]
 
+        self._parameter_list = []
+
     @property
     def count(self):
         """
         :return: The number of parameters
         """
-        return len(self.get_parameter_list())
+        return len(self.parameter_list)
 
-    def get_parameter_list(self):
+    @property
+    def parameter_list(self):
         """
-        Computes and returns the list with all parameters instances for measurements
-        :return:
+        :return: The number of parameters
         """
-        return []
+        return self._parameter_list
+
+    @parameter_list.setter
+    def parameter_list(self, new_param_list):
+        self._parameter_list = new_param_list

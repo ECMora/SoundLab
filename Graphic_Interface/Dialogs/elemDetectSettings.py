@@ -32,6 +32,7 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
 
         self._detector = None
         self._classifier = None
+        self.parameters = []
 
         # get the factory adapters for parameters, segmentation and classification
         self._parameterAdapterFactory = ParametersAdapterFactory()
@@ -57,7 +58,7 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         :return:
         """
         # parameters
-        self._restore_parameters(parameter_adapters)
+        #self._restore_parameters(parameter_adapters)
 
         # segmentation method
         self._restore_method(segmentation_adapter, self.segmentation_adapter_factory, u'Segmentation')
@@ -164,7 +165,9 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
 
     def configure_parameters(self):
         param_window = ParametersWindow(self)
-        param_window.show()
+        if param_window.exec_():
+            self.parameters = param_window.get_parameter_list()
+
 
     def create_measurement_parameter_tree(self):
         # set the segmentation and classification parameters
@@ -333,17 +336,18 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         """
         :return: The list of selected parameters adapters to measure
         """
-        parameters_groups = self.param_measurement_tree.children()
-
-        parameters_list = []
-        for group in parameters_groups:
-            parameters_list.extend(group.children())
-
-        # get just the parameter selected by user to be measured
-        parameters_adapters_list = [self.parameter_adapter_factory.get_adapter(x.name()) for x in parameters_list
-                                    if x.param(unicode(self.tr(u'Measure'))).value()]
-
-        return parameters_adapters_list
+        return self.parameters
+        # parameters_groups = self.param_measurement_tree.children()
+        #
+        # parameters_list = []
+        # for group in parameters_groups:
+        #     parameters_list.extend(group.children())
+        #
+        # # get just the parameter selected by user to be measured
+        # parameters_adapters_list = [self.parameter_adapter_factory.get_adapter(x.name()) for x in parameters_list
+        #                             if x.param(unicode(self.tr(u'Measure'))).value()]
+        #
+        # return parameters_adapters_list
 
     # endregion
 

@@ -43,7 +43,7 @@ class SegmentManager(QObject):
         # the detector adapter object that would be used on segments detection
         self._detector = None
 
-        # the parameter measurer adapter list
+        # the parameter measurer list
         self._measurerList = []
 
         # the detected elements
@@ -85,12 +85,12 @@ class SegmentManager(QObject):
         self.recompute_element_table()
 
     @property
-    def measurer_adapters(self):
+    def parameters(self):
         return self._measurerList
 
-    @measurer_adapters.setter
-    def measurer_adapters(self, new_measurer_adapters):
-        self._measurerList = new_measurer_adapters
+    @parameters.setter
+    def parameters(self, new_parameter_measurers):
+        self._measurerList = new_parameter_measurers
         self.recompute_element_table()
 
     def recompute_element_table(self):
@@ -102,7 +102,7 @@ class SegmentManager(QObject):
         """
         # clear the parameters
         rows = len(self.elements)
-        cols = len(self.measurer_adapters)
+        cols = len(self.parameters)
 
         self.measuredParameters = np.zeros(rows * cols).reshape((rows, cols))
 
@@ -124,7 +124,7 @@ class SegmentManager(QObject):
         The names of the columns of parameters.
         :return:
         """
-        return [x.get_instance().name for x in self.measurer_adapters]
+        return [x.getName() for x in self.parameters]
 
     @property
     def columnNames(self):
@@ -169,7 +169,7 @@ class SegmentManager(QObject):
 
     @property
     def columnCount(self):
-        return len(self.measurer_adapters) + len(self.classificationColumnNames)
+        return len(self.parameters) + len(self.classificationColumnNames)
 
     # endregion
 
@@ -211,12 +211,12 @@ class SegmentManager(QObject):
         # get the classification parameters and classifier
         classifier = self.classifier_adapter.get_instance()
 
-        classifier.parameters = self.measurer_adapters
+        classifier.parameters = self.parameters
 
         # classify each element
         for i in xrange(len(self.elements)):
             #                                     parameter adapter, value
-            parameter_vector = [self.measuredParameters[i, j] for j, x in enumerate(self.measurer_adapters)]
+            parameter_vector = [self.measuredParameters[i, j] for j, x in enumerate(self.parameters)]
             self._classify_element(element_index=i, classifier=classifier, parameter_vector=parameter_vector)
 
         self.measurementsChanged.emit()
@@ -233,7 +233,7 @@ class SegmentManager(QObject):
         classifier = classifier if classifier is not None else self.classifier_adapter.get_instance()
 
         parameter_vector = parameter_vector if parameter_vector is not None else \
-            [self.measuredParameters[element_index, j] for j in xrange(len(self.measurer_adapters))]
+            [self.measuredParameters[element_index, j] for j in xrange(len(self.parameters))]
 
         classification_value = classifier.classify(self.elements[element_index], parameter_vector)
 
@@ -242,19 +242,19 @@ class SegmentManager(QObject):
         # update visualization
         self.update_elements_visual_items(self.classifier_adapter, element_index, classification_value)
 
-    def update_elements_visual_items(self, adapter, element_index, value):
+    def update_elements_visual_items(self, parameter, element_index, value):
         """
         Method that raises the signal segmentVisualItemAdded
         with the according visual items founded for an specific
         detected element.
         :return:
         """
-        visual_items = adapter.get_visual_items()
+        visual_items = parameter.get_visual_items()
         if not visual_items:
             return
 
         for item in visual_items:
-            item.set_data(self.signal, self.elements[element_index], value)
+            item.set_data(self.  signal, self.elements[element_index], value)
 
         self.segmentVisualItemAdded.emit(element_index, visual_items)
 
@@ -304,7 +304,7 @@ class SegmentManager(QObject):
             self.classificationTableData.insert(index, None)
             self._elements.insert(index, element)
             self.measuredParameters = np.concatenate((self.measuredParameters[:index],
-                                                      np.array([np.zeros(len(self.measurer_adapters))]),
+                                                      np.array([np.zeros(len(self.parameters))]),
                                                       self.measuredParameters[index:]))
         # measure parameters
         self._measure(element, index, raise_visual_items=True)
@@ -352,7 +352,7 @@ class SegmentManager(QObject):
         """
         # update visual items of segments measurements
         for i in xrange(self.rowCount):
-            for j, parameter_adapter in enumerate(self.measurer_adapters):
+            for j, parameter_adapter in enumerate(self.parameters):
                 self.update_elements_visual_items(parameter_adapter, i, self.measuredParameters[i, j])
 
         self.measurementsFinished.emit()
@@ -365,13 +365,11 @@ class SegmentManager(QObject):
         :param elements:
         :return:
         """
-        if len(self.measurer_adapters) == 0:
+        if len(self.parameters) == 0:
             return
 
-        measure_methods = [parameter_adapter.get_instance() for parameter_adapter in self.measurer_adapters]
-
         for i in xrange(self.rowCount):
-            self._measure(self.elements[i], i, measure_methods)
+            self._measure(self.elements[i], i)
 
     def _measure(self, element, index, measure_methods=None, raise_visual_items=False):
         """
@@ -387,9 +385,9 @@ class SegmentManager(QObject):
             raise IndexError()
 
         if measure_methods is None:
-            measure_methods = [parameter_adapter.get_instance() for parameter_adapter in self.measurer_adapters]
+            measure_methods = self.parameters
 
-        for j, parameter_adapter in enumerate(self.measurer_adapters):
+        for j, parameter_adapter in enumerate(self.parameters):
             try:
                 # measure param
                 self.measuredParameters[index, j] = measure_methods[j].measure(element)
@@ -421,7 +419,7 @@ class SegmentManager(QObject):
         if row < 0 or row >= self.rowCount:
             raise IndexError()
 
-        if col < len(self.measurer_adapters):
+        if col < len(self.parameters):
             return self.measuredParameters[row, col]
 
         # the order of the classification taxonomy may change
@@ -429,7 +427,7 @@ class SegmentManager(QObject):
         if classification is None:
             return self.tr(u"No Identified")
 
-        index = col - len(self.measurer_adapters)
+        index = col - len(self.parameters)
 
         if index == 0 and classification.family is not None:
             return classification.family

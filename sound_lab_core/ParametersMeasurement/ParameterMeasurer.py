@@ -28,12 +28,14 @@ class ParameterMeasurer(QObject):
         if self._measurement_location is None:
             self._measurement_location = MeanMeasurementLocation()
 
+    def getName(self):
+        return self.name
+
     # region Properties
 
     @property
     def name(self):
-        location_name = "" if self.location is None else self.location.name
-        return self._name + "(" + location_name + ")"
+        return self._name
 
     @name.setter
     def name(self, new_name):
@@ -67,6 +69,9 @@ class ParameterMeasurer(QObject):
 
     def __str__(self):
         return self.name
+
+    def get_visual_items(self):
+        return []
 
     @property
     def default_value(self):
