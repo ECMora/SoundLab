@@ -336,6 +336,7 @@ class SegmentManager(QObject):
     # endregion
 
     # region Measurements
+
     def measure_parameters_and_classify(self):
         """
         Measure the parameters over the detected elements and

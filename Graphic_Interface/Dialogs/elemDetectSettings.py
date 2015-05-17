@@ -35,82 +35,20 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         self.parameters = []
 
         # get the factory adapters for parameters, segmentation and classification
-        self._parameterAdapterFactory = ParametersAdapterFactory()
         self._segmentationAdapterFactory = SegmentationAdapterFactory()
         self._classificationAdapterFactory = ClassificationAdapterFactory()
-
-        self.parameter_tree_widget = ParameterTree()
-        self.param_measurement_tree = None
 
         self.segmentation_classification_tree_widget = ParameterTree()
         self.segmentation_classification_tree = None
 
-        self.create_parameter_trees()
+        layout = QtGui.QVBoxLayout()
+        layout.setMargin(0)
+        layout.addWidget(self.segmentation_classification_tree_widget)
+        self.segmentation_classification_settings.setLayout(layout)
+
+        self.create_segmentation_classification_param_tree()
 
         self.detect()
-
-    def restore_previous_state(self, parameter_adapters, segmentation_adapter=None, classification_adapter=None):
-        """
-        Restore the dialog previous selected data to avoid lose of previous selected parameters
-        :param parameter_adapters: The list of parameters adapters previously selected
-        :param segmentation_adapter: The segmentation adapter previously selected
-        :param classification_adapter: The classification adapter previously selected
-        :return:
-        """
-        # parameters
-        #self._restore_parameters(parameter_adapters)
-
-        # segmentation method
-        self._restore_method(segmentation_adapter, self.segmentation_adapter_factory, u'Segmentation')
-
-        # classification method
-        self._restore_method(classification_adapter, self.classification_adapter_factory, u'Classification')
-
-    def _restore_parameters(self, parameter_adapters):
-        """
-        restore the parameters adapters selected
-        :return:
-        """
-        parameters_groups = self.param_measurement_tree.children()
-
-        # parameters adapters
-        for group in parameters_groups:
-            for parameter in group.children():
-                adapter = self.parameter_adapter_factory.get_adapter(parameter.name())
-                for p in parameter_adapters:
-                    if type(adapter) == type(p):
-                        parameter.param(unicode(self.tr(u'Measure'))).setValue(True)
-                        adapter.restore_settings(p, self.widget.signal)
-                        break
-
-    def _restore_method(self, adapter, adapter_factory, method_name):
-        """
-        Restore the segmentation or classification adapter previously used
-        (user friendly restore of previous values of the dialog)
-        :param adapter: the adapter (segmentation or classification adapter)
-        :param method_name: the method name (one of 'Segmentation', 'Classification')
-        :return:
-        """
-
-        for parameter in self.segmentation_classification_tree.param(unicode(self.tr(method_name))).children():
-            if parameter.type() == u"bool":
-                adapter_name = parameter.name()
-                method_adapter = adapter_factory.get_adapter(adapter_name)
-
-                if type(adapter) == type(method_adapter):
-                    method_adapter.restore_settings(adapter, self.widget.signal)
-                    parameter.setValue(True)
-
-    def create_parameter_trees(self):
-        """
-        Create the ParameterTree with the options of the dialog.
-        The ParameterTree contains the combo box of
-        the active parameters parameters and to select.
-        :return:
-        """
-        self.create_segmentation_classification_param_tree()
-        self.create_measurement_parameter_tree()
-        self.configure_parameter_trees_layout()
 
     def create_segmentation_classification_param_tree(self):
 
@@ -168,56 +106,6 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         if param_window.exec_():
             self.parameters = param_window.get_parameter_list()
 
-
-    def create_measurement_parameter_tree(self):
-        # set the segmentation and classification parameters
-        self.param_measurement_tree = Parameter.create(name=unicode(self.tr(u'Parameter Measurements')), type=u'group')
-
-        # create a group for each parameter group category
-        for parameter_group in self.parameter_adapter_factory.parameter_groups:
-            parameter_group_tree = Parameter.create(name=unicode(self.tr(unicode(parameter_group.name))),
-                                                    type=u'group', expanded=False)
-
-            # for each group category add all the parameters on that category
-            for adapter_name in parameter_group.adapters_names():
-                group = Parameter.create(name=unicode(self.tr(unicode(adapter_name))),
-                                         type=u'group', expanded=True)
-
-                # the measure/ not measure check box to select parameter for measurement
-                measure = Parameter.create(name=unicode(self.tr(u'Measure')), type=u'bool', default=False, value=False)
-
-                # get the parameter settings if any (Parameter tree interface of the parameter adapter)
-                param_settings = parameter_group.get_adapter(adapter_name).get_settings()
-
-                group.addChild(measure)
-
-                if param_settings is not None:
-                    group.addChild(param_settings)
-
-                parameter_group_tree.addChild(group)
-
-            self.param_measurement_tree.addChild(parameter_group_tree)
-
-        self.parameter_tree_widget.setAutoScroll(True)
-        self.parameter_tree_widget.setHeaderHidden(True)
-        self.parameter_tree_widget.setParameters(self.param_measurement_tree)
-
-    def configure_parameter_trees_layout(self):
-        """
-        Configure the layout of the parameter trees of segmentation,
-        classification methods and parameter measurement.
-        :return:
-        """
-        layout = QtGui.QVBoxLayout()
-        layout.setMargin(0)
-        layout.addWidget(self.segmentation_classification_tree_widget)
-        self.segmentation_classification_settings.setLayout(layout)
-
-        layout2 = QtGui.QVBoxLayout()
-        layout2.setMargin(0)
-        layout2.addWidget(self.parameter_tree_widget)
-        self.parameter_measurement_settings.setLayout(layout2)
-
     def segmentation_classification_changed(self, param, changes, param_tree_name, adapter_factory):
         """
         Process a change into the parameter tree of segmentation
@@ -254,7 +142,6 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
                     if isinstance(adapter, classifiers_tuple):
                         self._restore_parameters(adapter.classifier_parameters())
 
-
                 except Exception as ex:
                     print(ex.message)
 
@@ -273,21 +160,52 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
 
     # endregion
 
-    # region WorkSpace
+    # region Restore Previous Status
 
-    def load_workspace(self, workspace):
+    def restore_previous_state(self, parameter_adapters, segmentation_adapter=None, classification_adapter=None):
         """
-        Method that loads the workspace to update visual options from main window.
-        :param workspace:
+        Restore the dialog previous selected data to avoid lose of previous selected parameters
+        :param parameter_adapters: The list of parameters adapters previously selected
+        :param segmentation_adapter: The segmentation adapter previously selected
+        :param classification_adapter: The classification adapter previously selected
+        :return:
         """
-        self.widget.load_workspace(workspace)
+        # parameters
+        self._restore_parameters(parameter_adapters)
+
+        # segmentation method
+        self._restore_method(segmentation_adapter, self.segmentation_adapter_factory, u'Segmentation')
+
+        # classification method
+        self._restore_method(classification_adapter, self.classification_adapter_factory, u'Classification')
+
+    def _restore_parameters(self, parameter_adapters):
+        """
+        restore the parameters adapters selected
+        :return:
+        """
+        pass
+
+    def _restore_method(self, adapter, adapter_factory, method_name):
+        """
+        Restore the segmentation or classification adapter previously used
+        (user friendly restore of previous values of the dialog)
+        :param adapter: the adapter (segmentation or classification adapter)
+        :param method_name: the method name (one of 'Segmentation', 'Classification')
+        :return:
+        """
+        for parameter in self.segmentation_classification_tree.param(unicode(self.tr(method_name))).children():
+            if parameter.type() == u"bool":
+                adapter_name = parameter.name()
+                method_adapter = adapter_factory.get_adapter(adapter_name)
+
+                if type(adapter) == type(method_adapter):
+                    method_adapter.restore_settings(adapter, self.widget.signal)
+                    parameter.setValue(True)
 
     # endregion
 
     # region  Factory Adapters Properties
-    @property
-    def parameter_adapter_factory(self):
-        return self._parameterAdapterFactory
 
     @property
     def segmentation_adapter_factory(self):
@@ -297,9 +215,25 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
     def classification_adapter_factory(self):
         return self._classificationAdapterFactory
 
+    @property
+    def detector(self):
+        """
+        :return: The selected detector adapter to perform segmentation
+        """
+        self._detector = self._get_adapter(u'Segmentation', self.segmentation_adapter_factory,
+                                           ManualDetectorAdapter)
+        return self._detector
+
+    @property
+    def classifier(self):
+        self._classifier = self._get_adapter(u'Classification', self.classification_adapter_factory,
+                                             ManualClassifierAdapter)
+        return self._classifier
+
     # endregion
 
     # region Detector, Parameter Measurers and Classifier
+
     def _get_adapter(self, param_tree_name, adapter_factory, default_adapter_class):
         try:
             name = ""
@@ -317,39 +251,20 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
             adapter = default_adapter_class()
         return adapter
 
-    @property
-    def detector(self):
-        """
-        :return: The selected detector adapter to perform segmentation
-        """
-        self._detector = self._get_adapter(u'Segmentation', self.segmentation_adapter_factory,
-                                           ManualDetectorAdapter)
-        return self._detector
-
-    @property
-    def classifier(self):
-        self._classifier = self._get_adapter(u'Classification', self.classification_adapter_factory,
-                                             ManualClassifierAdapter)
-        return self._classifier
-
     def get_measurer_list(self):
         """
-        :return: The list of selected parameters adapters to measure
+        :return: The list of selected parameters to measure
         """
         return self.parameters
-        # parameters_groups = self.param_measurement_tree.children()
-        #
-        # parameters_list = []
-        # for group in parameters_groups:
-        #     parameters_list.extend(group.children())
-        #
-        # # get just the parameter selected by user to be measured
-        # parameters_adapters_list = [self.parameter_adapter_factory.get_adapter(x.name()) for x in parameters_list
-        #                             if x.param(unicode(self.tr(u'Measure'))).value()]
-        #
-        # return parameters_adapters_list
 
     # endregion
+
+    def load_workspace(self, workspace):
+        """
+        Method that loads the workspace to update visual options from main window.
+        :param workspace:
+        """
+        self.widget.load_workspace(workspace)
 
     def detect(self):
         """

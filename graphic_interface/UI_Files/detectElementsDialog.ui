@@ -9,7 +9,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>898</width>
+    <width>766</width>
     <height>466</height>
    </rect>
   </property>
@@ -47,7 +47,7 @@
       <string notr="true"/>
      </property>
      <layout class="QGridLayout" name="gridLayout_2">
-      <item row="1" column="3">
+      <item row="1" column="2">
        <widget class="QDialogButtonBox" name="buttonBox">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
@@ -75,7 +75,7 @@
         </property>
        </widget>
       </item>
-      <item row="0" column="3">
+      <item row="0" column="2">
        <widget class="QDockWidget" name="dock_segm_classif">
         <property name="sizePolicy">
          <sizepolicy hsizetype="Maximum" vsizetype="Expanding">
@@ -135,41 +135,6 @@
           <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
          </property>
         </layout>
-       </widget>
-      </item>
-      <item row="0" column="2">
-       <widget class="QDockWidget" name="dock_parameter_measurement">
-        <property name="sizePolicy">
-         <sizepolicy hsizetype="Maximum" vsizetype="Expanding">
-          <horstretch>0</horstretch>
-          <verstretch>0</verstretch>
-         </sizepolicy>
-        </property>
-        <property name="minimumSize">
-         <size>
-          <width>250</width>
-          <height>84</height>
-         </size>
-        </property>
-        <property name="maximumSize">
-         <size>
-          <width>524287</width>
-          <height>524287</height>
-         </size>
-        </property>
-        <property name="styleSheet">
-         <string notr="true"/>
-        </property>
-        <property name="floating">
-         <bool>false</bool>
-        </property>
-        <property name="features">
-         <set>QDockWidget::DockWidgetMovable</set>
-        </property>
-        <property name="windowTitle">
-         <string>Parameter Measurements</string>
-        </property>
-        <widget class="QWidget" name="parameter_measurement_settings"/>
        </widget>
       </item>
      </layout>

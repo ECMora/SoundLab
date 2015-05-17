@@ -64,7 +64,7 @@ class BatchWindow(QtGui.QMainWindow, Ui_MainWindow):
                 self.listwidgetProgress.addItem(signal.name + u" " + self.tr(u"has been processed"))
 
             except Exception as ex:
-                print("some split problems: " + ex.message)
+                print("split problems: " + ex.message)
 
         self.progressBarProcesed.setValue(100)
 
