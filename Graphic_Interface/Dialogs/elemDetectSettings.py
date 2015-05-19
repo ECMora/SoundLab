@@ -23,16 +23,15 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
 
     # region Initialize
 
-    def __init__(self, parent, signal=None):
+    def __init__(self, parent, signal, segment_manager=None, parameter_manager=None):
         QDialog.__init__(self, parent)
         self.setupUi(self)
 
-        if signal is not None:
-            self.widget.signal = small_signal(signal)
+        self.widget.signal = small_signal(signal)
 
         self._detector = None
         self._classifier = None
-        self.parameters = []
+        self.parameter_manager = parameter_manager
 
         # get the factory adapters for parameters, segmentation and classification
         self._segmentationAdapterFactory = SegmentationAdapterFactory()
@@ -47,6 +46,9 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         self.segmentation_classification_settings.setLayout(layout)
 
         self.create_segmentation_classification_param_tree()
+
+        if segment_manager is not None:
+            self.restore_previous_state(segment_manager)
 
         self.detect()
 
@@ -102,9 +104,8 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         self.segmentation_classification_tree_widget.setParameters(self.segmentation_classification_tree)
 
     def configure_parameters(self):
-        param_window = ParametersWindow(self)
-        if param_window.exec_():
-            self.parameters = param_window.get_parameter_list()
+        param_window = ParametersWindow(self, self.parameter_manager)
+        param_window.exec_()
 
     def segmentation_classification_changed(self, param, changes, param_tree_name, adapter_factory):
         """
@@ -139,9 +140,6 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
                     if method_settings:
                         param_settings.addChild(method_settings)
 
-                    if isinstance(adapter, classifiers_tuple):
-                        self._restore_parameters(adapter.classifier_parameters())
-
                 except Exception as ex:
                     print(ex.message)
 
@@ -162,29 +160,16 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
 
     # region Restore Previous Status
 
-    def restore_previous_state(self, parameter_adapters, segmentation_adapter=None, classification_adapter=None):
+    def restore_previous_state(self, segment_manager):
         """
-        Restore the dialog previous selected data to avoid lose of previous selected parameters
-        :param parameter_adapters: The list of parameters adapters previously selected
-        :param segmentation_adapter: The segmentation adapter previously selected
-        :param classification_adapter: The classification adapter previously selected
+        Restore the dialog previous selected data to avoid lose of previous selected information
         :return:
         """
-        # parameters
-        self._restore_parameters(parameter_adapters)
-
         # segmentation method
-        self._restore_method(segmentation_adapter, self.segmentation_adapter_factory, u'Segmentation')
+        self._restore_method(segment_manager.detector_adapter, self.segmentation_adapter_factory, u'Segmentation')
 
         # classification method
-        self._restore_method(classification_adapter, self.classification_adapter_factory, u'Classification')
-
-    def _restore_parameters(self, parameter_adapters):
-        """
-        restore the parameters adapters selected
-        :return:
-        """
-        pass
+        self._restore_method(segment_manager.classifier_adapter, self.classification_adapter_factory, u'Classification')
 
     def _restore_method(self, adapter, adapter_factory, method_name):
         """
@@ -255,7 +240,7 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         """
         :return: The list of selected parameters to measure
         """
-        return self.parameters
+        return self.parameter_manager.parameter_list
 
     # endregion
 

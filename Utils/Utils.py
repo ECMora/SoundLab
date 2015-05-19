@@ -173,11 +173,9 @@ class SegmentationThread(QThread):
         self._detector = value
 
     def run(self):
-        if self.detector is None:
-            return
-
-        self.detector.detect()
-        self.segmentationFinished.emit(self.detector.elements)
+        if self.detector is not None:
+            self.detector.detect()
+            self.segmentationFinished.emit(self.detector.elements)
 
 
 class MeasurementThread(QThread):

@@ -363,12 +363,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         """
         elements = elements if elements is not None else self.get_visible_elements()
 
-        elements_to_remove = self.get_sound_lab_elements(self.elements)
-
-        elements_to_remove = set(elements_to_remove).difference(set(elements))
-
-        self.remove_visual_elements(oscilogram=draw_oscilogram, specgram=draw_specgram,
-                                    elements=elements_to_remove)
+        self.remove_visual_elements(oscilogram=draw_oscilogram, specgram=draw_specgram)
 
         self.no_visible_items = [item for start, end in self._get_no_visible_visual_items_tuples(elements)
                                       for item in self.get_no_visible_visual_item(start, end)[0]]
