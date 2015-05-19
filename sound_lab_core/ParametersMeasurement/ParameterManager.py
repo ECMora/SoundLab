@@ -1,4 +1,5 @@
-from PyQt4.QtCore import QObject, pyqtSignal
+import numpy as np
+from PyQt4.QtCore import QObject
 from sound_lab_core.ParametersMeasurement.Adapters import *
 from sound_lab_core.ParametersMeasurement.Adapters.Locations import *
 
@@ -12,49 +13,41 @@ class ParameterManager(QObject):
     def __init__(self):
         QObject.__init__(self)
 
-        # location adapters of measurement for the spectral parameters
-        self.locations_adapters = [(u'Start', StartLocationAdapter()),
-                                   (u'Center', CenterLocationAdapter()),
-                                   (u'End', EndLocationAdapter()),
-                                   (u'Mean', MeanLocationAdapter())]
-
         # adapters for each type of parameter
-        self.time_parameters_adapters = [
-            (u'Start Time', StartTimeParameterAdapter()),
-            (u'End Time', EndTimeParameterAdapter()),
-            (u'Duration', DurationTimeParameterAdapter()),
-            (u'Zero Cross Rate', ZeroCrossRateParameterAdapter()),
-            (u'Local Max Mean', LocalMaxMeanParameterAdapter()),
-            (u'Entropy', EntropyTimeParameterAdapter())]
+        self.time_parameters_adapters = [StartTimeParameterAdapter(), EndTimeParameterAdapter(),
+                                         DurationTimeParameterAdapter(), ZeroCrossRateParameterAdapter(),
+                                         LocalMaxMeanParameterAdapter(), EntropyTimeParameterAdapter()]
 
-        self.wave_parameters_adapters = [
-            (u'RMS', RmsTimeParameterAdapter()),
-            (u'PeakToPeak', PeakToPeakParameterAdapter()),
-            (u'StartToMax', StartToMaxTimeParameterAdapter())]
+        self.wave_parameters_adapters = [RmsTimeParameterAdapter(), PeakToPeakParameterAdapter(),
+                                         StartToMaxTimeParameterAdapter()]
 
-        self.spectral_parameters_adapters = [
-            (u'PeakFreq', PeakFreqParameterAdapter()),
-            (u'MaxFreq', MaxFreqParameterAdapter()),
-            (u'MinFreq', MinFreqParameterAdapter()),
-            (u'BandWidth', BandWidthParameterAdapter()),
-            (u'PeaksAbove', PeaksAboveParameterAdapter())]
+        self.spectral_parameters_adapters = [PeakFreqParameterAdapter(), MaxFreqParameterAdapter(),
+                                             MinFreqParameterAdapter(),  BandWidthParameterAdapter(),
+                                             PeaksAboveParameterAdapter()]
 
-        self._parameter_list = []
+        # location adapters of measurement for the spectral parameters
+        self.locations_adapters = [StartLocationAdapter(), CenterLocationAdapter(),
+                                   EndLocationAdapter(), MeanLocationAdapter()]
 
-    @property
-    def count(self):
-        """
-        :return: The number of parameters
-        """
-        return len(self.parameter_list)
+        rows, cols = len(self.spectral_parameters_adapters), len(self.locations_adapters)
+
+        # matrix initialized on False
+        self.location_parameters = np.zeros(rows * cols).reshape(rows, cols) > 0
 
     @property
     def parameter_list(self):
         """
         :return: The number of parameters
         """
-        return self._parameter_list
+        time_params = [x.get_instance() for x in self.time_parameters_adapters if x.selected]
+        wave_params = [x.get_instance() for x in self.wave_parameters_adapters if x.selected]
 
-    @parameter_list.setter
-    def parameter_list(self, new_param_list):
-        self._parameter_list = new_param_list
+        spectral_parameters = []
+        for i in xrange(len(self.spectral_parameters_adapters)):
+            for j in xrange(len(self.locations_adapters)):
+                if self.location_parameters[i, j]:
+                    parameter = self.spectral_parameters_adapters[i].get_instance()
+                    parameter.location = self.locations_adapters[j].get_instance()
+                    spectral_parameters.append(parameter)
+
+        return time_params + wave_params + spectral_parameters

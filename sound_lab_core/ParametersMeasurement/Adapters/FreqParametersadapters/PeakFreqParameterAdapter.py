@@ -12,6 +12,8 @@ class PeakFreqParameterAdapter(SoundLabAdapter):
 
     def __init__(self):
         SoundLabAdapter.__init__(self)
+        self.name = self.tr(u'PeakFreq')
+
 
     def get_instance(self):
         return PeakFreqParameter()

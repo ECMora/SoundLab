@@ -10,6 +10,8 @@ class EndTimeParameterAdapter(ParameterAdapter):
 
     def __init__(self):
         ParameterAdapter.__init__(self)
+        self.name = self.tr(u'End Time')
+
 
     def get_instance(self):
         return EndTimeParameter()

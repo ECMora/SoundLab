@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\SegmentationAndClasificationWindowUI.ui'
+# Form implementation generated from reading ui file 'D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\SegmentationAndClasificationWindowUI.ui'
 #
-# Created: Sun Apr 26 14:34:54 2015
+# Created: Tue May 19 08:47:05 2015
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -274,8 +274,8 @@ class Ui_MainWindow(object):
         self.actionSelectedElement_Correlation.setObjectName(_fromUtf8("actionSelectedElement_Correlation"))
         self.actionClassify = QtGui.QAction(MainWindow)
         self.actionClassify.setObjectName(_fromUtf8("actionClassify"))
-        self.actionStopDetection = QtGui.QAction(MainWindow)
-        self.actionStopDetection.setObjectName(_fromUtf8("actionStopDetection"))
+        self.actionDelete_All = QtGui.QAction(MainWindow)
+        self.actionDelete_All.setObjectName(_fromUtf8("actionDelete_All"))
         self.toolBar.addAction(self.actionCross_correlation)
         self.menuParameters.addAction(self.actionView_Parameters)
         self.menuParameters.addAction(self.actionFull_Screen)
@@ -294,8 +294,8 @@ class Ui_MainWindow(object):
         self.menuParameters.addSeparator()
         self.menuDetection.addAction(self.actionAddElement)
         self.menuDetection.addAction(self.actionDelete_Selected_Elements)
+        self.menuDetection.addAction(self.actionDelete_All)
         self.menuDetection.addAction(self.actionDetection)
-        self.menuDetection.addAction(self.actionStopDetection)
         self.menuDetection.addSeparator()
         self.menuDetection.addAction(self.actionClassify)
         self.menuDetection.addAction(self.actionDeselect_Elements)
@@ -384,8 +384,8 @@ class Ui_MainWindow(object):
         self.actionCross_correlation.setText(QtGui.QApplication.translate("MainWindow", "Cross-correlation", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSelectedElement_Correlation.setText(QtGui.QApplication.translate("MainWindow", "Selected Element Correlation", None, QtGui.QApplication.UnicodeUTF8))
         self.actionClassify.setText(QtGui.QApplication.translate("MainWindow", "Classify", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionStopDetection.setText(QtGui.QApplication.translate("MainWindow", "Stop Detection", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionStopDetection.setShortcut(QtGui.QApplication.translate("MainWindow", "Alt+D", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionDelete_All.setText(QtGui.QApplication.translate("MainWindow", "Delete All", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionDelete_All.setToolTip(QtGui.QApplication.translate("MainWindow", "Delete All the detected elements", None, QtGui.QApplication.UnicodeUTF8))
 
 from graphic_interface.widgets.SoundLabToolBar import SoundLabToolBarWidget
 from pyqtgraph import TableWidget

@@ -11,6 +11,7 @@ class PeakToPeakParameterAdapter(ParameterAdapter):
 
     def __init__(self):
         ParameterAdapter.__init__(self)
+        self.name = self.tr(u'PeakToPeak')
 
     def get_instance(self):
         return PeakToPeakParameter()

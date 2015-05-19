@@ -10,6 +10,7 @@ class BandWidthParameterAdapter(FreqParameterAdapter):
 
     def __init__(self):
         FreqParameterAdapter.__init__(self)
+        self.name = self.tr(u'BandWidth')
 
     def get_instance(self):
         self.compute_settings()

@@ -10,6 +10,7 @@ class EntropyTimeParameterAdapter(ParameterAdapter):
 
     def __init__(self):
         ParameterAdapter.__init__(self)
+        self.name = self.tr(u'Entropy')
 
     def get_instance(self):
         return EntropyTimeParameter()

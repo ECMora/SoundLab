@@ -10,6 +10,8 @@ class ZeroCrossRateParameterAdapter(ParameterAdapter):
 
     def __init__(self):
         ParameterAdapter.__init__(self)
+        self.name = self.tr(u'Zero Cross Rate')
+
 
     def get_instance(self):
         return ZeroCrossRateParameter()

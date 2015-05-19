@@ -10,6 +10,7 @@ class StartTimeParameterAdapter(ParameterAdapter):
 
     def __init__(self):
         ParameterAdapter.__init__(self)
+        self.name = self.tr(u'Start Time')
 
     def get_instance(self):
         return StartTimeParameter()

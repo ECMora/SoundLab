@@ -11,6 +11,7 @@ class ParameterAdapter(SoundLabAdapter):
     def __init__(self):
         SoundLabAdapter.__init__(self)
 
+
     def get_db_orm_mapper(self):
         """
         Get the db orm instance class for the current parameter

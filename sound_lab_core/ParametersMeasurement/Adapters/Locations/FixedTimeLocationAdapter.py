@@ -4,6 +4,7 @@ from pyqtgraph.parametertree import Parameter
 
 
 class FixedTimeLocationAdapter(SoundLabAdapter):
+
     def __init__(self):
         SoundLabAdapter.__init__(self)
 

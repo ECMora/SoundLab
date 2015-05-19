@@ -4,6 +4,7 @@ import xlwt
 from PyQt4.QtCore import pyqtSlot, Qt, QPoint, QTimer
 from PyQt4.QtGui import QFileDialog, QAbstractItemView, QActionGroup, QMessageBox, \
     QProgressBar, QColor, QAction, QTableWidgetItem
+from sound_lab_core.ParametersMeasurement.ParameterManager import ParameterManager
 from SoundLabWindow import SoundLabWindow
 from duetto.audio_signals.AudioSignal import AudioSignal
 from graphic_interface.dialogs.CrossCorrelationDialog import CrossCorrelationDialog
@@ -70,6 +71,8 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         self.segmentManager.measurementsFinished.connect(self.measurement_finished)
         self.segmentManager.detectionProgressChanged.connect(lambda x: self.windowProgressDetection.setValue(x * 0.9))
         self.segmentManager.segmentVisualItemAdded.connect(self.widget.add_parameter_visual_items)
+
+        self.parameter_manager = ParameterManager()
 
         # set the signal to the widget
         self.widget.signal = signal
@@ -410,6 +413,9 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         or the visible area otherwise.
         :return:
         """
+        self.on_action()
+        return
+
         # delete the elements on the widget and get the indexes for update
         deleted_elements = self.widget.selected_elements_interval()
 
@@ -431,6 +437,19 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
         # deselect the elements on the widget
         self.on_actionDeselect_Elements_triggered()
+
+    @pyqtSlot()
+    def on_actionDelete_All_triggered(self):
+        """
+        Removes all the detected elements on the widget
+        :return:
+        """
+        # clear the segments
+        self.segmentManager.elements = []
+
+        # removes the widget elements
+        self.widget.elements = []
+        self.widget.graph()
 
     @pyqtSlot()
     def on_actionAddElement_triggered(self):
@@ -613,11 +632,10 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
             QMessageBox.warning(QMessageBox(), self.tr(u"Error"), self.tr(u"There is an on going detection in progress."))
             return
 
-        elementsDetectorDialog = ElemDetectSettingsDialog(parent=self, signal=self.widget.signal)
+        elementsDetectorDialog = ElemDetectSettingsDialog(self, self.widget.signal, self.segmentManager,
+                                                          self.parameter_manager)
         elementsDetectorDialog.load_workspace(self.workSpace)
-        elementsDetectorDialog.restore_previous_state(self.segmentManager.parameters,
-                                                      self.segmentManager.detector_adapter,
-                                                      self.segmentManager.classifier_adapter)
+
         try:
             if elementsDetectorDialog.exec_():
                 # the detection dialog is a factory of segmentation,

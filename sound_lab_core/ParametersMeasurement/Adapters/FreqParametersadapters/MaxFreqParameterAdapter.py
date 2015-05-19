@@ -12,6 +12,7 @@ class MaxFreqParameterAdapter(FreqParameterAdapter):
 
     def __init__(self):
         FreqParameterAdapter.__init__(self)
+        self.name = self.tr(u'MaxFreq')
 
     def get_instance(self):
         self.compute_settings()

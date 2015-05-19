@@ -7,6 +7,7 @@ class CenterLocationAdapter(FixedTimeLocationAdapter):
 
     def __init__(self):
         FixedTimeLocationAdapter.__init__(self)
+        self.name = self.tr(u'Center')
 
     def get_instance(self):
         self.update_instance_variables()

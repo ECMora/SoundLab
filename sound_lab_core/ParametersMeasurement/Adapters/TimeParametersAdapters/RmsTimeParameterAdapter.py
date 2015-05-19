@@ -10,6 +10,7 @@ class RmsTimeParameterAdapter(ParameterAdapter):
 
     def __init__(self):
         ParameterAdapter.__init__(self)
+        self.name = self.tr(u'RMS')
 
     def get_instance(self):
         return RmsTimeParameter()

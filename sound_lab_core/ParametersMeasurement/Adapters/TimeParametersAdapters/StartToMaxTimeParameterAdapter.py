@@ -10,6 +10,7 @@ class StartToMaxTimeParameterAdapter(ParameterAdapter):
 
     def __init__(self):
         ParameterAdapter.__init__(self)
+        self.name = self.tr(u'StartToMax')
 
     def get_instance(self):
         return StartToMaxTimeParameter()

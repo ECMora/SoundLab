@@ -25,6 +25,12 @@ class SoundLabAdapter(QObject):
     def __init__(self):
         QObject.__init__(self)
 
+        # a name for the adapter
+        self.name = ""
+
+        # if the adapter is selected by user to use it
+        self.selected = False
+
         # the db object mapper in the orm if any
         self.db_mapper = None
 

@@ -11,6 +11,8 @@ class PeaksAboveParameterAdapter(SoundLabAdapter):
 
     def __init__(self):
         SoundLabAdapter.__init__(self)
+        self.name = self.tr(u'PeaksAbove')
+
         settings = [
             {u'name': unicode(self.tr(u'Threshold (dB)')), u'type': u'int', u'value': -20.00, u'step': 1, u'limits': (-100, 0)}]
         self.threshold = -20

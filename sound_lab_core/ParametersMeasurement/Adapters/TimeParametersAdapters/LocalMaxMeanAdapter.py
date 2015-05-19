@@ -10,6 +10,7 @@ class LocalMaxMeanParameterAdapter(ParameterAdapter):
 
     def __init__(self):
         ParameterAdapter.__init__(self)
+        self.name = self.tr(u'Local Max Mean')
 
     def get_instance(self):
         return LocalMaxMeanParameter()

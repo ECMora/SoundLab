@@ -13,6 +13,7 @@ class MinFreqParameterAdapter(FreqParameterAdapter):
 
     def __init__(self):
         FreqParameterAdapter.__init__(self)
+        self.name = self.tr(u'MinFreq')
 
     def get_instance(self):
         self.compute_settings()

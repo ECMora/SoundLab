@@ -101,8 +101,7 @@ class SegmentManager(QObject):
         :return:
         """
         # clear the parameters
-        rows = len(self.elements)
-        cols = len(self.parameters)
+        rows, cols = len(self.elements), len(self.parameters)
 
         self.measuredParameters = np.zeros(rows * cols).reshape((rows, cols))
 

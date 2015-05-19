@@ -11,6 +11,8 @@ class DurationTimeParameterAdapter(ParameterAdapter):
 
     def __init__(self):
         ParameterAdapter.__init__(self)
+        self.name = self.tr(u'Duration')
+
 
     def get_instance(self):
         return DurationTimeParameter()

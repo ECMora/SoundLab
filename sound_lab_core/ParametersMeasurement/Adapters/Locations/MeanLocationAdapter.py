@@ -7,6 +7,7 @@ class MeanLocationAdapter(SoundLabAdapter):
 
     def __init__(self):
         SoundLabAdapter.__init__(self)
+        self.name = self.tr(u'Mean')
 
     def get_instance(self):
         return MeanMeasurementLocation()
