@@ -285,7 +285,6 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         file_name = unicode(QFileDialog.getSaveFileName(self, self.tr(u"Save parameters as excel file"),
                                                         os.path.join(self.workSpace.lastOpenedFolder,
                                                                      str(self.widget.signalName) + ".xls"), "*.xls"))
-
         # save the data of table
         if file_name:
             # the excel book to save data
@@ -413,8 +412,6 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         or the visible area otherwise.
         :return:
         """
-        self.on_action()
-        return
 
         # delete the elements on the widget and get the indexes for update
         deleted_elements = self.widget.selected_elements_interval()

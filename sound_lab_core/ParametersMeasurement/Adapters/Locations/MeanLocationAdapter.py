@@ -10,7 +10,7 @@ class MeanLocationAdapter(SoundLabAdapter):
         self.name = self.tr(u'Mean')
 
     def get_instance(self):
-        return MeanMeasurementLocation()
+        return [MeanMeasurementLocation()]
 
 
 

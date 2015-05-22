@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
 import numpy as np
+from graphic_interface.segment_visualization.parameter_items.spectral_parameter_items.AverageFreqVisualItem import \
+    AverageFreqVisualItem
+from sound_lab_core.ParametersMeasurement.Locations.MeanMeasurementLocation import MeanMeasurementLocation
 from sound_lab_core.ParametersMeasurement.SpectralParameters.FreqParameter import FreqParameter
 
 
@@ -27,3 +30,8 @@ class MinFreqParameter(FreqParameter):
             below[peak_index:] = False
             min_freq_index = np.argwhere(below).max() + 1
         return round((freqs[min_freq_index] - freqs[min_freq_index] % 10)/1000.0, self.decimal_places)
+
+    def get_visual_items(self):
+        if isinstance(self.location, MeanMeasurementLocation):
+            return [AverageFreqVisualItem(tooltip=self.tr(u"Max Freq") + u" at " + unicode(self.threshold) + u" dB->")]
+        return []

@@ -3,10 +3,25 @@ from sound_lab_core.SoundLabAdapter import SoundLabAdapter
 from pyqtgraph.parametertree import Parameter
 
 
-class FixedTimeLocationAdapter(SoundLabAdapter):
-
+class LocationAdapter(SoundLabAdapter):
     def __init__(self):
         SoundLabAdapter.__init__(self)
+
+    def get_instance(self):
+        """
+        The location adapter returns a list with all the locations
+        that the adapter is managing. A single adapter could manage
+        multiple locations of a same type. Example: Segment x-distant
+        divided by n then return n locations
+        :return:
+        """
+        return []
+
+
+class FixedTimeLocationAdapter(LocationAdapter):
+
+    def __init__(self):
+        LocationAdapter.__init__(self)
 
         settings = [{u'name': unicode(self.tr(u'ms delay')), u'type': u'int',
                      u'value': 0, u'step': 1, u'limits': (0, 60 * 60 * 1000)}]  # 1 hour segment as upper limit
@@ -33,5 +48,6 @@ class FixedTimeLocationAdapter(SoundLabAdapter):
         returns a Parameter Tree with the options of the abs decay detector
         """
         return self.settings
+
 
 

@@ -192,7 +192,7 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
         elif row == 0:
             for i in xrange(1, table.rowCount()):
                 table.item(i, col).setCheckState(table.item(row, col).checkState())
-                self.parameter_manager.location_parameters[i - 1, col] = table.item(row, col).checkState() == Qt.Checked
+                self.parameter_manager.location_parameters[i - 1, col - 1] = table.item(row, col).checkState() == Qt.Checked
 
         elif col == 0:
             for i in xrange(1, table.columnCount()):

@@ -12,7 +12,7 @@ class CenterLocationAdapter(FixedTimeLocationAdapter):
     def get_instance(self):
         self.update_instance_variables()
 
-        return CenterMeasurementLocation(ms_delay=self.ms_delay)
+        return [CenterMeasurementLocation(ms_delay=self.ms_delay)]
 
 
 

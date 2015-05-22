@@ -9,11 +9,10 @@ class EndLocationAdapter(FixedTimeLocationAdapter):
         FixedTimeLocationAdapter.__init__(self)
         self.name = self.tr(u'End')
 
-
     def get_instance(self):
         self.update_instance_variables()
 
-        return EndMeasurementLocation(ms_delay=self.ms_delay)
+        return [EndMeasurementLocation(ms_delay=self.ms_delay)]
 
 
 

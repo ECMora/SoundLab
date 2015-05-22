@@ -8,7 +8,7 @@ class MeanMeasurementLocation(MeasurementLocation):
 
     def __init__(self):
         MeasurementLocation.__init__(self)
-        self.name = "mean"
+        self.name = "Mean"
 
     def get_data_array_slice(self, segment):
         return segment.signal.data[segment.indexFrom:segment.indexTo]

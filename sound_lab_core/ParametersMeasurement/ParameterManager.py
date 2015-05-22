@@ -2,6 +2,10 @@ import numpy as np
 from PyQt4.QtCore import QObject
 from sound_lab_core.ParametersMeasurement.Adapters import *
 from sound_lab_core.ParametersMeasurement.Adapters.Locations import *
+from sound_lab_core.ParametersMeasurement.Adapters.Locations.RegularDurationLocationAdapter import \
+    RegularDurationLocationAdapter
+from sound_lab_core.ParametersMeasurement.Adapters.Locations.RegularIntervalsLocationAdapter import \
+    RegularIntervalsLocationAdapter
 
 
 class ParameterManager(QObject):
@@ -27,7 +31,9 @@ class ParameterManager(QObject):
 
         # location adapters of measurement for the spectral parameters
         self.locations_adapters = [StartLocationAdapter(), CenterLocationAdapter(),
-                                   EndLocationAdapter(), MeanLocationAdapter()]
+                                   EndLocationAdapter(), MeanLocationAdapter(),
+                                   RegularIntervalsLocationAdapter(),
+                                   RegularDurationLocationAdapter()]
 
         rows, cols = len(self.spectral_parameters_adapters), len(self.locations_adapters)
 
@@ -46,8 +52,9 @@ class ParameterManager(QObject):
         for i in xrange(len(self.spectral_parameters_adapters)):
             for j in xrange(len(self.locations_adapters)):
                 if self.location_parameters[i, j]:
-                    parameter = self.spectral_parameters_adapters[i].get_instance()
-                    parameter.location = self.locations_adapters[j].get_instance()
-                    spectral_parameters.append(parameter)
+                    for location in self.locations_adapters[j].get_instance():
+                        parameter = self.spectral_parameters_adapters[i].get_instance()
+                        parameter.location = location
+                        spectral_parameters.append(parameter)
 
         return time_params + wave_params + spectral_parameters

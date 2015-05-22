@@ -12,7 +12,7 @@ class StartLocationAdapter(FixedTimeLocationAdapter):
     def get_instance(self):
         self.update_instance_variables()
 
-        return StartMeasurementLocation(ms_delay=self.ms_delay)
+        return [StartMeasurementLocation(ms_delay=self.ms_delay)]
 
 
 

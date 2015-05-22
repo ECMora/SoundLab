@@ -253,7 +253,7 @@ class SegmentManager(QObject):
             return
 
         for item in visual_items:
-            item.set_data(self.  signal, self.elements[element_index], value)
+            item.set_data(self.signal, self.elements[element_index], value)
 
         self.segmentVisualItemAdded.emit(element_index, visual_items)
 
@@ -352,8 +352,8 @@ class SegmentManager(QObject):
         """
         # update visual items of segments measurements
         for i in xrange(self.rowCount):
-            for j, parameter_adapter in enumerate(self.parameters):
-                self.update_elements_visual_items(parameter_adapter, i, self.measuredParameters[i, j])
+            for j, parameter in enumerate(self.parameters):
+                self.update_elements_visual_items(parameter, i, self.measuredParameters[i, j])
 
         self.measurementsFinished.emit()
         self.measurementsChanged.emit()
@@ -387,14 +387,14 @@ class SegmentManager(QObject):
         if measure_methods is None:
             measure_methods = self.parameters
 
-        for j, parameter_adapter in enumerate(self.parameters):
+        for j, parameter in enumerate(self.parameters):
             try:
                 # measure param
                 self.measuredParameters[index, j] = measure_methods[j].measure(element)
 
                 # raise the parameter visual item if any
                 if raise_visual_items:
-                    self.update_elements_visual_items(parameter_adapter, index, self.measuredParameters[index, j])
+                    self.update_elements_visual_items(parameter, index, self.measuredParameters[index, j])
 
             except Exception as e:
                 # if some error is raised set a default value

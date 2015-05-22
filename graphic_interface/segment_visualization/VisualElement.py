@@ -150,5 +150,4 @@ class VisualElement:
         :param parameter_item: the new parameter item to visualize
         :return:
         """
-        # visible by default
         self.visual_parameters_items.append(parameter_item)
