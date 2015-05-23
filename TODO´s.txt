@@ -30,7 +30,7 @@ Complexity-3: Large code changes and/or multiple code files tasks
 
 -----------------------------------------------------------
 
-Complexity-4: New Code Design and Infrastructure Implementation
+Complexity-4: New  Code Design and Infrastructure Implementation
 
                   (Second version of Sound Lab)
             - - - - (June, July 2015 to ...) - - - -
