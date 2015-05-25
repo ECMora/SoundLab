@@ -59,30 +59,6 @@ class OneDimensionalElementsDetector(ElementsDetector):
     def min_size(self, value):
         self._min_size = value
 
-    @property
-    def threshold(self):
-        return self._threshold
-
-    @threshold.setter
-    def threshold(self, value):
-        self._threshold = value
-
-    @property
-    def threshold2(self):
-        return self._threshold2
-
-    @threshold2.setter
-    def threshold2(self, value):
-        self._threshold2 = value
-
-    @property
-    def threshold3(self):
-        return self._threshold3
-
-    @threshold3.setter
-    def threshold3(self, value):
-        self._threshold3 = value
-
     # endregion
 
     def get_one_dimensional_class(self):
@@ -171,3 +147,79 @@ class OneDimensionalElementsDetector(ElementsDetector):
                                                           (data[i] == data[i - 1] == data[i + 1])]
 
         return array(indexes), data[indexes]
+
+
+class EnvelopeDetector(OneDimensionalElementsDetector):
+    def __init__(self, **kwargs):
+        OneDimensionalElementsDetector.__init__(**kwargs)
+
+
+class SingleThresholdDetector(EnvelopeDetector):
+    def __init__(self, signal, threshold_db=-40, min_size_ms=1, merge_factor=5):
+        """
+        :return:
+        """
+        EnvelopeDetector.__init__(self, signal=signal, min_size_ms=min_size_ms, merge_factor=merge_factor)
+
+        # variables for detection
+        self._threshold = threshold_db
+
+    # region Properties
+
+    @property
+    def threshold(self):
+        return self._threshold
+
+    @threshold.setter
+    def threshold(self, value):
+        self._threshold = value
+
+    # endregion
+
+    def detect(self):
+        return []
+
+
+class DoubleThresholdDetector(EnvelopeDetector):
+    def __init__(self, signal, threshold_db=-40, threshold2_db=0, min_size_ms=1, merge_factor=5):
+        """
+        :return:
+        """
+        EnvelopeDetector.__init__(self, signal=signal, min_size_ms=min_size_ms, merge_factor=merge_factor)
+
+        # variables for detection
+        self._threshold = threshold_db
+        self._threshold2 = threshold2_db
+
+    # region Properties
+
+    @property
+    def threshold(self):
+        return self._threshold
+
+    @threshold.setter
+    def threshold(self, value):
+        self._threshold = value
+
+    @property
+    def threshold2(self):
+        return self._threshold2
+
+    @threshold2.setter
+    def threshold2(self, value):
+        self._threshold2 = value
+
+    # endregion
+
+    def detect(self):
+        return []
+
+
+class TripleThresholdDetector(EnvelopeDetector):
+    @property
+    def threshold3(self):
+        return self._threshold3
+
+    @threshold3.setter
+    def threshold3(self, value):
+        self._hreshold3 = value
