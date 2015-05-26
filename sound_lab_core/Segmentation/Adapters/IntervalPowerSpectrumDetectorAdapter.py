@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from sound_lab_core.Segmentation.OneDimensional.IntervalMethods.IntervalMaxDetector import IntervalMaxDetector
 from sound_lab_core.Segmentation.Adapters.IntervalDetectorAdapter import IntervalDetectorAdapter
+from sound_lab_core.Segmentation.OneDimensional.EnvelopeMethods import IntervalMaxEnvelope
 
 
 class IntervalPowerSpectrumDetectorAdapter(IntervalDetectorAdapter):
@@ -19,5 +19,5 @@ class IntervalPowerSpectrumDetectorAdapter(IntervalDetectorAdapter):
         self.update_instance_variables()
         self.signal_max_value = max(signal.data)
 
-        return IntervalMaxDetector(signal, self.threshold_dB, self.threshold2_dB,
+        return IntervalMaxEnvelope(signal, self.threshold_dB, self.threshold2_dB,
                                              self.threshold3_dB, self.min_size_ms, self.merge_factor)

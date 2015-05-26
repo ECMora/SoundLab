@@ -11,8 +11,7 @@ class AbsDecayEnvelopeDetector(OneDimensionalElementsDetector):
 
     def __init__(self, signal, decay_ms=1, threshold_db=-40, threshold2_db=0, threshold3_db=0,
                  min_size_ms=1, merge_factor=5):
-        OneDimensionalElementsDetector.__init__(self, signal, threshold_db, threshold2_db, threshold3_db,
-                                                min_size_ms, merge_factor)
+        OneDimensionalElementsDetector.__init__(self, signal=signal, min_size_ms=min_size_ms, merge_factor=merge_factor)
 
         self._decay_ms = decay_ms
 
