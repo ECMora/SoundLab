@@ -1,5 +1,6 @@
 from numpy import sqrt, mean, square
-from sound_lab_core.Segmentation.OneDimensional.IntervalEnvelope import IntervalEnvelope
+
+from sound_lab_core.Segmentation.OneDimensional.EnvelopeMethods.IntervalEnvelope import IntervalEnvelope
 
 
 class IntervalRmsEnvelope(IntervalEnvelope):

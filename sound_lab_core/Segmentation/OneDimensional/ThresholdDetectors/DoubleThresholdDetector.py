@@ -1,16 +1,15 @@
-from numpy import amax
-from sound_lab_core.Segmentation.OneDimensional.EnvelopeDetector import EnvelopeDetector
+from sound_lab_core.Segmentation.OneDimensional.ThresholdDetectors import SingleThresholdDetector
 from utils.Utils import fromdB
 
 __author__ = 'Orlando'
 
 
-class DoubleThresholdDetector(EnvelopeDetector):
+class DoubleThresholdDetector(SingleThresholdDetector):
     def __init__(self, signal, threshold_db=-40, threshold2_db=0, min_size_ms=1, merge_factor=5):
         """
         :return:
         """
-        EnvelopeDetector.__init__(self, threshold_db=threshold_db, signal=signal, min_size_ms=min_size_ms, merge_factor=merge_factor)
+        SingleThresholdDetector.__init__(self, threshold_db=threshold_db, signal=signal, min_size_ms=min_size_ms, merge_factor=merge_factor)
 
         # variables for detection
         self._threshold2 = threshold2_db

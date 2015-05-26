@@ -3,6 +3,7 @@ from PyQt4.QtCore import QObject
 from sound_lab_core.Clasification.Adapters import *
 from sound_lab_core.ParametersMeasurement.Adapters import *
 from sound_lab_core.Segmentation.Adapters import *
+from sound_lab_core.Segmentation.Adapters.SingleThresholdAdapter import SingleThresholdAdapter
 
 
 class AdapterFactory(QObject):
@@ -128,10 +129,11 @@ class SegmentationAdapterFactory(AdapterFactory):
 
         self.adapters = [
             (u'Manual', ManualDetectorAdapter()),
-            (u'Interval Power Spectrum', IntervalPowerSpectrumDetectorAdapter()),
-            (u'Interval Rms', IntervalRmsDetectorAdapter()),
-            (u'Interval Max Mean', IntervalMaxMeanDetectorAdapter()),
-            (u'Envelope Abs Decay', AbsDecayEnvelopeDetectorAdapter()),
+            (u'Single Threshold', SingleThresholdAdapter()),
+            # (u'Interval Power Spectrum', IntervalPowerSpectrumDetectorAdapter()),
+            # (u'Interval Rms', IntervalRmsDetectorAdapter()),
+            # (u'Interval Max Mean', IntervalMaxMeanDetectorAdapter()),
+            # (u'Envelope Abs Decay', AbsDecayEnvelopeDetectorAdapter()),
             (u'Watershed', WatershedDetectorAdapter()),
             (u'Adaptive Threshold', AdaptThreshDetectorAdapter()),
             (u'GrabCut', GrabCutDetectorAdapter())

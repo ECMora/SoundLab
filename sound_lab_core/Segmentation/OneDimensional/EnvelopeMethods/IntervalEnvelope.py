@@ -1,9 +1,21 @@
-from matplotlib import mlab as mlab
-import numpy as np
+from PyQt4.QtCore import pyqtSignal, QObject
 from utils.Utils import fromdB
+import numpy as np
 
 
-class IntervalEnvelope:
+class IntervalEnvelope(QObject):
+    """
+    An envelope that is a function constant by intervals.
+    """
+
+    # region SIGNALS
+
+    # signal raised while the acoustic processing is been computed.
+    # Raise the percent of progress.
+    progressChanged = pyqtSignal(int)
+
+    # endregion
+
     # region CONSTANTS
 
     # the number of calls to the interval_function method before send a
@@ -13,7 +25,13 @@ class IntervalEnvelope:
     # endregion
 
     def __init__(self, threshold_db=-40):
+        QObject.__init__(self)
+
         self._threshold = threshold_db
+
+        # the scale of each value of the acoustic processing
+        # on the real signal data
+        self._scale = 1
 
     # region Properties
 
@@ -24,6 +42,14 @@ class IntervalEnvelope:
     @threshold.setter
     def threshold(self, value):
         self._threshold = value
+
+    @property
+    def scale(self):
+        return self._scale
+
+    @scale.setter
+    def scale(self, value):
+        self._scale = value
 
     # endregion
 
@@ -42,15 +68,16 @@ class IntervalEnvelope:
 
         k = min_size / 2
 
+        # update the scale of the acoustic processing
+        self.scale = k
+
         interval_acoustic_processing = np.array(
             [0 if i == 0 else self.interval_function(data[(i - 1) * k: i * k], i, arr_size)
              for i in xrange(arr_size)])
 
-        threshold = self.get_threshold_level(interval_acoustic_processing)
+        self.progressChanged.emit(90)
 
-        self.detectionProgressChanged.emit(60)
-
-        return mlab.contiguous_regions(interval_acoustic_processing > threshold), interval_acoustic_processing
+        return interval_acoustic_processing
 
     def function_progress(self, step, total):
         """
@@ -58,7 +85,7 @@ class IntervalEnvelope:
         :param total: the total steps of the interval_function calls
         :return:
         """
-        self.detectionProgressChanged.emit(5 + step * 70.0 / total)
+        self.progressChanged.emit(step * 90.0 / total)
 
     def interval_function(self, data, step, total):
         """
