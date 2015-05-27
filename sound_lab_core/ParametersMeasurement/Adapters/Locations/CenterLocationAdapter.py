@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from sound_lab_core.ParametersMeasurement.Adapters.Locations.FixedTimeLocationAdapter import FixedTimeLocationAdapter
-from sound_lab_core.ParametersMeasurement.Locations.CenterMeasurementLocation import CenterMeasurementLocation
+from sound_lab_core.ParametersMeasurement.Locations.CenterMeasurementLocation import CenterFrequencyMeasurementLocation
 
 
 class CenterLocationAdapter(FixedTimeLocationAdapter):
@@ -12,7 +12,7 @@ class CenterLocationAdapter(FixedTimeLocationAdapter):
     def get_instance(self):
         self.update_instance_variables()
 
-        return [CenterMeasurementLocation(ms_delay=self.ms_delay)]
+        return [CenterFrequencyMeasurementLocation(ms_delay=self.ms_delay)]
 
 
 

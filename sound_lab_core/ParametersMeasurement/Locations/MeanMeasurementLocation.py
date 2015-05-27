@@ -1,13 +1,13 @@
-from sound_lab_core.ParametersMeasurement.Locations.MeasurementLocation import MeasurementLocation
+from sound_lab_core.ParametersMeasurement.Locations.MeasurementLocation import FrequencyMeasurementLocation
 
 
-class MeanMeasurementLocation(MeasurementLocation):
+class MeanFrequencyMeasurementLocation(FrequencyMeasurementLocation):
     """
     Location of measurement at all the segment.
     """
 
     def __init__(self):
-        MeasurementLocation.__init__(self)
+        FrequencyMeasurementLocation.__init__(self)
         self.name = "Mean"
 
     def get_data_array_slice(self, segment):

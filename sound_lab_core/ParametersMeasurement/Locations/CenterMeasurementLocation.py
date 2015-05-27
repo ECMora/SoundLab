@@ -1,15 +1,15 @@
 from numpy import zeros
 from matplotlib import mlab
-from sound_lab_core.ParametersMeasurement.Locations.MeasurementLocation import MeasurementLocation
+from sound_lab_core.ParametersMeasurement.Locations.MeasurementLocation import FrequencyMeasurementLocation
 
 
-class CenterMeasurementLocation(MeasurementLocation):
+class CenterFrequencyMeasurementLocation(FrequencyMeasurementLocation):
     """
     Location of measurement at the centre of the segment.
     """
 
     def __init__(self, ms_delay=0):
-        MeasurementLocation.__init__(self)
+        FrequencyMeasurementLocation.__init__(self)
 
         self.ms_delay = ms_delay
 

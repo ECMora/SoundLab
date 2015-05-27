@@ -1,9 +1,10 @@
 from PyQt4.QtCore import pyqtSignal, QObject
-from utils.Utils import fromdB
 import numpy as np
+from sound_lab_core.Segmentation.OneDimensional.DetectionEnvelopes.DetectionEnvelope import DetectionEnvelope
+from utils.Utils import fromdB
 
 
-class IntervalEnvelope(QObject):
+class IntervalEnvelope(DetectionEnvelope):
     """
     An envelope that is a function constant by intervals.
     """
@@ -24,7 +25,7 @@ class IntervalEnvelope(QObject):
 
     # endregion
 
-    def __init__(self, threshold_db=-40):
+    def __init__(self, threshold_db=-40, min_size=40):
         QObject.__init__(self)
 
         self._threshold = threshold_db
@@ -32,6 +33,7 @@ class IntervalEnvelope(QObject):
         # the scale of each value of the acoustic processing
         # on the real signal data
         self._scale = 1
+        self._min_size = min_size
 
     # region Properties
 
@@ -51,6 +53,14 @@ class IntervalEnvelope(QObject):
     def scale(self, value):
         self._scale = value
 
+    @property
+    def min_size(self):
+        return self._min_size
+
+    @min_size.setter
+    def min_size(self, value):
+        self._min_size = value
+
     # endregion
 
     def get_threshold_level(self, data):
@@ -61,8 +71,8 @@ class IntervalEnvelope(QObject):
         """
         return fromdB(self.threshold, 0, max(data))
 
-    def get_acoustic_processing(self, data, min_size):
-        min_size = max(2, int(min_size))
+    def get_acoustic_processing(self, data):
+        min_size = max(2, int(self.min_size))
 
         arr_size = data.size * 2 / min_size
 
@@ -98,5 +108,3 @@ class IntervalEnvelope(QObject):
         if step % self.PROGRESS_STEP == 0:
             self.function_progress(step, total)
         return 0
-
-

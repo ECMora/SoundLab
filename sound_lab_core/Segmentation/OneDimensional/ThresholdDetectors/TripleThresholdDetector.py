@@ -1,18 +1,16 @@
-from sound_lab_core.Segmentation.OneDimensional.ThresholdDetectors import SingleThresholdDetector
+from sound_lab_core.Segmentation.OneDimensional.ThresholdDetectors.SingleThresholdDetector import SingleThresholdDetector
 from utils.Utils import fromdB
-
-__author__ = 'Orlando'
 
 
 class TripleThresholdDetector(SingleThresholdDetector):
 
     def __init__(self, signal, threshold_db=-40, threshold2_db=0, threshold3_db=0,
-                 min_size_ms=1, merge_factor=5):
+                 min_size_ms=1, merge_factor=5, envelope=None):
         """
         :return:
         """
         SingleThresholdDetector.__init__(self, signal=signal, threshold_db=threshold_db, min_size_ms=min_size_ms,
-                                  merge_factor=merge_factor)
+                                         merge_factor=merge_factor, envelope_method=envelope)
 
         # variables for detection
         self._threshold2 = threshold2_db
@@ -38,7 +36,7 @@ class TripleThresholdDetector(SingleThresholdDetector):
 
     # endregion
 
-    def detect_elements(self, elems, acoustic_processing):
+    def detect_elements(self, acoustic_processing):
         """
         Detect the start and end of the detected elements using three thresholds.
         :param elems: List of tuples (start, end) of detected elements with one threshold
@@ -46,7 +44,9 @@ class TripleThresholdDetector(SingleThresholdDetector):
         :param acoustic_processing:
         :return:
         """
-        if self.threshold2 < 0 or self.threshold3 < 0:
+        elems = SingleThresholdDetector.detect_elements(self, acoustic_processing)
+
+        if self.threshold2 < 0 and self.threshold3 < 0:
             # use both thresholds start and end
             result = []
             for element in elems:

@@ -1,7 +1,7 @@
-from sound_lab_core.ParametersMeasurement.Locations.MeasurementLocation import MeasurementLocation
+from sound_lab_core.ParametersMeasurement.Locations.MeasurementLocation import FrequencyMeasurementLocation
 
 
-class RegularIntervalsMeasurementLocation(MeasurementLocation):
+class RegularIntervalsFrequencyMeasurementLocation(FrequencyMeasurementLocation):
     """
     Locations that represents an x-distant division of a segment in n sub-intervals
     """
@@ -13,7 +13,7 @@ class RegularIntervalsMeasurementLocation(MeasurementLocation):
         :param subinterval_index: the index of the current sub-interval location
         :return:
         """
-        MeasurementLocation.__init__(self)
+        FrequencyMeasurementLocation.__init__(self)
         self.name = "Regular Intervals" + "[" + str(subinterval_index + 1) + "]"
 
         self.interval_count = interval_count

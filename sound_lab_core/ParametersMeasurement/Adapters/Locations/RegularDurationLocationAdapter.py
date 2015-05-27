@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from sound_lab_core.ParametersMeasurement.Adapters.Locations.FixedTimeLocationAdapter import LocationAdapter
 from sound_lab_core.ParametersMeasurement.Locations.RegularDurationMeasurementLocation import \
-    RegularDurationMeasurementLocation
+    RegularDurationFrequencyMeasurementLocation
 from pyqtgraph.parametertree import Parameter
 
 
@@ -38,7 +38,7 @@ class RegularDurationLocationAdapter(LocationAdapter):
         locations = []
 
         for i in xrange(self.max_intervals):
-            locations.append(RegularDurationMeasurementLocation(self.duration_ms, i))
+            locations.append(RegularDurationFrequencyMeasurementLocation(self.duration_ms, i))
 
         return locations
 

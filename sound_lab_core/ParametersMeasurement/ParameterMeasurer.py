@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from PyQt4.QtCore import QObject
-from sound_lab_core.ParametersMeasurement.Locations.MeanMeasurementLocation import MeanMeasurementLocation
+from sound_lab_core.ParametersMeasurement.Locations.MeanMeasurementLocation import MeanFrequencyMeasurementLocation
 
 
 class ParameterMeasurer(QObject):
@@ -26,7 +26,7 @@ class ParameterMeasurer(QObject):
         self._measurement_location = measurement_location
 
         if self._measurement_location is None:
-            self._measurement_location = MeanMeasurementLocation()
+            self._measurement_location = MeanFrequencyMeasurementLocation()
 
     def getName(self):
         return self.name

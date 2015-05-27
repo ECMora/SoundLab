@@ -8,6 +8,8 @@ class MeasurementLocation:
     segment. A measurement location transform the way of compute the parameter.
     A parameter with a location is measured in a transformed segment data that
     just include the information of the segment location specified.
+
+    A location is an interval (time and spectral) of the segment data
     """
 
     def __init__(self):
@@ -27,3 +29,8 @@ class MeasurementLocation:
         return mlab.psd(self.get_data_array_slice(segment), Fs=segment.signal.samplingRate, noverlap=128)
 
 
+class FrequencyMeasurementLocation(MeasurementLocation):
+
+    def __init__(self):
+        # name of the measurement location
+        MeasurementLocation.__init__(self)

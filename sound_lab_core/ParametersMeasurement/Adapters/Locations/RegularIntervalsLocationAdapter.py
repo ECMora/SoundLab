@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from sound_lab_core.ParametersMeasurement.Adapters.Locations.FixedTimeLocationAdapter import LocationAdapter
 from sound_lab_core.ParametersMeasurement.Locations.RegularIntervalsMeasurementLocation import \
-    RegularIntervalsMeasurementLocation
+    RegularIntervalsFrequencyMeasurementLocation
 from pyqtgraph.parametertree import Parameter
 
 
@@ -32,7 +32,7 @@ class RegularIntervalsLocationAdapter(LocationAdapter):
         locations = []
 
         for i in xrange(self.intervals):
-            locations.append(RegularIntervalsMeasurementLocation(self.intervals, i))
+            locations.append(RegularIntervalsFrequencyMeasurementLocation(self.intervals, i))
 
         return locations
 

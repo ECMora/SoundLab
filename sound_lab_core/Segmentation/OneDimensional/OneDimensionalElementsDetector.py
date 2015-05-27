@@ -64,9 +64,6 @@ class OneDimensionalElementsDetector(ElementsDetector):
         """
         return self.elements
 
-    def filter_by_min_size(self, elements):
-        return elements
-
     def merge_intervals(self, elements_array):
         """
         Merge into one interval two elements with no more than  distance factor distance between them
@@ -90,18 +87,5 @@ class OneDimensionalElementsDetector(ElementsDetector):
             result.append(t)
 
         return result
-
-    def local_max(self, data):
-        """
-        Identify the local  (positives or not) max that are above threshold
-        :param data:  Array of int with the signal data information
-        :return:
-        """
-        data = abs(array(data))
-
-        indexes = [i for i in xrange(1, data.size - 1) if (data[i - 1] < data[i] > data[i + 1]) or
-                                                          (data[i] == data[i - 1] == data[i + 1])]
-
-        return array(indexes), data[indexes]
 
 

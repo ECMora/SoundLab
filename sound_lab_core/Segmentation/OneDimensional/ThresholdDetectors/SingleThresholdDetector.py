@@ -1,4 +1,4 @@
-from sound_lab_core.Segmentation.OneDimensional.EnvelopeMethods.IntervalMaxEnvelope import IntervalMaxEnvelope
+from sound_lab_core.Segmentation.OneDimensional.DetectionEnvelopes.IntervalMaxEnvelope import IntervalMaxEnvelope
 from sound_lab_core.Segmentation.OneDimensional.OneDimensionalElementsDetector import OneDimensionalElementsDetector
 from matplotlib import mlab as mlab
 from utils.Utils import fromdB
@@ -44,13 +44,9 @@ class SingleThresholdDetector(OneDimensionalElementsDetector):
 
         acoustic_processing = self.get_acoustic_processing(self.signal.data[indexFrom:indexTo])
 
-        threshold = self.envelope_method.get_threshold_level(acoustic_processing)
-
-        detected = mlab.contiguous_regions(acoustic_processing > threshold)
+        detected = self.detect_elements(acoustic_processing)
 
         detected = [c * self.envelope_method.scale for c in detected]
-
-        print(detected, acoustic_processing, threshold)
 
         self.detectionProgressChanged.emit(80)
 
@@ -70,20 +66,20 @@ class SingleThresholdDetector(OneDimensionalElementsDetector):
 
         return self.elements
 
-    def get_threshold_level(self, data):
-        """
-        Computes the threshold level from an array of data supplied.
-        :param data:
-        :return:
-        """
-        return fromdB(self.threshold, 0, max(data))
+    def detect_elements(self, acoustic_processing):
+        if self.envelope_method is None:
+            return []
+
+        threshold = self.envelope_method.get_threshold_level(acoustic_processing)
+
+        return mlab.contiguous_regions(acoustic_processing > threshold)
 
     def get_acoustic_processing(self, data):
         if self.envelope_method is None:
             return []
 
         return self.envelope_method.\
-            get_acoustic_processing(data, self.min_size * self.signal.samplingRate / 1000.0)
+            get_acoustic_processing(data)
 
     def filter_by_min_size(self, detected):
         """

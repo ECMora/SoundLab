@@ -6,9 +6,9 @@ import pyqtgraph as pg
 
 class SoundLabAdapter(QObject):
     """
-    Adapter Pattern Design implementation to bind
+    Adapter-Factory Pattern Design implementation to bind
     support for segmentation classification and
-    parameter measurement into the visual interface of trees.
+    parameter measurement into the visual interface.
     """
 
     # region CONSTANTS

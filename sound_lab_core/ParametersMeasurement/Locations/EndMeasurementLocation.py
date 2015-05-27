@@ -1,14 +1,14 @@
 from numpy import zeros
-from sound_lab_core.ParametersMeasurement.Locations.MeasurementLocation import MeasurementLocation
+from sound_lab_core.ParametersMeasurement.Locations.MeasurementLocation import FrequencyMeasurementLocation
 
 
-class EndMeasurementLocation(MeasurementLocation):
+class EndFrequencyMeasurementLocation(FrequencyMeasurementLocation):
     """
     Location of measurement at the end of the segment.
     """
 
     def __init__(self, ms_delay=0):
-        MeasurementLocation.__init__(self)
+        FrequencyMeasurementLocation.__init__(self)
 
         self.ms_delay = 0 if ms_delay >= 0 else ms_delay
 
