@@ -24,8 +24,16 @@ class FixedTimeLocationAdapter(LocationAdapter):
         LocationAdapter.__init__(self)
 
         settings = [{u'name': unicode(self.tr(u'ms delay')), u'type': u'int',
-                     u'value': 0, u'step': 1, u'limits': (0, 60 * 60 * 1000)}]  # 1 hour segment as upper limit
+                     u'value': 0, u'step': 1, u'limits': (0, 60 * 60 * 1000)},
+                    {u'name': unicode(self.tr(u'min limit kHz')), u'type': u'int',
+                     u'value': 0, u'step': 1, u'limits': (0, 250)},
+                    {u'name': unicode(self.tr(u'max limit kHz')), u'type': u'int',
+                     u'value': 250, u'step': 1, u'limits': (0, 250)},
+                    {u'name': unicode(self.tr(u'Freq interval')), u'type': u'int',
+                     u'value': 1, u'step': 1, u'limits': (1, 1000)},
+                    ]
 
+        self.ms_delay = 0
         self.ms_delay = 0
 
         self.settings = Parameter.create(name=u'Settings', type=u'group', children=settings)

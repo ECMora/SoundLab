@@ -29,8 +29,3 @@ class MeasurementLocation:
         return mlab.psd(self.get_data_array_slice(segment), Fs=segment.signal.samplingRate, noverlap=128)
 
 
-class FrequencyMeasurementLocation(MeasurementLocation):
-
-    def __init__(self):
-        # name of the measurement location
-        MeasurementLocation.__init__(self)

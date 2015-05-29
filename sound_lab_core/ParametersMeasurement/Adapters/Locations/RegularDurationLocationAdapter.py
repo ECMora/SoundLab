@@ -20,7 +20,7 @@ class RegularDurationLocationAdapter(LocationAdapter):
 
         self.settings = Parameter.create(name=u'Settings', type=u'group', children=settings)
 
-    def update_instance_variables(self):
+    def get_instance(self):
         try:
             duration_ms = self.settings.param(unicode(self.tr(u'duration (ms)'))).value()
             max_intervals = self.settings.param(unicode(self.tr(u'max intervals'))).value()
@@ -31,10 +31,6 @@ class RegularDurationLocationAdapter(LocationAdapter):
 
         self.duration_ms = duration_ms
         self.max_intervals = max_intervals
-
-    def get_instance(self):
-        self.update_instance_variables()
-
         locations = []
 
         for i in xrange(self.max_intervals):
