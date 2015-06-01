@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from sound_lab_core.ParametersMeasurement.Adapters.Locations.FixedTimeLocationAdapter import FixedTimeLocationAdapter
-from sound_lab_core.ParametersMeasurement.Locations.EndMeasurementLocation import EndFrequencyMeasurementLocation
+from sound_lab_core.ParametersMeasurement.Locations.TimeLocations.EndMeasurementLocation import EndMeasurementLocation
 
 
 class EndLocationAdapter(FixedTimeLocationAdapter):
@@ -12,7 +12,7 @@ class EndLocationAdapter(FixedTimeLocationAdapter):
     def get_instance(self):
         self.update_instance_variables()
 
-        return [EndFrequencyMeasurementLocation(ms_delay=self.ms_delay)]
+        return [EndMeasurementLocation(ms_delay=self.ms_delay)]
 
 
 

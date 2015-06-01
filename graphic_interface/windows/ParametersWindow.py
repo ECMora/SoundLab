@@ -3,6 +3,8 @@ from PyQt4 import QtGui
 from PyQt4.QtCore import Qt, pyqtSignal
 from PyQt4.QtGui import QAbstractItemView
 from pyqtgraph.parametertree import Parameter, ParameterTree
+from sound_lab_core.ParametersMeasurement.Adapters.FreqParametersadapters.FreqParameterAdapter import \
+    SpectralParameterAdapter
 from sound_lab_core.ParametersMeasurement.ParameterManager import ParameterManager
 from ui_python_files.ParametersWindow import Ui_Dialog
 
@@ -130,15 +132,15 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
         :return:
         """
         table = self.parameter_locations_table
-        locations_adapters = self.parameter_manager.locations_adapters
+        time_locations_adapters = self.parameter_manager.time_locations_adapters
         param_adapters = self.parameter_manager.spectral_parameters_adapters
 
         # one extra row and column for the 'select all' option
         table.setRowCount(1 + len(param_adapters))
-        table.setColumnCount(1 + len(locations_adapters))
+        table.setColumnCount(1 + len(time_locations_adapters))
 
         row_names = [self.tr(u"All Params")] + [x.name for x in param_adapters]
-        column_names = [self.tr(u"All Locations")] + [x.name for x in locations_adapters]
+        column_names = [self.tr(u"All Locations")] + [x.name for x in time_locations_adapters]
 
         # load spectral params and locations
         for i in xrange(table.rowCount()):
@@ -169,13 +171,13 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
         table.setVerticalHeaderLabels(row_names)
         table.setHorizontalHeaderLabels(column_names)
 
-        table.cellClicked.connect(lambda x, y: self.parameter_spectral_selected(x, y, param_adapters, locations_adapters))
+        table.cellClicked.connect(lambda x, y: self.parameter_spectral_selected(x, y, param_adapters, time_locations_adapters))
         table.resizeColumnsToContents()
         table.resizeRowsToContents()
 
     # endregion
 
-    def parameter_spectral_selected(self, row, col, param_adapters, locations_adapters=None):
+    def parameter_spectral_selected(self, row, col, param_adapters, time_locations_adapters=None):
 
         table = self.parameter_locations_table
 
@@ -187,7 +189,7 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
 
             for i in xrange(1, table.rowCount()):
                 table.item(i, col).setCheckState(table.item(row, col).checkState())
-                self.parameter_spectral_selected(i, col, param_adapters, locations_adapters)
+                self.parameter_spectral_selected(i, col, param_adapters, time_locations_adapters)
 
         elif row == 0:
             for i in xrange(1, table.rowCount()):
@@ -200,7 +202,7 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
                 self.parameter_manager.location_parameters[row - 1, i - 1] = table.item(row, col).checkState() == Qt.Checked
         else:
             self.parameter_manager.location_parameters[row - 1, col - 1] = table.item(row, col).checkState() == Qt.Checked
-            self.update_parameter_and_locations_settings(row - 1, col - 1, param_adapters, locations_adapters)
+            self.update_parameter_and_locations_settings(row - 1, col - 1, param_adapters, time_locations_adapters)
 
     def parameter_time_selected(self, row, col, param_adapters):
         table = self.time_parameter_table if self.tab_time_parameters.isVisible() else self.wave_parameter_table
@@ -214,7 +216,7 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
         param_adapters[row-1].selected = table.item(row, col).checkState() == Qt.Checked
         self.update_parameter_and_locations_settings(row - 1, col, param_adapters)
 
-    def update_parameter_and_locations_settings(self, row, col, param_adapters, locations_adapters=None):
+    def update_parameter_and_locations_settings(self, row, col, param_adapters, time_locations_adapters=None):
         # update tree of parameter settings and locations
         self.param_measurement_tree.clearChildren()
         self.location_measurement_tree.clearChildren()
@@ -224,13 +226,14 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
             param_settings = parameter_adapter.get_settings()
             self.param_measurement_tree.addChild(param_settings)
 
-        except Exception as ex:
-            print("updating settings " + ex.message)
-
-        try:
-            location_adapter = locations_adapters[col]
-            location_settings = location_adapter.get_settings()
+            time_location_adapter = time_locations_adapters[col]
+            location_settings = time_location_adapter.get_settings()
             self.location_measurement_tree.addChild(location_settings)
+
+            if isinstance(parameter_adapter, SpectralParameterAdapter):
+                spectral_location_adapter = parameter_adapter.get_spectral_location_adapter()
+                spectral_location_settings = spectral_location_adapter.get_settings()
+                self.location_measurement_tree.addChild(spectral_location_settings)
 
         except Exception as ex:
             print("updating settings " + ex.message)

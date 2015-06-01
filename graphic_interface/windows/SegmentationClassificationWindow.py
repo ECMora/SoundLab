@@ -72,7 +72,7 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         self.segmentManager.detectionProgressChanged.connect(lambda x: self.windowProgressDetection.setValue(x * 0.9))
         self.segmentManager.segmentVisualItemAdded.connect(self.widget.add_parameter_visual_items)
 
-        self.parameter_manager = ParameterManager()
+        self.parameter_manager = ParameterManager(signal=signal)
 
         # set the signal to the widget
         self.widget.signal = signal
@@ -633,27 +633,28 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
                                                           self.parameter_manager)
         elementsDetectorDialog.load_workspace(self.workSpace)
 
-        try:
-            if elementsDetectorDialog.exec_():
-                # the detection dialog is a factory of segmentation,
-                # parameter parameters and classification concrete implementations
+        # try:
+        if elementsDetectorDialog.exec_():
+            # the detection dialog is a factory of segmentation,
+            # parameter parameters and classification concrete implementations
 
-                # get the segmentation, classification and parameters methods
-                self.segmentManager.detector_adapter = elementsDetectorDialog.detector
-                self.segmentManager.classifier_adapter = elementsDetectorDialog.classifier
-                self.segmentManager.parameters = elementsDetectorDialog.get_measurer_list()
+            # get the segmentation, classification and parameters methods
+            self.segmentManager.detector_adapter = elementsDetectorDialog.detector
+            self.segmentManager.classifier_adapter = elementsDetectorDialog.classifier
+            self.segmentManager.parameters = elementsDetectorDialog.get_measurer_list()
 
-                self.windowProgressDetection.setValue(0)
-                self.set_progress_bar_visibility(True)
+            self.windowProgressDetection.setValue(0)
+            self.set_progress_bar_visibility(True)
 
-                # execute the detection
-                self.segmentManager.segmentationFinished.connect(self.segmentation_finished)
-                self.segmentManager.detect_elements()
+            # execute the detection
+            self.segmentManager.segmentationFinished.connect(self.segmentation_finished)
+            self.segmentManager.detect_elements()
 
-        except Exception as e:
-            print("detection errors: " + e.message)
-            self.windowProgressDetection.setValue(100)
-            self.set_progress_bar_visibility(False)
+        # except Exception as e:
+        #     print("detection errors: " + e.message)
+        #     raise e
+        #     self.windowProgressDetection.setValue(100)
+        #     self.set_progress_bar_visibility(False)
 
     def segmentation_finished(self):
         """

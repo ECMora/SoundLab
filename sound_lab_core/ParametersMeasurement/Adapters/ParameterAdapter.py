@@ -11,6 +11,14 @@ class ParameterAdapter(SoundLabAdapter):
     def __init__(self):
         SoundLabAdapter.__init__(self)
 
+    def update_data(self, signal):
+        """
+        Updates the internal data (if any) that are related with
+         the final measured signal properties.
+        :param signal: the signal in whic the param would be measured
+        :return:
+        """
+        pass
 
     def get_db_orm_mapper(self):
         """

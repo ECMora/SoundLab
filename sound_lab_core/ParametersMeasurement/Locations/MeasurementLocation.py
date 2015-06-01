@@ -17,6 +17,11 @@ class MeasurementLocation:
         self.name = ""
 
     def get_data_array_slice(self, segment):
+        """
+        Returns the slice of segment data that belongs to the current location.
+        :param segment:
+        :return:
+        """
         return segment.signal.data
 
     def get_segment_data(self, segment):

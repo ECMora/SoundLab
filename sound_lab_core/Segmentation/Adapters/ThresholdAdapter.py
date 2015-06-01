@@ -1,5 +1,4 @@
 from sound_lab_core.Segmentation.OneDimensional.DetectionEnvelopes.AbsDecayEnvelope import AbsDecayEnvelope
-from sound_lab_core.Segmentation.OneDimensional.DetectionEnvelopes.IntervalEnvelope import IntervalEnvelope
 from sound_lab_core.Segmentation.OneDimensional.DetectionEnvelopes.IntervalMaxEnvelope import IntervalMaxEnvelope
 from sound_lab_core.Segmentation.OneDimensional.DetectionEnvelopes.IntervalMaxMeanEnvelope import \
     IntervalMaxMeanEnvelope
@@ -17,7 +16,7 @@ class ThresholdAdapter(SoundLabAdapter):
     THRESHOLD_DEFAULT = -40
     MIN_SIZE_DEFAULT = 2
     MERGE_FACTOR_DEFAULT = 5
-    ENVELOPE_DEFAULT = AbsDecayEnvelope
+    ENVELOPE_DEFAULT = IntervalRmsEnvelope
 
     # endregion
 

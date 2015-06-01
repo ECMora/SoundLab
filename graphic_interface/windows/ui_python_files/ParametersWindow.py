@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\ParametersWindow.ui'
+# Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\ParametersWindow.ui'
 #
-# Created: Fri May 15 14:48:36 2015
+# Created: Sun May 31 20:55:26 2015
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,11 +17,32 @@ except AttributeError:
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
         Dialog.setObjectName(_fromUtf8("Dialog"))
-        Dialog.resize(604, 430)
+        Dialog.resize(825, 493)
         self.gridLayout = QtGui.QGridLayout(Dialog)
         self.gridLayout.setObjectName(_fromUtf8("gridLayout"))
+        self.settings_widget = QtGui.QWidget(Dialog)
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.settings_widget.sizePolicy().hasHeightForWidth())
+        self.settings_widget.setSizePolicy(sizePolicy)
+        self.settings_widget.setMinimumSize(QtCore.QSize(250, 0))
+        self.settings_widget.setMaximumSize(QtCore.QSize(16777215, 16777215))
+        self.settings_widget.setStyleSheet(_fromUtf8(""))
+        self.settings_widget.setObjectName(_fromUtf8("settings_widget"))
+        self.gridLayout.addWidget(self.settings_widget, 0, 2, 3, 1)
+        self.buttonBox = QtGui.QDialogButtonBox(Dialog)
+        self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
+        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
+        self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
+        self.gridLayout.addWidget(self.buttonBox, 3, 2, 1, 1)
         self.tab_parameters = QtGui.QTabWidget(Dialog)
-        self.tab_parameters.setMinimumSize(QtCore.QSize(400, 0))
+        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
+        sizePolicy.setHorizontalStretch(2)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.tab_parameters.sizePolicy().hasHeightForWidth())
+        self.tab_parameters.setSizePolicy(sizePolicy)
+        self.tab_parameters.setMinimumSize(QtCore.QSize(500, 0))
         self.tab_parameters.setObjectName(_fromUtf8("tab_parameters"))
         self.tab_time_parameters = QtGui.QWidget()
         self.tab_time_parameters.setObjectName(_fromUtf8("tab_time_parameters"))
@@ -55,22 +76,7 @@ class Ui_Dialog(object):
         self.tab_parameters.addTab(self.tab_spectral_params, _fromUtf8(""))
         self.gridLayout.addWidget(self.tab_parameters, 0, 0, 3, 2)
         spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
-        self.gridLayout.addItem(spacerItem, 3, 0, 1, 1)
-        self.buttonBox = QtGui.QDialogButtonBox(Dialog)
-        self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
-        self.buttonBox.setStandardButtons(QtGui.QDialogButtonBox.Cancel|QtGui.QDialogButtonBox.Ok)
-        self.buttonBox.setObjectName(_fromUtf8("buttonBox"))
-        self.gridLayout.addWidget(self.buttonBox, 3, 2, 1, 1)
-        self.settings_widget = QtGui.QWidget(Dialog)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.settings_widget.sizePolicy().hasHeightForWidth())
-        self.settings_widget.setSizePolicy(sizePolicy)
-        self.settings_widget.setMinimumSize(QtCore.QSize(180, 0))
-        self.settings_widget.setMaximumSize(QtCore.QSize(400, 16777215))
-        self.settings_widget.setObjectName(_fromUtf8("settings_widget"))
-        self.gridLayout.addWidget(self.settings_widget, 0, 2, 3, 1)
+        self.gridLayout.addItem(spacerItem, 3, 0, 1, 2)
 
         self.retranslateUi(Dialog)
         self.tab_parameters.setCurrentIndex(0)
@@ -79,7 +85,7 @@ class Ui_Dialog(object):
         QtCore.QMetaObject.connectSlotsByName(Dialog)
 
     def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "Dialog", None, QtGui.QApplication.UnicodeUTF8))
+        Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "Parameters Window", None, QtGui.QApplication.UnicodeUTF8))
         self.tab_parameters.setTabText(self.tab_parameters.indexOf(self.tab_time_parameters), QtGui.QApplication.translate("Dialog", "Time Parameters", None, QtGui.QApplication.UnicodeUTF8))
         self.tab_parameters.setTabText(self.tab_parameters.indexOf(self.tab_wave_parameters), QtGui.QApplication.translate("Dialog", "Wave Parameters", None, QtGui.QApplication.UnicodeUTF8))
         self.tab_parameters.setTabText(self.tab_parameters.indexOf(self.tab_spectral_params), QtGui.QApplication.translate("Dialog", "Spectral Parameters", None, QtGui.QApplication.UnicodeUTF8))

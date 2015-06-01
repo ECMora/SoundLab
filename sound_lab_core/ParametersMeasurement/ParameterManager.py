@@ -14,7 +14,11 @@ class ParameterManager(QObject):
     Provides the adapters for parameters creation.
     """
 
-    def __init__(self):
+    def __init__(self, signal=None):
+        """
+        :param signal: the signal in which would be be measured the parameters.
+        :return:
+        """
         QObject.__init__(self)
 
         # adapters for each type of parameter
@@ -29,18 +33,23 @@ class ParameterManager(QObject):
                                              MinFreqParameterAdapter(),  BandWidthParameterAdapter(),
                                              PeaksAboveParameterAdapter()]
 
-        # location adapters of measurement for the spectral parameters
-        self.locations_adapters = [StartLocationAdapter(), CenterLocationAdapter(),
-                                   EndLocationAdapter(), MeanLocationAdapter(),
-                                   RegularIntervalsLocationAdapter(),
-                                   RegularDurationLocationAdapter()]
+        if signal is not None:
+            adapters = self.spectral_parameters_adapters + self.time_parameters_adapters + self.wave_parameters_adapters
 
-        rows, cols = len(self.spectral_parameters_adapters), len(self.locations_adapters)
+            for adapter in adapters:
+                adapter.update_data(signal)
 
-        # matrix initialized on False
+        # time location adapters of measurement for the spectral parameters
+        self.time_locations_adapters = [StartLocationAdapter(), CenterLocationAdapter(),
+                                        EndLocationAdapter(), MeanLocationAdapter(),
+                                        RegularIntervalsLocationAdapter(),
+                                        RegularDurationLocationAdapter()]
+
+        rows, cols = len(self.spectral_parameters_adapters), len(self.time_locations_adapters)
+
+        # matrix of selection for initialized on False
         self.location_parameters = np.zeros(rows * cols).reshape(rows, cols) > 0
 
-    @property
     def parameter_list(self):
         """
         :return: The number of parameters
@@ -50,11 +59,15 @@ class ParameterManager(QObject):
 
         spectral_parameters = []
         for i in xrange(len(self.spectral_parameters_adapters)):
-            for j in xrange(len(self.locations_adapters)):
+            for j in xrange(len(self.time_locations_adapters)):
                 if self.location_parameters[i, j]:
-                    for location in self.locations_adapters[j].get_instance():
-                        parameter = self.spectral_parameters_adapters[i].get_instance()
-                        parameter.location = location
-                        spectral_parameters.append(parameter)
+                    for location in self.time_locations_adapters[j].get_instance():
+                        spectral_location_adapter = self.spectral_parameters_adapters[i].get_spectral_location_adapter()
+
+                        for spectral_location in spectral_location_adapter.get_instance():
+                            parameter = self.spectral_parameters_adapters[i].get_instance()
+                            parameter.time_location = location
+                            parameter.spectral_location = spectral_location
+                            spectral_parameters.append(parameter)
 
         return time_params + wave_params + spectral_parameters

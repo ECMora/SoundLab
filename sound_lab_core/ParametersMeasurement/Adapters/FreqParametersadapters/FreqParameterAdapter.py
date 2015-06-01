@@ -1,11 +1,41 @@
+from sound_lab_core.ParametersMeasurement.Adapters.Locations.FrequencyMeasurementLocationAdapter import \
+    FrequencyMeasurementLocationAdapter
 from sound_lab_core.ParametersMeasurement.Adapters.ParameterAdapter import ParameterAdapter
 from sound_lab_core.SoundLabAdapter import SoundLabAdapter
 from pyqtgraph.parametertree import Parameter
 
 
-class FreqParameterAdapter(ParameterAdapter):
+class SpectralParameterAdapter(ParameterAdapter):
+    """
+    Each spectral parameter could be computed over a spectral location.
+    """
+
     def __init__(self):
         ParameterAdapter.__init__(self)
+        self._spectral_location_adapter = FrequencyMeasurementLocationAdapter()
+
+        self.settings = Parameter.create(name=u'Settings', type=u'group', children=[])
+
+    def get_settings(self):
+        """
+        Gets the settings of the corresponding adapted class.
+        :return: a list of dicts in the way needed to create the param tree
+        """
+        return self.settings
+
+    def get_spectral_location_adapter(self):
+        """
+        :return: the adapter for the spectral location definition
+        """
+        return self._spectral_location_adapter
+
+    def update_data(self, signal):
+        self._spectral_location_adapter.update_data(signal)
+
+
+class FreqParameterAdapter(SpectralParameterAdapter):
+    def __init__(self):
+        SpectralParameterAdapter.__init__(self)
         settings = [
             {u'name': unicode(self.tr(u'Threshold (dB)')), u'type': u'int', u'value': -20.00, u'step': 1,
              u'limits': (-100, 0)},
@@ -15,13 +45,6 @@ class FreqParameterAdapter(ParameterAdapter):
         self.total = True
 
         self.settings = Parameter.create(name=u'Settings', type=u'group', children=settings)
-
-    def get_settings(self):
-        """
-        Gets the settings of the corresponding adapted class.
-        :return: a list of dicts in the way needed to create the param tree
-        """
-        return self.settings
 
     def compute_settings(self):
         # use a try catch because the instance must be required after

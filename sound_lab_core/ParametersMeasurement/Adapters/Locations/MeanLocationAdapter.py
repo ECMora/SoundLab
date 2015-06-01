@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
-from sound_lab_core.ParametersMeasurement.Locations.MeanMeasurementLocation import MeanFrequencyMeasurementLocation
-from sound_lab_core.SoundLabAdapter import SoundLabAdapter
+from sound_lab_core.ParametersMeasurement.Adapters.Locations.FixedTimeLocationAdapter import LocationAdapter
+from sound_lab_core.ParametersMeasurement.Locations.TimeLocations.MeanMeasurementLocation import MeanMeasurementLocation
 
 
-class MeanLocationAdapter(SoundLabAdapter):
+class MeanLocationAdapter(LocationAdapter):
 
     def __init__(self):
-        SoundLabAdapter.__init__(self)
+        LocationAdapter.__init__(self)
         self.name = self.tr(u'Mean')
 
     def get_instance(self):
-        return [MeanFrequencyMeasurementLocation()]
+        return [MeanMeasurementLocation()]
 
 
 

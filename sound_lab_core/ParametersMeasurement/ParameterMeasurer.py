@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from PyQt4.QtCore import QObject
-from sound_lab_core.ParametersMeasurement.Locations.MeanMeasurementLocation import MeanFrequencyMeasurementLocation
+
+from sound_lab_core.ParametersMeasurement.Locations.TimeLocations.MeanMeasurementLocation import MeanMeasurementLocation
 
 
 class ParameterMeasurer(QObject):
@@ -9,7 +10,7 @@ class ParameterMeasurer(QObject):
     in segments.
     """
 
-    def __init__(self, decimal_places=2, measurement_location=None):
+    def __init__(self, decimal_places=2, time_measurement_location=None):
         """
         Create a parameter measurer
         :return:
@@ -23,13 +24,13 @@ class ParameterMeasurer(QObject):
         self._decimal_places = decimal_places
 
         # the location on the detected segment to perform the parameter measurement
-        self._measurement_location = measurement_location
+        self._time_measurement_location = time_measurement_location
 
-        if self._measurement_location is None:
-            self._measurement_location = MeanFrequencyMeasurementLocation()
+        if self._time_measurement_location is None:
+            self._time_measurement_location = MeanMeasurementLocation()
 
     def getName(self):
-        return self.name
+        return self._name
 
     # region Properties
 
@@ -55,15 +56,15 @@ class ParameterMeasurer(QObject):
         self._decimal_places = new_decimal_places
 
     @property
-    def location(self):
-        return self._measurement_location
+    def time_location(self):
+        return self._time_measurement_location
 
-    @location.setter
-    def location(self, new_location):
+    @time_location.setter
+    def time_location(self, new_location):
         if new_location is None:
             raise Exception("Location of measurement cant be None")
 
-        self._measurement_location = new_location
+        self._time_measurement_location = new_location
 
     # endregion
 

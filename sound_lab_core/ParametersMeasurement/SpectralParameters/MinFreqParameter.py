@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 import numpy as np
+
 from graphic_interface.segment_visualization.parameter_items.spectral_parameter_items.AverageFreqVisualItem import \
     AverageFreqVisualItem
-from sound_lab_core.ParametersMeasurement.Locations.MeanMeasurementLocation import MeanFrequencyMeasurementLocation
+from sound_lab_core.ParametersMeasurement.Locations.TimeLocations.MeanMeasurementLocation import MeanMeasurementLocation
 from sound_lab_core.ParametersMeasurement.SpectralParameters.FreqParameter import FreqParameter
 
 
@@ -12,14 +13,15 @@ class MinFreqParameter(FreqParameter):
     """
 
     def __init__(self, threshold=-20, total=True, decimal_places=2,
-                 measurement_location=None):
-        FreqParameter.__init__(self,threshold, total, decimal_places=decimal_places, measurement_location=measurement_location)
+                 time_measurement_location=None):
+        FreqParameter.__init__(self,threshold, total, decimal_places=decimal_places,
+                               time_measurement_location=time_measurement_location)
         self.name = "MinFreq(kHz)"
 
     def measure(self, segment):
         # frequency_params is a tuple Pxx, freqs shared by all the frequency parameters
         # on their measurements
-        Pxx, freqs = self.location.get_segment_data(segment)
+        Pxx, freqs = self.time_location.get_segment_data(segment)
         value = np.amax(Pxx) * np.power(10, self.threshold/10.0)
 
         if self.total:
@@ -32,6 +34,6 @@ class MinFreqParameter(FreqParameter):
         return round((freqs[min_freq_index] - freqs[min_freq_index] % 10)/1000.0, self.decimal_places)
 
     def get_visual_items(self):
-        if isinstance(self.location, MeanFrequencyMeasurementLocation):
+        if isinstance(self.time_location, MeanMeasurementLocation):
             return [AverageFreqVisualItem(tooltip=self.tr(u"Max Freq") + u" at " + unicode(self.threshold) + u" dB->")]
         return []

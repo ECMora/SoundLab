@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
-from sound_lab_core.ParametersMeasurement.Adapters.Locations.FixedTimeLocationAdapter import LocationAdapter
-from sound_lab_core.ParametersMeasurement.Locations.RegularDurationMeasurementLocation import \
-    RegularDurationFrequencyMeasurementLocation
 from pyqtgraph.parametertree import Parameter
+
+from sound_lab_core.ParametersMeasurement.Adapters.Locations.FrequencyMeasurementLocationAdapter import LocationAdapter
+from sound_lab_core.ParametersMeasurement.Locations.TimeLocations.RegularDurationMeasurementLocation import \
+    RegularDurationMeasurementLocation
 
 
 class RegularDurationLocationAdapter(LocationAdapter):
@@ -18,7 +19,7 @@ class RegularDurationLocationAdapter(LocationAdapter):
         self.duration_ms = 100
         self.max_intervals = 20
 
-        self.settings = Parameter.create(name=u'Settings', type=u'group', children=settings)
+        self.settings = Parameter.create(name=u'Time Location', type=u'group', children=settings)
 
     def get_instance(self):
         try:
@@ -34,7 +35,7 @@ class RegularDurationLocationAdapter(LocationAdapter):
         locations = []
 
         for i in xrange(self.max_intervals):
-            locations.append(RegularDurationFrequencyMeasurementLocation(self.duration_ms, i))
+            locations.append(RegularDurationMeasurementLocation(self.duration_ms, i))
 
         return locations
 

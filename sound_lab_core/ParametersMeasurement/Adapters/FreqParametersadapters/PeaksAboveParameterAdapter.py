@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
 from pyqtgraph.parametertree import Parameter
+from sound_lab_core.ParametersMeasurement.Adapters.FreqParametersadapters.FreqParameterAdapter import \
+    SpectralParameterAdapter
 from sound_lab_core.ParametersMeasurement.SpectralParameters.PeaksAboveParameter import PeaksAboveParameter
-from sound_lab_core.SoundLabAdapter import SoundLabAdapter
 
 
-class PeaksAboveParameterAdapter(SoundLabAdapter):
+class PeaksAboveParameterAdapter(SpectralParameterAdapter):
     """
     Adapter class for the peaks above parameter.
     """
 
     def __init__(self):
-        SoundLabAdapter.__init__(self)
+        SpectralParameterAdapter.__init__(self)
         self.name = self.tr(u'PeaksAbove')
 
         settings = [
@@ -37,7 +38,7 @@ class PeaksAboveParameterAdapter(SoundLabAdapter):
         return PeaksAboveParameter(threshold=self.threshold)
 
     def restore_settings(self, adapter_copy, signal):
-        if not isinstance(adapter_copy, SoundLabAdapter) or \
+        if not isinstance(adapter_copy, SpectralParameterAdapter) or \
            not isinstance(adapter_copy, PeaksAboveParameterAdapter):
             raise Exception("Invalid type exception.")
 

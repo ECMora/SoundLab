@@ -1,20 +1,20 @@
-from sound_lab_core.ParametersMeasurement.Locations.FrequencyMeasurementLocation import FrequencyMeasurementLocation
+from sound_lab_core.ParametersMeasurement.Locations.MeasurementLocation import MeasurementLocation
 
 
-class RegularDurationFrequencyMeasurementLocation(FrequencyMeasurementLocation):
+class RegularDurationMeasurementLocation(MeasurementLocation):
     """
     Locations that represents an x-distant division
     of a segment every duration_interval_ms of time.
     """
 
-    def __init__(self, duration_interval_ms, subinterval_index, min_kHz=0, max_kHz=250):
+    def __init__(self, duration_interval_ms, subinterval_index):
         """
         :param duration_interval_ms: The duration of the intervals in
         which is divided the segment for the current location.
         :param subinterval_index: the index of the current sub-interval location
         :return:
         """
-        FrequencyMeasurementLocation.__init__(self, min_kHz=min_kHz, max_kHz=max_kHz)
+        MeasurementLocation.__init__(self)
 
         self.name = "Regular Duration" + "[" + str((subinterval_index + 1) * duration_interval_ms) + "ms]"
 

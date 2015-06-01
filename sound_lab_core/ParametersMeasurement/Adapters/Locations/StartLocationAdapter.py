@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from sound_lab_core.ParametersMeasurement.Adapters.Locations.FixedTimeLocationAdapter import FixedTimeLocationAdapter
-from sound_lab_core.ParametersMeasurement.Locations.StartMeasurementLocation import StartFrequencyMeasurementLocation
+from sound_lab_core.ParametersMeasurement.Locations.TimeLocations.StartMeasurementLocation import StartMeasurementLocation
 
 
 class StartLocationAdapter(FixedTimeLocationAdapter):
@@ -12,7 +12,7 @@ class StartLocationAdapter(FixedTimeLocationAdapter):
     def get_instance(self):
         self.update_instance_variables()
 
-        return [StartFrequencyMeasurementLocation(ms_delay=self.ms_delay)]
+        return [StartMeasurementLocation(ms_delay=self.ms_delay)]
 
 
 

@@ -1,5 +1,2 @@
-from CenterMeasurementLocation import CenterFrequencyMeasurementLocation
-from StartMeasurementLocation import StartFrequencyMeasurementLocation
-from EndMeasurementLocation import EndFrequencyMeasurementLocation
-from MeanMeasurementLocation import MeanFrequencyMeasurementLocation
+from sound_lab_core.ParametersMeasurement.Locations.TimeLocations.EndMeasurementLocation import EndMeasurementLocation
 
