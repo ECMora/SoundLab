@@ -76,11 +76,11 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         # the method settings
         list_classification.append({u'name': unicode(self.tr(u'Method Settings')), u'type': u'group', u'children': []})
 
-        params = [{u'name': unicode(self.tr(u'Segmentation')),
+        params = [{u'name': unicode(self.tr(u'Parameters')), u'type': u'action'},
+                  {u'name': unicode(self.tr(u'Segmentation')),
                    u'type': u'group', u'children': list_param},
                   {u'name': unicode(self.tr(u'Classification')),
-                   u'type': u'group', u'children': list_classification},
-                  {u'name': unicode(self.tr(u'Parameters')), u'type': u'action'}]
+                   u'type': u'group', u'children': list_classification}]
 
         self.segmentation_classification_tree = Parameter.create(
             name=unicode(self.tr(u'Segmentation-Classification')), type=u'group', children=params)
@@ -240,7 +240,7 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         """
         :return: The list of selected parameters to measure
         """
-        return self.parameter_manager.parameter_list
+        return self.parameter_manager.parameter_list()
 
     # endregion
 
