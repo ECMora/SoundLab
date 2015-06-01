@@ -22,7 +22,11 @@ class MaxFreqParameter(FreqParameter):
         # on their measurements
         Pxx, freqs = self.time_location.get_segment_data(segment)
 
-        value = np.amax(Pxx) * np.power(10,self.threshold/10.0)
+        min_freq_limit_index, max_freq_limit_index = self.spectral_location.get_freq_limits(freqs)
+
+        Pxx = Pxx[min_freq_limit_index:max_freq_limit_index]
+
+        value = np.amax(Pxx) * np.power(10, self.threshold/10.0)
 
         if self.total:
             max_freq_index = np.argwhere(Pxx >= value).max()
@@ -31,6 +35,9 @@ class MaxFreqParameter(FreqParameter):
             peak_index = np.argmax(Pxx)
             below[:peak_index] = False
             max_freq_index = np.argwhere(below).min() - 1
+
+        max_freq_index += min_freq_limit_index
+
         return round((freqs[max_freq_index] - freqs[max_freq_index] % 10)/1000.0, self.decimal_places)
 
     def get_visual_items(self):

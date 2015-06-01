@@ -22,15 +22,24 @@ class MinFreqParameter(FreqParameter):
         # frequency_params is a tuple Pxx, freqs shared by all the frequency parameters
         # on their measurements
         Pxx, freqs = self.time_location.get_segment_data(segment)
-        value = np.amax(Pxx) * np.power(10, self.threshold/10.0)
+
+        min_freq_limit_index, max_freq_limit_index = self.spectral_location.get_freq_limits(freqs)
+
+        Pxx = Pxx[min_freq_limit_index:max_freq_limit_index]
+
+        value = np.amax(Pxx) * np.power(10, self.threshold / 10.0)
 
         if self.total:
             min_freq_index = np.argwhere(Pxx >= value).min()
+
         else:
             below = Pxx < value
             peak_index = np.argmax(Pxx)
             below[peak_index:] = False
             min_freq_index = np.argwhere(below).max() + 1
+
+        min_freq_index += min_freq_limit_index
+
         return round((freqs[min_freq_index] - freqs[min_freq_index] % 10)/1000.0, self.decimal_places)
 
     def get_visual_items(self):

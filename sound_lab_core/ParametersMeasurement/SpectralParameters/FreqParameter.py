@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from sound_lab_core.ParametersMeasurement.Locations.SpectralLocations.FrequencyMeasurementLocation import \
+    FrequencyMeasurementLocation
 from sound_lab_core.ParametersMeasurement.ParameterMeasurer import ParameterMeasurer
 
 
@@ -14,7 +16,7 @@ class SpectralParameter(ParameterMeasurer):
         self._spectral_measurement_location = spectral_measurement_location
 
         if self._spectral_measurement_location is None:
-            self._spectral_measurement_location = None
+            self._spectral_measurement_location = FrequencyMeasurementLocation()
 
     @property
     def spectral_location(self):

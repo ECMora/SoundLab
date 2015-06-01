@@ -1,0 +1,40 @@
+import numpy as np
+from sound_lab_core.ParametersMeasurement.ParameterMeasurer import ParameterMeasurer
+from pylab import mlab
+
+
+class SpectralRollOffParameter(ParameterMeasurer):
+    """
+    Class that measure the max freq parameter on a segment
+    """
+
+    def __init__(self, func, funcName):
+        ParameterMeasurer.__init__(self)
+        self.name = "Spectral RollOff {0}".format(funcName)
+        self.func = func
+
+    def _spectral_rolloff(self, frames, freqs):
+        result = np.zeros(len(frames))
+        for i in range(len(frames)):
+            frame = frames[i]
+            w = np.amin(frame)
+            frame = frame - w
+            sum = np.cumsum(np.multiply(frame, frame))
+            lo = 0
+            hi = len(frame)-1
+            th = 0.92
+            while lo <= hi:
+                m = (lo+hi)/2
+                if sum[m] < th * sum[-1]:
+                    lo = m+1
+                else:
+                    hi = m-1
+            result[i] = freqs[hi]
+        return result
+
+    def measure(self, segment):
+        s, freqs, bins = mlab.specgram(segment.signal.data[segment.indexFrom:segment.indexTo], Fs=segment.signal.samplingRate, NFFT=512, noverlap=-1)
+        s = np.transpose(s)
+
+        return self.func(self._spectral_rolloff(s, freqs))
+

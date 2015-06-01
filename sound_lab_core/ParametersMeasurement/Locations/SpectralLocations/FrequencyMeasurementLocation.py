@@ -1,4 +1,5 @@
 from sound_lab_core.ParametersMeasurement.Locations.MeasurementLocation import MeasurementLocation
+import numpy as np
 
 
 class FrequencyMeasurementLocation(MeasurementLocation):
@@ -18,3 +19,14 @@ class FrequencyMeasurementLocation(MeasurementLocation):
         self.max_kHz = max_kHz
 
         self.name = str(min_kHz) + "-" + str(max_kHz) + " kHz"
+
+    def get_freq_limits(self, freqs):
+        """
+        computes and return the indexes of the current frecuency slice
+        :param freqs: The array of frequencies
+        :return:
+        """
+        min_freq = self.min_kHz * 1000
+        max_freq = self.max_kHz * 1000
+
+        return np.searchsorted(freqs, min_freq), np.searchsorted(freqs, max_freq)

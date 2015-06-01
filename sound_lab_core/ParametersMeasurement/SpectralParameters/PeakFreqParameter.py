@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 from PyQt4 import QtGui
-from numpy import argmax
-
+import numpy as np
 from graphic_interface.segment_visualization.parameter_items.spectral_parameter_items.AverageFreqVisualItem import \
     AverageFreqVisualItem
 from sound_lab_core.ParametersMeasurement.Locations.TimeLocations.MeanMeasurementLocation import MeanMeasurementLocation
@@ -22,7 +21,13 @@ class PeakFreqParameter(SpectralParameter):
         # frequency_params is a tuple Pxx, freqs shared by all the frequency parameters
         # on their measurements
         Pxx, freqs = self.time_location.get_segment_data(segment)
-        index = argmax(Pxx)
+
+        min_freq_index, max_freq_index = self.spectral_location.get_freq_limits(freqs)
+
+        index = np.argmax(Pxx[min_freq_index:max_freq_index])
+
+        index += min_freq_index
+
         return round((freqs[index] - freqs[index] % 10) / 1000.0, self.decimal_places)
 
     def get_visual_items(self):

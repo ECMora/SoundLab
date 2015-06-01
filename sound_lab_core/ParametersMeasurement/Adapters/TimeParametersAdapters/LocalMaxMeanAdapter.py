@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from sound_lab_core.ParametersMeasurement.TimeParameters.LocalMaxMeanParameter import LocalMaxMeanParameter
 from sound_lab_core.ParametersMeasurement.Adapters.ParameterAdapter import ParameterAdapter
+from sound_lab_core.ParametersMeasurement.WaveParameters import LocalMaxMeanParameter
 
 
 class LocalMaxMeanParameterAdapter(ParameterAdapter):

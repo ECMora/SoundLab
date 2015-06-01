@@ -33,12 +33,6 @@ class ParameterManager(QObject):
                                              MinFreqParameterAdapter(),  BandWidthParameterAdapter(),
                                              PeaksAboveParameterAdapter()]
 
-        if signal is not None:
-            adapters = self.spectral_parameters_adapters + self.time_parameters_adapters + self.wave_parameters_adapters
-
-            for adapter in adapters:
-                adapter.update_data(signal)
-
         # time location adapters of measurement for the spectral parameters
         self.time_locations_adapters = [StartLocationAdapter(), CenterLocationAdapter(),
                                         EndLocationAdapter(), MeanLocationAdapter(),
@@ -49,6 +43,14 @@ class ParameterManager(QObject):
 
         # matrix of selection for initialized on False
         self.location_parameters = np.zeros(rows * cols).reshape(rows, cols) > 0
+
+        if signal is not None:
+            adapters = self.spectral_parameters_adapters + self.time_parameters_adapters + self.wave_parameters_adapters
+
+            for adapter in adapters:
+                adapter.update_data(signal)
+
+        self.spectral_locations = []
 
     def parameter_list(self):
         """

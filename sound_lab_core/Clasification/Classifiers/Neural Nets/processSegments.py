@@ -1,13 +1,11 @@
-from duetto.audio_signals.audio_signals_stream_readers.WavStreamManager import WavStreamManager
-from sound_lab_core.Elements.OneDimensionalElements.OneDimensionalElement import OneDimensionalElement
-import numpy as np
 import pickle
 import os
 
+from duetto.audio_signals.audio_signals_stream_readers.WavStreamManager import WavStreamManager
+import numpy as np
+
+from sound_lab_core.Elements.OneDimensionalElements.OneDimensionalElement import OneDimensionalElement
 from sound_lab_core.ParametersMeasurement.TimeParameters.DurationTimeParameter import DurationTimeParameter
-from sound_lab_core.ParametersMeasurement.TimeParameters.EntropyTimeParameter import EntropyTimeParameter
-from sound_lab_core.ParametersMeasurement.TimeParameters.LocalMaxMeanParameter import LocalMaxMeanParameter
-from sound_lab_core.ParametersMeasurement.TimeParameters.PeakToPeakParameter import PeakToPeakParameter
 from sound_lab_core.ParametersMeasurement.TimeParameters.RmsTimeParameter import RmsTimeParameter
 from sound_lab_core.ParametersMeasurement.TimeParameters.StartToMaxTimeParameter import StartToMaxTimeParameter
 from sound_lab_core.ParametersMeasurement.TimeParameters.ZeroCrossRateParameter import ZeroCrossRateParameter
@@ -16,6 +14,8 @@ from sound_lab_core.ParametersMeasurement.SpectralParameters.MaxFreqParameter im
 from sound_lab_core.ParametersMeasurement.SpectralParameters.MinFreqParameter import MinFreqParameter
 from sound_lab_core.ParametersMeasurement.SpectralParameters.PeakFreqParameter import PeakFreqParameter
 from sound_lab_core.ParametersMeasurement.SpectralParameters.PeaksAboveParameter import PeaksAboveParameter
+from sound_lab_core.ParametersMeasurement.WaveParameters import PeakToPeakParameter, LocalMaxMeanParameter
+
 
 class SegmentsReader:
 

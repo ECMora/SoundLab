@@ -18,6 +18,10 @@ class BandWidthParameter(FreqParameter):
         # on their measurements
         Pxx, freqs = self.time_location.get_segment_data(segment)
 
+        min_freq_limit_index, max_freq_limit_index = self.spectral_location.get_freq_limits(freqs)
+
+        Pxx = Pxx[min_freq_limit_index:max_freq_limit_index]
+
         value = np.amax(Pxx) * np.power(10, self.threshold / 10.0)
 
         if self.total:
@@ -30,6 +34,9 @@ class BandWidthParameter(FreqParameter):
             below_right = below[peak_index:]
             min_freq_index = np.argwhere(below_left).max() + 1
             max_freq_index = np.argwhere(below_right).min() - 1 + peak_index
+
+        min_freq_index += min_freq_limit_index
+        max_freq_index += min_freq_limit_index
 
         band_with = (freqs[max_freq_index] - freqs[min_freq_index])
 

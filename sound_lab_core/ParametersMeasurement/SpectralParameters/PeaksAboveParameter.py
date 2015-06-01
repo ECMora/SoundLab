@@ -21,6 +21,10 @@ class PeaksAboveParameter(SpectralParameter):
         # on their measurements
         Pxx, freqs = self.time_location.get_segment_data(segment)
 
+        min_freq_index, max_freq_index = self.spectral_location.get_freq_limits(freqs)
+
+        Pxx = Pxx[min_freq_index:max_freq_index]
+
         value = np.amax(Pxx) * np.power(10, self.threshold/10.0)
         _, cnt_regions = label(Pxx >= value)
         return cnt_regions
