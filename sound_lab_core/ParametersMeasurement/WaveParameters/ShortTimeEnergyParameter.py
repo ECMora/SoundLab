@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-from . import DECIMAL_PLACES
-import numpy as np
 from sound_lab_core.ParametersMeasurement.ParameterMeasurer import ParameterMeasurer
 
 

@@ -10,7 +10,7 @@ class SpectralRollOffParameter(ParameterMeasurer):
 
     def __init__(self, func, funcName):
         ParameterMeasurer.__init__(self)
-        self.name = "Spectral RollOff {0}".format(funcName)
+        self.name = "Spectral RollOff " + funcName
         self.func = func
 
     def _spectral_rolloff(self, frames, freqs):

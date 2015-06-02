@@ -231,7 +231,7 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
             self.location_measurement_tree.addChild(location_settings)
 
             if isinstance(parameter_adapter, SpectralParameterAdapter):
-                spectral_location_adapter = parameter_adapter.get_spectral_location_adapter()
+                spectral_location_adapter = self.parameter_manager.spectral_locations_adapters[row, col]
                 spectral_location_settings = spectral_location_adapter.get_settings()
                 self.location_measurement_tree.addChild(spectral_location_settings)
 

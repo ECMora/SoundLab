@@ -1,20 +1,21 @@
 # -*- coding: utf-8 -*-
-from sound_lab_core.ParametersMeasurement.Adapters.ParameterAdapter import ParameterAdapter
-from sound_lab_core.ParametersMeasurement.FourierParameters.SpectrumSpreadParameter import SpectrumSpreadParameter
+from sound_lab_core.ParametersMeasurement.Adapters.FourierParametersAdapters.FourierParameterAdapter import \
+    FourierParameterAdapter
+from sound_lab_core.ParametersMeasurement.SpectralParameters.FourierParameters import SpectrumSpreadParameter
 
 
-class SpectrumSpreadParameterAdapter(ParameterAdapter):
+class SpectrumSpreadParameterAdapter(FourierParameterAdapter):
     """
     Adapter class for the start time parameter.
     """
 
-    def __init__(self, func, funcName):
-        ParameterAdapter.__init__(self)
-        self.func = func
-        self.funcName = funcName
+    def __init__(self):
+        FourierParameterAdapter.__init__(self)
+        self.name = self.tr(u"Spectrum Spread")
 
     def get_instance(self):
-        return SpectrumSpreadParameter(self.func, self.funcName)
+        self.compute_settings()
+        return SpectrumSpreadParameter(self.func, self.function_name)
 
 
 

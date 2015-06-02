@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import numpy as np
-from .TimeParameter import TimeParameter
+from sound_lab_core.ParametersMeasurement.TimeParameters.TimeParameter import TimeParameter
 
 
 class StartToMaxTimeParameter(TimeParameter):

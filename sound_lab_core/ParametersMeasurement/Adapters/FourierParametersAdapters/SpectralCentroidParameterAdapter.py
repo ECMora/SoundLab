@@ -1,20 +1,21 @@
 # -*- coding: utf-8 -*-
-from sound_lab_core.ParametersMeasurement.Adapters.ParameterAdapter import ParameterAdapter
-from sound_lab_core.ParametersMeasurement.FourierParameters.SpectralCentroidParameter import SpectralCentroidParameter
+from sound_lab_core.ParametersMeasurement.Adapters.FourierParametersAdapters.FourierParameterAdapter import \
+    FourierParameterAdapter
+from sound_lab_core.ParametersMeasurement.SpectralParameters.FourierParameters import SpectralCentroidParameter
 
 
-class SpectralCentroidParameterAdapter(ParameterAdapter):
+class SpectralCentroidParameterAdapter(FourierParameterAdapter):
     """
     Adapter class for the start time parameter.
     """
 
-    def __init__(self, func, funcName):
-        ParameterAdapter.__init__(self)
-        self.func = func
-        self.funcName = funcName
+    def __init__(self):
+        FourierParameterAdapter.__init__(self)
+        self.name = self.tr(u"Spectral Centroid")
 
     def get_instance(self):
-        return SpectralCentroidParameter(self.func, self.funcName)
+        self.compute_settings()
+        return SpectralCentroidParameter(self.func, self.function_name)
 
 
 

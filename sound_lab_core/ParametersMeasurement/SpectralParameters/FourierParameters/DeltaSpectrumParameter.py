@@ -12,7 +12,7 @@ class DeltaSpectrumParameter(ParameterMeasurer):
 
     def __init__(self, func, funcName):
         ParameterMeasurer.__init__(self)
-        self.name = "Delta Spectrum {0}".format(funcName)
+        self.name = "Delta Spectrum " + funcName
         self.func = func
 
     def _delta_spectrum(self, frames):

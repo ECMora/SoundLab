@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from sound_lab_core.ParametersMeasurement.Adapters.ParameterAdapter import ParameterAdapter
-from sound_lab_core.ParametersMeasurement.WaveParameters import ShortTimeEnergyParameter
+from sound_lab_core.ParametersMeasurement.WaveParameters.ShortTimeEnergyParameter import ShortTimeEnergyParameter
 
 
 class ShortTimeEnergyParameterAdapter(ParameterAdapter):
@@ -10,6 +10,7 @@ class ShortTimeEnergyParameterAdapter(ParameterAdapter):
 
     def __init__(self):
         ParameterAdapter.__init__(self)
+        self.name = u"ShortTimeEnergy"
 
     def get_instance(self):
         return ShortTimeEnergyParameter()

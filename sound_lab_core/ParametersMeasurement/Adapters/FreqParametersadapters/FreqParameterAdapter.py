@@ -12,8 +12,6 @@ class SpectralParameterAdapter(ParameterAdapter):
 
     def __init__(self):
         ParameterAdapter.__init__(self)
-        self._spectral_location_adapter = FrequencyMeasurementLocationAdapter()
-
         self.settings = Parameter.create(name=u'Settings', type=u'group', children=[])
 
     def get_settings(self):
@@ -22,15 +20,6 @@ class SpectralParameterAdapter(ParameterAdapter):
         :return: a list of dicts in the way needed to create the param tree
         """
         return self.settings
-
-    def get_spectral_location_adapter(self):
-        """
-        :return: the adapter for the spectral location definition
-        """
-        return self._spectral_location_adapter
-
-    def update_data(self, signal):
-        self._spectral_location_adapter.update_data(signal)
 
 
 class FreqParameterAdapter(SpectralParameterAdapter):

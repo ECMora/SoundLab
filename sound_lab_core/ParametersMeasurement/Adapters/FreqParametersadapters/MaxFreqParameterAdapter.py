@@ -16,13 +16,7 @@ class MaxFreqParameterAdapter(FreqParameterAdapter):
 
     def get_instance(self):
         self.compute_settings()
-        instance = MaxFreqParameter(threshold=self.threshold, total=self.total)
-
-        spectral_location_adapter = self.get_spectral_location_adapter()
-        if spectral_location_adapter is not None:
-            instance.spectral_location = spectral_location_adapter.get_instance()
-
-        return instance
+        return MaxFreqParameter(threshold=self.threshold, total=self.total)
 
     def get_visual_items(self):
         return [AverageFreqVisualItem(tooltip=self.tr(u"Max Freq") + u" at " + unicode(self.threshold) + u" dB->")]

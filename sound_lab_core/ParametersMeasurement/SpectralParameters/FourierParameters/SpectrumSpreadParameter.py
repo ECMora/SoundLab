@@ -12,7 +12,7 @@ class SpectrumSpreadParameter(ParameterMeasurer):
 
     def __init__(self, func, funcName):
         ParameterMeasurer.__init__(self)
-        self.name = "Spectrum Spread {0}".format(funcName)
+        self.name = "Spectrum Spread " + funcName
         self.func = func
 
     def _spectral_centroid(self, frames, freqs):
