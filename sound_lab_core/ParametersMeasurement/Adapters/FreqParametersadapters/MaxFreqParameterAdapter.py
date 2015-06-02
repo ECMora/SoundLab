@@ -16,7 +16,7 @@ class MaxFreqParameterAdapter(FreqParameterAdapter):
 
     def get_instance(self):
         self.compute_settings()
-        return MaxFreqParameter(threshold=self.threshold, total=self.total)
+        return MaxFreqParameter(threshold=self.threshold, total=self.total, decimal_places=self.decimal_places)
 
     def get_visual_items(self):
         return [AverageFreqVisualItem(tooltip=self.tr(u"Max Freq") + u" at " + unicode(self.threshold) + u" dB->")]

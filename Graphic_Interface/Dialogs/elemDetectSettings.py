@@ -76,7 +76,7 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         # the method settings
         list_classification.append({u'name': unicode(self.tr(u'Method Settings')), u'type': u'group', u'children': []})
 
-        params = [{u'name': unicode(self.tr(u'Parameters')), u'type': u'action'},
+        params = [{u'name': unicode(self.tr(u'Parameter Measurements')), u'type': u'action'},
                   {u'name': unicode(self.tr(u'Segmentation')),
                    u'type': u'group', u'children': list_param},
                   {u'name': unicode(self.tr(u'Classification')),
@@ -95,7 +95,7 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
                                         self.segmentation_classification_changed(param, changes, u'Classification',
                                                                                  self.classification_adapter_factory))
 
-        self.segmentation_classification_tree.param(unicode(self.tr(u'Parameters'))).\
+        self.segmentation_classification_tree.param(unicode(self.tr(u'Parameter Measurements'))).\
             sigActivated.connect(self.configure_parameters)
 
         # create and set initial properties

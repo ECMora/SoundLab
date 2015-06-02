@@ -403,6 +403,18 @@ class SegmentManager(QObject):
 
     # endregion
 
+    def stop_processing(self):
+        """
+        Stop the current on going processing if any.
+        The process could be a Segmentation or a Measurement
+        :return:
+        """
+        if self.segmentation_thread.isRunning():
+            self.segmentation_thread.terminate()
+
+        if self.measurement_thread.isRunning():
+            self.measurement_thread.terminate()
+
     def save_data_on_db(self):
         """
         Save on db the data of detected segments, measurements and classification made.

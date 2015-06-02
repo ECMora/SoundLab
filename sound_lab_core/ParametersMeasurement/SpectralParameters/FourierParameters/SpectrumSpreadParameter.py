@@ -10,8 +10,8 @@ class SpectrumSpreadParameter(ParameterMeasurer):
     Class that measure the max freq parameter on a segment
     """
 
-    def __init__(self, func, funcName):
-        ParameterMeasurer.__init__(self)
+    def __init__(self, func, funcName, decimal_places=2):
+        ParameterMeasurer.__init__(self, decimal_places=decimal_places)
         self.name = "Spectrum Spread " + funcName
         self.func = func
 
@@ -56,5 +56,5 @@ class SpectrumSpreadParameter(ParameterMeasurer):
         s, freqs, bins = mlab.specgram(segment.signal.data[segment.indexFrom:segment.indexTo], Fs=segment.signal.samplingRate, NFFT=512, noverlap=-1)
         s = np.transpose(s)
 
-        return self.func(self._spectrum_spread(s, freqs))
+        return round(self.func(self._spectrum_spread(s, freqs)), self.decimal_places)
 

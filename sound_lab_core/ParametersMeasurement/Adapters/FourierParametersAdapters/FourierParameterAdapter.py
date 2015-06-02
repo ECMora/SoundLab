@@ -12,18 +12,18 @@ class FourierParameterAdapter(SpectralParameterAdapter):
     def __init__(self):
         SpectralParameterAdapter.__init__(self)
 
-        settings = [{u'name': unicode(self.tr(u'Function')), u'type': u'list',
-                     u'values': [(x, x) for x in [u"Mean", u"Variance"]],
-                     u'default': self.selected_function,
-                     u'value': self.selected_function}]
+        self._settings += [{u'name': unicode(self.tr(u'Function')), u'type': u'list',
+                            u'values': [(x, x) for x in [u"Mean", u"Variance"]],
+                            u'default': self.selected_function,
+                            u'value': self.selected_function}]
 
         self.function_name = str(self.selected_function)
         self.func = np.var if self.name is u"Variance" else np.mean
 
-
-        self.settings = Parameter.create(name=u'Settings', type=u'group', children=settings)
+        self.settings = Parameter.create(name=u'Settings', type=u'group', children=self._settings)
 
     def compute_settings(self):
+        SpectralParameterAdapter.compute_settings(self)
         try:
             function = self.settings.param(unicode(self.tr(u'Function'))).value()
 

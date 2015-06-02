@@ -15,7 +15,7 @@ class SpectralCentroidParameterAdapter(FourierParameterAdapter):
 
     def get_instance(self):
         self.compute_settings()
-        return SpectralCentroidParameter(self.func, self.function_name)
+        return SpectralCentroidParameter(self.func, self.function_name, decimal_places=self.decimal_places)
 
 
 

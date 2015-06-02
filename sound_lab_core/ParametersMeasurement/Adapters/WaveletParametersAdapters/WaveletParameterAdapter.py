@@ -1,27 +1,41 @@
 # -*- coding: utf-8 -*-
 from pyqtgraph.parametertree import Parameter
+from sound_lab_core.ParametersMeasurement.Adapters.FreqParametersadapters.FreqParameterAdapter import \
+    SpectralParameterAdapter
 from sound_lab_core.SoundLabAdapter import SoundLabAdapter
-from sound_lab_core.ParametersMeasurement.Adapters.ParameterAdapter import ParameterAdapter
-from utils.db.DB_ORM import DB
 
 
-class WaveletParameterAdapter(ParameterAdapter):
+class WaveletParameterAdapter(SpectralParameterAdapter):
     """
     Adapter class for the peaks above parameter.
     """
 
     def __init__(self):
-        ParameterAdapter.__init__(self)
+        SpectralParameterAdapter.__init__(self)
         selected_wavelet = "db10"
         wavelets = [(unicode(x), x) for x in ["haar","db2","db4","db6","db8","db10"]]
-        settings = [{u'name': unicode(self.tr(u'Wavelet')), u'type': u'list',
-                     u'values': wavelets,
-                     u'default': unicode(selected_wavelet),
-                     u'value': unicode(selected_wavelet)}]
+        self._settings += [{u'name': unicode(self.tr(u'Wavelet')), u'type': u'list',
+                            u'values': wavelets,
+                            u'default': unicode(selected_wavelet),
+                            u'value': unicode(selected_wavelet)},
+                           {u'name': unicode(self.tr(u'Level')), u'type': u'int',
+                            u'value': 0, u'default': 0, u'limits': (0, 7)}]
 
+        self.level = 0
         self.wavelet = selected_wavelet
-        self.settings = Parameter.create(name=u'Settings', type=u'group', children=settings)
+        self.settings = Parameter.create(name=u'Settings', type=u'group', children=self._settings)
         self.settings.param(unicode(self.tr(u'Wavelet'))).setValue(selected_wavelet)
+
+    def compute_settings(self):
+        SpectralParameterAdapter.compute_settings(self)
+
+        try:
+            level = self.settings.param(unicode(self.tr(u'Level'))).value()
+
+        except Exception as e:
+            level = self.level
+
+        self.level = level
 
     def get_settings(self):
         """

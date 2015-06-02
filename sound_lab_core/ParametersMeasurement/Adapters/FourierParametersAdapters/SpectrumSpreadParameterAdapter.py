@@ -15,7 +15,7 @@ class SpectrumSpreadParameterAdapter(FourierParameterAdapter):
 
     def get_instance(self):
         self.compute_settings()
-        return SpectrumSpreadParameter(self.func, self.function_name)
+        return SpectrumSpreadParameter(self.func, self.function_name, decimal_places=self.decimal_places)
 
 
 

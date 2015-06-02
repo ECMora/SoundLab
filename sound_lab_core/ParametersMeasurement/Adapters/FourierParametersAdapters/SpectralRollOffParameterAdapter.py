@@ -15,7 +15,7 @@ class SpectralRollOffParameterAdapter(FourierParameterAdapter):
 
     def get_instance(self):
         self.compute_settings()
-        return SpectralRollOffParameter(self.func, self.function_name)
+        return SpectralRollOffParameter(self.func, self.function_name, decimal_places=self.decimal_places)
 
 
 

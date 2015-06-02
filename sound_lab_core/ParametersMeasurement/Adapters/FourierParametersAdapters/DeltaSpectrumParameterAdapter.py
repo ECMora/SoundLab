@@ -16,7 +16,7 @@ class DeltaSpectrumParameterAdapter(FourierParameterAdapter):
     def get_instance(self):
         self.compute_settings()
 
-        return DeltaSpectrumParameter(self.func, self.function_name)
+        return DeltaSpectrumParameter(self.func, self.function_name, decimal_places=self.decimal_places)
 
 
 

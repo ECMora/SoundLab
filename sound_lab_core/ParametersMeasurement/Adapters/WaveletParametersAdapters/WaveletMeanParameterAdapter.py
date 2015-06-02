@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from sound_lab_core.ParametersMeasurement.WaveletParameters import WaveletMeanParameter
 from sound_lab_core.ParametersMeasurement.Adapters.WaveletParametersAdapters.WaveletParameterAdapter import WaveletParameterAdapter
+from sound_lab_core.ParametersMeasurement.SpectralParameters.WaveletParameters import WaveletMeanParameter
 
 
 class WaveletMeanParameterAdapter(WaveletParameterAdapter):
@@ -10,12 +10,10 @@ class WaveletMeanParameterAdapter(WaveletParameterAdapter):
 
     def __init__(self):
         WaveletParameterAdapter.__init__(self)
-
-    def __init__(self, level):
-        WaveletParameterAdapter.__init__(self)
-        self.level = level
+        self.name = "WaveletMean"
 
     def get_instance(self):
+        self.compute_settings()
         try:
             wavelet = self.settings.param(unicode(self.tr(u'Wavelet'))).value()
 
@@ -23,4 +21,4 @@ class WaveletMeanParameterAdapter(WaveletParameterAdapter):
             wavelet = self.wavelet
 
         self.wavelet = wavelet
-        return WaveletMeanParameter(level=self.level, wavelet=self.wavelet)
+        return WaveletMeanParameter(level=self.level, wavelet=self.wavelet, decimal_places=self.decimal_places)

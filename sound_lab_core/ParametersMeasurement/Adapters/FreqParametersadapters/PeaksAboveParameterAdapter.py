@@ -14,19 +14,15 @@ class PeaksAboveParameterAdapter(SpectralParameterAdapter):
         SpectralParameterAdapter.__init__(self)
         self.name = self.tr(u'PeaksAbove')
 
-        settings = [
+        self._settings += [
             {u'name': unicode(self.tr(u'Threshold (dB)')), u'type': u'int', u'value': -20.00, u'step': 1, u'limits': (-100, 0)}]
-        self.threshold = -20
-        self.settings = Parameter.create(name=u'Settings', type=u'group', children=settings)
 
-    def get_settings(self):
-        """
-        Gets the settings of the corresponding adapted class.
-        :return: a list of dicts in the way needed to create the param tree
-        """
-        return self.settings
+        self.threshold = -20
+        self.settings = Parameter.create(name=u'Settings', type=u'group', children=self._settings)
 
     def get_instance(self):
+        self.compute_settings()
+
         try:
             threshold = self.settings.param(unicode(self.tr(u'Threshold (dB)'))).value()
 
@@ -35,7 +31,7 @@ class PeaksAboveParameterAdapter(SpectralParameterAdapter):
 
         self.threshold = threshold
 
-        return PeaksAboveParameter(threshold=self.threshold)
+        return PeaksAboveParameter(threshold=self.threshold, decimal_places=self.decimal_places)
 
     def restore_settings(self, adapter_copy, signal):
         if not isinstance(adapter_copy, SpectralParameterAdapter) or \

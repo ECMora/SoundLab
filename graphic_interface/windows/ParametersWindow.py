@@ -220,6 +220,8 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
         # update tree of parameter settings and locations
         self.param_measurement_tree.clearChildren()
         self.location_measurement_tree.clearChildren()
+        if row < 0 or col < 0:
+            return
 
         try:
             parameter_adapter = param_adapters[row]

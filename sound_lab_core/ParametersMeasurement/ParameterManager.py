@@ -1,17 +1,7 @@
 import numpy as np
 from PyQt4.QtCore import QObject
 from sound_lab_core.ParametersMeasurement.Adapters import *
-from sound_lab_core.ParametersMeasurement.Adapters.FourierParametersAdapters import SpectralCentroidParameterAdapter, \
-    SpectrumSpreadParameterAdapter, DeltaSpectrumParameterAdapter, SpectralRollOffParameterAdapter
 from sound_lab_core.ParametersMeasurement.Adapters.Locations import *
-from sound_lab_core.ParametersMeasurement.Adapters.Locations.FrequencyMeasurementLocationAdapter import \
-    FrequencyMeasurementLocationAdapter
-from sound_lab_core.ParametersMeasurement.Adapters.Locations.RegularDurationLocationAdapter import \
-    RegularDurationLocationAdapter
-from sound_lab_core.ParametersMeasurement.Adapters.Locations.RegularIntervalsLocationAdapter import \
-    RegularIntervalsLocationAdapter
-from sound_lab_core.ParametersMeasurement.Adapters.TimeParametersAdapters.ShortTimeEnergyParameterAdapter import \
-    ShortTimeEnergyParameterAdapter
 
 
 class ParameterManager(QObject):
@@ -40,7 +30,9 @@ class ParameterManager(QObject):
                                              MinFreqParameterAdapter(),  BandWidthParameterAdapter(),
                                              PeaksAboveParameterAdapter(), DeltaSpectrumParameterAdapter(),
                                              SpectralCentroidParameterAdapter(), SpectralRollOffParameterAdapter(),
-                                             SpectrumSpreadParameterAdapter()
+                                             SpectrumSpreadParameterAdapter(), WaveletMeanParameterAdapter(),
+                                             WaveletCentroidParameterAdapter(), WaveletVarParameterAdapter(),
+                                             WaveletDeltaParameterAdapter()
                                              ]
 
         # time location adapters of measurement for the spectral parameters

@@ -2,3 +2,7 @@ from StartLocationAdapter import StartLocationAdapter
 from CenterLocationAdapter import CenterLocationAdapter
 from EndLocationAdapter import EndLocationAdapter
 from MeanLocationAdapter import MeanLocationAdapter
+from RegularDurationLocationAdapter import RegularDurationLocationAdapter
+from RegularIntervalsLocationAdapter import RegularIntervalsLocationAdapter
+from FrequencyMeasurementLocationAdapter import FrequencyMeasurementLocationAdapter
+

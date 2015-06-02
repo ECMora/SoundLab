@@ -7,8 +7,8 @@ class ShortTimeEnergyParameter(ParameterMeasurer):
     Class that measure the start time paramter on a segment
     """
 
-    def __init__(self):
-        ParameterMeasurer.__init__(self)
+    def __init__(self, decimal_places=2):
+        ParameterMeasurer.__init__(self, decimal_places=decimal_places)
         self.name = "Short Time Energy"
 
     def measure(self, segment):

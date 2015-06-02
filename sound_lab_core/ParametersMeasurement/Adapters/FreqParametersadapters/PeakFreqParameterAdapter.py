@@ -16,7 +16,9 @@ class PeakFreqParameterAdapter(SpectralParameterAdapter):
         self.name = self.tr(u'PeakFreq')
 
     def get_instance(self):
-        return PeakFreqParameter()
+        self.compute_settings()
+
+        return PeakFreqParameter(decimal_places=self.decimal_places)
 
     def get_visual_items(self):
         return [AverageFreqVisualItem(QtGui.QColor(255, 50, 50, 255), tooltip=self.tr(u"Peak Freq"))]

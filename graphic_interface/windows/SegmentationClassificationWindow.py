@@ -382,6 +382,7 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
         # if the signal was playing must be stopped
         self.widget.stop()
+        self.segmentManager.stop_processing()
 
         # if there is a measurement made and parameters measured that could be saved
         if self.tableParameterOscilogram.rowCount() > 0:

@@ -12,7 +12,22 @@ class SpectralParameterAdapter(ParameterAdapter):
 
     def __init__(self):
         ParameterAdapter.__init__(self)
-        self.settings = Parameter.create(name=u'Settings', type=u'group', children=[])
+        self._settings = [{u'name': unicode(self.tr(u'Decimal Places')), u'type': u'int', u'value': 3, u'step': 1,
+                           u'limits': (1, 5)}]
+        self.decimal_places = 3
+
+        self.settings = Parameter.create(name=u'Settings', type=u'group', children=self._settings)
+
+    def compute_settings(self):
+        # use a try catch because the instance must be required after
+        # param tree object is destroyed
+        try:
+            decimals = self.settings.param(unicode(self.tr(u'Decimal Places'))).value()
+
+        except Exception as e:
+            decimals = self.decimal_places
+
+        self.decimal_places = decimals
 
     def get_settings(self):
         """
@@ -25,17 +40,17 @@ class SpectralParameterAdapter(ParameterAdapter):
 class FreqParameterAdapter(SpectralParameterAdapter):
     def __init__(self):
         SpectralParameterAdapter.__init__(self)
-        settings = [
-            {u'name': unicode(self.tr(u'Threshold (dB)')), u'type': u'int', u'value': -20.00, u'step': 1,
-             u'limits': (-100, 0)},
-            {u'name': unicode(self.tr(u'Total')), u'type': u'bool', u'default': True, u'value': True}]
+        self._settings += [{u'name': unicode(self.tr(u'Threshold (dB)')), u'type': u'int', u'value': -20.00, u'step': 1,
+                            u'limits': (-100, 0)},
+                           {u'name': unicode(self.tr(u'Total')), u'type': u'bool', u'default': True, u'value': True}]
 
         self.threshold = -20
         self.total = True
 
-        self.settings = Parameter.create(name=u'Settings', type=u'group', children=settings)
+        self.settings = Parameter.create(name=u'Settings', type=u'group', children=self._settings)
 
     def compute_settings(self):
+        SpectralParameterAdapter.compute_settings(self)
         # use a try catch because the instance must be required after
         # param tree object is destroyed
         try:
@@ -59,7 +74,7 @@ class FreqParameterAdapter(SpectralParameterAdapter):
 
         self.settings.param(unicode(self.tr(u'Threshold (dB)'))).setValue(adapter_copy.threshold)
         self.settings.param(unicode(self.tr(u'Total'))).setValue(adapter_copy.total)
-
+        self.settings.param(unicode(self.tr(u'Decimal Places'))).setValue(adapter_copy.decimal_places)
         self.compute_settings()
 
 

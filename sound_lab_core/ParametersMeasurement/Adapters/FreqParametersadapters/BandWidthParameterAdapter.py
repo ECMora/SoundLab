@@ -15,4 +15,4 @@ class BandWidthParameterAdapter(FreqParameterAdapter):
     def get_instance(self):
         self.compute_settings()
 
-        return BandWidthParameter(threshold=self.threshold, total=self.total)
+        return BandWidthParameter(threshold=self.threshold, total=self.total, decimal_places=self.decimal_places)
