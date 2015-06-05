@@ -30,7 +30,9 @@ class ParameterMeasurer(QObject):
             self._time_measurement_location = MeanMeasurementLocation()
 
     def getName(self):
-        return self._name
+        time_location_name = "(" + self.time_location.name + ")" if self.time_location is not None else ""
+
+        return self._name + time_location_name
 
     # region Properties
 

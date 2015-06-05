@@ -13,5 +13,6 @@ class StartToMaxTimeParameter(TimeParameter):
         self.name = "StartToMax(s)"
 
     def measure(self, segment):
-        return round(np.argmax(segment.signal.data[segment.indexFrom:segment.indexTo])
-                     * 1.0 / segment.signal.samplingRate, self.decimal_places)
+        data = self.time_location.get_data_array_slice(segment)
+
+        return round(np.argmax(data) * 1.0 / segment.signal.samplingRate, self.decimal_places)

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from pyqtgraph.parametertree import Parameter
+
 from sound_lab_core.ParametersMeasurement.Adapters.ParameterAdapter import ParameterAdapter
-from sound_lab_core.ParametersMeasurement.TimeParameters.StartTimeParameter import StartTimeParameter
 
 
 class TimeParameterAdapter(ParameterAdapter):

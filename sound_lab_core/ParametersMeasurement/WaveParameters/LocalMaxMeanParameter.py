@@ -13,7 +13,7 @@ class LocalMaxMeanParameter(ParameterMeasurer):
 
     def measure(self, segment):
 
-        data = abs(segment.signal.data[segment.indexFrom:segment.indexTo])
+        data = abs(self.time_location.get_data_array_slice(segment))
 
         indexes = [i for i in xrange(1, data.size - 1) if (data[i - 1] < data[i] > data[i + 1]) or
                    (data[i] == data[i - 1] == data[i + 1])]

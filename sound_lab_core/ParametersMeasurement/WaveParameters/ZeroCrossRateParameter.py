@@ -13,5 +13,6 @@ class ZeroCrossRateParameter(ParameterMeasurer):
         self.name = "ZeroCrossRate"
 
     def measure(self, segment):
-        a = segment.signal.data[segment.indexFrom:segment.indexTo]
-        return round((len(np.where(a[:-1] * a[1:] <= 0)) * 1.0) / (a.size - 1), self.decimal_places)
+        data = self.time_location.get_data_array_slice(segment)
+
+        return round((len(np.where(data[:-1] * data[1:] <= 0)) * 1.0) / (data.size - 1), self.decimal_places)

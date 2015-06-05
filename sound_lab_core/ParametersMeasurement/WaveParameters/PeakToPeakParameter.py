@@ -13,5 +13,6 @@ class PeakToPeakParameter(ParameterMeasurer):
         self.name = "PeekToPeek(V)"
 
     def measure(self, segment):
-        return np.round(np.ptp(segment.signal.data[segment.indexFrom:segment.indexTo] /
-                            float(segment.signal.maximumValue)), self.decimal_places)
+        data = self.time_location.get_data_array_slice(segment)
+
+        return np.round(np.ptp(data / float(segment.signal.maximumValue)), self.decimal_places)

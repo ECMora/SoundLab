@@ -12,5 +12,5 @@ class ShortTimeEnergyParameter(ParameterMeasurer):
         self.name = "Short Time Energy"
 
     def measure(self, segment):
-        data = segment.signal.data[segment.indexFrom:segment.indexTo]
-        return sum([1.0*x*x for x in data]) / len(data)
+        data = self.time_location.get_data_array_slice(segment)
+        return round(sum([1.0*x*x for x in data]) / len(data), self.decimal_places)

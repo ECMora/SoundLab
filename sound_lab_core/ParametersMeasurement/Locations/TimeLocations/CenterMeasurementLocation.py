@@ -20,7 +20,6 @@ class CenterMeasurementLocation(MeasurementLocation):
         if self.ms_delay < 0:
             self.name += " - " + str(self.ms_delay) + "ms"
 
-
     def get_data_array_slice(self, segment):
         slice_arr = zeros(segment.indexTo - segment.indexFrom)
 

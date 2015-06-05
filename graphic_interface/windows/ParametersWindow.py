@@ -85,10 +85,14 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
 
         table = self.wave_parameter_table
         adapters = self.parameter_manager.wave_parameters_adapters
-        rows = [x.name for x in adapters]
-        self.load_time_based_parameters(table, rows, adapters)
+        locations_adapters = self.parameter_manager.wave_locations_adapters
+        self.load_parameters_locations(table, locations_adapters, adapters, self.parameter_manager.wave_location_parameters)
 
-        self.load_spectral_parameters()
+        table = self.parameter_locations_table
+        locations_adapters = self.parameter_manager.spectral_time_locations_adapters
+        adapters = self.parameter_manager.spectral_parameters_adapters
+
+        self.load_parameters_locations(table, locations_adapters, adapters, self.parameter_manager.spectral_location_parameters)
 
         # clear the parameter-location settings tree
         self.param_measurement_tree.clearChildren()
@@ -115,7 +119,7 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
         for i in xrange(table.rowCount()):
             item = QtGui.QTableWidgetItem("")
 
-            state = Qt.Unchecked if (i == 0 or not adapters[i - 1].selected) else Qt.Checked
+            state = Qt.Checked
             all_selected = all_selected and (i == 0 or state == Qt.Checked)
 
             item.setCheckState(state)
@@ -129,15 +133,11 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
         table.resizeColumnsToContents()
         table.resizeRowsToContents()
 
-    def load_spectral_parameters(self):
+    def load_parameters_locations(self, table, time_locations_adapters, param_adapters, selection_matrix):
         """
         Load into the spectral tab widget the data of the current parameter manager
         :return:
         """
-        table = self.parameter_locations_table
-        time_locations_adapters = self.parameter_manager.time_locations_adapters
-        param_adapters = self.parameter_manager.spectral_parameters_adapters
-
         # one extra row and column for the 'select all' option
         table.setRowCount(1 + len(param_adapters))
         table.setColumnCount(1 + len(time_locations_adapters))
@@ -152,7 +152,7 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
                 table.setItem(i, j, item)
 
                 state = Qt.Unchecked
-                if i > 0 and j > 0 and self.parameter_manager.location_parameters[i - 1, j - 1]:
+                if i > 0 and j > 0 and selection_matrix[i - 1, j - 1]:
                     state = Qt.Checked
 
                 item.setCheckState(state)
@@ -161,11 +161,11 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
 
         # set the state for the select all options items
         for i in xrange(1, table.rowCount()):
-            state = Qt.Checked if self.parameter_manager.location_parameters[i - 1, :].all() else Qt.Unchecked
+            state = Qt.Checked if selection_matrix[i - 1, :].all() else Qt.Unchecked
             table.item(i, 0).setCheckState(state)
 
         for i in xrange(1, table.columnCount()):
-            state = Qt.Checked if self.parameter_manager.location_parameters[:, i - 1].all() else Qt.Unchecked
+            state = Qt.Checked if selection_matrix[:, i - 1].all() else Qt.Unchecked
             table.item(0, i).setCheckState(state)
             all_selected = all_selected and (state == Qt.Checked)
 
@@ -174,15 +174,14 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
         table.setVerticalHeaderLabels(row_names)
         table.setHorizontalHeaderLabels(column_names)
 
-        table.cellClicked.connect(lambda x, y: self.parameter_spectral_selected(x, y, param_adapters, time_locations_adapters))
+        table.cellClicked.connect(lambda x, y: self.parameter_spectral_selected(table, x, y, param_adapters,
+                                                                                selection_matrix, time_locations_adapters))
         table.resizeColumnsToContents()
         table.resizeRowsToContents()
 
     # endregion
 
-    def parameter_spectral_selected(self, row, col, param_adapters, time_locations_adapters=None):
-
-        table = self.parameter_locations_table
+    def parameter_spectral_selected(self,table, row, col, param_adapters, selection_matrix, time_locations_adapters=None, ):
 
         # select all params all locations
         if row == 0 and col == 0:
@@ -192,19 +191,19 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
 
             for i in xrange(1, table.rowCount()):
                 table.item(i, col).setCheckState(table.item(row, col).checkState())
-                self.parameter_spectral_selected(i, col, param_adapters, time_locations_adapters)
+                self.parameter_spectral_selected(table, i, col, param_adapters,selection_matrix, time_locations_adapters)
 
         elif row == 0:
             for i in xrange(1, table.rowCount()):
                 table.item(i, col).setCheckState(table.item(row, col).checkState())
-                self.parameter_manager.location_parameters[i - 1, col - 1] = table.item(row, col).checkState() == Qt.Checked
+                selection_matrix[i - 1, col - 1] = table.item(row, col).checkState() == Qt.Checked
 
         elif col == 0:
             for i in xrange(1, table.columnCount()):
                 table.item(row, i).setCheckState(table.item(row, col).checkState())
-                self.parameter_manager.location_parameters[row - 1, i - 1] = table.item(row, col).checkState() == Qt.Checked
+                selection_matrix[row - 1, i - 1] = table.item(row, col).checkState() == Qt.Checked
         else:
-            self.parameter_manager.location_parameters[row - 1, col - 1] = table.item(row, col).checkState() == Qt.Checked
+            selection_matrix[row - 1, col - 1] = table.item(row, col).checkState() == Qt.Checked
             self.update_parameter_and_locations_settings(row - 1, col - 1, param_adapters, time_locations_adapters)
 
     def parameter_time_selected(self, row, col, param_adapters):

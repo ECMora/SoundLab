@@ -17,6 +17,8 @@ class ParameterManager(QObject):
         """
         QObject.__init__(self)
 
+        # region Parameter adapters
+
         # adapters for each type of parameter
         self.time_parameters_adapters = [StartTimeParameterAdapter(), EndTimeParameterAdapter(),
                                          DurationTimeParameterAdapter()]
@@ -35,19 +37,33 @@ class ParameterManager(QObject):
                                              WaveletDeltaParameterAdapter()
                                              ]
 
+        # endregion
+
+        # region Locations Adapters
+
         # time location adapters of measurement for the spectral parameters
-        self.time_locations_adapters = [StartLocationAdapter(), CenterLocationAdapter(),
+        self.spectral_time_locations_adapters = [StartLocationAdapter(), CenterLocationAdapter(),
+                                                 EndLocationAdapter(), MeanLocationAdapter(),
+                                                 RegularIntervalsLocationAdapter(),
+                                                 RegularDurationLocationAdapter()]
+        
+        # the time location adapters for the wave  parameters
+        self.wave_locations_adapters = [StartLocationAdapter(), CenterLocationAdapter(),
                                         EndLocationAdapter(), MeanLocationAdapter(),
                                         RegularIntervalsLocationAdapter(),
                                         RegularDurationLocationAdapter()]
 
-        rows, cols = len(self.spectral_parameters_adapters), len(self.time_locations_adapters)
+        # matrices for the selection of parameter-location (bool)
+        rows, cols = len(self.wave_parameters_adapters), len(self.wave_locations_adapters)
+        self.wave_location_parameters = np.zeros(rows * cols).reshape(rows, cols) > 0
 
-        # matrix of selection for initialized on False
-        self.location_parameters = np.zeros(rows * cols).reshape(rows, cols) > 0
+        rows, cols = len(self.spectral_parameters_adapters), len(self.spectral_time_locations_adapters)
+        self.spectral_location_parameters = np.zeros(rows * cols).reshape(rows, cols) > 0
 
         self.spectral_locations_adapters = np.array([FrequencyMeasurementLocationAdapter()
                                                      for _ in xrange(rows * cols)]).reshape((rows, cols))
+
+        # endregion
 
         self.signal = signal
         if signal is not None:
@@ -80,14 +96,22 @@ class ParameterManager(QObject):
         """
         :return: The number of parameters
         """
-        time_params = [x.get_instance() for x in self.time_parameters_adapters if x.selected]
-        wave_params = [x.get_instance() for x in self.wave_parameters_adapters if x.selected]
+        time_params = [x.get_instance() for x in self.time_parameters_adapters]
+        wave_params = []
+
+        for i in xrange(len(self.wave_parameters_adapters)):
+            for j in xrange(len(self.wave_locations_adapters)):
+                if self.wave_location_parameters[i, j]:
+                    for location in self.wave_locations_adapters[j].get_instance():
+                        parameter = self.wave_parameters_adapters[i].get_instance()
+                        parameter.time_location = location
+                        wave_params.append(parameter)
 
         spectral_parameters = []
         for i in xrange(len(self.spectral_parameters_adapters)):
-            for j in xrange(len(self.time_locations_adapters)):
-                if self.location_parameters[i, j]:
-                    for location in self.time_locations_adapters[j].get_instance():
+            for j in xrange(len(self.spectral_time_locations_adapters)):
+                if self.spectral_location_parameters[i, j]:
+                    for location in self.spectral_time_locations_adapters[j].get_instance():
                         spectral_location_adapter = self.spectral_locations_adapters[i, j]
 
                         for spectral_location in spectral_location_adapter.get_instance():
@@ -95,5 +119,6 @@ class ParameterManager(QObject):
                             parameter.time_location = location
                             parameter.spectral_location = spectral_location
                             spectral_parameters.append(parameter)
+
 
         return time_params + wave_params + spectral_parameters

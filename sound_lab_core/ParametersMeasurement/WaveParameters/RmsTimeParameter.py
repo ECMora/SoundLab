@@ -13,8 +13,8 @@ class RmsTimeParameter(ParameterMeasurer):
         self.name = "RMS(V)"
 
     def measure(self, segment):
-        index_from, index_to = segment.indexFrom, segment.indexTo
+        data = self.time_location.get_data_array_slice(segment)
 
-        squares = np.square(segment.signal.data[index_from:index_to] / float(segment.signal.maximumValue))
+        squares = np.square(data / float(segment.signal.maximumValue))
 
         return np.round(np.sqrt(np.mean(squares)), self.decimal_places)

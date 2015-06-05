@@ -9,3 +9,6 @@ class TimeParameter(ParameterMeasurer):
 
     def __init__(self, decimal_places=4):
         ParameterMeasurer.__init__(self, decimal_places=decimal_places)
+
+    def getName(self):
+        return self._name
