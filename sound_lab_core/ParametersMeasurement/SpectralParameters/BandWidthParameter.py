@@ -22,6 +22,11 @@ class BandWidthParameter(FreqParameter):
 
         Pxx = Pxx[min_freq_limit_index:max_freq_limit_index]
 
+        if len(Pxx) == 0:
+            band_with = (freqs[max_freq_limit_index] - freqs[max_freq_limit_index])
+
+            return round((band_with - band_with % 10)/1000.0, self.decimal_places)
+
         value = np.amax(Pxx) * np.power(10, self.threshold / 10.0)
 
         if self.total:

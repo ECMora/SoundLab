@@ -24,7 +24,12 @@ class PeakFreqParameter(SpectralParameter):
 
         min_freq_index, max_freq_index = self.spectral_location.get_freq_limits(freqs)
 
-        index = np.argmax(Pxx[min_freq_index:max_freq_index])
+        Pxx = Pxx[min_freq_index:max_freq_index]
+
+        if len(Pxx) == 0:
+            return round((freqs[min_freq_index] % 10) / 1000.0, self.decimal_places)
+
+        index = np.argmax(Pxx)
 
         index += min_freq_index
 

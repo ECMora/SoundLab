@@ -145,6 +145,7 @@
     <addaction name="actionDelete_Selected_Elements"/>
     <addaction name="actionDelete_All"/>
     <addaction name="actionDetection"/>
+    <addaction name="actionParameter_Measurement"/>
     <addaction name="separator"/>
     <addaction name="actionClassify"/>
     <addaction name="actionDeselect_Elements"/>
@@ -622,6 +623,11 @@
    </property>
    <property name="toolTip">
     <string>Delete All the detected elements</string>
+   </property>
+  </action>
+  <action name="actionParameter_Measurement">
+   <property name="text">
+    <string>Parameter Measurement</string>
    </property>
   </action>
   <zorder>dockWidgetParameterTableOscilogram</zorder>

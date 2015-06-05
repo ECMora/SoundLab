@@ -27,6 +27,9 @@ class MinFreqParameter(FreqParameter):
 
         Pxx = Pxx[min_freq_limit_index:max_freq_limit_index]
 
+        if len(Pxx) == 0:
+            return round((freqs[min_freq_limit_index] - freqs[min_freq_limit_index] % 10)/1000.0, self.decimal_places)
+
         value = np.amax(Pxx) * np.power(10, self.threshold / 10.0)
 
         if self.total:

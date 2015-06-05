@@ -15,6 +15,9 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
     Contains a tab widget with all the types of parameters to measure.
     """
 
+    # signal raised when the window has finished to interact with parameters
+    parameterChangeFinished = pyqtSignal(object)
+
     def __init__(self, parent=None, parameter_manager=None):
         QtGui.QDialog.__init__(self, parent)
         self.setupUi(self)
@@ -239,3 +242,8 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
 
         except Exception as ex:
             print("updating settings " + ex.message)
+
+    def close(self):
+        self.parameterChangeFinished.emit(self.parameter_manager)
+
+        QtGui.QDialog.close(self)

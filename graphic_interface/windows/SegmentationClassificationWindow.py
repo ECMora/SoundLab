@@ -4,6 +4,7 @@ import xlwt
 from PyQt4.QtCore import pyqtSlot, Qt, QPoint, QTimer
 from PyQt4.QtGui import QFileDialog, QAbstractItemView, QActionGroup, QMessageBox, \
     QProgressBar, QColor, QAction, QTableWidgetItem
+from graphic_interface.windows.ParametersWindow import ParametersWindow
 from sound_lab_core.ParametersMeasurement.ParameterManager import ParameterManager
 from SoundLabWindow import SoundLabWindow
 from duetto.audio_signals.AudioSignal import AudioSignal
@@ -795,6 +796,18 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         self.widget.graph()
 
     # endregion
+
+    @pyqtSlot()
+    def on_actionParameter_Measurement_triggered(self):
+        param_window = ParametersWindow(self, self.parameter_manager)
+
+        def update_parameters(parameter_manager):
+            print("param updated")
+            self.segmentManager.parameters = parameter_manager.parameter_list()
+
+        param_window.parameterChangeFinished.connect(lambda p: update_parameters(p))
+
+        param_window.exec_()
 
     def load_workspace(self, workspace):
         """

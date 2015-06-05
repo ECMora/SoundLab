@@ -9,7 +9,7 @@ duetto Sound Lab Tasks
 Complexity-1: No new-code activity
 
 - - - - (May of 2015) - - - -
-* User Manual
++ User Manual
 * Styles improvement
 * Testing and searching of bugs
 * Translation of strings with Translator

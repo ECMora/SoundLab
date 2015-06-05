@@ -25,6 +25,9 @@ class PeaksAboveParameter(SpectralParameter):
 
         Pxx = Pxx[min_freq_index:max_freq_index]
 
+        if len(Pxx) == 0:
+            return 0
+
         value = np.amax(Pxx) * np.power(10, self.threshold/10.0)
         _, cnt_regions = label(Pxx >= value)
         return cnt_regions
