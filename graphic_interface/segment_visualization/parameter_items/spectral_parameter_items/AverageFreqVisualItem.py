@@ -3,6 +3,10 @@ from PyQt4 import QtGui
 from graphic_interface.segment_visualization.parameter_items.spectral_parameter_items.SpectralParameterVisualItem import SpectralVisualItemWrapper
 import pyqtgraph as pg
 import numpy as np
+from sound_lab_core.ParametersMeasurement.Locations.TimeLocations.RegularDurationMeasurementLocation import \
+    RegularDurationMeasurementLocation
+from sound_lab_core.ParametersMeasurement.Locations.TimeLocations.RegularIntervalsMeasurementLocation import \
+    RegularIntervalsMeasurementLocation
 
 
 class AverageFreqVisualItem(SpectralVisualItemWrapper):
@@ -50,17 +54,18 @@ class AverageFreqVisualItem(SpectralVisualItemWrapper):
     def get_item(self):
         return self.peak_freq_region
 
-    def set_data(self, signal, segment, data_kHz):
-
-        self.indexFrom = segment.indexFrom
-        self.indexTo = segment.indexTo
+    def set_data(self, signal, parameter, segment, data_kHz):
 
         self.peak_freq_value = int(data_kHz*1000)
 
+        param_name = parameter.getName()
+        print(param_name)
+
         # update positions
-        self.peak_freq_pos = np.array([[self.indexFrom,  self.peak_freq_value],
-                                       [self.indexTo,  self.peak_freq_value]])
-        self.peak_freq_region.setToolTip(self.tooltip + " " + str(data_kHz) + "(kHz)")
+        self.peak_freq_pos = np.array([[parameter.time_location.time_start_index,  self.peak_freq_value],
+                                       [parameter.time_location.time_end_index,  self.peak_freq_value]])
+
+        self.peak_freq_region.setToolTip(self.tooltip + " " + str(data_kHz) + "(kHz)" + param_name)
 
     def translate_time_freq_coords(self, translate_time_function=None, translate_freq_function=None):
         pos = np.zeros(4).reshape((2,2))

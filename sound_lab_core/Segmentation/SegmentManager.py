@@ -253,7 +253,7 @@ class SegmentManager(QObject):
             return
 
         for item in visual_items:
-            item.set_data(self.signal, self.elements[element_index], value)
+            item.set_data(self.signal, parameter, self.elements[element_index], value)
 
         self.segmentVisualItemAdded.emit(element_index, visual_items)
 
@@ -368,8 +368,19 @@ class SegmentManager(QObject):
         if len(self.parameters) == 0:
             return
 
+        step_interval = self.rowCount
+
+        if 10 < step_interval < 50:
+            step_interval /= 5
+
+        elif step_interval >= 50:
+            step_interval /= 10
+
         for i in xrange(self.rowCount):
             self._measure(self.elements[i], i)
+
+            if i % step_interval == 0:
+                self.measurementsChanged.emit()
 
     def _measure(self, element, index, measure_methods=None, raise_visual_items=False):
         """

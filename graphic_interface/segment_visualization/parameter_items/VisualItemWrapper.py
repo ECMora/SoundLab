@@ -10,10 +10,12 @@ class VisualItemWrapper:
     def __init__(self):
         pass
 
-    def set_data(self, signal, segment, data):
+    def set_data(self, signal,parameter, segment, data):
         """
         set the parameter measurement data to visualize it
         signal: Audio Signal in which the measurement was made.
+        parameter: The parameter that measure the data. Its supplied to use the final locations
+        in which the param was measured.
         segment: The segment on the signal in which the measurement was made.
         data: value of the measurement data.
         """

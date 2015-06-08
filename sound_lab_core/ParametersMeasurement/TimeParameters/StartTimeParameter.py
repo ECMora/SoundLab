@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
-from sound_lab_core.ParametersMeasurement.ParameterMeasurer import ParameterMeasurer
+from sound_lab_core.ParametersMeasurement.TimeParameters.TimeParameter import TimeParameter
 
 
-class StartTimeParameter(ParameterMeasurer):
+class StartTimeParameter(TimeParameter):
     """
     Class that measure the start time parameter on a segment
     """
 
     def __init__(self, decimal_places=4):
-        ParameterMeasurer.__init__(self, decimal_places=decimal_places)
+        TimeParameter.__init__(self, decimal_places=decimal_places)
         self.name = "Start(s)"
 
     def measure(self, segment):

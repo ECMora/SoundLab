@@ -19,7 +19,7 @@ class ClassificationVisualItem(TimeVisualItemWrapper):
     def get_item(self):
         return self.classification_item
 
-    def set_data(self, signal, segment, classification_value):
+    def set_data(self, signal, parameter, segment, classification_value):
         if classification_value is None or not isinstance(classification_value, ClassificationData):
             return
 

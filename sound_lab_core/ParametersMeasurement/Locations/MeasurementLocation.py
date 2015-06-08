@@ -16,13 +16,15 @@ class MeasurementLocation:
         # name of the measurement location
         self.name = ""
 
+        self.time_start_index, self.time_end_index = 0, 0
+
     def get_data_array_slice(self, segment):
         """
         Returns the slice of segment data that belongs to the current location.
         :param segment:
         :return:
         """
-        return segment.signal.data
+        return segment.signal.data[segment.indexFrom:segment.indexTo]
 
     def get_segment_data(self, segment):
         """

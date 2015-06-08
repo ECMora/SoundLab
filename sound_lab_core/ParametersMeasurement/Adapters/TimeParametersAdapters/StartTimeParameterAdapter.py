@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from sound_lab_core.ParametersMeasurement.Adapters.TimeParametersAdapters.TimeParameterAdapter import \
     TimeParameterAdapter
-from sound_lab_core.ParametersMeasurement.WaveParameters.StartTimeParameter import StartTimeParameter
+from sound_lab_core.ParametersMeasurement.TimeParameters.StartTimeParameter import StartTimeParameter
 
 
 class StartTimeParameterAdapter(TimeParameterAdapter):
