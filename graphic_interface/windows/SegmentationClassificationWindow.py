@@ -802,7 +802,6 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         param_window = ParametersWindow(self, self.parameter_manager)
 
         def update_parameters(parameter_manager):
-            print("param updated")
             self.segmentManager.parameters = parameter_manager.parameter_list()
 
         param_window.parameterChangeFinished.connect(lambda p: update_parameters(p))

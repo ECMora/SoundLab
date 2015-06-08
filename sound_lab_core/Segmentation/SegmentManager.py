@@ -368,16 +368,10 @@ class SegmentManager(QObject):
         if len(self.parameters) == 0:
             return
 
-        step_interval = self.rowCount
-
-        if 10 < step_interval < 50:
-            step_interval /= 5
-
-        elif step_interval >= 50:
-            step_interval /= 10
+        step_interval = self.rowCount if self.rowCount <= 10 else self.rowCount / 5 if self.rowCount < 50 else self.rowCount / 10
 
         for i in xrange(self.rowCount):
-            self._measure(self.elements[i], i)
+            self._measure(self.elements[i], i, raise_visual_items=True)
 
             if i % step_interval == 0:
                 self.measurementsChanged.emit()

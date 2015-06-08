@@ -36,6 +36,4 @@ class PeakFreqParameter(SpectralParameter):
         return round((freqs[index] - freqs[index] % 10) / 1000.0, self.decimal_places)
 
     def get_visual_items(self):
-        if isinstance(self.time_location, MeanMeasurementLocation):
-            return [AverageFreqVisualItem(QtGui.QColor(255, 50, 50, 255), tooltip=self.tr(u"Peak Freq"))]
-        return []
+        return [AverageFreqVisualItem(QtGui.QColor(255, 50, 50, 255), tooltip=self.tr(u"Peak Freq"))]

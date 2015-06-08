@@ -6,8 +6,8 @@ import pyqtgraph as pg
 
 class PeakToPeakVisualItem(TimeVisualItemWrapper):
 
-    def __init__(self):
-        TimeVisualItemWrapper.__init__(self)
+    def __init__(self, color=None, tooltip=""):
+        TimeVisualItemWrapper.__init__(self, color=color, tooltip=tooltip)
 
 
 

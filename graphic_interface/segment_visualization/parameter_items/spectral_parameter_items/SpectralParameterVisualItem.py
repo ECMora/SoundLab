@@ -7,8 +7,8 @@ class SpectralVisualItemWrapper(VisualItemWrapper):
     Represents the visual parameter items for time parameters (oscilogram)
     """
 
-    def __init__(self):
-        VisualItemWrapper.__init__(self)
+    def __init__(self, color=None, tooltip=""):
+        VisualItemWrapper.__init__(self, color=color, tooltip=tooltip)
 
     def translate_time_freq_coords(self, translate_time_function=None, translate_freq_function=None):
         """

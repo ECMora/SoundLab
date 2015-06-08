@@ -23,7 +23,7 @@ class CenterMeasurementLocation(MeasurementLocation):
     def get_data_array_slice(self, segment):
         slice_arr = zeros(segment.indexTo - segment.indexFrom)
 
-        start_index = max(0, len(slice_arr)/2 + self.ms_delay * segment.signal.samplingRate / 1000)
+        start_index = max(0, int(len(slice_arr)*3/8.0 + self.ms_delay * segment.signal.samplingRate / 1000))
 
         start_index = min(start_index, int(len(slice_arr) * 0.75))
 
@@ -35,6 +35,6 @@ class CenterMeasurementLocation(MeasurementLocation):
 
         slice_arr[: size] = segment.signal.data[start_index: start_index + size]
 
-        self.time_start_index, self.time_end_index = start_index, start_index + size
+        self.time_start_index, self.time_end_index = segment.indexFrom + start_index, segment.indexFrom + start_index + size
 
         return slice_arr

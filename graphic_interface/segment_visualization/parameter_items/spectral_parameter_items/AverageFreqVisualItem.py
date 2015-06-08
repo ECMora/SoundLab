@@ -3,26 +3,9 @@ from PyQt4 import QtGui
 from graphic_interface.segment_visualization.parameter_items.spectral_parameter_items.SpectralParameterVisualItem import SpectralVisualItemWrapper
 import pyqtgraph as pg
 import numpy as np
-from sound_lab_core.ParametersMeasurement.Locations.TimeLocations.RegularDurationMeasurementLocation import \
-    RegularDurationMeasurementLocation
-from sound_lab_core.ParametersMeasurement.Locations.TimeLocations.RegularIntervalsMeasurementLocation import \
-    RegularIntervalsMeasurementLocation
 
 
 class AverageFreqVisualItem(SpectralVisualItemWrapper):
-    """
-
-    """
-
-    # region CONSTANTS
-
-    # the color for the pen to draw the item
-    COLOR = QtGui.QColor(50, 50, 255, 255)
-
-    # the width of the line on the item
-    ELEMENT_REGION_WIDTH = 3
-
-    # endregion
 
     def __init__(self, color=None, tooltip=""):
         """
@@ -38,16 +21,12 @@ class AverageFreqVisualItem(SpectralVisualItemWrapper):
         # the freq value
         self.peak_freq_value = 0
 
-        if color is not None and isinstance(color, QtGui.QColor):
-            self.COLOR = color
-
         # a line for peak freq
         self.peak_freq_pos = np.array([[self.indexFrom,  self.peak_freq_value],
                                        [self.indexTo,  self.peak_freq_value]])
 
         self.peak_freq_adj = np.array([[0, 1]])
         self.peak_freq_region = pg.GraphItem()
-        self.tooltip = tooltip
 
         self.peak_freq_region.setToolTip(self.tooltip)
 
@@ -59,7 +38,6 @@ class AverageFreqVisualItem(SpectralVisualItemWrapper):
         self.peak_freq_value = int(data_kHz*1000)
 
         param_name = parameter.getName()
-        print(param_name)
 
         # update positions
         self.peak_freq_pos = np.array([[parameter.time_location.time_start_index,  self.peak_freq_value],

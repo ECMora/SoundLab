@@ -27,6 +27,6 @@ class StartMeasurementLocation(MeasurementLocation):
 
         slice_arr[: size] = segment.signal.data[start_index: start_index + size]
 
-        self.time_start_index, self.time_end_index = start_index, start_index + size
+        self.time_start_index, self.time_end_index = segment.indexFrom + start_index, segment.indexFrom + start_index + size
 
         return slice_arr

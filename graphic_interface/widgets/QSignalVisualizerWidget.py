@@ -209,6 +209,10 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         :param x2: the end limit of the new visible interval in signal data array indexes
         :return:
         """
+        # avoid out of range zoom
+        x1 = max(x1, 0)
+        x2 = min(x2, self.signal.length)
+
         widget.changeRange(x1, x2)
         self.mainCursor.min, self.mainCursor.max = x1, x2
         self.updateScrollbar()

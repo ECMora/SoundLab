@@ -44,6 +44,4 @@ class MaxFreqParameter(FreqParameter):
         return round((freqs[max_freq_index] - freqs[max_freq_index] % 10)/1000.0, self.decimal_places)
 
     def get_visual_items(self):
-        if isinstance(self.time_location, MeanMeasurementLocation):
-            return [AverageFreqVisualItem(tooltip=self.tr(u"Max Freq") + u" at " + unicode(self.threshold) + u" dB->")]
-        return []
+        return [AverageFreqVisualItem(tooltip=self.tr(u"Max Freq") + u" at " + unicode(self.threshold) + u" dB->")]

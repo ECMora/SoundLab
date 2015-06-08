@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from PyQt4 import QtGui
 
 
 class VisualItemWrapper:
@@ -7,10 +8,23 @@ class VisualItemWrapper:
     as representation of a measured parameter
     """
 
-    def __init__(self):
-        pass
+    # region CONSTANTS
 
-    def set_data(self, signal,parameter, segment, data):
+    # the color for the pen to draw the item
+    COLOR = QtGui.QColor(50, 50, 255, 255)
+
+    # the width of the line on the item
+    ELEMENT_REGION_WIDTH = 3
+
+    # endregion
+
+    def __init__(self, color=None, tooltip=""):
+        if color is not None and isinstance(color, QtGui.QColor):
+            self.COLOR = color
+
+        self.tooltip = tooltip
+
+    def set_data(self, signal, parameter, segment, data):
         """
         set the parameter measurement data to visualize it
         signal: Audio Signal in which the measurement was made.
