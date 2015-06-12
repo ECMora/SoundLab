@@ -10,7 +10,7 @@ class ParameterMeasurer(QObject):
     in segments.
     """
 
-    def __init__(self, decimal_places=2, time_measurement_location=None):
+    def __init__(self, decimal_places=2, time_measurement_location=None, visual_items=None):
         """
         Create a parameter measurer
         :return:
@@ -19,6 +19,8 @@ class ParameterMeasurer(QObject):
 
         # the name of the parameter
         self._name = ""
+
+        self.visual_items = [] if visual_items is None or not isinstance(visual_items, list) else visual_items
 
         # the decimal places to round this parameter
         self._decimal_places = decimal_places
@@ -74,7 +76,7 @@ class ParameterMeasurer(QObject):
         return self.name
 
     def get_visual_items(self):
-        return []
+        return self.visual_items
 
     @property
     def default_value(self):

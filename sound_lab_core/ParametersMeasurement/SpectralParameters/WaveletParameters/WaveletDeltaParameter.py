@@ -18,7 +18,7 @@ class WaveletDeltaParameter(ParameterMeasurer):
 
     def delta(self, m):
         result = 0
-        for i in range(len(m)-1):
+        for i in xrange(len(m)-1):
             if m[i+1] > EPS:
                 result += (abs(m[i]/m[i+1]))
         return result

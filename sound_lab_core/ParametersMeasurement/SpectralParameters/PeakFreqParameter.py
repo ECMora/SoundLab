@@ -12,9 +12,9 @@ class PeakFreqParameter(SpectralParameter):
     Class that measure the peak freq parameter on a segment
     """
 
-    def __init__(self, decimal_places=2, time_measurement_location=None):
+    def __init__(self, decimal_places=2, time_measurement_location=None, visual_items=None):
         SpectralParameter.__init__(self, decimal_places=decimal_places,
-                                   time_measurement_location=time_measurement_location)
+                                   time_measurement_location=time_measurement_location, visual_items=visual_items)
         self.name = "PeakFreq(kHz)"
 
     def measure(self, segment):
@@ -34,6 +34,3 @@ class PeakFreqParameter(SpectralParameter):
         index += min_freq_index
 
         return round((freqs[index] - freqs[index] % 10) / 1000.0, self.decimal_places)
-
-    def get_visual_items(self):
-        return [AverageFreqVisualItem(QtGui.QColor(255, 50, 50, 255), tooltip=self.tr(u"Peak Freq"))]

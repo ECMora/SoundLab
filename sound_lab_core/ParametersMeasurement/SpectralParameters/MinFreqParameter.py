@@ -12,10 +12,9 @@ class MinFreqParameter(FreqParameter):
     Class that measure the min freq parameter on a segment
     """
 
-    def __init__(self, threshold=-20, total=True, decimal_places=2,
-                 time_measurement_location=None):
-        FreqParameter.__init__(self,threshold, total, decimal_places=decimal_places,
-                               time_measurement_location=time_measurement_location)
+    def __init__(self, **kwargs):
+        FreqParameter.__init__(self, **kwargs)
+
         self.name = "MinFreq(kHz)"
 
     def measure(self, segment):
@@ -44,6 +43,3 @@ class MinFreqParameter(FreqParameter):
         min_freq_index += min_freq_limit_index
 
         return round((freqs[min_freq_index] - freqs[min_freq_index] % 10)/1000.0, self.decimal_places)
-
-    def get_visual_items(self):
-        return [AverageFreqVisualItem(tooltip=self.tr(u"Max Freq") + u" at " + unicode(self.threshold) + u" dB->")]

@@ -44,11 +44,8 @@ class FreqParameter(SpectralParameter):
     Class that measure the min freq parameter on a segment
     """
 
-    def __init__(self, threshold=-20, total=True, decimal_places=2, time_measurement_location=None,
-                 spectral_measurement_location=None):
-        SpectralParameter.__init__(self, decimal_places=decimal_places,
-                                   time_measurement_location=time_measurement_location,
-                                   spectral_measurement_location=spectral_measurement_location)
+    def __init__(self, threshold=-20, total=True, **kwargs):
+        SpectralParameter.__init__(self, **kwargs)
 
         self.threshold = threshold
         self.total = total

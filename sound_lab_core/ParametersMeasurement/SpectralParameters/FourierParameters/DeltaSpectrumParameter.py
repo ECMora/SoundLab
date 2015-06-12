@@ -17,10 +17,10 @@ class DeltaSpectrumParameter(SpectralParameter):
 
     def _delta_spectrum(self, frames):
         result = np.zeros(len(frames))
-        for i in range(len(frames)):
+        for i in xrange(len(frames)):
             frame = frames[i]
             delta = 0.0
-            for j in range(len(frame)-1):
+            for j in xrange(len(frame)-1):
                 delta += (np.log(abs(1.0*frame[j+1])+EPS) - np.log(abs(1.0*frame[j])+EPS))**2
             result[i] = delta/(len(frame)-1)
         return result

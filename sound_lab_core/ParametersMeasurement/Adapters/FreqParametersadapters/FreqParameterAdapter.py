@@ -1,5 +1,4 @@
-from sound_lab_core.ParametersMeasurement.Adapters.Locations.FrequencyMeasurementLocationAdapter import \
-    FrequencyMeasurementLocationAdapter
+from PyQt4 import QtGui
 from sound_lab_core.ParametersMeasurement.Adapters.ParameterAdapter import ParameterAdapter
 from sound_lab_core.SoundLabAdapter import SoundLabAdapter
 from pyqtgraph.parametertree import Parameter
@@ -9,11 +8,17 @@ class SpectralParameterAdapter(ParameterAdapter):
     """
     Each spectral parameter could be computed over a spectral location.
     """
+    DEFAULT_COLOR = QtGui.QColor(50, 50, 255, 255)
 
     def __init__(self):
         ParameterAdapter.__init__(self)
         self._settings = [{u'name': unicode(self.tr(u'Decimal Places')), u'type': u'int', u'value': 3, u'step': 1,
-                           u'limits': (1, 5)}]
+                           u'limits': (1, 5)},
+                          {u'name': unicode(self.tr(u'Visual Item Color')), u'type': u'color',
+                           u'value': self.DEFAULT_COLOR}]
+
+        self.visual_item_color = self.DEFAULT_COLOR
+
         self.decimal_places = 3
 
         self.settings = Parameter.create(name=u'Settings', type=u'group', children=self._settings)
@@ -23,11 +28,13 @@ class SpectralParameterAdapter(ParameterAdapter):
         # param tree object is destroyed
         try:
             decimals = self.settings.param(unicode(self.tr(u'Decimal Places'))).value()
+            visual_item_color = self.settings.param(unicode(self.tr(u'Visual Item Color'))).value()
 
         except Exception as e:
-            decimals = self.decimal_places
+            decimals, visual_item_color = self.decimal_places, self.visual_item_color
 
         self.decimal_places = decimals
+        self.visual_item_color = visual_item_color
 
     def get_settings(self):
         """
@@ -76,7 +83,3 @@ class FreqParameterAdapter(SpectralParameterAdapter):
         self.settings.param(unicode(self.tr(u'Total'))).setValue(adapter_copy.total)
         self.settings.param(unicode(self.tr(u'Decimal Places'))).setValue(adapter_copy.decimal_places)
         self.compute_settings()
-
-
-
-

@@ -16,13 +16,13 @@ class SpectrumSpreadParameter(SpectralParameter):
 
     def _spectral_centroid(self, frames, freqs):
         result = np.zeros(len(frames))
-        for i in range(len(frames)):
+        for i in xrange(len(frames)):
             frame = frames[i]
             w = np.amin(frame)
             frame = frame - w
             num = 0.0
             dem = 0.0
-            for j in range(len(frame)):
+            for j in xrange(len(frame)):
                 num += 1.0 * freqs[j] * frame[j] * frame[j]
                 dem += 1.0 * frame[j] * frame[j]
 

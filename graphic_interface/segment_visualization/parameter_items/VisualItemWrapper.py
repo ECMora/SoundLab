@@ -10,15 +10,16 @@ class VisualItemWrapper:
 
     # region CONSTANTS
 
-    # the color for the pen to draw the item
-    COLOR = QtGui.QColor(50, 50, 255, 255)
-
     # the width of the line on the item
     ELEMENT_REGION_WIDTH = 3
 
     # endregion
 
     def __init__(self, color=None, tooltip=""):
+
+        # the color for the pen to draw the item
+        self.COLOR = QtGui.QColor(50, 50, 255, 255)
+
         if color is not None and isinstance(color, QtGui.QColor):
             self.COLOR = color
 

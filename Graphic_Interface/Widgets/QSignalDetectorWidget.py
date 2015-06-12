@@ -172,7 +172,6 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         """
         return [x.indexFrom if isinstance(x, DetectedSoundLabElement) else x[0] for x in self.elements]
 
-
     @property
     def elements(self):
         return self._elements
@@ -483,12 +482,10 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
         self.parameters_items[element_index].extend(parameter_items)
 
-        if not isinstance(self.elements[element_index], DetectedSoundLabElement):
-            return
-
         # if the element at index is visible as detected sound la elements add the items
-        for item in parameter_items:
-            self._elements[element_index].add_visual_item(item)
+        if isinstance(self.elements[element_index], DetectedSoundLabElement):
+            for item in parameter_items:
+                self._elements[element_index].add_visual_item(item)
 
     def add_segmentation_items(self, items):
         """

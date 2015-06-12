@@ -15,7 +15,7 @@ class SpectralRollOffParameter(SpectralParameter):
 
     def _spectral_rolloff(self, frames, freqs):
         result = np.zeros(len(frames))
-        for i in range(len(frames)):
+        for i in xrange(len(frames)):
             frame = frames[i]
             w = np.amin(frame)
             frame = frame - w

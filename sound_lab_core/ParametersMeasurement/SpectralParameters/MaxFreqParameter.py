@@ -12,9 +12,8 @@ class MaxFreqParameter(FreqParameter):
     Class that measure the max freq parameter on a segment
     """
 
-    def __init__(self, threshold=-20, total=True, decimal_places=2, time_measurement_location=None):
-        FreqParameter.__init__(self, threshold, total, decimal_places=decimal_places,
-                               time_measurement_location=time_measurement_location)
+    def __init__(self, **kwargs):
+        FreqParameter.__init__(self, **kwargs)
         self.name = "MaxFreq(kHz)"
 
     def measure(self, segment):
@@ -42,6 +41,3 @@ class MaxFreqParameter(FreqParameter):
         max_freq_index += min_freq_limit_index
 
         return round((freqs[max_freq_index] - freqs[max_freq_index] % 10)/1000.0, self.decimal_places)
-
-    def get_visual_items(self):
-        return [AverageFreqVisualItem(tooltip=self.tr(u"Max Freq") + u" at " + unicode(self.threshold) + u" dB->")]
