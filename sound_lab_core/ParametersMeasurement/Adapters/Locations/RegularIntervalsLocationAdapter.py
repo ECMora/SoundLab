@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from pyqtgraph.parametertree import Parameter
 
-from sound_lab_core.ParametersMeasurement.Adapters.Locations.FrequencyMeasurementLocationAdapter import LocationAdapter
+from sound_lab_core.ParametersMeasurement.Adapters.Locations.LocationAdapter import LocationAdapter
 from sound_lab_core.ParametersMeasurement.Locations.TimeLocations.RegularIntervalsMeasurementLocation import \
     RegularIntervalsMeasurementLocation
 

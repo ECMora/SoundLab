@@ -115,6 +115,9 @@ class VisualElement:
 
     # endregion
 
+    def clone(self):
+        return VisualElement(self.number, self.signal, self.indexFrom, self.indexTo)
+
     def setNumber(self, n):
         self._number = n
         self.text_number.setText(str(n))

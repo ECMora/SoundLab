@@ -33,6 +33,9 @@ class AverageFreqVisualItem(SpectralVisualItemWrapper):
     def get_item(self):
         return self.peak_freq_region
 
+    def clone(self):
+        return AverageFreqVisualItem(self.COLOR, self.tooltip)
+
     def set_data(self, signal, parameter, segment, data_kHz):
 
         self.peak_freq_value = int(data_kHz*1000)

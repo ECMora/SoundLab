@@ -51,3 +51,6 @@ class OscilogramElement(VisualElement):
 
         # the brush color is dependent of number
         self.element_region.setBrush(self.brush)
+
+    def clone(self):
+        return OscilogramElement(self.signal, self.indexFrom, self.indexTo, self.number)

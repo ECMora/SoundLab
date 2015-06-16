@@ -1,12 +1,17 @@
 # -*- coding: utf-8 -*-
 from pyqtgraph.parametertree import Parameter
 
-from sound_lab_core.ParametersMeasurement.Adapters.Locations.FrequencyMeasurementLocationAdapter import LocationAdapter
+from sound_lab_core.ParametersMeasurement.Adapters.Locations.LocationAdapter import LocationAdapter
 from sound_lab_core.ParametersMeasurement.Locations.TimeLocations.RegularDurationMeasurementLocation import \
     RegularDurationMeasurementLocation
 
 
 class RegularDurationLocationAdapter(LocationAdapter):
+    """
+    A time location adapter to define a group of locations in a segment.
+    The RegularDurationLocationAdapter allows to define n equidistant
+    locations on a segment each one separated by a  time delay in ms.
+    """
     def __init__(self):
         LocationAdapter.__init__(self)
         self.name = self.tr(u'Regular Duration')

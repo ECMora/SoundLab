@@ -9,5 +9,6 @@ class PeakToPeakVisualItem(TimeVisualItemWrapper):
     def __init__(self, color=None, tooltip=""):
         TimeVisualItemWrapper.__init__(self, color=color, tooltip=tooltip)
 
-
+    def clone(self):
+        return PeakToPeakVisualItem(self.COLOR, self.tooltip)
 

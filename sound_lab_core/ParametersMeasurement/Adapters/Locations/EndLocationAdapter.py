@@ -5,12 +5,15 @@ from sound_lab_core.ParametersMeasurement.Locations.TimeLocations.EndMeasurement
 
 
 class EndLocationAdapter(FixedTimeLocationAdapter):
+    """
+    The FixedTimeLocationAdapter for the end of the segment
+    """
 
     def __init__(self):
         FixedTimeLocationAdapter.__init__(self)
 
         settings = [{u'name': unicode(self.tr(u'ms delay')), u'type': u'int',
-                      u'value': 0, u'step': 1, u'limits': (- 60 * 60 * 1000, 0)}]
+                     u'value': 0, u'step': 1, u'limits': (- 60 * 60 * 1000, 0)}]
 
         self.settings = Parameter.create(name=u'Time Location', type=u'group', children=settings)
         self.name = self.tr(u'End')

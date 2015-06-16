@@ -4,6 +4,9 @@ from sound_lab_core.ParametersMeasurement.Locations.TimeLocations.StartMeasureme
 
 
 class StartLocationAdapter(FixedTimeLocationAdapter):
+    """
+    The FixedTimeLocationAdapter for the start of the segment
+    """
 
     def __init__(self):
         FixedTimeLocationAdapter.__init__(self)

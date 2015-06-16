@@ -252,10 +252,13 @@ class SegmentManager(QObject):
         if not visual_items:
             return
 
-        for item in visual_items:
+        # copy the visual items list to add every item on each detected element
+        copied_visual_items = [x.clone() for x in visual_items]
+
+        for item in copied_visual_items:
             item.set_data(self.signal, parameter, self.elements[element_index], value)
 
-        self.segmentVisualItemAdded.emit(element_index, visual_items)
+        self.segmentVisualItemAdded.emit(element_index, copied_visual_items)
 
     # endregion
 

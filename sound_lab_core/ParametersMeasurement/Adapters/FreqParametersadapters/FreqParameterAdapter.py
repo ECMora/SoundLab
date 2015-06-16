@@ -14,10 +14,14 @@ class SpectralParameterAdapter(ParameterAdapter):
         ParameterAdapter.__init__(self)
         self._settings = [{u'name': unicode(self.tr(u'Decimal Places')), u'type': u'int', u'value': 3, u'step': 1,
                            u'limits': (1, 5)},
+                          {u'name': unicode(self.tr(u'Show Visual Items')), u'type': u'bool',
+                           u'value': True},
                           {u'name': unicode(self.tr(u'Visual Item Color')), u'type': u'color',
                            u'value': self.DEFAULT_COLOR}]
 
         self.visual_item_color = self.DEFAULT_COLOR
+
+        self.show_visual_items = True
 
         self.decimal_places = 3
 
@@ -29,12 +33,14 @@ class SpectralParameterAdapter(ParameterAdapter):
         try:
             decimals = self.settings.param(unicode(self.tr(u'Decimal Places'))).value()
             visual_item_color = self.settings.param(unicode(self.tr(u'Visual Item Color'))).value()
+            show_items = self.settings.param(unicode(self.tr(u'Show Visual Items'))).value()
 
         except Exception as e:
-            decimals, visual_item_color = self.decimal_places, self.visual_item_color
+            decimals, visual_item_color, show_items = self.decimal_places, self.visual_item_color, self.show_visual_items
 
         self.decimal_places = decimals
         self.visual_item_color = visual_item_color
+        self.show_visual_items = show_items
 
     def get_settings(self):
         """

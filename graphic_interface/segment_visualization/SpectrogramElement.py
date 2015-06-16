@@ -53,6 +53,9 @@ class SpectrogramElement(VisualElement):
 
         VisualElement.add_parameter_item(self, parameter_item)
 
+    def clone(self):
+        return SpectrogramElement(self.signal, self.indexFrom, self.indexTo, self.number)
+
     def translate_time_freq_coords(self, translate_time_function=None, translate_freq_function=None):
         """
         Update the visual representation of the object's visual

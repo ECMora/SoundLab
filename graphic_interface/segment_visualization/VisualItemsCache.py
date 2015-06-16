@@ -57,7 +57,7 @@ class VisualItemsCache:
             """
             n = n if n is not None else self.INITIAL_ITEMS_COUNT
 
-            # create the text items
+            # create the visual items
             for i in xrange(n):
                 item = DetectedSoundLabElement(self.signal, 0, 0)
                 self.free_visual_items_queue.append(item)

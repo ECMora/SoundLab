@@ -5,7 +5,7 @@ from sound_lab_core.ParametersMeasurement.SpectralParameters.WaveletParameters i
 
 class WaveletDeltaParameterAdapter(WaveletParameterAdapter):
     """
-    Adapter class for the peaks above parameter.
+
     """
 
     def __init__(self):

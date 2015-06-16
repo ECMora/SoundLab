@@ -5,6 +5,9 @@ from sound_lab_core.ParametersMeasurement.Locations.TimeLocations.CenterMeasurem
 
 
 class CenterLocationAdapter(FixedTimeLocationAdapter):
+    """
+    The FixedTimeLocationAdapter for the centre of the segment
+    """
 
     def __init__(self):
         FixedTimeLocationAdapter.__init__(self)

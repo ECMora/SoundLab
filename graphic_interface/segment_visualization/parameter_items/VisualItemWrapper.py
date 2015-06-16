@@ -41,3 +41,6 @@ class VisualItemWrapper:
         returns the visual item to include on a visual widget
         """
         return None
+
+    def clone(self):
+        return self
