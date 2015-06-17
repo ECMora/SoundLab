@@ -12,6 +12,7 @@ class SingleThresholdAdapter(ThresholdAdapter):
 
     def __init__(self):
         ThresholdAdapter.__init__(self)
+        self.name = u'Single Threshold'
 
         self.settings = Parameter.create(name=u'Settings', type=u'group', children=self.settings_parameter_list)
 

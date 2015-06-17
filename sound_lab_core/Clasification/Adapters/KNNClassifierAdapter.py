@@ -16,6 +16,8 @@ class KNNClassifierAdapter(ClassifierAdapter):
         ClassifierAdapter.__init__(self)
         db_session = DB().get_db_session()
 
+        self.name = u'KNN'
+
         training_vector_count = db_session.query(Segment).filter(or_(Segment.specie != None,
                                                                      Segment.genus != None,
                                                                      Segment.family != None)).count()

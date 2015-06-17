@@ -11,5 +11,7 @@ class ManualClassifierAdapter(ClassifierAdapter):
     def __init__(self):
         ClassifierAdapter.__init__(self)
 
+        self.name = u'Manual'
+
     def get_instance(self):
         return ManualClassifier()

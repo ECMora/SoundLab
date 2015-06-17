@@ -20,6 +20,8 @@ class TripleThresholdAdapter(ThresholdAdapter):
     def __init__(self):
         ThresholdAdapter.__init__(self)
 
+        self.name = u'Triple Threshold'
+
         self.settings_parameter_list.insert(1, {u'name': unicode(self.tr(u'Threshold2 (dB)')), u'type': u'float',
                                                 u'value': self.THRESHOLD2_DEFAULT,
                                                 u'step': 1, u'limits': (-120, 0)})

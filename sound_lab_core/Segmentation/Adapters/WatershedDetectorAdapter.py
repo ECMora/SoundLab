@@ -12,6 +12,8 @@ class WatershedDetectorAdapter(ImageDetectorAdapter):
     def __init__(self):
         ImageDetectorAdapter.__init__(self)
 
+        self.name = u'Watershed'
+
     def get_instance(self,signal):
         """
         Gets a new get_instance of the corresponding parameter measurement.

@@ -1,8 +1,6 @@
 from pyqtgraph.parametertree import Parameter
 from sound_lab_core.SoundLabAdapter import SoundLabAdapter
 
-__author__ = 'y.febles'
-
 
 class LocationAdapter(SoundLabAdapter):
     """

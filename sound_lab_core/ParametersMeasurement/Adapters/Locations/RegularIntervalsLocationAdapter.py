@@ -7,6 +7,12 @@ from sound_lab_core.ParametersMeasurement.Locations.TimeLocations.RegularInterva
 
 
 class RegularIntervalsLocationAdapter(LocationAdapter):
+    """
+    An adapter to create Regular Intervals Location.
+    Those are the locations that divide the segment on n intervals
+    and each interval are located on an equidistant distribution.
+    """
+
     def __init__(self):
         LocationAdapter.__init__(self)
         self.name = self.tr(u'Regular Intervals')
@@ -14,6 +20,7 @@ class RegularIntervalsLocationAdapter(LocationAdapter):
         settings = [{u'name': unicode(self.tr(u'Intervals')), u'type': u'int',
                      u'value': 4, u'step': 1, u'limits': (1, 10000)}]
 
+        # the amount of intervals to divide the segment
         self.intervals = 4
 
         self.settings = Parameter.create(name=u'Time Location', type=u'group', children=settings)
@@ -30,19 +37,5 @@ class RegularIntervalsLocationAdapter(LocationAdapter):
     def get_instance(self):
         self.update_instance_variables()
 
-        locations = []
-
-        for i in xrange(self.intervals):
-            locations.append(RegularIntervalsMeasurementLocation(self.intervals, i))
-
-        return locations
-
-    def get_settings(self):
-        """
-        returns a Parameter Tree with the options of the abs decay detector
-        """
-        return self.settings
-
-
-
-
+        # create as many locations as the count of intervals selected
+        return [RegularIntervalsMeasurementLocation(self.intervals, i) for i in xrange(self.intervals)]

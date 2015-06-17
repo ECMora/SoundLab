@@ -15,7 +15,6 @@ from sound_lab_core.Segmentation.SegmentManager import SegmentManager
 from ..dialogs.ManualClassificationDialog import ManualClassificationDialog
 from TwoDimensionalAnalisysWindow import TwoDimensionalAnalisysWindow
 from ui_python_files.SegmentationAndClasificationWindowUI import Ui_MainWindow
-from utils.Utils import CallableStartThread
 
 
 class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
@@ -631,8 +630,8 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
             QMessageBox.warning(QMessageBox(), self.tr(u"Error"), self.tr(u"There is an on going detection in progress."))
             return
 
-        elementsDetectorDialog = ElemDetectSettingsDialog(self, self.widget.signal, self.segmentManager,
-                                                          self.parameter_manager)
+        elementsDetectorDialog = ElemDetectSettingsDialog(self, self.widget.signal, self.parameter_manager, self.segmentManager)
+
         elementsDetectorDialog.load_workspace(self.workSpace)
 
         # try:

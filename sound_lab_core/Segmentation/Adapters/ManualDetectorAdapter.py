@@ -11,5 +11,7 @@ class ManualDetectorAdapter(SoundLabAdapter):
     def __init__(self):
         SoundLabAdapter.__init__(self)
 
+        self.name = u'Manual'
+
     def get_instance(self, signal):
         return ManualDetector(signal)

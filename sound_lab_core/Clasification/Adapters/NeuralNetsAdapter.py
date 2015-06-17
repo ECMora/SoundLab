@@ -21,6 +21,8 @@ class NeuralNetsAdapter(ClassifierAdapter):
         # Context available classifiers
         self. _classifiers = {}
 
+        self.name = u'Neural Nets'
+
         # get available context trained networks
         for context in self.NETWORKS:
 

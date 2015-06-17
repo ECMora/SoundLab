@@ -12,6 +12,7 @@ class RegularDurationLocationAdapter(LocationAdapter):
     The RegularDurationLocationAdapter allows to define n equidistant
     locations on a segment each one separated by a  time delay in ms.
     """
+
     def __init__(self):
         LocationAdapter.__init__(self)
         self.name = self.tr(u'Regular Duration')
@@ -21,7 +22,10 @@ class RegularDurationLocationAdapter(LocationAdapter):
                     {u'name': unicode(self.tr(u'max intervals')), u'type': u'int',
                      u'value': 20, u'step': 1, u'limits': (1, 100000)}]
 
+        # the separation time between locations
         self.duration_ms = 100
+
+        # the max amount of locations (the real amount of locations depends of the segment duration)
         self.max_intervals = 20
 
         self.settings = Parameter.create(name=u'Time Location', type=u'group', children=settings)
@@ -32,24 +36,8 @@ class RegularDurationLocationAdapter(LocationAdapter):
             max_intervals = self.settings.param(unicode(self.tr(u'max intervals'))).value()
 
         except Exception as e:
-            duration_ms = 100
-            max_intervals = 100
+            duration_ms, max_intervals = 100, 100
 
-        self.duration_ms = duration_ms
-        self.max_intervals = max_intervals
-        locations = []
+        self.duration_ms, self.max_intervals = duration_ms, max_intervals
 
-        for i in xrange(self.max_intervals):
-            locations.append(RegularDurationMeasurementLocation(self.duration_ms, i))
-
-        return locations
-
-    def get_settings(self):
-        """
-        returns a Parameter Tree with the options of the abs decay detector
-        """
-        return self.settings
-
-
-
-
+        return [RegularDurationMeasurementLocation(self.duration_ms, i) for i in xrange(self.max_intervals)]
