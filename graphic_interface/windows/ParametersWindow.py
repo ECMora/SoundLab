@@ -15,6 +15,7 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
     Contains a tab widget with all the types of parameters to measure.
     """
 
+    # SIGNALS
     # signal raised when the window has finished to interact with parameters
     parameterChangeFinished = pyqtSignal(object)
 
@@ -22,6 +23,7 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
         QtGui.QDialog.__init__(self, parent)
         self.setupUi(self)
 
+        # configuration of parameters and location trees user interface
         self.parameter_tree_widget = ParameterTree()
         self.parameter_tree_widget.setAutoScroll(True)
         self.parameter_tree_widget.setHeaderHidden(True)
@@ -39,13 +41,14 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
         self.param_measurement_tree = None
         self.location_measurement_tree = None
 
-        # create the parameter tree
+        # create the parameter trees for parameter settings and location settings
         self.param_measurement_tree = Parameter.create(name=unicode(self.tr(u'Parameter Settings')), type=u'group')
-        self.location_measurement_tree = Parameter.create(name=unicode(self.tr(u'Location Settings')), type=u'group')
-
         self.parameter_tree_widget.setParameters(self.param_measurement_tree)
+
+        self.location_measurement_tree = Parameter.create(name=unicode(self.tr(u'Location Settings')), type=u'group')
         self.location_tree_widget.setParameters(self.location_measurement_tree)
 
+        # tables are just for selection (of parameter-location) not for edit elements.
         self.parameter_locations_table.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.wave_parameter_table.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.time_parameter_table.setEditTriggers(QAbstractItemView.NoEditTriggers)
@@ -63,6 +66,7 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
     def parameter_manager(self, parameter):
         self._parameter_manager = parameter
 
+        # when change the parameter manager updates its values on the tables
         self.load_parameters()
 
     # endregion
@@ -71,17 +75,15 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
 
     def load_parameters(self):
         """
-        Load into the window the parameter configuration on its
+        Updates the parameter configuration on the window with the ones in the parameter manager.
         parameter_manager.
         :return:
         """
+
         if self.parameter_manager is None:
             return
 
-        table = self.time_parameter_table
-        adapters = self.parameter_manager.time_parameters_adapters
-        rows = [x.name for x in adapters]
-        self.load_time_based_parameters(table, rows, adapters)
+        self.load_time_based_parameters()
 
         table = self.wave_parameter_table
         adapters = self.parameter_manager.wave_parameters_adapters
@@ -91,30 +93,31 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
         table = self.parameter_locations_table
         locations_adapters = self.parameter_manager.spectral_time_locations_adapters
         adapters = self.parameter_manager.spectral_parameters_adapters
-
         self.load_parameters_locations(table, locations_adapters, adapters, self.parameter_manager.spectral_location_parameters)
 
         # clear the parameter-location settings tree
         self.param_measurement_tree.clearChildren()
         self.location_measurement_tree.clearChildren()
 
-    def load_time_based_parameters(self, table, row_names, adapters):
+    def load_time_based_parameters(self):
         """
-        Load into the supplied table widget the data to use the adapters.
-        :param table: The table in which will be loaded the parameters.
-        :param row_names: the name of the rows in the table
-        :param adapters: the adapters dor each parameter (same length of rows_names)
+        Load into the time parameter table widget the data of the time parameter adapters from the manager.
         :return:
         """
+
+        # commodity variable for table
+        table = self.time_parameter_table
+
+        adapters = self.parameter_manager.time_parameters_adapters
+
         # first row for the 'select all' option
         table.setRowCount(1 + len(adapters))
-        table.setVerticalHeaderLabels([self.tr(u"Select All")] + row_names)
+        table.setVerticalHeaderLabels([self.tr(u"Select All")] + [x.name for x in adapters])
 
         table.setColumnCount(1)
         table.setHorizontalHeaderLabels([self.tr(u"Measure")])
         all_selected = True
 
-        # load spectral params and locations
         # the first row (0 index) is for the select all option
         for i in xrange(table.rowCount()):
             item = QtGui.QTableWidgetItem("")
@@ -130,6 +133,7 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
 
         table.cellClicked.connect(lambda x, y: self.parameter_time_selected(x, y, adapters))
 
+        # fit the contents of the parameters names on the cells
         table.resizeColumnsToContents()
         table.resizeRowsToContents()
 

@@ -10,7 +10,7 @@ class AbsDecayEnvelope(DetectionEnvelope):
     def __init__(self, signal=None, threshold_db=-40, min_size=1, envelope_type="sin"):
         DetectionEnvelope.__init__(self, threshold_db=threshold_db)
 
-        self.min_size = min_size
+        self.min_size = min_size if min_size > 0 else 1
         self.type = envelope_type
 
     def get_acoustic_processing(self, data):

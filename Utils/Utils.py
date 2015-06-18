@@ -7,14 +7,8 @@ from numpy import argmax
 from PyQt4 import QtGui
 from duetto.audio_signals.Synthesizer import Synthesizer
 
-FLOATING_POINT_EPSILON = 0.01
 
-
-DECIMAL_PLACES = 2
-
-
-WORK_SPACE_FILE_NAME = "soundlab.ini"
-
+# region Methods
 
 def deserialize(filename):
     """
@@ -90,22 +84,23 @@ def folder_files(folder, extensions=None):
 
 def small_signal(signal, duration_ms=50):
     """
-    computes and return (through an heuristic) an small signal
-    that represent the current one. The small signal has less than 100ms of duration
-    and is provided as a way of search characteristics of the whole signal.
-    Must be "as similar as possible to the complete signal".
-    :param signal:
-    :param duration_ms: The duration of the smal signal to genrate from the supplied one in ms
-    :return: Audio signal.
+    Computes and return (through an heuristic) an small signal that represent
+    the current one. The small signal has less than 100ms of duration and is
+    provided as a way of search characteristics of the whole signal. Must be
+    "as similar as possible to the complete signal".
+
+    :param signal: The signal to become small
+    :param duration_ms: The duration of the small signal to generate from the supplied one in ms
+    :return: an AudioSignal.
     """
     if signal.duration <= duration_ms / 1000.0:
         return signal
 
     # small signal
-    smaller_signal = Synthesizer.generateSilence(samplingRate=signal.samplingRate,
-                                                 bitDepth=signal.bitDepth, duration=duration_ms+1)
+    smaller_signal = Synthesizer.generateSilence(samplingRate=signal.samplingRate, bitDepth=signal.bitDepth,
+                                                 duration=duration_ms + 1)
 
-    # ensure that the max amplitude interval is in the small signal
+    # ensures that the max amplitude interval is in the small signal
     index_max_amp = argmax(signal.data)
 
     ms = signal.samplingRate / 1000.0
@@ -130,32 +125,31 @@ def toDB(value=0, min_value=1, max_value=1):
 def fromdB(value_dB=0, min_value=1, max_value=1):
     return round((10.0 ** ((60 + value_dB) / 20.0)) * max_value / 1000.0, 0) - min_value
 
+# endregion
 
-def getScaledValue(value, scales, scale_step):
-    """
-    Transform a supplied value to another scale to
-    :param value: The value to change in scale
-    :param scales: he list of
-    :param scale_step:
-    :return:
-    """
-    pass
 
+# region Classes
 
 class CallableStartThread(QThread):
     """
-    A segmentation_thread started by a function supplied
+    A thread started by a function supplied
     """
 
     def __init__(self, parent=None, function=None):
         QThread.__init__(self, parent)
-        self.function = function if function is not None else lambda : None
+        self.function = function if function is not None else lambda: None
+
+    def run(self):
+        self.function()
 
 
 class SegmentationThread(QThread):
+    """
+    Thread that execute the segmentation of a signal.
+    """
 
     # SIGNALS
-    # signal raised when the segmentation
+    # signal raised when the segmentation is finished
     segmentationFinished = pyqtSignal(list)
 
     def __init__(self, parent=None, detector=None):
@@ -201,3 +195,16 @@ class RecordThread(QThread):
     def run(self):
         if self.player is not None:
             self.player.record()
+
+# endregion
+
+
+# CONSTANTS
+
+FLOATING_POINT_EPSILON = 0.01
+
+
+DECIMAL_PLACES = 2
+
+
+WORK_SPACE_FILE_NAME = "soundlab.ini"
