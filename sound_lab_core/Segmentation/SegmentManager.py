@@ -1,7 +1,6 @@
 from PyQt4.QtCore import QObject, pyqtSignal
 import numpy as np
 from duetto.audio_signals import AudioSignal
-
 from sound_lab_core.Segmentation.Adapters import ManualDetectorAdapter
 from sound_lab_core.Clasification.Adapters import ManualClassifierAdapter
 from sound_lab_core.Elements.OneDimensionalElements.OneDimensionalElement import OneDimensionalElement
@@ -92,6 +91,9 @@ class SegmentManager(QObject):
     def parameters(self, new_parameter_measurers):
         self._measurerList = new_parameter_measurers
         self.recompute_element_table()
+        self.measure_parameters()
+
+        self.measurementsChanged.emit()
 
     def recompute_element_table(self):
         """

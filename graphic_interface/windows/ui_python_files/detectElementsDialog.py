@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\detectElementsDialog.ui'
+# Form implementation generated from reading ui file 'D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\detectElementsDialog.ui'
 #
-# Created: Sat May 16 22:27:02 2015
+# Created: Wed Jul 01 16:38:39 2015
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -63,6 +63,9 @@ class Ui_Dialog(object):
         self.dock_segm_classif.setObjectName(_fromUtf8("dock_segm_classif"))
         self.segmentation_classification_settings = QtGui.QWidget()
         self.segmentation_classification_settings.setObjectName(_fromUtf8("segmentation_classification_settings"))
+        self.parameter_bttn = QtGui.QPushButton(self.segmentation_classification_settings)
+        self.parameter_bttn.setGeometry(QtCore.QRect(70, 10, 151, 23))
+        self.parameter_bttn.setObjectName(_fromUtf8("parameter_bttn"))
         self.dock_segm_classif.setWidget(self.segmentation_classification_settings)
         self.gridLayout_2.addWidget(self.dock_segm_classif, 0, 2, 1, 1)
         self.widget = QSignalDetectorWidget(self.widget_2)
@@ -88,6 +91,7 @@ class Ui_Dialog(object):
     def retranslateUi(self, Dialog):
         Dialog.setWindowTitle(QtGui.QApplication.translate("Dialog", "Detection Settings", None, QtGui.QApplication.UnicodeUTF8))
         self.dock_segm_classif.setWindowTitle(QtGui.QApplication.translate("Dialog", "Segmentation and Classification Settings", None, QtGui.QApplication.UnicodeUTF8))
+        self.parameter_bttn.setText(QtGui.QApplication.translate("Dialog", "Parameters Measurement", None, QtGui.QApplication.UnicodeUTF8))
         self.widget.setToolTip(QtGui.QApplication.translate("Dialog", "<html><head/><body><p>Signal to learn about algorithm parameters</p></body></html>", None, QtGui.QApplication.UnicodeUTF8))
 
 from graphic_interface.widgets.QSignalDetectorWidget import QSignalDetectorWidget

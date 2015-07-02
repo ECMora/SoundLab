@@ -107,7 +107,21 @@
         <property name="windowTitle">
          <string>Segmentation and Classification Settings</string>
         </property>
-        <widget class="QWidget" name="segmentation_classification_settings"/>
+        <widget class="QWidget" name="segmentation_classification_settings">
+         <widget class="QPushButton" name="parameter_bttn">
+          <property name="geometry">
+           <rect>
+            <x>70</x>
+            <y>10</y>
+            <width>151</width>
+            <height>23</height>
+           </rect>
+          </property>
+          <property name="text">
+           <string>Parameters Measurement</string>
+          </property>
+         </widget>
+        </widget>
        </widget>
       </item>
       <item row="0" column="1">

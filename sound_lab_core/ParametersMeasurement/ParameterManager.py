@@ -42,15 +42,19 @@ class ParameterManager(QObject):
         # region Locations Adapters
 
         # time location adapters of measurement for the spectral parameters
-        self.spectral_time_locations_adapters = [StartLocationAdapter(), CenterLocationAdapter(),
-                                                 EndLocationAdapter(), MeanLocationAdapter(),
+        self.spectral_time_locations_adapters = [MeanLocationAdapter(), StartLocationAdapter(),
+                                                 CenterLocationAdapter(), EndLocationAdapter(),
                                                  RegularIntervalsLocationAdapter(),
                                                  RegularDurationLocationAdapter()]
         
         # the time location adapters for the wave  parameters (same locations that the )
         self.wave_locations_adapters = [x.__class__() for x in self.spectral_time_locations_adapters]
 
+        # endregion
+
         # matrices for the selection of parameter-location (bool)
+        self.time_location_parameters = np.zeros(len(self.time_parameters_adapters)) > 0
+
         rows, cols = len(self.wave_parameters_adapters), len(self.wave_locations_adapters)
         self.wave_location_parameters = np.zeros(rows * cols).reshape(rows, cols) > 0
 
@@ -59,8 +63,6 @@ class ParameterManager(QObject):
 
         self.spectral_locations_adapters = np.array([FrequencyMeasurementLocationAdapter()
                                                      for _ in xrange(rows * cols)]).reshape((rows, cols))
-
-        # endregion
 
         self.signal = signal
         if signal is None:
@@ -132,3 +134,6 @@ class ParameterManager(QObject):
                             spectral_parameters.append(parameter)
 
         return time_params + wave_params + spectral_parameters
+
+    def clone(self):
+        return self

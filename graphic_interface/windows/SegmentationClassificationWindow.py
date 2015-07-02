@@ -1,13 +1,13 @@
 # -*- coding: utf-8 -*-
 import os
 import xlwt
+from SoundLabWindow import SoundLabWindow
 from PyQt4.QtCore import pyqtSlot, Qt, QPoint, QTimer
+from duetto.audio_signals.AudioSignal import AudioSignal
 from PyQt4.QtGui import QFileDialog, QAbstractItemView, QActionGroup, QMessageBox, \
     QProgressBar, QColor, QAction, QTableWidgetItem
 from graphic_interface.windows.ParametersWindow import ParametersWindow
 from sound_lab_core.ParametersMeasurement.ParameterManager import ParameterManager
-from SoundLabWindow import SoundLabWindow
-from duetto.audio_signals.AudioSignal import AudioSignal
 from graphic_interface.dialogs.CrossCorrelationDialog import CrossCorrelationDialog
 from ..dialogs.elemDetectSettings import ElemDetectSettingsDialog
 from graphic_interface.windows.ToastWidget import ToastWidget
@@ -72,6 +72,7 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         self.segmentManager.detectionProgressChanged.connect(lambda x: self.windowProgressDetection.setValue(x * 0.9))
         self.segmentManager.segmentVisualItemAdded.connect(self.widget.add_parameter_visual_items)
 
+        # the factory of adapters for parameters to supply to the ui window or segmentation dialog
         self.parameter_manager = ParameterManager(signal=signal)
 
         # set the signal to the widget
@@ -136,8 +137,7 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
         buttons_box = QMessageBox.Yes | QMessageBox.No
         mbox = QMessageBox(QMessageBox.Question, self.tr(u"soundLab"),
-                           self.tr(u"The file has segmentation data stored. Do you want to load it?"),
-                           buttons_box, self)
+                           self.tr(u"The file has segmentation data stored. Do you want to load it?"), buttons_box, self)
         result = mbox.exec_()
 
         if result == QMessageBox.Yes:
@@ -465,8 +465,7 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
         self.segmentManager.add_element(element_added_index, element.indexFrom, element.indexTo)
 
-        for wnd in self.two_dim_windows:
-            wnd.load_data(self.segmentManager)
+        self.update_two_dim_windows()
 
     @pyqtSlot()
     def on_actionDeselect_Elements_triggered(self):
@@ -630,32 +629,32 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
             QMessageBox.warning(QMessageBox(), self.tr(u"Error"), self.tr(u"There is an on going detection in progress."))
             return
 
-        elementsDetectorDialog = ElemDetectSettingsDialog(self, self.widget.signal, self.parameter_manager, self.segmentManager)
-
+        elementsDetectorDialog = ElemDetectSettingsDialog(self, self.widget.signal, self.segmentManager)
+        elementsDetectorDialog.modifyParametersMeasurement.connect(lambda: self.on_actionParameter_Measurement_triggered())
         elementsDetectorDialog.load_workspace(self.workSpace)
 
-        # try:
-        if elementsDetectorDialog.exec_():
-            # the detection dialog is a factory of segmentation,
-            # parameter parameters and classification concrete implementations
+        try:
+            if elementsDetectorDialog.exec_():
+                # the detection dialog is a factory of segmentation,
+                # parameter parameters and classification concrete implementations
 
-            # get the segmentation, classification and parameters methods
-            self.segmentManager.detector_adapter = elementsDetectorDialog.detector
-            self.segmentManager.classifier_adapter = elementsDetectorDialog.classifier
-            self.segmentManager.parameters = elementsDetectorDialog.get_measurer_list()
+                # get the segmentation, classification and parameters methods
+                self.segmentManager.detector_adapter = elementsDetectorDialog.detector
+                self.segmentManager.classifier_adapter = elementsDetectorDialog.classifier
+                self.segmentManager.parameters = self.parameter_manager.parameter_list()
 
-            self.windowProgressDetection.setValue(0)
-            self.set_progress_bar_visibility(True)
+                self.windowProgressDetection.setValue(0)
+                self.set_progress_bar_visibility(True)
 
-            # execute the detection
-            self.segmentManager.segmentationFinished.connect(self.segmentation_finished)
-            self.segmentManager.detect_elements()
+                # execute the detection
+                self.segmentManager.segmentationFinished.connect(self.segmentation_finished)
+                self.segmentManager.detect_elements()
 
-        # except Exception as e:
-        #     print("detection errors: " + e.message)
-        #     raise e
-        #     self.windowProgressDetection.setValue(100)
-        #     self.set_progress_bar_visibility(False)
+        except Exception as e:
+            print("detection errors: " + e.message)
+
+            self.windowProgressDetection.setValue(100)
+            self.set_progress_bar_visibility(False)
 
     def segmentation_finished(self):
         """
@@ -682,7 +681,9 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         # must be refreshed the widget because the parameter measurement
         # may include visual items into the graph
         self.widget.graph()
+        self.update_two_dim_windows()
 
+    def update_two_dim_windows(self):
         # update the measured data on the two dimensional opened windows
         for wnd in self.two_dim_windows:
             wnd.load_data(self.segmentManager)
@@ -796,14 +797,34 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
     # endregion
 
+    def update_parameters(self, parameter_manager):
+        """
+        Updates the parameters to measure from a change in their selection.
+        :param parameter_manager:
+        :return:
+        """
+        # update the segment manager
+        self.segmentManager.parameters = parameter_manager.parameter_list()
+
+        self.update_two_dim_windows()
+
     @pyqtSlot()
     def on_actionParameter_Measurement_triggered(self):
+
+        # check for previously parameters measurements to save
+        if self.tableParameterOscilogram.rowCount() > 0:
+
+            mbox = QMessageBox(QMessageBox.Question, self.tr(u"soundLab"),
+                               self.tr(u"You are going to make a new selection of parameters to measure."
+                                       u"All your previously selected elements measurements will be lost."
+                                       u"Do you want to save measurements first?"), QMessageBox.Yes | QMessageBox.No, self)
+
+            if mbox.exec_() == QMessageBox.Yes:
+                self.on_actionMeditions_triggered()
+
         param_window = ParametersWindow(self, self.parameter_manager)
 
-        def update_parameters(parameter_manager):
-            self.segmentManager.parameters = parameter_manager.parameter_list()
-
-        param_window.parameterChangeFinished.connect(lambda p: update_parameters(p))
+        param_window.parameterChangeFinished.connect(lambda p: self.update_parameters(p))
 
         param_window.exec_()
 

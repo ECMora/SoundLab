@@ -4,7 +4,6 @@ from sound_lab_core.Segmentation.OneDimensional.DetectionEnvelopes.DetectionEnve
 
 class AbsDecayEnvelope(DetectionEnvelope):
     """
-    An envelope that is a function constant by intervals.
     """
 
     def __init__(self, signal=None, threshold_db=-40, min_size=1, envelope_type="sin"):
