@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 from PyQt4 import QtGui
 from PyQt4.QtGui import QDialog
-from pyqtgraph.parametertree import Parameter, ParameterTree
-from graphic_interface.windows.ui_python_files.detectElementsDialog import Ui_Dialog
-from graphic_interface.windows.ParametersWindow import ParametersWindow
+from PyQt4.QtCore import pyqtSignal
 from utils.Utils import small_signal
 from sound_lab_core.AdapterFactories import *
 from sound_lab_core.Clasification.Adapters import *
+from pyqtgraph.parametertree import Parameter, ParameterTree
+from graphic_interface.windows.ui_python_files.detectElementsDialog import Ui_Dialog
 
 
 # tuples of classifiers (get a tuple of all an not of super class because a bug (?) on isinstance method)
@@ -20,9 +20,17 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
     It's a factory interface of detectors, parameter measurers and classifiers
     """
 
+    # region SIGNALS
+
+    # signal raised when the user try to modify the parameters to measure
+    # that functionality is delegated in the segmentation window through signal
+    modifyParametersMeasurement = pyqtSignal()
+
+    # endregion
+
     # region Initialize
 
-    def __init__(self, parent, signal, parameter_manager, segment_manager=None):
+    def __init__(self, parent, signal, segment_manager=None):
         QDialog.__init__(self, parent)
         self.setupUi(self)
 
@@ -35,9 +43,6 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         self._segmentationAdapterFactory = SegmentationAdapterFactory()
         self._classificationAdapterFactory = ClassificationAdapterFactory()
 
-        # to manage the parameter selection and configuration
-        self.parameter_manager = parameter_manager
-
         # the widget to visualize the segmentation and classification methods
         self.segmentation_classification_tree = None
         self.segmentation_classification_tree_widget = ParameterTree()
@@ -46,8 +51,13 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
 
         layout = QtGui.QVBoxLayout()
         layout.setMargin(0)
+
+        layout.addWidget(self.parameter_bttn)
         layout.addWidget(self.segmentation_classification_tree_widget)
         self.segmentation_classification_settings.setLayout(layout)
+
+        # to manage the parameter selection and configuration
+        self.parameter_bttn.clicked.connect(lambda: self.modifyParametersMeasurement.emit())
 
         self.create_segmentation_classification_param_tree()
 
@@ -79,8 +89,7 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         # the method settings
         list_classification.append({u'name': unicode(self.tr(u'Method Settings')), u'type': u'group', u'children': []})
 
-        params = [{u'name': unicode(self.tr(u'Parameter Measurements')), u'type': u'action'},
-                  {u'name': unicode(self.tr(u'Segmentation')), u'type': u'group', u'children': list_param},
+        params = [{u'name': unicode(self.tr(u'Segmentation')), u'type': u'group', u'children': list_param},
                   {u'name': unicode(self.tr(u'Classification')), u'type': u'group', u'children': list_classification}]
 
         self.segmentation_classification_tree = Parameter.create(name=unicode(self.tr(u'Settings')),
@@ -100,20 +109,17 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
                                         self.segmentation_classification_changed(param, changes, u'Classification',
                                                                                  self.classification_adapter_factory))
 
-        self.segmentation_classification_tree.param(unicode(self.tr(u'Parameter Measurements'))). \
-            sigActivated.connect(self.configure_parameters)
-
         # create and set initial properties
         self.segmentation_classification_tree_widget.setParameters(self.segmentation_classification_tree)
 
-    def configure_parameters(self):
-        """
-        Opens a parameter window to allow parameter measurement configuration.
-        through the window the user can select and configure the parameters to measure.
-        :return:
-        """
-        param_window = ParametersWindow(self, self.parameter_manager)
-        param_window.exec_()
+        # the only way of segmentation and classification on Sound Lab Lite version is manual
+        self.segmentation_classification_tree_widget.setEnabled(False)
+
+        lite_licence_restriction = u"The only way of segmentation and classification \n " \
+                                   u"on Sound Lab Lite version is the manual. \n " \
+                                   u"The others methods are available at \n the Professional Version of the software"
+
+        self.segmentation_classification_tree_widget.setToolTip(self.tr(lite_licence_restriction))
 
     def segmentation_classification_changed(self, param, changes, param_tree_name, adapter_factory):
         """
@@ -239,6 +245,7 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         param_tree_name = u'Classification' if adapter_factory == self.classification_adapter_factory else u'Segmentation'
 
         default_adapter_class = ManualDetectorAdapter
+
         if adapter_factory == self.classification_adapter_factory:
             default_adapter_class = ManualClassifierAdapter
 
@@ -258,12 +265,6 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
             adapter = default_adapter_class()
 
         return adapter
-
-    def get_measurer_list(self):
-        """
-        :return: The list of selected parameters to measure
-        """
-        return self.parameter_manager.parameter_list()
 
     # endregion
 

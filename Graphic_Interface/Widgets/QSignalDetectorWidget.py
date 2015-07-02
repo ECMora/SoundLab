@@ -170,6 +170,10 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         """
         :return: the list of sorted start indexes of elements as list of ints
         """
+
+        # Each object in self.elements could be a tuple (start, end) of signal data indexes
+        # or a DetectedSoundLabElement instance (if that elements is been visualized on the widget)
+
         return [x.indexFrom if isinstance(x, DetectedSoundLabElement) else x[0] for x in self.elements]
 
     @property
@@ -199,15 +203,21 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
         # if the element is not a DetectedSoundLab instance then create it
         if not isinstance(self.elements[index], DetectedSoundLabElement):
-            self.elements[index] = QSignalDetectorWidget.visual_items_cache.get_visual_item(self.signal,
-                                                                           self.elements[index][0],
-                                                                           self.elements[index][1],
-                                                                           index + 1, self.elementClicked)
+            start_index, end_index = self.elements[index][0], self.elements[index][1]
+            self.elements[index] = self.get_visual_item(self.signal, start_index, end_index, index + 1, self.elementClicked)
+
             # add parameter items if any
             for param in self.parameters_items[index]:
                 self.elements[index].add_visual_item(param)
 
         return self.elements[index]
+
+    def get_visual_item(self, signal, index_from, index_to, number=0, signal_callback=None):
+        """
+        Wrapper method to simplify expressions.
+        Obtains a new visual item from the cache.
+        """
+        return QSignalDetectorWidget.visual_items_cache.get_visual_item(signal, index_from, index_to, number, signal_callback)
 
     # endregion
 
@@ -631,7 +641,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         index_from -= 1 if index_from > 0 and start <= self.get_element(index_from - 1).indexTo else 0
 
         # insert the new element
-        element = QSignalDetectorWidget.visual_items_cache.get_visual_item(self.signal, start, end, 0, self.elementClicked)
+        element = self.get_visual_item(self.signal, start, end, 0, self.elementClicked)
         self.elements.insert(index_from, element)
         self.parameters_items.insert(index_from, [])
 
