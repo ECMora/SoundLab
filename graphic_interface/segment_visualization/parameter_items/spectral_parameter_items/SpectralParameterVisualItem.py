@@ -4,7 +4,6 @@ from graphic_interface.segment_visualization.parameter_items.VisualItemWrapper i
 
 class SpectralVisualItemWrapper(VisualItemWrapper):
     """
-    Represents the visual parameter items for spectral parameters
     """
 
     def __init__(self, color=None, tooltip=""):

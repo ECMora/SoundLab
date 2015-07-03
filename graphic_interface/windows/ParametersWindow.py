@@ -16,9 +16,12 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
     Contains a tab widget with all the types of parameters to measure.
     """
 
-    # SIGNALS
+    # region SIGNALS
+
     # signal raised when the window has finished to interact with parameters
     parameterChangeFinished = pyqtSignal(object)
+
+    # endregion
 
     def __init__(self, parent=None, parameter_manager=None):
         QtGui.QDialog.__init__(self, parent)

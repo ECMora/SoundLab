@@ -80,6 +80,14 @@ class DetectedSoundLabElement:
 
     # endregion
 
+    def release_parameter_items(self):
+        """
+        Removes the parameter visual items added into the current element
+        :return:
+        """
+        self.time_element.release_parameter_items()
+        self.spectral_element.release_parameter_items()
+
     def add_visual_item(self, parameter_item):
         """
         Add a parameter item into the visual element representation

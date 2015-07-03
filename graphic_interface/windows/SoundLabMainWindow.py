@@ -1,4 +1,5 @@
 #  -*- coding: utf-8 -*-
+import subprocess
 from PyQt4 import QtCore
 from pyqtgraph.parametertree.parameterTypes import ListParameter
 from pyqtgraph.parametertree import Parameter, ParameterTree
@@ -48,6 +49,9 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
     #  minimum and maximum sampling rate used on the application
     MIN_SAMPLING_RATE = 1000
     MAX_SAMPLING_RATE = 2000000
+
+    # user manual path file
+    USER_MANUAL_FILE_NAME = "soundLab-Manual_de_Usuario.pdf"
 
     # the maxThresholdLabel duration of signal that is possible to process
     # with the segmentation and classification window (in seconds)
@@ -1948,6 +1952,22 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         # re translate the opened windows
         for widget, window in self.one_dim_windows:
             window.retranslateUi(window)
+
+    @pyqtSlot()
+    def on_actionUser_Manual_triggered(self):
+        """
+        Try to open the user manual.
+        :return:
+        """
+
+        user_manual_path = os.path.join("doc", self.USER_MANUAL_FILE_NAME)
+
+        if not os.path.exists(user_manual_path):
+            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Sorry"), self.tr(u"The user manual was not found"))
+            return
+
+        # open user manual file
+        os.system("start " + user_manual_path)
 
     @pyqtSlot()
     def on_actionSettings_triggered(self):

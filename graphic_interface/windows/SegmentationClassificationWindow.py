@@ -467,6 +467,8 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
         self.update_two_dim_windows()
 
+        self.widget.graph()
+
     @pyqtSlot()
     def on_actionDeselect_Elements_triggered(self):
         """

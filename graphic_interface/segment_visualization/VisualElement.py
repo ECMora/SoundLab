@@ -154,3 +154,10 @@ class VisualElement:
         :return:
         """
         self.visual_parameters_items.append(parameter_item)
+
+    def release_parameter_items(self):
+        """
+        Removes all the parameter visual items added into the current element
+        :return:
+        """
+        self.visual_parameters_items = []

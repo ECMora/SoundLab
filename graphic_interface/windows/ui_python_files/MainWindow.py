@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\MainWindow.ui'
+# Form implementation generated from reading ui file 'D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\MainWindow.ui'
 #
-# Created: Sun Apr 26 13:07:40 2015
+# Created: Fri Jul 03 14:22:39 2015
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -93,6 +93,8 @@ class Ui_DuettoMainWindow(object):
         icon1.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/Macromedia.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.menuPlay_Speed.setIcon(icon1)
         self.menuPlay_Speed.setObjectName(_fromUtf8("menuPlay_Speed"))
+        self.menuHelp = QtGui.QMenu(self.menubar)
+        self.menuHelp.setObjectName(_fromUtf8("menuHelp"))
         DuettoMainWindow.setMenuBar(self.menubar)
         self.statusbar = QtGui.QStatusBar(DuettoMainWindow)
         self.statusbar.setStyleSheet(_fromUtf8("background-color: rgb(255, 255, 255);"))
@@ -367,6 +369,8 @@ class Ui_DuettoMainWindow(object):
         self.actionPlayLoop.setObjectName(_fromUtf8("actionPlayLoop"))
         self.actionChangeTabDown = QtGui.QAction(DuettoMainWindow)
         self.actionChangeTabDown.setObjectName(_fromUtf8("actionChangeTabDown"))
+        self.actionUser_Manual = QtGui.QAction(DuettoMainWindow)
+        self.actionUser_Manual.setObjectName(_fromUtf8("actionUser_Manual"))
         self.menuSave_Images.addAction(self.actionOsc_Image)
         self.menuSave_Images.addAction(self.actionSpecgram_Image)
         self.menuSave_Images.addAction(self.actionCombined_Image)
@@ -438,11 +442,13 @@ class Ui_DuettoMainWindow(object):
         self.menuSound.addAction(self.actionStop_Sound)
         self.menuSound.addAction(self.actionRecord)
         self.menuSound.addAction(self.actionPlayLoop)
+        self.menuHelp.addAction(self.actionUser_Manual)
         self.menubar.addAction(self.menuFile.menuAction())
         self.menubar.addAction(self.menuEdit.menuAction())
         self.menubar.addAction(self.menuTools.menuAction())
         self.menubar.addAction(self.menuView.menuAction())
         self.menubar.addAction(self.menuSound.menuAction())
+        self.menubar.addAction(self.menuHelp.menuAction())
 
         self.retranslateUi(DuettoMainWindow)
         self.tabOpenedSignals.setCurrentIndex(-1)
@@ -465,6 +471,7 @@ class Ui_DuettoMainWindow(object):
         self.menuView.setTitle(QtGui.QApplication.translate("DuettoMainWindow", "Analysis", None, QtGui.QApplication.UnicodeUTF8))
         self.menuSound.setTitle(QtGui.QApplication.translate("DuettoMainWindow", "Sound", None, QtGui.QApplication.UnicodeUTF8))
         self.menuPlay_Speed.setTitle(QtGui.QApplication.translate("DuettoMainWindow", "Play Speed", None, QtGui.QApplication.UnicodeUTF8))
+        self.menuHelp.setTitle(QtGui.QApplication.translate("DuettoMainWindow", "Help", None, QtGui.QApplication.UnicodeUTF8))
         self.dock_settings.setToolTip(QtGui.QApplication.translate("DuettoMainWindow", "Visual Settigns Area", None, QtGui.QApplication.UnicodeUTF8))
         self.dock_settings.setWindowTitle(QtGui.QApplication.translate("DuettoMainWindow", "Settings", None, QtGui.QApplication.UnicodeUTF8))
         self.toolBar.setWindowTitle(QtGui.QApplication.translate("DuettoMainWindow", "toolBar", None, QtGui.QApplication.UnicodeUTF8))
@@ -574,6 +581,8 @@ class Ui_DuettoMainWindow(object):
         self.actionChangeTabDown.setText(QtGui.QApplication.translate("DuettoMainWindow", "Go to previous signal", None, QtGui.QApplication.UnicodeUTF8))
         self.actionChangeTabDown.setToolTip(QtGui.QApplication.translate("DuettoMainWindow", "ChangeTabDown", None, QtGui.QApplication.UnicodeUTF8))
         self.actionChangeTabDown.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Ctrl+Left", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionUser_Manual.setText(QtGui.QApplication.translate("DuettoMainWindow", "User Manual", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionUser_Manual.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "F1", None, QtGui.QApplication.UnicodeUTF8))
 
 from graphic_interface.widgets.SoundLabToolBar import SoundLabToolBarWidget
 import icons_rc
