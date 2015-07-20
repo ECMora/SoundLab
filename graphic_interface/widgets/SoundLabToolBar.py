@@ -25,7 +25,7 @@ class SoundLabToolBarWidget(QtGui.QToolBar):
     """
 
     def __init__(self, parent=None):
-        QtGui.QToolBar.__init__(self,parent)
+        QtGui.QToolBar.__init__(self, parent)
 
         # the group of items actions to manage
         # list of GroupActionManager

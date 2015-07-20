@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>522</width>
+    <width>539</width>
     <height>339</height>
    </rect>
   </property>
@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Browse Files</string>
+   <string>Browse</string>
   </property>
   <property name="windowIcon">
    <iconset resource="resources/icons.qrc">
@@ -37,7 +37,7 @@
        <string>Play</string>
       </property>
       <property name="icon">
-       <iconset resource="resources/icons.qrc">
+       <iconset>
         <normaloff>:/myappicons/02049_26x26.png</normaloff>:/myappicons/02049_26x26.png</iconset>
       </property>
       <property name="checkable">
@@ -119,7 +119,7 @@
        <string>File Down</string>
       </property>
       <property name="icon">
-       <iconset resource="resources/icons.qrc">
+       <iconset>
         <normaloff>:/myappicons/downfile.png</normaloff>:/myappicons/downfile.png</iconset>
       </property>
      </widget>
@@ -133,7 +133,7 @@
        <string>File Up</string>
       </property>
       <property name="icon">
-       <iconset resource="resources/icons.qrc">
+       <iconset>
         <normaloff>:/myappicons/upfile.png</normaloff>:/myappicons/upfile.png</iconset>
       </property>
      </widget>

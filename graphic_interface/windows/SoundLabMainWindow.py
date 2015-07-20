@@ -46,6 +46,11 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
     # endregion
 
     #  region CONSTANTS
+
+    # maximum limit of  memory of the signals array data in bits that the system can handle
+    # correctly ---> 30 minutes of signals at 44100 kHz with 16 bits
+    MAX_MEMORY_SIGNAL_LIMIT = 1800 * 44100 * 16
+
     #  minimum and maximum sampling rate used on the application
     MIN_SAMPLING_RATE = 1000
     MAX_SAMPLING_RATE = 2000000
@@ -1258,6 +1263,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
     #  endregion
 
     #  region Signal Processing Methods
+
     @pyqtSlot()
     def on_actionBatchProcessing_triggered(self):
         BatchWindow(self).show()
@@ -1382,31 +1388,31 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         :return:
         """
         # reuse the insert silence dialog
-        resamplingDialog = sdialog.Ui_Dialog()
-        resamplingDialogWindow = InsertSilenceDialog(self)
-        resamplingDialog.setupUi(resamplingDialogWindow)
-
-        # change the label for the new task of resampling
-        resamplingDialog.label.setText(self.tr(u"Select the new Sampling Rate."))
-
-        # set by default the current sampling rate
-        resamplingDialog.insertSpinBox.setValue(self.widget.signal.samplingRate)
-
-        if resamplingDialogWindow.exec_():
-            # get the new sampling rate
-            val = resamplingDialog.insertSpinBox.value()
-
-            if self.MIN_SAMPLING_RATE <= val <= self.MAX_SAMPLING_RATE:
-                self.widget.resampling(val)
-
-            elif val < self.MIN_SAMPLING_RATE:
-                QMessageBox.warning(QMessageBox(), self.tr(u"Error"),
-                                    self.tr(u"Sampling rate should be greater than") + u" " + unicode(
-                                        self.MIN_SAMPLING_RATE))
-            else:
-                QMessageBox.warning(QMessageBox(), self.tr(u"Error"),
-                                    self.tr(u"Sampling rate should be less than") + u" " + unicode(
-                                        self.MAX_SAMPLING_RATE))
+        # resamplingDialog = sdialog.Ui_Dialog()
+        # resamplingDialogWindow = InsertSilenceDialog(self)
+        # resamplingDialog.setupUi(resamplingDialogWindow)
+        #
+        # # change the label for the new task of resampling
+        # resamplingDialog.label.setText(self.tr(u"Select the new Sampling Rate."))
+        #
+        # # set by default the current sampling rate
+        # resamplingDialog.insertSpinBox.setValue(self.widget.signal.samplingRate)
+        #
+        # if resamplingDialogWindow.exec_():
+        #     # get the new sampling rate
+        #     val = resamplingDialog.insertSpinBox.value()
+        #
+        #     if self.MIN_SAMPLING_RATE <= val <= self.MAX_SAMPLING_RATE:
+        #         self.widget.resampling(val)
+        #
+        #     elif val < self.MIN_SAMPLING_RATE:
+        #         QMessageBox.warning(QMessageBox(), self.tr(u"Error"),
+        #                             self.tr(u"Sampling rate should be greater than") + u" " + unicode(
+        #                                 self.MIN_SAMPLING_RATE))
+        #     else:
+        #         QMessageBox.warning(QMessageBox(), self.tr(u"Error"),
+        #                             self.tr(u"Sampling rate should be less than") + u" " + unicode(
+        #                                 self.MAX_SAMPLING_RATE))
 
         self.updateSignalPropertiesLabel(self.widget.signal)
 
@@ -1545,10 +1551,10 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         :param pathlist:
         :return:
         """
-        # open in the current tab just the first of the signals otherwise would
-        # be opened just one tab
+        open_current_tab = self.widget is None or self.widget.undoRedoManager.count() == 0
+
         for i, path in enumerate(pathlist):
-            self._open(path, currentTab=(i == 0))
+            self._open(path, currentTab=(i == 0) and open_current_tab)
 
     def _open(self, file_path='', currentTab=False):
         """
@@ -1558,6 +1564,29 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         otherwise is open on new tab
         :return:
         """
+        signal_memory_used = 0
+        for i in range(self.tabOpenedSignals.count()):
+            signal = self.tabOpenedSignals.widget(i).signal
+            signal_memory_used += signal.length * signal.bitDepth
+
+        # check file to open properties
+        rate, bits, noc, userData, size = read_wav_metadata(open(file_path, "rb"))
+        signal_memory_used += size * bits
+
+        others_signals_opened_msg = u"the signal to open exceeds the work capacity of the soundLab Lite Version. " \
+                                    u"Try to split it with the batch processing and open it again."
+
+        if self.tabOpenedSignals.count() > 0:
+            others_signals_opened_msg = u"the total amount of signals data opened exceeds the work " \
+                                        u"capacity of the soundLab Lite Version. " \
+                                        u"Close an opened signal and try it again."
+
+        if signal_memory_used >= self.MAX_MEMORY_SIGNAL_LIMIT:
+            QMessageBox.warning(QMessageBox(), self.tr(u"Error"),
+                                self.tr(u"The new signal can't be opened because " + others_signals_opened_msg)
+                                + u"\n" + file_path)
+            return
+
         if file_path != u'':
             try:
                 # set the variables for folder files management
@@ -1771,7 +1800,9 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
             #  try to open the file in the new signal file path
             file_path = self.filesInFolder[self.filesInFolderIndex]
             if os.path.exists(file_path):
-                self._open(file_path, currentTab=True)
+                open_current_tab = self.widget is None or self.widget.undoRedoManager.count() == 0
+
+                self._open(file_path, currentTab=open_current_tab)
 
     def getFolderFiles(self, file_path):
         """

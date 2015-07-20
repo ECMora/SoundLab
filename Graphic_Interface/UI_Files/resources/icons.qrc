@@ -1,41 +1,44 @@
 <RCC>
   <qresource prefix="myappicons">
+    <file>down_arrow.png</file>
+    <file>up_arrow.png</file>
+    <file>button_new.png</file>
+    <file>button_open.png</file>
+    <file>button_cut.png</file>
+    <file>button_paste.png</file>
+    <file>button_copy.png</file>
+    <file>button_segment_clasif.png</file>
+    <file>button_powerspect.png</file>
+    <file>button_oscil_spect.png</file>
+    <file>button_settings.png</file>
+    <file>button_oscil.png</file>
+    <file>button_spect.png</file>
+    <file>button_save.png</file>
+    <file>button_zoom.png</file>
+    <file>button_fileDown.png</file>
+    <file>button_fileUp.png</file>
+    <file>button_zoom_in.png</file>
+    <file>button_zoom_out.png</file>
+    <file>button_search.png</file>
+    <file>button_rec.png</file>
+    <file>button_stop.png</file>
+    <file>button_redo.png</file>
+    <file>button_undo.png</file>
+    <file>button_loop.png</file>
+    <file>button_pause.png</file>
+    <file>button_play.png</file>
     <file>duetto_logo.png</file>
     <file>add.png</file>
     <file>deselectElements.png</file>
     <file>delete_elements.png</file>
     <file>81.ico</file>
     <file>2dgraphs.png</file>
-    <file>Process Viewer.png</file>
-    <file>ColorSync Utility.png</file>
-    <file>Macromedia.png</file>
-    <file>downfile.png</file>
-    <file>upfile.png</file>
-    <file>undo.png</file>
-    <file>redo.png</file>
     <file>cerrar.png</file>
     <file>Photofiltre.png</file>
     <file>Camera.ico</file>
     <file>Position.png</file>
     <file>Behavior.png</file>
-    <file>pausa.png</file>
-    <file>record_26x26.png</file>
-    <file>spec.ico</file>
-    <file>osc.ico</file>
-    <file>combined.ico</file>
     <file>Excel.png</file>
-    <file>powerspec.ico</file>
-    <file>copy_26x26.png</file>
-    <file>cut_26x26.png</file>
-    <file>paste_26x26.png</file>
-    <file>02049_26x26.png</file>
-    <file>02051_26x26.png</file>
-    <file>225.ico</file>
-    <file>zoom_26x26.png</file>
-    <file>Leopard Icon 60.ico</file>
-    <file>81.ico</file>
-    <file>zoomin_26x26.png</file>
-    <file>zoomout_26x26.png</file>
   </qresource>
   <qresource prefix="GraphicInterface\Windows"/>
 </RCC>

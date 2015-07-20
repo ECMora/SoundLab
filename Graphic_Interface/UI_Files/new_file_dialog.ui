@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>New file</string>
+   <string>New</string>
   </property>
   <layout class="QFormLayout" name="formLayout">
    <item row="1" column="1">
@@ -65,7 +65,7 @@
       <string notr="true">background-color: rgb(255, 255, 255);</string>
      </property>
      <property name="text">
-      <string>Sampling rate:</string>
+      <string>Sampling Rate:</string>
      </property>
     </widget>
    </item>
@@ -75,7 +75,7 @@
       <string notr="true">background-color: rgb(255, 255, 255);</string>
      </property>
      <property name="text">
-      <string>Bit depth:</string>
+      <string>Bit Depth:</string>
      </property>
     </widget>
    </item>
@@ -98,7 +98,7 @@
       <string notr="true">background-color: rgb(255, 255, 255);</string>
      </property>
      <property name="text">
-      <string>White noise</string>
+      <string>White Noise</string>
      </property>
     </widget>
    </item>

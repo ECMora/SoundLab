@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\BrowseFilesWindow.ui'
 #
-# Created: Sat Apr 18 18:23:48 2015
+# Created: Sat Jul 18 13:24:34 2015
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -17,7 +17,7 @@ except AttributeError:
 class Ui_BrowseFilesWindow(object):
     def setupUi(self, BrowseFilesWindow):
         BrowseFilesWindow.setObjectName(_fromUtf8("BrowseFilesWindow"))
-        BrowseFilesWindow.resize(522, 339)
+        BrowseFilesWindow.resize(539, 339)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Preferred, QtGui.QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -119,7 +119,7 @@ class Ui_BrowseFilesWindow(object):
         QtCore.QMetaObject.connectSlotsByName(BrowseFilesWindow)
 
     def retranslateUi(self, BrowseFilesWindow):
-        BrowseFilesWindow.setWindowTitle(QtGui.QApplication.translate("BrowseFilesWindow", "Browse Files", None, QtGui.QApplication.UnicodeUTF8))
+        BrowseFilesWindow.setWindowTitle(QtGui.QApplication.translate("BrowseFilesWindow", "Browse", None, QtGui.QApplication.UnicodeUTF8))
         BrowseFilesWindow.setToolTip(QtGui.QApplication.translate("BrowseFilesWindow", "The browse window allow to visualize several signals and its properties. You can select one or many to open in sound Lab.", None, QtGui.QApplication.UnicodeUTF8))
         self.playFile_bttn.setToolTip(QtGui.QApplication.translate("BrowseFilesWindow", "Play the first of the selected signals.", None, QtGui.QApplication.UnicodeUTF8))
         self.playFile_bttn.setText(QtGui.QApplication.translate("BrowseFilesWindow", "Play", None, QtGui.QApplication.UnicodeUTF8))

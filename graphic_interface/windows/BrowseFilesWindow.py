@@ -1,66 +1,15 @@
 # -*- coding: utf-8 -*-
-from PyQt4 import QtGui
 import os
+import time
+
+from PyQt4 import QtGui
 from PyQt4.QtCore import pyqtSignal, pyqtSlot, Qt
 from PyQt4.QtGui import QAbstractItemView, QFileDialog
-import time
-from utils.Utils import DECIMAL_PLACES, folder_files as getFolderFiles
 from duetto.audio_signals.AudioSignalPlayer import AudioSignalPlayer
 from duetto.audio_signals import openSignal
+
+from utils.Utils import DECIMAL_PLACES, folder_files as getFolderFiles, read_wav_metadata
 from graphic_interface.windows.ui_python_files.BrowseFilesWindow import Ui_BrowseFilesWindow
-from io import SEEK_CUR
-import struct
-from scipy.io import wavfile
-from numpy.compat import asbytes
-
-
-# method to read the metadata of a wav file
-# would be included in api later
-def read_wav_metadata(stream):
-    """
-    Reads a stream that contains an wav signal. Returns a tuple containing sampling rate, bit depth, number of
-    channels, user data, and data in that order. Before returning it closes the stream.
-    :param stream: An instance of a class derived from io.IOBase.
-        The stream from which to read. A call to its readable() and seekable() methods must return True. Its
-        contents must be in WAV format, otherwise an exception is raised.
-    """
-    # read the first chunk (the riff chunk),
-    # contains the size and a way to know this is a WAV stream
-    fsize = wavfile._read_riff_chunk(stream)
-
-    noc = 1
-    bits = 16
-    rate = 44100
-    userData = ''
-    data = None
-
-    # read each chunk
-    while stream.tell() < fsize:
-        chunk_id = stream.read(4)
-
-        if chunk_id == asbytes('fmt '):
-            # read fmt chunk, contains all metadata
-            size, comp, noc, rate, sbytes, ba, bits = wavfile._read_fmt_chunk(stream)
-        elif chunk_id == asbytes('data'):
-            # read data chunk
-            if wavfile._big_endian:
-                fmt = '>i'
-            else:
-                fmt = '<i'
-            size = struct.unpack(fmt, stream.read(4))[0]
-            stream.seek(size, SEEK_CUR)
-        else:
-            # ignore unknown chunk
-            dt = stream.read(4)
-            if wavfile._big_endian:
-                fmt = '>i'
-            else:
-                fmt = '<i'
-            size = struct.unpack(fmt, dt)[0]
-            stream.seek(size, SEEK_CUR)
-
-    stream.close()
-    return rate, bits, noc, userData, size
 
 
 class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
@@ -105,7 +54,10 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
         for file_path in folderFiles:
             self.add_file(file_path)
 
+        self.files_tablewidget.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.files_tablewidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.files_tablewidget.cellPressed.connect(self.select_file)
+
         self.selectAll_bttn.setText(self.tr(u"Select All"))
 
         self.player = None
@@ -238,6 +190,9 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
 
     # region Files Selection
 
+    def select_file(self, row, column=0):
+        self.files_tablewidget.item(row, 0).setCheckState(Qt.Checked)
+
     @pyqtSlot()
     def on_actionInvertSelection_triggered(self):
         """
@@ -367,3 +322,9 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
 
         except Exception as ex:
             pass
+
+    def closeEvent(self, *args, **kwargs):
+        QtGui.QMainWindow.closeEvent(self, *args, **kwargs)
+
+        if self.player:
+            self.player.stop()

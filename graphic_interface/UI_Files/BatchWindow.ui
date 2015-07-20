@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Batch Window</string>
+   <string>Batch Processing</string>
   </property>
   <property name="toolTip">
    <string>The batch window allow to execute a processing over multiples signal files.</string>

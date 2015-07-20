@@ -1,0 +1,41 @@
+<RCC>
+  <qresource prefix="myappicons">
+    <file>duetto_logo.png</file>
+    <file>add.png</file>
+    <file>deselectElements.png</file>
+    <file>delete_elements.png</file>
+    <file>81.ico</file>
+    <file>2dgraphs.png</file>
+    <file>Process Viewer.png</file>
+    <file>ColorSync Utility.png</file>
+    <file>Macromedia.png</file>
+    <file>downfile.png</file>
+    <file>upfile.png</file>
+    <file>undo.png</file>
+    <file>redo.png</file>
+    <file>cerrar.png</file>
+    <file>Photofiltre.png</file>
+    <file>Camera.ico</file>
+    <file>Position.png</file>
+    <file>Behavior.png</file>
+    <file>pausa.png</file>
+    <file>record_26x26.png</file>
+    <file>spec.ico</file>
+    <file>osc.ico</file>
+    <file>combined.ico</file>
+    <file>Excel.png</file>
+    <file>powerspec.ico</file>
+    <file>copy_26x26.png</file>
+    <file>cut_26x26.png</file>
+    <file>paste_26x26.png</file>
+    <file>02049_26x26.png</file>
+    <file>02051_26x26.png</file>
+    <file>225.ico</file>
+    <file>zoom_26x26.png</file>
+    <file>Leopard Icon 60.ico</file>
+    <file>81.ico</file>
+    <file>zoomin_26x26.png</file>
+    <file>zoomout_26x26.png</file>
+  </qresource>
+  <qresource prefix="GraphicInterface\Windows"/>
+</RCC>

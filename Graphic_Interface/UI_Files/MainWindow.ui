@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>745</width>
-    <height>386</height>
+    <height>454</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -126,9 +126,9 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
    <widget class="QMenu" name="menuFile">
     <property name="geometry">
      <rect>
-      <x>15</x>
-      <y>129</y>
-      <width>171</width>
+      <x>65</x>
+      <y>184</y>
+      <width>174</width>
       <height>394</height>
      </rect>
     </property>
@@ -185,6 +185,7 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
      <string>Tools</string>
     </property>
     <addaction name="actionFull_Screen"/>
+    <addaction name="actionSettings"/>
     <addaction name="separator"/>
     <addaction name="actionZoomIn"/>
     <addaction name="actionZoom_out"/>
@@ -225,7 +226,6 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
     <property name="title">
      <string>Analysis</string>
     </property>
-    <addaction name="actionSettings"/>
     <addaction name="actionOscilogram"/>
     <addaction name="actionSpectogram"/>
     <addaction name="actionCombined"/>
@@ -247,7 +247,7 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
       <string>Play Speed</string>
      </property>
      <property name="icon">
-      <iconset resource="resources/icons.qrc">
+      <iconset>
        <normaloff>:/myappicons/Macromedia.png</normaloff>:/myappicons/Macromedia.png</iconset>
      </property>
      <addaction name="action1_8x"/>
@@ -305,7 +305,7 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
     </size>
    </property>
    <property name="toolTip">
-    <string>Visual Settigns Area</string>
+    <string>Settigns Area</string>
    </property>
    <property name="styleSheet">
     <string notr="true">background-color: rgb(255, 255, 255);</string>
@@ -325,6 +325,12 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
    <widget class="QWidget" name="osc_settings_contents"/>
   </widget>
   <widget class="SoundLabToolBarWidget" name="toolBar">
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
    <property name="windowTitle">
     <string>toolBar</string>
    </property>
@@ -347,7 +353,7 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
   <action name="actionOpen">
    <property name="icon">
     <iconset resource="resources/icons.qrc">
-     <normaloff>:/myappicons/81.ico</normaloff>:/myappicons/81.ico</iconset>
+     <normaloff>:/myappicons/button_open.png</normaloff>:/myappicons/button_open.png</iconset>
    </property>
    <property name="text">
     <string>Open</string>
@@ -374,10 +380,10 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
   <action name="actionZoomIn">
    <property name="icon">
     <iconset resource="resources/icons.qrc">
-     <normaloff>:/myappicons/zoomin_26x26.png</normaloff>:/myappicons/zoomin_26x26.png</iconset>
+     <normaloff>:/myappicons/button_zoom_in.png</normaloff>:/myappicons/button_zoom_in.png</iconset>
    </property>
    <property name="text">
-    <string>Zoom in</string>
+    <string>Zoom In</string>
    </property>
    <property name="shortcut">
     <string>+</string>
@@ -386,10 +392,10 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
   <action name="actionZoom_out">
    <property name="icon">
     <iconset resource="resources/icons.qrc">
-     <normaloff>:/myappicons/zoomout_26x26.png</normaloff>:/myappicons/zoomout_26x26.png</iconset>
+     <normaloff>:/myappicons/button_zoom_out.png</normaloff>:/myappicons/button_zoom_out.png</iconset>
    </property>
    <property name="text">
-    <string>Zoom out</string>
+    <string>Zoom Out</string>
    </property>
    <property name="shortcut">
     <string>-</string>
@@ -398,7 +404,7 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
   <action name="actionSpectogram">
    <property name="icon">
     <iconset resource="resources/icons.qrc">
-     <normaloff>:/myappicons/spec.ico</normaloff>:/myappicons/spec.ico</iconset>
+     <normaloff>:/myappicons/button_spect.png</normaloff>:/myappicons/button_spect.png</iconset>
    </property>
    <property name="text">
     <string>Spectogram</string>
@@ -410,7 +416,7 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
    </property>
    <property name="icon">
     <iconset resource="resources/icons.qrc">
-     <normaloff>:/myappicons/osc.ico</normaloff>:/myappicons/osc.ico</iconset>
+     <normaloff>:/myappicons/button_oscil.png</normaloff>:/myappicons/button_oscil.png</iconset>
    </property>
    <property name="text">
     <string>Oscillogram</string>
@@ -422,7 +428,7 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
   <action name="actionCombined">
    <property name="icon">
     <iconset resource="resources/icons.qrc">
-     <normaloff>:/myappicons/combined.ico</normaloff>:/myappicons/combined.ico</iconset>
+     <normaloff>:/myappicons/button_oscil_spect.png</normaloff>:/myappicons/button_oscil_spect.png</iconset>
    </property>
    <property name="text">
     <string>Combined</string>
@@ -431,7 +437,7 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
   <action name="actionNew">
    <property name="icon">
     <iconset resource="resources/icons.qrc">
-     <normaloff>:/myappicons/Leopard Icon 60.ico</normaloff>:/myappicons/Leopard Icon 60.ico</iconset>
+     <normaloff>:/myappicons/button_new.png</normaloff>:/myappicons/button_new.png</iconset>
    </property>
    <property name="text">
     <string>New</string>
@@ -446,7 +452,7 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
   <action name="actionOneDimensionalTransformation">
    <property name="icon">
     <iconset resource="resources/icons.qrc">
-     <normaloff>:/myappicons/powerspec.ico</normaloff>:/myappicons/powerspec.ico</iconset>
+     <normaloff>:/myappicons/button_powerspect.png</normaloff>:/myappicons/button_powerspect.png</iconset>
    </property>
    <property name="text">
     <string>Power Spectrum</string>
@@ -455,7 +461,7 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
   <action name="actionPlay_Sound">
    <property name="icon">
     <iconset resource="resources/icons.qrc">
-     <normaloff>:/myappicons/02049_26x26.png</normaloff>:/myappicons/02049_26x26.png</iconset>
+     <normaloff>:/myappicons/button_play.png</normaloff>:/myappicons/button_play.png</iconset>
    </property>
    <property name="text">
     <string>Play</string>
@@ -467,7 +473,7 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
   <action name="actionStop_Sound">
    <property name="icon">
     <iconset resource="resources/icons.qrc">
-     <normaloff>:/myappicons/02051_26x26.png</normaloff>:/myappicons/02051_26x26.png</iconset>
+     <normaloff>:/myappicons/button_stop.png</normaloff>:/myappicons/button_stop.png</iconset>
    </property>
    <property name="text">
     <string>Stop</string>
@@ -476,7 +482,7 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
   <action name="actionPause_Sound">
    <property name="icon">
     <iconset resource="resources/icons.qrc">
-     <normaloff>:/myappicons/pausa.png</normaloff>:/myappicons/pausa.png</iconset>
+     <normaloff>:/myappicons/button_pause.png</normaloff>:/myappicons/button_pause.png</iconset>
    </property>
    <property name="text">
     <string>Pause</string>
@@ -488,7 +494,7 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
   <action name="actionZoom_out_entire_file">
    <property name="icon">
     <iconset resource="resources/icons.qrc">
-     <normaloff>:/myappicons/zoom_26x26.png</normaloff>:/myappicons/zoom_26x26.png</iconset>
+     <normaloff>:/myappicons/button_zoom.png</normaloff>:/myappicons/button_zoom.png</iconset>
    </property>
    <property name="text">
     <string>Zoom None</string>
@@ -497,10 +503,10 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
   <action name="actionSaveAs">
    <property name="icon">
     <iconset resource="resources/icons.qrc">
-     <normaloff>:/myappicons/225.ico</normaloff>:/myappicons/225.ico</iconset>
+     <normaloff>:/myappicons/button_save.png</normaloff>:/myappicons/button_save.png</iconset>
    </property>
    <property name="text">
-    <string>Save as</string>
+    <string>Save As</string>
    </property>
    <property name="toolTip">
     <string>Save</string>
@@ -512,7 +518,7 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
   <action name="actionCopy">
    <property name="icon">
     <iconset resource="resources/icons.qrc">
-     <normaloff>:/myappicons/copy_26x26.png</normaloff>:/myappicons/copy_26x26.png</iconset>
+     <normaloff>:/myappicons/button_copy.png</normaloff>:/myappicons/button_copy.png</iconset>
    </property>
    <property name="text">
     <string>Copy</string>
@@ -524,7 +530,7 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
   <action name="actionPaste">
    <property name="icon">
     <iconset resource="resources/icons.qrc">
-     <normaloff>:/myappicons/paste_26x26.png</normaloff>:/myappicons/paste_26x26.png</iconset>
+     <normaloff>:/myappicons/button_paste.png</normaloff>:/myappicons/button_paste.png</iconset>
    </property>
    <property name="text">
     <string>Paste</string>
@@ -536,7 +542,7 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
   <action name="actionCut">
    <property name="icon">
     <iconset resource="resources/icons.qrc">
-     <normaloff>:/myappicons/cut_26x26.png</normaloff>:/myappicons/cut_26x26.png</iconset>
+     <normaloff>:/myappicons/button_cut.png</normaloff>:/myappicons/button_cut.png</iconset>
    </property>
    <property name="text">
     <string>Cut</string>
@@ -548,10 +554,10 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
   <action name="actionSettings">
    <property name="icon">
     <iconset resource="resources/icons.qrc">
-     <normaloff>:/myappicons/ColorSync Utility.png</normaloff>:/myappicons/ColorSync Utility.png</iconset>
+     <normaloff>:/myappicons/button_settings.png</normaloff>:/myappicons/button_settings.png</iconset>
    </property>
    <property name="text">
-    <string>Visual Settings</string>
+    <string>Settings</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Space</string>
@@ -560,7 +566,7 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
   <action name="actionRecord">
    <property name="icon">
     <iconset resource="resources/icons.qrc">
-     <normaloff>:/myappicons/record_26x26.png</normaloff>:/myappicons/record_26x26.png</iconset>
+     <normaloff>:/myappicons/button_rec.png</normaloff>:/myappicons/button_rec.png</iconset>
    </property>
    <property name="text">
     <string>Record</string>
@@ -619,7 +625,7 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
   <action name="actionSegmentation_And_Clasification">
    <property name="icon">
     <iconset resource="resources/icons.qrc">
-     <normaloff>:/myappicons/Process Viewer.png</normaloff>:/myappicons/Process Viewer.png</iconset>
+     <normaloff>:/myappicons/button_segment_clasif.png</normaloff>:/myappicons/button_segment_clasif.png</iconset>
    </property>
    <property name="text">
     <string>Segmentation - Classification</string>
@@ -632,7 +638,7 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
   </action>
   <action name="actionSaveThemeAs">
    <property name="text">
-    <string>Save Theme as...</string>
+    <string>Save Theme As...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+T</string>
@@ -649,7 +655,7 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
   <action name="actionUndo">
    <property name="icon">
     <iconset resource="resources/icons.qrc">
-     <normaloff>:/myappicons/undo.png</normaloff>:/myappicons/undo.png</iconset>
+     <normaloff>:/myappicons/button_undo.png</normaloff>:/myappicons/button_undo.png</iconset>
    </property>
    <property name="text">
     <string>Undo</string>
@@ -661,7 +667,7 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
   <action name="actionRedo">
    <property name="icon">
     <iconset resource="resources/icons.qrc">
-     <normaloff>:/myappicons/redo.png</normaloff>:/myappicons/redo.png</iconset>
+     <normaloff>:/myappicons/button_redo.png</normaloff>:/myappicons/button_redo.png</iconset>
    </property>
    <property name="text">
     <string>Redo</string>
@@ -725,7 +731,7 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
   <action name="actionFile_Up">
    <property name="icon">
     <iconset resource="resources/icons.qrc">
-     <normaloff>:/myappicons/upfile.png</normaloff>:/myappicons/upfile.png</iconset>
+     <normaloff>:/myappicons/button_fileUp.png</normaloff>:/myappicons/button_fileUp.png</iconset>
    </property>
    <property name="text">
     <string>File Up</string>
@@ -737,7 +743,7 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
   <action name="actionFile_Down">
    <property name="icon">
     <iconset resource="resources/icons.qrc">
-     <normaloff>:/myappicons/downfile.png</normaloff>:/myappicons/downfile.png</iconset>
+     <normaloff>:/myappicons/button_fileDown.png</normaloff>:/myappicons/button_fileDown.png</iconset>
    </property>
    <property name="text">
     <string>File Down</string>
@@ -857,11 +863,11 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
   </action>
   <action name="actionSave_selected_interval_as">
    <property name="icon">
-    <iconset resource="resources/icons.qrc">
+    <iconset>
      <normaloff>:/myappicons/225.ico</normaloff>:/myappicons/225.ico</iconset>
    </property>
    <property name="text">
-    <string>Save selection as...</string>
+    <string>Save Selection As...</string>
    </property>
   </action>
   <action name="actionClose">
@@ -872,7 +878,7 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
   <action name="actionSave">
    <property name="icon">
     <iconset resource="resources/icons.qrc">
-     <normaloff>:/myappicons/225.ico</normaloff>:/myappicons/225.ico</iconset>
+     <normaloff>:/myappicons/button_save.png</normaloff>:/myappicons/button_save.png</iconset>
    </property>
    <property name="text">
     <string>Save</string>
@@ -954,7 +960,7 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
      <normaloff>:/myappicons/81.ico</normaloff>:/myappicons/81.ico</iconset>
    </property>
    <property name="text">
-    <string>Open selection</string>
+    <string>Open Selection</string>
    </property>
   </action>
   <action name="actionSwitchPlayStatus">
@@ -984,10 +990,10 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
    </property>
    <property name="icon">
     <iconset resource="resources/icons.qrc">
-     <normaloff>:/myappicons/Behavior.png</normaloff>:/myappicons/Behavior.png</iconset>
+     <normaloff>:/myappicons/button_loop.png</normaloff>:/myappicons/button_loop.png</iconset>
    </property>
    <property name="text">
-    <string>Play loop</string>
+    <string>Play Loop</string>
    </property>
    <property name="toolTip">
     <string>Play Loop</string>

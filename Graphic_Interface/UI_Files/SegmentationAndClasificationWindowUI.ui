@@ -144,11 +144,11 @@
     <addaction name="actionAddElement"/>
     <addaction name="actionDelete_Selected_Elements"/>
     <addaction name="actionDelete_All"/>
-    <addaction name="actionDetection"/>
-    <addaction name="actionParameter_Measurement"/>
-    <addaction name="separator"/>
-    <addaction name="actionClassify"/>
     <addaction name="actionDeselect_Elements"/>
+    <addaction name="separator"/>
+    <addaction name="actionDetection"/>
+    <addaction name="actionClassify"/>
+    <addaction name="actionParameter_Measurement"/>
    </widget>
    <widget class="QMenu" name="menuTools">
     <property name="title">
@@ -186,10 +186,10 @@
   <action name="actionZoomIn">
    <property name="icon">
     <iconset resource="resources/icons.qrc">
-     <normaloff>:/myappicons/zoomin_26x26.png</normaloff>:/myappicons/zoomin_26x26.png</iconset>
+     <normaloff>:/myappicons/button_zoom_in.png</normaloff>:/myappicons/button_zoom_in.png</iconset>
    </property>
    <property name="text">
-    <string>Zoom in</string>
+    <string>Zoom In</string>
    </property>
    <property name="shortcut">
     <string>+</string>
@@ -198,10 +198,10 @@
   <action name="actionZoom_out">
    <property name="icon">
     <iconset resource="resources/icons.qrc">
-     <normaloff>:/myappicons/zoomout_26x26.png</normaloff>:/myappicons/zoomout_26x26.png</iconset>
+     <normaloff>:/myappicons/button_zoom_out.png</normaloff>:/myappicons/button_zoom_out.png</iconset>
    </property>
    <property name="text">
-    <string>Zoom out</string>
+    <string>Zoom Out</string>
    </property>
    <property name="shortcut">
     <string>-</string>
@@ -210,7 +210,7 @@
   <action name="actionSpectogram">
    <property name="icon">
     <iconset resource="resources/icons.qrc">
-     <normaloff>:/myappicons/spec.ico</normaloff>:/myappicons/spec.ico</iconset>
+     <normaloff>:/myappicons/button_spect.png</normaloff>:/myappicons/button_spect.png</iconset>
    </property>
    <property name="text">
     <string>Spectogram</string>
@@ -222,7 +222,7 @@
    </property>
    <property name="icon">
     <iconset resource="resources/icons.qrc">
-     <normaloff>:/myappicons/osc.ico</normaloff>:/myappicons/osc.ico</iconset>
+     <normaloff>:/myappicons/button_oscil.png</normaloff>:/myappicons/button_oscil.png</iconset>
    </property>
    <property name="text">
     <string>Oscillogram</string>
@@ -234,7 +234,7 @@
   <action name="actionCombined">
    <property name="icon">
     <iconset resource="resources/icons.qrc">
-     <normaloff>:/myappicons/combined.ico</normaloff>:/myappicons/combined.ico</iconset>
+     <normaloff>:/myappicons/button_oscil_spect.png</normaloff>:/myappicons/button_oscil_spect.png</iconset>
    </property>
    <property name="text">
     <string>Combined</string>
@@ -243,7 +243,7 @@
   <action name="actionPlay_Sound">
    <property name="icon">
     <iconset resource="resources/icons.qrc">
-     <normaloff>:/myappicons/02049_26x26.png</normaloff>:/myappicons/02049_26x26.png</iconset>
+     <normaloff>:/myappicons/button_play.png</normaloff>:/myappicons/button_play.png</iconset>
    </property>
    <property name="text">
     <string>Play Sound</string>
@@ -255,7 +255,7 @@
   <action name="actionStop_Sound">
    <property name="icon">
     <iconset resource="resources/icons.qrc">
-     <normaloff>:/myappicons/02051_26x26.png</normaloff>:/myappicons/02051_26x26.png</iconset>
+     <normaloff>:/myappicons/button_stop.png</normaloff>:/myappicons/button_stop.png</iconset>
    </property>
    <property name="text">
     <string>Stop Sound</string>
@@ -264,7 +264,7 @@
   <action name="actionPause_Sound">
    <property name="icon">
     <iconset resource="resources/icons.qrc">
-     <normaloff>:/myappicons/pausa.png</normaloff>:/myappicons/pausa.png</iconset>
+     <normaloff>:/myappicons/button_pause.png</normaloff>:/myappicons/button_pause.png</iconset>
    </property>
    <property name="text">
     <string>Pause Sound</string>
@@ -273,46 +273,10 @@
   <action name="actionZoom_out_entire_file">
    <property name="icon">
     <iconset resource="resources/icons.qrc">
-     <normaloff>:/myappicons/zoom_26x26.png</normaloff>:/myappicons/zoom_26x26.png</iconset>
+     <normaloff>:/myappicons/button_zoom.png</normaloff>:/myappicons/button_zoom.png</iconset>
    </property>
    <property name="text">
     <string>Zoom None</string>
-   </property>
-  </action>
-  <action name="actionCopy">
-   <property name="icon">
-    <iconset resource="resources/icons.qrc">
-     <normaloff>:/myappicons/copy_26x26.png</normaloff>:/myappicons/copy_26x26.png</iconset>
-   </property>
-   <property name="text">
-    <string>Copy</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+C</string>
-   </property>
-  </action>
-  <action name="actionPaste">
-   <property name="icon">
-    <iconset resource="resources/icons.qrc">
-     <normaloff>:/myappicons/paste_26x26.png</normaloff>:/myappicons/paste_26x26.png</iconset>
-   </property>
-   <property name="text">
-    <string>Paste</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+V</string>
-   </property>
-  </action>
-  <action name="actionCut">
-   <property name="icon">
-    <iconset resource="resources/icons.qrc">
-     <normaloff>:/myappicons/cut_26x26.png</normaloff>:/myappicons/cut_26x26.png</iconset>
-   </property>
-   <property name="text">
-    <string>Cut</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+X</string>
    </property>
   </action>
   <action name="actionMeditions">
@@ -321,7 +285,7 @@
      <normaloff>:/myappicons/Excel.png</normaloff>:/myappicons/Excel.png</iconset>
    </property>
    <property name="text">
-    <string>Measurements as Excel</string>
+    <string>Measurements As Excel</string>
    </property>
   </action>
   <action name="actionView_Parameters">
@@ -338,7 +302,7 @@
   <action name="actionDetection">
    <property name="icon">
     <iconset resource="resources/icons.qrc">
-     <normaloff>:/myappicons/Process Viewer.png</normaloff>:/myappicons/Process Viewer.png</iconset>
+     <normaloff>:/myappicons/button_segment_clasif.png</normaloff>:/myappicons/button_segment_clasif.png</iconset>
    </property>
    <property name="text">
     <string>Detect</string>
@@ -477,7 +441,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Rectangular_Cursor</string>
+    <string>Rectangular Cursor</string>
    </property>
   </action>
   <action name="actionZoom_Cursor">
@@ -533,7 +497,7 @@
   </action>
   <action name="actionRecord">
    <property name="icon">
-    <iconset resource="resources/icons.qrc">
+    <iconset>
      <normaloff>:/myappicons/record_26x26.png</normaloff>:/myappicons/record_26x26.png</iconset>
    </property>
    <property name="text">
@@ -546,7 +510,7 @@
    </property>
    <property name="icon">
     <iconset resource="resources/icons.qrc">
-     <normaloff>:/myappicons/Behavior.png</normaloff>:/myappicons/Behavior.png</iconset>
+     <normaloff>:/myappicons/button_loop.png</normaloff>:/myappicons/button_loop.png</iconset>
    </property>
    <property name="text">
     <string>PlayLoop</string>
@@ -569,11 +533,11 @@
   </action>
   <action name="actionSound_File_Segmentation">
    <property name="icon">
-    <iconset resource="resources/icons.qrc">
+    <iconset>
      <normaloff>:/myappicons/225.ico</normaloff>:/myappicons/225.ico</iconset>
    </property>
    <property name="text">
-    <string>Segmentation on file</string>
+    <string>Segmentation On File</string>
    </property>
   </action>
   <action name="actionTemporal_Parameters">
@@ -634,6 +598,11 @@
  </widget>
  <customwidgets>
   <customwidget>
+   <class>SoundLabToolBarWidget</class>
+   <extends>QToolBar</extends>
+   <header>graphic_interface.widgets.SoundLabToolBar</header>
+  </customwidget>
+  <customwidget>
    <class>QSignalDetectorWidget</class>
    <extends>QWidget</extends>
    <header>graphic_interface.widgets.QSignalDetectorWidget</header>
@@ -643,11 +612,6 @@
    <class>TableWidget</class>
    <extends>QTableWidget</extends>
    <header>pyqtgraph.h</header>
-  </customwidget>
-  <customwidget>
-   <class>SoundLabToolBarWidget</class>
-   <extends>QToolBar</extends>
-   <header>graphic_interface.widgets.SoundLabToolBar</header>
   </customwidget>
  </customwidgets>
  <resources>
