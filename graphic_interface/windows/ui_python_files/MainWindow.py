@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\MainWindow.ui'
+# Form implementation generated from reading ui file 'D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\MainWindow.ui'
 #
-# Created: Sat Jul 18 15:12:33 2015
+# Created: Tue Jul 21 08:33:34 2015
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -67,7 +67,7 @@ class Ui_DuettoMainWindow(object):
         self.menubar.setStyleSheet(_fromUtf8(""))
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuFile = QtGui.QMenu(self.menubar)
-        self.menuFile.setGeometry(QtCore.QRect(65, 184, 174, 394))
+        self.menuFile.setGeometry(QtCore.QRect(131, 126, 174, 394))
         self.menuFile.setAutoFillBackground(False)
         self.menuFile.setStyleSheet(_fromUtf8(""))
         self.menuFile.setTearOffEnabled(False)
@@ -330,9 +330,7 @@ class Ui_DuettoMainWindow(object):
         self.actionChange_Sign = QtGui.QAction(DuettoMainWindow)
         self.actionChange_Sign.setObjectName(_fromUtf8("actionChange_Sign"))
         self.actionSave_selected_interval_as = QtGui.QAction(DuettoMainWindow)
-        icon29 = QtGui.QIcon()
-        icon29.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/225.ico")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionSave_selected_interval_as.setIcon(icon29)
+        self.actionSave_selected_interval_as.setIcon(icon15)
         self.actionSave_selected_interval_as.setObjectName(_fromUtf8("actionSave_selected_interval_as"))
         self.actionClose = QtGui.QAction(DuettoMainWindow)
         self.actionClose.setObjectName(_fromUtf8("actionClose"))
@@ -354,15 +352,15 @@ class Ui_DuettoMainWindow(object):
         self.actionSound_Devices.setCheckable(False)
         self.actionSound_Devices.setObjectName(_fromUtf8("actionSound_Devices"))
         self.actionBrowse = QtGui.QAction(DuettoMainWindow)
-        icon30 = QtGui.QIcon()
-        icon30.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/81.ico")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionBrowse.setIcon(icon30)
+        icon29 = QtGui.QIcon()
+        icon29.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/81.ico")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionBrowse.setIcon(icon29)
         self.actionBrowse.setObjectName(_fromUtf8("actionBrowse"))
         self.actionOpenInOtherTab = QtGui.QAction(DuettoMainWindow)
-        self.actionOpenInOtherTab.setIcon(icon30)
+        self.actionOpenInOtherTab.setIcon(icon29)
         self.actionOpenInOtherTab.setObjectName(_fromUtf8("actionOpenInOtherTab"))
         self.actionOpen_Selection = QtGui.QAction(DuettoMainWindow)
-        self.actionOpen_Selection.setIcon(icon30)
+        self.actionOpen_Selection.setIcon(icon29)
         self.actionOpen_Selection.setObjectName(_fromUtf8("actionOpen_Selection"))
         self.actionSwitchPlayStatus = QtGui.QAction(DuettoMainWindow)
         self.actionSwitchPlayStatus.setObjectName(_fromUtf8("actionSwitchPlayStatus"))
@@ -372,9 +370,9 @@ class Ui_DuettoMainWindow(object):
         self.actionChangeTabUp.setObjectName(_fromUtf8("actionChangeTabUp"))
         self.actionPlayLoop = QtGui.QAction(DuettoMainWindow)
         self.actionPlayLoop.setCheckable(True)
-        icon31 = QtGui.QIcon()
-        icon31.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/button_loop.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
-        self.actionPlayLoop.setIcon(icon31)
+        icon30 = QtGui.QIcon()
+        icon30.addPixmap(QtGui.QPixmap(_fromUtf8(":/myappicons/button_loop.png")), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionPlayLoop.setIcon(icon30)
         self.actionPlayLoop.setObjectName(_fromUtf8("actionPlayLoop"))
         self.actionChangeTabDown = QtGui.QAction(DuettoMainWindow)
         self.actionChangeTabDown.setObjectName(_fromUtf8("actionChangeTabDown"))
