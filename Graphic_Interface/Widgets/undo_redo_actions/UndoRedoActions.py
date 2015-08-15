@@ -310,7 +310,6 @@ class ResamplingAction(UndoRedoAction):
     def redo(self):
         self.signal.resampling(self.sr)
 
-
 # region CUT,COPY,PASTE
 class EditionAction(UndoRedoAction):
 

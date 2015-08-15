@@ -628,6 +628,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         Gets the current widget selected or None if no signal is opened
         :return:
         """
+
         if self.tabOpenedSignals.count() == 0:
             return None
 

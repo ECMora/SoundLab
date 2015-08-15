@@ -1,53 +1,43 @@
 duetto Sound Lab Tasks
-# TODO these are the tasks to do in the software development of the duetto SoundLab System.
-# TODO tasks marked with * are ready to be implemented
-# TODO those marked with - are in process and those marked with + are completed.
-# TODO the tasks are divided by their complexity.
+
+Tasks to do in the software development of the duetto SoundLab
+System. Tasks  marked  with * are  ready  to  be  implemented.
+Those  marked  with - are in process and those marked with '+'
+are  completed. The tasks  are  divided  by their complexity.
 
 -----------------------------------------------------------
 
 Complexity-1: No new-code activity
 
-- - - - (May of 2015) - - - -
-+ User Manual
-* Styles improvement
+* Check and complete User Manual
 * Testing and searching of bugs
 * Translation of strings with Translator
 
 -----------------------------------------------------------
 
 Complexity-2: Small-to-medium code changes
-- - - - (April 2015) - - - -
-* Fix zoom bug. Mouse move heavy computation
-* Fix other bugs.
+
+
 -----------------------------------------------------------
 
 Complexity-3: Large code changes and/or multiple code files tasks
 
-* improve parameters speed processing time
-* improve segmentation speed
-* implementation of classification methods (ANN)
 
 -----------------------------------------------------------
 
 Complexity-4: New  Code Design and Infrastructure Implementation
 
-                  (Second version of Sound Lab)
-            - - - - (June, July 2015 to ...) - - - -
 
 * Design of extra modules.
-    * Tools                         (Gabriela)
-    * Synthesizer                   (Carlos)
-    * One dimensional Transforms    (Gabriela)
-    * Filters                       (Hiram - Yasel)
+    * Tools                      ---> (Gabriela)      [Lupas, gomas de borrar, extraccion de datos variados etc]
+    * Synthesizer                ---> (Carlos)        [sintetizador de señales complejo usando trabajo de carlos 3ro]
+    * One dimensional Transforms ---> (Gabriela)      [agregar las presentes en avisoft, nuevas y mejorar eficiencia]
+    * Filters                    ---> (Hiram - Yasel) [implementación de FIR e IIR filters acceso a propiedades y diseño de filtros complejos]
     * Audio Formats and Compression (Carlos)
+
     * Parameter Measurement         (Gabriela - Hiram - Carlos - Yasel)
     * Segmentation                  (Hiram - Yasel)
     * Classification                (Gabriela - Hiram - Carlos - Yasel)
     * Spectral Representation       (?)
 
-
-
--------------------------------------------- ---------------
-Busqueda
-    Librerias de compresion de audio.
+* Include the segmentation, parameter measurements and clasification methods on duetto api?
