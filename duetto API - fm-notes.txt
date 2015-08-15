@@ -1,0 +1,67 @@
+Spectrogram
+===========
+17: ¿Por qué definir esto como una constante?
+    SPECGRAM_COMPLEX_SIDE = "onesided"
+  ¿Por qué de tipo string?
+  Los comentarios son:
+  - Debería implementarse como algo mutable, de manera que con una misma instancia
+  pueda obtenerse a placer cualquiera de las variantes del espectrograma.
+  - Los valores posibles de ese algo mutable debería implementarse de forma flexible
+  también (en caso que cambie la biblioteca base), ya sea con @staticmethod en esta u
+  otra clase auxiliar, o métodos/propiedades de esta u otra clase auxiliar, etc.
+  - El nombre debería ser algo como SPECGRAM_SIDES (lo que es COMPLEX o no
+  es el dato, no el resultado de la STFT)
+29: Conversar la necesidad de tener decimales si es dB en
+    AMPLITUDE_DATA_DECIMAL_PLACES = 2
+    (casi al final hay otro comentario sobre el tema de dB)
+31: ¿Por qué ovelap con número de puntos? Normalmente es un porciento del
+  NFFT o debería recalcularse cuando cambia NFFT (en el @NFFT.setter)
+52: ¿Por qué _signal con un solo underscore y el resto de los atributos con dos?
+56: ¿Por qué usar esta instrucción:
+        self.__window = window if window is not None else WindowFunction.Hamming
+  y no simplemente:
+        self.__window = window
+  habiendo definido WindowFunction.Hamming como el valor por defecto del parámetro
+  window en la definición del método __init__?
+59: "matriz" debería ser "matrix"
+84: ¿Por qué no force=True en el llamado a 
+        self.recomputeSpectrogram()
+  dentro del @signal.setter?
+99: El @overlap.setter yo lo implementaría de la siguiente manera:
+        if self.__overlap != overlap:
+          self.__overlap = overlap
+          # update values for other processing or visualizing options
+          self.recomputeSpectrogram()
+    Con la implementación actual, si no cambia el overlap, se estaría llamando
+    a self.recomputeSpectrogram() con los parámetros por defecto y como se puede
+    comprobar siempre se cumpliría la condicional de la línea 172 y se retornaría
+    sin hacer nada, por tanto no debería hacer falta el llamado.
+    (En caso de estar de acuerdo, revisar los otros setters para tratamiento similar)
+128: ¿Por qué no se llama a
+        self.recomputeSpectrogram()
+  dentro del @window.setter? (y en tal caso con force=True)
+163: Discutir como cambia lo programado bajo:
+        # computing overlap so the number of columns is less or equal than maxCol
+  cuando el overlap es en porciento.
+171: Conversar lo del overlap en recomputeSpectrogram
+  (para ser un poco claro en los términos de los comentarios, por ejemplo en la línea
+  172 "completely" está mal usado, pues realmente no se recalcularía "at all". Además
+  el término overlap se usa aquí en dos sentidos, en el del overlap de la STFT y en el
+  sentido común de que se superponga lo mostrado con lo que se quiere recalcular)
+177: Discutir que "# delegate in matplotlib specgram function ..." sea más bien
+  delegar a un método helper nuestro que sirva de middleware entre nuestra API
+  y cualquiera sea la biblioteca final que se use (para independizar de cualquiera
+  sea esa biblioteca)
+- Llegado este punto, ¿será necesario diseñar una clase SimpleSpectrogram para usos
+  simples en la generación de un spectrograma en memoria? O quizás con métodos 
+  helpers será suficiente. Discutir esto.
+185: Conversar la programación de lo programado bajo:
+        # changes to dB for bioacustic processing
+  Discutir:
+  - conversión a dB y la posibilidad de que sea opcional
+  - el tratamiento de los -Inf, y esos valores de "-100"
+232: En getInfo, en vez de
+        freq = np.round(self.freqs[y] * 1.0 / 1000, self.FREQ_DATA_DECIMAL_PLACES)
+  mejor (más claro y limpio)
+        freq = np.round(self.freqs[y] / 1000.0, self.FREQ_DATA_DECIMAL_PLACES)
+

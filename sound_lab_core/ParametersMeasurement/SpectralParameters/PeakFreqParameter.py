@@ -21,7 +21,7 @@ class PeakFreqParameter(SpectralParameter):
         # frequency_params is a tuple Pxx, freqs shared by all the frequency parameters
         # on their measurements
         Pxx, freqs = self.time_location.get_segment_data(segment)
-
+        print(Pxx)
         min_freq_index, max_freq_index = self.spectral_location.get_freq_limits(freqs)
 
         Pxx = Pxx[min_freq_index:max_freq_index]

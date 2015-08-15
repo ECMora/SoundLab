@@ -15,17 +15,21 @@ class StartMeasurementLocation(MeasurementLocation):
         self.name = "Start" + "" if self.ms_delay == 0 else " + " + str(self.ms_delay) + "ms"
 
     def get_data_array_slice(self, segment):
-        slice_arr = zeros(segment.indexTo - segment.indexFrom)
+
+        # slice_arr = zeros(segment.indexTo - segment.indexFrom)
+
+        slice_arr = zeros(256)
 
         start_index = min(int(len(slice_arr) * 0.75), self.ms_delay * segment.signal.samplingRate / 1000)
 
-        size = len(slice_arr) / 4
-
+        # size = len(slice_arr) / 4
+        size = 256
         # if start index is to far that the 1/4 of slice is outside the segment
-        if start_index >= len(slice_arr) * 3.0 / 4:
-            size = len(slice_arr) - start_index
+        # if start_index >= len(slice_arr) * 3.0 / 4:
+        #     size = len(slice_arr) - start_index
 
-        slice_arr[: size] = segment.signal.data[start_index: start_index + size]
+        # slice_arr[: size] = segment.signal.data[start_index: start_index + size]
+        slice_arr[: size] = segment.signal.data[segment.indexFrom + start_index: segment.indexFrom + start_index + size]
 
         self.time_start_index, self.time_end_index = segment.indexFrom + start_index, segment.indexFrom + start_index + size
 
