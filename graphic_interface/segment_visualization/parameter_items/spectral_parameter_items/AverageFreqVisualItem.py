@@ -18,6 +18,7 @@ class AverageFreqVisualItem(SpectralVisualItemWrapper):
         self.indexFrom = 0
         self.indexTo = 0
 
+
         # the freq value
         self.peak_freq_value = 0
 

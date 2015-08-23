@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
-from PyQt4 import QtGui
 import numpy as np
-from graphic_interface.segment_visualization.parameter_items.spectral_parameter_items.AverageFreqVisualItem import \
-    AverageFreqVisualItem
-from sound_lab_core.ParametersMeasurement.Locations.TimeLocations.MeanMeasurementLocation import MeanMeasurementLocation
 from sound_lab_core.ParametersMeasurement.SpectralParameters.FreqParameter import SpectralParameter
 
 
@@ -21,7 +17,7 @@ class PeakFreqParameter(SpectralParameter):
         # frequency_params is a tuple Pxx, freqs shared by all the frequency parameters
         # on their measurements
         Pxx, freqs = self.time_location.get_segment_data(segment)
-        print(Pxx)
+
         min_freq_index, max_freq_index = self.spectral_location.get_freq_limits(freqs)
 
         Pxx = Pxx[min_freq_index:max_freq_index]

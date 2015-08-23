@@ -1,4 +1,5 @@
 from PyQt4 import QtGui
+from PyQt4.QtGui import QColor
 from sound_lab_core.ParametersMeasurement.Adapters.ParameterAdapter import ParameterAdapter
 from sound_lab_core.SoundLabAdapter import SoundLabAdapter
 from pyqtgraph.parametertree import Parameter
@@ -26,6 +27,20 @@ class SpectralParameterAdapter(ParameterAdapter):
         self.decimal_places = 3
 
         self.settings = Parameter.create(name=u'Settings', type=u'group', children=self._settings)
+
+    def state(self):
+            return {"decimals": self.decimal_places, "visual_item_color": self.visual_item_color.rgb(),
+                    "show_items":self.show_visual_items}
+
+    def load_state(self, state):
+
+        decimals = state["decimals"] if "decimals" in state else self.decimal_places
+        visual_item_color_rgb = state["visual_item_color"] if "visual_item_color" in state else self.visual_item_color
+        show_items = state["show_items"] if "show_items" in state else self.show_items
+
+        self.settings.param(unicode(self.tr(u'Decimal Places'))).setValue(decimals)
+        self.settings.param(unicode(self.tr(u'Visual Item Color'))).setValue(QColor(visual_item_color_rgb))
+        self.settings.param(unicode(self.tr(u'Show Visual Items'))).setValue(show_items)
 
     def compute_settings(self):
         # use a try catch because the instance must be required after
@@ -61,6 +76,22 @@ class FreqParameterAdapter(SpectralParameterAdapter):
         self.total = True
 
         self.settings = Parameter.create(name=u'Settings', type=u'group', children=self._settings)
+
+    def state(self):
+        state = SpectralParameterAdapter.state(self)
+        state["total"] = self.total
+        state["threshold"] = self.threshold
+
+        return state
+
+    def load_state(self, state):
+        SpectralParameterAdapter.load_state(self, state)
+
+        total = state["total"] if "total" in state else self.total
+        threshold = state["threshold"] if "threshold" in state else self.threshold
+
+        self.settings.param(unicode(self.tr(u'Threshold (dB)'))).setValue(threshold)
+        self.settings.param(unicode(self.tr(u'Total'))).setValue(total)
 
     def compute_settings(self):
         SpectralParameterAdapter.compute_settings(self)

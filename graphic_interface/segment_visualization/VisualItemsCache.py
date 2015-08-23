@@ -5,7 +5,7 @@ from graphic_interface.segment_visualization.DetectedSoundLabElement import Dete
 
 class VisualItemsCache:
     """
-    Static class that handles the cache for the visual elements
+    Class that handles the cache for the visual elements
     Keep in memory a set of visual element to reuse them if necessary for efficiency
     Singleton pattern.
     """

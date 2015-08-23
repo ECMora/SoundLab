@@ -347,7 +347,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         osc_items = self.segmentation_visual_items + self.no_visible_items
 
         # add oscilogram items if visible
-        if self.visibleOscilogram and osc and self.visual_items_visibility.oscilogram_items_visible:
+        if osc and self.visual_items_visibility.oscilogram_items_visible:
 
             if self.visual_items_visibility.oscilogram_text_visible:
                 osc_items.extend([x for e in elements for x in e.time_element.visual_text])
@@ -361,7 +361,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         spec_items = []
 
         # add spectrogram items if visible
-        if self.visibleSpectrogram and spec and self.visual_items_visibility.spectrogram_items_visible:
+        if spec and self.visual_items_visibility.spectrogram_items_visible:
 
             if self.visual_items_visibility.spectrogram_text_visible:
                 spec_items.extend([x for e in elements for x in e.spectral_element.visual_text])
@@ -473,7 +473,14 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         :return: tuple of int (start, end) with the indexes of start and end
         selected elements or None if no selection is made.
         """
-        start, end = self.selectedRegion
+        # check if there is a selected element
+        selected_rgn_start, selected_rgn_end = self.oscSelectionRegion.getRegion()
+
+        # if no selected element
+        if selected_rgn_end <= selected_rgn_start:
+            start, end = self.selectedRegion
+        else:
+            start, end = selected_rgn_start, selected_rgn_end
 
         # if no area is selected
         if end == start or len(self.elements) == 0 or (start == self.mainCursor.min and end == self.mainCursor.max):
@@ -499,21 +506,22 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
     def delete_selected_elements(self):
         """
-        Deletes the elements between the selection
-        (zoom cursor if zoom cursor is selected and there is a selection or
-        the visible interval otherwise)
-        @return: the tuple (x,y) of init and end of the interval deleted.
-        If no element is deleted returns None
+        Delete selected element if any. If no element is selected then deletes the
+        elements between the zoom selection if any. If no zoom selection is made
+        then delete the elements on the visible interval
         """
+
         selection = self.selected_elements_interval()
+
         if selection is None:
             return
 
         # remove the selected region Element if is contained on the removed elements region
         selected_rgn_start, selected_rgn_end = self.oscSelectionRegion.getRegion()
+
         start, end = self.selectedRegion
         if start <= selected_rgn_start <= end or start <= selected_rgn_end <= end:
-            self.select_element()
+            self.deselect_element()
 
         index_from, index_to = selection
         self.release_items(index_from, index_to)

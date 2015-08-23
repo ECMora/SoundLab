@@ -7,7 +7,7 @@ from duetto.audio_signals.AudioSignal import AudioSignal
 from PyQt4.QtGui import QFileDialog, QAbstractItemView, QActionGroup, QMessageBox, \
     QProgressBar, QColor, QAction, QTableWidgetItem
 from graphic_interface.windows.ParametersWindow import ParametersWindow
-from sound_lab_core.ParametersMeasurement.ParameterManager import ParameterManager
+from sound_lab_core.ParametersMeasurement.MeasurementTemplate import MeasurementTemplate
 from graphic_interface.dialogs.CrossCorrelationDialog import CrossCorrelationDialog
 from ..dialogs.elemDetectSettings import ElemDetectSettingsDialog
 from graphic_interface.windows.ToastWidget import ToastWidget
@@ -19,6 +19,7 @@ from ui_python_files.SegmentationAndClasificationWindowUI import Ui_MainWindow
 
 class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
     """
+
     Window that process the segmentation and classification of a signal
     Contains a QSignalDetectorWidget that wrapper several functionality
     Allows to select the segmentation and classification settings,
@@ -73,7 +74,7 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         self.segmentManager.segmentVisualItemAdded.connect(self.widget.add_parameter_visual_items)
 
         # the factory of adapters for parameters to supply to the ui window or segmentation dialog
-        self.parameter_manager = ParameterManager(signal=signal)
+        self.parameter_manager = MeasurementTemplate(signal=signal)
 
         # set the signal to the widget
         self.widget.signal = signal
@@ -95,6 +96,7 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         self.dockWidgetParameterTableOscilogram.setVisible(False)
         self.tableParameterOscilogram.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.tableParameterOscilogram.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.tableParameterOscilogram.setSortingEnabled(False)
 
         # add the context menu actions to the widget
         self.__addContextMenuActions()
@@ -110,7 +112,7 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         if workspace is not None:
             self.load_workspace(workspace)
 
-        self.showMaximized()
+        self.show()
 
         self.try_restore_previous_session()
 
@@ -206,7 +208,8 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         segm_transf_actions = QActionGroup(self)
         segm_transf_actions_list = [self.actionDetection, self.actionTwo_Dimensional_Graphs,
                                     self.actionDelete_Selected_Elements,
-                                    self.actionDeselect_Elements, self.actionAddElement, sep]
+                                    self.actionDeselect_Elements, self.actionAddElement,
+                                    self.actionParameter_Measurement, sep]
 
         for act in segm_transf_actions_list:
             act.setActionGroup(segm_transf_actions)
@@ -215,7 +218,7 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
         # add to the customizable sound lab toolbar first than the default actions
         # addActionGroup(actionGroup, name)
-        self.toolBar.addActionGroup(segm_transf_actions, u"Segments")
+        self.toolBar.addActionGroup(segm_transf_actions, u"Segments and Parameters")
 
         # apply the common sound lab window toolbar actions
         SoundLabWindow.configureToolBarActionsGroups(self)
@@ -280,25 +283,29 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         Save to disc the measurement made by the window to the elements detected.
         :param name: The name of the file to save the data
         :param table: The table with the parameter to save into excel
-        :return:
+        :return: True if successfully False otherwise
         """
         file_name = unicode(QFileDialog.getSaveFileName(self, self.tr(u"Save parameters as excel file"),
                                                         os.path.join(self.workSpace.lastOpenedFolder,
                                                                      str(self.widget.signalName) + ".xls"), "*.xls"))
         # save the data of table
-        if file_name:
-            # the excel book to save data
-            try:
+        if not file_name:
+            return False
 
-                wb = xlwt.Workbook()
-                ws = wb.add_sheet("Elements Measurements")
-                self.write_data(ws, self.tableParameterOscilogram)
-                wb.save(file_name)
+        # if successfully selected the path save the excel book of data
+        try:
 
-                self.segmentManager.save_data_on_db()
+            wb = xlwt.Workbook()
+            ws = wb.add_sheet("Elements Measurements")
+            self.write_data(ws, self.tableParameterOscilogram)
+            wb.save(file_name)
 
-            except Exception as ex:
-                print("Error saving the excel file. " + ex.message)
+            self.segmentManager.save_data_on_db()
+
+        except Exception as ex:
+            print("Error saving the excel file. " + ex.message)
+
+        return True
 
     @pyqtSlot()
     def on_actionSound_File_Segmentation_triggered(self):
@@ -388,16 +395,11 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         if self.tableParameterOscilogram.rowCount() > 0:
 
             result = mbox.exec_()
-            # get the user decision about save
-            if result == QMessageBox.Cancel:
-                # cancel the close
+
+            # check if the user decision about save is discard and continue working
+            if result == QMessageBox.Cancel or (result == QMessageBox.Yes and not self.on_actionMeditions_triggered()):
                 event.ignore()
                 return
-
-            elif result == QMessageBox.Yes:
-                # save the measured data as excel
-                # get the file name to save the measurements
-                self.on_actionMeditions_triggered()
 
             self.clear_two_dim_windows()
 
@@ -468,6 +470,8 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         self.update_two_dim_windows()
 
         self.widget.graph()
+
+        self.__set_parameter_window_visible()
 
     @pyqtSlot()
     def on_actionDeselect_Elements_triggered(self):
@@ -685,6 +689,15 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         self.widget.graph()
         self.update_two_dim_windows()
 
+        self.__set_parameter_window_visible()
+
+    def __set_parameter_window_visible(self):
+
+        # set the parameter window to visible state after measurements
+        if not self.tableParameterOscilogram.isVisible():
+            self.actionView_Parameters.setChecked(True)
+            self.dockWidgetParameterTableOscilogram.setVisible(True)
+
     def update_two_dim_windows(self):
         # update the measured data on the two dimensional opened windows
         for wnd in self.two_dim_windows:
@@ -814,17 +827,18 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
     def on_actionParameter_Measurement_triggered(self):
 
         # check for previously parameters measurements to save
-        if self.tableParameterOscilogram.rowCount() > 0:
+        # there is measured parameters when the list of their names has at least one element
+        if len(self.segmentManager.parameterColumnNames) > 0:
 
             mbox = QMessageBox(QMessageBox.Question, self.tr(u"soundLab"),
-                               self.tr(u"You are going to make a new selection of parameters to measure."
-                                       u"All your previously selected elements measurements will be lost."
+                               self.tr(u"You are going to change the parameters to measure."
+                                       u"All your previously selected measurements will be lost."
                                        u"Do you want to save measurements first?"), QMessageBox.Yes | QMessageBox.No, self)
 
             if mbox.exec_() == QMessageBox.Yes:
                 self.on_actionMeditions_triggered()
 
-        param_window = ParametersWindow(self, self.parameter_manager)
+        param_window = ParametersWindow(self, self.parameter_manager, self.widget.signal)
 
         param_window.parameterChangeFinished.connect(lambda p: self.update_parameters(p))
 

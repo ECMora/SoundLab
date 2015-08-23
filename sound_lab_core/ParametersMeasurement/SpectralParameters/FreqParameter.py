@@ -34,9 +34,9 @@ class SpectralParameter(ParameterMeasurer):
         :return: The name and the location (if any)
         """
         time_location_name = "" if self.time_location is None else self.time_location.name
-        spectral_location_name = "" if self.spectral_location is None else self.spectral_location.name
+        # spectral_location_name = "" if self.spectral_location is None else self.spectral_location.name
 
-        return self._name + "(" + time_location_name + ")(" + spectral_location_name + ")"
+        return self._name + "(" + time_location_name + ")"  #(" + spectral_location_name + ")"
 
 
 class FreqParameter(SpectralParameter):

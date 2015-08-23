@@ -6,40 +6,165 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>825</width>
-    <height>493</height>
+    <width>932</width>
+    <height>643</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Parameters Window</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="2" rowspan="3">
-    <widget class="QWidget" name="settings_widget" native="true">
-     <property name="sizePolicy">
-      <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-       <horstretch>0</horstretch>
-       <verstretch>0</verstretch>
-      </sizepolicy>
+   <item row="8" column="1" colspan="6">
+    <widget class="QGroupBox" name="advanced_mode_gbox">
+     <property name="title">
+      <string/>
      </property>
-     <property name="minimumSize">
-      <size>
-       <width>250</width>
-       <height>0</height>
-      </size>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QSignalDetectorWidget" name="widget" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>150</width>
+          <height>250</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>600</width>
+          <height>250</height>
+         </size>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QGroupBox" name="groupBox">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="title">
+         <string>Measurement template</string>
+        </property>
+        <layout class="QGridLayout" name="gridLayout_5">
+         <item row="4" column="1">
+          <widget class="QLineEdit" name="new_template_name_linedit"/>
+         </item>
+         <item row="6" column="0" colspan="2">
+          <widget class="QGroupBox" name="groupBox_2">
+           <property name="title">
+            <string>Previsualization Settings</string>
+           </property>
+           <layout class="QVBoxLayout" name="verticalLayout">
+            <item>
+             <widget class="QCheckBox" name="visible_oscilogram_cbox">
+              <property name="text">
+               <string>Visible Oscilogram</string>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QCheckBox" name="visible_spectrogram_cbox">
+              <property name="text">
+               <string>Visible Spectrogram</string>
+              </property>
+              <property name="checked">
+               <bool>false</bool>
+              </property>
+             </widget>
+            </item>
+           </layout>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QComboBox" name="measurement_template_cbox">
+           <item>
+            <property name="text">
+             <string>Bats</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>user defined</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>other template</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QPushButton" name="remove_measurement_template_bttn">
+           <property name="text">
+            <string>Remove</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QPushButton" name="save_measurement_template_as_bttn">
+           <property name="text">
+            <string>Save As</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="0" colspan="2">
+          <spacer name="verticalSpacer_2">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Fixed</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>10</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+         <item row="1" column="0" colspan="2">
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeType">
+            <enum>QSizePolicy::Fixed</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>10</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item row="1" column="1" colspan="6">
+    <widget class="QCheckBox" name="advanced_mode_visibility_cbox">
+     <property name="text">
+      <string>Show Advanced Mode</string>
      </property>
-     <property name="maximumSize">
-      <size>
-       <width>16777215</width>
-       <height>16777215</height>
-      </size>
-     </property>
-     <property name="styleSheet">
-      <string notr="true"/>
+     <property name="checked">
+      <bool>false</bool>
      </property>
     </widget>
    </item>
-   <item row="3" column="2">
+   <item row="9" column="6">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -49,17 +174,29 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="0" rowspan="3" colspan="2">
+   <item row="0" column="1" colspan="4">
     <widget class="QTabWidget" name="tab_parameters">
      <property name="sizePolicy">
       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-       <horstretch>2</horstretch>
+       <horstretch>10</horstretch>
        <verstretch>0</verstretch>
       </sizepolicy>
      </property>
      <property name="minimumSize">
       <size>
        <width>500</width>
+       <height>0</height>
+      </size>
+     </property>
+     <property name="maximumSize">
+      <size>
+       <width>600</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="sizeIncrement">
+      <size>
+       <width>3</width>
        <height>0</height>
       </size>
      </property>
@@ -98,21 +235,41 @@
      </widget>
     </widget>
    </item>
-   <item row="3" column="0" colspan="2">
-    <spacer name="horizontalSpacer">
-     <property name="orientation">
-      <enum>Qt::Horizontal</enum>
+   <item row="0" column="5" colspan="2">
+    <widget class="QWidget" name="settings_widget" native="true">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
      </property>
-     <property name="sizeHint" stdset="0">
+     <property name="minimumSize">
       <size>
-       <width>40</width>
-       <height>20</height>
+       <width>250</width>
+       <height>0</height>
       </size>
      </property>
-    </spacer>
+     <property name="maximumSize">
+      <size>
+       <width>16777215</width>
+       <height>16777215</height>
+      </size>
+     </property>
+     <property name="styleSheet">
+      <string notr="true"/>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>QSignalDetectorWidget</class>
+   <extends>QWidget</extends>
+   <header>graphic_interface.widgets.QSignalDetectorWidget</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections>
   <connection>

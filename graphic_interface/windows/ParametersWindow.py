@@ -1,13 +1,17 @@
 #  -*- coding: utf-8 -*-
+import os
 from PyQt4 import QtGui
+from duetto.audio_signals import openSignal
+from sound_lab_core.Elements.OneDimensionalElements.OneDimensionalElement import OneDimensionalElement
+from utils.Utils import small_signal
 from PyQt4.QtCore import Qt, pyqtSignal
 from PyQt4.QtGui import QAbstractItemView
 from pyqtgraph.parametertree import Parameter, ParameterTree
-from sound_lab_core.ParametersMeasurement.Adapters.FreqParametersadapters.FreqParameterAdapter import \
-    SpectralParameterAdapter
+from graphic_interface.widgets.signal_visualizer_tools import Tools
 from sound_lab_core.ParametersMeasurement.Adapters.Locations.LocationAdapter import LocationAdapter
-from sound_lab_core.ParametersMeasurement.ParameterManager import ParameterManager
+from sound_lab_core.ParametersMeasurement.MeasurementTemplate import MeasurementTemplate
 from ui_python_files.ParametersWindow import Ui_Dialog
+from utils.Utils import folder_files, serialize, deserialize
 
 
 class ParametersWindow(QtGui.QDialog, Ui_Dialog):
@@ -16,6 +20,15 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
     Contains a tab widget with all the types of parameters to measure.
     """
 
+    # region CONSTANTS
+
+    MEASUREMENT_TEMPLATE_FOLDER = os.path.join("utils", "measurement_templates")
+
+    PARAMETER_VISUALIZATION_SIGNAL_PATH = os.path.join(os.path.join("utils", "measurement_templates"),
+                                                       "measurement_params_example.wav")
+
+    # endregion
+
     # region SIGNALS
 
     # signal raised when the window has finished to interact with parameters
@@ -23,9 +36,20 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
 
     # endregion
 
-    def __init__(self, parent=None, parameter_manager=None):
+    def __init__(self, parent=None, measurement_template=None, signal=None):
         QtGui.QDialog.__init__(self, parent)
         self.setupUi(self)
+
+        # the list of templates names
+        self.templates_paths = []
+        self.load_templates()
+
+        # if accepted or cancel anyway raise the changes
+        self.buttonBox.clicked.connect(lambda bttn: self.parameterChangeFinished.emit(self.measurement_template))
+
+        self.remove_measurement_template_bttn.clicked.connect(self.delete_template)
+        self.save_measurement_template_as_bttn.clicked.connect(self.save_template_as)
+        self.measurement_template_cbox.currentIndexChanged.connect(self.select_template)
 
         # configuration of parameters and location trees user interface
         self.parameter_tree_widget = ParameterTree()
@@ -36,8 +60,10 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
         self.location_tree_widget.setAutoScroll(True)
         self.location_tree_widget.setHeaderHidden(True)
 
+        label = QtGui.QLabel("<center><h4>" + self.tr(u"Settings") + "</h4></center>")
         layout = QtGui.QVBoxLayout()
         layout.setMargin(0)
+        layout.addWidget(label)
         layout.addWidget(self.parameter_tree_widget)
         layout.addWidget(self.location_tree_widget)
         self.settings_widget.setLayout(layout)
@@ -46,10 +72,10 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
         self.location_measurement_tree = None
 
         # create the parameter trees for parameter settings and location settings
-        self.param_measurement_tree = Parameter.create(name=unicode(self.tr(u'Parameter Settings')), type=u'group')
+        self.param_measurement_tree = Parameter.create(name=unicode(self.tr(u'Parameter')), type=u'group')
         self.parameter_tree_widget.setParameters(self.param_measurement_tree)
 
-        self.location_measurement_tree = Parameter.create(name=unicode(self.tr(u'Location Settings')), type=u'group')
+        self.location_measurement_tree = Parameter.create(name=unicode(self.tr(u'Location')), type=u'group')
         self.location_tree_widget.setParameters(self.location_measurement_tree)
 
         # tables are just for selection (of parameter-location) not for edit elements.
@@ -57,21 +83,197 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
         self.wave_parameter_table.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.time_parameter_table.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
-        self._parameter_manager = None
-        self.parameter_manager = parameter_manager if parameter_manager is not None else ParameterManager()
+        self._measurement_template = None
+        self.measurement_template = measurement_template if measurement_template is not None else MeasurementTemplate()
 
-        # if accepted or cancel anyway raise the changes
-        self.buttonBox.clicked.connect(lambda bttn: self.parameterChangeFinished.emit(self.parameter_manager))
+        # pre visualization signal
+        try:
+            signal = openSignal(self.PARAMETER_VISUALIZATION_SIGNAL_PATH)
+
+        except Exception as e:
+            signal = small_signal(signal)
+
+        self.widget.signal = signal
+        self.widget.visibleSpectrogram = True
+        self.widget.visibleOscilogram = True
+        self.try_load_signal_segment()
+
+        self.widget.setSelectedTool(Tools.NoTool)
+        self.visible_oscilogram_cbox.stateChanged.connect(self.update_widget_graphs_visibility)
+        self.visible_spectrogram_cbox.stateChanged.connect(self.update_widget_graphs_visibility)
+        self.visible_spectrogram_cbox.setChecked(True)
+        self.visible_oscilogram_cbox.setChecked(True)
+
+        visibility_function = lambda: self.advanced_mode_gbox.setVisible(self.advanced_mode_visibility_cbox.isChecked())
+        self.advanced_mode_visibility_cbox.stateChanged.connect(visibility_function)
+        self.advanced_mode_gbox.setVisible(False)
+
+    def try_load_signal_segment(self):
+        """
+        Restore (if any) the previous session with this file.
+        That means detected elements, measured parameters etc that are saved on the signal
+        extra data.
+        :return:
+        """
+        if not self.widget.signal.extraData:
+            return
+
+        data = self.widget.signal.extraData
+
+        # try to add the detected elements from the extra data (list of tuples (start,end) )
+        if not isinstance(data, list):
+            return
+
+        elements = [e for e in data if isinstance(e, tuple) and len(e) == 2
+                    and isinstance(e[0], int) and isinstance(e[1], int)]
+
+        if len(elements) == 0:
+            return
+
+        elems = []
+        for i, e in enumerate(elements):
+            elems.append(OneDimensionalElement(self.widget.signal, e[0], e[1]))
+
+        self.widget.elements = elems
+        self.widget.graph()
+
+    def update_widget_graphs_visibility(self):
+
+        osc_visibility = self.visible_oscilogram_cbox.isChecked()
+        spec_visibility = self.visible_spectrogram_cbox.isChecked()
+
+        if self.widget.visibleOscilogram != osc_visibility:
+            self.widget.visibleOscilogram = osc_visibility
+
+        if self.widget.visibleSpectrogram != spec_visibility:
+            self.widget.visibleSpectrogram = spec_visibility
+
+        self.widget.setVisible(osc_visibility or spec_visibility)
+
+        self.widget.graph()
+
+    # region Measurement Template Actions
+
+    def select_template(self, index):
+        if index == 0:
+            self.measurement_template = MeasurementTemplate()
+            return
+
+        try:
+            self.measurement_template.load_state(deserialize(self.templates_paths[index-1]))
+            self.load_parameters()
+
+        except Exception as e:
+            print(e.message)
+
+    def load_templates(self):
+        """
+        Load all the available templates from disc
+        (if any) and fills the combo box with them.
+        :return:
+        """
+        self.measurement_template_cbox.clear()
+
+        # the 0 index of the combo has the new template option for unsaved ones
+        self.measurement_template_cbox.addItem("--new--")
+
+        self.templates_paths = folder_files(self.MEASUREMENT_TEMPLATE_FOLDER, extensions=[".dmt"])
+
+        templates = []
+
+        for path in self.templates_paths:
+            try:
+                templates.append(deserialize(path)["name"])
+
+            except Exception as e:
+                templates.append(path)
+
+        self.measurement_template_cbox.addItems(templates)
+
+    def save_template_as(self):
+        """
+        Save the current template as a new one in the system.
+        :return:
+        """
+        new_template_name = str(self.new_template_name_linedit.text())
+        template_names = [str(self.measurement_template_cbox.itemText(i))
+                          for i in range(self.measurement_template_cbox.count())]
+
+        if not new_template_name:
+            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
+                                      self.tr(u"You have to write a name for the measurement template."))
+            return
+
+        elif new_template_name in template_names:
+            error_msg = self.tr(u"There is already a template with that name.")
+            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"), error_msg)
+            return
+
+        # save the template as new one
+        self.measurement_template.name = new_template_name
+
+        try:
+            new_template_path = os.path.join(self.MEASUREMENT_TEMPLATE_FOLDER,
+                                             self.measurement_template.name + ".dmt")
+
+            serialize(new_template_path, self.measurement_template.get_state())
+
+            self.templates_paths.append(new_template_path)
+            self.measurement_template_cbox.addItem(new_template_name)
+
+            # the first index is for the --new-- template
+            self.measurement_template_cbox.setCurrentIndex(len(self.templates_paths))
+
+        except Exception as e:
+            print e.message
+            error_msg = self.tr(u"An error occurs when the template was been saved. Try it again")
+            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"), error_msg)
+
+    def delete_template(self):
+        """
+        removes (if possible) the current template from the list of templates.
+        :return:
+        """
+
+        text = self.tr(u"The current measurement template is protected and could not be deleted.")
+
+        if not self.measurement_template.editable:
+            QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"), text)
+            return
+
+        current_template_index = self.measurement_template_cbox.currentIndex()
+
+        if current_template_index == 0:
+            return
+
+        # delete the file
+        try:
+            os.remove(os.path.join(self.MEASUREMENT_TEMPLATE_FOLDER,
+                                   self.measurement_template.name + ".dmt"))
+
+            self.measurement_template_cbox.removeItem(current_template_index)
+            del self.templates_paths[current_template_index - 1]
+
+        except Exception as e:
+            pass
+
+        # select the --new-- template at 0 index in the combo box
+        self.measurement_template_cbox.setCurrentIndex(0)
+
+    # endregion
 
     # region Properties
 
     @property
-    def parameter_manager(self):
-        return self._parameter_manager
+    def measurement_template(self):
+        return self._measurement_template
 
-    @parameter_manager.setter
-    def parameter_manager(self, parameter):
-        self._parameter_manager = parameter
+    @measurement_template.setter
+    def measurement_template(self, parameter):
+        if not isinstance(parameter, MeasurementTemplate):
+            raise Exception("Invalid type of argument. Must be of type MeasurementTemplate")
+
+        self._measurement_template = parameter
 
         # when change the parameter manager updates its values on the tables
         self.load_parameters()
@@ -82,25 +284,24 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
 
     def load_parameters(self):
         """
-        Updates the parameter configuration on the window with the ones in the parameter manager.
-        parameter_manager.
+        Updates the parameter configuration on the window with the ones in the parameter template.
         :return:
         """
 
-        if self.parameter_manager is None:
+        if self.measurement_template is None:
             return
 
         self.load_time_based_parameters()
 
         table = self.wave_parameter_table
-        adapters = self.parameter_manager.wave_parameters_adapters
-        locations_adapters = self.parameter_manager.wave_locations_adapters
-        self.load_parameters_locations(table, locations_adapters, adapters, self.parameter_manager.wave_location_parameters)
+        adapters = self.measurement_template.wave_parameters_adapters
+        locations_adapters = self.measurement_template.wave_locations_adapters
+        self.load_parameters_locations(table, locations_adapters, adapters, self.measurement_template.wave_location_parameters)
 
         table = self.parameter_locations_table
-        locations_adapters = self.parameter_manager.spectral_time_locations_adapters
-        adapters = self.parameter_manager.spectral_parameters_adapters
-        self.load_parameters_locations(table, locations_adapters, adapters, self.parameter_manager.spectral_location_parameters)
+        locations_adapters = self.measurement_template.spectral_time_locations_adapters
+        adapters = self.measurement_template.spectral_parameters_adapters
+        self.load_parameters_locations(table, locations_adapters, adapters, self.measurement_template.spectral_location_parameters)
 
         # clear the parameter-location settings tree
         self.param_measurement_tree.clearChildren()
@@ -115,7 +316,7 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
         # commodity variable for table
         table = self.time_parameter_table
 
-        adapters = self.parameter_manager.time_parameters_adapters
+        adapters = self.measurement_template.time_parameters_adapters
 
         # first row for the 'select all' option
         table.setRowCount(1 + len(adapters))
@@ -129,7 +330,7 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
         for i in xrange(table.rowCount()):
             item = QtGui.QTableWidgetItem("")
 
-            state = Qt.Unchecked if i == 0 or not self.parameter_manager.time_location_parameters[i-1] else Qt.Checked
+            state = Qt.Unchecked if i == 0 or not self.measurement_template.time_location_parameters[i-1] else Qt.Checked
 
             all_selected = all_selected and (i == 0 or state == Qt.Checked)
 
@@ -140,7 +341,12 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
         if all_selected:
             table.item(0, 0).setCheckState(Qt.Checked)
 
-        table.cellClicked.connect(lambda row, col: self.parameter_time_selected(row, col, adapters))
+        def time_selection_function(row, col):
+            self.parameter_time_selected(row, col, adapters)
+            state = Qt.Unchecked if table.item(row,col).checkState() == Qt.Checked else Qt.Checked
+            table.item(row,col).setCheckState(state)
+
+        table.cellPressed.connect(time_selection_function)
 
         # fit the contents of the parameters names on the cells
         table.resizeColumnsToContents()
@@ -187,8 +393,15 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
         table.setVerticalHeaderLabels(row_names)
         table.setHorizontalHeaderLabels(column_names)
 
-        table.cellClicked.connect(lambda x, y: self.parameter_spectral_selected(table, x, y, param_adapters,
-                                                                                selection_matrix, time_locations_adapters))
+        def selection_function(x, y):
+            self.parameter_spectral_selected(table, x, y, param_adapters,
+                                             selection_matrix, time_locations_adapters)
+
+            state = Qt.Unchecked if table.item(x, y).checkState() == Qt.Checked else Qt.Checked
+            table.item(x,y).setCheckState(state)
+
+        table.cellPressed.connect(selection_function)
+
         table.resizeColumnsToContents()
         table.resizeRowsToContents()
 
@@ -220,17 +433,20 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
             self.update_parameter_and_locations_settings(row - 1, col - 1, param_adapters, time_locations_adapters)
 
     def parameter_time_selected(self, row, col, param_adapters):
+
         table = self.time_parameter_table if self.tab_time_parameters.isVisible() else self.wave_parameter_table
 
         if row == 0:
             for i in xrange(1, table.rowCount()):
                 table.item(i, col).setCheckState(table.item(row, col).checkState())
 
-            self.parameter_manager.time_location_parameters[:] = table.item(row, col).checkState() == Qt.Checked
+            self.measurement_template.time_location_parameters[:] = table.item(row, col).checkState() == Qt.Checked
             return
 
-        self.parameter_manager.time_location_parameters[row - 1] = table.item(row, col).checkState() == Qt.Checked
-        self.update_parameter_and_locations_settings(row - 1, col, param_adapters, self.parameter_manager.time_location_parameters)
+        self.measurement_template.time_location_parameters[row - 1] = table.item(row, col).checkState() == Qt.Checked
+        self.update_parameter_and_locations_settings(row - 1, col,
+                                                     param_adapters,
+                                                     self.measurement_template.spectral_time_locations_adapters)
 
     def update_parameter_and_locations_settings(self, row, col, param_adapters, time_locations_adapters=None):
         # update tree of parameter settings and locations
@@ -244,15 +460,16 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
             param_settings = parameter_adapter.get_settings()
             self.param_measurement_tree.addChild(param_settings)
 
-            if isinstance(time_locations_adapters, LocationAdapter):
+            if time_locations_adapters is not None:
                 time_location_adapter = time_locations_adapters[col]
                 location_settings = time_location_adapter.get_settings()
                 self.location_measurement_tree.addChild(location_settings)
 
-            if isinstance(parameter_adapter, SpectralParameterAdapter):
-                spectral_location_adapter = self.parameter_manager.spectral_locations_adapters[row, col]
-                spectral_location_settings = spectral_location_adapter.get_settings()
-                self.location_measurement_tree.addChild(spectral_location_settings)
+            # spectral locations reserved for future versions
+            # if isinstance(parameter_adapter, SpectralParameterAdapter):
+            #     spectral_location_adapter = self.measurement_template.spectral_locations_adapters[row, col]
+            #     spectral_location_settings = spectral_location_adapter.get_settings()
+            #     self.location_measurement_tree.addChild(spectral_location_settings)
 
         except Exception as ex:
             print("updating settings " + ex.message)

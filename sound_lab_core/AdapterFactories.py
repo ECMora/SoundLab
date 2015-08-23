@@ -55,12 +55,12 @@ class SegmentationAdapterFactory(AdapterFactory):
                          # thresholds methods
                          SingleThresholdAdapter(),
                          DoubleThresholdAdapter(),
-                         TripleThresholdAdapter(),
+                         TripleThresholdAdapter()]
 
                          # image methods
-                         WatershedDetectorAdapter(),
-                         AdaptThreshDetectorAdapter(),
-                         GrabCutDetectorAdapter()]
+                         # WatershedDetectorAdapter(),
+                         # AdaptThreshDetectorAdapter(),
+                         # GrabCutDetectorAdapter()]
 
 
 class ClassificationAdapterFactory(AdapterFactory):
@@ -71,4 +71,4 @@ class ClassificationAdapterFactory(AdapterFactory):
     def __init__(self):
         AdapterFactory.__init__(self)
 
-        self.adapters = [ManualClassifierAdapter(), KNNClassifierAdapter(), NeuralNetsAdapter()]
+        self.adapters = [ManualClassifierAdapter()] #, KNNClassifierAdapter(), NeuralNetsAdapter()]
