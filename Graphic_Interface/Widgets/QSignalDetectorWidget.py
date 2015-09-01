@@ -272,10 +272,10 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         """
         elements = elements if elements is not None else self.get_visible_elements()
 
-        self.remove_visual_elements(oscilogram=draw_oscilogram, specgram=draw_specgram)
+        self.remove_visual_elements(oscilogram=draw_oscilogram, specgram=draw_specgram, elements=elements)
 
         self.no_visible_items = [item for start, end in self._get_no_visible_visual_items_tuples(elements)
-                                      for item in self.get_no_visible_visual_item(start, end)[0]]
+                                 for item in self.get_no_visible_visual_item(start, end)[0]]
 
         self.add_visual_elements(elements, draw_oscilogram, draw_specgram)
 
@@ -603,6 +603,23 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         self.graph_elements()
 
     # endregion
+
+    def get_signal_segmentation_data(self):
+        """
+        return the list of segments previously stored on the signal.
+        :return: list of tuples (start, end) of every segment in signal data indexes
+        """
+        if not self.signal.extraData:
+            return []
+
+        data = self.signal.extraData
+
+        # try to add the detected elements from the extra data (list of tuples (start,end) )
+        if not isinstance(data, list):
+            return []
+
+        return [e for e in data if isinstance(e, tuple) and len(e) == 2
+                and isinstance(e[0], int) and isinstance(e[1], int)]
 
     def get_visible_region(self):
         """

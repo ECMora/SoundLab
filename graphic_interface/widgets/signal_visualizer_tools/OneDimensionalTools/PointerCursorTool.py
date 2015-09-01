@@ -11,13 +11,13 @@ class PointerCursorTool(SignalVisualizerTool):
     in the widget graph visualization.
     """
 
-    #CONSTANTS
+    # CONSTANTS
     def __init__(self, widget):
         SignalVisualizerTool.__init__(self, widget)
         self.pointerCursor = pg.ScatterPlotItem()
 
-        # dict of data usefull for the tool
-        # TODO must be examinated for possible improvement
+        # dict of data useful for the tool
+        # TODO must be examined for possible improvement
         self.last = {'pos': [0, 0], 'pen': {'color': 'w', 'width': 2}, 'brush': pg.intColor(255, 255), 'symbol': '+',
                      'size': 20}
 

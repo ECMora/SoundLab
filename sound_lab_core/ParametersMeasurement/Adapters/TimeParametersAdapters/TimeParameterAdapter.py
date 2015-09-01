@@ -23,8 +23,9 @@ class TimeParameterAdapter(ParameterAdapter):
         return {"decimals":self.decimal_places}
 
     def load_state(self, state):
-        decimals = state["decimals"] if "decimals" in state else self.decimal_places
-        self.settings.param(unicode(self.tr(u'Decimal Places'))).setValue(decimals)
+        if "decimals" in state:
+            print(self.name + "setting decimals to " + str(state["decimals"]))
+            self.settings.param(unicode(self.tr(u'Decimal Places'))).setValue(state["decimals"])
 
     def get_settings(self):
         return self.settings

@@ -123,16 +123,8 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         extra data.
         :return:
         """
-        if not self.widget.signal.extraData:
-            return
+        elements = self.widget.get_signal_segmentation_data()
 
-        data = self.widget.signal.extraData
-        # try to add the detected elements from the extra data (list of tuples (start,end) )
-        if not isinstance(data, list):
-            return
-
-        elements = [e for e in data if isinstance(e, tuple) and len(e) == 2
-                    and isinstance(e[0], int) and isinstance(e[1], int)]
 
         if len(elements) == 0:
             return
@@ -838,7 +830,11 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
             if mbox.exec_() == QMessageBox.Yes:
                 self.on_actionMeditions_triggered()
 
-        param_window = ParametersWindow(self, self.parameter_manager, self.widget.signal)
+        NFFT = self.workSpace.spectrogramWorkspace.FFTSize
+        overlap = self.workSpace.spectrogramWorkspace.FFTOverlap
+        spectrogram_data = dict(NFFT=NFFT, overlap=overlap)
+        param_window = ParametersWindow(self, self.parameter_manager,
+                                        self.widget.signal, specgram_data=spectrogram_data)
 
         param_window.parameterChangeFinished.connect(lambda p: self.update_parameters(p))
 

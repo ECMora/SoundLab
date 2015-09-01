@@ -22,15 +22,11 @@ Complexity-2: Small-to-medium code changes
 * fix Min Freq ............................
 * revision of freq params locations interaction
 
-* save parameter templates just with the visible parameter used
+* save parameter templates just with the visible parameter used???
 
-* include more options to generate the parameters visual items
-    color, shape, size etc
 * include the way to access the spectrogram settings used
 * fix the parameter measurement visual items update bug
-
-* save the state of all the configuration for parameter and locations and not just the bolean table
-
+* make an efficiency improvement on parameter items update
 
 * Enable the cross correlation method
 * Revision of the two dimensional analysis window for improvements

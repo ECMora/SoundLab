@@ -1,17 +1,16 @@
 #  -*- coding: utf-8 -*-
 import os
 from PyQt4 import QtGui
-from duetto.audio_signals import openSignal
-from sound_lab_core.Elements.OneDimensionalElements.OneDimensionalElement import OneDimensionalElement
 from utils.Utils import small_signal
 from PyQt4.QtCore import Qt, pyqtSignal
 from PyQt4.QtGui import QAbstractItemView
-from pyqtgraph.parametertree import Parameter, ParameterTree
-from graphic_interface.widgets.signal_visualizer_tools import Tools
-from sound_lab_core.ParametersMeasurement.Adapters.Locations.LocationAdapter import LocationAdapter
-from sound_lab_core.ParametersMeasurement.MeasurementTemplate import MeasurementTemplate
+from duetto.audio_signals import openSignal
 from ui_python_files.ParametersWindow import Ui_Dialog
+from pyqtgraph.parametertree import Parameter, ParameterTree
 from utils.Utils import folder_files, serialize, deserialize
+from graphic_interface.widgets.signal_visualizer_tools import Tools
+from sound_lab_core.Segmentation.SegmentManager import SegmentManager
+from sound_lab_core.ParametersMeasurement.MeasurementTemplate import MeasurementTemplate
 
 
 class ParametersWindow(QtGui.QDialog, Ui_Dialog):
@@ -36,13 +35,23 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
 
     # endregion
 
-    def __init__(self, parent=None, measurement_template=None, signal=None):
+    # region Initialize
+
+    def __init__(self, parent=None, measurement_template=None, signal=None, specgram_data=None):
+        """
+        :type specgram_data: dict with the options of spectrogram creation on main window
+        options are NFFT and overlap
+        """
         QtGui.QDialog.__init__(self, parent)
         self.setupUi(self)
 
         # the list of templates names
         self.templates_paths = []
         self.load_templates()
+
+        self.spectrogram_data = {}
+        if specgram_data is not None:
+            self.spectrogram_data = specgram_data
 
         # if accepted or cancel anyway raise the changes
         self.buttonBox.clicked.connect(lambda bttn: self.parameterChangeFinished.emit(self.measurement_template))
@@ -60,13 +69,8 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
         self.location_tree_widget.setAutoScroll(True)
         self.location_tree_widget.setHeaderHidden(True)
 
-        label = QtGui.QLabel("<center><h4>" + self.tr(u"Settings") + "</h4></center>")
-        layout = QtGui.QVBoxLayout()
-        layout.setMargin(0)
-        layout.addWidget(label)
-        layout.addWidget(self.parameter_tree_widget)
-        layout.addWidget(self.location_tree_widget)
-        self.settings_widget.setLayout(layout)
+        # create and set the layout for the parameter and location settings widget
+        self.create_layout_for_settings_widget()
 
         self.param_measurement_tree = None
         self.location_measurement_tree = None
@@ -93,10 +97,19 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
         except Exception as e:
             signal = small_signal(signal)
 
+        self.configure_advanced_mode_items(signal)
+
+        self.segmentManager = SegmentManager()
+
+        self.segmentManager.signal = self.widget.signal
+        self.segmentManager.segmentVisualItemAdded.connect(self.widget.add_parameter_visual_items)
+        self.segmentManager.measurementsChanged.connect(self.widget.draw_elements)
+        self.try_load_signal_segment()
+
+    def configure_advanced_mode_items(self, signal):
         self.widget.signal = signal
         self.widget.visibleSpectrogram = True
         self.widget.visibleOscilogram = True
-        self.try_load_signal_segment()
 
         self.widget.setSelectedTool(Tools.NoTool)
         self.visible_oscilogram_cbox.stateChanged.connect(self.update_widget_graphs_visibility)
@@ -108,6 +121,15 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
         self.advanced_mode_visibility_cbox.stateChanged.connect(visibility_function)
         self.advanced_mode_gbox.setVisible(False)
 
+    def create_layout_for_settings_widget(self):
+        label = QtGui.QLabel("<center><h4>" + self.tr(u"Settings") + "</h4></center>")
+        layout = QtGui.QVBoxLayout()
+        layout.setMargin(0)
+        layout.addWidget(label)
+        layout.addWidget(self.parameter_tree_widget)
+        layout.addWidget(self.location_tree_widget)
+        self.settings_widget.setLayout(layout)
+
     def try_load_signal_segment(self):
         """
         Restore (if any) the previous session with this file.
@@ -115,26 +137,15 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
         extra data.
         :return:
         """
-        if not self.widget.signal.extraData:
+        segments = self.widget.get_signal_segmentation_data()
+
+        if len(segments) == 0:
             return
 
-        data = self.widget.signal.extraData
+        for i, e in enumerate(segments):
+            self.segmentManager.add_element(i, e[0], e[1])
 
-        # try to add the detected elements from the extra data (list of tuples (start,end) )
-        if not isinstance(data, list):
-            return
-
-        elements = [e for e in data if isinstance(e, tuple) and len(e) == 2
-                    and isinstance(e[0], int) and isinstance(e[1], int)]
-
-        if len(elements) == 0:
-            return
-
-        elems = []
-        for i, e in enumerate(elements):
-            elems.append(OneDimensionalElement(self.widget.signal, e[0], e[1]))
-
-        self.widget.elements = elems
+        self.widget.elements = self.segmentManager.elements
         self.widget.graph()
 
     def update_widget_graphs_visibility(self):
@@ -152,10 +163,18 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
 
         self.widget.graph()
 
+    # endregion
+
     # region Measurement Template Actions
 
     def select_template(self, index):
+        """
+        Select the template at index supplied.
+        :param index:
+        :return:
+        """
         if index == 0:
+            # the --new-- or blank measurement template
             self.measurement_template = MeasurementTemplate()
             return
 
@@ -165,6 +184,8 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
 
         except Exception as e:
             print(e.message)
+
+        self.update_parameter_pre_visualization()
 
     def load_templates(self):
         """
@@ -342,11 +363,11 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
             table.item(0, 0).setCheckState(Qt.Checked)
 
         def time_selection_function(row, col):
-            self.parameter_time_selected(row, col, adapters)
-            state = Qt.Unchecked if table.item(row,col).checkState() == Qt.Checked else Qt.Checked
-            table.item(row,col).setCheckState(state)
+            state = Qt.Unchecked if table.item(row, col).checkState() == Qt.Checked else Qt.Checked
+            table.item(row, col).setCheckState(state)
 
         table.cellPressed.connect(time_selection_function)
+        table.cellClicked.connect(lambda row, col: self.parameter_time_selected(row, col, adapters))
 
         # fit the contents of the parameters names on the cells
         table.resizeColumnsToContents()
@@ -394,20 +415,21 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
         table.setHorizontalHeaderLabels(column_names)
 
         def selection_function(x, y):
-            self.parameter_spectral_selected(table, x, y, param_adapters,
-                                             selection_matrix, time_locations_adapters)
-
             state = Qt.Unchecked if table.item(x, y).checkState() == Qt.Checked else Qt.Checked
-            table.item(x,y).setCheckState(state)
+            table.item(x, y).setCheckState(state)
 
         table.cellPressed.connect(selection_function)
+        table.cellClicked.connect(lambda x, y:
+                                  self.parameter_spectral_selected(table, x, y, param_adapters,
+                                                                   selection_matrix, time_locations_adapters))
 
         table.resizeColumnsToContents()
         table.resizeRowsToContents()
 
     # endregion
 
-    def parameter_spectral_selected(self, table, row, col, param_adapters, selection_matrix, time_locations_adapters=None):
+    def parameter_spectral_selected(self, table, row, col, param_adapters, selection_matrix,
+                                    time_locations_adapters=None, select_all_parameters=False):
 
         # select all params all locations
         if row == 0 and col == 0:
@@ -417,7 +439,8 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
 
             for i in xrange(1, table.rowCount()):
                 table.item(i, col).setCheckState(table.item(row, col).checkState())
-                self.parameter_spectral_selected(table, i, col, param_adapters, selection_matrix, time_locations_adapters)
+                self.parameter_spectral_selected(table, i, col, param_adapters,
+                                                 selection_matrix, time_locations_adapters, True)
 
         elif row == 0:
             for i in xrange(1, table.rowCount()):
@@ -430,7 +453,15 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
                 selection_matrix[row - 1, i - 1] = table.item(row, col).checkState() == Qt.Checked
         else:
             selection_matrix[row - 1, col - 1] = table.item(row, col).checkState() == Qt.Checked
-            self.update_parameter_and_locations_settings(row - 1, col - 1, param_adapters, time_locations_adapters)
+
+            # boolean to avoid multiple computation with recursive calls
+            if not select_all_parameters:
+                self.update_parameter_and_locations_settings(row - 1, col - 1, param_adapters, time_locations_adapters)
+
+        if not select_all_parameters:
+            table.repaint()
+            self.settings_widget.repaint()
+            self.update_parameter_pre_visualization()
 
     def parameter_time_selected(self, row, col, param_adapters):
 
@@ -447,6 +478,9 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
         self.update_parameter_and_locations_settings(row - 1, col,
                                                      param_adapters,
                                                      self.measurement_template.spectral_time_locations_adapters)
+
+        table.repaint()
+        self.update_parameter_pre_visualization()
 
     def update_parameter_and_locations_settings(self, row, col, param_adapters, time_locations_adapters=None):
         # update tree of parameter settings and locations
@@ -473,3 +507,11 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
 
         except Exception as ex:
             print("updating settings " + ex.message)
+
+    def update_parameter_pre_visualization(self):
+        if self.widget.visibleSpectrogram or self.widget.visibleOscilogram:
+            self.segmentManager.parameters = self.measurement_template.parameter_list()
+
+            self.widget.elements = self.segmentManager.elements
+
+            self.segmentManager.measure_parameters_and_classify()

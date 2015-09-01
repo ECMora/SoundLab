@@ -24,10 +24,6 @@ class SoundLabWidget:
         # the gui tool that is used on the widget gui interaction
         self.gui_user_tool = None
 
-        # factorization variable for the widgets of the system that
-        # all load an application theme TODO check changes with the use of the workspace
-        self.theme = None
-
     # region Events Handling
 
     def mouseMoveEvent(self, event):

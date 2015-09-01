@@ -10,7 +10,8 @@ class PeakFreqParameter(SpectralParameter):
 
     def __init__(self, decimal_places=2, time_measurement_location=None, visual_items=None):
         SpectralParameter.__init__(self, decimal_places=decimal_places,
-                                   time_measurement_location=time_measurement_location, visual_items=visual_items)
+                                   time_measurement_location=time_measurement_location,
+                                   visual_items=visual_items)
         self.name = "PeakFreq(kHz)"
 
     def measure(self, segment):

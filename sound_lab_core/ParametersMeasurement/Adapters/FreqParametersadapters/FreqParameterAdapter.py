@@ -18,44 +18,65 @@ class SpectralParameterAdapter(ParameterAdapter):
                           {u'name': unicode(self.tr(u'Show Visual Items')), u'type': u'bool',
                            u'value': True},
                           {u'name': unicode(self.tr(u'Visual Item Color')), u'type': u'color',
-                           u'value': self.DEFAULT_COLOR}]
+                           u'value': self.DEFAULT_COLOR},
+                          {u'name': unicode(self.tr(u'Visual Item Figure')),  u'type': u'list',
+                           u'value': '+',
+                           u'default': '+',
+                           u'values': [(u'Plus', '+'), (u"Circle", 'o'), (u"Square", 's'),
+                                       (u"Triangle", 't'), (u'Diamond', 'd')]},
+                          {u'name': unicode(self.tr(u'Visual Item Size')), u'type': u'int',
+                           u'value': 10, u'limits': (1, 100)}]
 
-        self.visual_item_color = self.DEFAULT_COLOR
-
-        self.show_visual_items = True
-
+        self.items_figure = ''
         self.decimal_places = 3
+        self.items_pixel_size = 10
+        self.show_visual_items = True
+        self.visual_item_color = self.DEFAULT_COLOR
 
         self.settings = Parameter.create(name=u'Settings', type=u'group', children=self._settings)
 
     def state(self):
-            return {"decimals": self.decimal_places, "visual_item_color": self.visual_item_color.rgb(),
-                    "show_items":self.show_visual_items}
+        return dict(decimals=self.decimal_places,
+                    items_figure=self.items_figure,
+                    items_pixel_size_figure=self.items_pixel_size,
+                    visual_item_color=self.visual_item_color.rgb(),
+                    show_items=self.show_visual_items)
 
     def load_state(self, state):
+        if "items_figure" in state:
+            self.settings.param(unicode(self.tr(u'Visual Item Figure'))).setValue(state["items_figure"])
 
-        decimals = state["decimals"] if "decimals" in state else self.decimal_places
-        visual_item_color_rgb = state["visual_item_color"] if "visual_item_color" in state else self.visual_item_color
-        show_items = state["show_items"] if "show_items" in state else self.show_items
+        if "items_pixel_size_figure" in state:
+            self.settings.param(unicode(self.tr(u'Visual Item Size'))).setValue(state["items_pixel_size_figure"])
 
-        self.settings.param(unicode(self.tr(u'Decimal Places'))).setValue(decimals)
-        self.settings.param(unicode(self.tr(u'Visual Item Color'))).setValue(QColor(visual_item_color_rgb))
-        self.settings.param(unicode(self.tr(u'Show Visual Items'))).setValue(show_items)
+        if "decimals" in state:
+            self.settings.param(unicode(self.tr(u'Decimal Places'))).setValue(state["decimals"])
+
+        if "visual_item_color" in state:
+            self.settings.param(unicode(self.tr(u'Visual Item Color'))).setValue(QColor(state["visual_item_color"]))
+
+        if "show_items" in state:
+            self.settings.param(unicode(self.tr(u'Show Visual Items'))).setValue(state["show_items"])
 
     def compute_settings(self):
         # use a try catch because the instance must be required after
         # param tree object is destroyed
         try:
+            items_figure = self.settings.param(unicode(self.tr(u'Visual Item Figure'))).value()
+            items_pixel_size_figure = self.settings.param(unicode(self.tr(u'Visual Item Size'))).value()
             decimals = self.settings.param(unicode(self.tr(u'Decimal Places'))).value()
             visual_item_color = self.settings.param(unicode(self.tr(u'Visual Item Color'))).value()
             show_items = self.settings.param(unicode(self.tr(u'Show Visual Items'))).value()
 
         except Exception as e:
             decimals, visual_item_color, show_items = self.decimal_places, self.visual_item_color, self.show_visual_items
+            items_figure, items_pixel_size_figure = self.items_figure, self.items_pixel_size
 
         self.decimal_places = decimals
-        self.visual_item_color = visual_item_color
+        self.items_figure = items_figure
         self.show_visual_items = show_items
+        self.visual_item_color = visual_item_color
+        self.items_pixel_size = items_pixel_size_figure
 
     def get_settings(self):
         """

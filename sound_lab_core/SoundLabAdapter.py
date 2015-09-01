@@ -87,4 +87,5 @@ class SoundLabAdapter(QObject):
         :param adapter_copy: the adapter to load settings for
         :return:
         """
+        # TODO must be examined to possible removed using load state implementation
         pass

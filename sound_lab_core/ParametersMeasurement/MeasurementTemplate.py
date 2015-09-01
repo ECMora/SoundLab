@@ -1,5 +1,4 @@
 import numpy as np
-from PyQt4.QtCore import QObject
 from sound_lab_core.ParametersMeasurement.Adapters import *
 from sound_lab_core.ParametersMeasurement.Adapters.Locations import *
 
@@ -63,16 +62,20 @@ class MeasurementTemplate:
         rows, cols = len(self.spectral_parameters_adapters), len(self.spectral_time_locations_adapters)
         self.spectral_location_parameters = np.zeros(rows * cols).reshape(rows, cols) > 0
 
-        self.signal = signal
-        if signal is None:
-            return
+        self.update_adapters_data(signal)
 
-        # if there is a signal provided then update the adapters values for it
-        adapters = self.spectral_parameters_adapters + self.time_parameters_adapters + self.wave_parameters_adapters
-        
-        # updates the adapters with the signal properties
-        for adapter in adapters:
-            adapter.update_data(signal)
+    def update_adapters_data(self, signal=None, spectrogram_data=None):
+
+        if signal is not None:
+            # if there is a signal provided then update the adapters values for it
+            adapters = self.spectral_parameters_adapters + self.time_parameters_adapters + self.wave_parameters_adapters
+
+            # updates the adapters with the signal properties
+            for adapter in adapters:
+                adapter.update_data(signal)
+
+        if spectrogram_data is not None:
+            pass
 
     def parameter_list(self):
         """
