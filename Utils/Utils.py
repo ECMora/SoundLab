@@ -98,6 +98,10 @@ def small_signal(signal, duration_ms=50):
     :param duration_ms: The duration of the small signal to generate from the supplied one in ms
     :return: an AudioSignal.
     """
+    if signal is None:
+        return Synthesizer.generateSilence(samplingRate=44100, bitDepth=16,
+                                           duration=50)
+
     if signal.duration <= duration_ms / 1000.0:
         return signal
 

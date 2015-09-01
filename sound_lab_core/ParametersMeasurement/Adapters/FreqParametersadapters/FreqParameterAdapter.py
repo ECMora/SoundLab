@@ -1,4 +1,5 @@
 from PyQt4 import QtGui
+from PyQt4.QtGui import QColor
 from sound_lab_core.ParametersMeasurement.Adapters.ParameterAdapter import ParameterAdapter
 from sound_lab_core.SoundLabAdapter import SoundLabAdapter
 from pyqtgraph.parametertree import Parameter
@@ -17,30 +18,65 @@ class SpectralParameterAdapter(ParameterAdapter):
                           {u'name': unicode(self.tr(u'Show Visual Items')), u'type': u'bool',
                            u'value': True},
                           {u'name': unicode(self.tr(u'Visual Item Color')), u'type': u'color',
-                           u'value': self.DEFAULT_COLOR}]
+                           u'value': self.DEFAULT_COLOR},
+                          {u'name': unicode(self.tr(u'Visual Item Figure')),  u'type': u'list',
+                           u'value': '+',
+                           u'default': '+',
+                           u'values': [(u'Plus', '+'), (u"Circle", 'o'), (u"Square", 's'),
+                                       (u"Triangle", 't'), (u'Diamond', 'd')]},
+                          {u'name': unicode(self.tr(u'Visual Item Size')), u'type': u'int',
+                           u'value': 10, u'limits': (1, 100)}]
 
+        self.items_figure = ''
+        self.decimal_places = 3
+        self.items_pixel_size = 10
+        self.show_visual_items = True
         self.visual_item_color = self.DEFAULT_COLOR
 
-        self.show_visual_items = True
-
-        self.decimal_places = 3
-
         self.settings = Parameter.create(name=u'Settings', type=u'group', children=self._settings)
+
+    def state(self):
+        return dict(decimals=self.decimal_places,
+                    items_figure=self.items_figure,
+                    items_pixel_size_figure=self.items_pixel_size,
+                    visual_item_color=self.visual_item_color.rgb(),
+                    show_items=self.show_visual_items)
+
+    def load_state(self, state):
+        if "items_figure" in state:
+            self.settings.param(unicode(self.tr(u'Visual Item Figure'))).setValue(state["items_figure"])
+
+        if "items_pixel_size_figure" in state:
+            self.settings.param(unicode(self.tr(u'Visual Item Size'))).setValue(state["items_pixel_size_figure"])
+
+        if "decimals" in state:
+            self.settings.param(unicode(self.tr(u'Decimal Places'))).setValue(state["decimals"])
+
+        if "visual_item_color" in state:
+            self.settings.param(unicode(self.tr(u'Visual Item Color'))).setValue(QColor(state["visual_item_color"]))
+
+        if "show_items" in state:
+            self.settings.param(unicode(self.tr(u'Show Visual Items'))).setValue(state["show_items"])
 
     def compute_settings(self):
         # use a try catch because the instance must be required after
         # param tree object is destroyed
         try:
+            items_figure = self.settings.param(unicode(self.tr(u'Visual Item Figure'))).value()
+            items_pixel_size_figure = self.settings.param(unicode(self.tr(u'Visual Item Size'))).value()
             decimals = self.settings.param(unicode(self.tr(u'Decimal Places'))).value()
             visual_item_color = self.settings.param(unicode(self.tr(u'Visual Item Color'))).value()
             show_items = self.settings.param(unicode(self.tr(u'Show Visual Items'))).value()
 
         except Exception as e:
             decimals, visual_item_color, show_items = self.decimal_places, self.visual_item_color, self.show_visual_items
+            items_figure, items_pixel_size_figure = self.items_figure, self.items_pixel_size
 
         self.decimal_places = decimals
-        self.visual_item_color = visual_item_color
+        self.items_figure = items_figure
         self.show_visual_items = show_items
+        self.visual_item_color = visual_item_color
+        self.items_pixel_size = items_pixel_size_figure
 
     def get_settings(self):
         """
@@ -61,6 +97,22 @@ class FreqParameterAdapter(SpectralParameterAdapter):
         self.total = True
 
         self.settings = Parameter.create(name=u'Settings', type=u'group', children=self._settings)
+
+    def state(self):
+        state = SpectralParameterAdapter.state(self)
+        state["total"] = self.total
+        state["threshold"] = self.threshold
+
+        return state
+
+    def load_state(self, state):
+        SpectralParameterAdapter.load_state(self, state)
+
+        total = state["total"] if "total" in state else self.total
+        threshold = state["threshold"] if "threshold" in state else self.threshold
+
+        self.settings.param(unicode(self.tr(u'Threshold (dB)'))).setValue(threshold)
+        self.settings.param(unicode(self.tr(u'Total'))).setValue(total)
 
     def compute_settings(self):
         SpectralParameterAdapter.compute_settings(self)

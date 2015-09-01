@@ -8,3 +8,4 @@ utils/Themes/.dth
 graphic_interface/windows/ui_python_files/icons_rc.py
 *.jpg
 
+*.dmt

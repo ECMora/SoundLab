@@ -196,7 +196,7 @@ class InsertSignalAction(UndoRedoAction):
 
     def undo(self):
         EditionSignalProcessor(self.signal).cut(self.start, self.start + self.ms * self.signal.samplingRate/1000.0)
-        #TODO clear the clipboard after cut
+        # TODO clear the clipboard after cut
 
     def redo(self):
         pass
@@ -309,7 +309,6 @@ class ResamplingAction(UndoRedoAction):
 
     def redo(self):
         self.signal.resampling(self.sr)
-
 
 # region CUT,COPY,PASTE
 class EditionAction(UndoRedoAction):

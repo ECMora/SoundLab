@@ -45,6 +45,24 @@ class SoundLabAdapter(QObject):
         """
         return None
 
+    def state(self):
+        """
+        Memento pattern to save the current satate of the adapter
+        :return: dict with object state
+        """
+        return {"name": self.name}
+
+    def load_state(self, state):
+        """
+        Load an object state from the supplied one.
+        :param state: dict with object state
+        :return:
+        """
+        if not isinstance(state, dict):
+            return
+
+        self.name = state["name"] if "name" in state else self.name
+
     def get_settings(self):
         """
         Gets the settings of the corresponding adapted class.
@@ -69,4 +87,5 @@ class SoundLabAdapter(QObject):
         :param adapter_copy: the adapter to load settings for
         :return:
         """
+        # TODO must be examined to possible removed using load state implementation
         pass

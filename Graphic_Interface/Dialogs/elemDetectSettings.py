@@ -113,7 +113,7 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         self.segmentation_classification_tree_widget.setParameters(self.segmentation_classification_tree)
 
         # the only way of segmentation and classification on Sound Lab Lite version is manual
-        self.segmentation_classification_tree_widget.setEnabled(False)
+        # self.segmentation_classification_tree_widget.setEnabled(False)
 
         lite_licence_restriction = u"The only way of segmentation and classification \n " \
                                    u"on Sound Lab Lite version is the manual. \n " \

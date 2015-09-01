@@ -7,7 +7,8 @@ import numpy as np
 
 class AverageFreqVisualItem(SpectralVisualItemWrapper):
 
-    def __init__(self, color=None, tooltip=""):
+    def __init__(self, color=None, tooltip="", connect_points=False,
+                 point_figure='+', points_size=20):
         """
         :param color: the color for the lines
         :param tooltip: an optional tooltip to show
@@ -18,14 +19,23 @@ class AverageFreqVisualItem(SpectralVisualItemWrapper):
         self.indexFrom = 0
         self.indexTo = 0
 
+        self.points_size = points_size
+        self.point_figure = point_figure
+        # 'o' circle, ‘s’ square, ‘t’ triangle, ‘d’ diamond, ‘+’ plus
+        if point_figure not in "ostd+":
+            self.point_figure = "+"
+
         # the freq value
         self.peak_freq_value = 0
+
+        self.connect_points = connect_points
 
         # a line for peak freq
         self.peak_freq_pos = np.array([[self.indexFrom,  self.peak_freq_value],
                                        [self.indexTo,  self.peak_freq_value]])
 
         self.peak_freq_adj = np.array([[0, 1]])
+
         self.peak_freq_region = pg.GraphItem()
 
         self.peak_freq_region.setToolTip(self.tooltip)
@@ -34,7 +44,8 @@ class AverageFreqVisualItem(SpectralVisualItemWrapper):
         return self.peak_freq_region
 
     def clone(self):
-        return AverageFreqVisualItem(self.COLOR, self.tooltip)
+        return AverageFreqVisualItem(self.COLOR, self.tooltip,
+                                     self.connect_points, self.point_figure, self.points_size)
 
     def set_data(self, signal, parameter, segment, data_kHz):
 
@@ -59,5 +70,12 @@ class AverageFreqVisualItem(SpectralVisualItemWrapper):
             pos[0, 1] = translate_freq_function(self.peak_freq_pos[0, 1])
             pos[1, 1] = translate_freq_function(self.peak_freq_pos[1, 1])
 
-        options = dict(size=1, symbol='d', pxMode=False, pen=(pg.mkPen(self.COLOR, width=self.ELEMENT_REGION_WIDTH)))
-        self.peak_freq_region.setData(pos=pos, adj=self.peak_freq_adj, **options)
+        options = dict(size=self.points_size, symbol=self.point_figure,
+                       pxMode=True, pen=(pg.mkPen(self.COLOR, width=self.ELEMENT_REGION_WIDTH)))
+
+        if self.connect_points:
+            self.peak_freq_region.setData(pos=pos, adj=self.peak_freq_adj, **options)
+
+        else:
+            self.peak_freq_region.setData(pos=pos,  **options)
+

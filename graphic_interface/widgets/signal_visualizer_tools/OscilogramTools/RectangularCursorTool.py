@@ -17,8 +17,8 @@ class RectangularCursorTool(SignalVisualizerTool):
     def __init__(self, widget):
         SignalVisualizerTool.__init__(self, widget)
 
-        # dict of data ussefull for the tool
-        # TODO must be examinated for possible improvement
+        # dict of data useful for the tool
+        # TODO must be examined for possible improvement
         self.last = {'pos': [0, 0]}
 
         # visual rectangle for the tool

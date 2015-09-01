@@ -802,6 +802,12 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         """
         self._edition_action(self.editionSignalProcessor.copy, CopyAction)
 
+    def _edition_action(self, edition_method, undo_redo_action_class):
+        # get the current signal selection interval
+        start, end = self.selectedRegion
+        edition_method(start, end)
+        self.undoRedoManager.add(undo_redo_action_class(start, end, self.editionSignalProcessor))
+
     def paste(self):
         """
         Paste the previously copied or cutted section
@@ -812,13 +818,6 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         self.editionSignalProcessor.paste(start)
         self.undoRedoManager.add(PasteAction(start, end, self.editionSignalProcessor))
         self.graph()
-
-    def _edition_action(self, edition_method, undo_redo_action_class):
-        # get the current signal selection interval
-        start, end = self.selectedRegion
-        edition_method(start, end)
-        self.undoRedoManager.add(undo_redo_action_class(start, end, self.editionSignalProcessor))
-
     #  endregion
 
     #  region Signal Processing Actions

@@ -11,13 +11,21 @@ class TimeParameterAdapter(ParameterAdapter):
 
     def __init__(self):
         ParameterAdapter.__init__(self)
-        settings = [
+        self._settings = [
             {u'name': unicode(self.tr(u'Decimal Places')), u'type': u'int', u'value': 3, u'step': 1,
              u'limits': (1, 5)}]
 
         self.decimal_places = 3
 
-        self.settings = Parameter.create(name=u'Settings', type=u'group', children=settings)
+        self.settings = Parameter.create(name=u'Settings', type=u'group', children=self._settings)
+
+    def state(self):
+        return {"decimals":self.decimal_places}
+
+    def load_state(self, state):
+        if "decimals" in state:
+            print(self.name + "setting decimals to " + str(state["decimals"]))
+            self.settings.param(unicode(self.tr(u'Decimal Places'))).setValue(state["decimals"])
 
     def get_settings(self):
         return self.settings

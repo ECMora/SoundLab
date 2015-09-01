@@ -33,6 +33,6 @@ class MeasurementLocation:
         to perform parameter measurement.
         :return:
         """
-        return mlab.psd(self.get_data_array_slice(segment), Fs=segment.signal.samplingRate, noverlap=128)
+        return mlab.psd(self.get_data_array_slice(segment), NFFT=512, Fs=segment.signal.samplingRate, noverlap=256)
 
 

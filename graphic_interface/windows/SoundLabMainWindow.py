@@ -213,11 +213,15 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
 
             if mbox.exec_() == QtGui.QMessageBox.Yes:
                 for file_path in self.workSpace.openedFiles:
-                    self._open(file_path)
-                    # restore if any the widgets visibility
-                    self.changeWidgetsVisibility(self.workSpace.visibleOscilogram,
-                                                 self.workSpace.visibleSpectrogram)
-
+                    try:
+                        self._open(file_path)
+                        # restore if any the widgets visibility
+                        self.changeWidgetsVisibility(self.workSpace.visibleOscilogram,
+                                                     self.workSpace.visibleSpectrogram)
+                    except Exception as e:
+                        QtGui.QMessageBox.warning(QtGui.QMessageBox(), self.tr(u"Error"),
+                                                  self.tr(u"There is a problem when try to load the signal at ") +
+                                                  file_path + " \n" + e.message)
             else:
                 # clear the previous session state
                 self.workSpace.clearOpenedFiles()
@@ -628,6 +632,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         Gets the current widget selected or None if no signal is opened
         :return:
         """
+
         if self.tabOpenedSignals.count() == 0:
             return None
 

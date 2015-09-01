@@ -18,6 +18,13 @@ class WaveParameterAdapter(ParameterAdapter):
 
         self.settings = Parameter.create(name=u'Settings', type=u'group', children=settings)
 
+    def state(self):
+        return {"decimals": self.decimal_places}
+
+    def load_state(self, state):
+        if "decimals" in state:
+            self.settings.param(unicode(self.tr(u'Decimal Places'))).setValue(state["decimals"])
+
     def get_settings(self):
         return self.settings
 

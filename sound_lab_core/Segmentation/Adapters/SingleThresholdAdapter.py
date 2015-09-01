@@ -7,7 +7,6 @@ from sound_lab_core.Segmentation.OneDimensional.ThresholdDetectors.SingleThresho
 
 class SingleThresholdAdapter(ThresholdAdapter):
     """
-    Adapter class for the start time parameter.
     """
 
     def __init__(self):
