@@ -126,8 +126,8 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
    <widget class="QMenu" name="menuFile">
     <property name="geometry">
      <rect>
-      <x>65</x>
-      <y>184</y>
+      <x>131</x>
+      <y>126</y>
       <width>174</width>
       <height>394</height>
      </rect>
@@ -863,8 +863,8 @@ No signal is open&lt;/h2&gt;&lt;hr&gt;
   </action>
   <action name="actionSave_selected_interval_as">
    <property name="icon">
-    <iconset>
-     <normaloff>:/myappicons/225.ico</normaloff>:/myappicons/225.ico</iconset>
+    <iconset resource="resources/icons.qrc">
+     <normaloff>:/myappicons/button_save.png</normaloff>:/myappicons/button_save.png</iconset>
    </property>
    <property name="text">
     <string>Save Selection As...</string>
