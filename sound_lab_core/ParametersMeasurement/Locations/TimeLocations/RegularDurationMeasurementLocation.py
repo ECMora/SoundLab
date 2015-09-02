@@ -7,14 +7,14 @@ class RegularDurationMeasurementLocation(MeasurementLocation):
     of a segment every duration_interval_ms of time.
     """
 
-    def __init__(self, duration_interval_ms, subinterval_index):
+    def __init__(self, duration_interval_ms, subinterval_index, NFFT, overlap):
         """
         :param duration_interval_ms: The duration of the intervals in
         which is divided the segment for the current location.
         :param subinterval_index: the index of the current sub-interval location
         :return:
         """
-        MeasurementLocation.__init__(self)
+        MeasurementLocation.__init__(self, NFFT, overlap)
 
         self.name = "Regular Duration" + "[" + str((subinterval_index + 1) * duration_interval_ms) + "ms]"
 

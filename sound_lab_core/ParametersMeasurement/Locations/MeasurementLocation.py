@@ -12,9 +12,14 @@ class MeasurementLocation:
     A location is an interval (time and spectral) of the segment data
     """
 
-    def __init__(self):
+    def __init__(self, NFFT=512, overlap=50):
         # name of the measurement location
         self.name = ""
+
+        self.NFFT = NFFT
+
+        # overlap in %
+        self.overlap = int(overlap * 0.01 * NFFT)
 
         self.time_start_index, self.time_end_index = 0, 0
 
@@ -30,9 +35,9 @@ class MeasurementLocation:
         """
         Compute and returns the segment data transformed accord to the current location
         to perform parameter measurement.
-        to perform parameter measurement.
         :return:
         """
-        return mlab.psd(self.get_data_array_slice(segment), NFFT=512, Fs=segment.signal.samplingRate, noverlap=256)
+        data = self.get_data_array_slice(segment)
+        return mlab.psd(data, NFFT=self.NFFT, Fs=segment.signal.samplingRate, noverlap=self.overlap)
 
 

@@ -9,9 +9,9 @@ class FrequencyMeasurementLocation(MeasurementLocation):
     which the measurement will be executed
     """
 
-    def __init__(self, min_kHz=0, max_kHz=250):
+    def __init__(self, min_kHz=0, max_kHz=250, NFFT=512, overlap=50):
         # name of the measurement location
-        MeasurementLocation.__init__(self)
+        MeasurementLocation.__init__(self, NFFT, overlap)
 
         # the freq interval in which would be measured
         # the parameters

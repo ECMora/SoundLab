@@ -21,6 +21,7 @@ class AverageFreqVisualItem(SpectralVisualItemWrapper):
 
         self.points_size = points_size
         self.point_figure = point_figure
+
         # 'o' circle, ‘s’ square, ‘t’ triangle, ‘d’ diamond, ‘+’ plus
         if point_figure not in "ostd+":
             self.point_figure = "+"
@@ -31,8 +32,11 @@ class AverageFreqVisualItem(SpectralVisualItemWrapper):
         self.connect_points = connect_points
 
         # a line for peak freq
-        self.peak_freq_pos = np.array([[self.indexFrom,  self.peak_freq_value],
-                                       [self.indexTo,  self.peak_freq_value]])
+        point_positions_list = [[self.indexFrom,  self.peak_freq_value]]
+        if connect_points:
+            point_positions_list.append([self.indexTo,  self.peak_freq_value])
+
+        self.peak_freq_pos = np.array(point_positions_list)
 
         self.peak_freq_adj = np.array([[0, 1]])
 
@@ -54,21 +58,34 @@ class AverageFreqVisualItem(SpectralVisualItemWrapper):
         param_name = parameter.getName()
 
         # update positions
-        self.peak_freq_pos = np.array([[parameter.time_location.time_start_index,  self.peak_freq_value],
-                                       [parameter.time_location.time_end_index,  self.peak_freq_value]])
+        point_positions_list = [[parameter.time_location.time_start_index,  self.peak_freq_value]]
+
+        if self.connect_points:
+            point_positions_list.append([parameter.time_location.time_end_index,  self.peak_freq_value])
+
+        self.peak_freq_pos = np.array(point_positions_list)
 
         self.peak_freq_region.setToolTip(self.tooltip + " " + str(data_kHz) + "(kHz)" + param_name)
 
-    def translate_time_freq_coords(self, translate_time_function=None, translate_freq_function=None):
-        pos = np.zeros(4).reshape((2, 2))
+    def translate_points_positions(self, translate_time_function=None, translate_freq_function=None):
+        pos = np.copy(self.peak_freq_pos)
 
         if translate_time_function is not None:
             pos[0, 0] = translate_time_function(self.peak_freq_pos[0, 0])
-            pos[1, 0] = translate_time_function(self.peak_freq_pos[1, 0])
+
+            if self.connect_points:
+                pos[1, 0] = translate_time_function(self.peak_freq_pos[1, 0])
 
         if translate_freq_function is not None:
             pos[0, 1] = translate_freq_function(self.peak_freq_pos[0, 1])
-            pos[1, 1] = translate_freq_function(self.peak_freq_pos[1, 1])
+
+            if self.connect_points:
+                pos[1, 1] = translate_freq_function(self.peak_freq_pos[1, 1])
+
+        return pos
+
+    def translate_time_freq_coords(self, translate_time_function=None, translate_freq_function=None):
+        pos = self.translate_points_positions(translate_time_function, translate_freq_function)
 
         options = dict(size=self.points_size, symbol=self.point_figure,
                        pxMode=True, pen=(pg.mkPen(self.COLOR, width=self.ELEMENT_REGION_WIDTH)))

@@ -20,8 +20,8 @@ class MaxFreqParameterAdapter(FreqParameterAdapter):
         visual_items = []
         if self.show_visual_items:
             visual_items = [AverageFreqVisualItem(color=self.visual_item_color, tooltip=self.tr(u"Max Freq") + u" at " +
-                                                  unicode(self.threshold) + u" dB->", point_figure=self.items_figure,
-                                                  points_size=self.items_pixel_size)]
+                                                  unicode(self.threshold) + u" dB->", connect_points=False,
+                                                  point_figure=self.items_figure, points_size=self.items_pixel_size)]
 
         return MaxFreqParameter(threshold=self.threshold, total=self.total,
                                 decimal_places=self.decimal_places, visual_items=visual_items)

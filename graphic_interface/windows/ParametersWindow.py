@@ -117,9 +117,10 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
         self.visible_spectrogram_cbox.setChecked(True)
         self.visible_oscilogram_cbox.setChecked(True)
 
-        visibility_function = lambda: self.advanced_mode_gbox.setVisible(self.advanced_mode_visibility_cbox.isChecked())
+        visibility_function = lambda: self.dock_widget_advanced_mode.setVisible(self.advanced_mode_visibility_cbox.isChecked())
         self.advanced_mode_visibility_cbox.stateChanged.connect(visibility_function)
-        self.advanced_mode_gbox.setVisible(False)
+        self.dock_widget_advanced_mode.setVisible(False)
+        self.finished.connect(lambda _: self.dock_widget_advanced_mode.setVisible(False))
 
     def create_layout_for_settings_widget(self):
         label = QtGui.QLabel("<center><h4>" + self.tr(u"Settings") + "</h4></center>")

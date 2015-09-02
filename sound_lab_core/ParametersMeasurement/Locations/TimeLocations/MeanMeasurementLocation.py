@@ -6,8 +6,8 @@ class MeanMeasurementLocation(MeasurementLocation):
     Location of measurement at all the segment.
     """
 
-    def __init__(self):
-        MeasurementLocation.__init__(self)
+    def __init__(self, NFFT=256, overlap=50):
+        MeasurementLocation.__init__(self, NFFT, overlap)
         self.name = "Mean"
 
     def get_data_array_slice(self, segment):

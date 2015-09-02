@@ -19,7 +19,7 @@ class CenterLocationAdapter(FixedTimeLocationAdapter):
     def get_instance(self):
         self.update_instance_variables()
 
-        return [CenterMeasurementLocation(ms_delay=self.ms_delay, fft_points=self.fft_points)]
+        return [CenterMeasurementLocation(ms_delay=self.ms_delay, NFFT=self.fft_points, overlap=self.overlap)]
 
 
 

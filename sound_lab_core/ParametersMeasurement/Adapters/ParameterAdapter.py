@@ -15,7 +15,7 @@ class ParameterAdapter(SoundLabAdapter):
         """
         Updates the internal data (if any) that are related with
          the final measured signal properties.
-        :param signal: the signal in whic the param would be measured
+        :param signal: the signal in which the param would be measured
         :return:
         """
         pass
