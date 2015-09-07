@@ -8,23 +8,25 @@ class TimeParameterAdapter(ParameterAdapter):
     """
     Adapter class for the start time parameter.
     """
+    DEFAULT_DECIMAL_PLACES = 3
 
     def __init__(self):
         ParameterAdapter.__init__(self)
         self._settings = [
-            {u'name': unicode(self.tr(u'Decimal Places')), u'type': u'int', u'value': 3, u'step': 1,
-             u'limits': (1, 5)}]
+            {u'name': unicode(self.tr(u'Decimal Places')), u'type': u'int', u'value': self.DEFAULT_DECIMAL_PLACES
+             , u'step': 1, u'limits': (1, 5)}]
 
-        self.decimal_places = 3
+        self.decimal_places = self.DEFAULT_DECIMAL_PLACES
 
         self.settings = Parameter.create(name=u'Settings', type=u'group', children=self._settings)
+        self.settings.sigTreeStateChanged.connect(lambda changes: self.dataChanged.emit())
 
     def state(self):
-        return {"decimals":self.decimal_places}
+        self.compute_settings()
+        return {"decimals": self.decimal_places}
 
     def load_state(self, state):
         if "decimals" in state:
-            print(self.name + "setting decimals to " + str(state["decimals"]))
             self.settings.param(unicode(self.tr(u'Decimal Places'))).setValue(state["decimals"])
 
     def get_settings(self):
@@ -37,6 +39,7 @@ class TimeParameterAdapter(ParameterAdapter):
             decimals = self.settings.param(unicode(self.tr(u'Decimal Places'))).value()
 
         except Exception as e:
-            decimals = 3
+            decimals = self.DEFAULT_DECIMAL_PLACES
 
-        self.decimal_places = decimals
+        if self.decimal_places != decimals:
+            self.decimal_places = decimals

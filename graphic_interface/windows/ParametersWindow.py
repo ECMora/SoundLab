@@ -37,7 +37,7 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
 
     # region Initialize
 
-    def __init__(self, parent=None, measurement_template=None, signal=None, specgram_data=None):
+    def __init__(self, parent=None, measurement_template=None, signal=None, workspace=None):
         """
         :type specgram_data: dict with the options of spectrogram creation on main window
         options are NFFT and overlap
@@ -48,10 +48,6 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
         # the list of templates names
         self.templates_paths = []
         self.load_templates()
-
-        self.spectrogram_data = {}
-        if specgram_data is not None:
-            self.spectrogram_data = specgram_data
 
         # if accepted or cancel anyway raise the changes
         self.buttonBox.clicked.connect(lambda bttn: self.parameterChangeFinished.emit(self.measurement_template))
@@ -87,6 +83,9 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
         self.wave_parameter_table.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.time_parameter_table.setEditTriggers(QAbstractItemView.NoEditTriggers)
 
+        self.workspace = workspace
+        self.signal = signal
+
         self._measurement_template = None
         self.measurement_template = measurement_template if measurement_template is not None else MeasurementTemplate()
 
@@ -107,15 +106,24 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
         self.try_load_signal_segment()
 
     def configure_advanced_mode_items(self, signal):
+        """
+        Configure the setting of the advanced mode window.
+        :param signal: the signal to graph with the segment to dynamically
+        measure the parameters and display items
+        :return:
+        """
         self.widget.signal = signal
         self.widget.visibleSpectrogram = True
-        self.widget.visibleOscilogram = True
+        self.widget.visibleOscilogram = False
 
-        self.widget.setSelectedTool(Tools.NoTool)
+        if self.workspace is not None:
+            self.widget.load_workspace(self.workspace)
+
         self.visible_oscilogram_cbox.stateChanged.connect(self.update_widget_graphs_visibility)
         self.visible_spectrogram_cbox.stateChanged.connect(self.update_widget_graphs_visibility)
         self.visible_spectrogram_cbox.setChecked(True)
-        self.visible_oscilogram_cbox.setChecked(True)
+        self.visible_oscilogram_cbox.setChecked(False)
+        self.widget.setSelectedTool(Tools.NoTool)
 
         visibility_function = lambda: self.dock_widget_advanced_mode.setVisible(self.advanced_mode_visibility_cbox.isChecked())
         self.advanced_mode_visibility_cbox.stateChanged.connect(visibility_function)
@@ -150,7 +158,6 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
         self.widget.graph()
 
     def update_widget_graphs_visibility(self):
-
         osc_visibility = self.visible_oscilogram_cbox.isChecked()
         spec_visibility = self.visible_spectrogram_cbox.isChecked()
 
@@ -182,11 +189,11 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
         try:
             self.measurement_template.load_state(deserialize(self.templates_paths[index-1]))
             self.load_parameters()
+            self.update_parameter_pre_visualization()
 
         except Exception as e:
             print(e.message)
-
-        self.update_parameter_pre_visualization()
+            self.select_template(0)
 
     def load_templates(self):
         """
@@ -296,13 +303,37 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
             raise Exception("Invalid type of argument. Must be of type MeasurementTemplate")
 
         self._measurement_template = parameter
+        self.config_measurement_template()
+
+        for adapter in self.measurement_template.get_data_changing_adapters():
+            adapter.dataChanged.connect(self.update_parameter_pre_visualization)
 
         # when change the parameter manager updates its values on the tables
         self.load_parameters()
-
     # endregion
 
     # region Load Parameters
+
+    def config_measurement_template(self):
+        """
+        sets the configuration if any of the values in the measurement template
+        accord to the current signal in process by the system
+        :return:
+        """
+
+        if self.signal is not None:
+            self.measurement_template.update_adapters_data(self.signal)
+
+        if self.workspace is not None:
+            NFFT = self.workspace.spectrogramWorkspace.FFTSize
+            overlap = self.workspace.spectrogramWorkspace.FFTOverlap
+
+            # the overlap on the workspace is between 0 and 1
+            # and is -1 if automatic overlap selected by system
+            overlap = 50 if overlap < 0 else overlap * 100
+
+            spectrogram_data = dict(NFFT=NFFT, overlap=overlap)
+            self.measurement_template.update_locations_data(spectrogram_data)
 
     def load_parameters(self):
         """
@@ -480,7 +511,9 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
                                                      param_adapters,
                                                      self.measurement_template.spectral_time_locations_adapters)
 
+        # make a fast visible the change on the checkbox to prevent multiple clicks
         table.repaint()
+
         self.update_parameter_pre_visualization()
 
     def update_parameter_and_locations_settings(self, row, col, param_adapters, time_locations_adapters=None):
@@ -516,3 +549,7 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
             self.widget.elements = self.segmentManager.elements
 
             self.segmentManager.measure_parameters_and_classify()
+
+    def resizeEvent(self, event):
+        QtGui.QDialog.resizeEvent(self, event)
+        self.widget.graph()

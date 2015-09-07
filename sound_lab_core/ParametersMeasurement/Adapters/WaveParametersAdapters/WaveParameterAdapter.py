@@ -18,6 +18,10 @@ class WaveParameterAdapter(ParameterAdapter):
 
         self.settings = Parameter.create(name=u'Settings', type=u'group', children=settings)
 
+        # temporally disabled because the wave parameters has no visual items
+        # so is no necessary to refresh changes in preview parameters window
+        # self.settings.sigTreeStateChanged.connect(lambda changes: self.dataChanged.emit())
+
     def state(self):
         return {"decimals": self.decimal_places}
 

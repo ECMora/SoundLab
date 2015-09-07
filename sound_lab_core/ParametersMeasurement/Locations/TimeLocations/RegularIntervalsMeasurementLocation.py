@@ -21,4 +21,13 @@ class RegularIntervalsMeasurementLocation(MeasurementLocation):
         self.sub_interval_index = subinterval_index
 
     def get_data_array_slice(self, segment):
-        return segment.signal.data[segment.indexFrom:segment.indexTo]
+        interval_length = (segment.indexTo - segment.indexFrom) / self.interval_count
+
+        start_index = min(segment.indexFrom + interval_length * self.sub_interval_index,
+                          segment.indexTo - self.NFFT)
+
+        end_index = start_index + self.NFFT
+
+        self.time_start_index, self.time_end_index = start_index, end_index
+
+        return segment.signal.data[start_index:end_index]

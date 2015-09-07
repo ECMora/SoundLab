@@ -20,7 +20,7 @@ class PeakFreqParameterAdapter(SpectralParameterAdapter):
 
         if self.show_visual_items:
             visual_items = [AverageFreqVisualItem(color=self.visual_item_color, tooltip=self.tr(u"Peak Freq"),
-                                                  connect_points=True, point_figure=self.items_figure,
+                                                  connect_points=False, point_figure=self.items_figure,
                                                   points_size=self.items_pixel_size)]
 
         return PeakFreqParameter(decimal_places=self.decimal_places, visual_items=visual_items)

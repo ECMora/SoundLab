@@ -13,7 +13,6 @@ class DurationTimeParameterAdapter(TimeParameterAdapter):
         TimeParameterAdapter.__init__(self)
         self.name = self.tr(u'Duration')
 
-
     def get_instance(self):
         self.compute_settings()
 

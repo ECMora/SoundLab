@@ -64,18 +64,95 @@ class MeasurementTemplate:
 
         self.update_adapters_data(signal)
 
-    def update_adapters_data(self, signal=None, spectrogram_data=None):
+    def update_adapters_data(self, signal=None):
+        if signal is None:
+            return
 
-        if signal is not None:
-            # if there is a signal provided then update the adapters values for it
-            adapters = self.spectral_parameters_adapters + self.time_parameters_adapters + self.wave_parameters_adapters
+        # if there is a signal provided then update the adapters values for it
+        adapters = self.spectral_parameters_adapters + self.time_parameters_adapters + self.wave_parameters_adapters
 
-            # updates the adapters with the signal properties
-            for adapter in adapters:
-                adapter.update_data(signal)
+        # updates the adapters with the signal properties
+        for adapter in adapters:
+            adapter.update_data(signal)
 
-        if spectrogram_data is not None:
-            pass
+    def update_locations_data(self, spectrogram_data=None):
+        if spectrogram_data is None or "NFFT" not in spectrogram_data or\
+           "overlap" not in spectrogram_data:
+            return
+
+        NFFT = spectrogram_data["NFFT"]
+        overlap = spectrogram_data["overlap"]
+
+        locations = self.spectral_time_locations_adapters + self.wave_locations_adapters
+
+        # updates the adapters with the signal properties
+        for location in locations:
+            if isinstance(location, MeanLocationAdapter):
+                continue
+            location.update_data(NFFT, overlap)
+
+    def clone(self):
+        return self
+
+    # region Get & Save State
+
+    def get_state(self):
+        return dict(name=self.name, editable=self.editable,
+
+                    # boolean matrix of selections
+                    time_location=self.time_location_parameters,
+                    wave_location=self.wave_location_parameters,
+                    spectral_location=self.spectral_location_parameters,
+
+                    # parameter adapters states
+                    time_parameters_adapters=[x.state() for x in self.time_parameters_adapters],
+                    wave_parameters_adapters=[x.state() for x in self.wave_parameters_adapters],
+                    spectral_parameters_adapters=[x.state() for x in self.spectral_parameters_adapters],
+
+                    # location adapters states
+                    wave_locations_adapters=[x.state() for x in self.wave_locations_adapters],
+                    spectral_time_locations_adapters=[x.state() for x in self.spectral_time_locations_adapters])
+
+    def load_state(self, state):
+        """
+        load into the current instance a saved state of a measurement template
+        :param state: dict with the state saved
+        :return:
+        """
+        if not isinstance(state, dict):
+            return
+
+        self.name = state["name"] if "name" in state else self.name
+        self.editable = state["editable"] if "editable" in state else self.editable
+
+        if "time_location" in state:
+            self.time_location_parameters = state["time_location"]
+
+        if "wave_location" in state:
+            self.wave_location_parameters = state["wave_location"]
+
+        if "spectral_location" in state:
+            self.spectral_location_parameters = state["spectral_location"]
+
+        # parameter adapters
+        self.__load_state_helper(state, "time_parameters_adapters", self.time_parameters_adapters)
+        self.__load_state_helper(state, "wave_parameters_adapters", self.wave_parameters_adapters)
+        self.__load_state_helper(state, "spectral_parameters_adapters", self.spectral_parameters_adapters)
+
+        # location adapters
+        self.__load_state_helper(state, "wave_locations_adapters", self.wave_locations_adapters)
+        self.__load_state_helper(state, "spectral_time_locations_adapters", self.spectral_time_locations_adapters)
+
+    def __load_state_helper(self, state, field_name, field):
+        if field_name in state:
+            for i in xrange(len(field)):
+                try:
+                    field[i].load_state(state[field_name][i])
+
+                except Exception as e:
+                    print("Error in load state of measurement template. " + e.message)
+
+    # endregion
 
     def parameter_list(self):
         """
@@ -110,68 +187,13 @@ class MeasurementTemplate:
 
         return time_params + wave_params + spectral_parameters
 
-    def clone(self):
-        return self
-
-    def get_state(self):
-        return dict(name=self.name, editable=self.editable,
-
-                    # boolean matrix of selections
-                    time_location=self.time_location_parameters,
-                    wave_location=self.wave_location_parameters,
-                    spectral_location=self.spectral_location_parameters,
-
-                    # parameter adapters states
-                    time_parameters_adapters=[x.state() for x in self.time_parameters_adapters],
-                    wave_parameters_adapters=[x.state() for x in self.wave_parameters_adapters],
-                    spectral_parameters_adapters=[x.state() for x in self.spectral_parameters_adapters],
-
-                    # location adapters states
-                    wave_locations_adapters=[x.state() for x in self.wave_locations_adapters],
-                    spectral_time_locations_adapters=[x.state() for x in self.spectral_time_locations_adapters])
-
-    def load_state(self, state):
+    def get_data_changing_adapters(self):
         """
-        load into the current instance a saved state of a measurement template
-        :param state: dict with the state saved
+        return a list of the adapters to observe to know
+        if the parameter list has changed
         :return:
         """
-
-        if not isinstance(state, dict):
-            return
-
-        self.name = state["name"] if "name" in state else self.name
-        self.editable = state["editable"] if "editable" in state else self.editable
-
-        # region matrix with boolean selections
-
-        if "time_location" in state:
-            self.time_location_parameters = state["time_location"]
-
-        if "wave_location" in state:
-            self.wave_location_parameters = state["wave_location"]
-
-        if "spectral_location" in state:
-            self.spectral_location_parameters = state["spectral_location"]
-
-        # endregion
-
-        # parameter adapters
-
-        self.__load_state_helper(state, "time_parameters_adapters", self.time_parameters_adapters)
-        self.__load_state_helper(state, "wave_parameters_adapters", self.wave_parameters_adapters)
-        self.__load_state_helper(state, "spectral_parameters_adapters", self.spectral_parameters_adapters)
-
-        # location adapters
-        self.__load_state_helper(state, "wave_locations_adapters", self.wave_locations_adapters)
-        self.__load_state_helper(state, "spectral_time_locations_adapters", self.spectral_time_locations_adapters)
-
-    def __load_state_helper(self, state, field_name, field):
-
-        if field_name in state:
-            for i in xrange(len(field)):
-                try:
-                    field[i].load_state(state[field_name][i])
-
-                except Exception as e:
-                    print("Error in load state of measurement template. " + e.message)
+        return self.time_parameters_adapters + self.wave_parameters_adapters +\
+            self.spectral_parameters_adapters + self.spectral_time_locations_adapters
+            # temporally disabled because the wave adapters has no visual items
+            # + self.wave_locations_adapters

@@ -51,6 +51,7 @@ class SpectrogramWorkspace(object):
         self.FFTSize = FFTSize
         self.FFTWindow = FFTWindow
         self.FFTOverlap = FFTOverlap
+
         self.theme = theme if theme else SpectrogramTheme()
 
     @property

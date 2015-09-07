@@ -24,7 +24,6 @@ Complexity-2: Small-to-medium code changes
 
 * save parameter templates just with the visible parameter used???
 
-* include the way to access the spectrogram settings used
 * fix the parameter measurement visual items update bug
 * make an efficiency improvement on parameter items update
 

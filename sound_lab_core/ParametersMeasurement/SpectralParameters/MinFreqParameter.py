@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
 import numpy as np
-
-from graphic_interface.segment_visualization.parameter_items.spectral_parameter_items.AverageFreqVisualItem import \
-    AverageFreqVisualItem
-from sound_lab_core.ParametersMeasurement.Locations.TimeLocations.MeanMeasurementLocation import MeanMeasurementLocation
 from sound_lab_core.ParametersMeasurement.SpectralParameters.FreqParameter import FreqParameter
 
 
@@ -14,7 +10,6 @@ class MinFreqParameter(FreqParameter):
 
     def __init__(self, **kwargs):
         FreqParameter.__init__(self, **kwargs)
-
         self.name = "MinFreq(kHz)"
 
     def measure(self, segment):

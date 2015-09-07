@@ -830,15 +830,13 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
             if mbox.exec_() == QMessageBox.Yes:
                 self.on_actionMeditions_triggered()
 
-        NFFT = self.workSpace.spectrogramWorkspace.FFTSize
-        overlap = self.workSpace.spectrogramWorkspace.FFTOverlap
-        spectrogram_data = dict(NFFT=NFFT, overlap=overlap)
+
         param_window = ParametersWindow(self, self.parameter_manager,
-                                        self.widget.signal, specgram_data=spectrogram_data)
+                                        self.widget.signal, workspace=self.workSpace)
 
         param_window.parameterChangeFinished.connect(lambda p: self.update_parameters(p))
 
-        param_window.exec_()
+        param_window.show()
 
     def load_workspace(self, workspace):
         """

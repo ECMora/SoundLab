@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from PyQt4 import QtGui
-from PyQt4.QtCore import QObject
+from PyQt4.QtCore import QObject, pyqtSignal
 import pyqtgraph as pg
 
 
@@ -19,6 +19,14 @@ class SoundLabAdapter(QObject):
 
     # the width for the line on the visual items
     VISUAL_ITEM_LINE_WIDTH = 2
+
+    # endregion
+
+    # region SIGNALS
+
+    # signal raised when a data has changed on the adapter settings
+    # so the object returned by get_instance method has changed
+    dataChanged = pyqtSignal()
 
     # endregion
 

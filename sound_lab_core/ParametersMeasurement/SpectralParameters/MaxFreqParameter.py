@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
 import numpy as np
-
-from graphic_interface.segment_visualization.parameter_items.spectral_parameter_items.AverageFreqVisualItem import \
-    AverageFreqVisualItem
-from sound_lab_core.ParametersMeasurement.Locations.TimeLocations.MeanMeasurementLocation import MeanMeasurementLocation
 from sound_lab_core.ParametersMeasurement.SpectralParameters.FreqParameter import FreqParameter
 
 
@@ -28,10 +24,11 @@ class MaxFreqParameter(FreqParameter):
         if len(Pxx) == 0:
             return round((freqs[max_freq_limit_index] - freqs[max_freq_limit_index] % 10)/1000.0, self.decimal_places)
 
-        value = np.amax(Pxx) * np.power(10, self.threshold/10.0)
+        value = np.amax(Pxx) * np.power(10, self.threshold / 10.0)
 
         if self.total:
             max_freq_index = np.argwhere(Pxx >= value).max()
+
         else:
             below = Pxx < value
             peak_index = np.argmax(Pxx)

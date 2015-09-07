@@ -32,6 +32,7 @@ class BandWidthParameter(FreqParameter):
         if self.total:
             min_freq_index = np.argwhere(Pxx >= value).min()
             max_freq_index = np.argwhere(Pxx >= value).max()
+
         else:
             below = Pxx < value
             peak_index = np.argmax(Pxx)

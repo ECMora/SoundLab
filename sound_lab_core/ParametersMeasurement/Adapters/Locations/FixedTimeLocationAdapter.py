@@ -13,7 +13,7 @@ class TimeLocationAdapter(LocationAdapter):
         LocationAdapter.__init__(self)
 
         self._settings = [{u'name': unicode(self.tr(u'FFT points')), u'type': u'int',
-                           u'value': 256, u'step': 1, u'limits': (128, 1000000)},
+                           u'value': 256, u'step': 1, u'limits': (32, 1000000)},
                           {u'name': unicode(self.tr(u'overlap (%)')), u'type': u'int',
                            u'value': 50, u'step': 1, u'limits': (0, 99)}]
 
@@ -22,6 +22,12 @@ class TimeLocationAdapter(LocationAdapter):
         self.overlap = 50
 
         self.settings = Parameter.create(name=u'Time Location', type=u'group', children=self._settings)
+        self.settings.sigTreeStateChanged.connect(lambda changes: self.dataChanged.emit())
+
+    def update_data(self, NFFT, overlap):
+        self.settings.param(unicode(self.tr(u'FFT points'))).setValue(NFFT)
+        self.settings.param(unicode(self.tr(u'overlap (%)'))).setValue(overlap)
+        self.update_instance_variables()
 
     def update_instance_variables(self):
         try:
@@ -33,6 +39,19 @@ class TimeLocationAdapter(LocationAdapter):
 
         self.fft_points = fft_points
         self.overlap = overlap
+
+    def state(self):
+        self.update_instance_variables()
+        return dict(NFFT=self.fft_points, overlap=self.overlap)
+
+    def load_state(self, state):
+        if "NFFT" in state:
+            self.settings.param(unicode(self.tr(u'FFT points'))).setValue(state["NFFT"])
+
+        if "overlap" in state:
+            self.settings.param(unicode(self.tr(u'overlap (%)'))).setValue(state["overlap"])
+
+        self.update_instance_variables()
 
 
 class FixedTimeLocationAdapter(TimeLocationAdapter):
@@ -49,6 +68,7 @@ class FixedTimeLocationAdapter(TimeLocationAdapter):
         self.ms_delay = 0
 
         self.settings = Parameter.create(name=u'Time Location', type=u'group', children=self._settings)
+        self.settings.sigTreeStateChanged.connect(lambda changes: self.dataChanged.emit())
 
     def update_instance_variables(self):
         TimeLocationAdapter.update_instance_variables(self)
@@ -60,3 +80,17 @@ class FixedTimeLocationAdapter(TimeLocationAdapter):
             ms_delay = 0
 
         self.ms_delay = ms_delay
+
+    def state(self):
+        self.update_instance_variables()
+
+        parent_state = TimeLocationAdapter.state(self)
+        parent_state["ms_delay"] = self.ms_delay
+        return parent_state
+
+    def load_state(self, state):
+        TimeLocationAdapter.load_state(self, state)
+
+        if "ms_delay" in state:
+            self.settings.param(unicode(self.tr(u'ms delay'))).setValue(state["ms_delay"])
+            self.ms_delay = state["ms_delay"]

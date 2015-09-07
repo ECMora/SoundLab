@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from PyQt4.QtCore import QObject
+from PyQt4.QtCore import QObject, pyqtSignal
 
 from sound_lab_core.ParametersMeasurement.Locations.TimeLocations.MeanMeasurementLocation import MeanMeasurementLocation
 
@@ -9,6 +9,9 @@ class ParameterMeasurer(QObject):
     Class that represent an object that measure parameters
     in segments.
     """
+
+    # signal raised when the time location is changed
+    timeLocationChanged = pyqtSignal()
 
     def __init__(self, decimal_places=2, time_measurement_location=None, visual_items=None):
         """
@@ -69,6 +72,7 @@ class ParameterMeasurer(QObject):
             raise Exception("Location of measurement cant be None")
 
         self._time_measurement_location = new_location
+        self.timeLocationChanged.emit()
 
     # endregion
 
