@@ -1,18 +1,25 @@
 from sound_lab_core.Segmentation.OneDimensional.DetectionEnvelopes.IntervalMaxEnvelope import IntervalMaxEnvelope
 from sound_lab_core.Segmentation.OneDimensional.OneDimensionalElementsDetector import OneDimensionalElementsDetector
 from matplotlib import mlab as mlab
-from utils.Utils import fromdB
+import pyqtgraph as pg
+import numpy as np
 
 
 class SingleThresholdDetector(OneDimensionalElementsDetector):
 
-    def __init__(self, signal, threshold_db=-40, min_size_ms=1, merge_factor=5, envelope_method=IntervalMaxEnvelope()):
-        OneDimensionalElementsDetector.__init__(self, signal=signal, min_size_ms=min_size_ms, merge_factor=merge_factor)
+    def __init__(self, signal, threshold_db=-40, min_size_ms=1, merge_factor=5,
+                 envelope_method=None):
+        OneDimensionalElementsDetector.__init__(self, signal=signal, min_size_ms=min_size_ms,
+                                                merge_factor=merge_factor)
 
         # variables for detection
         self._threshold = threshold_db
         self._envelope_method = None
-        self.envelope_method = envelope_method
+        self.envelope_method = envelope_method if envelope_method is not None else IntervalMaxEnvelope()
+
+        # visual elements
+        self.envelope = None
+        self.threshold_visual_item = None
 
     # region Properties
 
@@ -37,6 +44,17 @@ class SingleThresholdDetector(OneDimensionalElementsDetector):
 
     # endregion
 
+    def get_visual_items(self):
+        items = []
+
+        if self.envelope is not None:
+            items.append(self.envelope)
+
+        if self.threshold_visual_item is not None:
+            items.append(self.threshold_visual_item)
+
+        return items
+
     def detect(self, indexFrom=0, indexTo=-1):
         indexTo = self.signal.length if indexTo == -1 else indexTo
 
@@ -46,6 +64,13 @@ class SingleThresholdDetector(OneDimensionalElementsDetector):
 
         detected = self.detect_elements(acoustic_processing)
 
+        self.envelope = pg.PlotCurveItem(x=np.arange(len(acoustic_processing)) * self.envelope_method.scale,
+                                         y=acoustic_processing)
+
+
+
+        # convert the logic units of the envelope to the real ones on the signal data array
+        # accord to the scale of each index on the envelope method array
         detected = [c * self.envelope_method.scale for c in detected]
 
         self.detectionProgressChanged.emit(80)

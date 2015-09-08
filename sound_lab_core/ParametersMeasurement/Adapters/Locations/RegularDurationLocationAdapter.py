@@ -29,6 +29,7 @@ class RegularDurationLocationAdapter(TimeLocationAdapter):
         self.max_intervals = 20
 
         self.settings = Parameter.create(name=u'Time Location', type=u'group', children=self._settings)
+        self.settings.sigTreeStateChanged.connect(lambda changes: self.dataChanged.emit())
 
     def get_instance(self):
         TimeLocationAdapter.update_instance_variables(self)

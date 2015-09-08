@@ -125,7 +125,12 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
         self.visible_oscilogram_cbox.setChecked(False)
         self.widget.setSelectedTool(Tools.NoTool)
 
-        visibility_function = lambda: self.dock_widget_advanced_mode.setVisible(self.advanced_mode_visibility_cbox.isChecked())
+        def visibility_function():
+            visibility = self.advanced_mode_visibility_cbox.isChecked()
+            self.dock_widget_advanced_mode.setVisible(visibility)
+            if visibility:
+                self.update_parameter_pre_visualization()
+
         self.advanced_mode_visibility_cbox.stateChanged.connect(visibility_function)
         self.dock_widget_advanced_mode.setVisible(False)
         self.finished.connect(lambda _: self.dock_widget_advanced_mode.setVisible(False))

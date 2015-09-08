@@ -11,7 +11,8 @@ class OneDimensionalElementsDetector(ElementsDetector):
     one dimensional areas (intervals [start, end] ) over an acoustic processing of one dimension.
     """
 
-    def __init__(self, signal, min_size_ms=1, merge_factor=5, one_dimensional_class=OneDimensionalElement):
+    def __init__(self, signal, min_size_ms=1,
+                 merge_factor=5, one_dimensional_class=OneDimensionalElement):
         """
         :param signal: The signal in which would be detected the elements
         :param min_size_ms: The min size of a detected element is ms. Parameter to filter detected elements.
@@ -58,9 +59,10 @@ class OneDimensionalElementsDetector(ElementsDetector):
 
     def detect(self, indexFrom=0, indexTo=-1):
         """
+        Abstract method that perform the detection over the signal.
         :param indexFrom:
         :param indexTo:
-        :return:
+        :return: return the list of one dimensional elements detected
         """
         return self.elements
 

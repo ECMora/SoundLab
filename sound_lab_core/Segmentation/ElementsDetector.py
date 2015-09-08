@@ -27,6 +27,9 @@ class ElementsDetector(QObject):
         """
         return self.elements
 
+    def get_visual_items(self):
+        return []
+
 
 
 

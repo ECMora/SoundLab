@@ -28,7 +28,7 @@ class SpectralParameterAdapter(ParameterAdapter):
                           {u'name': unicode(self.tr(u'Size')), u'type': u'int',
                            u'value': 10, u'limits': (1, 100)}]
 
-        self.items_figure = ''
+        self.items_figure = '+'
         self.decimal_places = 3
         self.items_pixel_size = 10
         self.show_visual_items = True
@@ -101,6 +101,7 @@ class FreqParameterAdapter(SpectralParameterAdapter):
         self.total = False
 
         self.settings = Parameter.create(name=u'Settings', type=u'group', children=self._settings)
+        self.settings.sigTreeStateChanged.connect(lambda changes: self.dataChanged.emit())
 
     def state(self):
         self.compute_settings()

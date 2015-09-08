@@ -23,7 +23,7 @@ class AverageFreqVisualItem(SpectralVisualItemWrapper):
         self.point_figure = point_figure
 
         # 'o' circle, ‘s’ square, ‘t’ triangle, ‘d’ diamond, ‘+’ plus
-        if point_figure not in "ostd+":
+        if point_figure not in ['o', 's', 't', 'd', '+']:
             self.point_figure = "+"
 
         # the freq value
@@ -43,6 +43,10 @@ class AverageFreqVisualItem(SpectralVisualItemWrapper):
         self.peak_freq_region = pg.GraphItem()
 
         self.peak_freq_region.setToolTip(self.tooltip)
+
+    @property
+    def pen(self):
+        return pg.mkPen(self.COLOR, width=self.ELEMENT_REGION_WIDTH)
 
     def get_item(self):
         return self.peak_freq_region
@@ -88,11 +92,12 @@ class AverageFreqVisualItem(SpectralVisualItemWrapper):
         pos = self.translate_points_positions(translate_time_function, translate_freq_function)
 
         options = dict(size=self.points_size, symbol=self.point_figure,
-                       pxMode=True, pen=(pg.mkPen(self.COLOR, width=self.ELEMENT_REGION_WIDTH)))
+                       pxMode=True, pen=self.pen)
 
         if self.connect_points:
-            self.peak_freq_region.setData(pos=pos, adj=self.peak_freq_adj, **options)
+            self.peak_freq_region.setData(pos=pos, adj=self.peak_freq_adj, symbolPen=self.pen
+                                          , **options)
 
         else:
-            self.peak_freq_region.setData(pos=pos,  **options)
+            self.peak_freq_region.setData(pos=pos, symbolPen=self.pen,  **options)
 

@@ -24,13 +24,17 @@ class MaxFreqParameter(FreqParameter):
         if len(Pxx) == 0:
             return round((freqs[max_freq_limit_index] - freqs[max_freq_limit_index] % 10)/1000.0, self.decimal_places)
 
-        value = np.amax(Pxx) * np.power(10, self.threshold / 10.0)
+        max_value = np.amax(Pxx)
+        if max_value == 0:
+            max_value = 1.0
 
-        if self.total:
-            max_freq_index = np.argwhere(Pxx >= value).max()
+        Pxx = 10. * np.log10(Pxx / max_value)
+
+        if not self.total:
+            max_freq_index = np.argwhere(Pxx >= self.threshold).max()
 
         else:
-            below = Pxx < value
+            below = Pxx < self.threshold
             peak_index = np.argmax(Pxx)
             below[:peak_index] = False
             max_freq_index = np.argwhere(below).min() - 1

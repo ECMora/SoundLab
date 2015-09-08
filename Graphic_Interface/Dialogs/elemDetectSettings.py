@@ -287,6 +287,6 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         self.widget.elements = detector.detect()
 
         # update the visual items of the segmentation process
-        self.widget.add_segmentation_items(self.detector.get_visual_items())
+        self.widget.add_segmentation_items(detector.get_visual_items())
 
         self.widget.graph()
