@@ -229,8 +229,8 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
         Save the current template as a new one in the system.
         :return:
         """
-        new_template_name = str(self.new_template_name_linedit.text())
-        template_names = [str(self.measurement_template_cbox.itemText(i))
+        new_template_name = unicode(self.new_template_name_linedit.text())
+        template_names = [unicode(self.measurement_template_cbox.itemText(i))
                           for i in range(self.measurement_template_cbox.count())]
 
         if not new_template_name:

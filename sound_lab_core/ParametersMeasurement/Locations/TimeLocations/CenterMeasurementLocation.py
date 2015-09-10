@@ -15,13 +15,12 @@ class CenterMeasurementLocation(MeasurementLocation):
         self.name = "Center "
 
         if self.ms_delay > 0:
-            self.name += " + " + str(self.ms_delay) + "ms"
+            self.name += " + " + unicode(self.ms_delay) + "ms"
 
         if self.ms_delay < 0:
-            self.name += str(self.ms_delay) + "ms"
+            self.name += unicode(self.ms_delay) + "ms"
 
     def get_data_array_slice(self, segment):
-        slice_arr = zeros(self.NFFT)
 
         ms_delay = self.ms_delay * segment.signal.samplingRate / 1000
 
@@ -29,10 +28,10 @@ class CenterMeasurementLocation(MeasurementLocation):
 
         index_center += ms_delay
 
-        start_index = min(segment.indexTo - self.NFFT, max(segment.indexFrom, index_center))
+        start_index = max(segment.indexFrom, index_center)
 
-        self.time_start_index, self.time_end_index = start_index, start_index + self.NFFT
+        end_index = min(start_index + self.NFFT, segment.indexTo)
 
-        slice_arr[: self.NFFT] = segment.signal.data[self.time_start_index: self.time_end_index]
+        self.time_start_index, self.time_end_index = start_index, end_index
 
-        return slice_arr
+        return segment.signal.data[self.time_start_index: self.time_end_index]

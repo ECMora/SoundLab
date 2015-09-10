@@ -115,14 +115,14 @@ class CrossCorrelationDialog(QDialog, Ui_cross_correlationDialog):
         for i, match, offset in ordered_matches:
             row_count = self.matchTableWidget.rowCount()
             self.matchTableWidget.insertRow(row_count)
-            item = QTableWidgetItem(str(i+1))
+            item = QTableWidgetItem(unicode(i+1))
             self.matchTableWidget.setVerticalHeaderItem(row_count, item)
 
             item = QTableWidgetItem('{:.2%}'.format(match))
             item.setBackground(self._tableColorEven if i % 2 == 0 else self._tableColorOdd)
             self.matchTableWidget.setItem(row_count, 0, item)
 
-            item = QTableWidgetItem(str('{:.0f} ms'.format(offset)))
+            item = QTableWidgetItem(unicode('{:.0f} ms'.format(offset)))
             item.setBackground(self._tableColorEven if i % 2 == 0 else self._tableColorOdd)
             self.matchTableWidget.setItem(row_count, 1, item)
 

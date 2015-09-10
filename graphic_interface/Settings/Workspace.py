@@ -165,9 +165,9 @@ class Workspace(object):
             self.openedFiles.append(filepath)
 
         if len(self.recentFiles) < self.LAST_OPENED_FILES_AMOUNT:
-            self.recentFiles.append(str(filepath))
+            self.recentFiles.append(unicode(filepath))
         else:
-            self.recentFiles.append(str(filepath))
+            self.recentFiles.append(unicode(filepath))
             self.recentFiles.pop(0)
 
     def copy(self):

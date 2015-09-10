@@ -23,8 +23,8 @@ class BatchWindow(QtGui.QMainWindow, Ui_MainWindow):
         :return:
         """
         # get the input and output audio files folder
-        directory_input = str(self.lineeditFilePath.text())
-        directory_output = str(self.lineEditOutputFolder.text())
+        directory_input = unicode(self.lineeditFilePath.text())
+        directory_output = unicode(self.lineEditOutputFolder.text())
 
         # validate folders
         if not os.path.isdir(directory_input) or not os.path.isdir(directory_output):
@@ -52,11 +52,11 @@ class BatchWindow(QtGui.QMainWindow, Ui_MainWindow):
                 if pieces >= 1:
                     for i in range(pieces):
                         save = signal.copy(i * pieceSize, (i + 1) * pieceSize)
-                        FileManager().write(save, os.path.join(directory_output, str(i + 1) + "-" + signal.name))
+                        FileManager().write(save, os.path.join(directory_output, unicode(i + 1) + "-" + signal.name))
 
                 if left > 0:
                     save = signal.copy(signal.length - left, signal.length)
-                    FileManager().write(save, os.path.join(directory_output, str(pieces + 1) + "-" + signal.name))
+                    FileManager().write(save, os.path.join(directory_output, unicode(pieces + 1) + "-" + signal.name))
 
                 files_processed += 1
 

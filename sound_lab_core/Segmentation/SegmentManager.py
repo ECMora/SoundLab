@@ -407,8 +407,7 @@ class SegmentManager(QObject):
                     self.update_elements_visual_items(parameter, index, self.measuredParameters[index, j])
 
             except Exception as e:
-                # if some error is raised set a default value
-                self.measuredParameters[index, j] = measure_methods[j].default_value
+                # if some error is raised do not set value
                 print("Error measure params " + e.message)
 
     # endregion

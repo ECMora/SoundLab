@@ -17,7 +17,7 @@ class FourierParameterAdapter(SpectralParameterAdapter):
                             u'default': self.selected_function,
                             u'value': self.selected_function}]
 
-        self.function_name = str(self.selected_function)
+        self.function_name = unicode(self.selected_function)
         self.func = np.var if self.name is u"Variance" else np.mean
 
         self.settings = Parameter.create(name=u'Settings', type=u'group', children=self._settings)
@@ -31,4 +31,4 @@ class FourierParameterAdapter(SpectralParameterAdapter):
             function = self.selected_function
 
         self.func = np.var if function is u"Variance" else np.mean
-        self.function_name = str(function)
+        self.function_name = unicode(function)

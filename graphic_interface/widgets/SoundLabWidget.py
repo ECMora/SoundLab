@@ -86,7 +86,7 @@ class SoundLabWidget:
         decimal_places = self.gui_user_tool.DECIMAL_PLACES
 
         for atr_name, value in data_list:
-            value_str = str(value)
+            value_str = unicode(value)
 
             try:
                 decimals = value_str[value_str.rindex("."):]
@@ -98,7 +98,7 @@ class SoundLabWidget:
                 print("Data text tool update " + ex.message)
 
             str_pad = " " * (len(value_str) - self.DATA_TOOL_STR_LENGTH)
-            detected_data += str(atr_name) + ": " + str_pad + value_str + " "
+            detected_data += unicode(atr_name) + ": " + str_pad + value_str + " "
 
         # raise the detected data as signal the definition of the signal must
         # be in every descendant widget (python issues to solve)

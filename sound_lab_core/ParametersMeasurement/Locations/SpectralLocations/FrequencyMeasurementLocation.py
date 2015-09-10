@@ -18,7 +18,7 @@ class FrequencyMeasurementLocation(MeasurementLocation):
         self.min_kHz = min_kHz
         self.max_kHz = max_kHz
 
-        self.name = str(min_kHz) + "-" + str(max_kHz) + " kHz"
+        self.name = unicode(min_kHz) + u"-" + unicode(max_kHz) + u" kHz"
 
     def get_freq_limits(self, freqs):
         """

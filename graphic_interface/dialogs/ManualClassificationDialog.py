@@ -36,18 +36,18 @@ class ManualClassificationDialog(classification_dialog.Ui_Dialog, QtGui.QDialog)
         # add the values of the taxonomy classification into the combo boxes
         # species (the first value is "" for the 'no selected specie')
         self.species.sort(lambda x, y: 1 if x.name_spa > y.name_spa else 0)
-        species_names = [""] + [str(x) for x in self.species]
+        species_names = [""] + [unicode(x) for x in self.species]
 
         self.specie_cbox.addItems(species_names)
 
         # genus (the first value is "" for the 'no selected genus')
-        self.genus.sort(lambda x, y: 1 if str(x) > str(y) else 0)
-        genus_names = [""] + [str(x) for x in self.genus]
+        self.genus.sort(lambda x, y: 1 if unicode(x) > unicode(y) else 0)
+        genus_names = [""] + [unicode(x) for x in self.genus]
         self.genus_cbox.addItems(genus_names)
 
         # families (the first value is "" for the 'no selected family')
-        self.families.sort(lambda x, y: 1 if str(x) > str(y) else 0)
-        family_names = [""] + [str(x) for x in self.families]
+        self.families.sort(lambda x, y: 1 if unicode(x) > unicode(y) else 0)
+        family_names = [""] + [unicode(x) for x in self.families]
         self.family_cbox.addItems(family_names)
 
         # set the hierarchy of the taxonomy into the como boxes selection

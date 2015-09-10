@@ -12,19 +12,18 @@ class EndMeasurementLocation(MeasurementLocation):
 
         self.ms_delay = 0 if ms_delay >= 0 else ms_delay
 
-        self.name = "End " + "" if self.ms_delay == 0 else str(self.ms_delay) + "ms"
+        self.name = u"End " + "" if self.ms_delay == 0 else unicode(self.ms_delay) + u"ms"
 
     def get_data_array_slice(self, segment):
-
-        slice_arr = zeros(self.NFFT)
 
         ms_delay = self.ms_delay * segment.signal.samplingRate / 1000
 
         # ms_delay is < 0
         start_index = max(segment.indexFrom, segment.indexTo - self.NFFT + ms_delay)
 
-        self.time_start_index, self.time_end_index = start_index, start_index + self.NFFT
+        end_index = min(start_index + self.NFFT, segment.indexTo)
 
-        slice_arr[: self.NFFT] = segment.signal.data[self.time_start_index: self.time_end_index]
+        self.time_start_index, self.time_end_index = start_index, end_index
 
-        return slice_arr
+        return segment.signal.data[self.time_start_index: self.time_end_index]
+

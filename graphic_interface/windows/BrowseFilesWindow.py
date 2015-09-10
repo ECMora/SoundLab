@@ -115,7 +115,7 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
             while size > 1024 and j < len(sufix):
                 size /= 1024.0
                 j += 1
-            size = str(round(size, DECIMAL_PLACES))+sufix[j]
+            size = unicode(round(size, DECIMAL_PLACES))+sufix[j]
 
         except Exception as ex:
             size = "-"
@@ -127,7 +127,7 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
         # region Creation date
         try:
             date = time.gmtime(os.path.getctime(file_path))
-            date = str(time.strftime("%d/%m/%Y", date))
+            date = unicode(time.strftime("%d/%m/%Y", date))
         except Exception as ex:
             date = "-"
 
@@ -151,7 +151,7 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
             duration_seg /= 60.0
             j += 1
 
-        duration_seg = str(round(duration_seg, DECIMAL_PLACES)) + sufix[j]
+        duration_seg = unicode(round(duration_seg, DECIMAL_PLACES)) + sufix[j]
 
         duration = QtGui.QTableWidgetItem(duration_seg)
 

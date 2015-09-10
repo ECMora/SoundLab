@@ -1497,7 +1497,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
                     self.closeSignalAt(i)
 
             except Exception as ex:
-                print("Error closing signal at index "+str(i) + " " + ex.message)
+                print("Error closing signal at index "+unicode(i) + " " + ex.message)
 
     @pyqtSlot()
     def on_actionNew_triggered(self):
@@ -1678,7 +1678,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         # get the filename to store the signal
         file_name = unicode(QFileDialog.getSaveFileName(self, self.tr(u"Save signal"),
                                                         os.path.join(self.workSpace.lastOpenedFolder,
-                                                        str(self.widget.signalName)), u"*.wav"))
+                                                        unicode(self.widget.signalName)), u"*.wav"))
         if file_name:
             widget.save(file_name)
 
@@ -1695,7 +1695,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         #  get the filename to store the new signal
         file_name = unicode(QFileDialog.getSaveFileName(self, self.tr(u"Save signal"),
                                                        os.path.join(self.workSpace.lastOpenedFolder,
-                                                       str(self.widget.signalName)), u"*.wav"))
+                                                       unicode(self.widget.signalName)), u"*.wav"))
         if file_name:
             widget.saveSelectedSectionAsSignal(file_name)
 
@@ -1749,10 +1749,10 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
 
         # ask for names like signal.name(#)
         n = 1
-        while self.signalNameExists(signal.name + "(" + str(n) + ")"):
+        while self.signalNameExists(signal.name + "(" + unicode(n) + ")"):
             n += 1
 
-        signal.name = signal.name + "(" + str(n) + ")"
+        signal.name = signal.name + "(" + unicode(n) + ")"
 
     def signalNameExists(self, name):
         """

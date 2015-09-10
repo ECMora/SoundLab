@@ -20,11 +20,11 @@ class ClassificationData:
         :return:
         """
         if specie is not None and not isinstance(specie, Specie):
-            raise Exception("Invalid argument type (specie must be of tye Specie).")
+            raise Exception(u"Invalid argument type (specie must be of tye Specie).")
         if genus is not None and not isinstance(genus, Genera):
-            raise Exception("Invalid argument type (genus must be of tye Genera).")
+            raise Exception(u"Invalid argument type (genus must be of tye Genera).")
         if family is not None and not isinstance(family, Family):
-            raise Exception("Invalid argument type (family must be of tye Family).")
+            raise Exception(u"Invalid argument type (family must be of tye Family).")
 
         self.specie, self.genus, self.family = None, None, None
 
@@ -44,7 +44,7 @@ class ClassificationData:
            (family is not None and self.family != family) or \
            (genus is not None and self.genus != genus):
 
-            raise Exception("Invalid arguments. The relationship between the classification taxonomy is incorrect")
+            raise Exception(u"Invalid arguments. The relationship between the classification taxonomy is incorrect")
 
     def get_image(self):
         """
@@ -56,16 +56,16 @@ class ClassificationData:
         if self.specie:
             return self.specie.name_spa
         if self.genus:
-            return "Genus: " + str(self.genus)
+            return u"Genus: " + unicode(self.genus)
         if self.family:
-            return "Family: " + str(self.family)
+            return u"Family: " + unicode(self.family)
 
-        return "No Classified"
+        return u"No Classified"
 
     def get_full_description(self):
         desc = ""
-        desc += "Specie: " + str(self.specie) + "\n" if self.specie else ""
-        desc += "Genus: " + str(self.genus) + "\n" if self.genus else ""
-        desc += "Family: " + str(self.family) + "\n" if self.family else ""
+        desc += "Specie: " + unicode(self.specie) + "\n" if self.specie else ""
+        desc += "Genus: " + unicode(self.genus) + "\n" if self.genus else ""
+        desc += "Family: " + unicode(self.family) + "\n" if self.family else ""
 
         return desc

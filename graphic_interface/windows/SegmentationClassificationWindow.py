@@ -48,8 +48,9 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
     def __init__(self, parent=None, signal=None, workspace=None):
         """
         Create a the window of segmentation and classification.
-        :param parent: the parent widget if any
-        :param signal: the signal to visualize for segmentation and classification
+        :param parent:    the parent widget if any
+        :param signal:    the signal to visualize for segmentation and classification
+        :param workspace: the workspace with specgram and oscilogram generation options
         :return:
         """
 
@@ -111,6 +112,15 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
         if workspace is not None:
             self.load_workspace(workspace)
+
+        if parent is not None:
+            # show window in the center of the parent
+            parent_x, parent_y = parent.x(), parent.y()
+            parent_width, parent_height = parent.width(), parent.height()
+            a = str('a')
+            window_x = parent_x + (parent_width - self.width()) / 2
+            window_y = parent_y + (parent_height - self.height()) / 2
+            self.move(window_x, window_y)
 
         self.show()
 

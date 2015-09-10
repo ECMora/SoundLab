@@ -52,7 +52,7 @@ class VisualElement:
         self.visible = True
 
         # the visual elements that show text
-        self.text_number = pg.TextItem(str(number), color=(255, 255, 255), anchor=(0.5, 0.5))
+        self.text_number = pg.TextItem(unicode(number), color=(255, 255, 255), anchor=(0.5, 0.5))
         self.text_number.setFont(self.FONT)
         self.visual_text = [self.text_number]
 
@@ -120,7 +120,7 @@ class VisualElement:
 
     def setNumber(self, n):
         self._number = n
-        self.text_number.setText(str(n))
+        self.text_number.setText(unicode(n))
 
     def visual_widgets(self):
         """

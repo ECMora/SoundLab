@@ -69,7 +69,7 @@ class AverageFreqVisualItem(SpectralVisualItemWrapper):
 
         self.peak_freq_pos = np.array(point_positions_list)
 
-        self.peak_freq_region.setToolTip(self.tooltip + " " + str(data_kHz) + "(kHz)" + param_name)
+        self.peak_freq_region.setToolTip(self.tooltip + u" " + unicode(data_kHz) + u"(kHz)" + param_name)
 
     def translate_points_positions(self, translate_time_function=None, translate_freq_function=None):
         pos = np.copy(self.peak_freq_pos)

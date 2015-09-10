@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from matplotlib import mlab
-
+import numpy as np
 
 class MeasurementLocation:
     """
@@ -38,6 +38,10 @@ class MeasurementLocation:
         :return:
         """
         data = self.get_data_array_slice(segment)
+
+        if len(data) < self.NFFT:
+            data = np.concatenate((data, np.zeros(self.NFFT - len(data))))
+
         return mlab.psd(data, NFFT=self.NFFT, Fs=segment.signal.samplingRate, noverlap=self.overlap)
 
 

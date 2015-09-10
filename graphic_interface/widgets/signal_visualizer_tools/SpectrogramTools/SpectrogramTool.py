@@ -60,4 +60,4 @@ class SpectrogramTool(SignalVisualizerTool):
             if time > 60:
                 time /= 60
                 unit = 'h'
-        return str(numpy.round(time, 1)) + unit
+        return unicode(numpy.round(time, 1)) + unit
