@@ -56,7 +56,7 @@ class RegularIntervalsFreqVisualItem(SpectralVisualItemWrapper):
         self.peak_freq_pos = np.array([[parameter.time_location.time_start_index,  self.peak_freq_value],
                                        [parameter.time_location.time_end_index,  self.peak_freq_value]])
 
-        self.peak_freq_region.setToolTip(self.tooltip + " " + str(data_kHz) + "(kHz)" + param_name)
+        self.peak_freq_region.setToolTip(self.tooltip + u" " + unicode(data_kHz) + u"(kHz)" + param_name)
 
     def translate_time_freq_coords(self, translate_time_function=None, translate_freq_function=None):
         pos = np.zeros(4).reshape((2,2))

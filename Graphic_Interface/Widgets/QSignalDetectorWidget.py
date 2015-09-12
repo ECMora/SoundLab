@@ -241,7 +241,8 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
         # pixel_visible_text
         if (end_position - start_position) * widget_pixel_width / widget_scene_width > 30:
-            text = "(" + str(start + 1) + "..." + str(end + 1) + ")" if end > start else "(" + str(start + 1) + ")"
+            text = u"(" + unicode(start + 1) + u"..." + unicode(end + 1) + u")" \
+                if end > start else u"(" + unicode(start + 1) + u")"
             text_item = pg.TextItem(text, color=(255, 255, 255), anchor=(0.5, 0.5))
             text_item.setPos(start_position / 2.0 + end_position / 2.0, 0.75 * max_value)
             osc_items.append(text_item)

@@ -1,0 +1,1 @@
+python setup_cxf.py build_exe

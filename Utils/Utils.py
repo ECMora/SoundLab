@@ -82,7 +82,7 @@ def folder_files(folder, extensions=None):
 
                     files.append(unicode(unicode(root) + u"/" + unicode(f)))
             except Exception as ex:
-                print("Errors in get folder files. On file " + str(f) + ". " + ex.message)
+                print("Errors in get folder files. On file " + unicode(f) + ". " + ex.message)
 
     return files
 

@@ -252,10 +252,10 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
             elems[self.selectedElementIndex].setBrush(pg.mkBrush(self.SELECTED_ELEMENT_COLOR))
 
         # update font size in axis labels
-        text_size = {'color': '#FFF', 'font-size': str(self.font.pointSize()) + 'pt'}
-        self.widget.setAxisLabel("bottom", str(self.segmentManager.parameterColumnNames[x_axis_index]), **text_size)
+        text_size = {'color': '#FFF', 'font-size': unicode(self.font.pointSize()) + 'pt'}
+        self.widget.setAxisLabel(u"bottom", unicode(self.segmentManager.parameterColumnNames[x_axis_index]), **text_size)
 
-        self.widget.setAxisLabel("left", str(self.segmentManager.parameterColumnNames[y_axis_index]), **text_size)
+        self.widget.setAxisLabel(u"left", unicode(self.segmentManager.parameterColumnNames[y_axis_index]), **text_size)
 
         # add the plot to the widget
         self.widget.addItem(self.scatter_plot)
