@@ -94,10 +94,14 @@ class AverageFreqVisualItem(SpectralVisualItemWrapper):
         options = dict(size=self.points_size, symbol=self.point_figure,
                        pxMode=True, pen=self.pen)
 
-        if self.connect_points:
-            self.peak_freq_region.setData(pos=pos, adj=self.peak_freq_adj, symbolPen=self.pen
-                                          , **options)
+        if not self.connect_points:
+            self.peak_freq_region.setData(pos=pos, symbolPen=self.pen,  **options)
 
         else:
-            self.peak_freq_region.setData(pos=pos, symbolPen=self.pen,  **options)
+            # if not connect points set the size to min
+            # for "invisibility" effect and just see the line
+            options["size"] = 1
+
+            self.peak_freq_region.setData(pos=pos, adj=self.peak_freq_adj, symbolPen=self.pen, **options)
+
 

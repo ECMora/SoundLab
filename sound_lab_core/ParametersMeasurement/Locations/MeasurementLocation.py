@@ -2,6 +2,7 @@
 from matplotlib import mlab
 import numpy as np
 
+
 class MeasurementLocation:
     """
     Class that represent a measurement location of a parameter over a detected

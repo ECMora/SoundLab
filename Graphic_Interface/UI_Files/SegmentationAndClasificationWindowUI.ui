@@ -578,6 +578,17 @@
     <string>Parameter Measurement</string>
    </property>
   </action>
+  <action name="actionVisualizationParametersChanged">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Group by Parameter</string>
+   </property>
+  </action>
   <zorder>dockWidgetParameterTableOscilogram</zorder>
  </widget>
  <customwidgets>

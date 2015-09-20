@@ -281,18 +281,11 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         # avoid multiples recursion calls when update the zoom regions in widgets
         self.zoom_update_in_progress = True
 
-        oscilogram_zoom_region = self.axesOscilogram.gui_user_tool.zoomRegion.getRegion()
-        spectrogram_zoom_region = self.axesSpecgram.gui_user_tool.zoomRegion.getRegion()
+        osc_min_x, osc_max_x = self.axesOscilogram.gui_user_tool.zoomRegion.getRegion()
+        spec_min_x, spec_max_x = self.axesSpecgram.gui_user_tool.zoomRegion.getRegion()
 
-        #  the translation of spectrograms coords into oscilogram coords
-        spec_region_coords_in_osc = self.from_spec_to_osc(spectrogram_zoom_region[0]),\
-                                 self.from_spec_to_osc(spectrogram_zoom_region[1])
-
-        #  rename for easy code
-        osc_min_x, osc_max_x = oscilogram_zoom_region[0], oscilogram_zoom_region[1]
-
-        #  rename for easy code
-        spec_min_x, spec_max_x = spec_region_coords_in_osc[0], spec_region_coords_in_osc[1]
+        #  translation of spectrograms coords into oscilogram coords
+        spec_min_x, spec_max_x = self.from_spec_to_osc(spec_min_x), self.from_spec_to_osc(spec_max_x)
 
         min_x_spec = self.from_osc_to_spec(osc_max_x)
         max_x_spec = self.from_osc_to_spec(osc_min_x)
@@ -802,12 +795,6 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         """
         self._edition_action(self.editionSignalProcessor.copy, CopyAction)
 
-    def _edition_action(self, edition_method, undo_redo_action_class):
-        # get the current signal selection interval
-        start, end = self.selectedRegion
-        edition_method(start, end)
-        self.undoRedoManager.add(undo_redo_action_class(start, end, self.editionSignalProcessor))
-
     def paste(self):
         """
         Paste the previously copied or cutted section
@@ -818,6 +805,13 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         self.editionSignalProcessor.paste(start)
         self.undoRedoManager.add(PasteAction(start, end, self.editionSignalProcessor))
         self.graph()
+
+    def _edition_action(self, edition_method, undo_redo_action_class):
+        # get the current signal selection interval
+        start, end = self.selectedRegion
+        edition_method(start, end)
+        self.undoRedoManager.add(undo_redo_action_class(start, end, self.editionSignalProcessor))
+
     #  endregion
 
     #  region Signal Processing Actions
@@ -959,7 +953,7 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         filter_method.filter(start, end)
         self.graph()
 
-    def absoluteValue(self,sign):
+    def absoluteValue(self, sign):
         """
 
         :param sign:

@@ -2,6 +2,7 @@
 from sound_lab_core.ParametersMeasurement.Locations.SpectralLocations.FrequencyMeasurementLocation import \
     FrequencyMeasurementLocation
 from sound_lab_core.ParametersMeasurement.ParameterMeasurer import ParameterMeasurer
+from sound_lab_core.ParametersMeasurement.Locations.TimeLocations.MeanMeasurementLocation import MeanMeasurementLocation
 
 
 class SpectralParameter(ParameterMeasurer):
@@ -18,6 +19,8 @@ class SpectralParameter(ParameterMeasurer):
         if self._spectral_measurement_location is None:
             self._spectral_measurement_location = FrequencyMeasurementLocation()
 
+        self.timeLocationChanged.connect(self._update_visual_items)
+
     @property
     def spectral_location(self):
         return self._spectral_measurement_location
@@ -29,6 +32,17 @@ class SpectralParameter(ParameterMeasurer):
 
         self._spectral_measurement_location = new_location
 
+    def _update_visual_items(self):
+        """
+        The visual item for the peak freq parameter changes with the location.
+        if location is 'mean' must be connected the start and end of the location
+        if not just visualize the start point.
+        :return:
+        """
+        connect_points = isinstance(self.time_location, MeanMeasurementLocation)
+
+        for item in self.visual_items:
+            item.connect_points = connect_points
     def getName(self):
         """
         :return: The name and the location (if any)

@@ -31,7 +31,7 @@ class KNNClassifier(TrainingVectorClassifier):
            or vector2.values is None or len(vector1.values) != len(vector2.values):
             raise Exception("Invalid Arguments")
 
-        # simple euclidean distance
+        # simple euclidean distance by now
         return sum([(vector1.values[i] - vector2.values[i]) ** 2
                     for i in xrange(len(vector1.values))]) ** 0.5
 

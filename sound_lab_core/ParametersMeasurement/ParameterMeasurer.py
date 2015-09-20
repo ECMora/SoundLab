@@ -31,9 +31,6 @@ class ParameterMeasurer(QObject):
         # the location on the detected segment to perform the parameter measurement
         self._time_measurement_location = time_measurement_location
 
-        if self._time_measurement_location is None:
-            self._time_measurement_location = MeanMeasurementLocation()
-
     def getName(self):
         time_location_name = "(" + self.time_location.name + ")" if self.time_location is not None else ""
 

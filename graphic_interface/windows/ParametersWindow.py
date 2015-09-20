@@ -554,7 +554,3 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
             self.widget.elements = self.segmentManager.elements
 
             self.segmentManager.measure_parameters_and_classify()
-
-    def resizeEvent(self, event):
-        QtGui.QDialog.resizeEvent(self, event)
-        self.widget.graph()

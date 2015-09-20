@@ -254,8 +254,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         Configure the no Opened signals widget to show.
         :return:
         """
-        # the widget for no opened signals configuration is just
-        # to set it invisible at starting
+        # the widget for no opened signals configuration is just invisible at start,
         # when a more complicated logic will be needed put it here
         self.noSignalOpened_lbl.setVisible(False)
 
