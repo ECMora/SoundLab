@@ -73,6 +73,9 @@ class ParameterMeasurer(QObject):
 
     # endregion
 
+    def __eq__(self, other):
+        return type(self) == type(other)
+
     def __str__(self):
         return self.name
 

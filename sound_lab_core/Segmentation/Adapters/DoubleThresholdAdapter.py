@@ -12,7 +12,7 @@ class DoubleThresholdAdapter(ThresholdAdapter):
 
     # region CONSTANTS
 
-    THRESHOLD2_DEFAULT = -40
+    THRESHOLD2_DEFAULT = -20
 
     # endregion
 

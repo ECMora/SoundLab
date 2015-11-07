@@ -18,21 +18,18 @@ Complexity-1: No new-code activity
 
 Complexity-2: Small-to-medium code changes
 
++ bugs de  repintado en detector widget
+
 * fix graph of signal in small resolution
 
 * Enable the cross correlation method
 * Revision of the two dimensional analysis window for improvements
 
 * merge factor in ms instead of points
-* paint envelope curve on every type of envelope segmentation
-
 * bugs de repintado en parameter window advanced
-* bugs de  repintado en detector widget
 * make an efficiency improvement on parameter visual items update
 
 * poner los dialogos de parameter y segmentacion como ventanas
-* poner las filas de los segmentos que sean ordenables y se corresponda
-  el numero con el segmento aunque este ordenado
 
 -----------------------------------------------------------
 
@@ -45,14 +42,21 @@ Complexity-4: New  Code Design and Infrastructure Implementation
 
 * Design of extra modules.
     * Tools                      ---> (Gabriela)      [Lupas, gomas de borrar, extraccion de datos variados etc]
+    
     * Synthesizer                ---> (Carlos)        [sintetizador de señales complejo usando trabajo de carlos 3ro]
+    
     * One dimensional Transforms ---> (Gabriela)      [agregar las presentes en avisoft, nuevas y mejorar eficiencia]
+    
     * Filters                    ---> (Hiram - Yasel) [implementación de FIR e IIR filters acceso a propiedades y diseño de filtros complejos]
+    
     * Audio Formats and Compression (Carlos)
 
     * Parameter Measurement         (Gabriela - Hiram - Carlos - Yasel)
+    
     * Segmentation                  (Hiram - Yasel)
+    
     * Classification                (Gabriela - Hiram - Carlos - Yasel)
+    
     * Spectral Representation       (?)
 
 * Include the segmentation, parameter measurements and clasification methods on duetto api?

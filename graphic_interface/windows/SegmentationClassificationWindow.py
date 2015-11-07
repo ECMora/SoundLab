@@ -32,7 +32,10 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
     """
 
     # region CONSTANTS
-
+    
+    # sort type of the parameter table
+    PARAMETER_SORT_NONE, PARAMETER_SORT_BY_LOCATION, PARAMETER_SORT_BY_PARAMETER = range(3)
+    
     # different colors for the even and odds rows in the parameter table and segment colors.
     TABLE_ROW_COLOR_ODD = QColor(0, 0, 255, 150)
     TABLE_ROW_COLOR_EVEN = QColor(0, 255, 0, 150)
@@ -70,10 +73,10 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
         # the object that handles the measuring of parameters and manage the segments
         self.segmentManager = SegmentManager()
-        self.segmentManager.measurementsChanged.connect(self.update_parameter_table)
         self.segmentManager.measurementsFinished.connect(self.measurement_finished)
         self.segmentManager.detectionProgressChanged.connect(lambda x: self.windowProgressDetection.setValue(x * 0.9))
         self.segmentManager.segmentVisualItemAdded.connect(self.widget.add_parameter_visual_items)
+        self.segmentManager.segmentationFinished.connect(self.segmentation_finished)
 
         # the factory of adapters for parameters to supply to the ui window or segmentation dialog
         self.parameter_manager = MeasurementTemplate(signal=signal)
@@ -90,6 +93,10 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         # set visible the two graphs by default
         self.changeWidgetsVisibility(True, True)
 
+        # shift of the table parameters rows. If the table visualization isn't expanded
+        # the first row are the name of the parameters and the second one the locations
+        self.parameter_table_row_shift = 2
+
         # connect the signals on the widget for new detected data by its tools
         # and to select the element in the table. Binding the element click to the table
         self.widget.toolDataDetected.connect(self.update_status_bar)
@@ -100,13 +107,13 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         self.dockWidgetParameterTableOscilogram.setVisible(False)
         self.tableParameterOscilogram.setSortingEnabled(False)
 
-        # configuration variable for the parameter table visualization
-        # True to show complete name
-        self.parameter_table_expanded = False
+        # connect the table parameter sort type actions
+        self.actionGroupNone.triggered.connect(self.groupTableParametersChanged)
+        self.actionGroupByParameter.triggered.connect(self.groupTableParametersChanged)
+        self.actionGroupByLocation.triggered.connect(self.groupTableParametersChanged)
 
-        # shift of the table parameters rows. If the table visualization isn't expanded
-        # the first row are the name of the parameters and the second one the locations
-        self.parameter_table_row_shift = 2
+        # configuration variable for the parameter table visualization sort
+        self.parameter_table_sort_type = self.PARAMETER_SORT_BY_PARAMETER
 
         # add the context menu actions to the widget
         self.__addContextMenuActions()
@@ -206,10 +213,15 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
                 separator4
                 ])
         # endregion
-
         # add the action to switch visualization mode on  the parameter table
         self.tableParameterOscilogram.setContextMenuPolicy(QtCore.Qt.ActionsContextMenu)
-        self.tableParameterOscilogram.addAction(self.actionVisualizationParametersChanged)
+
+        parameter_tables_action_group = QActionGroup(self.tableParameterOscilogram)
+        actions = [self.actionGroupNone, self.actionGroupByLocation, self.actionGroupByParameter]
+
+        for act in actions:
+            parameter_tables_action_group.addAction(act)
+            self.tableParameterOscilogram.addAction(act)
 
     def configureToolBarActionsGroups(self):
         """
@@ -519,14 +531,14 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         the event selected cell in the QTableWidget. Useless in this application context.
         """
         # select the element in the table of parameters
-        self.tableParameterOscilogram.selectRow(element_index)
+        self.tableParameterOscilogram.selectRow(element_index + self.parameter_table_row_shift)
 
         # in the widget...
-        self.widget.select_element(element_index - self.parameter_table_row_shift)
+        self.widget.select_element(element_index)
 
         # in the opened two dimensional windows...
         for wnd in self.two_dim_windows:
-            wnd.select_element(element_index - self.parameter_table_row_shift)
+            wnd.select_element(element_index)
 
         # and in the cross-correlation windows
         for i in xrange(len(self._cross_correlation_windows)):
@@ -676,7 +688,6 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
                 self.set_progress_bar_visibility(True)
 
                 # execute the detection
-                self.segmentManager.segmentationFinished.connect(self.segmentation_finished)
                 self.segmentManager.detect_elements()
 
         except Exception as e:
@@ -694,7 +705,9 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
         # put the elements detected into the widget to visualize them
         self.widget.elements = self.segmentManager.elements
-        self.widget.graph()
+
+        # shows the detection elements first and later the measurements as lazy load
+        self.widget.draw_elements()
 
         self.windowProgressDetection.setValue(100)
         self.set_progress_bar_visibility(False)
@@ -709,13 +722,12 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         """
         # must be refreshed the widget because the parameter measurement
         # may include visual items into the graph
-        self.widget.graph()
+        self.widget.draw_elements()
         self.update_two_dim_windows()
-
+        self.update_parameter_table()
         self.__set_parameter_window_visible()
 
     def __set_parameter_window_visible(self):
-
         # set the parameter window to visible state after measurements
         if not self.tableParameterOscilogram.isVisible():
             self.actionView_Parameters.setChecked(True)
@@ -726,32 +738,63 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         for wnd in self.two_dim_windows:
             wnd.load_data(self.segmentManager)
 
-    def _group_parameters(self, parameters):
+    def groupTableParametersChanged(self):
+
+        grouped_params = self.actionGroupByParameter.isChecked()
+        grouped_locations = self.actionGroupByLocation.isChecked()
+        grouped_none = self.actionGroupNone.isChecked()
+
+        self.parameter_table_row_shift = 0 if grouped_none else 2
+
+        if grouped_none:
+            self.parameter_table_sort_type = self.PARAMETER_SORT_NONE
+
+        elif grouped_params:
+            self.parameter_table_sort_type = self.PARAMETER_SORT_BY_PARAMETER
+
+        elif grouped_locations:
+            self.parameter_table_sort_type = self.PARAMETER_SORT_BY_LOCATION
+
+        self.update_parameter_table()
+        self.on_actionDeselect_Elements_triggered()
+
+    # endregion
+
+    # region Parameter Table
+
+    def _group_measurements(self, parameters):
+        """
+        group the measurements for display in table
+        :param parameters: the parameters measurements to group
+        :return: list of groups (list) grouped by location or parameter
+        accord to the instance variable  parameter_table_sort_type
+        """
         groups = []
 
-        index = 0
-        while index < len(parameters):
-            current_group = []
-            current_type = type(parameters[index])
+        def group_item_selector(param):
+            if self.parameter_table_sort_type == self.PARAMETER_SORT_BY_LOCATION:
+                return "-" if param.time_location is None else param.time_location.name
+            return param.name
 
-            while index < len(parameters) and type(parameters[index]) == current_type:
-                current_group.append(parameters[index])
-                current_type = type(parameters[index])
+        param_positions = [(parameters[i], i) for i in xrange(len(parameters))]
+
+        comparer = lambda x, y: cmp(group_item_selector(x[0]), group_item_selector(y[0]))
+
+        param_positions.sort(cmp=comparer)
+
+        index = 0
+        while index < len(param_positions):
+            current_group = []
+            current_item = group_item_selector(param_positions[index][0])
+
+            while index < len(parameters) and group_item_selector(param_positions[index][0]) == current_item:
+                current_group.append(param_positions[index][0])
+                current_item = group_item_selector(param_positions[index][0])
                 index += 1
 
             groups.append(current_group)
 
-        return groups
-
-    def on_actionVisualizationParametersChanged_triggered(self):
-
-        grouped_params = self.actionVisualizationParametersChanged.isChecked()
-
-        self.parameter_table_row_shift = 2 if grouped_params else 0
-        self.parameter_table_expanded = not grouped_params
-
-        self.update_parameter_table()
-        self.select_element(0)
+        return groups, [t[1] for t in param_positions]
 
     def _get_table_widget_item_centered(self, text):
         """
@@ -762,6 +805,65 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         item = QTableWidgetItem(unicode(text))
         item.setTextAlignment(Qt.AlignHCenter | Qt.AlignVCenter)
         return item
+
+    def __fill_parameter_table_measurements(self, param_indexes):
+        """
+        Fill the values of the table parameters using the param indexes
+        from the parameter sort defined by user. Is a helper method of the update parameter table
+        :param param_indexes:
+        :return:
+        """
+
+        # update every measurement [row, column] position
+        for i in xrange(self.segmentManager.rowCount):
+            for j in xrange(self.segmentManager.columnCount):
+                # the last columns aren't for parameters but for classification
+                param_index = param_indexes[j] if j < len(param_indexes) else j
+
+                item = self._get_table_widget_item_centered(self.segmentManager[i, param_index])
+
+                # color options for the rows of the table
+                item.setBackgroundColor(self.TABLE_ROW_COLOR_ODD if (i+self.parameter_table_row_shift) % 2 == 0
+                                        else self.TABLE_ROW_COLOR_EVEN)
+
+                self.tableParameterOscilogram.setItem(i + self.parameter_table_row_shift, j, item)
+
+    def __fill_parameter_table_grouped_columns_headers(self, params_groups, indexes):
+        # set the span value to group the param names columns and their names
+        column_index = 0
+
+        parameters = []
+        for g in params_groups:
+            parameters.extend(g)
+
+        for j in xrange(len(parameters)):
+            if self.parameter_table_sort_type == self.PARAMETER_SORT_BY_LOCATION:
+                text = parameters[j].name
+            else:
+                text = "-" if parameters[j].time_location is None else unicode(parameters[j].time_location.name)
+
+            item = self._get_table_widget_item_centered(text)
+            self.tableParameterOscilogram.setItem(1, j, item)
+
+        # set the group names on the row 0
+        for param_group in params_groups:
+            span_size = len(param_group)
+            if span_size > 1:
+                self.tableParameterOscilogram.setSpan(0, column_index, 1, span_size)
+
+            if self.parameter_table_sort_type == self.PARAMETER_SORT_BY_PARAMETER:
+                text = param_group[0].name
+            else:
+                text = "-" if param_group[0].time_location is None else unicode(param_group[0].time_location.name)
+
+            item = self._get_table_widget_item_centered(text)
+            self.tableParameterOscilogram.setItem(0, column_index, item)
+            column_index += span_size
+
+        # put the classification category headers
+        for index, category_classif in enumerate(self.segmentManager.classificationColumnNames):
+            item = self._get_table_widget_item_centered(category_classif)
+            self.tableParameterOscilogram.setItem(0, column_index + index, item)
 
     def update_parameter_table(self):
         """
@@ -777,61 +879,35 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
         header_labels = self.segmentManager.columnNames
 
-        # update every measurement [row, column] position
-        for i in xrange(self.segmentManager.rowCount):
-            for j in xrange(self.segmentManager.columnCount):
-                item = self._get_table_widget_item_centered(self.segmentManager[i, j])
+        if self.parameter_table_sort_type != self.PARAMETER_SORT_NONE:
+            # get the list of parameters grouped by type
+            params_groups, indexes = self._group_measurements(parameters)
 
-                # color options for the rows of the table
-                item.setBackgroundColor(self.TABLE_ROW_COLOR_ODD if (i+self.parameter_table_row_shift) % 2 == 0
-                                        else self.TABLE_ROW_COLOR_EVEN)
-
-                self.tableParameterOscilogram.setItem(i + self.parameter_table_row_shift, j, item)
-
-        # region Grouped By Parameter
-
-        if not self.parameter_table_expanded:
             header_labels = ["" for _ in self.segmentManager.columnNames]
 
             # set the vertical names of rows. Parameters on first row and locations on second
             vertical_headers = ["Parameter" if s == 0 else
                                 "Location" if s == 1 else str(s - self.parameter_table_row_shift + 1)
-                                for s in range(self.segmentManager.rowCount + self.parameter_table_row_shift)]
+                                for s in xrange(self.segmentManager.rowCount + self.parameter_table_row_shift)]
+
+            if self.parameter_table_sort_type == self.PARAMETER_SORT_BY_LOCATION:
+                swap = vertical_headers[0]
+                vertical_headers[0] = vertical_headers[1]
+                vertical_headers[1] = swap
 
             self.tableParameterOscilogram.setVerticalHeaderLabels(vertical_headers)
+            self.__fill_parameter_table_grouped_columns_headers(params_groups, indexes)
+            self.__fill_parameter_table_measurements(indexes)
 
-            # get the list of parameters grouped by type
-            params_groups = self._group_parameters(parameters)
-
-            # set the span value to group the param names columns and their names
-            column_index = 0
-
-            # set the locations names on the row 1
-            for j in xrange(len(parameters)):
-                text = "-" if parameters[j].time_location is None else unicode(parameters[j].time_location.name)
-
-                item = self._get_table_widget_item_centered(text)
-                self.tableParameterOscilogram.setItem(1, j, item)
-
-            # set the params names on the row 0
-            for param_group in params_groups:
-                span_size = len(param_group)
-                if span_size > 1:
-                    self.tableParameterOscilogram.setSpan(0, column_index, 1, span_size)
-
-                item = self._get_table_widget_item_centered(param_group[0].name)
-                self.tableParameterOscilogram.setItem(0, column_index, item)
-                column_index += span_size
-
-            # put the classification category
-            for index, category_classif in enumerate(self.segmentManager.classificationColumnNames):
-                item = self._get_table_widget_item_centered(category_classif)
-                self.tableParameterOscilogram.setItem(0, column_index + index, item)
-        # endregion
+        else:
+            self.__fill_parameter_table_measurements(xrange(len(parameters)))
 
         self.tableParameterOscilogram.setHorizontalHeaderLabels(header_labels)
+
         # connect the table selection with the selection of an element
-        self.tableParameterOscilogram.cellPressed.connect(self.select_element)
+        cell_pressed_element = lambda index, col: self.select_element(index - self.parameter_table_row_shift, col)
+        self.tableParameterOscilogram.cellPressed.connect(cell_pressed_element)
+
         self.tableParameterOscilogram.resizeColumnsToContents()
         self.tableParameterOscilogram.resizeRowsToContents()
 
@@ -857,7 +933,7 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         visibility = self.actionTemporal_Elements.isChecked()
 
         self.widget.visual_items_visibility.oscilogram_items_visible = visibility
-        self.widget.graph()
+        self.widget.draw_elements()
 
         for x in [self.actionTemporal_Figures, self.actionTemporal_Numbers, self.actionTemporal_Parameters]:
             x.setEnabled(visibility)
@@ -865,12 +941,12 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
     @pyqtSlot()
     def on_actionTemporal_Figures_triggered(self):
         self.widget.visual_items_visibility.oscilogram_figures_visible = self.actionTemporal_Figures.isChecked()
-        self.widget.graph()
+        self.widget.draw_elements()
 
     @pyqtSlot()
     def on_actionTemporal_Parameters_triggered(self):
         self.widget.visual_items_visibility.oscilogram_parameters_visible = self.actionTemporal_Parameters.isChecked()
-        self.widget.graph()
+        self.widget.draw_elements()
 
     @pyqtSlot()
     def on_actionTemporal_Numbers_triggered(self):
@@ -879,7 +955,7 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
         """
         self.widget.visual_items_visibility.oscilogram_text_visible = self.actionTemporal_Numbers.isChecked()
-        self.widget.graph()
+        self.widget.draw_elements()
 
     @pyqtSlot()
     def on_actionSpectral_Elements_triggered(self):
@@ -890,7 +966,7 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         visibility = self.actionSpectral_Elements.isChecked()
 
         self.widget.visual_items_visibility.spectrogram_items_visible = visibility
-        self.widget.graph()
+        self.widget.draw_elements()
 
         for x in [self.actionSpectral_Numbers, self.actionSpectral_Figures, self.actionSpectral_Parameters]:
             x.setEnabled(visibility)
@@ -898,12 +974,12 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
     @pyqtSlot()
     def on_actionSpectral_Figures_triggered(self):
         self.widget.visual_items_visibility.spectrogram_figures_visible = self.actionSpectral_Figures.isChecked()
-        self.widget.graph()
+        self.widget.draw_elements()
 
     @pyqtSlot()
     def on_actionSpectral_Parameters_triggered(self):
         self.widget.visual_items_visibility.spectrogram_parameters_visible = self.actionSpectral_Parameters.isChecked()
-        self.widget.graph()
+        self.widget.draw_elements()
 
     @pyqtSlot()
     def on_actionSpectral_Numbers_triggered(self):
@@ -912,7 +988,7 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
 
         """
         self.widget.visual_items_visibility.spectrogram_text_visible = self.actionSpectral_Numbers.isChecked()
-        self.widget.graph()
+        self.widget.draw_elements()
 
     # endregion
 
@@ -922,10 +998,12 @@ class SegmentationClassificationWindow(SoundLabWindow, Ui_MainWindow):
         :param parameter_manager:
         :return:
         """
-        # update the segment manager
+        self.widget.release_items(parameter_items=True, elements_items=False)
+
+        # update the segment manager that measure the new params
         self.segmentManager.parameters = parameter_manager.parameter_list()
 
-        self.update_two_dim_windows()
+        self.measurement_finished()
 
     @pyqtSlot()
     def on_actionParameter_Measurement_triggered(self):

@@ -79,6 +79,12 @@ class DoubleThresholdDetector(SingleThresholdDetector):
 
             result.append((start_index, end_index))
 
+            if start_index > 0:
+                start_index -= 1
+
+            if end_index < len(acoustic_processing):
+                end_index += 1
+
             x_values = np.arange(start_index * x_scale, end_index * x_scale)
             visual_item = pg.PlotCurveItem(x=x_values, y=np.ones(len(x_values)) * threshold_db * self._y_scale,
                                            pen=self.THRESHOLD_2_PEN)

@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
-import random
-from PyQt4.QtGui import QFileDialog
-from PyQt4.QtCore import pyqtSlot
 import numpy
-from pyqtgraph.parametertree import Parameter, ParameterTree
+import random
 import pyqtgraph as pg
 from PyQt4 import QtGui, QtCore
+from PyQt4.QtCore import pyqtSlot
+from PyQt4.QtGui import QFileDialog
 from utils.Utils import save_image
+from pyqtgraph.parametertree import Parameter
+from graphic_interface.windows.DuettoParameterTree import DuettoParameterTree
 from graphic_interface.dialogs.ManualClassificationDialog import ManualClassificationDialog
 from graphic_interface.windows.ui_python_files.Two_Dimensional_AnalisysWindowUI import Ui_TwoDimensionalWindow
 
@@ -60,6 +61,21 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
 
         self.segmentManager = segmentManager
 
+        # set the layout for the parameter tree widget
+        lay1 = QtGui.QVBoxLayout()
+        lay1.setMargin(0)
+
+        self.ParamTree = None
+        self.parameterTree = DuettoParameterTree()
+        lay1.addWidget(self.parameterTree)
+
+        self.dockWidgetContents.setLayout(lay1)
+        self.parameterTree.setAutoScroll(True)
+        self.parameterTree.setHeaderHidden(True)
+
+        self.dockWidgetContents.setStyleSheet("background-color:#DDF")
+        self.parameterTree.setMinimumWidth(self.DOCK_WINDOW_WIDTH)
+
         # scatter plot to graphs the elements
         self.scatter_plot = None
 
@@ -106,11 +122,6 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
         # get two initial random parameters to visualize in x and y axis
         x, y = random.randint(0, len(x_axis) / 2), random.randint(len(x_axis) / 2, len(x_axis) - 1)
 
-        # set the layout for the widget
-        lay1 = QtGui.QVBoxLayout()
-        lay1.setMargin(0)
-
-        # region Set the parameter tree settings
         params = [
             {u'name': unicode(self.tr(u'X Axis Parameter Settings')), u'type': u'group', u'children':
                 [{u'name': unicode(self.tr(u'X Axis')), u'type': u'list', u'value': x,
@@ -129,21 +140,12 @@ class TwoDimensionalAnalisysWindow(QtGui.QMainWindow, Ui_TwoDimensionalWindow):
             {u'name': unicode(self.tr(u'Save Graph as Image')), u'type': u'action'}]
 
         self.ParamTree = Parameter.create(name=u'params', type=u'group', children=params)
-        self.parameterTree = ParameterTree()
-        lay1.addWidget(self.parameterTree)
-        self.parameterTree.setAutoScroll(True)
-        self.parameterTree.setHeaderHidden(True)
         self.parameterTree.setParameters(self.ParamTree, showTop=False)
 
-        self.dockWidgetContents.setLayout(lay1)
-        self.dockWidgetContents.setStyleSheet("background-color:#DDF")
-        self.parameterTree.setMinimumWidth(self.DOCK_WINDOW_WIDTH)
         self.ParamTree.sigTreeStateChanged.connect(self.plot)
         self.ParamTree.param(unicode(self.tr(u'Save Graph as Image'))).sigActivated.connect(
             self.on_actionSaveGraphImage_triggered)
         self.ParamTree.param(unicode(self.tr(u'Change Font'))).sigActivated.connect(self.changeFont)
-
-        # endregion
 
         # visualize the changes
         self.plot()

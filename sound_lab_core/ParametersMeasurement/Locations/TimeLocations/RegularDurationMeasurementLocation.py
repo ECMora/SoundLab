@@ -36,3 +36,8 @@ class RegularDurationMeasurementLocation(MeasurementLocation):
         self.time_start_index, self.time_end_index = start_index, end_index
 
         return segment.signal.data[start_index:end_index]
+
+    def __eq__(self, other):
+        return isinstance(other, RegularDurationMeasurementLocation) and \
+               self.interval_duration == other.interval_duration and \
+               self.sub_interval_index == other.sub_interval_index

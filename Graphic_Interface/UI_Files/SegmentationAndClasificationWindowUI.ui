@@ -578,7 +578,7 @@
     <string>Parameter Measurement</string>
    </property>
   </action>
-  <action name="actionVisualizationParametersChanged">
+  <action name="actionGroupByParameter">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -587,6 +587,34 @@
    </property>
    <property name="text">
     <string>Group by Parameter</string>
+   </property>
+  </action>
+  <action name="actionGroupByLocation">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Group by Location</string>
+   </property>
+   <property name="toolTip">
+    <string>Group by Location</string>
+   </property>
+  </action>
+  <action name="actionGroupNone">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="text">
+    <string>Group None</string>
+   </property>
+   <property name="toolTip">
+    <string>Group None</string>
    </property>
   </action>
   <zorder>dockWidgetParameterTableOscilogram</zorder>

@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 from PyQt4 import QtGui
 from duetto.audio_signals import AudioSignal
-from pyqtgraph.parametertree import Parameter, ParameterTree
+from pyqtgraph.parametertree import Parameter
 from pyqtgraph.parametertree.parameterTypes import ListParameter
 from duetto.dimensional_transformations.one_dimensional_transforms.InstantFrequenciesTransform import InstantFrequencies
 from graphic_interface.one_dimensional_transforms.OneDimensionalGeneralHandler import OneDimensionalGeneralHandler
+from graphic_interface.windows.DuettoParameterTree import DuettoParameterTree
 from graphic_interface.windows.ParameterList import DuettoListParameterItem
 from graphic_interface.windows.ui_python_files.one_dim_transforms_window import Ui_OneDimensionalWindow
 
@@ -123,15 +124,13 @@ class OneDimensionalAnalysisWindow(QtGui.QMainWindow, Ui_OneDimensionalWindow):
             {u'name':  unicode(self.tr(u'Settings')), u'type': u'group'}
         ]
 
-        ListParameter.itemClass = DuettoListParameterItem
         self.ParamTree = Parameter.create(name=u'One Dimensional Transform', type=u'group', children=params)
 
         # create and set initial properties
-        self.parameterTree = ParameterTree()
+        self.parameterTree = DuettoParameterTree()
         self.parameterTree.setAutoScroll(True)
         self.parameterTree.setHeaderHidden(True)
         self.parameterTree.setParameters(self.ParamTree)
-
 
         # connect the signals to react when a change of one_dim_transform is made
         self.ParamTree.param(unicode(self.tr(u'Select'))).sigValueChanged.connect(self.changeTransform)

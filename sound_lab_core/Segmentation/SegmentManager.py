@@ -16,9 +16,6 @@ class SegmentManager(QObject):
 
     # region SIGNALS
 
-    # signal raised when the parameters of the segments change
-    measurementsChanged = pyqtSignal()
-
     # signal raised when a parameter is measured on a segment
     # raise the segment index and the list of visual items associated
     segmentVisualItemAdded = pyqtSignal(int, list)
@@ -26,7 +23,7 @@ class SegmentManager(QObject):
     # signal raised when the segmentation has finished
     segmentationFinished = pyqtSignal()
 
-    # signal raised when the measurement of parameteers and classification has finished
+    # signal raised when the measurement of parameters and classification has finished
     measurementsFinished = pyqtSignal()
 
     # signal raised while detection is been made. Raise the percent of detection progress.
@@ -54,7 +51,7 @@ class SegmentManager(QObject):
 
         # the thread to perform the measurements with
         self.measurement_thread = MeasurementThread(segment_manager=self)
-        self.measurement_thread.finished.connect(self._get_measurements)
+        self.measurement_thread.finished.connect(lambda: self.measurementsFinished.emit())
 
         # the signal in which would be detected the elements
         self._signal = None
@@ -93,7 +90,7 @@ class SegmentManager(QObject):
         self.recompute_element_table()
         self.measure_parameters()
 
-        self.measurementsChanged.emit()
+        self.measurementsFinished.emit()
 
     def recompute_element_table(self):
         """
@@ -109,7 +106,7 @@ class SegmentManager(QObject):
 
         self.classificationTableData = [None for _ in self._elements]
 
-        self.measurementsChanged.emit()
+        self.measurementsFinished.emit()
 
     @property
     def classificationColumnNames(self):
@@ -201,7 +198,7 @@ class SegmentManager(QObject):
             self.update_elements_visual_items(self.classifier_adapter, i, classification)
             self.classificationTableData[i] = classification
 
-        self.measurementsChanged.emit()
+        self.measurementsFinished.emit()
 
     def classify_elements(self):
         """
@@ -220,7 +217,7 @@ class SegmentManager(QObject):
             parameter_vector = [self.measuredParameters[i, j] for j, x in enumerate(self.parameters)]
             self._classify_element(element_index=i, classifier=classifier, parameter_vector=parameter_vector)
 
-        self.measurementsChanged.emit()
+        self.measurementsFinished.emit()
 
     def _classify_element(self, element_index, classifier=None, parameter_vector=None):
         """
@@ -282,7 +279,7 @@ class SegmentManager(QObject):
 
         self._elements = self.elements[:start_index] + self.elements[end_index+1:]
 
-        self.measurementsChanged.emit()
+        self.measurementsFinished.emit()
 
     def add_element(self, index, index_from, index_to):
         """
@@ -314,7 +311,7 @@ class SegmentManager(QObject):
         self._measure(element, index, raise_visual_items=True)
         self._classify_element(index)
 
-        self.measurementsChanged.emit()
+        self.measurementsFinished.emit()
 
     def detect_elements(self):
         """
@@ -350,19 +347,6 @@ class SegmentManager(QObject):
         if not self.measurement_thread.isRunning():
             self.measurement_thread.start()
 
-    def _get_measurements(self):
-        """
-        Callback that is called when measurement thread finish.
-        Raises the visual items for segments and emit the finish measurements signal
-        """
-        # update visual items of segments measurements
-        for i in xrange(self.rowCount):
-            for j, parameter in enumerate(self.parameters):
-                self.update_elements_visual_items(parameter, i, self.measuredParameters[i, j])
-
-        self.measurementsFinished.emit()
-        self.measurementsChanged.emit()
-
     def measure_parameters(self):
         """
         :param tableParameterOscilogram:
@@ -373,13 +357,8 @@ class SegmentManager(QObject):
         if len(self.parameters) == 0:
             return
 
-        step_interval = self.rowCount if self.rowCount <= 10 else self.rowCount / 5 if self.rowCount < 50 else self.rowCount / 10
-
         for i in xrange(self.rowCount):
             self._measure(self.elements[i], i, raise_visual_items=True)
-
-            if i % step_interval == 0:
-                self.measurementsChanged.emit()
 
     def _measure(self, element, index, measure_methods=None, raise_visual_items=False):
         """

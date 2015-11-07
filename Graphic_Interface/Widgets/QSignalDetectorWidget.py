@@ -284,7 +284,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         for e in self.get_sound_lab_elements(self.elements):
             e.spectral_element.translate_time_freq_coords(self.from_osc_to_spec, self.get_freq_index)
 
-    def release_items(self, index_from=None, index_to=None):
+    def release_items(self, index_from=None, index_to=None, parameter_items=True, elements_items=True):
         """
         Release the visual items of the elements list
         between the indexes supplied
@@ -301,11 +301,15 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
 
         # release items
         for i in xrange(index_from, index_to + 1):
-            if isinstance(self.elements[i], DetectedSoundLabElement):
+            if not isinstance(self.elements[i], DetectedSoundLabElement):
+                continue
+
+            if parameter_items:
                 # remove parameter visual items of the released element
                 self.elements[i].release_parameter_items()
                 self.parameters_items[i] = []
 
+            if elements_items:
                 QSignalDetectorWidget.visual_items_cache.release_visual_item(self.elements[i])
                 self.elements[i] = (self.elements[i].indexFrom, self.elements[i].indexTo)
 
@@ -394,7 +398,7 @@ class QSignalDetectorWidget(QSignalVisualizerWidget):
         """
         if not 0 <= element_index < len(self.elements):
             return
-
+        print(element_index, " param items added ", len(parameter_items), parameter_items)
         self.parameters_items[element_index].extend(parameter_items)
 
         # if the element at index is visible as detected sound la elements add the items

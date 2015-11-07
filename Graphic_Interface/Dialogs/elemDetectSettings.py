@@ -2,11 +2,14 @@
 from PyQt4 import QtGui
 from PyQt4.QtGui import QDialog
 from PyQt4.QtCore import pyqtSignal
+from pyqtgraph.parametertree.parameterTypes import ListParameter
+from graphic_interface.windows.ParameterList import DuettoListParameterItem
 from utils.Utils import small_signal
 from sound_lab_core.AdapterFactories import *
 from sound_lab_core.Clasification.Adapters import *
-from pyqtgraph.parametertree import Parameter, ParameterTree
+from pyqtgraph.parametertree import Parameter
 from graphic_interface.windows.ui_python_files.detectElementsDialog import Ui_Dialog
+from graphic_interface.windows.DuettoParameterTree import DuettoParameterTree
 
 
 # tuples of classifiers (get a tuple of all an not of super class because a bug (?) on isinstance method)
@@ -45,7 +48,8 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
 
         # the widget to visualize the segmentation and classification methods
         self.segmentation_classification_tree = None
-        self.segmentation_classification_tree_widget = ParameterTree()
+
+        self.segmentation_classification_tree_widget = DuettoParameterTree()
         self.segmentation_classification_tree_widget.setAutoScroll(True)
         self.segmentation_classification_tree_widget.setHeaderHidden(True)
 
@@ -115,11 +119,11 @@ class ElemDetectSettingsDialog(QDialog, Ui_Dialog):
         # the only way of segmentation and classification on Sound Lab Lite version is manual
         # self.segmentation_classification_tree_widget.setEnabled(False)
 
-        lite_licence_restriction = u"The only way of segmentation and classification \n " \
-                                   u"on Sound Lab Lite version is the manual. \n " \
-                                   u"The others methods are available at \n the Professional Version of the software"
-
-        self.segmentation_classification_tree_widget.setToolTip(self.tr(lite_licence_restriction))
+        # lite_licence_restriction = u"The only way of segmentation and classification \n " \
+        #                            u"on Sound Lab Lite version is the manual. \n " \
+        #                            u"The others methods are available at \n the Professional Version of the software"
+        #
+        # self.segmentation_classification_tree_widget.setToolTip(self.tr(lite_licence_restriction))
 
     def segmentation_classification_changed(self, param, changes, param_tree_name, adapter_factory):
         """

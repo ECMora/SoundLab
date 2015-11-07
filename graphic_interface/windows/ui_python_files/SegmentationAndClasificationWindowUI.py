@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\SegmentationAndClasificationWindowUI.ui'
 #
-# Created: Fri Sep 18 21:08:56 2015
+# Created: Sat Oct 03 23:13:13 2015
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -258,10 +258,18 @@ class Ui_MainWindow(object):
         self.actionDelete_All.setObjectName(_fromUtf8("actionDelete_All"))
         self.actionParameter_Measurement = QtGui.QAction(MainWindow)
         self.actionParameter_Measurement.setObjectName(_fromUtf8("actionParameter_Measurement"))
-        self.actionVisualizationParametersChanged = QtGui.QAction(MainWindow)
-        self.actionVisualizationParametersChanged.setCheckable(True)
-        self.actionVisualizationParametersChanged.setChecked(True)
-        self.actionVisualizationParametersChanged.setObjectName(_fromUtf8("actionVisualizationParametersChanged"))
+        self.actionGroupByParameter = QtGui.QAction(MainWindow)
+        self.actionGroupByParameter.setCheckable(True)
+        self.actionGroupByParameter.setChecked(True)
+        self.actionGroupByParameter.setObjectName(_fromUtf8("actionGroupByParameter"))
+        self.actionGroupByLocation = QtGui.QAction(MainWindow)
+        self.actionGroupByLocation.setCheckable(True)
+        self.actionGroupByLocation.setChecked(False)
+        self.actionGroupByLocation.setObjectName(_fromUtf8("actionGroupByLocation"))
+        self.actionGroupNone = QtGui.QAction(MainWindow)
+        self.actionGroupNone.setCheckable(True)
+        self.actionGroupNone.setChecked(False)
+        self.actionGroupNone.setObjectName(_fromUtf8("actionGroupNone"))
         self.menuParameters.addAction(self.actionView_Parameters)
         self.menuParameters.addAction(self.actionFull_Screen)
         self.menuParameters.addSeparator()
@@ -367,7 +375,11 @@ class Ui_MainWindow(object):
         self.actionDelete_All.setText(QtGui.QApplication.translate("MainWindow", "Delete All", None, QtGui.QApplication.UnicodeUTF8))
         self.actionDelete_All.setToolTip(QtGui.QApplication.translate("MainWindow", "Delete All the detected elements", None, QtGui.QApplication.UnicodeUTF8))
         self.actionParameter_Measurement.setText(QtGui.QApplication.translate("MainWindow", "Parameter Measurement", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionVisualizationParametersChanged.setText(QtGui.QApplication.translate("MainWindow", "Group by Parameter", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionGroupByParameter.setText(QtGui.QApplication.translate("MainWindow", "Group by Parameter", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionGroupByLocation.setText(QtGui.QApplication.translate("MainWindow", "Group by Location", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionGroupByLocation.setToolTip(QtGui.QApplication.translate("MainWindow", "Group by Location", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionGroupNone.setText(QtGui.QApplication.translate("MainWindow", "Group None", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionGroupNone.setToolTip(QtGui.QApplication.translate("MainWindow", "Group None", None, QtGui.QApplication.UnicodeUTF8))
 
 from graphic_interface.widgets.SoundLabToolBar import SoundLabToolBarWidget
 from pyqtgraph import TableWidget

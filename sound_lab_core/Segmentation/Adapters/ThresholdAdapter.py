@@ -13,9 +13,9 @@ class ThresholdAdapter(SoundLabAdapter):
 
     # region CONSTANTS
 
-    THRESHOLD_DEFAULT = -40
-    MIN_SIZE_DEFAULT = 2
-    MERGE_FACTOR_DEFAULT = 5
+    THRESHOLD_DEFAULT = -20
+    MIN_SIZE_DEFAULT = 1
+    MERGE_FACTOR_DEFAULT = 0
     ENVELOPE_DEFAULT = IntervalRmsEnvelope
 
     # endregion

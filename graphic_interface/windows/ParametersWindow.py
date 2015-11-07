@@ -6,11 +6,12 @@ from PyQt4.QtCore import Qt, pyqtSignal
 from PyQt4.QtGui import QAbstractItemView
 from duetto.audio_signals import openSignal
 from ui_python_files.ParametersWindow import Ui_Dialog
-from pyqtgraph.parametertree import Parameter, ParameterTree
+from pyqtgraph.parametertree import Parameter
 from utils.Utils import folder_files, serialize, deserialize
 from graphic_interface.widgets.signal_visualizer_tools import Tools
 from sound_lab_core.Segmentation.SegmentManager import SegmentManager
 from sound_lab_core.ParametersMeasurement.MeasurementTemplate import MeasurementTemplate
+from graphic_interface.windows.DuettoParameterTree import DuettoParameterTree
 
 
 class ParametersWindow(QtGui.QDialog, Ui_Dialog):
@@ -57,11 +58,11 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
         self.measurement_template_cbox.currentIndexChanged.connect(self.select_template)
 
         # configuration of parameters and location trees user interface
-        self.parameter_tree_widget = ParameterTree()
+        self.parameter_tree_widget = DuettoParameterTree()
         self.parameter_tree_widget.setAutoScroll(True)
         self.parameter_tree_widget.setHeaderHidden(True)
 
-        self.location_tree_widget = ParameterTree()
+        self.location_tree_widget = DuettoParameterTree()
         self.location_tree_widget.setAutoScroll(True)
         self.location_tree_widget.setHeaderHidden(True)
 
@@ -102,7 +103,7 @@ class ParametersWindow(QtGui.QDialog, Ui_Dialog):
 
         self.segmentManager.signal = self.widget.signal
         self.segmentManager.segmentVisualItemAdded.connect(self.widget.add_parameter_visual_items)
-        self.segmentManager.measurementsChanged.connect(self.widget.draw_elements)
+        self.segmentManager.measurementsFinished.connect(self.widget.draw_elements)
         self.try_load_signal_segment()
 
     def configure_advanced_mode_items(self, signal):

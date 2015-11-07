@@ -117,7 +117,10 @@ class SingleThresholdDetector(OneDimensionalElementsDetector):
         return mlab.contiguous_regions(acoustic_processing > threshold)
 
     def get_acoustic_processing(self, data):
-        return np.array([]) if self.envelope_method is None else self.envelope_method.get_acoustic_processing(data)
+        if self.envelope_method is None:
+            return np.array([])
+
+        return self.envelope_method.get_acoustic_processing(data)
 
     def filter_by_min_size(self, detected):
         """
