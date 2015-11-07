@@ -1528,7 +1528,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         """
         file_name = QFileDialog.getOpenFileName(self, self.tr(u"Select a file to open"),
                                                 directory=self.workSpace.lastOpenedFile,
-                                                filter=self.tr(u"Wave Files") + u"(*.wav);;All Files(*)")
+                                                filter=self.tr(u"Wave Files  ") + u"(*.wav);;All Files (*.*)")
 
         self._open(unicode(file_name))
 
