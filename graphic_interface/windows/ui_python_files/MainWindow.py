@@ -2,7 +2,7 @@
 
 # Form implementation generated from reading ui file 'D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\MainWindow.ui'
 #
-# Created: Tue Jul 21 08:33:34 2015
+# Created: Tue Nov 10 08:36:24 2015
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -67,7 +67,7 @@ class Ui_DuettoMainWindow(object):
         self.menubar.setStyleSheet(_fromUtf8(""))
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuFile = QtGui.QMenu(self.menubar)
-        self.menuFile.setGeometry(QtCore.QRect(131, 126, 174, 394))
+        self.menuFile.setGeometry(QtCore.QRect(58, 158, 174, 394))
         self.menuFile.setAutoFillBackground(False)
         self.menuFile.setStyleSheet(_fromUtf8(""))
         self.menuFile.setTearOffEnabled(False)
@@ -482,7 +482,7 @@ class Ui_DuettoMainWindow(object):
         self.dock_settings.setToolTip(QtGui.QApplication.translate("DuettoMainWindow", "Settigns Area", None, QtGui.QApplication.UnicodeUTF8))
         self.dock_settings.setWindowTitle(QtGui.QApplication.translate("DuettoMainWindow", "Settings", None, QtGui.QApplication.UnicodeUTF8))
         self.toolBar.setWindowTitle(QtGui.QApplication.translate("DuettoMainWindow", "toolBar", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionOpen.setText(QtGui.QApplication.translate("DuettoMainWindow", "Open", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionOpen.setText(QtGui.QApplication.translate("DuettoMainWindow", "Open...", None, QtGui.QApplication.UnicodeUTF8))
         self.actionOpen.setToolTip(QtGui.QApplication.translate("DuettoMainWindow", "Open Signals", None, QtGui.QApplication.UnicodeUTF8))
         self.actionOpen.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Ctrl+O", None, QtGui.QApplication.UnicodeUTF8))
         self.actionExit.setText(QtGui.QApplication.translate("DuettoMainWindow", "Exit", None, QtGui.QApplication.UnicodeUTF8))
@@ -494,7 +494,7 @@ class Ui_DuettoMainWindow(object):
         self.actionSpectogram.setText(QtGui.QApplication.translate("DuettoMainWindow", "Spectogram", None, QtGui.QApplication.UnicodeUTF8))
         self.actionOscilogram.setText(QtGui.QApplication.translate("DuettoMainWindow", "Oscillogram", None, QtGui.QApplication.UnicodeUTF8))
         self.actionCombined.setText(QtGui.QApplication.translate("DuettoMainWindow", "Combined", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionNew.setText(QtGui.QApplication.translate("DuettoMainWindow", "New", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionNew.setText(QtGui.QApplication.translate("DuettoMainWindow", "New...", None, QtGui.QApplication.UnicodeUTF8))
         self.actionNew.setToolTip(QtGui.QApplication.translate("DuettoMainWindow", "New signal", None, QtGui.QApplication.UnicodeUTF8))
         self.actionNew.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Ctrl+N", None, QtGui.QApplication.UnicodeUTF8))
         self.actionOneDimensionalTransformation.setText(QtGui.QApplication.translate("DuettoMainWindow", "Power Spectrum", None, QtGui.QApplication.UnicodeUTF8))
@@ -572,7 +572,7 @@ class Ui_DuettoMainWindow(object):
         self.actionCloseUnmodified.setText(QtGui.QApplication.translate("DuettoMainWindow", "Close Unmodified", None, QtGui.QApplication.UnicodeUTF8))
         self.actionCloseUnmodified.setToolTip(QtGui.QApplication.translate("DuettoMainWindow", "Close Unmodified", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSound_Devices.setText(QtGui.QApplication.translate("DuettoMainWindow", "Sound Devices", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionBrowse.setText(QtGui.QApplication.translate("DuettoMainWindow", "Browse", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionBrowse.setText(QtGui.QApplication.translate("DuettoMainWindow", "Browse...", None, QtGui.QApplication.UnicodeUTF8))
         self.actionBrowse.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Ctrl+B", None, QtGui.QApplication.UnicodeUTF8))
         self.actionOpenInOtherTab.setText(QtGui.QApplication.translate("DuettoMainWindow", "Open In Other Tab", None, QtGui.QApplication.UnicodeUTF8))
         self.actionOpenInOtherTab.setToolTip(QtGui.QApplication.translate("DuettoMainWindow", "Open In Other Tab", None, QtGui.QApplication.UnicodeUTF8))

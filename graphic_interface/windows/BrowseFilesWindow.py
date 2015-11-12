@@ -1,13 +1,11 @@
 # -*- coding: utf-8 -*-
 import os
 import time
-
 from PyQt4 import QtGui
 from PyQt4.QtCore import pyqtSignal, pyqtSlot, Qt
 from PyQt4.QtGui import QAbstractItemView, QFileDialog
 from duetto.audio_signals.AudioSignalPlayer import AudioSignalPlayer
 from duetto.audio_signals import openSignal
-
 from utils.Utils import DECIMAL_PLACES, folder_files as getFolderFiles, read_wav_metadata
 from graphic_interface.windows.ui_python_files.BrowseFilesWindow import Ui_BrowseFilesWindow
 
@@ -58,7 +56,7 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
         self.files_tablewidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.files_tablewidget.cellPressed.connect(self.select_file)
 
-        self.selectAll_bttn.setText(self.tr(u"Select All"))
+        self.update_select_all_bttn()
 
         self.player = None
 
@@ -182,6 +180,10 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
         # update the line edit with the name of the new file
         self.folderPath_lineEdit.setText(self.selected_folder)
 
+        # clean table
+        self.folderFiles = []
+        self.files_tablewidget.setRowCount(0)
+
         for file_name in getFolderFiles(self.selected_folder):
             # add the new file into the table widget
             self.add_file(file_name)
@@ -191,7 +193,10 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
     # region Files Selection
 
     def select_file(self, row, column=0):
-        self.files_tablewidget.item(row, 0).setCheckState(Qt.Checked)
+        state = Qt.Checked if self.files_tablewidget.item(row, 0).checkState() != Qt.Checked else Qt.Unchecked
+
+        self.files_tablewidget.item(row, 0).setCheckState(state)
+        self.update_select_all_bttn()
 
     @pyqtSlot()
     def on_actionInvertSelection_triggered(self):
@@ -208,6 +213,15 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
 
             self.files_tablewidget.item(x, 0).setCheckState(check_state)
 
+        self.update_select_all_bttn()
+
+    def update_select_all_bttn(self):
+        all_selected = len(self.files_selected()) == self.files_tablewidget.rowCount()
+
+        print("Selected {0}".format(len(self.files_selected())))
+
+        self.selectAll_bttn.setText(self.tr(u"Deselect All") if all_selected else self.tr(u"Select All"))
+
     @pyqtSlot()
     def on_actionSelectAll_triggered(self):
         """
@@ -220,10 +234,10 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
 
         check_state = Qt.Checked if self.selectAll_bttn.text() == self.tr(u"Select All") else Qt.Unchecked
 
-        self.selectAll_bttn.setText(self.tr(u"Deselect All") if check_state == Qt.Checked else self.tr(u"Select All"))
-
         for x in xrange(self.files_tablewidget.rowCount()):
             self.files_tablewidget.item(x, 0).setCheckState(check_state)
+
+        self.update_select_all_bttn()
 
     # endregion
 
@@ -262,24 +276,17 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
             return
 
         files_selected_indexes = [x[1] for x in self.files_selected()]
+        files_unselected_indexes = [i for i in xrange(len(self.folderFiles)) if i not in files_selected_indexes]
 
-        # if no selected files select first file if up and last file if down
-        if len(files_selected_indexes) == 0:
-            files_selected_indexes = [len(self.folderFiles) if up else -1]
+        if len(files_unselected_indexes) > 0:
+            position = len(files_unselected_indexes) - 1 if up else 0
+            index = files_unselected_indexes[position]
 
-        # start at the index of the
-        # next file to the last selected (the next unselected index) if 'up'
-        # or the index before the first selected (the previous unselected index) if not 'up'
-        start_index = files_selected_indexes[0] - 1 if up else files_selected_indexes[-1] + 1
-        end_index = -1 if up else len(self.folderFiles)
-        step = -1 if up else 1
-
-        for i in xrange(start_index, end_index, step):
-            if self.files_tablewidget.item(i, 0).checkState() == Qt.Unchecked:
-                # get the first unselected, change it state and open it
-                self.files_tablewidget.item(i, 0).setCheckState(Qt.Checked)
-                self.openFiles.emit([self.folderFiles[i]])
-                return
+            # get the first unselected, change it state and open it
+            self.files_tablewidget.item(index, 0).setCheckState(Qt.Checked)
+            self.openFiles.emit([self.folderFiles[index]])
+            self.update_select_all_bttn()
+            return
 
     # endregion
 

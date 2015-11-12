@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QDialog
 
 from graphic_interface.windows.ui_python_files.ui_new_file_dialog import Ui_NewFileDialog
@@ -15,15 +16,15 @@ class NewFileDialog(QDialog, Ui_NewFileDialog):
         "rbtnWhiteNoise": False,
         "cbxBitDepth": 1,
         "dsbxDuration": 1,
+        "sbxSamplingRateIndex": 1,
         "sbxSamplingRate": 44100
     }
     # endregion
 
     def __init__(self, parent, windowFlags=None):
-        if windowFlags:
-            QDialog.__init__(self, parent, windowFlags)
-        else:
-            QDialog.__init__(self, parent)
+
+        QDialog.__init__(self, parent, Qt.WindowSystemMenuHint | Qt.WindowTitleHint)
+
         self.setupUi(self)
 
         # load the previous selected values for the dialog or the defaults ones
@@ -41,7 +42,8 @@ class NewFileDialog(QDialog, Ui_NewFileDialog):
         self.rbtnWhiteNoise.setChecked(self.dialogValues["rbtnWhiteNoise"])
         self.cbxBitDepth.setCurrentIndex(self.dialogValues["cbxBitDepth"])
         self.dsbxDuration.setValue(self.dialogValues["dsbxDuration"])
-        self.sbxSamplingRate.setValue(self.dialogValues["sbxSamplingRate"])
+
+        self.sbxSamplingRate.setCurrentIndex(self.dialogValues["sbxSamplingRateIndex"])
 
     def save_values(self):
         """
@@ -54,12 +56,14 @@ class NewFileDialog(QDialog, Ui_NewFileDialog):
         self.dialogValues["rbtnWhiteNoise"] = self.rbtnWhiteNoise.isChecked()
         self.dialogValues["cbxBitDepth"] = self.cbxBitDepth.currentIndex()
         self.dialogValues["dsbxDuration"] = self.dsbxDuration.value()
-        self.dialogValues["sbxSamplingRate"] = self.sbxSamplingRate.value()
+
+
+        self.dialogValues["sbxSamplingRateIndex"] = self.sbxSamplingRate.currentIndex()
 
 
     @property
     def SamplingRate(self):
-        return self.sbxSamplingRate.value()
+        return int(self.sbxSamplingRate.currentText())
 
     @property
     def Duration(self):

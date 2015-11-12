@@ -1,4 +1,5 @@
 from PyQt4.QtGui import QDialog
+from PyQt4.QtCore import Qt
 from graphic_interface.windows.ui_python_files import ChangeVolumeDialog as cvdialog
 
 
@@ -24,11 +25,11 @@ class ChangeVolumeDialog(cvdialog.Ui_Dialog, QDialog):
     }
     # endregion
 
-    def __init__(self):
+    def __init__(self, parent=None):
         """
         Initialize the dialogs elements with their last value
         """
-        QDialog.__init__(self)
+        QDialog.__init__(self, parent, Qt.WindowSystemMenuHint | Qt.WindowTitleHint)
         self.setupUi(self)
 
         # load the previous selected values for the dialog or the defaults ones

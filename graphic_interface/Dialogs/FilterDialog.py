@@ -1,3 +1,4 @@
+from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QDialog
 from graphic_interface.windows.ui_python_files import FilterOptionsDialog as filterdg
 
@@ -26,11 +27,11 @@ class FilterDialog(filterdg.Ui_Dialog, QDialog):
     }
     # endregion
 
-    def __init__(self, signalSamplingRate=None):
+    def __init__(self, parent=None, signalSamplingRate=None):
         """
         Initialize the dialogs elements with their last value
         """
-        QDialog.__init__(self)
+        QDialog.__init__(self, None, Qt.WindowSystemMenuHint | Qt.WindowTitleHint)
         self.setupUi(self)
 
         # load the previous selected values for the dialog or the defaults ones

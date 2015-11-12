@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'E:\Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\BrowseFilesWindow.ui'
+# Form implementation generated from reading ui file 'D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\BrowseFilesWindow.ui'
 #
-# Created: Sat Jul 18 13:24:34 2015
+# Created: Tue Nov 10 15:56:56 2015
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -47,7 +47,7 @@ class Ui_BrowseFilesWindow(object):
         sizePolicy.setHeightForWidth(self.folderPath_bttn.sizePolicy().hasHeightForWidth())
         self.folderPath_bttn.setSizePolicy(sizePolicy)
         self.folderPath_bttn.setMinimumSize(QtCore.QSize(30, 0))
-        self.folderPath_bttn.setMaximumSize(QtCore.QSize(30, 16777215))
+        self.folderPath_bttn.setMaximumSize(QtCore.QSize(16777215, 16777215))
         self.folderPath_bttn.setObjectName(_fromUtf8("folderPath_bttn"))
         self.gridLayout.addWidget(self.folderPath_bttn, 0, 9, 1, 1)
         self.files_tablewidget = QtGui.QTableWidget(self.centralwidget)
@@ -126,7 +126,7 @@ class Ui_BrowseFilesWindow(object):
         self.folderPath_lineEdit.setToolTip(QtGui.QApplication.translate("BrowseFilesWindow", "Input folder of signals to browse.", None, QtGui.QApplication.UnicodeUTF8))
         self.folderPath_lineEdit.setText(QtGui.QApplication.translate("BrowseFilesWindow", "Seleccione la carpeta", None, QtGui.QApplication.UnicodeUTF8))
         self.folderPath_bttn.setToolTip(QtGui.QApplication.translate("BrowseFilesWindow", "Explore folders to add signals to the currently visualized on table.", None, QtGui.QApplication.UnicodeUTF8))
-        self.folderPath_bttn.setText(QtGui.QApplication.translate("BrowseFilesWindow", "...", None, QtGui.QApplication.UnicodeUTF8))
+        self.folderPath_bttn.setText(QtGui.QApplication.translate("BrowseFilesWindow", "Folder...", None, QtGui.QApplication.UnicodeUTF8))
         self.files_tablewidget.setToolTip(QtGui.QApplication.translate("BrowseFilesWindow", "Table with parameters of signals to analize them.", None, QtGui.QApplication.UnicodeUTF8))
         item = self.files_tablewidget.horizontalHeaderItem(0)
         item.setText(QtGui.QApplication.translate("BrowseFilesWindow", "Filename", None, QtGui.QApplication.UnicodeUTF8))

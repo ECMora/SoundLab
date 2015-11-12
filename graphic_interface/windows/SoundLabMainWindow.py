@@ -1,31 +1,29 @@
 #  -*- coding: utf-8 -*-
 import subprocess
-from pyqtgraph.parametertree.parameterTypes import SimpleParameter
-from utils.Utils import *
 from PyQt4 import QtCore
-from graphic_interface.dialogs import *
-from SoundLabWindow import SoundLabWindow
-from duetto.audio_signals import openSignal
-from BrowseFilesWindow import BrowseFilesWindow
-from PyQt4.QtCore import pyqtSlot, QMimeData, pyqtSignal
-from duetto.audio_signals.Synthesizer import Synthesizer
-from ui_python_files.MainWindow import Ui_DuettoMainWindow
-from graphic_interface.Settings.WorkTheme import WorkTheme
-from graphic_interface.windows.BatchWindow import BatchWindow
-from pyqtgraph.parametertree import Parameter, registerParameterType
+from pyqtgraph.parametertree.parameterTypes import ListParameter
+from pyqtgraph.parametertree import Parameter, ParameterTree
 from PyQt4.QtGui import QMessageBox, QActionGroup, QAction, QFileDialog
-from graphic_interface.windows.ParameterList import DuettoListParameter
-from graphic_interface.widgets.QSignalDetectorWidget import QSignalDetectorWidget
-from graphic_interface.widgets.QSignalVisualizerWidget import QSignalVisualizerWidget
-from graphic_interface.segment_visualization.VisualItemsCache import VisualItemsCache
-from SegmentationClassificationWindow import SegmentationClassificationWindow
-from graphic_interface.widgets.signal_visualizer_tools.SignalVisualizerTool import Tools
+from PyQt4.QtCore import pyqtSlot, QMimeData, pyqtSignal
+from duetto.audio_signals import openSignal
+from duetto.audio_signals.Synthesizer import Synthesizer
 from duetto.signal_processing.filter_signal_processors.frequency_domain_filters import BandPassFilter, HighPassFilter, \
     BandStopFilter, LowPassFilter
 from duetto.dimensional_transformations.two_dimensional_transforms.Spectrogram.WindowFunctions import WindowFunction
-from graphic_interface.windows.DuettoParameterTree import DuettoParameterTree, DuettoWidgetParameterItem
-
+from graphic_interface.segment_visualization.VisualItemsCache import VisualItemsCache
+from utils.Utils import *
+from graphic_interface.widgets.QSignalVisualizerWidget import QSignalVisualizerWidget
+from graphic_interface.widgets.QSignalDetectorWidget import QSignalDetectorWidget
+from graphic_interface.Settings.WorkTheme import WorkTheme
+from graphic_interface.windows.BatchWindow import BatchWindow
+from graphic_interface.windows.ParameterList import DuettoListParameterItem
 from graphic_interface.windows.OneDimensionalAnalysisWindow import OneDimensionalAnalysisWindow
+from SegmentationClassificationWindow import SegmentationClassificationWindow
+from ui_python_files.MainWindow import Ui_DuettoMainWindow
+from graphic_interface.dialogs import *
+from graphic_interface.widgets.signal_visualizer_tools.SignalVisualizerTool import Tools
+from BrowseFilesWindow import BrowseFilesWindow
+from SoundLabWindow import SoundLabWindow
 
 
 class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
@@ -121,10 +119,10 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         self.settingsParameterTree = self.__getSettings(app_styles, app_languages, app_themes)
         self.settingsParameterTree.sigTreeStateChanged.connect(self.paramTreeChanged)
 
-        self.parameterTreeWidget = DuettoParameterTree()
+        self.parameterTreeWidget = ParameterTree()
         self.parameterTreeWidget.setAutoScroll(True)
-        self.parameterTreeWidget.setHeaderHidden(True)
         self.parameterTreeWidget.setFixedWidth(self.SETTINGS_WINDOW_WIDTH)
+        self.parameterTreeWidget.setHeaderHidden(True)
         self.parameterTreeWidget.setParameters(self.settingsParameterTree, showTop=False)
 
         self.addSignalTab(Synthesizer.generateSilence(duration=1))
@@ -256,7 +254,8 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         Configure the no Opened signals widget to show.
         :return:
         """
-        # the widget for no opened signals configuration is just invisible at start,
+        # the widget for no opened signals configuration is just
+        # to set it invisible at starting
         # when a more complicated logic will be needed put it here
         self.noSignalOpened_lbl.setVisible(False)
 
@@ -434,8 +433,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         #  endregion
 
         # change the item class of the list parameter type to allow order in the children params added
-        registerParameterType('list', DuettoListParameter, override=True)
-
+        ListParameter.itemClass = DuettoListParameterItem
         return Parameter.create(name=u'params', type=u'group', children=params)
 
     def addWidgetContextMenuActions(self):
@@ -1528,7 +1526,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         """
         file_name = QFileDialog.getOpenFileName(self, self.tr(u"Select a file to open"),
                                                 directory=self.workSpace.lastOpenedFile,
-                                                filter=self.tr(u"Wave Files  ") + u"(*.wav);;All Files (*.*)")
+                                                filter=self.tr(u"Wave Files") + u"(*.wav);;All Files(*)")
 
         self._open(unicode(file_name))
 
@@ -1714,6 +1712,13 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         indexFrom, indexTo = self.widget.selectedRegion
         signal = widget.signal.copy(indexFrom, indexTo) if indexTo > indexFrom else widget.signal
 
+        name = signal.name
+        name_without_ext = name[0:name.rfind(".")]
+        ext = name[name.rfind("."):]
+
+        signal.name = name_without_ext + "_({0}-{1}segs){2}".format(round(indexFrom * 1.0 / signal.samplingRate, 2),
+                                                                    round(indexTo * 1.0 / signal.samplingRate, 2), ext)
+
         self.addSignalTab(signal)
 
     # endregion
@@ -1749,12 +1754,16 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         if self.signalNameCount(signal.name) == 1:
             return
 
+        name = signal.name
+        name_without_ext = name[0:name.rfind(".")]
+        ext = name[name.rfind("."):]
+
         # ask for names like signal.name(#)
         n = 1
-        while self.signalNameExists(signal.name + "(" + unicode(n) + ")"):
+        while self.signalNameExists(name_without_ext + "(" + unicode(n) + ")" + ext):
             n += 1
 
-        signal.name = signal.name + "(" + unicode(n) + ")"
+        signal.name = name_without_ext + "(" + unicode(n) + ")" + ext
 
     def signalNameExists(self, name):
         """
