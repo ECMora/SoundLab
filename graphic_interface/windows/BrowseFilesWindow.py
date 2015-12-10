@@ -171,12 +171,14 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
         Open the dialog to select a new file to open
         :return:
         """
-        new_file = QFileDialog.getOpenFileName(parent=self, directory=self.selected_folder,
-                                               caption=self.tr(u"Open File"),
-                                               filter=self.tr(u"Wav Files") + u" (*.wav);(*.WAV);All Files (*)")
+        folder_selected = str(QFileDialog.getExistingDirectory(parent=self, directory=self.selected_folder,
+                                                                    caption=self.tr(u"Open Folder"),
+                                                                    options=QFileDialog.HideNameFilterDetails))
 
-        self.selected_folder = os.path.dirname(unicode(new_file))
+        if not folder_selected:
+            return
 
+        self.selected_folder = folder_selected
         # update the line edit with the name of the new file
         self.folderPath_lineEdit.setText(self.selected_folder)
 
@@ -205,6 +207,7 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
         it opposite. (Checked -> Unchecked and Unchecked -> Checked)
         :return:
         """
+
         for x in xrange(self.files_tablewidget.rowCount()):
             # change the check state of every file item
             check_state = self.files_tablewidget.item(x, 0).checkState()
@@ -218,7 +221,7 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
     def update_select_all_bttn(self):
         all_selected = len(self.files_selected()) == self.files_tablewidget.rowCount()
 
-        print("Selected {0}".format(len(self.files_selected())))
+        self.selectAll_bttn.setText(self.tr(u"Deselect All") if all_selected else self.tr(u"Select All"))
 
         self.selectAll_bttn.setText(self.tr(u"Deselect All") if all_selected else self.tr(u"Select All"))
 
@@ -278,10 +281,13 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
         files_selected_indexes = [x[1] for x in self.files_selected()]
         files_unselected_indexes = [i for i in xrange(len(self.folderFiles)) if i not in files_selected_indexes]
 
+        # if no selected files select first file if up and last file if down
+        if len(files_selected_indexes) == 0:
+            files_selected_indexes = [len(self.folderFiles) if up else -1]
+
         if len(files_unselected_indexes) > 0:
             position = len(files_unselected_indexes) - 1 if up else 0
             index = files_unselected_indexes[position]
-
             # get the first unselected, change it state and open it
             self.files_tablewidget.item(index, 0).setCheckState(Qt.Checked)
             self.openFiles.emit([self.folderFiles[index]])

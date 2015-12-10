@@ -1,29 +1,31 @@
 #  -*- coding: utf-8 -*-
 import subprocess
+from pyqtgraph.parametertree.parameterTypes import SimpleParameter
+from utils.Utils import *
 from PyQt4 import QtCore
-from pyqtgraph.parametertree.parameterTypes import ListParameter
-from pyqtgraph.parametertree import Parameter, ParameterTree
-from PyQt4.QtGui import QMessageBox, QActionGroup, QAction, QFileDialog
-from PyQt4.QtCore import pyqtSlot, QMimeData, pyqtSignal
+from graphic_interface.dialogs import *
+from SoundLabWindow import SoundLabWindow
 from duetto.audio_signals import openSignal
+from BrowseFilesWindow import BrowseFilesWindow
+from PyQt4.QtCore import pyqtSlot, QMimeData, pyqtSignal
 from duetto.audio_signals.Synthesizer import Synthesizer
+from ui_python_files.MainWindow import Ui_DuettoMainWindow
+from graphic_interface.Settings.WorkTheme import WorkTheme
+from graphic_interface.windows.BatchWindow import BatchWindow
+from pyqtgraph.parametertree import Parameter, registerParameterType
+from PyQt4.QtGui import QMessageBox, QActionGroup, QAction, QFileDialog
+from graphic_interface.windows.ParameterList import DuettoListParameter
+from graphic_interface.widgets.QSignalDetectorWidget import QSignalDetectorWidget
+from graphic_interface.widgets.QSignalVisualizerWidget import QSignalVisualizerWidget
+from graphic_interface.segment_visualization.VisualItemsCache import VisualItemsCache
+from SegmentationClassificationWindow import SegmentationClassificationWindow
+from graphic_interface.widgets.signal_visualizer_tools.SignalVisualizerTool import Tools
 from duetto.signal_processing.filter_signal_processors.frequency_domain_filters import BandPassFilter, HighPassFilter, \
     BandStopFilter, LowPassFilter
 from duetto.dimensional_transformations.two_dimensional_transforms.Spectrogram.WindowFunctions import WindowFunction
-from graphic_interface.segment_visualization.VisualItemsCache import VisualItemsCache
-from utils.Utils import *
-from graphic_interface.widgets.QSignalVisualizerWidget import QSignalVisualizerWidget
-from graphic_interface.widgets.QSignalDetectorWidget import QSignalDetectorWidget
-from graphic_interface.Settings.WorkTheme import WorkTheme
-from graphic_interface.windows.BatchWindow import BatchWindow
-from graphic_interface.windows.ParameterList import DuettoListParameterItem
+from graphic_interface.windows.DuettoParameterTree import DuettoParameterTree, DuettoWidgetParameterItem
+
 from graphic_interface.windows.OneDimensionalAnalysisWindow import OneDimensionalAnalysisWindow
-from SegmentationClassificationWindow import SegmentationClassificationWindow
-from ui_python_files.MainWindow import Ui_DuettoMainWindow
-from graphic_interface.dialogs import *
-from graphic_interface.widgets.signal_visualizer_tools.SignalVisualizerTool import Tools
-from BrowseFilesWindow import BrowseFilesWindow
-from SoundLabWindow import SoundLabWindow
 
 
 class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
@@ -119,10 +121,10 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         self.settingsParameterTree = self.__getSettings(app_styles, app_languages, app_themes)
         self.settingsParameterTree.sigTreeStateChanged.connect(self.paramTreeChanged)
 
-        self.parameterTreeWidget = ParameterTree()
+        self.parameterTreeWidget = DuettoParameterTree()
         self.parameterTreeWidget.setAutoScroll(True)
-        self.parameterTreeWidget.setFixedWidth(self.SETTINGS_WINDOW_WIDTH)
         self.parameterTreeWidget.setHeaderHidden(True)
+        self.parameterTreeWidget.setFixedWidth(self.SETTINGS_WINDOW_WIDTH)
         self.parameterTreeWidget.setParameters(self.settingsParameterTree, showTop=False)
 
         self.addSignalTab(Synthesizer.generateSilence(duration=1))
@@ -254,8 +256,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         Configure the no Opened signals widget to show.
         :return:
         """
-        # the widget for no opened signals configuration is just
-        # to set it invisible at starting
+        # the widget for no opened signals configuration is just invisible at start,
         # when a more complicated logic will be needed put it here
         self.noSignalOpened_lbl.setVisible(False)
 
@@ -433,7 +434,8 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         #  endregion
 
         # change the item class of the list parameter type to allow order in the children params added
-        ListParameter.itemClass = DuettoListParameterItem
+        registerParameterType('list', DuettoListParameter, override=True)
+
         return Parameter.create(name=u'params', type=u'group', children=params)
 
     def addWidgetContextMenuActions(self):
@@ -1660,6 +1662,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         signal_index = self.tabOpenedSignals.currentIndex() if signal_index is None else signal_index
         widget = self.tabOpenedSignals.widget(signal_index)
 
+        # if the signal is opened from an existing file save it there
         if widget.signalFilePath:
             widget.save()
         else:
@@ -1716,7 +1719,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         name_without_ext = name[0:name.rfind(".")]
         ext = name[name.rfind("."):]
 
-        signal.name = name_without_ext + "_({0}-{1}segs){2}".format(round(indexFrom * 1.0 / signal.samplingRate, 2),
+        signal.name = name_without_ext + "_{0}-{1}s{2}".format(round(indexFrom * 1.0 / signal.samplingRate, 2),
                                                                     round(indexTo * 1.0 / signal.samplingRate, 2), ext)
 
         self.addSignalTab(signal)
