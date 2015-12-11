@@ -1526,7 +1526,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         """
         file_name = QFileDialog.getOpenFileName(self, self.tr(u"Select a file to open"),
                                                 directory=self.workSpace.lastOpenedFile,
-                                                filter=self.tr(u"Wave Files") + u"(*.wav);;All Files(*)")
+                                                filter=self.tr(u"Wave Files ") + u"(*.wav);;All Files (*.*)")
 
         self._open(unicode(file_name))
 
@@ -1716,7 +1716,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         name_without_ext = name[0:name.rfind(".")]
         ext = name[name.rfind("."):]
 
-        signal.name = name_without_ext + "_({0}-{1}segs){2}".format(round(indexFrom * 1.0 / signal.samplingRate, 2),
+        signal.name = name_without_ext + "_{0}-{1}s{2}".format(round(indexFrom * 1.0 / signal.samplingRate, 2),
                                                                     round(indexTo * 1.0 / signal.samplingRate, 2), ext)
 
         self.addSignalTab(signal)

@@ -211,7 +211,7 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         """
         # avoid out of range zoom
         x1 = max(x1, 0)
-        x2 = min(x2, self.signal.length)
+        x2 = min(x2, self.signal.length-1)
 
         widget.changeRange(x1, x2)
         self.mainCursor.min, self.mainCursor.max = x1, x2
@@ -401,7 +401,7 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         # update the current view interval of the recording signal
         if self.signal.length > 0:
 
-            self.mainCursor.max = self.signal.length
+            self.mainCursor.max = self.signal.length-1
             # draw the last signal half second
             self.mainCursor.min = max(0, self.signal.length - self.signal.samplingRate/2)
             self.graph()
@@ -723,13 +723,13 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         The new subinterval has the middle index equal to the old one.
         :return:
         """
-        interval_size_added = (self.mainCursor.max - self.mainCursor.min) / self.ZOOM_STEP
+        interval_size_added = max(1, (self.mainCursor.max - self.mainCursor.min) / self.ZOOM_STEP)
 
         # update the max interval limit
-        if (self.mainCursor.max + interval_size_added) < self.signal.length:
+        if (self.mainCursor.max + interval_size_added) < self.signal.length-1:
             self.mainCursor.max += interval_size_added
         else:
-            self.mainCursor.max = self.signal.length
+            self.mainCursor.max = self.signal.length-1
 
         #  update the min interval limit
         if self.mainCursor.min - interval_size_added >= 0:
@@ -745,7 +745,7 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         Set to visible the complete signal.
         """
         self.mainCursor.min = 0
-        self.mainCursor.max = self.signal.length
+        self.mainCursor.max = self.signal.length-1
         self.graph()
 
     #  endregion
@@ -757,7 +757,7 @@ class QSignalVisualizerWidget(QtGui.QWidget):
         Update the two widgets visualizations
         """
         # ensure that the region to graph is inside the signal limits
-        self.mainCursor.max = min(self.mainCursor.max, self.signal.length)
+        self.mainCursor.max = min(self.mainCursor.max, self.signal.length-1)
         self.mainCursor.min = max(self.mainCursor.min, 0)
         if self.mainCursor.min > self.mainCursor.max:
             self.zoomNone()
