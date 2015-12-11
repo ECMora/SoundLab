@@ -2,7 +2,7 @@
 from PyQt4.QtCore import Qt
 from PyQt4.QtGui import QDialog
 
-from graphic_interface.windows.ui_python_files.ui_new_file_dialog import Ui_NewFileDialog
+from graphic_interface.windows.ui_python_files.new_file_dialog import Ui_NewFileDialog
 
 
 class NewFileDialog(QDialog, Ui_NewFileDialog):
@@ -71,7 +71,7 @@ class NewFileDialog(QDialog, Ui_NewFileDialog):
 
     @property
     def BitDepth(self):
-        return 1 << (self.cbxBitDepth.currentIndex() + 3)
+        return int(self.cbxBitDepth.currentText())
 
     @property
     def Silence(self):

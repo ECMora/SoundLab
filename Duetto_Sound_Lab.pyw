@@ -147,3 +147,5 @@ if __name__ == '__main__':
 
     dmw.show()
     sys.exit(app.exec_())
+
+    # probando vcs fm-yasel

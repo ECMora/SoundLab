@@ -36,7 +36,7 @@ class FilterDialog(filterdg.Ui_Dialog, QDialog):
 
         # load the previous selected values for the dialog or the defaults ones
         self.load_values()
-        self.btonaceptar.clicked.connect(self.save_values)
+        self.buttonBox.accepted.connect(self.save_values)
 
         # set the limits of the possible selectable frequencies to valid ranges
         self.spinBoxBandPassFl.valueChanged.connect(lambda value: self.spinBoxBandPassFu.setMinimum(value))

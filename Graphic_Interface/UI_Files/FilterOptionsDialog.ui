@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>229</width>
+    <width>262</width>
     <height>277</height>
    </rect>
   </property>
@@ -14,38 +14,6 @@
    <string>Filter</string>
   </property>
   <layout class="QGridLayout" name="gridLayout_2">
-   <item row="2" column="2">
-    <widget class="QPushButton" name="btoncancelar">
-     <property name="toolTip">
-      <string extracomment="Cancelar la operacion"/>
-     </property>
-     <property name="text">
-      <string>Cancelar</string>
-     </property>
-     <property name="default">
-      <bool>false</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="1">
-    <widget class="QPushButton" name="btonaceptar">
-     <property name="toolTip">
-      <string extracomment="Acepta los cambios realizados"/>
-     </property>
-     <property name="text">
-      <string>Aceptar</string>
-     </property>
-     <property name="checkable">
-      <bool>false</bool>
-     </property>
-     <property name="default">
-      <bool>false</bool>
-     </property>
-     <property name="flat">
-      <bool>false</bool>
-     </property>
-    </widget>
-   </item>
    <item row="0" column="1" colspan="2">
     <widget class="QGroupBox" name="groupBox">
      <property name="sizePolicy">
@@ -61,6 +29,25 @@
       <bool>false</bool>
      </property>
      <layout class="QGridLayout" name="gridLayout">
+      <item row="1" column="2">
+       <widget class="QDoubleSpinBox" name="spinBoxHighPass">
+        <property name="minimumSize">
+         <size>
+          <width>80</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="suffix">
+         <string/>
+        </property>
+        <property name="maximum">
+         <double>300.000000000000000</double>
+        </property>
+        <property name="singleStep">
+         <double>0.100000000000000</double>
+        </property>
+       </widget>
+      </item>
       <item row="4" column="0">
        <widget class="QRadioButton" name="rButtonBandStop">
         <property name="styleSheet">
@@ -83,7 +70,7 @@
          <string notr="true"/>
         </property>
         <property name="text">
-         <string>Fl</string>
+         <string>Fl ( kHz )</string>
         </property>
         <property name="indent">
          <number>14</number>
@@ -112,7 +99,7 @@
          <string notr="true"/>
         </property>
         <property name="text">
-         <string>Fc</string>
+         <string>Fc ( kHz )</string>
         </property>
         <property name="indent">
          <number>14</number>
@@ -141,7 +128,7 @@
          <string notr="true"/>
         </property>
         <property name="text">
-         <string>Fu</string>
+         <string>Fu ( kHz )</string>
         </property>
         <property name="indent">
          <number>14</number>
@@ -170,7 +157,7 @@
          <string notr="true"/>
         </property>
         <property name="text">
-         <string>Fl</string>
+         <string>Fl ( kHz )</string>
         </property>
         <property name="indent">
          <number>14</number>
@@ -189,7 +176,7 @@
          <string notr="true"/>
         </property>
         <property name="text">
-         <string>Fc</string>
+         <string>Fc ( kHz )</string>
         </property>
         <property name="indent">
          <number>14</number>
@@ -205,7 +192,7 @@
          </size>
         </property>
         <property name="suffix">
-         <string> kHz</string>
+         <string/>
         </property>
         <property name="maximum">
          <double>300.000000000000000</double>
@@ -227,29 +214,10 @@
          <string notr="true"/>
         </property>
         <property name="text">
-         <string>Fu</string>
+         <string>Fu ( kHz )</string>
         </property>
         <property name="indent">
          <number>14</number>
-        </property>
-       </widget>
-      </item>
-      <item row="1" column="2">
-       <widget class="QDoubleSpinBox" name="spinBoxHighPass">
-        <property name="minimumSize">
-         <size>
-          <width>80</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="suffix">
-         <string> kHz</string>
-        </property>
-        <property name="maximum">
-         <double>300.000000000000000</double>
-        </property>
-        <property name="singleStep">
-         <double>0.100000000000000</double>
         </property>
        </widget>
       </item>
@@ -262,7 +230,7 @@
          </size>
         </property>
         <property name="suffix">
-         <string> kHz</string>
+         <string/>
         </property>
         <property name="maximum">
          <double>300.000000000000000</double>
@@ -281,7 +249,7 @@
          </size>
         </property>
         <property name="suffix">
-         <string> kHz</string>
+         <string/>
         </property>
         <property name="maximum">
          <double>300.000000000000000</double>
@@ -300,7 +268,7 @@
          </size>
         </property>
         <property name="suffix">
-         <string> kHz</string>
+         <string/>
         </property>
         <property name="maximum">
          <double>300.000000000000000</double>
@@ -319,7 +287,7 @@
          </size>
         </property>
         <property name="suffix">
-         <string> kHz</string>
+         <string/>
         </property>
         <property name="maximum">
          <double>300.000000000000000</double>
@@ -332,41 +300,21 @@
      </layout>
     </widget>
    </item>
+   <item row="1" column="2">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+     <property name="centerButtons">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
   </layout>
  </widget>
  <resources/>
- <connections>
-  <connection>
-   <sender>btonaceptar</sender>
-   <signal>clicked()</signal>
-   <receiver>Dialog</receiver>
-   <slot>accept()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>67</x>
-     <y>251</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>120</x>
-     <y>135</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>btoncancelar</sender>
-   <signal>clicked()</signal>
-   <receiver>Dialog</receiver>
-   <slot>reject()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>177</x>
-     <y>251</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>120</x>
-     <y>135</y>
-    </hint>
-   </hints>
-  </connection>
- </connections>
+ <connections/>
 </ui>
