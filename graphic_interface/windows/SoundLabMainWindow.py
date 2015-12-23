@@ -208,9 +208,9 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         """
         # if previous files open then ask to open
         if len(self.workSpace.openedFiles) > 0:
-            mbox = QtGui.QMessageBox(QtGui.QMessageBox.Question, self.tr(u"soundLab"),
+            mbox = QtGui.QMessageBox(QtGui.QMessageBox.Question, self.tr(u"duetto-SoundLab"),
                                      self.tr(u"You left ")+self.tr(unicode(len(self.workSpace.openedFiles)))
-                                     + self.tr(u"opened file(s). Do you want to restore them?"),
+                                     + self.tr(u" opened file(s). Do you want to restore them?"),
                                      QtGui.QMessageBox.Yes | QtGui.QMessageBox.No, self)
 
             if mbox.exec_() == QtGui.QMessageBox.Yes:
@@ -1526,11 +1526,21 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         Open a new file signal.
         :return:
         """
-        file_name = QFileDialog.getOpenFileName(self, self.tr(u"Select a file to open"),
-                                                directory=self.workSpace.lastOpenedFile,
-                                                filter=self.tr(u"Wave Files ") + u"(*.wav);;All Files (*.*)")
+        file_names = QFileDialog.getOpenFileNames(self, self.tr(u"Select file(s) to open"),
+                                                  directory=self.workSpace.lastOpenedFile,
+                                                  filter=self.tr(u"Wave Files") + u" (*.wav);;" +
+                                                         self.tr(u"All Files") + u" (*.*)")
 
-        self._open(unicode(file_name))
+        if not file_names.isEmpty():
+            self.open_files(file_names)
+
+        # file_name = QFileDialog.getOpenFileName(self, self.tr(u"Select a file to open"),
+        #                                         directory=self.workSpace.lastOpenedFile,
+        #                                         filter=self.tr(u"Wave Files") + u" (*.wav);;" +
+        #                                                self.tr(u"All Files") + u" (*.*)")
+        #
+        # if not file_name.isEmpty():
+        #     self._open(unicode(file_name))
 
     @pyqtSlot()
     def on_actionOpenInOtherTab_triggered(self):
@@ -1558,10 +1568,10 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         :param pathlist:
         :return:
         """
-        open_current_tab = self.widget is None or self.widget.undoRedoManager.count() == 0
+        open_current_tab = self.widget is None  # ToDo(fm): Why "or self.widget.undoRedoManager.count() == 0"
 
         for i, path in enumerate(pathlist):
-            self._open(path, currentTab=(i == 0) and open_current_tab)
+            self._open(unicode(path), currentTab=(i == 0) and open_current_tab)
 
     def _open(self, file_path='', currentTab=False):
         """
@@ -1571,7 +1581,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         otherwise is open on new tab
         :return:
         """
-        signal_memory_used = 0
+        signal_memory_used = 0  # ToDo(fm): why not to store this value, then update it in open/close events
         for i in range(self.tabOpenedSignals.count()):
             signal = self.tabOpenedSignals.widget(i).signal
             signal_memory_used += signal.length * signal.bitDepth
@@ -1597,7 +1607,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         if file_path != u'':
             try:
                 # set the variables for folder files management
-                self.getFolderFiles(file_path)
+                self.getFolderFiles(file_path)  # ToDo(fm): why it should be called here
                 signal = openSignal(file_path)
             except Exception as ex:
                 QMessageBox.warning(QMessageBox(), self.tr(u"Error"),
@@ -1680,8 +1690,9 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
 
         # get the filename to store the signal
         file_name = unicode(QFileDialog.getSaveFileName(self, self.tr(u"Save signal"),
-                                                        os.path.join(self.workSpace.lastOpenedFolder,
-                                                        unicode(self.widget.signalName)), u"*.wav"))
+                                                        directory=os.path.join(self.workSpace.lastOpenedFolder,
+                                                                               unicode(self.widget.signalName)),
+                                                        filter=self.tr(u"Wave Files") + u" (*.wav)"))
         if file_name:
             widget.save(file_name)
 

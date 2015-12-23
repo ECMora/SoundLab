@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QDialog
+from PyQt4.QtGui import QDialog, QLayout
 
 from graphic_interface.windows.ui_python_files.new_file_dialog import Ui_NewFileDialog
 
@@ -14,16 +14,18 @@ class NewFileDialog(QDialog, Ui_NewFileDialog):
     dialogValues = {
         "rbtnSilence": True,
         "rbtnWhiteNoise": False,
-        "cbxBitDepth": 1,
-        "dsbxDuration": 1,
-        "sbxSamplingRateIndex": 1,
+        "cbxBitDepth": 2,
+        "dsbxDuration": 5,
+        "sbxSamplingRateIndex": 3,
         "sbxSamplingRate": 44100
     }
     # endregion
 
     def __init__(self, parent, windowFlags=None):
 
-        QDialog.__init__(self, parent, Qt.WindowSystemMenuHint | Qt.WindowTitleHint)
+        QDialog.__init__(self, parent, Qt.CustomizeWindowHint | Qt.WindowTitleHint | Qt.FramelessWindowHint)
+        # fm-note: MSWindowsFixedSizeDialogHint works as well as FramelessWindowHint, but is it said to be
+        #          exclusive for MS Windows.
 
         self.setupUi(self)
 

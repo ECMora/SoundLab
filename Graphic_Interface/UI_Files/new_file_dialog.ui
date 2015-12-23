@@ -2,25 +2,40 @@
 <ui version="4.0">
  <class>NewFileDialog</class>
  <widget class="QDialog" name="NewFileDialog">
+  <property name="windowModality">
+   <enum>Qt::WindowModal</enum>
+  </property>
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>205</width>
-    <height>142</height>
+    <width>199</width>
+    <height>168</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>New</string>
   </property>
   <layout class="QFormLayout" name="formLayout">
+   <property name="fieldGrowthPolicy">
+    <enum>QFormLayout::AllNonFixedFieldsGrow</enum>
+   </property>
+   <property name="labelAlignment">
+    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+   </property>
+   <property name="bottomMargin">
+    <number>6</number>
+   </property>
    <item row="0" column="0">
     <widget class="QLabel" name="label">
-     <property name="styleSheet">
-      <string notr="true">background-color: rgb(255, 255, 255);</string>
-     </property>
      <property name="text">
-      <string>Sampling Rate ( Hz ):</string>
+      <string>Sampling Rate (Hz):</string>
      </property>
     </widget>
    </item>
@@ -30,16 +45,11 @@
       <bool>true</bool>
      </property>
      <property name="currentIndex">
-      <number>1</number>
+      <number>3</number>
      </property>
      <item>
       <property name="text">
        <string>22050</string>
-      </property>
-     </item>
-     <item>
-      <property name="text">
-       <string>44100</string>
       </property>
      </item>
      <item>
@@ -50,6 +60,11 @@
      <item>
       <property name="text">
        <string>32000</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>44100</string>
       </property>
      </item>
      <item>
@@ -91,19 +106,16 @@
    </item>
    <item row="1" column="0">
     <widget class="QLabel" name="label_2">
-     <property name="styleSheet">
-      <string notr="true">background-color: rgb(255, 255, 255);</string>
-     </property>
      <property name="text">
-      <string>Duration ( s ):</string>
+      <string>Duration (s):</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
      </property>
     </widget>
    </item>
    <item row="1" column="1">
     <widget class="QDoubleSpinBox" name="dsbxDuration">
-     <property name="styleSheet">
-      <string notr="true">background-color: rgb(255, 255, 255);</string>
-     </property>
      <property name="suffix">
       <string/>
      </property>
@@ -117,11 +129,8 @@
    </item>
    <item row="2" column="0">
     <widget class="QLabel" name="label_3">
-     <property name="styleSheet">
-      <string notr="true">background-color: rgb(255, 255, 255);</string>
-     </property>
      <property name="text">
-      <string>Bit Depth ( bits ):</string>
+      <string>Bit Depth (bits):</string>
      </property>
     </widget>
    </item>
@@ -131,7 +140,7 @@
       <bool>false</bool>
      </property>
      <property name="currentIndex">
-      <number>0</number>
+      <number>2</number>
      </property>
      <item>
       <property name="text">
@@ -140,32 +149,83 @@
      </item>
      <item>
       <property name="text">
+       <string>12</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
        <string>16</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>24</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>32</string>
+      </property>
+     </item>
+     <item>
+      <property name="text">
+       <string>64</string>
       </property>
      </item>
     </widget>
    </item>
-   <item row="3" column="0">
-    <widget class="QRadioButton" name="rbtnSilence">
-     <property name="styleSheet">
-      <string notr="true">background-color: rgb(255, 255, 255);</string>
+   <item row="3" column="0" colspan="2">
+    <widget class="QGroupBox" name="groupBox">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+       <horstretch>0</horstretch>
+       <verstretch>100</verstretch>
+      </sizepolicy>
      </property>
-     <property name="text">
-      <string>Silence</string>
+     <property name="title">
+      <string> Content </string>
      </property>
-     <property name="checked">
-      <bool>true</bool>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="1">
-    <widget class="QRadioButton" name="rbtnWhiteNoise">
-     <property name="styleSheet">
-      <string notr="true">background-color: rgb(255, 255, 255);</string>
-     </property>
-     <property name="text">
-      <string>White Noise</string>
-     </property>
+     <widget class="QRadioButton" name="rbtnSilence">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>19</y>
+        <width>71</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="text">
+       <string>Silence</string>
+      </property>
+      <property name="checked">
+       <bool>true</bool>
+      </property>
+     </widget>
+     <widget class="QRadioButton" name="rbtnWhiteNoise">
+      <property name="geometry">
+       <rect>
+        <x>85</x>
+        <y>19</y>
+        <width>91</width>
+        <height>20</height>
+       </rect>
+      </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="text">
+       <string>White Noise</string>
+      </property>
+     </widget>
     </widget>
    </item>
    <item row="4" column="0" colspan="2">

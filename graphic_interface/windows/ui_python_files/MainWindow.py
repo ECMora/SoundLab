@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'D:\Fac Biologia\DUETTO PROGRAMS\Desktop\Sound Lab\duetto-SoundLab\graphic_interface\UI_Files\MainWindow.ui'
+# Form implementation generated from reading ui file 'D:\dev\duetto\d-SoundLab\duetto-SoundLab\graphic_interface\UI_Files\MainWindow.ui'
 #
-# Created: Tue Nov 10 08:36:24 2015
+# Created: Tue Dec 15 17:22:38 2015
 #      by: PyQt4 UI code generator 4.9.5
 #
 # WARNING! All changes made in this file will be lost!
@@ -18,7 +18,7 @@ class Ui_DuettoMainWindow(object):
     def setupUi(self, DuettoMainWindow):
         DuettoMainWindow.setObjectName(_fromUtf8("DuettoMainWindow"))
         DuettoMainWindow.setWindowModality(QtCore.Qt.ApplicationModal)
-        DuettoMainWindow.resize(745, 454)
+        DuettoMainWindow.resize(748, 454)
         sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -62,12 +62,12 @@ class Ui_DuettoMainWindow(object):
         self.horizontalLayout.addWidget(self.noSignalOpened_lbl)
         DuettoMainWindow.setCentralWidget(self.centralwidget)
         self.menubar = QtGui.QMenuBar(DuettoMainWindow)
-        self.menubar.setGeometry(QtCore.QRect(0, 0, 745, 21))
+        self.menubar.setGeometry(QtCore.QRect(0, 0, 748, 21))
         self.menubar.setAutoFillBackground(False)
         self.menubar.setStyleSheet(_fromUtf8(""))
         self.menubar.setObjectName(_fromUtf8("menubar"))
         self.menuFile = QtGui.QMenu(self.menubar)
-        self.menuFile.setGeometry(QtCore.QRect(58, 158, 174, 394))
+        self.menuFile.setGeometry(QtCore.QRect(151, 128, 174, 394))
         self.menuFile.setAutoFillBackground(False)
         self.menuFile.setStyleSheet(_fromUtf8(""))
         self.menuFile.setTearOffEnabled(False)
@@ -504,7 +504,7 @@ class Ui_DuettoMainWindow(object):
         self.actionPause_Sound.setText(QtGui.QApplication.translate("DuettoMainWindow", "Pause", None, QtGui.QApplication.UnicodeUTF8))
         self.actionPause_Sound.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "P", None, QtGui.QApplication.UnicodeUTF8))
         self.actionZoom_out_entire_file.setText(QtGui.QApplication.translate("DuettoMainWindow", "Zoom None", None, QtGui.QApplication.UnicodeUTF8))
-        self.actionSaveAs.setText(QtGui.QApplication.translate("DuettoMainWindow", "Save As", None, QtGui.QApplication.UnicodeUTF8))
+        self.actionSaveAs.setText(QtGui.QApplication.translate("DuettoMainWindow", "Save As...", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSaveAs.setToolTip(QtGui.QApplication.translate("DuettoMainWindow", "Save", None, QtGui.QApplication.UnicodeUTF8))
         self.actionSaveAs.setShortcut(QtGui.QApplication.translate("DuettoMainWindow", "Ctrl+G", None, QtGui.QApplication.UnicodeUTF8))
         self.actionCopy.setText(QtGui.QApplication.translate("DuettoMainWindow", "Copy", None, QtGui.QApplication.UnicodeUTF8))

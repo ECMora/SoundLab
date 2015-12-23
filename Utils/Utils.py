@@ -80,7 +80,7 @@ def folder_files(folder, extensions=None):
                 if any([unicode(f).lower().endswith(unicode(x)) for x in extensions]):
                     # if file extension is admissible
 
-                    files.append(unicode(unicode(root) + u"/" + unicode(f)))
+                    files.append(unicode(os.path.join(root, f)))
             except Exception as ex:
                 print("Errors in get folder files. On file " + unicode(f) + ". " + ex.message)
 
