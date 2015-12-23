@@ -54,7 +54,7 @@ class BrowseFilesWindow(QtGui.QMainWindow, Ui_BrowseFilesWindow):
 
         self.files_tablewidget.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.files_tablewidget.setEditTriggers(QAbstractItemView.NoEditTriggers)
-        self.files_tablewidget.cellPressed.connect(self.select_file)
+        self.files_tablewidget.cellClicked.connect(self.select_file)
 
         self.update_select_all_bttn()
 

@@ -588,15 +588,15 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         # endregion
         # endregion
 
-        # add the widget as an action because the behoavior of the list
+        # add the widget as an action because the behavior of the list
         # is to disable the elements on it when there is no open signals and enable otherwise
         self.signalDependingActions.append(self.signalNameLineEdit)
         self.signalDependingActions.append(self.actionSwitchPlayStatus)
 
         # add the actions to the toolbar
         # actions groups (action,name of group)
-        actions_groups = [(open_save_actions, self.tr(u"Open/Save")),(undo_redo_actions, self.tr(u"Undo/Redo")),
-                          (edition_actions,self.tr(u"Edition")), (file_updown_actions, self.tr(u"File Up/Down")),
+        actions_groups = [(open_save_actions, self.tr(u"Open/Save")), (undo_redo_actions, self.tr(u"Undo/Redo")),
+                          (edition_actions, self.tr(u"Edition")), (file_updown_actions, self.tr(u"File Up/Down")),
                           (segm_transf_actions, self.tr(u"Processing")),
                           (settings_actions, self.tr(u"Settings"))]
 
@@ -625,6 +625,20 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         """
         for action in self.signalDependingActions:
             action.setEnabled(enable_state)
+
+        self.update_save_signals_enable_state()
+
+    def update_save_signals_enable_state(self, enable=None):
+        # update the save action enable state based on the selected signal edition actions
+
+        print("Update signal save...")
+        if enable is not None and isinstance(enable, bool):
+            state = enable
+        else:
+            state = self.widget is not None and self.widget.undoRedoManager.current_action_index >= 0
+
+        self.actionSave.setEnabled(state)
+        self.actionSaveAs.setEnabled(state)
 
     # endregion
 
@@ -677,6 +691,9 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         self.workSpace.setClosedFile(self.widget.signalFilePath)
         self.widget.signal = signal
 
+        self.widget.undoRedoManager.actionExec.connect(lambda act: self.update_save_signals_enable_state())
+        self.widget.undoRedoManager.actionAdded.connect(lambda act: self.update_save_signals_enable_state())
+
         self.widget.signalNameChanged.connect(lambda: self.updateSignalPropertiesLabel(self.widget.signal))
 
         self.setUniqueSignalName(self.widget.signal)
@@ -689,7 +706,6 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
 
         # add context menu actions
         self.addWidgetContextMenuActions()
-
         self.updateFromSignalLoaded()
 
     def updateFromSignalLoaded(self):
@@ -738,6 +754,7 @@ class SoundLabMainWindow(SoundLabWindow, Ui_DuettoMainWindow):
         self.setWindowTitle(self.tr(u"duetto-Sound Lab - ") + self.widget.signalName)
 
         self.updateFromSignalLoaded()
+        self.update_save_signals_enable_state()
 
     def closeSignalAt(self, index):
         """
