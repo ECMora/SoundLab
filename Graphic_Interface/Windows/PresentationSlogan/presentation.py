@@ -61,4 +61,4 @@ class Ui_MainWindow(object):
     def retranslateUi(self, MainWindow):
         MainWindow.setWindowTitle(_translate("MainWindow", "DUETTO", None))
 
-from PyQt4 import phonon
+# from PyQt4 import phonon
