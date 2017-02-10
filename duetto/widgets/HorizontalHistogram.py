@@ -12,7 +12,7 @@ import pyqtgraph as pg
 
 
 class HorizontalHistogramWidget(HistogramLUTWidget):
-    def __init__(self, parent=None, *args, **kargs):
+    def __init__(self, parent=None,  *args, **kargs):
         HistogramLUTWidget.__init__(self, parent, *args, **kargs)
         self.item = HorizontalHistogramItem(*args, **kargs)
         self.setCentralItem(self.item)
@@ -166,10 +166,15 @@ class HorizontalHistogramItem(HistogramLUTItem):
         """
         pen = self._region.lines[0].pen
         rgn = self._region.getRegion()
+<<<<<<< HEAD
         p1 = self.view_boxHistogram.mapFromViewToItem(self,
                                                       Point(rgn[0], self.view_boxHistogram.viewRect().center().y()))
         p2 = self.view_boxHistogram.mapFromViewToItem(self,
                                                       Point(rgn[1], self.view_boxHistogram.viewRect().center().y()))
+=======
+        p1 = self.view_boxHistogram.mapFromViewToItem(self, Point(rgn[0], self.view_boxHistogram.viewRect().center().y()))
+        p2 = self.view_boxHistogram.mapFromViewToItem(self, Point(rgn[1], self.view_boxHistogram.viewRect().center().y()))
+>>>>>>> 80d83930ba477b708af83883a363b6d0fd2c73cd
         gradRect = self.gradient.mapRectToParent(self.gradient.gradRect.rect())
         for pen in [fn.mkPen('k', width=3), pen]:
             p.setPen(pen)
@@ -191,7 +196,11 @@ class HorizontalHistogramItem(HistogramLUTItem):
         """
         self.gradient.restoreState(colorBarState)
 
+<<<<<<< HEAD
     def setRegion(self, region):
+=======
+    def setRegion(self,region):
+>>>>>>> 80d83930ba477b708af83883a363b6d0fd2c73cd
         """
         Update the current visualization trheshold region with the supplied
         :param region:
@@ -204,6 +213,12 @@ class HorizontalHistogramItem(HistogramLUTItem):
 
     def regionChanging(self):
         if self.imageItem is not None:
+<<<<<<< HEAD
             self.imageItem().setLevels(self._region.getRegion())
         self.sigLevelsChanged.emit(self)
         self.update()
+=======
+            self.imageItem.setLevels(self._region.getRegion())
+        self.sigLevelsChanged.emit(self)
+        self.update()
+>>>>>>> 80d83930ba477b708af83883a363b6d0fd2c73cd
